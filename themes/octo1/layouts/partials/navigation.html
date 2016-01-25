@@ -1,0 +1,31 @@
+
+<!-- add any links here {{ "/" | absURL }}/ points to root -->
+<ul class="main-navigation">
+  <!-- Check if home_title is set in config file, if not use Blog -->
+  {{ if isset .Site.Params "home_title" }}
+  	<li><a href="{{ "/" | absURL }}/">{{ .Site.Params.home_title }}</a></li>
+  {{ else }}
+  	<li><a href="{{ "/" | absURL }}/">Blog2</a></li>
+  {{ end }}
+  <li><a href="https://www.google.com/search?q=andrew+ridgeley" target="_blank">The other guy from Wham!</a></li>
+  <!-- add more links here -->
+  <!-- <li><a href="{{ "/" | absURL }}/about.html">About Me</a></li> -->
+</ul>
+
+<!-- need to find a better way to put the link to the right, probably make a new class and use css -->
+<ul class="subscription">
+  {{ if .Site.Params.rss }}<a href="{{ "/index.xml" | absURL }}" type="application/rss+xml" title="RSS"><i class="fa fa-rss-square fa-lg"></i></a>{{ end }}
+
+  <!-- If you prefer RSS text (like Octopress) replace the line above with next comment -->
+  <!-- <li><a href="/index.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li> -->
+
+</ul>
+
+{{ if isset .Site.Params "search_engine_url" }}
+<form action="{{ .Site.Params.search_engine_url }}" method="get" target="_blank">
+  <fieldset role="search">
+  	<input class="search" type="text" name="q" results="0" placeholder="Search"/>
+    <input type="hidden" name="q" value="site:{{ "/" | absURL }}" />
+  </fieldset>
+</form>
+{{end}}

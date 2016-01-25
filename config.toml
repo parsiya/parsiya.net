@@ -1,0 +1,69 @@
+
+# https://gohugo.io/overview/configuration/
+
+baseurl = "http://parsiya.net"
+disablePathToLower = true
+languageCode = "en-us"
+title = "Parsia's Den"
+# theme = "octo1"
+
+# number of blog posts displayed in each page
+paginate = 6
+
+pygmentsuseclasses = false
+pygmentsstyle = "solarized_dark" # need to install Solarized from https://github.com/john2x/solarized-pygment.git
+# Octopress blog used Solarized_dark
+# options are solarized_dark (octopress), solarized_dark256 and default (solarized light)
+
+# will make the highlight shortcode and ``` do the same thing - otherwise they are treated differently
+pygmentscodefences = true
+
+# can pass in pygments options here, it can also be added in the highlight shortcode but not ```
+# pygmentsoptions = "linenos=true"
+
+disqusShortname = "parsiya"
+
+[permalinks]
+	post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the old ones
+
+[taxonomies]
+    category = "categories"
+    tag = "tags"
+
+[params]
+
+	SidebarRecentLimit = 5 # number of recent posts that will be shown in the sidebar
+	# truncate = true # this will show full blog posts on front page - I hate it
+
+	# highlight = "ir_black"	# change this to one of the css files in static/css/highlight/ - demo : https://highlightjs.org/static/demo/
+
+	author = "Parsia"
+
+	# appears in the site header under website title
+	subtitle = "Because no one wants to be the other guy from Wham!"
+
+	# used in the search engine
+	search_engine_url = "https://www.google.com/search"
+
+	# Text of the Continue Reading label. &rarr; == right arrow, but it gets messed up in the string so we will add it to index.html manually
+	continue_reading = "Would you like to know more?"
+
+	# Link that appears in the navigation menu and will point to site's root
+	home_title = "Blog"
+
+	# googleAnalytics = "Your Google Analytics tracking code"
+
+	bitbucket = "https://bitbucket.org/parsiya/"
+	twitter = "https://twitter.com/cryptogangsta/"
+	keybase = "https://keybase.io/parsiya/"
+	github = "https://github.com/parsiya/"
+
+	rss = true  # switch to true to enable RSS icon link
+
+	defaultDescription = ""
+
+	defaultKeywords = ["Parsia Hakimian" , "Parsia" , "infosec" , "information security"]
+
+# blackfriday is Hugo's markdown engine. Must look at its options
+[blackfriday]
+	hrefTargetBlank = true # open the external links in a new window

@@ -1,0 +1,80 @@
+<!-- copy pasted from  tpl/template_embedded.go -->
+<!-- default pagination.html creates <ul class="pagination"> and then a list of links for counters, forwardw and backward
+     while Octopress uses <div class="pagination"> and links inside-->
+
+
+<!-- this is how octopress implements the pagination links
+<div class="pagination">
+    
+      <a class="prev" href="/blog/page/3/">← Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/">Newer →</a>
+    
+  </div>
+-->
+
+<!-- Original 
+{{ $pag := $.Paginator }}
+    {{ if gt $pag.TotalPages 1 }}
+    <ul class="pagination">
+        {{ with $pag.First }}
+        <li>
+            <a href="{{ .URL }}" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
+        </li>
+        {{ end }}
+        <li
+        {{ if not $pag.HasPrev }}class="disabled"{{ end }}>
+        <a href="{{ if $pag.HasPrev }}{{ $pag.Prev.URL }}{{ end }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+        </li>
+        {{ range $pag.Pagers }}
+        <li
+        {{ if eq . $pag }}class="active"{{ end }}><a href="{{ .URL }}">{{ .PageNumber }}</a></li>
+        {{ end }}
+        <li
+        {{ if not $pag.HasNext }}class="disabled"{{ end }}>
+        <a href="{{ if $pag.HasNext }}{{ $pag.Next.URL }}{{ end }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+        </li>
+        {{ with $pag.Last }}
+        <li>
+            <a href="{{ .URL }}" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+        </li>
+        {{ end }}
+    </ul>
+    {{ end }}
+-->
+
+{{ $pag := $.Paginator }}
+{{ if gt $pag.TotalPages 1 }}
+<div class="pagination">
+
+    {{ with $pag.First }}
+        <!-- if you prefer characters instead use the following line -->
+        <!-- <a href="{{ .URL }}" aria-label="First" class="label-pagination"><span aria-hidden="true">&laquo;&laquo;</span></a> -->
+        <!-- fa-lg is supposedly dynamic size. You can use fa-1x to fa-5x and probably even more, check http://fontawesome.io -->
+        <a href="{{ .URL }}" aria-label="First" class="label-pagination"><i class="fa fa-angle-double-left fa-lg"></i></a>
+    {{ end }}
+
+    {{ if $pag.HasPrev }}
+    <!-- <a href="{{ if $pag.HasPrev }}{{ $pag.Prev.URL }}{{ end }}" aria-label="Previous" class="label-pagination"><span aria-hidden="true">&laquo;</span></a> -->
+        <a href="{{ if $pag.HasPrev }}{{ $pag.Prev.URL }}{{ end }}" aria-label="Previous" class="label-pagination"><i class="fa fa-angle-left fa-lg"></i></a>
+    {{ end }}
+
+    {{ range $pag.Pagers }}
+        <a href="{{ .URL }}" class="label-pagination">{{ .PageNumber }}</a>
+    {{ end }}
+
+    {{ if $pag.HasNext }}
+    <!-- <a href="{{ if $pag.HasNext }}{{ $pag.Next.URL }}{{ end }}" aria-label="Next" class="label-pagination"><span aria-hidden="true">&raquo;</span></a> -->
+        <a href="{{ if $pag.HasNext }}{{ $pag.Next.URL }}{{ end }}" aria-label="Next" class="label-pagination"><i class="fa fa-angle-right fa-lg"></i></a>
+    {{ end }} 
+    
+    {{ with $pag.Last }}
+    <!-- <a href="{{ .URL }}" aria-label="Last"><span aria-hidden="true" class="label-pagination">&raquo;&raquo;</span></a> -->
+        <a href="{{ .URL }}" aria-label="Last"><i class="fa fa-angle-double-right fa-lg"></i></a>
+    {{ end }}
+
+</div>
+{{ end }}
+
