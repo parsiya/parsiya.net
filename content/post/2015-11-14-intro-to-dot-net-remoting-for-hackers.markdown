@@ -21,6 +21,7 @@ In this post we will:
 
 If you know of any applications that use .NET Remoting please let me know. I want to look at them.
 
+[net-remoting-1]: https://msdn.microsoft.com/en-us/library/kwdt6w2k%28v=vs.71%29.aspx
 <!--more-->
 
 ### Table of Contents:
@@ -192,6 +193,10 @@ namespace RemotingSample
 Now we can build the solution. If you look at the resulting executables we will that both client and server have a copy of `RemotingLibrary.dll`.
 
 {% imgcap /images/2015/remoting1/01.png Both Client and Server have the same DLL %}
+
+{{< figure src="/images/2015/remoting1/01.png" title="Both Client and Server have the same DLL" >}}
+
+{{< imgcap caption="Both Client and Server have the same DLL" src="/images/2015/remoting1/01.png" >}}
 
 Now start `RawCap` and capture local traffic.
 
