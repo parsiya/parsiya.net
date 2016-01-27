@@ -45,11 +45,11 @@ We can see a bunch of traffic in Netmon. See this handy tree view to the left? T
 
 Click on `notepad++.exe` in the tree view to view all of its traffic. We can see that it is communicating with `superb-dca2.dl.sourceforge.net` and `downloads.sourceforge.net` over HTTP *gasp*. You may observe a different endpoint depending on your location (because Source forge).
 
-{% imgpopup /images/2015/TrafficAttribution1/01.PNG 80% Notepad++ traffic in Netmon >}}
+{% imgpopup /images/2015/TrafficAttribution1/01.PNG 80% Notepad++ traffic in Netmon %}
 
 There’s another `suspicious process` up there. Select `gup.exe` and we can see it is also related to `Notepad++` as it's creating a TLS connection to `notepad-plus-plus.org`.
 
-{% imgpopup /images/2015/TrafficAttribution1/02.PNG 80% gup.exe traffic in Netmon >}}
+{% imgpopup /images/2015/TrafficAttribution1/02.PNG 80% gup.exe traffic in Netmon %}
 
 But wait, there’s more. There may be traffic that is not correctly attributed due to the way that Netmon identifies traffic. We may be able to find some extra stuff there.  
 Here’s a Catch-22, there may be traffic related to our application that Netmon wasn’t able to correlate back to the process but how can we identify it if we do not know the endpoints. We will be using Procmon to compile a more comprehensive endpoint collection later.
@@ -62,14 +62,14 @@ Here’s a Catch-22, there may be traffic related to our application that Netmon
 
 Be sure to select `All Traffic` in the tree-view when applying filters search in all traffic.
 
-{% imgpopup /images/2015/TrafficAttribution1/03.PNG 80% Contains(property.Destination, 'sourceforge') >}}
+{% imgpopup /images/2015/TrafficAttribution1/03.PNG 80% Contains(property.Destination, 'sourceforge') %}
 
 We can search in different columns, one of the most common columns is `property.description`. Description is a column with a lot of information and is usually our best bet. For example if we want to see all GET request we can use the following filters (again they both do the same thing):
 
 * `Contains(property.Description,"GET")`
 * `Description.Contains("GET")`
 
-{% imgpopup /images/2015/TrafficAttribution1/04.PNG 80% Contains(property.Description,'GET') >}}
+{% imgpopup /images/2015/TrafficAttribution1/04.PNG 80% Contains(property.Description,'GET') %}
 
 We can also see Windows checking for certificate revocation lists over HTTP *zomg*.
 
@@ -77,7 +77,7 @@ To search for binary data use `ContainsBin`. For example to search for the CRLF 
 
 * `ContainsBin(FrameData, HEX, "0D 0A")`
 
-{% imgpopup /images/2015/TrafficAttribution1/05.PNG 80% ContainsBin(FrameData, HEX, '0D 0A') >}}
+{% imgpopup /images/2015/TrafficAttribution1/05.PNG 80% ContainsBin(FrameData, HEX, '0D 0A') %}
 
 We can also search for strings using `ContainsBin` by using `ASCII`. But remember this search is case-sensitive. To replicate our previous search for `sourceforge` we can use the following filter:
 
@@ -90,19 +90,19 @@ I am in the process of writing a longer blog entry about using Procmon but that 
 
 Procmon has a lot of filters but we will be using only a few of them. The first filter is `ProcessName`. Using this filter we can see only events belonging to specific process(es). Select Filter from the Filter menu or press Ctrl+L. Now create this filter `ProcessName is Notepad++.exe`. Note that Procmon will show you all processes with events in the drop down menu.
 
-{% imgpopup /images/2015/TrafficAttribution1/06.PNG 80% Creating a filter >}}
+{% imgpopup /images/2015/TrafficAttribution1/06.PNG 80% Creating a filter %}
 
 And we can see all events for `notepad++.exe` in Procmon. Take a note of ProcessID (PID) for `notepad++.exe`. In this case PID is `3964`.
 
-{% imgpopup /images/2015/TrafficAttribution1/07.PNG 80% ProcessName is notepad++.exe >}}
+{% imgpopup /images/2015/TrafficAttribution1/07.PNG 80% ProcessName is notepad++.exe %}
 
 But we want to look at spawned processes too. Let’s remove this filter and find all child processes for `notepad++.exe` using another filter. The new filter is `Parent PID is 3964`and it will show captured events for `gup.exe`.
 
-{% imgpopup /images/2015/TrafficAttribution1/08.PNG 80% ProcessName is Parent PID is 3964 >}}
+{% imgpopup /images/2015/TrafficAttribution1/08.PNG 80% ProcessName is Parent PID is 3964 %}
 
 Doubleclick on the first line (`Process Start`) to view command line parameters and other details for `gup.exe`. Note that the `gup.exe` application was ran with parameter `-v6.792` (version of Notepad++). So theoretically we can pretend that we are any version. It would be nice to look at this request and play with it.
 
-{% imgpopup /images/2015/TrafficAttribution1/09.PNG 80% ProcessName is gup.exe and ProcessStart >}}
+{% imgpopup /images/2015/TrafficAttribution1/09.PNG 80% ProcessName is gup.exe and ProcessStart %}
 
 An alternate way to get the same results is to use these two filter:
 
@@ -129,13 +129,13 @@ We use the following filters:
 3. `Operation is TCP Send`
 4. `Operation is TCP Connect`
 
-{% imgpopup /images/2015/TrafficAttribution1/10.PNG 80% Operation is TCP Connect and TCP Send >}}
+{% imgpopup /images/2015/TrafficAttribution1/10.PNG 80% Operation is TCP Connect and TCP Send %}
 
 We have already seen `downloads.sourceforge.net` but `ns378545.ip-91-121-64.eu` is new.
 
 If we ping it, we can see that the corresponding IP address is `91.121.64.34`. We can filter the results in Netmon by using this filter `IPv4.Address == 91.121.64.34` to view traffic related to his IP address.
 
-{% imgpopup /images/2015/TrafficAttribution1/11.PNG 80% IPv4.Address == 91.121.64.34 >}}
+{% imgpopup /images/2015/TrafficAttribution1/11.PNG 80% IPv4.Address == 91.121.64.34 %}
 
 It is `notepad-plus-plus.org`. Try pinging `notepad-plus-plus.org` to get `91.121.64.34`.
 
@@ -159,7 +159,7 @@ Sure, go ahead. Use Procmon and filters to identify the endpoints and then add f
 
 Select all traffic and use the filter `DNS`. Due to the way Netmon associates traffic with processes, DNS requests may be in Unknown or System.
 
-{% imgpopup /images/2015/TrafficAttribution1/12.PNG 80% DNS >}}
+{% imgpopup /images/2015/TrafficAttribution1/12.PNG 80% DNS %}
 
 Note that while we had a DNS query for `superb-dca2.dl.sourceforge.net`, we never connected to it so we did not see a `TCP Connect` event for it in Procmon.
 

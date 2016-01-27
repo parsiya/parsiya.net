@@ -10,7 +10,7 @@ title: 'Proxying Hipchat Part 3: SSL Added and Removed Here :^)'
 url: /blog/2015-10-19-proxying-hipchat-part-3-ssl-added-and-removed-here/
 ---
 
-Finally we are at part 3 of proxying Hipchat. This has been quite the adventure. In [**part1**]({% post_url 2015-10-08-hipchat-part-1-where-did-the-traffic-go >}} "Proxying Hipchat Part 1: Where did the Traffic Go?") we identified the endpoints. In [**part2**]({% post_url 2015-10-09-proxying-hipchat-part-2-so-you-think-you-can-use-burp >}} "Proxying Hipchat Part 2: So You Think You Can Use Burp?") we answered the question “So you think you can use Burp” with yes and proxied some of Hipchat’s traffic with Burp.
+Finally we are at part 3 of proxying Hipchat. This has been quite the adventure. In [**part1**]({% post_url 2015-10-08-hipchat-part-1-where-did-the-traffic-go %} "Proxying Hipchat Part 1: Where did the Traffic Go?") we identified the endpoints. In [**part2**]({% post_url 2015-10-09-proxying-hipchat-part-2-so-you-think-you-can-use-burp %} "Proxying Hipchat Part 2: So You Think You Can Use Burp?") we answered the question “So you think you can use Burp” with yes and proxied some of Hipchat’s traffic with Burp.
 
 In this part we will talk about developing our own proxy in Python to view Hipchat’s traffic to/form `hipchatserver.com` (which our example Hipchat server). First we are going to discuss how proxies work and we will get over Burp breaking our heart by creating our own proxy in Python to observe and dump the traffic in plaintext.
 
@@ -23,7 +23,7 @@ For a similar effort (although with a much more complex proxy in ``erlang``) loo
 ### -1 Breaking Atlassian’s EULA
 Go to your Hipchat server's web interface login page and view that page’s source. The same thing appears in [http://downloads.hipchat.com](http://downloads.hipchat.com).
 
-{{< imgcap src="/images/2015/hipchat3/00-hipchatlogin-source-code.png" caption="Reverse engineering intensifies"   >}}
+{% imgcap /images/2015/hipchat3/00-hipchatlogin-source-code.png Reverse engineering intensifies %}
 
 Oops we just broke someone’s EULA. Note to people from the future: This is <del>a fresh</del> an already stale Oracle meme (at the time of writing). For more information read an archived version of the article. [https://archive.is/xmtoW#selection-283.0-287.757](https://archive.is/xmtoW#selection-283.0-287.757) (you can link selected text in archived web pages, what a time to be alive).
 
@@ -39,11 +39,11 @@ Since last part, Hipchat has been update to version **2.2.1395**. If we start Hi
 
 `1388` is our current version number before update. This request retrieves the patch notes for all released versions after `1388` which is basically an HTML page (with some JavaScript in the header that will not be executed as we have seen before).
 
-{{< imgcap src="/images/2015/hipchat3/01-New-Request.png" caption="Request to retrieve patch notes"   >}}
+{% imgcap /images/2015/hipchat3/01-New-Request.png Request to retrive patchj notes %}
 
 Let’s update and see what happens. The application sends a GET request to retrieve the new installer from ``https://s3.amazonaws.com/downloads.hipchat.com/windows/HipChat-2.2.1395-win32.msi``, and then executes it. After logging in we can see that the requests logged in Burp have not changed from last update.
 
-{{< imgcap src="/images/2015/hipchat3/02-Patch-Notes.png" caption="Patch notes in Hipchat"   >}}
+{% imgcap /images/2015/hipchat3/02-Patch-Notes.png Patch notes in Hipchat %}
 
 ### 2. How does a Proxy Work?
 In order to create our own proxy, we must know how proxies work. We have all used Burp before but we don’t really care what happens under the hood until something goes wrong.
@@ -68,11 +68,11 @@ Now let’s see how Burp works. Let's look at the capture file in Wireshark.
 
 Click for full-size image.
 
-{% imgpopup /images/2015/hipchat3/03-GET-blog_info-in-Wireshark.png 80% GET blog_info.html in Wireshark >}}
+{% imgpopup /images/2015/hipchat3/03-GET-blog_info-in-Wireshark.png 80% GET blog_info.html in Wireshark %}
 
 In other words:
 
-{{< imgcap src="/images/2015/hipchat3/04-GET-blog_info-Sequence-Diagram.png" caption="GET blog_info sequence diagram"   >}}
+{% imgcap /images/2015/hipchat3/04-GET-blog_info-Sequence-Diagram.png GET blog_info sequence diagram %}
 
 In other other words:
 
@@ -94,11 +94,11 @@ Some notes:
 #### 2.2 GET https://s3.amazonaws.com/uploads.hipchat.com/…/freddie.png
 This one is different because it is over TLS.
 
-{{< imgcap src="/images/2015/hipchat3/05-GET-Freddie-in-Wireshark.png" caption="GET Freddie.png in Wireshark"   >}}
+{% imgcap /images/2015/hipchat3/05-GET-Freddie-in-Wireshark.png GET Freddie.png in Wireshark %}
 
 I am not going to mark the Wireshark screenshot this time. Because the sequence diagram explains everything:
 
-{{< imgcap src="" caption="" /images/2015/hipchat3/06-GET-Freddie-Sequence-Diagram.png GET Freddie.png sequence diagram >}}
+{% imgcap /images/2015/hipchat3/06-GET-Freddie-Sequence-Diagram.png GET Freddie.png sequence diagram %}
 
 This is very similar to the previous HTTP request. One difference is that Burp will generate its own certificate (signed by its own root Certificate Authority or root CA) for ``s3.amazonaws.com`` and present it to Hipchat. Hipchat then checks this certificate for validity and if it is signed by a valid root CA. If you have Burp, you have already added Burp’s CA to Windows’ certificate store (right?) so this fake certificate will be valid.
 
@@ -116,16 +116,16 @@ If the client is non-proxy-aware and does not send the ``CONNECT`` before the TL
 
 It can be enabled at ``Proxy > Options``. Select the proxy listener, click ``edit`` and under ``Request Handling`` select ``Support invisible proxying (enable only if needed)``.
 
-{{< imgcap src="" caption="" /images/2015/hipchat3/07-Burp-invisible-proxy-mode.png Burp invisible proxying option (enable only if needed!!1!) >}}
+{% imgcap /images/2015/hipchat3/07-Burp-invisible-proxy-mode.png Burp invisible proxying option (enable only if needed!!1!) %}
 
 ### 3. How does Hipchat Work?
 Great, now we (hopefully) have a pretty good idea how MItM proxies work. But before developing our own we must observe Hipchat in its natural habitat to cater to its needs. Let's remove the proxy settings from Hipchat, close it and run it again.
 
-{{< imgcap src="" caption="" /images/2015/hipchat3/08-Hipchat-Normal-Traffic.png Hipchat normal traffic to the server without Burp >}}
+{% imgcap /images/2015/hipchat3/08-Hipchat-Normal-Traffic.png Hipchat normal traffic to the server without Burp %}
 
 In other words. Click for full-size diagram (I have redacted the name of the Hipchat server because I am lazy):
 
-{% imgpopup /images/2015/hipchat3/09-Hipchat-in-Action.png 80% Hipchat in actionk >}}
+{% imgpopup /images/2015/hipchat3/09-Hipchat-in-Action.png 80% Hipchat in actionk %}
 
 In other other words:
 
@@ -158,14 +158,14 @@ Seems easy enough right? To be honest it is (you were expecting me to say wrong 
 #### 4.1 TLS Certificate Blues
 We need to create a TLS certificate for ``hipchatserver.com`` to present to Hipchat when we upgrade the connection to TLS. Here’s a catch, you can create a self-signed certificate which means that it is signed by itself. Self-signed certificate is also used in a different situation in the field which means an organization is signing their own certificates. In both cases, it means that the certificate is not valid. Hipchat will freak out if you give it a self-signed certificate signed by itself.
 
-{{< imgcap src="" caption="" /images/2015/hipchat3/10-self-signed-cert-error-in-hipchat-client.png Self signed cert error in Hipchat >}}
+{% imgcap /images/2015/hipchat3/10-self-signed-cert-error-in-hipchat-client.png Self signed cert error in Hipchat %}
 
 Even if you select “I know what I’m doing” and try to proceed, Hipchat will break the connection. So we need to generate our own root CA and sign our certificate with it and finally add this root CA to the list of trusted certificate authorities in Windows certificate store (just like we did with Burp’s CA).
 
 #### 4.2 Generating TLS Certificates
 I generated my certificates using ``OpenSSL`` in ``Cygwin``. First we need to create a pair of RSA keys and then use them to create a root CA.
 
-{% codeblock lang:bash creating our root CA >}}
+{% codeblock lang:bash creating our root CA %}
 # Generate a 2048 bit RSA key pair
 openssl genrsa -out rootCA.key 2048
 
@@ -177,11 +177,11 @@ openssl genrsa -out rootCA.key 2048
  
 # Create a rootCA (valid for a year)
 openssl req -x509 -new -nodes -key rootCA.key -days 365 -out rootCA.crt
-{% endcodeblock >}}
+{% endcodeblock %}
 
 And you will see something similar to this:
 
-{% codeblock lang:bash creating our root CA in Cygwin >}}
+{% codeblock lang:bash creating our root CA in Cygwin %}
 $ openssl genrsa -out rootCA.key 2048
 Generating RSA private key, 2048 bit long modulus
 .............................................+++
@@ -211,11 +211,11 @@ Organizational Unit Name (eg, section) []:
 Common Name (e.g. server FQDN or YOUR name) []:
 Email Address []:
 
-{% endcodeblock >}}
+{% endcodeblock %}
 
 Now we need to create our certificate for ``hipchatserver.com`` and then sign it.
 
-{% codeblock lang:bash creating the certificate for Hipchat server >}}
+{% codeblock lang:bash creating the certificate for Hipchat server %}
 # First we need to create a key pair for the new certificate
 openssl genrsa -out host.key 2048
 
@@ -225,9 +225,9 @@ openssl req -new -key host.key -out host.csr
 
 # Now we can create a valid certificate and sign it with our rootCA
 openssl x509 -req -in host.csr -CA rootCA.crt -CAkey rootCA.key -CAcreateserial -out host.crt -days 365
-{% endcodeblock >}}
+{% endcodeblock %}
 
-{% codeblock lang:bash creating the certificate for Hipchat server in Cygwin >}}
+{% codeblock lang:bash creating the certificate for Hipchat server in Cygwin %}
 # Key pair generation
 $ openssl genrsa -out host.key 2048
 Generating RSA private key, 2048 bit long modulus
@@ -266,7 +266,7 @@ Getting CA Private Key
 # This is what we will finally have
 $ ls
 host.crt host.csr host.key rootCA.crt rootCA.key rootCA.srl
-{% endcodeblock >}}
+{% endcodeblock %}
 
 Notice that I entered ``hipchatserver.com`` for the certificate’s Common Name (CN), this is handy in case the client is checking this field against the server. Obviously you should keep the key files secret.
 
@@ -294,7 +294,7 @@ Now let’s look at our proxy code. Comments should give us enough info.
 
 Remember to copy ``host.crt`` and ``host.key`` into the directory where the Python code is (or modify their paths in the source code):
 
-{% codeblock lang:python HipProxy-commented.py >}}
+{% codeblock lang:python HipProxy-commented.py %}
 # listen on 127.0.0.1:5222
 PROXY_HOST = "127.0.0.1"
 PROXY_PORT = 5222
@@ -427,9 +427,9 @@ while 1:
     except socket.error as socket_exception:
          if "timed out" not in str(socket_exception):
             print "\n[+] Error receiving data from server\n%s" % str(socket_exception)
-{% endcodeblock >}}
+{% endcodeblock %}
 
-{{< imgcap src="" caption="" /images/2015/hipchat3/11-It-works.png And it works >}}
+{% imgcap /images/2015/hipchat3/11-It-works.png And it works %}
 
 If you run the proxy, you will see that after the connection is made, server starts sending the whole address book and any messages in all available chatrooms (even if you are not logged into them), after the initial barrage of data from the server, the rest will be mild unless you are in very crowded chatrooms.
 

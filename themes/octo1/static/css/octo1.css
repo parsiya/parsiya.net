@@ -1278,7 +1278,8 @@ p.meta+.sharing {
 }
 .highlighttable,
 html .gist .gist-file .gist-syntax .gist-highlighttable {
-    border: 1px solid #05232b !important
+    border-left: 1px solid #05232b !important;
+   
 }
 .highlighttable table td.code,
 html .gist .gist-file .gist-syntax .gist-highlighttable table td.code {
@@ -1325,7 +1326,7 @@ pre .highlighttable pre {
 figure.code .highlighttable *::-moz-selection {
     background: #386774;
     color: inherit;
-    text-shadow: #002b36 0 1px
+    text-shadow: #002b36 0 1px;
 }
 .gist .highlighttable *::-webkit-selection,
 figure.code .highlighttable *::-webkit-selection {
@@ -1396,13 +1397,12 @@ pre {
     -ms-border-radius: 0.0em;
     -o-border-radius: 0.0em;
     border-radius: 0.0em;
-    border: 1px solid #05232b;
     line-height: 1.45em;
     margin-bottom: 0em;
     padding: 0em 0em;
     color: #93a1a1;
-    /*overflow: auto;*/
     font-size: 80%;  /* change the code font size */
+
 }
 h3.filename+pre {
     -moz-border-radius-topleft: 0px;
@@ -2151,7 +2151,7 @@ body>footer p:last-child {
 table,
 th,
 td {
-    border: 1px solid black;
+    border-left: 1px solid black; /* remove the right border for when overflow happens */
     padding: 3px;
 }
 th {
@@ -2218,11 +2218,19 @@ td.code {
 
 /* end of making mycode shortcode work */
 
-/* bottom-margin for code blocks */
-div.highlight {
-    margin-bottom: 0.5em;
+/* wrapped the whole output from the highlight function (which is a table) in a div to get a horizontal scrollbar for the whole row and not just the "pre" in the cell
+having a scrollbar for the cell will break alignment with line numbers    
+*/
+
+div.codewrapper {
+    overflow-x: auto;
+    overflow-y: hidden;
+    background-color: #002B36;
 }
 
+div.highlight {
+    border-color: #002B36;
+}
 
 /* side bar code from hyde-x */
 

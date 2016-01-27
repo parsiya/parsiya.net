@@ -200,21 +200,21 @@ Now start `RawCap` and capture local traffic.
 
 When you initially run the server, it will ask to be added to Windows Firewall's exceptions. You can safely deny that as both client and server are local. This is a major vulnerability in many .NET Remoting applications that work locally (like our example). If we do a `netstat` we can see that server is bound to `0.0.0.0` and is listening on all interfaces. Meaning anyone can connect to the server and execute exposed functions on our computer. We will read more about this later.
 
-{{< imgcap src="/images/2015/remoting1/02.png" caption="Server listening on all interfaces" >}}
+{% imgcap /images/2015/remoting1/02.png Server listening on all interfaces %}
 
 Now run both server and client and look at the results.
 
 We can see client calling both functions and printing the result.
 
-{{< imgcap src="/images/2015/remoting1/03.png" caption="Client execution" >}}
+{% imgcap /images/2015/remoting1/03.png Client execution %}
 
 We can clearly see that the functions were executed in server's application context because server is printing the verbose messages from `RemotingLibrary.dll`.
 
-{{< imgcap src="/images/2015/remoting1/04.png" caption="Server execution"   >}}
+{% imgcap /images/2015/remoting1/04.png Server execution %}
 
 If we look at the traffic in Wireshark and filter all traffic to/from port `8888`:
 
-{{< imgcap src="/images/2015/remoting1/05.png" caption=".NET Remoting traffic in Wireshark"   >}}
+{% imgcap /images/2015/remoting1/05.png .NET Remoting traffic in Wireshark %}
 
 You can read about the format and structure of .NET Remoting packets in the following documents:
 
@@ -290,48 +290,48 @@ In this section, I assume you know basic debugging (e.g. breakpoints, step into/
 
 Run `Server.exe` and then run dnSpy (for x86 application use `dnSpy-x86.exe`). Drag and drop `Client.exe` into it and navigate to `Main`. Notice that dnSpy automatically loads referenced DLLs including `RemotingLibrary.dll`. The decompiled code in dnSpy is the same as our original code but without the comments.
 
-{{< imgcap src="/images/2015/remoting1/06.png" caption="Opening Client.exe in dnSpy"   >}}
+{% imgcap /images/2015/remoting1/06.png Opening Client.exe in dnSpy %}
 
 Now we can run the client in dnSpy. Click on the green button named `Start` and it will open a dialog to start an executable in dnSpy. In version 1.4 it is pre-populated with `Client.exe` that we just dragged and dropped into dnSpy. As you can see, what can also specify arguments and also order the debugger to break on certain events. Let's keep the original selection and run `Client.exe`. dnSpy will break on `Main`.
 
-{{< imgcap src="/images/2015/remoting1/07.png" caption="Start options"   >}}
+{% imgcap /images/2015/remoting1/07.png Start options %}
 
 Now we can debug normally using shortcut keys or small button to the right of the `Continue` button (formerly `Start`).
 
 To set a breakpoint, you can either select a line and press `F2`, click on the space left of the line number or right click on the line and select it from the context menu. In this case we put a breakpoint on line `16` or the first `Console.WriteLine`.
 
-{{< imgcap src="/images/2015/remoting1/08.png" caption="Breakpoint"   >}}
+{% imgcap /images/2015/remoting1/08.png Breakpoint %}
 
 #### 4.1 Finding Nemo
 In this case, we can clearly see the `Add` function and where it is called. But let's assume that we only saw the traffic and opened the binary in dnSpy and didn't know where it is called. Our binary contains tons and tons of imaginary functions that may or may not call `Add`. How do we find `Add`?
 
 From the traffic we know that the function name is `Add` and it is in class `RemotingSample.Remotemath` and resides in `RemotingLibrary.dll`. Using these clues we can easily find the `Add` function in dnSpy.
 
-{{< imgcap src="/images/2015/remoting1/09.png" caption="Finding Add"   >}}
+{% imgcap /images/2015/remoting1/09.png Finding Add %}
 
 Our first instinct would be to put a breakpoint on `Add` and let the client `Continue`. But **this breakpoint will never trigger**. Because in .NET Remoting an instance of the function is created on the client and then executed on the server. If you don't believe me, try it. But how do we find who uses this function?
 
 #### 4.2 Analyze This
 Now we can use the `Analyze` feature of dnSpy. Right click on the `Add` function in `RemotingLibrary.dll` and select `Analyze`. Now a very handy new pane (window? seriously what are these called?) named `Analyzer` pops up. We can see the function and two items `Uses` and `Used By`. `Uses` shows us the other functions (in loaded binaries in dnSpy) that are used by `Add` and `Used By` shows other functions that use `Add`.
 
-{{< imgcap src="/images/2015/remoting1/10.png" caption="Analyze this"   >}}
+{% imgcap /images/2015/remoting1/10.png Analyze this %}
 
 That is a very nifty feature, neh? As you can see we can go down the wormhole and follow the chain. In this case we see that the `Main` function calls `Add`. If we double click on `Main` we will go back to the original entry point.
 
 #### 4.3 .NET Remoting in Action
 Now we can `Step Into` the line that calls `Add` in the client. If you have not changed the default settings, you should land in `mscorlib.dll` or more exactly in `CommonLanguageRuntimeLibrary.System.Runtime.Remoting.Proxies.RealProxy.PrivateInvoke()`. dnSpy's default settings, will skip all the other code (like attribute get/set etc). You can change this in `View (menu) > Options (menu item) > Debugger (tab) > DebuggerBrowsable` and `Call string-conversion`.
 
-{{< imgcap src="/images/2015/remoting1/11.png" caption="Landed in RealProxy"   >}}
+{% imgcap /images/2015/remoting1/11.png Landed in RealProxy %}
 
 In order to see local variables and their values press `Alt+4` to open the `Locals` window. This was changed in version 1.3 and up and is a huge UX upgrade.
 
-{{< imgcap src="/images/2015/remoting1/12.png" caption="Meeting the Locals"   >}}
+{% imgcap /images/2015/remoting1/12.png Meeting the Locals %}
 
 This where we always end up after following .NET Remoting calls; where the message is being sent and we can see its contents. In version 1.3 of dnSpy, any breakpoints set here would not be triggered but now we can do it (what a time to be alive). So you can set a breakpoint on line 404 (if you can find it *he he he*) `RemotingProxy remotingProxy = null;` just right before `if (1 == type)` and look at messages.
 
 `Type == 1` so the first `if` will be true. Let's look at it (with some comments):
 
-{{< codecaption lang="csharp" caption="" >}}
+{{< codecaption lang="csharp" title="" >}}
 
 if (1 == type)
 {
@@ -351,11 +351,11 @@ if (1 == type)
 
 Let's put a breakpoint on line `409 num = message = expr_14;` and continue. When we reach this line, we can step over it until we reach line `410` and then see the contents of the variable named `message`. Why didn't we put a breakpoint on the next line? Because if it won't trigger with default settings (remember those debugger settings at the start of this section?). Press `Alt+4` to look at `message`.
 
-{{< imgcap src="/images/2015/remoting1/13.png" caption="Contents of variable message"   >}}
+{% imgcap /images/2015/remoting1/13.png Contents of variable message %}
 
 We can see the message and a lot of information about it. Scroll down to line `474 RealProxy.HandleReturnMessage(message, message2);` and set a breakpoint on line `475` and `Continue`. We can see that the text in the function is printed on the server and we land in the new breakpoint and can see the return value in `message2`.
 
-{{< imgcap src="/images/2015/remoting1/14.png" caption="Return value"   >}}
+{% imgcap /images/2015/remoting1/14.png Return value %}
 
 If we `Step Out` we will land back in `Main`. Try doing the same for the `Sub` function call.
 
@@ -403,7 +403,7 @@ Now we can rebuild the solution. Client and server will run as before now we wan
 ### <a name="ch6"></a> 6. Modifying IL Instructions with dnSpy and Patching Binaries
 The easiest thing to do is to modify one of the function calls to call `StartProcess` and run an executable (e.g. `C:\Windows\System32\calc.exe`). Open the client in dnSpy and right click on the line that calls `Add` (line 16 in dnSpy). Choose `Edit IL Instructions`.
 
-{{< imgcap src="/images/2015/remoting1/15.png" caption="IL instructions"   >}}
+{% imgcap /images/2015/remoting1/15.png IL instructions %}
 
 What is IL? CIL (Common Intermediate Language) or IL is (almost) the .NET equivalent of Java bytecode. Let's look at what we got and see if we can decipher it (read the comments please):
 
@@ -440,15 +440,15 @@ What is IL? CIL (Common Intermediate Language) or IL is (almost) the .NET equiva
 
 Now we have a general idea of what's happening here. We need to change `Add` to `StartProcess`. Click on `Add` and a small context menu pops up.
 
-{{< imgcap src="/images/2015/remoting1/16.png" caption="Method context menu"   >}}
+{% imgcap /images/2015/remoting1/16.png Method context menu %}
 
 Select `Method` and a new page pops up that allows you to modify it to any method in all loaded assemblies. We can see the new fancy `StartProcess` function. So we select that. There's also a handy search feature.
 
-{{< imgcap src="/images/2015/remoting1/17.png" caption="Pick a method"   >}}
+{% imgcap /images/2015/remoting1/17.png Pick a method %}
 
 The method call is changed but `Add` had two Int32 parameters while `StartProcess` has only one string parameter. Without more modifications, two Int32s are pushed to the stack before the new method is being called. If we press OK on the IL code window we will see this monstrosity.
 
-{{< imgcap src="/images/2015/remoting1/18.png" caption="You ruined everything!!1!"   >}}
+{% imgcap /images/2015/remoting1/18.png You ruined everything!!1! %}
 
 But that's fine, we can edit the IL instructions and fix it. But how do we know what to do? At this point we can just learn IL coding but based on the instructions that we have seen, we should have a general idea of what to do. We also need to remove the `Console.WriteLine` because `StartProcess` has no return value (well `void()` but you know what I mean) and we should be calling `remoteMathObject.StartProcess("c:\\windows\\system32\\calc.exe");` individually.
 
@@ -464,7 +464,7 @@ The following IL code does the trick:
 
 {{< /codecaption >}}
 
-{{< imgcap src="/images/2015/remoting1/19.png" caption="You fixed it!!1!"   >}}
+{% imgcap /images/2015/remoting1/19.png You fixed it!!1! %}
 
 There is another way to do this. Download [LINQPad 5.0][linqpad-dl]. The standard version is free and is more than enough for our purpose. Copy paste all of the code in the client class into it. Now just like in Visual Studio we need to add references and import namespaces.
 
@@ -477,17 +477,17 @@ There is another way to do this. Download [LINQPad 5.0][linqpad-dl]. The standar
 6. Select `RemotingLibraryExpanded.dll` and add its namespace.
 7. Select `System.Runtime.Remoting.dll` and add `System.Runtime.Remoting.Channels` and `System.Runtime.Remoting.Channels.Tcp`.
 
-{{< imgcap src="/images/2015/remoting1/20.png" caption="References in LINQPad"   >}}
+{% imgcap /images/2015/remoting1/20.png References in LINQPad %}
 
-{{< imgcap src="/images/2015/remoting1/21.png" caption="Namespaces in LINQPad"   >}}
+{% imgcap /images/2015/remoting1/21.png Namespaces in LINQPad %}
 
 Now all of the errors in LINQPad should be gone and we can modify the code. Modify the first `Console.WriteLine` to `StartProcess("c:\\windows\system32\calc.exe")` and press `Execute`. The application may or may not execute properly. It will probably fail because we already have a TCP channel registered but we don't care about that. Click on the `IL` button at the bottom to see the generated IL code which is the same as what we wrote in dnSpy.
 
-{{< imgcap src="/images/2015/remoting1/22.png" caption="IL code in LINQPad"   >}}
+{% imgcap /images/2015/remoting1/22.png IL code in LINQPad %}
 
 Now we can save the modified module (in this case a new version of the client executable) using dnSpy. Use `File (menu) > Save Module` to save the new executable (let's call it `Client1.exe`). Run `Client1.exe` and Pew.
 
-{{< imgcap src="/images/2015/remoting1/23.png" caption="Pew Pew"   >}}
+{% imgcap /images/2015/remoting1/23.png Pew Pew %}
 
 *How can this be used in local privilege escalation?*  
 In the original project, server was running as SYSTEM, which means any standard user could run any binary or command and effectively give themselves admin.
@@ -498,7 +498,7 @@ As we saw at the start of this post, server is listening on `0.0.0.0` or all int
 ### <a name="ch7"></a> 7. Remediation
 Remediation is an important part of my day job. I am not an `infosec thoughtleader` but I think breaking is worth nothing if we don't want to/cannot talk to and work with the developers to fix things. So I am going to add remediation sections to my posts where appropriate and do my small part in helping. As with any other part of these posts, if you think there is a better way of doing things please let me know.
 
-{{< imgcap src="/images/2015/remoting1/24.jpg" caption="[insert reference to Starship Troopers and killing bugs and call yourself a geek]"   >}}
+{% imgcap /images/2015/remoting1/24.jpg [insert reference to Starship Troopers and killing bugs and call yourself a geek] %}
 
 It should be noted that channel properties and registration could also be done in executables' config files. Please refer to [Format for .NET Remoting Configuration Files][channelconfig] for more information.
 
@@ -529,7 +529,7 @@ TcpChannel remotingChannel = new TcpChannel(tcpChannelProperties, null, null);
 
 And now we can see the server listening only on localhost.
 
-{{< imgcap src="/images/2015/remoting1/25.png" caption="Server listening on localhost"   >}}
+{% imgcap /images/2015/remoting1/25.png Server listening on localhost %}
 
 We can also [authenticate the client](https://msdn.microsoft.com/en-us/library/bb187429%28v=vs.85%29.aspx).
 
@@ -557,7 +557,7 @@ TcpChannel remotingChannel = new TcpChannel(tcpChannelProperties, null, null);
 
 Let's only set the server channel to secure and see what happens:
 
-{{< imgcap src="/images/2015/remoting1/26.png" caption="Insecure client channel and secure server channel"   >}}
+{% imgcap /images/2015/remoting1/26.png Insecure client channel and secure server channel %}
 
 The client establishes the TCP connection and starts sending message in plaintext, but server never responds.
 
@@ -579,7 +579,7 @@ tcpChannelProperties["secure"] = true;
 
 Now the channel is encrypted.
 
-{{< imgcap src="/images/2015/remoting1/27.png" caption="Encrypted TCP channel"   >}}
+{% imgcap /images/2015/remoting1/27.png Encrypted TCP channel %}
 
 The [Encryption and Message Integrity][encryption-and-message-integrity] MSDN article talks about encryption. The `See Also` links at the bottom of the page go to authentication articles. For example [Authentication with the TCP Channel](https://msdn.microsoft.com/en-us/library/59hafwyt%28v=vs.85%29.aspx).
 

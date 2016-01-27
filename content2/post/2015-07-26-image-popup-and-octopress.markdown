@@ -12,13 +12,13 @@ However, it did not work for me out of the box. I created a test post with just 
 
 <!--more-->
 
-{% imgpopup /images/2015/popup1/pew1.jpg 50% test post >}}
+{% imgpopup /images/2015/popup1/pew1.jpg 50% test post %}
 
 There is this text "Click the image for a larger view." and there is also an unresized copy of the image on the page.
 
 By inspecting these two elements, we can find the culprits in the page source (comments are mine).
 
-{% codeblock lang:html page source >}}
+{% codeblock lang:html page source %}
 ...
 <div class="imgpopup screen">
   <!-- caption -->
@@ -32,11 +32,11 @@ By inspecting these two elements, we can find the culprits in the page source (c
 <div class="illustration print">
   <img src="/images/2015/pew.jpg" width="600" height="441" />
 </div>
-{% endcodeblock >}}
+{% endcodeblock %}
 
 During installation we have only copied two files (apart from editing `head.html`): `img_popup.rb` and `img_popup.html.erb`. The html file is probably your first guess to and you are right. Inside we can see html tags (original copy is at [https://github.com/ctdk/octopress-image-popup/blob/master/plugins/img_popup.html.erb][img_popup.html.erb]):
 
-{% codeblock lang:html img_popup.html.erb >}}
+{% codeblock lang:html img_popup.html.erb %}
 ...
 
 <div class="imgpopup screen">
@@ -53,17 +53,17 @@ During installation we have only copied two files (apart from editing `head.html
   <img src="<%= image %>" width="<%= full_width %>" height="<%= full_height %>"/>
 </div>
 
-{% endcodeblock >}}
+{% endcodeblock %}
 
 I am not quite sure what this `erb` file does but it looks like to be a blueprint for the final html content. We can just remove those parts that we want: the caption and the "illustration print" class.
 
 Another problem is after we click on the image. There is no space between image title and the "close" link.
 
-{% imgpopup /images/2015/popup1/pew2.jpg 50% pew pew popup >}}
+{% imgpopup /images/2015/popup1/pew2.jpg 50% pew pew popup %}
 
 To fix this we need to modify `img_popup.rb` (original at [https://github.com/ctdk/octopress-image-popup/blob/master/plugins/img_popup.rb][img_popup.rb]):
 
-{% codeblock lang:html img_popup.rb >}}
+{% codeblock lang:html img_popup.rb %}
 
 ...
 vars = {
@@ -73,7 +73,7 @@ vars = {
 }
  
 ...
-{% endcodeblock >}}
+{% endcodeblock %}
 
 We can see `title` saved in `vars['title']`. So we can just add a space to the end of it using the following line:  
 `vars['title'] += " "`
