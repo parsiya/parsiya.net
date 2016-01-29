@@ -17,13 +17,13 @@ This is specific to Hipchat client for Windows. The current version at the time 
 ### 1. EZ-Mode Proxy Settings
 To see the proxy settings, log off and select Configure Connection. Note that in the most recent version (2.2.1395) this added to the settings menu inside the application and there is no need to logoff.
 
-{{< imgcap src="/images/2015/hipchat2/01-Hipchat-login-screen.png" caption="Hipchat login screen" >}}
+{{< imgcap src="" caption="" /images/2015/hipchat2/01-Hipchat-login-screen.png Hipchat login screen >}}
 
 Yay for proxy settings. So you think you can use Burp? It’s not going to be that easy, otherwise why would I been writing this?
 
 My Burp proxy is listening on `127.0.0.1:8080` so I will add it as proxy.
 
-{{< imgcap src="/images/2015/hipchat2/02-Hipchat-proxy-settings.png" caption="Hipchat proxy settings" >}}
+{{< imgcap src="" caption="" /images/2015/hipchat2/02-Hipchat-proxy-settings.png Hipchat proxy settings >}}
 
 You can also enable proxy settings by modifying the `%appdata%\Atlassian\Hipchat.ini` file (on Windows). We need to modify these settings:
 
@@ -46,7 +46,7 @@ Now login. We will see some requests in Burp. We have seen them before, first on
 
 Note: `hipchatserver.com`, our imaginary Hipchat server's IP is `10.11.1.25` in this post.
 
-{{< imgcap src="/images/2015/hipchat2/03-Initial-requests-in-Burp.png" caption="Initial requests in Burp" >}}
+{{< imgcap src="" caption="" /images/2015/hipchat2/03-Initial-requests-in-Burp.png Initial requests in Burp >}}
 
 The third request looks like the start of an XMPP handshake which has been cut off by Burp. It should be something like this:
 
@@ -57,22 +57,22 @@ The third request looks like the start of an XMPP handshake which has been cut o
 
 To diagnose the problem, we must look at the traffic capture. Run Netmon and login to Hipchat again. Remember that you cannot capture Hipchat’s traffic to Burp with Netmon or Wireshark as it is local (from `127.0.0.1:49xxx` to `127.0.0.1:8080`) so you need to sniff local traffic with something like [RawCap][rawcap-download]. But we can look at Burp’s outbound traffic in Netmon. Look for traffic belonging to the `javaw.exe` process (for Burp).
 
-{{< imgcap src="/images/2015/hipchat2/04-Traffic-to-hipchat.png" caption="Burp <–> hipchatserver.com traffic in Netmon" >}}
+{{< imgcap src="" caption="" /images/2015/hipchat2/04-Traffic-to-hipchat.png Burp <–> hipchatserver.com traffic in Netmon >}}
 
 Or using sequence diagram created on [https://www.websequencediagrams.com](https://www.websequencediagrams.com). We have a bunch of internal licenses for this at Cigital so I have started adding sequence diagrams to all of my blog posts and reports :D.
 
-{{< imgcap src="/images/2015/hipchat2/05-Failed-XMPP-Handshake.png" caption="What happen?" >}}
+{{< imgcap src="" caption="" /images/2015/hipchat2/05-Failed-XMPP-Handshake.png What happen? >}}
 
 As we see the XMPP handshake is incomplete. In short, Burp somehow messes up the first part of the XMPP handshake and drops the packet just after it sees `to='chat.hipchat.com'` and sends an incomplete payload which causes the server to reject it and reset the connection.
 
 ### 3. Burp’s SSL Pass Through
 It’s time to talk about another one of Burp’s capabilities. This one is named `SSL Pass Through` and is very useful for exactly the situation we are in. We can specify endpoints (domain/IP and port) and tell Burp not to mess with the to/from those points and just pass it through as it is. This means that Burp will not Man-in-the-Middle (MitM) the connection and just ignore the traffic. It is located at `Proxy > Option > SSL Pass Through` (scroll all the way to the bottom). Let’s tell Burp not to proxy anything to/from the `hipchatserver.com` at `10.11.1.25:5222`.
 
-{{< imgcap src="/images/2015/hipchat2/06-SSL-Pass-Through.png" caption="SSL Pass Through settings" >}}
+{{< imgcap src="" caption="" /images/2015/hipchat2/06-SSL-Pass-Through.png SSL Pass Through settings >}}
 
 And yay!
 
-{{< imgcap src="/images/2015/hipchat2/07-Hipchat-logged-in-with-Burp-as-proxy.png" caption="Logged in with Burp " >}}
+{{< imgcap src="" caption="" /images/2015/hipchat2/07-Hipchat-logged-in-with-Burp-as-proxy.png Logged in with Burp  >}}
 
 Now let’s take a look at these requests. We have already seen the first two before.
 
@@ -91,11 +91,11 @@ Now let’s take a look at these requests. We have already seen the first two be
     User-Agent: Mozilla/5.0
     Host: www.hipchat.com
 
-{{< imgcap src="/images/2015/hipchat2/08-Profile-pic-placeholder.png" caption="Do not track me bro " >}}
+{{< imgcap src="" caption="" /images/2015/hipchat2/08-Profile-pic-placeholder.png Do not track me bro  >}}
 
 Why are we retrieving this image from hipchat.com every time when it can be stored in the application and conserve bandwidth? I don’t know but Paranoid Parsia tells me that it is an Atlassian tracking request. This way they will know where and when an instance has been executed. There is no identifying data sent with the request.
 
-{{< imgcap src="/images/2015/hipchat2/09-I-am-not-saying-it-was-Atlassian-but-it-was-Atlassian.jpg" caption="I am not saying it was Atlassian, but it was Atlassian " >}}
+{{< imgcap src="" caption="" /images/2015/hipchat2/09-I-am-not-saying-it-was-Atlassian-but-it-was-Atlassian.jpg I am not saying it was Atlassian, but it was Atlassian  >}}
 
 **Request 4** is another GET request.
 
@@ -189,13 +189,13 @@ I think this RSS feed is used to check for updates.
 ### 5. GET request over HTTP
 Now let’s take a look at request one. It is loading an HTML page and displays it in the app. directly We can intercept the response in Burp and modify it. The request is to [http://downloads.hipchat.com/blog_info.html](http://downloads.hipchat.com/blog_info.html) and that page is not available over TLS.
 
-{{< imgcap src="/images/2015/hipchat2/10-Changing-latest-news.png" caption="It has crashed again!" >}}
+{{< imgcap src="" caption="" /images/2015/hipchat2/10-Changing-latest-news.png It has crashed again! >}}
 
 That was easy. Now let’s see if we can modify it to display something else.
 
 Seems like it does not have JavaScript enabled so we cannot do a fancy looking alert box. We can inject buttons and forms but the submit action does not work. We can also inject images.
 
-{{< imgcap src="/images/2015/hipchat2/11-image-tag.png" caption="Pepe is watching you load links over HTTP" >}}
+{{< imgcap src="" caption="" /images/2015/hipchat2/11-image-tag.png Pepe is watching you load links over HTTP >}}
 
 This is not a serious vulnerability. The attacker needs to be on the same network or in the path and MitM the HTTP connection. But because it is HTTP, there are no certificate warnings. A number of Internet Service Providers also inject ads and other stuff in HTTP traffic. If injected they will appear here. I still do not know why even the emoticon is loaded over https but this latest news is not (`downloads.hipchat.com` is not even available over HTTPs).
 

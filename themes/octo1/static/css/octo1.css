@@ -248,7 +248,8 @@ h5,
 h6 {
     text-rendering: optimizelegibility;
     margin-bottom: 1em;
-    font-weight: bold
+    font-weight: bold;
+    margin-top: 1em;
 }
 h2,
 section h1 {
@@ -1138,7 +1139,7 @@ article .caption-wrapper.caption {
 }
 article .caption-wrapper {
     display: inline-block;
-    margin-bottom: 10px
+    margin-bottom: 1em;
 }
 article .caption-wrapper .caption-text {
     background: #fff;
@@ -2150,13 +2151,14 @@ body>footer p:last-child {
 }
 table,
 th,
-td {
+td
+ {
     border-left: 1px solid black; /* remove the right border for when overflow happens */
     padding: 3px;
 }
 th {
     font-weight: bold;
-    text-align: center
+    text-align: center;
 }
 
 /* Taken from hyde-x.css to format labels (categories) as octopress doesn't have  */
@@ -2228,8 +2230,14 @@ div.codewrapper {
     background-color: #002B36;
 }
 
-div.highlight {
+/* overflow for backtick code block
+   by just modifying div.highlight I will screw the codecaption overflow as they have div.highlight too.
+   This is something new that I learned.
+   basically it will select only div.highlights that are direct childs of entry-content */
+div.entry-content > div.highlight {
     border-color: #002B36;
+    overflow-x: auto;
+    overflow-y: hidden;
 }
 
 /* side bar code from hyde-x */

@@ -22,7 +22,7 @@ Pin is a dynamic binary instrumentation framework by Intel. The default installa
 
 Here is the modified code. Let's name it ``myins.cpp`` and save it in the ManualExamples directory. Apologies for the legal stuff at the start but I'd rather keep them than risk the wrath of open source gods.
 
-{{< codecaption lang="cpp" title="myins.c" >}}
+{% codeblock lang:cpp myins.c >}}
 /*BEGIN_LEGAL 
 Intel Open Source License 
 
@@ -122,13 +122,13 @@ int main(int argc, char * argv[])
     return 0;
 }
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 To compile it, we can use the provided makefile. In ManualExamples run ``make obj-ia32/myins.so``. Note the filename and path. If everything works correctly, we will have ``myins.so``. Let's copy it to where we want to write our example program.
 
 ### Crackme 1 - Example C Program
 The program is quite simple, it checks the first argument against the hardcoded value ``7bc3a60fbf38e98f6fef654afa26d270``. We will use this program to test our Pin tool.
-{{< codecaption lang="cpp" title="crkme1.c" >}}
+{% codeblock lang:cpp crkme1.c >}}
 #include <stdio.h>
 #include <string.h>
 
@@ -154,14 +154,14 @@ int main(int argc, char **argv)
 
   return 0;
 }
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Remember to use the ``ggdb`` option to compile with debug information (for GDB). From what I understand this is very similar to the ``g`` option. We will be using GDB to dive into the binary to observe strncmp's behavior. Let's use ``gcc -ggdb -o crkme1 crkme1.c``.
 
 ### Using Pin with Crkme1
 To run our Pin tool against any executable execute ``pin -t myins.so -- ./crkme1 012345``. Now let's experiment with some input. Our super secret code starts with ``7b`` so I will be ``fuzzing`` (for very simplistic definition of fuzzing) the first character and look at the number of executed instructions.
 
-{{< codecaption lang="bash" title="Changing first character" >}}
+{% codeblock lang:bash Changing first character >}}
 $ pin -t myins.so -- ./crkme1 1zzz
 Wrong
 Count: 100013
@@ -177,11 +177,11 @@ Count: 100013
 $pin -t myins.so -- ./crkme1 @zzz
 Wrong
 Count: 100013
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Notice a pattern? Seems like we executed two extra instructions when our first character matched. Assuming our theory is correct and we have the first character ``7``, let's experiment with the second character.
 
-{{< codecaption lang="bash" title="Changing second character" >}}
+{% codeblock lang:bash Changing second character >}}
 $ pin -t myins.so -- ./crkme1 71zz
 Wrong
 Count: 100015
@@ -194,14 +194,14 @@ Count: 100017 # 2 extra instructions executed
 $ pin -t myins.so -- ./crkme1 7@zz
 Wrong
 Count: 100015
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 At this point you probably have a good idea why this is happening. But let's look at the assembly code.
 
 ### GDB and strncmp
 Good thing we compiled our binary with debug information. Let's look at the assembly code for strncmp:
 
-{{< codecaption lang="bash" title="Running crkme1 in gdb" >}}
+{% codeblock lang:bash Running crkme1 in gdb >}}
 # q starts gdb in quiet mode
 $ gdb ./crkme1 -q
 Reading symbols from /root/Desktop/kek/crkme1...done.
@@ -217,11 +217,11 @@ Breakpoint 1, 0xb7f82b80 in ?? () from /lib/i386-linux-gnu/i686/cmov/libc.so.6
 No function contains program counter for selected frame.
 # oops what happened here?
 (gdb) 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 To get a better a picture of the problem, we're going to go through the same process in verbose mode in GDB using the ``set verbose on`` command.
 
-{{< codecaption lang="bash" title="Running in gdb with verbose on" >}}
+{% codeblock lang:bash Running in gdb with verbose on >}}
 $ gdb ./crkme1 -q
 Reading symbols from /root/Desktop/kek/crkme1...done.
 (gdb) set verbose on
@@ -240,12 +240,12 @@ Breakpoint 1, 0xb7f82b80 in ?? () from /lib/i386-linux-gnu/i686/cmov/libc.so.6
 (gdb) disass
 No function contains program counter for selected frame.
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 According to line 12, we we need the debugging symbols for libc to look inside the code. 
 On Kali use ``apt-get install libc6-dbg``. Here we go again:
 
-{{< codecaption lang="nasm" title="After installing libc6-dbg" >}}
+{% codeblock lang:nasm After installing libc6-dbg >}}
 root@kali:~/Desktop/kek# gdb ./crkme1 -q
 Reading symbols from /root/Desktop/kek/crkme1...done.
 (gdb) break strncmp
@@ -264,11 +264,11 @@ Dump of assembler code for function __strncmp_ssse3:
    0xb7f82b89 <+9>:	mov    ebp,DWORD PTR [esp+0x10]
    0xb7f82b8d <+13>:	cmp    ebp,0x10
    0xb7f82b90 <+16>:	jb     0xb7f843d0 <__strncmp_ssse3+6224>
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Now we can see what happens in strncmp. The following is the cleaned up version of the assembly of strncmp.
 
-{{< codecaption lang="nasm" title="strncmp" >}}
+{% codeblock lang:nasm strncmp >}}
 ; assuming we called strncmp (argv[1],code,32);
 
 0xb7f82b80 <+0>:	push   ebp
@@ -308,14 +308,14 @@ Now we can see what happens in strncmp. The following is the cleaned up version 
 0xb7f84554 <+6612>:	cmp    BYTE PTR [edx+0xf],cl
 0xb7f84557 <+6615>:	jne    0xb7f843b0 <__strncmp_ssse3+619
 0xb7f8455d <+6621>;	test   cl,cl
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 We can see that the implementation has unrolled the for and compares 16 bytes one by one. If a character is correct, two more instructions are executed (as we saw) which are ``test   cl,cl`` and ``je     0xb7f843c3`` which basically checks if we have reached the end of first string. Now we know why. Let us build our tool.
 
 ### PinSolver Mk1
 I am going to use Python's subprocess module and reuse [some old code](http://parsiya.net/blog/2014-05-25-pasting-shellcode-into-gdb-using-python/). The script simply iterates through all valid characters (note: do not include space or some other special characters). For this example I am going to use alphanumeric characters. Character with the largest number of executed instructions will be chose and we move on to the next character.
 
-{{< codecaption lang="python" title="pinsolvermk1.py" >}}
+{% codeblock lang:python >}}
 #!/usr/bin/python
 
 from subprocess import Popen, PIPE
@@ -354,7 +354,7 @@ while (True):
   
   # after a loop has finished, add the chosen char to the solution
   solution.append(candidate_char)
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Note: If your VM has multiple CPUs this will not work. At this moment I do not know why.
 

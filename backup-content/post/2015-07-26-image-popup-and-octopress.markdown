@@ -6,21 +6,19 @@ date: 2015-07-26T23:02:58Z
 title: Image Popup and Octopress
 ---
 
-Update: I have migrated the blog to Hugo and I do not use this anymore. However, it is still in the repository.
-
 I finally realized that I need an image popup plugin. The image plugins that I usually use do not support this. They are fine for normal images but not for larger ones. When I see an screenshot of a tool, I want to be able to zoom in. In my quest I looked at a few plugins and methods and finally decided to use [https://github.com/ctdk/octopress-image-popup][original repo]. It creates resized thumbnails automatically and the installation procedure is short and simple.
 
 However, it did not work for me out of the box. I created a test post with just an image and while the plugin worked, there are things that I did not like about it.
 
 <!--more-->
 
-{{< imgcap src="/images/2015/popup1/pew1.jpg" caption="test post" >}}
+{% imgpopup /images/2015/popup1/pew1.jpg 50% test post >}}
 
 There is this text "Click the image for a larger view." and there is also an unresized copy of the image on the page.
 
 By inspecting these two elements, we can find the culprits in the page source (comments are mine).
 
-{{< codecaption lang="html" title="page source" >}}
+{% codeblock lang:html page source >}}
 ...
 <div class="imgpopup screen">
   <!-- caption -->
@@ -34,11 +32,11 @@ By inspecting these two elements, we can find the culprits in the page source (c
 <div class="illustration print">
   <img src="/images/2015/pew.jpg" width="600" height="441" />
 </div>
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 During installation we have only copied two files (apart from editing `head.html`): `img_popup.rb` and `img_popup.html.erb`. The html file is probably your first guess to and you are right. Inside we can see html tags (original copy is at [https://github.com/ctdk/octopress-image-popup/blob/master/plugins/img_popup.html.erb][img_popup.html.erb]):
 
-{{< codecaption lang="html" title="img_popup.html.erb" >}}
+{% codeblock lang:html img_popup.html.erb >}}
 ...
 
 <div class="imgpopup screen">
@@ -55,17 +53,17 @@ During installation we have only copied two files (apart from editing `head.html
   <img src="<%= image %>" width="<%= full_width %>" height="<%= full_height %>"/>
 </div>
 
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 I am not quite sure what this `erb` file does but it looks like to be a blueprint for the final html content. We can just remove those parts that we want: the caption and the "illustration print" class.
 
 Another problem is after we click on the image. There is no space between image title and the "close" link.
 
-{{< imgcap src="/images/2015/popup1/pew2.jpg" caption="pew pew popup" >}}
+{% imgpopup /images/2015/popup1/pew2.jpg 50% pew pew popup >}}
 
 To fix this we need to modify `img_popup.rb` (original at [https://github.com/ctdk/octopress-image-popup/blob/master/plugins/img_popup.rb][img_popup.rb]):
 
-{{< codecaption lang="html" title="img_popup.rb" >}}
+{% codeblock lang:html img_popup.rb >}}
 
 ...
 vars = {
@@ -75,7 +73,7 @@ vars = {
 }
  
 ...
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 We can see `title` saved in `vars['title']`. So we can just add a space to the end of it using the following line:  
 `vars['title'] += " "`

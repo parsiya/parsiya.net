@@ -15,28 +15,28 @@ I stumbled upon the very useful tool [memfetch](http://lcamtuf.coredump.cx/soft/
 
 <!--more-->
 
-{{< codecaption lang="bash" title="errors while building memfetch" >}}
+{% codeblock lang:bash >}}
 $ make
 gcc -Wall -O9    memfetch.c   -o memfetch
 memfetch.c:30:22: fatal error: asm/page.h: No such file or directory
 compilation terminated.
 make: *** [memfetch] Error 1
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 Seems like the location of header files have moved since then. [This stackoverflow answer](http://stackoverflow.com/a/19310710) mentions removing ``asm/page.h`` and adding ``linux/types.h``. Let's see what happens now:
 
-{{< codecaption lang="bash" title="more errors" >}}
+{% codeblock lang:bash >}}
 $ make
 gcc -Wall -O9    memfetch.c   -o memfetch
 memfetch.c: In function ‘main’:
 memfetch.c:284:25: error: ‘PAGE_SIZE’ undeclared (first use in this function)
 memfetch.c:284:25: note: each undeclared identifier is reported only once for each function it appears in
 make: *** [memfetch] Error 1
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 The ``page.h`` file is located at ``/usr/src/linux-headers-3.12-kali1-common/include/asm-generic/page.h`` on Kali linux. This is where ``PAGE_SIZE`` is defined. Just adding it to ``memfetch.c`` along with changing ``#include <asm/page.h>`` to ``#include <linux/types.h>`` will do the trick.
 
-{{< codecaption lang="bash" title="additions to memfetch.c" >}}
+{% codeblock >}}
 // #include <asm/page.h>
 #include <linux/types.h>
 
@@ -49,6 +49,6 @@ The ``page.h`` file is located at ``/usr/src/linux-headers-3.12-kali1-common/inc
 #define PAGE_SIZE	(1UL << PAGE_SHIFT)
 #endif
 #define PAGE_MASK	(~(PAGE_SIZE-1))
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 If there is a better way to make this work, please let me know.

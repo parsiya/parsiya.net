@@ -37,13 +37,13 @@ In Netmon we also see the following endpoints:
 4. 54.231.47.194
 5. 54.225.209.74
 
-{{< imgcap src="/images/2015/hipchat1/01-Traffic-in-Netmon.png" caption="Traffic in Netmon" >}}
+{% imgpopup /images/2015/hipchat1/01-Traffic-in-Netmon.png 80% Traffic in Netmon >}}
 
 Traffic in Netmon, click to view full-size image.
 
 You will notice that I have a slightly different layout in Netmon now. I have removed time related columns. Right click any column name and select `Choose Columns`. There are also different layouts like `HTTP Troubleshoot`.
 
-{{< imgcap src="/images/2015/hipchat1/02-Endpoints-in-Netmon.png" caption="Endpoints in Netmon" >}}
+{{< imgcap src="" caption="" /images/2015/hipchat1/02-Endpoints-in-Netmon.png Endpoints in Netmon >}}
 
 
 In Procmon we can see five endpoints:
@@ -54,7 +54,7 @@ In Procmon we can see five endpoints:
 1. ec2-54-531-47-194.compute-1.amazonaws.com:https
 1. ec2-54-225-209-74.compute-1.amazonaws.com:https
 
-{{< imgcap src="/images/2015/hipchat1/03-Endpoints-in-Procmon.png" caption="Endpoints in Procmon" >}}
+{{< imgcap src="" caption="" /images/2015/hipchat1/03-Endpoints-in-Procmon.png Endpoints in Procmon >}}
 
 Procmon filters are:
 
@@ -96,7 +96,7 @@ It seems like the second endpoint is hosted on an AWS S3 bucket. S3 buckets are 
 
 Let's look at the conversation in Netmon. This is similar to `Follow TCP/UDP Stream` in Wireshark but unfortunately not as good.
 
-{{< imgcap src="/images/2015/hipchat1/04-bloginfo-fetch.png" caption="Fetching blog_info.html" >}}
+{{< imgcap src="" caption="" /images/2015/hipchat1/04-bloginfo-fetch.png Fetching blog_info.html >}}
 
 We are in luck, we can see a `GET` request over HTTP. Let’s look at it’s payload:
 
@@ -110,7 +110,7 @@ We are in luck, we can see a `GET` request over HTTP. Let’s look at it’s pay
 
 Note the User-Agent. Hipchat is fetching [http://downloads.hipchat.com/blog_info.html](http://downloads.hipchat.com/blog_info.html). This is the `Latest News` at the bottom of the Hipchat client. Notice that it is being loaded over HTTP and surprisingly it is not available over TLS (try accessing [https://downloads.hipchat.com/blog_info.html](https://downloads.hipchat.com/blog_info.html)) does not work. In fact you cannot access [https://downloads.hipchat.com](https://downloads.hipchat.com/).
 
-{{< imgcap src="/images/2015/hipchat1/05-Latest-news-in-hipchat.png" caption="Latest News fetched over HTTP ;)" >}}
+{{< imgcap src="" caption="" /images/2015/hipchat1/05-Latest-news-in-hipchat.png "Latest News" fetched over HTTP ;) >}}
 
 ##### 2.2.1 But what if this request was over TLS?
 Then we would have seen the TLS handshake and then encrypted data. Even by looking at the Common Name (CN) field in server’s certificate in 2nd part of the TLS handshake (`Server Hello`) we wouldn't have been able to discover the endpoint.
@@ -121,19 +121,19 @@ We are going to have to look at DNS requests. We know the endpoint’s IP addres
 
 This filter searches for the IP address in DNS traffic. It will find the DNS query that returned this IP address.
 
-{{< imgcap src="/images/2015/hipchat1/06-Downloads.png" caption="downloads.hipchat.com" >}}
+{{< imgcap src="" caption="" /images/2015/hipchat1/06-Downloads.png downloads.hipchat.com >}}
 
 As we can see, it is `downloads.hipchat.com`.
 
 IP to Hex conversion can be done online, by hand or using Python:
 
-{{< codecaption lang="python" title="IP to Hex" >}}
+{% codeblock lang:python IP to Hex >}}
 PS C:\> python
 >>> import socket
 >>> from binascii import hexlify
 >>> print hexlify ( socket.inet_aton("54.231.81.2") )
 36e75102
-{{< /codecaption >}}
+{% endcodeblock >}}
 
 #### 2.3 – 54.231.96.96 – s3-1.amazonaws.com
 
