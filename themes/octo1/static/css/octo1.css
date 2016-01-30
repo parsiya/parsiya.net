@@ -462,10 +462,10 @@ body div.pagination:after,
 }
 body {
     -webkit-text-size-adjust: none;
-    max-width: 1500px; /* original is 1200px but for some reason it is smaller in my screen */
+    max-width: 1200px; /* original is 1200px but for some reason it is smaller in my screen */
     position: relative;
     margin: 0 auto;
-    font-size: 130%;
+    font-size: 110%;
 }
 body>header,
 body>nav,
@@ -1833,7 +1833,7 @@ figure.code figcaption a:hover {
 #blog-archives article {
     padding: 1em 0 1em;
     position: relative;
-    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAABCAYAAACsXeyTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAFUlEQVQIHWNIS0sr/v//PwMMDzY+ADqMahlW4J91AAAAAElFTkSuQmCC') bottom left repeat-x
+    /*background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAABCAYAAACsXeyTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAFUlEQVQIHWNIS0sr/v//PwMMDzY+ADqMahlW4J91AAAAAElFTkSuQmCC') bottom left repeat-x*/
 }
 #blog-archives article:last-child {
     background: none
@@ -1866,7 +1866,8 @@ figure.code figcaption a:hover {
 }
 #blog-archives a.category,
 #blog-archives time {
-    color: #aaa
+    color: #aaa;
+
 }
 #blog-archives .entry-content {
     display: none
@@ -1877,7 +1878,7 @@ figure.code figcaption a:hover {
 }
 #blog-archives time .month,
 #blog-archives time .day {
-    display: inline-block
+    display: inline-block;
 }
 #blog-archives time .month {
     text-transform: uppercase
@@ -1915,17 +1916,18 @@ figure.code figcaption a:hover {
         position: absolute;
         text-align: right;
         left: 0em;
-        top: 1.8em
+        top: 3.2em; /* may need to change this to align the month/date on the tag/category (archive) pages */
+        font-family: "PT Sans","Helvetica Neue",Arial,sans-serif;
     }
-    #blog-archives .year {
-        display: none
-    }
+   /* #blog-archives .year {
+        display: none;
+    }*/
     #blog-archives article {
         padding-left: 4.5em;
-        padding-bottom: .7em
+        padding-bottom: .7em;
     }
     #blog-archives a.category {
-        line-height: 1.1em
+        line-height: 1.1em;
     }
 }
 #content>.category article {
@@ -1933,7 +1935,7 @@ figure.code figcaption a:hover {
     padding-left: 6.8em
 }
 #content>.category .year {
-    display: inline
+    display: inline;    
 }
 .side-shadow-border,
 aside.sidebar section h1,
@@ -2238,6 +2240,7 @@ div.entry-content > div.highlight {
     border-color: #002B36;
     overflow-x: auto;
     overflow-y: hidden;
+    margin-bottom: 0.4em;
 }
 
 /* side bar code from hyde-x */

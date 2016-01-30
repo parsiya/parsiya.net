@@ -6,8 +6,10 @@
     <!-- can't put the .Date.Format inside the datetime attribute because of double quotes, so it's outside -->
     <time>{{ .Date.Format "Jan 2, 2006" }}</time>
     <span class="categories">
-        {{ if isset .Params "categories" }}
-          {{ range .Params.categories }}<a class="category" href="{{ "/categories/" | absURL }}{{ . | urlize }}">{{ . }}</a>, {{ end }}
+      Tags: 
+        {{ if isset .Params "tags" }}
+        <!-- need to convert the tags to lower for the URLs to work -->
+          {{ range .Params.tags }}<a class="category" href="{{ "/tags/" | absURL }}{{ . | urlize | lower }}">{{ . }}</a>, {{ end }}
         {{ end }}
     </span>
   </p>

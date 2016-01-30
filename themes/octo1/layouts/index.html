@@ -12,12 +12,11 @@
         </h1>
         <p class="meta">{{ .Date.Format "Jan 2, 2006" }} - {{ .ReadingTime }} minute read - {{ if .Site.DisqusShortname }} <a href="{{ .Permalink }}#disqus_thread">Comments</a>{{ end }}
 
-        <!--&middot; this is the dot thing-->
-
-
         {{ if isset .Params "categories" }}
         <!-- <br/> this will make the categories go to the second line and mess with the title -->
-        {{ range .Params.categories }}<a class="label" href="{{ "/categories/" | absURL }}{{ . | urlize }}">{{ . }}</a>{{ end }}
+        <!-- in order to make category URLs work, we need to urlize them and then convert them to lowercase
+             e.g. .NET Remoting -urlize-> .NET-Remoting -lowercase-> .net-remoting -->
+        {{ range .Params.categories }}<a class="label" href="{{ "/categories/" | absURL }}{{ . | urlize | lower }}/">{{ . }}</a>{{ end }}
         {{ end }}</p>
 
       </header>

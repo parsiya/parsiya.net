@@ -27,7 +27,7 @@ You can deploy your own Hipchat server by [downloading a VM][hipchatova]. You wi
 Note: In these posts, the Hipchat server is named `hipchatserver.com` and its IP is `10.10.10.10` (these are just examples). Some of the screenshots are edited to hide the actual IPs and replace them with samples. My machine's sample IP address for the network interface that hosts the Hipchat server is `10.10.10.9`.
 
 ### 1. Traffic Attribution
-Run Netmon and Procmon as admin and run HipChat. We already know how to do [traffic attribution]({% post_url 2015-08-01-network-traffic-attribution-on-windows >}} "Network Traffic Attribution on Windows"). I was not logged into any chatrooms, so Hipchat is not loading any extra content (e.g. images linked in rooms).
+Run Netmon and Procmon as admin and run HipChat. We already know how to do [traffic attribution]({{< ref "2015-08-01-network-traffic-attribution-on-windows.markdown" >}} "Network Traffic Attribution on Windows"). I was not logged into any chatrooms, so Hipchat is not loading any extra content (e.g. images linked in rooms).
 
 In Netmon we also see the following endpoints:
 

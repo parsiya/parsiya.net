@@ -1,7 +1,9 @@
 ---
-categories:
+tags:
 - .NET Remoting
 - dnSpy
+- Reverse Engineering
+categories:
 - Reverse Engineering
 comments: true
 date: 2015-11-14T16:22:36Z

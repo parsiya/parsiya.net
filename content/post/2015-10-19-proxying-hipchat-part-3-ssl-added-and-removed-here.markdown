@@ -10,7 +10,7 @@ title: 'Proxying Hipchat Part 3: SSL Added and Removed Here :^)'
 url: /blog/2015-10-19-proxying-hipchat-part-3-ssl-added-and-removed-here/
 ---
 
-Finally we are at part 3 of proxying Hipchat. This has been quite the adventure. In [**part1**]({% post_url 2015-10-08-hipchat-part-1-where-did-the-traffic-go >}} "Proxying Hipchat Part 1: Where did the Traffic Go?") we identified the endpoints. In [**part2**]({% post_url 2015-10-09-proxying-hipchat-part-2-so-you-think-you-can-use-burp >}} "Proxying Hipchat Part 2: So You Think You Can Use Burp?") we answered the question “So you think you can use Burp” with yes and proxied some of Hipchat’s traffic with Burp.
+Finally we are at part 3 of proxying Hipchat. This has been quite the adventure. In [**part1**]({{< ref "2015-10-08-hipchat-part-1-where-did-the-traffic-go.markdown" >}} "Proxying Hipchat Part 1: Where did the Traffic Go?") we identified the endpoints. In [**part2**]({{< ref "2015-10-09-proxying-hipchat-part-2-so-you-think-you-can-use-burp.markdown" >}} "Proxying Hipchat Part 2: So You Think You Can Use Burp?") we answered the question “So you think you can use Burp” with yes and proxied some of Hipchat’s traffic with Burp.
 
 In this part we will talk about developing our own proxy in Python to view Hipchat’s traffic to/form `hipchatserver.com` (which our example Hipchat server). First we are going to discuss how proxies work and we will get over Burp breaking our heart by creating our own proxy in Python to observe and dump the traffic in plaintext.
 

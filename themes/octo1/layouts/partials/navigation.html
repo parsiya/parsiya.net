@@ -3,9 +3,9 @@
 <ul class="main-navigation">
   <!-- Check if home_title is set in config file, if not use Blog -->
   {{ if isset .Site.Params "home_title" }}
-  	<li><a href="{{ "/" | absURL }}/">{{ .Site.Params.home_title }}</a></li>
+  	<li><a href="{{ "/" | absURL }}">{{ .Site.Params.home_title }}</a></li>
   {{ else }}
-  	<li><a href="{{ "/" | absURL }}/">Blog2</a></li>
+  	<li><a href="{{ "/" | absURL }}">Blog</a></li>
   {{ end }}
   <li><a href="https://www.google.com/search?q=andrew+ridgeley" target="_blank">The other guy from Wham!</a></li>
   <!-- add more links here -->

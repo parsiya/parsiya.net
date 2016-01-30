@@ -8,7 +8,7 @@ date: 2015-10-09T22:34:37Z
 title: 'Proxying Hipchat Part 2: So You Think You Can Use Burp?'
 ---
 
-In [**part1**]({% post_url 2015-10-08-hipchat-part-1-where-did-the-traffic-go >}} "Proxying Hipchat Part 1: Where did the Traffic Go?") I talked about identifying Hipchat endpoints and promised to discuss proxying the application. In this post I will show how to proxy *some* of Hipchat’s traffic using Burp.
+In [**part1**]({{< ref "2015-10-08-hipchat-part-1-where-did-the-traffic-go.markdown" >}} "Proxying Hipchat Part 1: Where did the Traffic Go?") I talked about identifying Hipchat endpoints and promised to discuss proxying the application. In this post I will show how to proxy *some* of Hipchat’s traffic using Burp.
 
 This is specific to Hipchat client for Windows. The current version at the time of writing was is **2.2.1361**. Atlassian is skipping version 3 and version 4 still in beta.
 

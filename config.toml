@@ -1,11 +1,11 @@
 
 # https://gohugo.io/overview/configuration/
 
-baseurl = "http://parsiya.net"
+baseurl = "http://parsiya.io/"
 disablePathToLower = true
 languageCode = "en-us"
 title = "Parsia's Den"
-# theme = "octo1"
+theme = "octo1"
 
 # number of blog posts displayed in each page
 paginate = 6
@@ -15,16 +15,18 @@ pygmentsstyle = "solarized_dark" # need to install Solarized from https://github
 # Octopress blog used Solarized_dark
 # options are solarized_dark (octopress), solarized_dark256 and default (solarized light)
 
-# will make the highlight shortcode and ``` do the same thing - otherwise they are treated differently
+# will make the highlight shortcode and ``` do the same thing - otherwise they are treated differently and we do not want that
 pygmentscodefences = true
 
 # can pass in pygments options here, it can also be added in the highlight shortcode but not ```
 # pygmentsoptions = "linenos=true"
 
-disqusShortname = "parsiya"
+# disqus is not working currently
+# disqusShortname = "parsiya"
 
 [permalinks]
-	post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the old ones
+post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the old ones
+
 
 [indexes]
 	tag = "tags"
@@ -48,7 +50,7 @@ disqusShortname = "parsiya"
 	# Text of the Continue Reading label. &rarr; == right arrow, but it gets messed up in the string so we will add it to index.html manually
 	continue_reading = "Would you like to know more?"
 
-	# Link that appears in the navigation menu and will point to site's root
+	# Link that appears in the navigation menu and will point to site's root - if nothing is defined here default is Blog
 	home_title = "Blog"
 
 	# googleAnalytics = "Your Google Analytics tracking code"
