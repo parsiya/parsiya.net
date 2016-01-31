@@ -1,6 +1,8 @@
 ---
 categories:
 - Octopress
+tags:
+- imgpopup
 comments: true
 date: 2015-07-26T23:02:58Z
 title: Image Popup and Octopress
@@ -12,6 +14,7 @@ I finally realized that I need an image popup plugin. The image plugins that I u
 
 However, it did not work for me out of the box. I created a test post with just an image and while the plugin worked, there are things that I did not like about it.
 
+[original repo]: https://github.com/ctdk/octopress-image-popup
 <!--more-->
 
 {{< imgcap src="/images/2015/popup1/pew1.jpg" caption="test post" >}}

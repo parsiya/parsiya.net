@@ -1,7 +1,9 @@
 ---
 categories:
+- Reverse Engineering
+tags:
 - update
-- reverse engineering
+- FireEye
 comments: true
 date: 2014-09-02T00:34:00Z
 title: Fireeye's FLARE Challenge

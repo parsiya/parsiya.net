@@ -1,5 +1,7 @@
 ---
 categories:
+- Amazon S3
+tags:
 - hosting
 - amazon s3
 comments: true

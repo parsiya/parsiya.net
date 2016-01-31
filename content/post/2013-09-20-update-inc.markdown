@@ -1,5 +1,8 @@
 ---
-categories: null
+categories:
+- Octopress
+tags:
+- update
 comments: false
 date: 2013-09-20T00:00:00Z
 title: Update Inc

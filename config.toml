@@ -5,20 +5,22 @@ baseurl = "http://parsiya.io/"
 disablePathToLower = true
 languageCode = "en-us"
 title = "Parsia's Den"
-theme = "octo1"
+theme = "hugo-octopress"
 
 # number of blog posts displayed in each page
 paginate = 6
 
 pygmentsuseclasses = false
-pygmentsstyle = "solarized_dark" # need to install Solarized from https://github.com/john2x/solarized-pygment.git
+pygmentsstyle = "solarized_dark" 
+
+# you need to install Solarized from https://github.com/john2x/solarized-pygment.git
 # Octopress blog used Solarized_dark
 # options are solarized_dark (octopress), solarized_dark256 and default (solarized light)
 
 # will make the highlight shortcode and ``` do the same thing - otherwise they are treated differently and we do not want that
 pygmentscodefences = true
 
-# can pass in pygments options here, it can also be added in the highlight shortcode but not ```
+# can pass in pygments options here, it can also be added in the highlight shortcode
 # pygmentsoptions = "linenos=true"
 
 # disqus is not working currently
@@ -32,13 +34,30 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 	tag = "tags"
 	category = "categories"
 
+# menu
+[[menu.main]]
+	Name = "Blog"
+	URL = "/"
+	weight = -10
+
+[[menu.main]]
+	Name = "The other guy from Wham!"
+	URL = "https://www.google.com/search?q=andrew+ridgeley"
+	weight = -5
+
+[[menu.main]]
+	Name = "This theme - add link"
+	URL = "https://www.github.com"
+
 [params]
 
-	SidebarRecentLimit = 5 # number of recent posts that will be shown in the sidebar
-	# truncate = true # this will show full blog posts on front page - I hate it
+	# number of recent posts that will be shown in the sidebar
+	SidebarRecentLimit = 5 
 
-	# highlight = "ir_black"	# change this to one of the css files in static/css/highlight/ - demo : https://highlightjs.org/static/demo/
+	# if false, all of the post will appear on front page (and in pagination)
+	truncate = true 
 
+	# author's name (this will appear in metadata and under posts)
 	author = "Parsia"
 
 	# appears in the site header under website title
@@ -49,9 +68,6 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 
 	# Text of the Continue Reading label. &rarr; == right arrow, but it gets messed up in the string so we will add it to index.html manually
 	continue_reading = "Would you like to know more?"
-
-	# Link that appears in the navigation menu and will point to site's root - if nothing is defined here default is Blog
-	home_title = "Blog"
 
 	# googleAnalytics = "Your Google Analytics tracking code"
 
@@ -64,8 +80,10 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 
 	defaultDescription = ""
 
+	# does this even work in action?
 	defaultKeywords = ["Parsia Hakimian" , "Parsia" , "infosec" , "information security"]
 
-# blackfriday is Hugo's markdown engine. Must look at its options
+# blackfriday is Hugo's markdown engine. Options are at: https://gohugo.io/overview/configuration/ (scroll down to "Configure Blackfriday rendering")
 [blackfriday]
 	hrefTargetBlank = true # open the external links in a new window
+	fractions = false

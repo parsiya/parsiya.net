@@ -1,6 +1,8 @@
 ---
 categories:
 - Octopress
+tags:
+- Octopress
 - Cookie Clicker
 - MarkDown
 comments: false

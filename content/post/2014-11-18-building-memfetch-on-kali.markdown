@@ -1,5 +1,7 @@
 ---
 categories:
+- Memory Forensics
+tags:
 - Memfetch
 - Kali
 comments: true

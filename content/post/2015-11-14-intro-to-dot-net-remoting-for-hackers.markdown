@@ -2,7 +2,7 @@
 tags:
 - .NET Remoting
 - dnSpy
-- Reverse Engineering
+- .NET
 categories:
 - Reverse Engineering
 comments: true

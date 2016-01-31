@@ -9,7 +9,7 @@
       Tags: 
         {{ if isset .Params "tags" }}
         <!-- need to convert the tags to lower for the URLs to work -->
-          {{ range .Params.tags }}<a class="category" href="{{ "/tags/" | absURL }}{{ . | urlize | lower }}">{{ . }}</a>, {{ end }}
+          {{ range .Params.tags }}<a class="category" href="{{ "/tags/" | absURL }}{{ . | urlize | lower }}">{{ . }}</a>  {{ end }}
         {{ end }}
     </span>
   </p>

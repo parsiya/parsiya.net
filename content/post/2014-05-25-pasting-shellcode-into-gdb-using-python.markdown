@@ -1,5 +1,7 @@
 ---
 categories:
+- Python
+tags:
 - python
 - shellcode
 - interactive debugging

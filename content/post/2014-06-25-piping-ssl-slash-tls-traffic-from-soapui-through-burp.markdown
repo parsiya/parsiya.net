@@ -1,5 +1,7 @@
 ---
 categories:
+- Burp
+tags:
 - SoapUI
 - Burp
 - Proxy

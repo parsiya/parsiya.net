@@ -14,13 +14,10 @@
   <link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 
   <!-- goes into the title bar -->
-  <!-- 
-  <title>{{ .Title }} - {{ .Site.Author.name }}</title>
-  -->
   <title>{{ .Title }}</title>
 
   <!-- CSS -->
-  <link rel="stylesheet" href="{{ "/css/octo1.css" | absURL }}">
+  <link rel="stylesheet" href="{{ "/css/hugo-octopress.css" | absURL }}">
 
   <!-- For sidebar icons - TODO: find local icons I guess-->
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
@@ -55,7 +52,7 @@
 </head>
 <body{{ with .Site.Params.theme }} class="{{ . }}"{{ end }}>
 
-<!-- top header -->
+<!-- top header for octopress -->
 <header role="banner">{{ partial "octo-header.html" . }}</header>
 
 <!-- navigation -->

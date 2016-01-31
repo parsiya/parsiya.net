@@ -26,7 +26,7 @@
               <span class="day">{{ .Date | dateFormat "2" }}</span>
             </time>
             <footer>
-              <span class="categories"> <!-- show categories and tags-->
+              <span class="categories"> <!-- show categories and tags -->
                 posted in:
                 {{ if isset .Params "categories" }}
                 {{ range .Params.categories }} <a class="category" href="{{ "/categories/" | absURL }}{{ . | urlize | lower }}">{{ . }}</a>{{ end }}

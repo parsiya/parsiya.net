@@ -1,5 +1,7 @@
 ---
 categories:
+- Reverse Engineering
+tags:
 - microsoft
 - bluehat
 - Reverse Engineering

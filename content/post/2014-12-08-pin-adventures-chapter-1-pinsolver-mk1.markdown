@@ -1,5 +1,7 @@
 ---
 categories:
+- Reverse Engineering
+tags:
 - PIN
 - PIN tool
 - PINSolver

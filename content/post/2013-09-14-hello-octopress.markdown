@@ -1,5 +1,8 @@
 ---
-categories: null
+categories:
+- Octopress
+tags:
+- Octopress
 comments: true
 date: 2013-09-14T00:00:00Z
 title: Hello Octopress

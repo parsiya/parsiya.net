@@ -1,6 +1,8 @@
 ---
 categories:
 - Encryption
+tags:
+- Encryption
 - Common Crypto
 comments: true
 date: 2014-07-03T01:30:18Z

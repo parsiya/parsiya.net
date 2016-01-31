@@ -1,5 +1,8 @@
 ---
 categories:
+- Encryption
+- Reverse Engineering
+tags:
 - AES Keys
 - Cryptography
 - Reverse Engineering
@@ -23,15 +26,17 @@ Instead I am going to talk about what happens inside those rectangles labeled �
 ### 1. Thinking Inside the Box
 Each of these boxes consist of a few rounds. The number of rounds is based on key size in AES. Keep in mind that AES is a subset of the *Rijndael* family of ciphers (and I still do not know how to pronounce the name). NIST (National Institute of Standards and Technology) selected a fixed block size (16 bytes) and three different key sizes (128, 192 and 256 bits) and called it AES (Advanced Encryption Standard) because that’s what NIST does (other than allegedly embedding backdoors in [almost never used](https://www.mail-archive.com/openssl-announce@openssl.org/msg00127.html) random number generators, see [DUAL_EC_DRBG](http://blog.cryptographyengineering.com/2013/09/the-many-flaws-of-dualecdrbg.html) ;)). You do not need to memorize the formula that calculates the number of rounds based on key and block size. You can see the result of my painstaking calculations in the following table:
 
-| Key Size (bits)  | Number of Rounds (potatoes) |
-|:----------------:|:------------:|
-| 128            |        10  |
-| 192            |        12  |
-| 256            |        14  |
+    |
+    | Key Size (bits)  | Number of Rounds (potatoes) |
+    |------------------|-----------------------------|
+    |       128        |             10              |
+    |       192        |             12              |
+    |       256        |             14              |
+    |
 
 That was easy. So what happens inside each of these rounds. Except the last round, there are four steps in each round (encryption/decryption). For the remainder of this section I am going to assume that we are using a 128-bit key (16 bytes) resulting in 10 rounds.
 
-{{< imgcap src="/images/2015/tales1/AES-Rounds.jpg" caption="Inside AES - Source: [http://www.iis.ee.ethz.ch/~kgf/acacia/fig/aes.png](http://www.iis.ee.ethz.ch/~kgf/acacia/fig/aes.png)" >}}
+{{< imgcap src="/images/2015/tales1/AES-Rounds.jpg" caption="Inside AES - Source: http://www.iis.ee.ethz.ch/~kgf/acacia/fig/aes.png" >}}
 
 There are four different operations but I am going to go into some detail about ``AddRoundKey``. It is also the only operation which introduces an unknown element (key) into the process. The other operations are also simple and we can probably guess what they do based on their names.
 
@@ -612,7 +617,7 @@ This dumps Virtual Machine’s memory to ``memorydump.raw``. Now we need to find
 #### 3.2 Finding Keys
 There are different tools that we can use here again. One is from the “Lest We Remember” paper called ``aeskeyfind``. Another is [Bulk extractor](http://www.forensicswiki.org/wiki/Bulk_extractor) which finds other memory artifacts such as URLs, emails and Credit Card numbers. We will use ``aeskeyfind``. The ``v`` switch is for verbose mode that prints the key schedule among other information. This is really not recommended in memory forensics because we are running the dump program inside the VM memory and it will alter memory but it is enough for our purposes. Another thing to note is that I was not running our example program while making the memory snapshot but I found encryption keys.
 
-{{< codecaption lang="bash" title="keys inside VM memory dump" >}}
+{{< codecaption lang="" title="keys inside VM memory dump" >}}
 ./aeskeyfind -v memorydump.raw 
 FOUND POSSIBLE 128-BIT KEY AT BYTE 376ecc30 
 

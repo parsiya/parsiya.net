@@ -1,6 +1,8 @@
 ---
 categories:
 - Amazon S3
+tags:
+- Amazon S3
 - CSS
 - content-type
 comments: true

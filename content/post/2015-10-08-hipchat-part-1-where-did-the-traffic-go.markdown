@@ -1,5 +1,8 @@
 ---
 categories:
+- Reverse Engineering
+- Hipchat
+tags:
 - Hipchat
 - Proxying
 - Netmon
