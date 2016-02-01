@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1">
+
+  
+  <link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+  <link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <title>Proxying Hipchat Part 2: So You Think You Can Use Burp?</title>
+
+  
+  <link rel="stylesheet" href="http://parsiya.net/css/hugo-octopress.css">
+
+  
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  
+
+  
+  <link href="http://parsiya.net/favicon.png" rel="icon">
+
+  
+  
+  
+  
+  
+
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="[Parsia Hakimian Parsia infosec information security]">
+
+  <meta name="author" content="Parsia">
+
+  
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  
+
+</head>
+<body>
+
+
+<header role="banner"><hgroup>
+  
+  <h1><a href="http://parsiya.net/">Parsia&#39;s Den</a></h1>
+    <h2>Because no one wants to be the other guy from Wham!</h2>
+</hgroup></header>
+
+
+<nav role="navigation">
+
+
+<ul class="main-navigation">
+  
+    <li><a href="http://parsiya.net/" target="_blank" title="Blog">Blog</a></li>
+  
+    <li><a href="https://www.google.com/search?q=andrew&#43;ridgeley" target="_blank" title="The other guy from Wham!">The other guy from Wham!</a></li>
+  
+    <li><a href="https://www.github.com" target="_blank" title="This theme - add link">This theme - add link</a></li>
+  
+</ul>
+
+
+<ul class="subscription">
+  <a href="http://parsiya.net/index.xml" target="_blank" type="application/rss+xml" title="RSS"><i class="fa fa-rss-square fa-lg"></i></a>
+
+  
+  
+
+</ul>
+
+
+<form action="https://www.google.com/search" method="get" target="_blank">
+  <fieldset role="search">
+  	<input class="search" type="text" name="q" results="0" placeholder="Search"/>
+    <input type="hidden" name="q" value="site:http://parsiya.net/" />
+  </fieldset>
+</form>
+</nav>
+
+
+
+<div id="main">
+  <div id="content">
+    <div>
+      <article class="hentry" role="article">
+        <header>
+          <h1 class="entry-title">
+            Proxying Hipchat Part 2: So You Think You Can Use Burp? 
+          </h1>
+          <p class="meta">Oct 9, 2015 - 7 minute read -  <a href="http://parsiya.net/blog/2015-10-09-Proxying-Hipchat-Part-2-So-You-Think-You-Can-Use-Burp/#disqus_thread">Comments</a>
+
+          
+
+          
+          
+          <a class="label" href="http://parsiya.net/categories/reverse-engineering">Reverse Engineering</a><a class="label" href="http://parsiya.net/categories/hipchat">Hipchat</a>
+          </p>
+        </header>
+        <div class="entry-content">
+          
+
+<p>In <a href="http://parsiya.net/blog/2015-10-08-Proxying-Hipchat-Part-1-Where-did-the-Traffic-Go/" title="Proxying Hipchat Part 1: Where did the Traffic Go?" target="_blank"><strong>part1</strong></a> I talked about identifying Hipchat endpoints and promised to discuss proxying the application. In this post I will show how to proxy <em>some</em> of Hipchat’s traffic using Burp.</p>
+
+<p>This is specific to Hipchat client for Windows. The current version at the time of writing was is <strong>2.2.1361</strong>. Atlassian is skipping version 3 and version 4 still in beta.</p>
+
+<h3 id="1-ez-mode-proxy-settings:4e05e28f6fdfa8cb6420fb7940d5416d">1. EZ-Mode Proxy Settings</h3>
+
+<p>To see the proxy settings, log off and select Configure Connection. Note that in the most recent version (2.2.1395) this added to the settings menu inside the application and there is no need to logoff.</p>
+
+
+
+
+
+
+
+
+
+<span class="caption-wrapper">
+  <img class="caption" src="/images/2015/hipchat2/01-Hipchat-login-screen.png" title="Hipchat login screen" alt="Hipchat login screen">
+  <span class="caption-text">Hipchat login screen</span>
+</span>
+
+<p>Yay for proxy settings. So you think you can use Burp? It’s not going to be that easy, otherwise why would I been writing this?</p>
+
+<p>My Burp proxy is listening on <code>127.0.0.1:8080</code> so I will add it as proxy.</p>
+
+
+
+
+
+
+
+
+
+<span class="caption-wrapper">
+  <img class="caption" src="/images/2015/hipchat2/02-Hipchat-proxy-settings.png" title="Hipchat proxy settings" alt="Hipchat proxy settings">
+  <span class="caption-text">Hipchat proxy settings</span>
+</span>
+
+<p>You can also enable proxy settings by modifying the <code>%appdata%\Atlassian\Hipchat.ini</code> file (on Windows). We need to modify these settings:</p>
+<div class="highlight" style="background: #002B36"><pre style="line-height: 125%">httpHostname=localhost
+httpPort=8080
+proxyType=Http
+</pre></div>
+
+<p>Now login. We will see some requests in Burp. We have seen them before, first one is the <code>Latest News</code> and the second one is the emoticon associated with it. The emoticon is loaded over HTTPs while latest news is loaded over HTTP. We will play with it later.</p>
+<div class="highlight" style="background: #002B36"><pre style="line-height: 125%">1. http://downloads.hipchat.com/blog_info.html
+# section 2.2 in part 1
+
+2. https://s3.amazonaws.com/uploads.hipchat.com/10804/368466/FM3tGM05hUCySVj/freddie.png 
+# emoticon in this case it is Freddie Mercury
+# note that this changes because last time I saw success kid
+# section 2.3 in part 1.
+
+3.&lt;?xml version=&#39;1.0&#39;?&gt;&lt;stream:stream to=&#39;chat.hipchat.com&#39;
+# looks like the start of an XMPP handshake.
+</pre></div>
+
+<p>Note: <code>hipchatserver.com</code>, our imaginary Hipchat server&rsquo;s IP is <code>10.11.1.25</code> in this post.</p>
+
+
+
+
+
+
+
+
+
+<span class="caption-wrapper">
+  <img class="caption" src="/images/2015/hipchat2/03-Initial-requests-in-Burp.png" title="Initial requests in Burp" alt="Initial requests in Burp">
+  <span class="caption-text">Initial requests in Burp</span>
+</span>
+
+<p>The third request looks like the start of an XMPP handshake which has been cut off by Burp. It should be something like this:</p>
+<div class="highlight" style="background: #002B36"><pre style="line-height: 125%"><span style="color: #719e07">&lt;?xml version=&#39;1.0&#39;?&gt;</span><span style="color: #268BD2">&lt;stream:stream</span> <span style="color: #93A1A1">to=</span><span style="color: #2AA198">&#39;chat.hipchat.com&#39;</span> <span style="color: #93A1A1">xmlns=</span><span style="color: #2AA198">&#39;jabber:client&#39;</span> 
+<span style="color: #93A1A1">xmlns:stream=</span><span style="color: #2AA198">&#39;http://etherx.jabber.org/streams&#39;</span> <span style="color: #93A1A1">version=</span><span style="color: #2AA198">&#39;1.0&#39;</span><span style="color: #268BD2">&gt;</span>
+</pre></div>
+
+<h3 id="2-why-did-burp-burp:4e05e28f6fdfa8cb6420fb7940d5416d">2. Why did Burp, Burp?</h3>
+
+<p>To diagnose the problem, we must look at the traffic capture. Run Netmon and login to Hipchat again. Remember that you cannot capture Hipchat’s traffic to Burp with Netmon or Wireshark as it is local (from <code>127.0.0.1:49xxx</code> to <code>127.0.0.1:8080</code>) so you need to sniff local traffic with something like <a href="http://www.netresec.com/?page=RawCap" target="_blank">RawCap</a>. But we can look at Burp’s outbound traffic in Netmon. Look for traffic belonging to the <code>javaw.exe</code> process (for Burp).</p>
+
+
+
+
+
+
+
+
+
+<span class="caption-wrapper">
+  <img class="caption" src="/images/2015/hipchat2/04-Traffic-to-hipchat.png" title="Burp &lt;–&gt; hipchatserver.com traffic in Netmon" alt="Burp &lt;–&gt; hipchatserver.com traffic in Netmon">
+  <span class="caption-text">Burp &lt;–&gt; hipchatserver.com traffic in Netmon</span>
+</span>
+
+<p>Or using sequence diagram created on <a href="https://www.websequencediagrams.com" target="_blank">https://www.websequencediagrams.com</a>. We have a bunch of internal licenses for this at Cigital so I have started adding sequence diagrams to all of my blog posts and reports :D.</p>
+
+
+
+
+
+
+
+
+
+<span class="caption-wrapper">
+  <img class="caption" src="/images/2015/hipchat2/05-Failed-XMPP-Handshake.png" title="What happen?" alt="What happen?">
+  <span class="caption-text">What happen?</span>
+</span>
+
+<p>As we see the XMPP handshake is incomplete. In short, Burp somehow messes up the first part of the XMPP handshake and drops the packet just after it sees <code>to='chat.hipchat.com'</code> and sends an incomplete payload which causes the server to reject it and reset the connection.</p>
+
+<h3 id="3-burp-s-ssl-pass-through:4e05e28f6fdfa8cb6420fb7940d5416d">3. Burp’s SSL Pass Through</h3>
+
+<p>It’s time to talk about another one of Burp’s capabilities. This one is named <code>SSL Pass Through</code> and is very useful for exactly the situation we are in. We can specify endpoints (domain/IP and port) and tell Burp not to mess with the to/from those points and just pass it through as it is. This means that Burp will not Man-in-the-Middle (MitM) the connection and just ignore the traffic. It is located at <code>Proxy &gt; Option &gt; SSL Pass Through</code> (scroll all the way to the bottom). Let’s tell Burp not to proxy anything to/from the <code>hipchatserver.com</code> at <code>10.11.1.25:5222</code>.</p>
+
+
+
+
+
+
+
+
+
+<span class="caption-wrapper">
+  <img class="caption" src="/images/2015/hipchat2/06-SSL-Pass-Through.png" title="SSL Pass Through settings" alt="SSL Pass Through settings">
+  <span class="caption-text">SSL Pass Through settings</span>
+</span>
+
+<p>And yay!</p>
+
+
+
+
+
+
+
+
+
+<span class="caption-wrapper">
+  <img class="caption" src="/images/2015/hipchat2/07-Hipchat-logged-in-with-Burp-as-proxy.png" title="Logged in with Burp " alt="Logged in with Burp ">
+  <span class="caption-text">Logged in with Burp </span>
+</span>
+
+<p>Now let’s take a look at these requests. We have already seen the first two before.</p>
+<div class="highlight" style="background: #002B36"><pre style="line-height: 125%">1. GET: http://downloads.hipchat.com/blog_info.html
+2. GET: https://s3.amazonaws.com/uploads.hipchat.com/10804/368466/FM3tGM05hUCySVj/freddie.png
+3. GET: https://www.hipchat.com/img/silhouette_125.png
+4. GET: https://hipchat.com/release_notes/appcast/qtwindows?auth-uid=351&amp;auth-token=JHAgpsxHVva3SMC
+5. GET: https://www.hipchat.com/release_notes/appcast/qtwindows?auth-uid=351&amp;auth-token=JHAgpsxHVva3SMC
+</pre></div>
+
+<p><strong>Request number 3</strong> is retrieving an image. It is the placeholder image for profile pictures in Hipchat.</p>
+<div class="highlight" style="background: #002B36"><pre style="line-height: 125%"><span style="color: #268BD2">GET</span> <span style="color: #93A1A1">/img/silhouette_125.png</span> <span style="color: #268BD2">HTTP</span><span style="color: #719e07">/</span><span style="color: #2AA198">1.1</span>
+<span style="color: #93A1A1">Connection</span><span style="color: #719e07">:</span> <span style="color: #93A1A1">Keep-Alive</span>
+<span style="color: #93A1A1">Accept-Encoding</span><span style="color: #719e07">:</span> <span style="color: #93A1A1">gzip, deflate</span>
+<span style="color: #93A1A1">Accept-Language</span><span style="color: #719e07">:</span> <span style="color: #93A1A1">en-US,*</span>
+<span style="color: #93A1A1">User-Agent</span><span style="color: #719e07">:</span> <span style="color: #93A1A1">Mozilla/5.0</span>
+<span style="color: #93A1A1">Host</span><span style="color: #719e07">:</span> <span style="color: #93A1A1">www.hipchat.com</span>
+</pre></div>
+
+
+
+
+
+
+
+
+
+<span class="caption-wrapper">
+  <img class="caption" src="/images/2015/hipchat2/08-Profile-pic-placeholder.png" title="Do not track me bro " alt="Do not track me bro ">
+  <span class="caption-text">Do not track me bro </span>
+</span>
+
+<p>Why are we retrieving this image from hipchat.com every time when it can be stored in the application and conserve bandwidth? I don’t know but Paranoid Parsia tells me that it is an Atlassian tracking request. This way they will know where and when an instance has been executed. There is no identifying data sent with the request.</p>
+
+
+
+
+
+
+
+
+
+<span class="caption-wrapper">
+  <img class="caption" src="/images/2015/hipchat2/09-I-am-not-saying-it-was-Atlassian-but-it-was-Atlassian.jpg" title="I am not saying it was Atlassian, but it was Atlassian " alt="I am not saying it was Atlassian, but it was Atlassian ">
+  <span class="caption-text">I am not saying it was Atlassian, but it was Atlassian </span>
+</span>
+
+<p><strong>Request 4</strong> is another GET request.</p>
+<div class="highlight" style="background: #002B36"><pre style="line-height: 125%"><span style="color: #268BD2">GET</span> <span style="color: #93A1A1">/release_notes/appcast/qtwindows?auth-uid=351&amp;auth-token=JHAgpsxHVva3SMC</span> <span style="color: #268BD2">HTTP</span><span style="color: #719e07">/</span><span style="color: #2AA198">1.1</span>
+<span style="color: #93A1A1">Cache-Control</span><span style="color: #719e07">:</span> <span style="color: #93A1A1">no-cache</span>
+<span style="color: #93A1A1">Pragma</span><span style="color: #719e07">:</span> <span style="color: #93A1A1">no-cache</span>
+<span style="color: #93A1A1">Connection</span><span style="color: #719e07">:</span> <span style="color: #93A1A1">Keep-Alive</span>
+<span style="color: #93A1A1">Accept-Encoding</span><span style="color: #719e07">:</span> <span style="color: #93A1A1">gzip, deflate</span>
+<span style="color: #93A1A1">Accept-Language</span><span style="color: #719e07">:</span> <span style="color: #93A1A1">en-US,*</span>
+<span style="color: #93A1A1">User-Agent</span><span style="color: #719e07">:</span> <span style="color: #93A1A1">Mozilla/5.0</span>
+<span style="color: #93A1A1">Host</span><span style="color: #719e07">:</span> <span style="color: #93A1A1">hipchat.com</span>
+</pre></div>
+
+<p>But it gets redirected to <a href="https://www.hipchat.com/release_notes/appcast/qtwindows?auth-uid=351&amp;auth-token=JHAgpsxHVva3SMC" target="_blank">https://www.hipchat.com/release_notes/appcast/qtwindows?auth-uid=351&amp;auth-token=JHAgpsxHVva3SMC</a>. Remember when we saw the application communicating with both <code>hipchat.com</code> and <code>www.hipchat.com</code> (sections 2.4 and 2.5 of <a href="hipchat-part1" target="_blank">part 1</a>)? This is it.</p>
+<div class="highlight" style="background: #002B36"><pre style="line-height: 125%">HTTP/1.1 301 Moved Permanently
+Cache-control: no-cache=&quot;set-cookie&quot;
+Content-Type: text/html
+Date: Mon, 07 Sep 2015 22:41:37 GMT
+Location: https://www.hipchat.com/release_notes/appcast/qtwindows?auth-uid=351<span style="color: #93A1A1">&amp;</span>auth-token=JHAgpsxHVva3SMC
+Server: nginx
+Set-Cookie: AWSELB=05C1D11310299FE142D714774ABD93C5B09ED1734381C4F7DC691A8BCC5031E618740E2045508C8D72C034DD48A74BD4A2E439469DEA3BD63B536161358959E4151A965466;PATH=/
+Strict-Transport-Security: max-age=31536000
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Content-Length: 178
+Connection: keep-alive
+
+Response:
+<span style="color: #268BD2">&lt;html&gt;</span>
+<span style="color: #268BD2">&lt;head&gt;&lt;title&gt;</span>301 Moved Permanently<span style="color: #268BD2">&lt;/title&gt;&lt;/head&gt;</span>
+<span style="color: #268BD2">&lt;body</span> <span style="color: #93A1A1">bgcolor=</span><span style="color: #2AA198">&quot;white&quot;</span><span style="color: #268BD2">&gt;</span>
+<span style="color: #268BD2">&lt;center&gt;&lt;h1&gt;</span>301 Moved Permanently<span style="color: #268BD2">&lt;/h1&gt;&lt;/center&gt;</span>
+<span style="color: #268BD2">&lt;hr&gt;&lt;center&gt;</span>nginx<span style="color: #268BD2">&lt;/center&gt;</span>
+<span style="color: #268BD2">&lt;/body&gt;</span>
+<span style="color: #268BD2">&lt;/html&gt;</span>
+</pre></div>
+
+<p>Which results in <strong>request 5</strong>.</p>
+<div class="highlight" style="background: #002B36"><pre style="line-height: 125%"><span style="color: #268BD2">GET</span> <span style="color: #93A1A1">/release_notes/appcast/qtwindows?auth-uid=351&amp;auth-token=JHAgpsxHVva3SMC</span> <span style="color: #268BD2">HTTP</span><span style="color: #719e07">/</span><span style="color: #2AA198">1.1</span>
+<span style="color: #93A1A1">Cache-Control</span><span style="color: #719e07">:</span> <span style="color: #93A1A1">no-cache</span>
+<span style="color: #93A1A1">Pragma</span><span style="color: #719e07">:</span> <span style="color: #93A1A1">no-cache</span>
+<span style="color: #93A1A1">Connection</span><span style="color: #719e07">:</span> <span style="color: #93A1A1">Keep-Alive</span>
+<span style="color: #93A1A1">Accept-Encoding</span><span style="color: #719e07">:</span> <span style="color: #93A1A1">gzip, deflate</span>
+<span style="color: #93A1A1">Accept-Language</span><span style="color: #719e07">:</span> <span style="color: #93A1A1">en-US,*</span>
+<span style="color: #93A1A1">User-Agent</span><span style="color: #719e07">:</span> <span style="color: #93A1A1">Mozilla/5.0</span>
+<span style="color: #93A1A1">Host</span><span style="color: #719e07">:</span> <span style="color: #93A1A1">www.hipchat.com</span>
+</pre></div>
+
+<p>Response to request 5 is an RSS feed containing release versions of the Hipchat client for Windows. Click this link if you want to see it in action <a href="https://www.hipchat.com/release_notes/appcast/qtwindows" target="_blank">https://www.hipchat.com/release_notes/appcast/qtwindows</a>.</p>
+<div class="highlight" style="background: #002B36"><pre style="line-height: 125%">HTTP/1.1 200 OK
+Cache-control: no-cache=&quot;set-cookie&quot;
+Content-Type: application/xml
+Date: Mon, 07 Sep 2015 22:41:38 GMT
+Server: nginx
+Set-Cookie: AWSELB=05C1D11310299FE142D714774ABD93C5B09ED1734381C4F7DC691A8BCC5031E618740E204546FF579CEC855051CA268C2FEED4240DD3110178C6BD0BB2D00F1E409F9F4DA6;PATH=/
+Strict-Transport-Security: max-age=31536000
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Content-Length: 21562
+Connection: keep-alive
+
+<span style="color: #719e07">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><span style="color: #268BD2">&lt;rss</span> <span style="color: #93A1A1">version=</span><span style="color: #2AA198">&quot;2.0&quot;</span>
+<span style="color: #93A1A1">xmlns:sparkle=</span><span style="color: #2AA198">&quot;http://www.andymatuschak.org/xml-namespaces/sparkle&quot;</span>
+<span style="color: #93A1A1">xmlns:dc=</span><span style="color: #2AA198">&quot;http://purl.org/dc/elements/1.1/&quot;</span>
+<span style="color: #93A1A1">xmlns:hipchat=</span><span style="color: #2AA198">&quot;http://hipchat.com&quot;</span><span style="color: #268BD2">&gt;</span>
+<span style="color: #268BD2">&lt;channel&gt;</span>
+<span style="color: #268BD2">&lt;title&gt;</span>HipChat Windows App Changelog<span style="color: #268BD2">&lt;/title&gt;</span>
+<span style="color: #268BD2">&lt;link&gt;</span>https://www.hipchat.com/release_notes/appcast/qtwindows<span style="color: #268BD2">&lt;/link&gt;</span>
+<span style="color: #268BD2">&lt;description&gt;</span>Appcast of updates.<span style="color: #268BD2">&lt;/description&gt;</span>
+<span style="color: #268BD2">&lt;language&gt;</span>en<span style="color: #268BD2">&lt;/language&gt;</span>
+
+<span style="color: #268BD2">&lt;item&gt;</span>
+<span style="color: #268BD2">&lt;title&gt;</span>Version 2.2.1388 (1388)<span style="color: #268BD2">&lt;/title&gt;</span>
+<span style="color: #268BD2">&lt;pubDate&gt;</span>Tue, 23 Jun 2015 00:00:00 +0000<span style="color: #268BD2">&lt;/pubDate&gt;</span>
+<span style="color: #268BD2">&lt;sparkle:releaseNotesLink&gt;</span>https://www.hipchat.com/release_notes/client_embed/qtwindows?version_num=1373<span style="color: #93A1A1">&amp;</span>auth-token=JHAgpsxHVva3SMC<span style="color: #93A1A1">&amp;</span>auth-uid=351<span style="color: #268BD2">&lt;/sparkle:releaseNotesLink&gt;</span>
+<span style="color: #268BD2">&lt;sparkle:minimumSystemVersion&gt;</span>10.8<span style="color: #268BD2">&lt;/sparkle:minimumSystemVersion&gt;</span>
+<span style="color: #268BD2">&lt;enclosure</span> <span style="color: #93A1A1">url=</span><span style="color: #2AA198">&quot;https://s3.amazonaws.com/downloads.hipchat.com/windows/HipChat-2.2.1388-win32.msi&quot;</span>
+<span style="color: #93A1A1">sparkle:version=</span><span style="color: #2AA198">&quot;1388&quot;</span>
+<span style="color: #93A1A1">sparkle:shortVersionString=</span><span style="color: #2AA198">&quot;2.2.1388&quot;</span>
+<span style="color: #93A1A1">length=</span><span style="color: #2AA198">&quot;43982848&quot;</span>
+<span style="color: #93A1A1">type=</span><span style="color: #2AA198">&quot;application/octet-stream&quot;</span> <span style="color: #268BD2">/&gt;</span>
+<span style="color: #268BD2">&lt;hipchat:required&gt;</span>0<span style="color: #268BD2">&lt;/hipchat:required&gt;</span>
+<span style="color: #268BD2">&lt;/item&gt;</span>
+...
+
+<span style="color: #268BD2">&lt;/channel&gt;</span>
+<span style="color: #268BD2">&lt;/rss&gt;</span>
+</pre></div>
+
+<p>I think this RSS feed is used to check for updates.</p>
+
+<h3 id="5-get-request-over-http:4e05e28f6fdfa8cb6420fb7940d5416d">5. GET request over HTTP</h3>
+
+<p>Now let’s take a look at request one. It is loading an HTML page and displays it in the app. directly We can intercept the response in Burp and modify it. The request is to <a href="http://downloads.hipchat.com/blog_info.html" target="_blank">http://downloads.hipchat.com/blog_info.html</a> and that page is not available over TLS.</p>
+
+
+
+
+
+
+
+
+
+<span class="caption-wrapper">
+  <img class="caption" src="/images/2015/hipchat2/10-Changing-latest-news.png" title="It has crashed again!" alt="It has crashed again!">
+  <span class="caption-text">It has crashed again!</span>
+</span>
+
+<p>That was easy. Now let’s see if we can modify it to display something else.</p>
+
+<p>Seems like it does not have JavaScript enabled so we cannot do a fancy looking alert box. We can inject buttons and forms but the submit action does not work. We can also inject images.</p>
+
+<p>
+
+
+
+
+
+
+
+<span class="caption-wrapper">
+  <img class="caption" src="/images/2015/hipchat2/11-image-tag.png" title="Pepe is watching you load links over HTTP" alt="Pepe is watching you load links over HTTP">
+  <span class="caption-text">Pepe is watching you load links over HTTP</span>
+</span></p>
+
+<p>This is not a serious vulnerability. The attacker needs to be on the same network or in the path and MitM the HTTP connection. But because it is HTTP, there are no certificate warnings. A number of Internet Service Providers also inject ads and other stuff in HTTP traffic. If injected they will appear here. I still do not know why even the emoticon is loaded over https but this latest news is not (<code>downloads.hipchat.com</code> is not even available over HTTPs).</p>
+
+<p>In my opinion the best strategy for an attacker is to inject links to phishing sites. Something along the lines of <code>Click to download the new version</code> and serve infected files or <code>Click to verify your account</code> and point to a phishing login screen. Doubly so because this is <em>the Hipchat link box</em> and users are expected to click these links. We should also remember that Hipchat is also used in non-corporate environments so the next person at Starbucks may be messing with your traffic.</p>
+
+<h4 id="5-1-the-container:4e05e28f6fdfa8cb6420fb7940d5416d">5.1 The Container</h4>
+
+<p>The container looks like to be QtWebKit (remember the User-Agent?). It does not have JavaScript enabled so injected JS will not be executed. We can inject forms, but the actions will not work (e.g. I injected a simple form with one input field to pass its contents to do a Google search but nothing happens when the button is clicked). This part needs more investigation and I will probably get back to it. If you know about this container (whatever that is) please let me know.</p>
+
+<p>In part three, we will talk about proxying Hipchat client’s traffic with the Hipchat server that we skipped using Burp&rsquo;s SSL Pass Through and do more exciting stuff.</p>
+
+<p>As usual if you have any questions/feedback/complaints or just want life advice from ancient Persian spirits, you know where to find me.</p>
+
+<!--links-->
+
+        </div>
+        
+
+<footer>
+  <p class="meta">
+    <span class="byline author vcard">Posted by <span class="fn">Parsia</span></span>
+    
+    <time>Oct 9, 2015</time>
+    <span class="categories">
+      Tags: 
+        
+        
+          <a class="category" href="http://parsiya.net/tags/hipchat">Hipchat</a>  <a class="category" href="http://parsiya.net/tags/proxying">Proxying</a>  <a class="category" href="http://parsiya.net/tags/burp">Burp</a>  
+        
+    </span>
+  </p>
+    
+  
+  
+
+  
+
+  <p class="meta">
+    
+        <a class="basic-alignment left" href="http://parsiya.net/blog/2015-10-08-Proxying-Hipchat-Part-1-Where-did-the-Traffic-Go/" title="Proxying Hipchat Part 1: Where did the Traffic Go?">Proxying Hipchat Part 1: Where did the Traffic Go?</a>
+    
+
+     
+      <a class="basic-alignment right" href="http://parsiya.net/blog/2015-10-19-proxying-hipchat-part-3-ssl-added-and-removed-here/" title="Proxying Hipchat Part 3: SSL Added and Removed Here :^)">Proxying Hipchat Part 3: SSL Added and Removed Here :^)</a>
+    
+  </p>
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    
+    
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'parsiya';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</footer>
+
+ 
+      </article>
+    </div>
+    
+
+
+<aside class="sidebar thirds">
+  <section class="first odd">
+    <h1>Who am I?</h1>
+    <p>I am Parsia Hakimian, ex-dev and current (mostly) software security consultant at <a target="_blank" href="http://cigital.com" title="Cigital">Cigital</a>.</p>
+    <p>I am interested in Reverse Engineering, Crypto, Assembly, C, Python, EvE Online and other things (not necessarily in that order).</p>
+    <p>email: parsiya [at] google’s email [dot]com or use keybase (click on the key icon).</p>
+
+    
+  </section>
+
+  
+
+
+
+  <ul class="sidebar-nav">
+    <li class="sidebar-nav-item">
+    <a target="_blank" href="https://github.com/parsiya/" title="https://github.com/parsiya/"><i class="fa fa-github fa-3x"></i></a>
+    <a target="_blank" href="https://bitbucket.org/parsiya/" title="https://bitbucket.org/parsiya/"><i class="fa fa-bitbucket fa-3x"></i></a>
+    
+    
+    
+    
+    <a target="_blank" href="https://twitter.com/cryptogangsta/" title="https://twitter.com/cryptogangsta/"><i class="fa fa-twitter fa-3x"></i></a>
+    
+    <a target="_blank" href="https://keybase.io/parsiya/" title="https://keybase.io/parsiya/"><i class="fa fa-key fa-3x"></i></a> 
+
+    
+    
+    </li>
+  </ul>
+
+  
+  <section class="even">
+    <h1>Recent Posts</h1>
+
+    <ul id="recent_posts">
+      
+      <li class="post">
+        <a href="/blog/2016-01-31-Why-Hugo/">Why Hugo?</a>
+      </li>
+      
+      <li class="post">
+        <a href="/blog/2015-11-14-Intro-to-.NET-Remoting-for-Hackers/">Intro to .NET Remoting for Hackers</a>
+      </li>
+      
+      <li class="post">
+        <a href="/blog/2015-10-19-proxying-hipchat-part-3-ssl-added-and-removed-here/">Proxying Hipchat Part 3: SSL Added and Removed Here :^)</a>
+      </li>
+      
+      <li class="post">
+        <a href="/blog/2015-10-09-Proxying-Hipchat-Part-2-So-You-Think-You-Can-Use-Burp/">Proxying Hipchat Part 2: So You Think You Can Use Burp?</a>
+      </li>
+      
+      <li class="post">
+        <a href="/blog/2015-10-08-Proxying-Hipchat-Part-1-Where-did-the-Traffic-Go/">Proxying Hipchat Part 1: Where did the Traffic Go?</a>
+      </li>
+      
+    </ul>
+  </section>
+
+</aside>
+  </div>
+</div>
+
+
+
+
+<footer role="contentinfo">
+  <p>Copyright &copy; 2016 Parsia - <a href="http://parsiya.net/license/">License</a> - 
+  <span class="credit">Powered by <a target="_blank" href="https://gohugo.io">Hugo</a> and <a target="_blank" href="insertithere">Hugo-Octopress</a> theme.
+</p>
+
+</footer>
+
+
+<script>
+  var _gaq=[['_setAccount','UA-55491306-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

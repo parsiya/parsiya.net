@@ -1,0 +1,768 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Pinsolver on Parsia&#39;s Den</title>
+    <link>http://parsiya.net/tags/pinsolver/</link>
+    <description>Recent content in Pinsolver on Parsia&#39;s Den</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 08 Dec 2014 20:46:59 +0000</lastBuildDate>
+    <atom:link href="http://parsiya.net/tags/pinsolver/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Pin Adventures - Chapter 1 - PinSolver Mk1</title>
+      <link>http://parsiya.net/blog/2014-12-08-Pin-Adventures---Chapter-1---PinSolver-Mk1/</link>
+      <pubDate>Mon, 08 Dec 2014 20:46:59 +0000</pubDate>
+      
+      <guid>http://parsiya.net/blog/2014-12-08-Pin-Adventures---Chapter-1---PinSolver-Mk1/</guid>
+      <description>
+
+&lt;p&gt;While writing the writeups for the &lt;a href=&#34;http://parsiya.net/blog/2014-10-07-my-adventure-with-fireeye-flare-challenge/#ch6&#34; target=&#34;_blank&#34;&gt;Flare On Challenge 6&lt;/a&gt; I came upon &lt;a href=&#34;http://gaasedelen.blogspot.com/2014/09/solving-fireeyes-flare-on-six-via-side.html&#34; target=&#34;_blank&#34;&gt;an alternative solution&lt;/a&gt; by &lt;a href=&#34;https://twitter.com/gaasedelen&#34; target=&#34;_blank&#34;&gt;@gaasedelen&lt;/a&gt; to use the number of executed instructions as a side-channel. Recently during an engagement I used &lt;a href=&#34;https://software.intel.com/en-us/articles/pintool&#34; target=&#34;_blank&#34;&gt;Pintool&lt;/a&gt; to do &lt;code&gt;[redacted]&lt;/code&gt;. Now that I have a bit of time, I decided to use the idea to write such a tool.&lt;/p&gt;
+
+&lt;p&gt;As an example, we will use a C program that checks input for a hardcoded value using &lt;code&gt;strncmp&lt;/code&gt;. We want to see if it&amp;rsquo;s vulnerable to this side-channel (number of executed instructions).&lt;/p&gt;
+
+&lt;p&gt;##My Setup
+I will be using a Kali 32-bit VM using VirtualBox. Installing Pin is as simple as extracting the appropriate distribution in a directory and adding it to path.&lt;/p&gt;
+
+&lt;p&gt;###Pintool
+Pin is a dynamic binary instrumentation framework by Intel. The default installation contains a good number of examples in &lt;code&gt;/pintool/source/tools/ManualExamples/&lt;/code&gt;. If you look at various tutorials on it, most will use instruction count example in &lt;code&gt;inscount0.cpp&lt;/code&gt;. I will be simplifying it to suit our needs and do &lt;em&gt;some&lt;/em&gt; comments.&lt;/p&gt;
+
+&lt;p&gt;Here is the modified code. Let&amp;rsquo;s name it &lt;code&gt;myins.cpp&lt;/code&gt; and save it in the ManualExamples directory. Apologies for the legal stuff at the start but I&amp;rsquo;d rather keep them than risk the wrath of open source gods.&lt;/p&gt;
+
+
+
+
+    
+
+&lt;figure class=&#34;code&#34;&gt;
+  &lt;figcaption&gt;
+  	&lt;span&gt;myins.c&lt;/span&gt;
+  &lt;/figcaption&gt;
+  &lt;div class=&#34;codewrapper&#34;&gt; 
+    &lt;table class=&#34;highlighttable&#34;&gt;&lt;tr&gt;&lt;td&gt;&lt;div class=&#34;linenodiv&#34; style=&#34;background-color: #f0f0f0; padding-right: 10px&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #586E75&#34;&gt;/*BEGIN_LEGAL &lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;Intel Open Source License &lt;/span&gt;
+
+&lt;span style=&#34;color: #586E75&#34;&gt;Copyright (c) 2002-2014 Intel Corporation. All rights reserved.&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt; &lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;Redistribution and use in source and binary forms, with or without&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;modification, are permitted provided that the following conditions are&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;met:&lt;/span&gt;
+
+&lt;span style=&#34;color: #586E75&#34;&gt;Redistributions of source code must retain the above copyright notice,&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;this list of conditions and the following disclaimer.  Redistributions&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;in binary form must reproduce the above copyright notice, this list of&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;conditions and the following disclaimer in the documentation and/or&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;other materials provided with the distribution.  Neither the name of&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;the Intel Corporation nor the names of its contributors may be used to&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;endorse or promote products derived from this software without&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;specific prior written permission.&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt; &lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;``AS IS&amp;#39;&amp;#39; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE INTEL OR&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;END_LEGAL */&lt;/span&gt;
+&lt;span style=&#34;color: #719e07&#34;&gt;#include &amp;lt;iostream&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color: #719e07&#34;&gt;#include &amp;quot;pin.H&amp;quot;&lt;/span&gt;
+
+&lt;span style=&#34;color: #586E75&#34;&gt;// modified version of /pintool/source/tools/ManualExamples/inscount0.cpp&lt;/span&gt;
+
+
+&lt;span style=&#34;color: #586E75&#34;&gt;// The running count of instructions is kept here&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;// make it static to help the compiler optimize docount&lt;/span&gt;
+&lt;span style=&#34;color: #719e07&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;UINT64&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;icount&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;;&lt;/span&gt;
+
+&lt;span style=&#34;color: #586E75&#34;&gt;// This function is called before every instruction is executed&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;// increase the count every time it is called, which is before every instruction&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;VOID&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;docount&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;{&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;icount&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;++&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;;&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;}&lt;/span&gt;
+    
+&lt;span style=&#34;color: #586E75&#34;&gt;// Pin calls this function every time a new instruction is encountered&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;VOID&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;Instruction&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;(INS&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;ins,&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;VOID&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;*&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;v)&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #586E75&#34;&gt;// Insert a call to docount before every instruction, no arguments are passed&lt;/span&gt;
+    &lt;span style=&#34;color: #586E75&#34;&gt;// ins: instruction about to be executed&lt;/span&gt;
+    &lt;span style=&#34;color: #586E75&#34;&gt;// IPOINT_BEFORE: call is placed before each instruction&lt;/span&gt;
+    &lt;span style=&#34;color: #586E75&#34;&gt;// (AFUNPTR)docount: name of the function to call before every instruction&lt;/span&gt;
+    &lt;span style=&#34;color: #586E75&#34;&gt;// If any arguments are to be passed to the called function, they will be placed here&lt;/span&gt;
+    &lt;span style=&#34;color: #586E75&#34;&gt;// IARG_END: indicates the end of arguments&lt;/span&gt;
+    
+    &lt;span style=&#34;color: #586E75&#34;&gt;// as a result before each instruction, docount is called&lt;/span&gt;
+    &lt;span style=&#34;color: #93A1A1&#34;&gt;INS_InsertCall(ins,&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;IPOINT_BEFORE,&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;(AFUNPTR)docount,&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;IARG_END);&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;}&lt;/span&gt;
+
+&lt;span style=&#34;color: #586E75&#34;&gt;// This function is called when the application exits&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;VOID&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;Fini&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;(INT32&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;code,&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;VOID&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;*&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;v)&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #586E75&#34;&gt;// print the number of executed instructions&lt;/span&gt;
+    &lt;span style=&#34;color: #93A1A1&#34;&gt;cout&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;Count: &amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;icount&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;endl;&lt;/span&gt;
+
+&lt;span style=&#34;color: #93A1A1&#34;&gt;}&lt;/span&gt;
+
+&lt;span style=&#34;color: #586E75&#34;&gt;/* ===================================================================== */&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;/* Print Help Message                                                    */&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;/* ===================================================================== */&lt;/span&gt;
+
+&lt;span style=&#34;color: #93A1A1&#34;&gt;INT32&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;Usage&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;()&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #93A1A1&#34;&gt;cout&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;This tool counts the number of dynamic instructions executed&amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;endl;&lt;/span&gt;
+    &lt;span style=&#34;color: #719e07&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;}&lt;/span&gt;
+
+&lt;span style=&#34;color: #586E75&#34;&gt;/* ===================================================================== */&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;/* Main                                                                  */&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;/* ===================================================================== */&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;/*   argc, argv are the entire command line: pin -t &amp;lt;toolname&amp;gt; -- ...    */&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;/* ===================================================================== */&lt;/span&gt;
+
+&lt;span style=&#34;color: #DC322F&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;main&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #DC322F&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;argc,&lt;/span&gt; &lt;span style=&#34;color: #DC322F&#34;&gt;char&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;argv[])&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #586E75&#34;&gt;// Initialize pin&lt;/span&gt;
+    &lt;span style=&#34;color: #719e07&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;(PIN_Init(argc,&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;argv))&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;Usage();&lt;/span&gt;
+
+    &lt;span style=&#34;color: #586E75&#34;&gt;// Register Instruction to be called to instrument instructions&lt;/span&gt;
+    &lt;span style=&#34;color: #93A1A1&#34;&gt;INS_AddInstrumentFunction(Instruction,&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;);&lt;/span&gt;
+
+    &lt;span style=&#34;color: #586E75&#34;&gt;// Register Fini to be called when the application exits&lt;/span&gt;
+    &lt;span style=&#34;color: #93A1A1&#34;&gt;PIN_AddFiniFunction(Fini,&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;);&lt;/span&gt;
+    
+    &lt;span style=&#34;color: #586E75&#34;&gt;// Start the program, never returns&lt;/span&gt;
+    &lt;span style=&#34;color: #93A1A1&#34;&gt;PIN_StartProgram();&lt;/span&gt;
+    
+    &lt;span style=&#34;color: #719e07&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+  &lt;/div&gt;
+&lt;/figure&gt;
+
+
+&lt;p&gt;To compile it, we can use the provided makefile. In ManualExamples run &lt;code&gt;make obj-ia32/myins.so&lt;/code&gt;. Note the filename and path. If everything works correctly, we will have &lt;code&gt;myins.so&lt;/code&gt;. Let&amp;rsquo;s copy it to where we want to write our example program.&lt;/p&gt;
+
+&lt;h3 id=&#34;crackme-1-example-c-program:9d811092ed4116aee3518f2598b86e0b&#34;&gt;Crackme 1 - Example C Program&lt;/h3&gt;
+
+&lt;p&gt;The program is quite simple, it checks the first argument against the hardcoded value &lt;code&gt;7bc3a60fbf38e98f6fef654afa26d270&lt;/code&gt;. We will use this program to test our Pin tool.
+
+
+
+    
+
+&lt;figure class=&#34;code&#34;&gt;
+  &lt;figcaption&gt;
+  	&lt;span&gt;crkme1.c&lt;/span&gt;
+  &lt;/figcaption&gt;
+  &lt;div class=&#34;codewrapper&#34;&gt; 
+    &lt;table class=&#34;highlighttable&#34;&gt;&lt;tr&gt;&lt;td&gt;&lt;div class=&#34;linenodiv&#34; style=&#34;background-color: #f0f0f0; padding-right: 10px&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #719e07&#34;&gt;#include &amp;lt;stdio.h&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color: #719e07&#34;&gt;#include &amp;lt;string.h&amp;gt;&lt;/span&gt;
+
+&lt;span style=&#34;color: #DC322F&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;main&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #DC322F&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;argc,&lt;/span&gt; &lt;span style=&#34;color: #DC322F&#34;&gt;char&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;**&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;argv)&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;{&lt;/span&gt;
+
+  &lt;span style=&#34;color: #719e07&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;(&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;argc&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;!=&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;2&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;)&lt;/span&gt;
+  &lt;span style=&#34;color: #93A1A1&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #93A1A1&#34;&gt;printf(&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;usage: ./crkme1 code&lt;/span&gt;&lt;span style=&#34;color: #CB4B16&#34;&gt;\n&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;);&lt;/span&gt;
+    &lt;span style=&#34;color: #719e07&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;;&lt;/span&gt;
+  &lt;span style=&#34;color: #93A1A1&#34;&gt;}&lt;/span&gt;
+  
+  &lt;span style=&#34;color: #DC322F&#34;&gt;char&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;code[]&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;7bc3a60fbf38e98f6fef654afa26d270&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;;&lt;/span&gt;
+  
+  &lt;span style=&#34;color: #719e07&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;(&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;!&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;strncmp(argv[&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;],code,&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;32&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;)&lt;/span&gt;
+  &lt;span style=&#34;color: #93A1A1&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #93A1A1&#34;&gt;printf(&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;Correct&lt;/span&gt;&lt;span style=&#34;color: #CB4B16&#34;&gt;\n&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;);&lt;/span&gt;
+  &lt;span style=&#34;color: #93A1A1&#34;&gt;}&lt;/span&gt;
+  &lt;span style=&#34;color: #719e07&#34;&gt;else&lt;/span&gt;
+  &lt;span style=&#34;color: #93A1A1&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #93A1A1&#34;&gt;printf(&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;Wrong&lt;/span&gt;&lt;span style=&#34;color: #CB4B16&#34;&gt;\n&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;);&lt;/span&gt;
+  &lt;span style=&#34;color: #93A1A1&#34;&gt;}&lt;/span&gt;
+
+  &lt;span style=&#34;color: #719e07&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+  &lt;/div&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Remember to use the &lt;code&gt;ggdb&lt;/code&gt; option to compile with debug information (for GDB). From what I understand this is very similar to the &lt;code&gt;g&lt;/code&gt; option. We will be using GDB to dive into the binary to observe strncmp&amp;rsquo;s behavior. Let&amp;rsquo;s use &lt;code&gt;gcc -ggdb -o crkme1 crkme1.c&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;using-pin-with-crkme1:9d811092ed4116aee3518f2598b86e0b&#34;&gt;Using Pin with Crkme1&lt;/h3&gt;
+
+&lt;p&gt;To run our Pin tool against any executable execute &lt;code&gt;pin -t myins.so -- ./crkme1 012345&lt;/code&gt;. Now let&amp;rsquo;s experiment with some input. Our super secret code starts with &lt;code&gt;7b&lt;/code&gt; so I will be &lt;code&gt;fuzzing&lt;/code&gt; (for very simplistic definition of fuzzing) the first character and look at the number of executed instructions.&lt;/p&gt;
+
+&lt;p&gt;
+
+
+    
+
+&lt;figure class=&#34;code&#34;&gt;
+  &lt;figcaption&gt;
+  	&lt;span&gt;Changing first character&lt;/span&gt;
+  &lt;/figcaption&gt;
+  &lt;div class=&#34;codewrapper&#34;&gt; 
+    &lt;table class=&#34;highlighttable&#34;&gt;&lt;tr&gt;&lt;td&gt;&lt;div class=&#34;linenodiv&#34; style=&#34;background-color: #f0f0f0; padding-right: 10px&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;$ &lt;/span&gt;pin -t myins.so -- ./crkme1 1zzz
+Wrong
+Count: 100013
+&lt;span style=&#34;color: #268BD2&#34;&gt;$ &lt;/span&gt;pin -t myins.so -- ./crkme1 5zzz
+Wrong
+Count: 100013
+&lt;span style=&#34;color: #268BD2&#34;&gt;$ &lt;/span&gt;pin -t myins.so -- ./crkme1 7zzz
+Wrong
+Count: &lt;span style=&#34;color: #2AA198&#34;&gt;100015&lt;/span&gt; &lt;span style=&#34;color: #586E75&#34;&gt;# interesting&lt;/span&gt;
+&lt;span style=&#34;color: #268BD2&#34;&gt;$ &lt;/span&gt;pin -t myins.so -- ./crkme1 bzzz
+Wrong
+Count: 100013
+&lt;span style=&#34;color: #268BD2&#34;&gt;$pin&lt;/span&gt; -t myins.so -- ./crkme1 @zzz
+Wrong
+Count: 100013
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+  &lt;/div&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Notice a pattern? Seems like we executed two extra instructions when our first character matched. Assuming our theory is correct and we have the first character &lt;code&gt;7&lt;/code&gt;, let&amp;rsquo;s experiment with the second character.&lt;/p&gt;
+
+&lt;p&gt;
+
+
+    
+
+&lt;figure class=&#34;code&#34;&gt;
+  &lt;figcaption&gt;
+  	&lt;span&gt;Changing second character&lt;/span&gt;
+  &lt;/figcaption&gt;
+  &lt;div class=&#34;codewrapper&#34;&gt; 
+    &lt;table class=&#34;highlighttable&#34;&gt;&lt;tr&gt;&lt;td&gt;&lt;div class=&#34;linenodiv&#34; style=&#34;background-color: #f0f0f0; padding-right: 10px&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;$ &lt;/span&gt;pin -t myins.so -- ./crkme1 71zz
+Wrong
+Count: 100015
+&lt;span style=&#34;color: #268BD2&#34;&gt;$ &lt;/span&gt;pin -t myins.so -- ./crkme1 75zz
+Wrong
+Count: 100015
+&lt;span style=&#34;color: #268BD2&#34;&gt;$ &lt;/span&gt;pin -t myins.so -- ./crkme1 7bzz
+Wrong
+Count: &lt;span style=&#34;color: #2AA198&#34;&gt;100017&lt;/span&gt; &lt;span style=&#34;color: #586E75&#34;&gt;# 2 extra instructions executed&lt;/span&gt;
+&lt;span style=&#34;color: #268BD2&#34;&gt;$ &lt;/span&gt;pin -t myins.so -- ./crkme1 7@zz
+Wrong
+Count: 100015
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+  &lt;/div&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+
+&lt;p&gt;At this point you probably have a good idea why this is happening. But let&amp;rsquo;s look at the assembly code.&lt;/p&gt;
+
+&lt;h3 id=&#34;gdb-and-strncmp:9d811092ed4116aee3518f2598b86e0b&#34;&gt;GDB and strncmp&lt;/h3&gt;
+
+&lt;p&gt;Good thing we compiled our binary with debug information. Let&amp;rsquo;s look at the assembly code for strncmp:&lt;/p&gt;
+
+&lt;p&gt;
+
+
+    
+
+&lt;figure class=&#34;code&#34;&gt;
+  &lt;figcaption&gt;
+  	&lt;span&gt;Running crkme1 in gdb&lt;/span&gt;
+  &lt;/figcaption&gt;
+  &lt;div class=&#34;codewrapper&#34;&gt; 
+    &lt;table class=&#34;highlighttable&#34;&gt;&lt;tr&gt;&lt;td&gt;&lt;div class=&#34;linenodiv&#34; style=&#34;background-color: #f0f0f0; padding-right: 10px&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #586E75&#34;&gt;# q starts gdb in quiet mode&lt;/span&gt;
+&lt;span style=&#34;color: #268BD2&#34;&gt;$ &lt;/span&gt;gdb ./crkme1 -q
+Reading symbols from /root/Desktop/kek/crkme1...done.
+&lt;span style=&#34;color: #586E75&#34;&gt;# putting a break on strncmp, this is possible because we compiled with -ggdb option&lt;/span&gt;
+&lt;span style=&#34;color: #719e07&#34;&gt;(&lt;/span&gt;gdb&lt;span style=&#34;color: #719e07&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #B58900&#34;&gt;break &lt;/span&gt;strncmp
+Breakpoint &lt;span style=&#34;color: #2AA198&#34;&gt;1&lt;/span&gt; at 0x8048350
+&lt;span style=&#34;color: #586E75&#34;&gt;# passing 7bzz as a run-time argument. r stands for run&lt;/span&gt;
+&lt;span style=&#34;color: #719e07&#34;&gt;(&lt;/span&gt;gdb&lt;span style=&#34;color: #719e07&#34;&gt;)&lt;/span&gt; r 7bzz
+Starting program: /root/Desktop/kek/crkme1 7bzz
+
+Breakpoint 1, 0xb7f82b80 in ?? &lt;span style=&#34;color: #719e07&#34;&gt;()&lt;/span&gt; from /lib/i386-linux-gnu/i686/cmov/libc.so.6
+&lt;span style=&#34;color: #719e07&#34;&gt;(&lt;/span&gt;gdb&lt;span style=&#34;color: #719e07&#34;&gt;)&lt;/span&gt; disass
+No &lt;span style=&#34;color: #719e07&#34;&gt;function&lt;/span&gt; contains program counter &lt;span style=&#34;color: #719e07&#34;&gt;for&lt;/span&gt; selected frame.
+&lt;span style=&#34;color: #586E75&#34;&gt;# oops what happened here?&lt;/span&gt;
+&lt;span style=&#34;color: #719e07&#34;&gt;(&lt;/span&gt;gdb&lt;span style=&#34;color: #719e07&#34;&gt;)&lt;/span&gt; 
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+  &lt;/div&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+
+&lt;p&gt;To get a better a picture of the problem, we&amp;rsquo;re going to go through the same process in verbose mode in GDB using the &lt;code&gt;set verbose on&lt;/code&gt; command.&lt;/p&gt;
+
+&lt;p&gt;
+
+
+    
+
+&lt;figure class=&#34;code&#34;&gt;
+  &lt;figcaption&gt;
+  	&lt;span&gt;Running in gdb with verbose on&lt;/span&gt;
+  &lt;/figcaption&gt;
+  &lt;div class=&#34;codewrapper&#34;&gt; 
+    &lt;table class=&#34;highlighttable&#34;&gt;&lt;tr&gt;&lt;td&gt;&lt;div class=&#34;linenodiv&#34; style=&#34;background-color: #f0f0f0; padding-right: 10px&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;$ &lt;/span&gt;gdb ./crkme1 -q
+Reading symbols from /root/Desktop/kek/crkme1...done.
+&lt;span style=&#34;color: #719e07&#34;&gt;(&lt;/span&gt;gdb&lt;span style=&#34;color: #719e07&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #B58900&#34;&gt;set &lt;/span&gt;verbose on
+&lt;span style=&#34;color: #719e07&#34;&gt;(&lt;/span&gt;gdb&lt;span style=&#34;color: #719e07&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #B58900&#34;&gt;break &lt;/span&gt;strncmp
+Breakpoint &lt;span style=&#34;color: #2AA198&#34;&gt;1&lt;/span&gt; at 0x8048350
+&lt;span style=&#34;color: #719e07&#34;&gt;(&lt;/span&gt;gdb&lt;span style=&#34;color: #719e07&#34;&gt;)&lt;/span&gt; r 7bzz
+Starting program: /root/Desktop/kek/crkme1 7bzz
+Reading symbols from /lib/ld-linux.so.2...&lt;span style=&#34;color: #719e07&#34;&gt;(&lt;/span&gt;no debugging symbols found&lt;span style=&#34;color: #719e07&#34;&gt;)&lt;/span&gt;...done.
+Loaded symbols &lt;span style=&#34;color: #719e07&#34;&gt;for&lt;/span&gt; /lib/ld-linux.so.2
+Reading symbols from system-supplied DSO at 0xb7fe1000...&lt;span style=&#34;color: #719e07&#34;&gt;(&lt;/span&gt;no debugging symbols found&lt;span style=&#34;color: #719e07&#34;&gt;)&lt;/span&gt;...done.
+&lt;span style=&#34;color: #586E75&#34;&gt;# aha, no debugging symbols found for libc6&lt;/span&gt;
+Reading symbols from /lib/i386-linux-gnu/i686/cmov/libc.so.6...&lt;span style=&#34;color: #719e07&#34;&gt;(&lt;/span&gt;no debugging symbols found&lt;span style=&#34;color: #719e07&#34;&gt;)&lt;/span&gt;...done.
+Loaded symbols &lt;span style=&#34;color: #719e07&#34;&gt;for&lt;/span&gt; /lib/i386-linux-gnu/i686/cmov/libc.so.6
+
+Breakpoint 1, 0xb7f82b80 in ?? &lt;span style=&#34;color: #719e07&#34;&gt;()&lt;/span&gt; from /lib/i386-linux-gnu/i686/cmov/libc.so.6
+&lt;span style=&#34;color: #719e07&#34;&gt;(&lt;/span&gt;gdb&lt;span style=&#34;color: #719e07&#34;&gt;)&lt;/span&gt; disass
+No &lt;span style=&#34;color: #719e07&#34;&gt;function&lt;/span&gt; contains program counter &lt;span style=&#34;color: #719e07&#34;&gt;for&lt;/span&gt; selected frame.
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+  &lt;/div&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+
+&lt;p&gt;According to line 12, we we need the debugging symbols for libc to look inside the code.
+On Kali use &lt;code&gt;apt-get install libc6-dbg&lt;/code&gt;. Here we go again:&lt;/p&gt;
+
+&lt;p&gt;
+
+
+    
+
+&lt;figure class=&#34;code&#34;&gt;
+  &lt;figcaption&gt;
+  	&lt;span&gt;After installing libc6-dbg&lt;/span&gt;
+  &lt;/figcaption&gt;
+  &lt;div class=&#34;codewrapper&#34;&gt; 
+    &lt;table class=&#34;highlighttable&#34;&gt;&lt;tr&gt;&lt;td&gt;&lt;div class=&#34;linenodiv&#34; style=&#34;background-color: #f0f0f0; padding-right: 10px&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;root@kali:~/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;Desktop&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;kek#&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;gdb&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;crkme1&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;q&lt;/span&gt;
+&lt;span style=&#34;color: #268BD2&#34;&gt;Reading&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;symbols&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;root&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;Desktop&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;kek&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;crkme1...done.&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;gdb&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;break&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;strncmp&lt;/span&gt;
+&lt;span style=&#34;color: #268BD2&#34;&gt;Breakpoint&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;at&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;0x8048350&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;gdb&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;r&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;7&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;bzz&lt;/span&gt;
+&lt;span style=&#34;color: #268BD2&#34;&gt;Starting&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;program&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;root&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;Desktop&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;kek&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;crkme1&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;7&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;bzz&lt;/span&gt;
+
+&lt;span style=&#34;color: #268BD2&#34;&gt;Breakpoint&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;__strncmp_ssse3&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;()&lt;/span&gt;
+    &lt;span style=&#34;color: #268BD2&#34;&gt;at&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;..&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;sysdeps&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;i386&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;i686&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;multiarch&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;strcmp&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color: #B58900&#34;&gt;ss&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;se3.S&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;65&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;65&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;..&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;sysdeps&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;i386&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;i686&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;multiarch&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;strcmp&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color: #B58900&#34;&gt;ss&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;se3.S&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;No&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;such&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;file&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;or&lt;/span&gt; &lt;span style=&#34;color: #B58900&#34;&gt;di&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;rectory.&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;gdb&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #B58900&#34;&gt;di&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;sass&lt;/span&gt;
+&lt;span style=&#34;color: #268BD2&#34;&gt;Dump&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;of&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;assembler&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;code&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;for&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;__strncmp_ssse3&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f82b80&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;push&lt;/span&gt;   &lt;span style=&#34;color: #B58900&#34;&gt;ebp&lt;/span&gt;
+   &lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f82b81&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;mov&lt;/span&gt;    &lt;span style=&#34;color: #B58900&#34;&gt;edx&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;,&lt;/span&gt;&lt;span style=&#34;color: #DC322F&#34;&gt;DWORD&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;PTR&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color: #B58900&#34;&gt;esp&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;0x8&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;]&lt;/span&gt;
+   &lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f82b85&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;5&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;mov&lt;/span&gt;    &lt;span style=&#34;color: #B58900&#34;&gt;eax&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;,&lt;/span&gt;&lt;span style=&#34;color: #DC322F&#34;&gt;DWORD&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;PTR&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color: #B58900&#34;&gt;esp&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;0xc&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;]&lt;/span&gt;
+   &lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f82b89&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;9&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;mov&lt;/span&gt;    &lt;span style=&#34;color: #B58900&#34;&gt;ebp&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;,&lt;/span&gt;&lt;span style=&#34;color: #DC322F&#34;&gt;DWORD&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;PTR&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color: #B58900&#34;&gt;esp&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;0x10&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;]&lt;/span&gt;
+   &lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f82b8d&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;13&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;cmp&lt;/span&gt;    &lt;span style=&#34;color: #B58900&#34;&gt;ebp&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;,&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;0x10&lt;/span&gt;
+   &lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f82b90&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;16&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;jb&lt;/span&gt;     &lt;span style=&#34;color: #2AA198&#34;&gt;0xb7f843d0&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;__strncmp_ssse3&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6224&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+  &lt;/div&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Now we can see what happens in strncmp. The following is the cleaned up version of the assembly of strncmp.&lt;/p&gt;
+
+&lt;p&gt;
+
+
+    
+
+&lt;figure class=&#34;code&#34;&gt;
+  &lt;figcaption&gt;
+  	&lt;span&gt;strncmp&lt;/span&gt;
+  &lt;/figcaption&gt;
+  &lt;div class=&#34;codewrapper&#34;&gt; 
+    &lt;table class=&#34;highlighttable&#34;&gt;&lt;tr&gt;&lt;td&gt;&lt;div class=&#34;linenodiv&#34; style=&#34;background-color: #f0f0f0; padding-right: 10px&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #586E75&#34;&gt;; assuming we called strncmp (argv[1],code,32);&lt;/span&gt;
+
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f82b80&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;push&lt;/span&gt;   &lt;span style=&#34;color: #B58900&#34;&gt;ebp&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f82b81&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt; 	&lt;span style=&#34;color: #268BD2&#34;&gt;mov&lt;/span&gt;    &lt;span style=&#34;color: #B58900&#34;&gt;edx&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;,&lt;/span&gt;&lt;span style=&#34;color: #DC322F&#34;&gt;DWORD&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;PTR&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color: #B58900&#34;&gt;esp&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;0x8&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;]&lt;/span&gt;  &lt;span style=&#34;color: #586E75&#34;&gt;; argv[1] or &amp;quot;7bzz&amp;quot;&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f82b85&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;5&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt; 	&lt;span style=&#34;color: #268BD2&#34;&gt;mov&lt;/span&gt;    &lt;span style=&#34;color: #B58900&#34;&gt;eax&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;,&lt;/span&gt;&lt;span style=&#34;color: #DC322F&#34;&gt;DWORD&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;PTR&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color: #B58900&#34;&gt;esp&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;0xc&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;]&lt;/span&gt;  &lt;span style=&#34;color: #586E75&#34;&gt;; code or &amp;quot;7bc3 ..&amp;quot;&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f82b89&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;9&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt; 	&lt;span style=&#34;color: #268BD2&#34;&gt;mov&lt;/span&gt;    &lt;span style=&#34;color: #B58900&#34;&gt;ebp&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;,&lt;/span&gt;&lt;span style=&#34;color: #DC322F&#34;&gt;DWORD&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;PTR&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color: #B58900&#34;&gt;esp&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;0x10&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;]&lt;/span&gt; &lt;span style=&#34;color: #586E75&#34;&gt;; 32 or 0x20&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f82b8d&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;13&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt; 	&lt;span style=&#34;color: #268BD2&#34;&gt;cmp&lt;/span&gt;    &lt;span style=&#34;color: #B58900&#34;&gt;ebp&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;,&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;0x10&lt;/span&gt;                 &lt;span style=&#34;color: #586E75&#34;&gt;; 32 compared to 0x10 (16 decimal)&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f82b90&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;16&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt; 	&lt;span style=&#34;color: #268BD2&#34;&gt;jb&lt;/span&gt;     &lt;span style=&#34;color: #2AA198&#34;&gt;0xb7f843d0&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;__strncmp_ssse3&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6224&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color: #268BD2&#34;&gt;...&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;; if number of bytes to compare is bigger than 16&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;; let&amp;#39;s assume it is not and see what happens next&lt;/span&gt;
+&lt;span style=&#34;color: #268BD2&#34;&gt;...&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f843d0&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6224&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;test&lt;/span&gt;   &lt;span style=&#34;color: #B58900&#34;&gt;ebp&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;,&lt;/span&gt;&lt;span style=&#34;color: #B58900&#34;&gt;ebp&lt;/span&gt;  &lt;span style=&#34;color: #586E75&#34;&gt;; if (ebp == 0) goto 0xb7f843c3&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f843d2&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6226&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;je&lt;/span&gt;     &lt;span style=&#34;color: #2AA198&#34;&gt;0xb7f843c3&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;__strncmp_ssse3&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6211&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt; 
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f843d4&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6228&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;movzx&lt;/span&gt;  &lt;span style=&#34;color: #B58900&#34;&gt;ecx&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;,&lt;/span&gt;&lt;span style=&#34;color: #DC322F&#34;&gt;BYTE&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;PTR&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color: #B58900&#34;&gt;eax&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;]&lt;/span&gt; &lt;span style=&#34;color: #586E75&#34;&gt;; ecx = code&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f843d7&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6231&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;cmp&lt;/span&gt;    &lt;span style=&#34;color: #DC322F&#34;&gt;BYTE&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;PTR&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color: #B58900&#34;&gt;edx&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;],&lt;/span&gt;&lt;span style=&#34;color: #B58900&#34;&gt;cl&lt;/span&gt;  &lt;span style=&#34;color: #586E75&#34;&gt;; if (code[0] != argv[1][0]) goto 0xb7f843b0;&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f843d9&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6233&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;jne&lt;/span&gt;    &lt;span style=&#34;color: #2AA198&#34;&gt;0xb7f843b0&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;__strncmp_ssse3&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6192&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f843db&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6235&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;test&lt;/span&gt;   &lt;span style=&#34;color: #B58900&#34;&gt;cl&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;,&lt;/span&gt;&lt;span style=&#34;color: #B58900&#34;&gt;cl&lt;/span&gt;  &lt;span style=&#34;color: #586E75&#34;&gt;; if (code[0] == 0) goto 0xb7f843c3; // have we reached the end of code?&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f843dd&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6237&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;je&lt;/span&gt;     &lt;span style=&#34;color: #2AA198&#34;&gt;0xb7f843c3&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;__strncmp_ssse3&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6211&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f843df&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6239&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;cmp&lt;/span&gt;    &lt;span style=&#34;color: #B58900&#34;&gt;ebp&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;,&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;0x1&lt;/span&gt;  &lt;span style=&#34;color: #586E75&#34;&gt;; if (counter == 1) goto 0xb7f843c3; // was this our last compare?&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f843e2&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6242&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;je&lt;/span&gt;     &lt;span style=&#34;color: #2AA198&#34;&gt;0xb7f843c3&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;__strncmp_ssse3&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6211&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f843e4&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6244&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;movzx&lt;/span&gt;  &lt;span style=&#34;color: #B58900&#34;&gt;ecx&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;,&lt;/span&gt;&lt;span style=&#34;color: #DC322F&#34;&gt;BYTE&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;PTR&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color: #B58900&#34;&gt;eax&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;0x1&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;]&lt;/span&gt;	&lt;span style=&#34;color: #586E75&#34;&gt;; ecx = code[1];&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f843e8&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6248&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;cmp&lt;/span&gt;    &lt;span style=&#34;color: #DC322F&#34;&gt;BYTE&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;PTR&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color: #B58900&#34;&gt;edx&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;0x1&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;],&lt;/span&gt;&lt;span style=&#34;color: #B58900&#34;&gt;cl&lt;/span&gt;  &lt;span style=&#34;color: #586E75&#34;&gt;; if (code[1] != argv[1][1]) goto 0xb7f843b0;&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f843eb&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6251&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;jne&lt;/span&gt;    &lt;span style=&#34;color: #2AA198&#34;&gt;0xb7f843b0&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;__strncmp_ssse3&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6192&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f843ed&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6253&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;test&lt;/span&gt;   &lt;span style=&#34;color: #B58900&#34;&gt;cl&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;,&lt;/span&gt;&lt;span style=&#34;color: #B58900&#34;&gt;cl&lt;/span&gt;  &lt;span style=&#34;color: #586E75&#34;&gt;; if (code[1] == 0) goto 0xb7f843c3; // have we reached the end of code?&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f843ef&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6255&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;je&lt;/span&gt;     &lt;span style=&#34;color: #2AA198&#34;&gt;0xb7f843c3&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;__strncmp_ssse3&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6211&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f843f1&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6257&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;cmp&lt;/span&gt;    &lt;span style=&#34;color: #B58900&#34;&gt;ebp&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;,&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;0x2&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f843f4&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6260&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;je&lt;/span&gt;     &lt;span style=&#34;color: #2AA198&#34;&gt;0xb7f843c3&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;__strncmp_ssse3&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6211&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color: #268BD2&#34;&gt;...&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;; similar byte compares until the end&lt;/span&gt;
+&lt;span style=&#34;color: #268BD2&#34;&gt;...&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f8453f&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6591&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;test&lt;/span&gt;   &lt;span style=&#34;color: #B58900&#34;&gt;cl&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;,&lt;/span&gt;&lt;span style=&#34;color: #B58900&#34;&gt;cl&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f84541&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6593&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;je&lt;/span&gt;     &lt;span style=&#34;color: #2AA198&#34;&gt;0xb7f843c3&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;__strncmp_ssse3&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;621&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f84547&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6599&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;cmp&lt;/span&gt;    &lt;span style=&#34;color: #B58900&#34;&gt;ebp&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;,&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;0xf&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f8454a&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6602&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;je&lt;/span&gt;     &lt;span style=&#34;color: #2AA198&#34;&gt;0xb7f843c3&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;__strncmp_ssse3&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;621&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f84550&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6608&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;movzx&lt;/span&gt;  &lt;span style=&#34;color: #B58900&#34;&gt;ecx&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;,&lt;/span&gt;&lt;span style=&#34;color: #DC322F&#34;&gt;BYTE&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;PTR&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color: #B58900&#34;&gt;eax&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;0xf&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;]&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f84554&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6612&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;cmp&lt;/span&gt;    &lt;span style=&#34;color: #DC322F&#34;&gt;BYTE&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;PTR&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color: #B58900&#34;&gt;edx&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;0xf&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;],&lt;/span&gt;&lt;span style=&#34;color: #B58900&#34;&gt;cl&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f84557&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6615&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;	&lt;span style=&#34;color: #268BD2&#34;&gt;jne&lt;/span&gt;    &lt;span style=&#34;color: #2AA198&#34;&gt;0xb7f843b0&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;__strncmp_ssse3&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;619&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;xb7f8455d&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;lt;+&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;6621&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color: #586E75&#34;&gt;;	test   cl,cl&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+  &lt;/div&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+
+&lt;p&gt;We can see that the implementation has unrolled the for and compares 16 bytes one by one. If a character is correct, two more instructions are executed (as we saw) which are &lt;code&gt;test   cl,cl&lt;/code&gt; and &lt;code&gt;je     0xb7f843c3&lt;/code&gt; which basically checks if we have reached the end of first string. Now we know why. Let us build our tool.&lt;/p&gt;
+
+&lt;h3 id=&#34;pinsolver-mk1:9d811092ed4116aee3518f2598b86e0b&#34;&gt;PinSolver Mk1&lt;/h3&gt;
+
+&lt;p&gt;I am going to use Python&amp;rsquo;s subprocess module and reuse &lt;a href=&#34;http://parsiya.net/blog/2014-05-25-pasting-shellcode-into-gdb-using-python/&#34; target=&#34;_blank&#34;&gt;some old code&lt;/a&gt;. The script simply iterates through all valid characters (note: do not include space or some other special characters). For this example I am going to use alphanumeric characters. Character with the largest number of executed instructions will be chose and we move on to the next character.&lt;/p&gt;
+
+&lt;p&gt;
+
+
+    
+
+&lt;figure class=&#34;code&#34;&gt;
+  &lt;figcaption&gt;
+  	&lt;span&gt;pinsolvermk1.py&lt;/span&gt;
+  &lt;/figcaption&gt;
+  &lt;div class=&#34;codewrapper&#34;&gt; 
+    &lt;table class=&#34;highlighttable&#34;&gt;&lt;tr&gt;&lt;td&gt;&lt;div class=&#34;linenodiv&#34; style=&#34;background-color: #f0f0f0; padding-right: 10px&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #586E75&#34;&gt;#!/usr/bin/python&lt;/span&gt;
+
+&lt;span style=&#34;color: #719e07&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;subprocess&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;Popen,&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;PIPE&lt;/span&gt;
+
+&lt;span style=&#34;color: #586E75&#34;&gt;# create a set of alphanumeric chars&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;alphanumeric&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;0123456789&amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;abcdefghijklmnopqrstuvwxyz&amp;quot;&lt;/span&gt;
+
+&lt;span style=&#34;color: #93A1A1&#34;&gt;solution&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;[]&lt;/span&gt;
+
+&lt;span style=&#34;color: #93A1A1&#34;&gt;flag&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;False&lt;/span&gt;
+
+&lt;span style=&#34;color: #719e07&#34;&gt;while&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;True&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;):&lt;/span&gt;
+
+  &lt;span style=&#34;color: #93A1A1&#34;&gt;maxcount&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;0&lt;/span&gt;
+  &lt;span style=&#34;color: #93A1A1&#34;&gt;candidate_char&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;0&lt;/span&gt;
+
+  &lt;span style=&#34;color: #719e07&#34;&gt;for&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;char&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;in&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;alphanumeric:&lt;/span&gt;
+    &lt;span style=&#34;color: #586E75&#34;&gt;# construct&lt;/span&gt;
+    &lt;span style=&#34;color: #93A1A1&#34;&gt;fez&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;join(solution)&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;char&lt;/span&gt;
+    &lt;span style=&#34;color: #93A1A1&#34;&gt;proc&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;Popen([&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;pin&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;-t&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;myins.so&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;--&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;,&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;./crkme1&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;fez],&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;stdout&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;PIPE,&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;stderr&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;PIPE)&lt;/span&gt;
+  
+    &lt;span style=&#34;color: #586E75&#34;&gt;# read output and split by lines&lt;/span&gt;
+    &lt;span style=&#34;color: #93A1A1&#34;&gt;output&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;proc&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;stdout&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;read()&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;splitlines()&lt;/span&gt;
+  
+    &lt;span style=&#34;color: #719e07&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;(output[&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;]&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;Correct&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;):&lt;/span&gt;
+      &lt;span style=&#34;color: #719e07&#34;&gt;print&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;Code found: &amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;join(solution)&lt;/span&gt;
+      &lt;span style=&#34;color: #719e07&#34;&gt;break&lt;/span&gt;
+    &lt;span style=&#34;color: #719e07&#34;&gt;else&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;
+      &lt;span style=&#34;color: #93A1A1&#34;&gt;count&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #B58900&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;(output[&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;]&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;split(&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;)[&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;])&lt;/span&gt;
+    
+      &lt;span style=&#34;color: #719e07&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;(count&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;maxcount):&lt;/span&gt;
+        &lt;span style=&#34;color: #93A1A1&#34;&gt;maxcount&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;count&lt;/span&gt;
+        &lt;span style=&#34;color: #93A1A1&#34;&gt;candidate_char&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;char&lt;/span&gt;
+    
+    &lt;span style=&#34;color: #586E75&#34;&gt;# print (&amp;quot;Trying %s - Count is: %d - Maxcount is: %d - Candidate_char is: %s&amp;quot;) % (fez, count, maxcount, candidate_char)&lt;/span&gt;
+  
+  &lt;span style=&#34;color: #586E75&#34;&gt;# after a loop has finished, add the chosen char to the solution&lt;/span&gt;
+  &lt;span style=&#34;color: #93A1A1&#34;&gt;solution&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;append(candidate_char)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+  &lt;/div&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Note: If your VM has multiple CPUs this will not work. At this moment I do not know why.&lt;/p&gt;
+
+&lt;p&gt;TODO in next chapter:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Try to find some simple crackmes2 from CTFs to run this tool on&lt;/li&gt;
+&lt;li&gt;Find a way to increase pin&amp;rsquo;s performance&lt;/li&gt;
+&lt;li&gt;Why is the instruction count not calculated correctly occasionally when VM has multiple CPUs?&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;As usual, if there is a any feedback please feel free to comment or contact me on Twitter. My handle is in the side bar &amp;mdash;-&amp;gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

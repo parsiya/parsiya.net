@@ -10,7 +10,7 @@
         <h1 class="entry-title">
           <a href="{{ .Permalink }}">{{ .Title }}</a>
         </h1>
-        <p class="meta">{{ .Date.Format "Jan 2, 2006" }} - {{ .ReadingTime }} minute read - {{ if .Site.DisqusShortname }} <a href="{{ .Permalink }}#disqus_thread">Comments</a>{{ end }}
+        <p class="meta">{{ .Date.Format "Jan 2, 2006" }} - {{ .ReadingTime }} minute read - {{ if .Site.Params.disqusShortname }} <a href="{{ .Permalink }}#disqus_thread">Comments</a>{{ end }}
 
         {{ if isset .Params "categories" }}
         <!-- <br/> this will make the categories go to the second line and mess with the title -->

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Memory Forensics on Parsia&#39;s Den</title>
+    <link>http://parsiya.net/categories/memory-forensics/</link>
+    <description>Recent content in Memory Forensics on Parsia&#39;s Den</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 18 Nov 2014 23:21:01 +0000</lastBuildDate>
+    <atom:link href="http://parsiya.net/categories/memory-forensics/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Building memfetch on Kali &#43; Comments</title>
+      <link>http://parsiya.net/blog/2014-11-18-Building-memfetch-on-Kali--Comments/</link>
+      <pubDate>Tue, 18 Nov 2014 23:21:01 +0000</pubDate>
+      
+      <guid>http://parsiya.net/blog/2014-11-18-Building-memfetch-on-Kali--Comments/</guid>
+      <description>&lt;p&gt;I&amp;rsquo;ve used Disqus to add comments. At the moment, guests can comment and comments do not need to be approved (unless they have links). Hopefully there won&amp;rsquo;t be much spam to sink the ocassional comment that I think will be posted.&lt;/p&gt;
+
+&lt;p&gt;Note: I just wanted to make it work in a hurry. There are probably better ways of doing this.&lt;/p&gt;
+
+&lt;p&gt;I stumbled upon the very useful tool &lt;a href=&#34;http://lcamtuf.coredump.cx/soft/memfetch.tgz&#34; target=&#34;_blank&#34;&gt;memfetch&lt;/a&gt; by the talented &lt;em&gt;lcamtuf&lt;/em&gt;. The utility is quite old (from 2003 if I recall correctly) and I could not build it using the provided makefile.&lt;/p&gt;
+
+
+
+
+    
+
+&lt;figure class=&#34;code&#34;&gt;
+  &lt;figcaption&gt;
+  	&lt;span&gt;errors while building memfetch&lt;/span&gt;
+  &lt;/figcaption&gt;
+  &lt;div class=&#34;codewrapper&#34;&gt; 
+    &lt;table class=&#34;highlighttable&#34;&gt;&lt;tr&gt;&lt;td&gt;&lt;div class=&#34;linenodiv&#34; style=&#34;background-color: #f0f0f0; padding-right: 10px&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;1
+2
+3
+4
+5&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;$ &lt;/span&gt;make
+gcc -Wall -O9    memfetch.c   -o memfetch
+memfetch.c:30:22: fatal error: asm/page.h: No such file or directory
+compilation terminated.
+make: *** &lt;span style=&#34;color: #719e07&#34;&gt;[&lt;/span&gt;memfetch&lt;span style=&#34;color: #719e07&#34;&gt;]&lt;/span&gt; Error 1
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+  &lt;/div&gt;
+&lt;/figure&gt;
+
+
+&lt;p&gt;Seems like the location of header files have moved since then. &lt;a href=&#34;http://stackoverflow.com/a/19310710&#34; target=&#34;_blank&#34;&gt;This stackoverflow answer&lt;/a&gt; mentions removing &lt;code&gt;asm/page.h&lt;/code&gt; and adding &lt;code&gt;linux/types.h&lt;/code&gt;. Let&amp;rsquo;s see what happens now:&lt;/p&gt;
+
+&lt;p&gt;
+
+
+    
+
+&lt;figure class=&#34;code&#34;&gt;
+  &lt;figcaption&gt;
+  	&lt;span&gt;more errors&lt;/span&gt;
+  &lt;/figcaption&gt;
+  &lt;div class=&#34;codewrapper&#34;&gt; 
+    &lt;table class=&#34;highlighttable&#34;&gt;&lt;tr&gt;&lt;td&gt;&lt;div class=&#34;linenodiv&#34; style=&#34;background-color: #f0f0f0; padding-right: 10px&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;1
+2
+3
+4
+5
+6&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;$ &lt;/span&gt;make
+gcc -Wall -O9    memfetch.c   -o memfetch
+memfetch.c: In &lt;span style=&#34;color: #719e07&#34;&gt;function&lt;/span&gt; ‘main’:
+memfetch.c:284:25: error: ‘PAGE_SIZE’ undeclared &lt;span style=&#34;color: #719e07&#34;&gt;(&lt;/span&gt;first use in this &lt;span style=&#34;color: #719e07&#34;&gt;function)&lt;/span&gt;
+memfetch.c:284:25: note: each undeclared identifier is reported only once &lt;span style=&#34;color: #719e07&#34;&gt;for&lt;/span&gt; each &lt;span style=&#34;color: #719e07&#34;&gt;function&lt;/span&gt; it appears in
+make: *** &lt;span style=&#34;color: #719e07&#34;&gt;[&lt;/span&gt;memfetch&lt;span style=&#34;color: #719e07&#34;&gt;]&lt;/span&gt; Error 1
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+  &lt;/div&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;page.h&lt;/code&gt; file is located at &lt;code&gt;/usr/src/linux-headers-3.12-kali1-common/include/asm-generic/page.h&lt;/code&gt; on Kali linux. This is where &lt;code&gt;PAGE_SIZE&lt;/code&gt; is defined. Just adding it to &lt;code&gt;memfetch.c&lt;/code&gt; along with changing &lt;code&gt;#include &amp;lt;asm/page.h&amp;gt;&lt;/code&gt; to &lt;code&gt;#include &amp;lt;linux/types.h&amp;gt;&lt;/code&gt; will do the trick.&lt;/p&gt;
+
+&lt;p&gt;
+
+
+    
+
+&lt;figure class=&#34;code&#34;&gt;
+  &lt;figcaption&gt;
+  	&lt;span&gt;additions to memfetch.c&lt;/span&gt;
+  &lt;/figcaption&gt;
+  &lt;div class=&#34;codewrapper&#34;&gt; 
+    &lt;table class=&#34;highlighttable&#34;&gt;&lt;tr&gt;&lt;td&gt;&lt;div class=&#34;linenodiv&#34; style=&#34;background-color: #f0f0f0; padding-right: 10px&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;// &lt;span style=&#34;color: #586E75&#34;&gt;#include &amp;lt;asm/page.h&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;#include &amp;lt;linux/types.h&amp;gt;&lt;/span&gt;
+
+// Copied from asm-generic/page.h
+/* PAGE_SHIFT determines the page size */
+&lt;span style=&#34;color: #586E75&#34;&gt;#define PAGE_SHIFT	12&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;#ifdef __ASSEMBLY__&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;#define PAGE_SIZE	(1 &amp;lt;&amp;lt; PAGE_SHIFT)&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;#else&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;#define PAGE_SIZE	(1UL &amp;lt;&amp;lt; PAGE_SHIFT)&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;#endif&lt;/span&gt;
+&lt;span style=&#34;color: #586E75&#34;&gt;#define PAGE_MASK	(~(PAGE_SIZE-1))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+  &lt;/div&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+
+&lt;p&gt;If there is a better way to make this work, please let me know.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
