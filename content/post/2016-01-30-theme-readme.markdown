@@ -1,9 +1,9 @@
-+++
-date = "2016-01-30T20:52:38-05:00"
-draft = true
-title = "Theme Readme Test"
+---
+date: "2016-01-30T20:52:38-05:00"
+draft: true
+title: "Theme Readme Test"
 
-+++
+---
 
 # Hugo-Octopress
 Hugo-Octopress is a port of the classic [Octopress][octopress-link] theme to [Hugo][hugo-link].

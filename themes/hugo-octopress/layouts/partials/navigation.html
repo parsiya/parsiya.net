@@ -3,13 +3,13 @@
 
 <ul class="main-navigation">
   {{ range .Site.Menus.main }}
-    <li><a href="{{ .URL | absURL }}">{{ .Name }}</a></li>
+    <li><a href="{{ .URL | absURL }}" target="_blank" title="{{ .Name }}">{{ .Name }}</a></li>
   {{ end }}
 </ul>
 
-<!-- http://fontawesome.io icon -->
+<!-- http://fontawesome.io icon fa-lg adapts it to size (at least it is supposed to) -->
 <ul class="subscription">
-  {{ if .Site.Params.rss }}<a href="{{ "/index.xml" | absURL }}" type="application/rss+xml" title="RSS"><i class="fa fa-rss-square fa-lg"></i></a>{{ end }}
+  {{ if .Site.Params.rss }}<a href="{{ "/index.xml" | absURL }}" target="_blank" type="application/rss+xml" title="RSS"><i class="fa fa-rss-square fa-lg"></i></a>{{ end }}
 
   <!-- If you prefer RSS text (like Octopress) replace the line above with next comment -->
   <!-- <li><a href="/index.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li> -->

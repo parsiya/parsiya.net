@@ -64,7 +64,11 @@ post = "/blog/:year-:month-:day-:title/"
   # &rarr; == right arrow, but it gets messed up in the string so it is added to hugo-octopress/layouts/index.html manually
   continue_reading = "Would you like to know more?"
 
-  # Google analyrics
+  # disqus - simply enter your disqus - using the template from https://gohugo.io/extras/comments/ at /hugo-octopress/layouts/partials/disqus.html that disables disqus when running on localhost (if you are testing it offline remember to comment out the if in the template that checks for localhost)
+  # the template is injected into the pages in /hugo-octopress/layouts/partials/post-footer.html which is in every post (and not pages like license)
+  disqusShortname = "your disqus short name"
+
+  # Google analytics - _internal/googleanalyrics.html in injected in hugo-octopress/layouts/partials/header.html
   googleAnalytics = "Your Google Analytics tracking code"
 
   # switch to true to enable RSS icon link in the navigation menu
@@ -75,7 +79,7 @@ post = "/blog/:year-:month-:day-:title/"
 
   # keywords used in meta tags
   # does this even work in action?
-  defaultKeywords = ["Parsia Hakimian" , "Parsia" , "infosec" , "information security"]
+  # defaultKeywords = ["keyword1" , "keyword2" , "keyword3" , "keyword4"]
 
 ```
 
@@ -232,12 +236,8 @@ If you know how to clean it up, please let me know or better yet help me do it :
 
 **Update `theme.toml`**  after code is uploaded to github with repo info and other items.
 
-**Fix Disqus**
-
-**Fix Google analytics**
-
 ## <a name="attribution"></a>Attribution
-* [Octopress](octopress-link) is created by [Brandon Mathis](https://github.com/imathis). Octopress source can be found on [Github](https://github.com/imathis/octopress).
+* [Octopress](octopress-link) is created by [Brandon Mathis](https://github.com/imathis). Octopress source can be found on [https://github.com/imathis/octopress](https://github.com/imathis/octopress).
 
 * Some code was taken from the [Hyde-x](https://github.com/zyro/hyde-x) Hugo theme by [Andrei Mihu](http://andreimihu.com/).
 
@@ -251,7 +251,6 @@ Ported by Parsia Hakimian:
 
 ## <a name="themelicense"></a>Theme license
 Open sourced under the MIT license [link to MIT license in the repo after upload].
-
 
 
 [octopress-link]: http://octopress.org

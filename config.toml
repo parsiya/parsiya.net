@@ -1,7 +1,8 @@
 
 # https://gohugo.io/overview/configuration/
 
-baseurl = "http://parsiya.io/"
+baseurl = "http://parsiya.net/"
+# baseurl = "http://parsiya.io/"
 disablePathToLower = true
 languageCode = "en-us"
 title = "Parsia's Den"
@@ -22,9 +23,6 @@ pygmentscodefences = true
 
 # can pass in pygments options here, it can also be added in the highlight shortcode
 # pygmentsoptions = "linenos=true"
-
-# disqus is not working currently
-# disqusShortname = "parsiya"
 
 [permalinks]
 post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the old ones
@@ -69,7 +67,11 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 	# Text of the Continue Reading label. &rarr; == right arrow, but it gets messed up in the string so we will add it to index.html manually
 	continue_reading = "Would you like to know more?"
 
-	# googleAnalytics = "Your Google Analytics tracking code"
+	# Google analytics code
+	googleAnalytics = "UA-55491306-1"
+
+	# disqus shortcode
+	disqusShortname = "parsiya"
 
 	bitbucket = "https://bitbucket.org/parsiya/"
 	twitter = "https://twitter.com/cryptogangsta/"
