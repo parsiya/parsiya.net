@@ -2,8 +2,13 @@
 <!-- reading menu items from config file -->
 
 <ul class="main-navigation">
+  <!-- do not open links to root in new window - otherwise any other link can be opened in new window -->
   {{ range .Site.Menus.main }}
-    <li><a href="{{ .URL | absURL }}" target="_blank" title="{{ .Name }}">{{ .Name }}</a></li>
+    {{ if eq .URL "/" }}
+      <li><a href="{{ .URL | absURL }}" title="{{ .Name }}">{{ .Name }}</a></li>
+    {{ else }}
+      <li><a href="{{ .URL | absURL }}" target="_blank" title="{{ .Name }}">{{ .Name }}</a></li>
+    {{ end }}
   {{ end }}
 </ul>
 

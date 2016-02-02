@@ -15,7 +15,7 @@
   you can also add sidebar links from config file via the .Site.Menus.main  part
   <ul class="sidebar-nav">
     <li class="sidebar-nav-item"><a href="{{ "/" | absURL }}">{{ if isset .Site.Params "home"}}{{ .Site.Params.home }}{{ else }}Blog{{ end }}</a></li>
-    {{ range .Site.Menus.main }}  
+    {{ range .Site.Menus.main }}
     <li class="sidebar-nav-item">{{ .Pre }}<a href="{{ .URL | absURL }}">{{ .Name }}</a></li>
     {{end}}
   </ul>
@@ -48,8 +48,13 @@
   <section class="even">
     <h1>Recent Posts</h1>
 
+    <!-- check if the number of recent posts is set in config file, otherwise use 5 -->
     <ul id="recent_posts">
-      {{range first .Site.Params.SidebarRecentLimit .Site.Pages}}
+      {{ $numberofrecentposts := 5 }}
+      {{ if isset .Site.Params "SidebarRecentLimit" }}
+        {{ $numberofrecentposts := .Site.Params.SidebarRecentLimit }}
+      {{ end }}
+      {{range first $numberofrecentposts .Site.Pages }}
       <li class="post">
         <a href="{{.RelPermalink}}">{{.Title}}</a>
       </li>

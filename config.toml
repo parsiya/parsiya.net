@@ -12,7 +12,7 @@ theme = "hugo-octopress"
 paginate = 6
 
 pygmentsuseclasses = false
-pygmentsstyle = "solarized_dark" 
+pygmentsstyle = "solarized_dark"
 
 # you need to install Solarized from https://github.com/john2x/solarized-pygment.git
 # Octopress blog used Solarized_dark
@@ -33,10 +33,11 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 	category = "categories"
 
 # menu
+# links will open in a new window except links to "/" - links are added to navigation in hugo-octopress/layouts/partials/navigation.html
 [[menu.main]]
 	Name = "Blog"
 	URL = "/"
-	weight = -10
+	weight = -5
 
 [[menu.main]]
 	Name = "The other guy from Wham!"
@@ -44,16 +45,16 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 	weight = -5
 
 [[menu.main]]
-	Name = "This theme - add link"
-	URL = "https://www.github.com"
+	Name = "This theme on Github"
+	URL = "https://www.github.com/parsiya/hugo-octopress"
 
 [params]
 
-	# number of recent posts that will be shown in the sidebar
-	SidebarRecentLimit = 5 
+	# number of recent posts that will be shown in the sidebar - default is 5
+	SidebarRecentLimit = 5
 
 	# if false, all of the post will appear on front page (and in pagination)
-	truncate = true 
+	truncate = true
 
 	# author's name (this will appear in metadata and under posts)
 	author = "Parsia"

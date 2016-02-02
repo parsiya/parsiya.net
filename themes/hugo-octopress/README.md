@@ -36,7 +36,7 @@ paginate = 6
 
 # change the article links
 [permalinks]
-post = "/blog/:year-:month-:day-:title/" 
+post = "/blog/:year-:month-:day-:title/"
 
 # to generate tags and categories
 # tags are generated using the template hugo-octopress/layouts/indexes/tags.html
@@ -48,11 +48,11 @@ post = "/blog/:year-:month-:day-:title/"
 
 [params]
 
-  # number of recent posts that will be shown in the sidebar
-  SidebarRecentLimit = 5 
+  # number of recent posts that will be shown in the sidebar - default is 5
+  SidebarRecentLimit = 5
 
   # if false, all of the post will appear on front page (and in pagination) - not recommended
-  truncate = true 
+  truncate = true
 
   # author's name (this will appear in metadata and at the bottom of posts)
   author = "Site Author"
@@ -60,7 +60,7 @@ post = "/blog/:year-:month-:day-:title/"
   # appears in the site header under website title
   subtitle = "Site Subtitle"
 
-  # text of the Continue Reading label. 
+  # text of the Continue Reading label.
   # &rarr; == right arrow, but it gets messed up in the string so it is added to hugo-octopress/layouts/index.html manually
   continue_reading = "Would you like to know more?"
 
@@ -98,7 +98,7 @@ The following options in `config.toml` modify the behavior:
   pygmentsuseclasses = false
 
   # if nothing is set, then solarized_light is used
-  pygmentsstyle = "solarized_dark" 
+  pygmentsstyle = "solarized_dark"
 
   # will make the highlight shortcode and code fences (```) being treated the same way
   # otherwise they are treated differently
@@ -118,6 +118,8 @@ Blackfriday is Hugo's markdown engine. For a list of options visit https://gohug
 
 ## <a name="menu"></a>Navigation menu
 Links to the left of the navigation menu (everything other than the search input field and RSS icon) can be configured here. Navigation menu is generated using the `hugo-octopress/layouts/partials/navigation.html` template.
+
+All links open in a new window except links to root. If the URL is "/" the link will not open in a new window.
 
 Links are sorted according to weight from left to right. For example a link with weight of `-10` will be to the left of another link with weight `0` or `10`. Links can be added to the `config.toml` as follows:
 
@@ -175,7 +177,7 @@ Shortcode usage (and source) is as follows (please note that parameters are name
   <figcaption>
     <span>{{ .Get "title" }}</span>
   </figcaption>
-  <div class="codewrapper"> 
+  <div class="codewrapper">
     {{ highlight .Inner (.Get "lang") "linenos=true" }}
   </div>
 </figure>
