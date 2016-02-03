@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Octopress on Parsia&#39;s Den</title>
+    <link>http://parsiya.net/tags/octopress/</link>
+    <description>Recent content in Octopress on Parsia&#39;s Den</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 02 Feb 2016 22:58:26 -0500</lastBuildDate>
+    <atom:link href="http://parsiya.net/tags/octopress/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>From Octopress to Hugo</title>
+      <link>http://parsiya.net/blog/2016-02-02-From-Octopress-to-Hugo/</link>
+      <pubDate>Tue, 02 Feb 2016 22:58:26 -0500</pubDate>
+      
+      <guid>http://parsiya.net/blog/2016-02-02-From-Octopress-to-Hugo/</guid>
+      <description>
+
+&lt;p&gt;In &lt;a href=&#34;http://parsiya.net/blog/2016-01-31-Why-Hugo/&#34; title=&#34;Why Hugo?&#34; target=&#34;_blank&#34;&gt;last post&lt;/a&gt; I talked about why I moved from Octopress to Hugo. In this post I am going to talk about how I managed the migration and any interesting things that I encountered in the process. I will also introduce the &lt;a href=&#34;https://github.com/parsiya/hugo-octopress/&#34; target=&#34;_blank&#34;&gt;Hugo-Octopress&lt;/a&gt; theme (you are looking at it), which is the classic Octopress theme ported to Hugo.&lt;/p&gt;
+
+&lt;p&gt;You can also see the last archive of my Octopress blog (previously a private repo on Bitbucket) on github: &lt;a href=&#34;https://github.com/parsiya/Octopress-Blog&#34; target=&#34;_blank&#34;&gt;https://github.com/parsiya/Octopress-Blog&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;hugo-import-jekyll:4451b754531b2eca1dcd74c8f975ea86&#34;&gt;hugo import jekyll&lt;/h3&gt;
+
+&lt;p&gt;Hugo has an &lt;a href=&#34;https://gohugo.io/commands/hugo_import_jekyll/&#34; target=&#34;_blank&#34;&gt;Import from Jekyll&lt;/a&gt; feature. Octopress is also built on Jekyll but its directory structure is a bit different from Jekyll. Just running &lt;code&gt;hugo import jekyll&lt;/code&gt; in will not work. In Jekyll posts are usually stored in &lt;code&gt;jekyll-blog/posts/&lt;/code&gt; while in Octopress they are in &lt;code&gt;octopress-blog/source/_posts/&lt;/code&gt;. When importing from Octopress you have to point it to the &lt;code&gt;source&lt;/code&gt; directory like this:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;root&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;@debian&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;~/&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;Desktop&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;octopress&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;blog&lt;/span&gt;&lt;span style=&#34;color: #586E75&#34;&gt;# hugo import jekyll source/ hugo-import/&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;Importing&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;...&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;Congratulations!&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;23&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;posts&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;imported!&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;Now,&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;start&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;Hugo&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;by&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;yourself:&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;$&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;git&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;clone&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;https:&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;//&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;github&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;com&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;spf13&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;herring&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;cove&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;git&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;hugo&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;import&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;//&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;themes&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;herring&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;cove&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;$&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;cd&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;hugo&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;import&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;/&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;$&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;hugo&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;server&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;w&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;--&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;theme&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;herring&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;cove&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Converted Markdown posts will be in &lt;code&gt;hugo-import/content/posts/&lt;/code&gt; and almost everything else will in &lt;code&gt;hugo-import/static/&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;# before conversion
+---
+layout: post
+title: &amp;quot;Proxying Hipchat Part 3: SSL Added and Removed Here :^)&amp;quot;
+date: 2015-10-19 21:42:10 -0400
+comments: true
+categories: [&amp;#39;Hipchat&amp;#39;,&amp;#39;Proxying&amp;#39;,&amp;#39;Burp&amp;#39;, &amp;#39;Python&amp;#39;]
+---
+&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;# after conversion
+---
+categories:
+- Hipchat
+- Proxying
+- Burp
+- Python
+comments: true
+date: 2015-10-19T21:42:10Z
+title: &amp;#39;Proxying Hipchat Part 3: SSL Added and Removed Here :^)&amp;#39;
+url: /2015/10/19/proxying-hipchat-part-3-ssl-added-and-removed-here/
+---
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The only thing I needed to remove was &lt;code&gt;url&lt;/code&gt; because I wanted my URLs to be similar to &lt;code&gt;/blog/2015-10-19-proxying-hipchat-part-3-ssl-added-and-removed-here/&lt;/code&gt;. This can be accomplished by adding the following to the config file:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #719e07&#34;&gt;[permalinks]&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;post&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;/blog/:year-:month-:day-:title/&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;I deleted almost everything else in the &lt;code&gt;static&lt;/code&gt; directory apart from the following:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;images&lt;/code&gt; directory&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;favicon.png&lt;/code&gt;: because I wanted to keep the Octopress feel&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;stylesheets/screen.css&lt;/code&gt;: needed for porting the themes, although I moved it to &lt;code&gt;css\hugo-octopress.css&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Perhaps I did not use it properly, it is not built for Octopress anyways but the import process did not do much for me other than creating the basis for a new hugo blog (e.g. empty &lt;code&gt;layouts&lt;/code&gt; directory). I could have copied the Markdown files and use a bunch of &lt;code&gt;sed&lt;/code&gt; commands to replace the headers.&lt;/p&gt;
+
+&lt;h3 id=&#34;shortcodes:4451b754531b2eca1dcd74c8f975ea86&#34;&gt;Shortcodes&lt;/h3&gt;
+
+&lt;p&gt;I needed captions for images and codeblocks. Hugo does not have this by default but offers &lt;a href=&#34;https://gohugo.io/extras/shortcodes/&#34; target=&#34;_blank&#34;&gt;shortcodes&lt;/a&gt; which are very very simple create. Compared to plugin creation for Jekyll, Octopress or Pelican, it&amp;rsquo;s a walk in the park. I managed to create these two shortcodes in a few minutes. Granted Octopress and Jekyll already have these plugins.&lt;/p&gt;
+
+&lt;h4 id=&#34;codecaption:4451b754531b2eca1dcd74c8f975ea86&#34;&gt;Codecaption&lt;/h4&gt;
+
+&lt;p&gt;The codecaption block was quite simple. You can also see the result here.&lt;/p&gt;
+
+
+
+
+    
+
+&lt;figure class=&#34;code&#34;&gt;
+  &lt;figcaption&gt;
+  	&lt;span&gt;codecaption shortcode&lt;/span&gt;
+  &lt;/figcaption&gt;
+  &lt;div class=&#34;codewrapper&#34;&gt; 
+    &lt;table class=&#34;highlighttable&#34;&gt;&lt;tr&gt;&lt;td&gt;&lt;div class=&#34;linenodiv&#34; style=&#34;background-color: #f0f0f0; padding-right: 10px&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;1
+2
+3
+4
+5
+6
+7
+8&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;figure&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;code&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+  &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;figcaption&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+  	&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;span&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;{{ .Get &amp;quot;title&amp;quot; }}&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;span&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+  &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;figcaption&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+  &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;div&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;codewrapper&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+    {{ highlight .Inner (.Get &amp;quot;lang&amp;quot;) &amp;quot;linenos=true&amp;quot; }}
+  &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;div&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;figure&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+  &lt;/div&gt;
+&lt;/figure&gt;
+
+
+&lt;p&gt;The &lt;code&gt;highlight&lt;/code&gt; function in Hugo, passes everything between the opening and closing tags &lt;code&gt;.Inner&lt;/code&gt; to &lt;code&gt;pygments&lt;/code&gt; along with the language and an option to enable line numbers. The output of the &lt;code&gt;highlight&lt;/code&gt; function is a table with two rows:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;table&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;highlighttable&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+  &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;tbody&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;tr&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+      &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;td&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+        &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;div&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;linenodiv&amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;style&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;background-color: #f0f0f0; padding-right: 10px&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+          &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;pre&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;style&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;line-height: 125%&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+             &lt;span style=&#34;color: #586E75&#34;&gt;&amp;lt;!-- line numbers go here --&amp;gt;&lt;/span&gt;
+          &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;pre&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+        &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;div&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+      &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;td&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+      &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;td&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;code&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+        &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;div&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;highlight&amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;style&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;background: #002B36&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+          &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;pre&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;style&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;line-height: 125%&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+            &lt;span style=&#34;color: #586E75&#34;&gt;&amp;lt;!-- highlighted code --&amp;gt;&lt;/span&gt;
+          &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;pre&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+        &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;div&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+      &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;td&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;tr&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+  &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;tbody&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;table&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;I needed to do something for when the code overflowed. By adding code-wrap in &lt;code&gt;css&lt;/code&gt;, line numbers and code would lose alignment. By adding &lt;code&gt;overflow-x: auto&lt;/code&gt; to the &lt;code&gt;highlight&lt;/code&gt; div, it would get a horizontal scrollbar but that would again mess with the alignment with line numbers.&lt;/p&gt;
+
+&lt;p&gt;The solution was to wrap the whole table in a div and then give the div the following properties in css:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;div.codewrapper&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #B58900&#34;&gt;overflow-x&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #B58900&#34;&gt;auto&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;;&lt;/span&gt;
+    &lt;span style=&#34;color: #B58900&#34;&gt;overflow-y&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #B58900&#34;&gt;hidden&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;;&lt;/span&gt;
+    &lt;span style=&#34;color: #B58900&#34;&gt;background-color&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;#002B36&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;And that enables a horizontal scrollbar as you can see below:&lt;/p&gt;
+
+
+
+
+    
+
+&lt;figure class=&#34;code&#34;&gt;
+  &lt;figcaption&gt;
+  	&lt;span&gt;&lt;/span&gt;
+  &lt;/figcaption&gt;
+  &lt;div class=&#34;codewrapper&#34;&gt; 
+    &lt;table class=&#34;highlighttable&#34;&gt;&lt;tr&gt;&lt;td&gt;&lt;div class=&#34;linenodiv&#34; style=&#34;background-color: #f0f0f0; padding-right: 10px&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;1
+2&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+  &lt;/div&gt;
+&lt;/figure&gt;
+
+
+&lt;p&gt;Normal backtick blocks are converted into something like the following:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;div&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;highlight&amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;style&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;background: #002B36&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+  &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;pre&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;style&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;line-height: 125%&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span style=&#34;color: #586E75&#34;&gt;&amp;lt;!-- highlighted code --&amp;gt;&lt;/span&gt;
+  &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;pre&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;div&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;To give them the same capability for overflow would mean that I had to modify the css for &lt;code&gt;div.highlight&lt;/code&gt;. But that interfered with the div.highlight in the codecaption output. Instead I used the following that only applies to div.highlights inside &lt;code&gt;div.entry-content&lt;/code&gt; (which contains the contents of each post):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;div.entry-content&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;div.highlight&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #B58900&#34;&gt;border-color&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;#002B36&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;;&lt;/span&gt;
+    &lt;span style=&#34;color: #B58900&#34;&gt;overflow-x&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #B58900&#34;&gt;auto&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;;&lt;/span&gt;
+    &lt;span style=&#34;color: #B58900&#34;&gt;overflow-y&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #B58900&#34;&gt;hidden&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;;&lt;/span&gt;
+    &lt;span style=&#34;color: #B58900&#34;&gt;margin-bottom&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #2AA198&#34;&gt;0.4em&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Finally codecaption&amp;rsquo;s output is similar to this:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;figure&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;code&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+  &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;figcaption&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+  	&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;span&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;codecaption shortcode&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;span&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+  &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;figcaption&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+  &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;div&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;codewrapper&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;table&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;highlighttable&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&amp;lt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;table&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+  &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;div&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;figure&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h4 id=&#34;imagecap:4451b754531b2eca1dcd74c8f975ea86&#34;&gt;imagecap&lt;/h4&gt;
+
+&lt;p&gt;Image caption was similarly simple. I tried to imitate the output of &lt;code&gt;imgcap&lt;/code&gt; plugin in Octopress.&lt;/p&gt;
+
+&lt;p&gt;
+
+
+    
+
+&lt;figure class=&#34;code&#34;&gt;
+  &lt;figcaption&gt;
+  	&lt;span&gt;imgcap&lt;/span&gt;
+  &lt;/figcaption&gt;
+  &lt;div class=&#34;codewrapper&#34;&gt; 
+    &lt;table class=&#34;highlighttable&#34;&gt;&lt;tr&gt;&lt;td&gt;&lt;div class=&#34;linenodiv&#34; style=&#34;background-color: #f0f0f0; padding-right: 10px&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;1
+2
+3
+4
+5&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;span&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;caption-wrapper&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+  &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;img&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;caption&amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;src&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;{{ .Get &amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;src&amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;}}&amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;title&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;{{ .Get &amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;caption&amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;}}&amp;quot;&lt;/span&gt;
+   &lt;span style=&#34;color: #93A1A1&#34;&gt;alt&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;{{ .Get &amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;caption&amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;}}&amp;quot;&amp;gt;&lt;/span&gt;
+  &lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;span&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;caption-text&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;{{ .Get &amp;quot;caption&amp;quot; }}&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;span&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;span&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+  &lt;/div&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+
+&lt;h3 id=&#34;replacing-liquid-tags:4451b754531b2eca1dcd74c8f975ea86&#34;&gt;Replacing Liquid tags&lt;/h3&gt;
+
+&lt;p&gt;The next step was to replace the liquid tags used in Markdown files. I had a few different types of tags for images and codeblocks. I used a few &lt;code&gt;sed&lt;/code&gt; commands to search and replace them&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Why Hugo?</title>
+      <link>http://parsiya.net/blog/2016-01-31-Why-Hugo/</link>
+      <pubDate>Sun, 31 Jan 2016 20:22:19 -0500</pubDate>
+      
+      <guid>http://parsiya.net/blog/2016-01-31-Why-Hugo/</guid>
+      <description>
+
+&lt;p&gt;As you may have noticed (well no one reads this so I am fine), I have moved from &lt;a href=&#34;http://octopress.org&#34; target=&#34;_blank&#34;&gt;Octopress&lt;/a&gt; to &lt;a href=&#34;https://gohugo.io&#34; target=&#34;_blank&#34;&gt;Hugo&lt;/a&gt;. I have been trying to make this change for a while but due to laziness and some other matters it did not happen. I am going to talk about why I decided on the move and what I did. In then ext post I will talk about my migration from Octopress to Hugo.&lt;/p&gt;
+
+&lt;h3 id=&#34;octopress-the-bad-parts:6e4dd96c118f451aabe1dc11a2f8644f&#34;&gt;Octopress the Bad Parts&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Octopress had become so slow. Although I do not have many blog posts, they are usually long and contain images and code. Also it does not support incremental generation which means that every time I wanted to push my blog, I had to re-create the blog from scratch. I could live with this because I only do new posts every once in a while so waiting a couple of minutes before deploying the website is not inconvenient.&lt;/li&gt;
+&lt;li&gt;My main problem was during content creation. Every time I wanted to look at my changes I had to wait 30 seconds and then refresh the page manually to see the changes. This became very inconvenient. I started creating my posts in a local markdown editor (with preview support) and then copy/pasting it into the actual markdown file and looking at the result. However, modifying posts still took a lot of time and effort.&lt;/li&gt;
+&lt;li&gt;Octopress was written in Ruby. I am not a developer but I have written Ruby code (some of which are closer in your everyday lives than they appear &lt;code&gt;;)&lt;/code&gt;) but as you can see in my &lt;a href=&#34;http://parsiya.net/blog/2015-07-26-Image-Popup-and-Octopress/&#34; title=&#34;Image Popup and Octopress&#34; target=&#34;_blank&#34;&gt;imgpopup plugin post&lt;/a&gt;, creating plugins for Octopress was a pain for me.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;octopress-the-good-parts:6e4dd96c118f451aabe1dc11a2f8644f&#34;&gt;Octopress the Good Parts&lt;/h3&gt;
+
+&lt;p&gt;Hafiz the famous ancient Persian poet said &amp;ldquo;عیب می جمله چو گفتی هنرش نیز بگو&amp;rdquo; which basically means that you should talk about the strengths [of something] after you have ranted about the problems.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Clean theme: The Octopress classic theme is great. I really like it.&lt;/li&gt;
+&lt;li&gt;It does what it claims. You can install it using a gem and set up your posts and it is probably good to go. Most probably you will not encounter a bug.&lt;/li&gt;
+&lt;li&gt;Posts can be written in Markdown.&lt;/li&gt;
+&lt;li&gt;It has a lot of plugins for everyday use out of the box. There are plugins for code, images, videos and tweets.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Does this mean that Octopress is a bad static website generator? Not really but it did not work for me.&lt;/p&gt;
+
+&lt;h3 id=&#34;what-i-wanted:6e4dd96c118f451aabe1dc11a2f8644f&#34;&gt;What I Wanted&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Be reasonably fast.&lt;/li&gt;
+&lt;li&gt;Code and image caption plugins. Most static website generators supports code highlight by default but I really like code and image captions. Either it should be supported or I could create my own plugin.&lt;/li&gt;
+&lt;li&gt;Have the Octopress classic theme or a similar theme.&lt;/li&gt;
+&lt;li&gt;Allows me to migrate my posts from Octopress. In other words, support writing posts in Markdown. This is supported by almost all static website generators.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I could go to &lt;a href=&#34;https://jekyllrb.com/&#34; target=&#34;_blank&#34;&gt;Jekyll&lt;/a&gt; and almost everything would work without problems but creating plugins would be a pain. After all Octopress is built on top of Jekyll. Some call it a fancy front-end for Jekyll but I disagree.&lt;/p&gt;
+
+&lt;p&gt;I shopped around looking for static website generator and my final choices were &lt;a href=&#34;http://blog.getpelican.com/&#34; target=&#34;_blank&#34;&gt;Pelican&lt;/a&gt; and &lt;a href=&#34;https://gohugo.io&#34; target=&#34;_blank&#34;&gt;Hugo&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h4 id=&#34;pelican:6e4dd96c118f451aabe1dc11a2f8644f&#34;&gt;Pelican&lt;/h4&gt;
+
+&lt;p&gt;This &lt;a href=&#34;https://jakevdp.github.io/blog/2013/05/07/migrating-from-octopress-to-pelican/&#34; target=&#34;_blank&#34;&gt;post&lt;/a&gt; titles &amp;ldquo;Migrating from Octopress to Pelican&amp;rdquo; by Jake Vanderplas was really helpful and that was one of the reasons I almost chose Pelican and even modified most of my posts to work in Pelican.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Pelican is reasonably fast. I was amazed after I changed something in my post and saved and the page in browser auto-refreshed with changes within a few seconds.&lt;/li&gt;
+&lt;li&gt;It is written in Python. Nowadays I write most of my code in Python but creating the plugins were a pain. I fiddled with them for a few days and gave up after I could not create what I wanted.
+
+&lt;ul&gt;
+&lt;li&gt;There is a figure with caption plugin called &lt;a href=&#34;https://github.com/getpelican/pelican-plugins/tree/master/better_figures_and_images&#34; target=&#34;_blank&#34;&gt;better figures and images&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;There is no code caption plugin. I tried creating my own but I got lost. The reason was that because the code is not a one liner (it has an opening tag and closing tag with code int between), I had to create a Markdown pre-processor. There is an &lt;a href=&#34;https://github.com/getpelican/pelican-plugins/blob/master/liquid_tags/include_code.py&#34; target=&#34;_blank&#34;&gt;Include_code plugin&lt;/a&gt; that creates a highlighted code block with caption but it only supports pulling from a file. That would not work for me.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Someone has already done it. &lt;a href=&#34;https://github.com/duilio/pelican-octopress-theme&#34; target=&#34;_blank&#34;&gt;https://github.com/duilio/pelican-octopress-theme&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;I only needed to modify some tags but it mostly worked.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Pelican was a really good fit. However, the pains that I had to go through in order to create a codeblock with captions plugin (Markdown preprocessor what?), made me skip this and go for Hugo.&lt;/p&gt;
+
+&lt;h5 id=&#34;hugo:6e4dd96c118f451aabe1dc11a2f8644f&#34;&gt;Hugo&lt;/h5&gt;
+
+&lt;p&gt;I will talk about why I chose Hugo and the migration in length in the next post. But for now let&amp;rsquo;s see if Hugo is a good fit for my requirements.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;It is reasonably fast. Similar to Pelican when I modified a Markdown file, the browser auto-refreshed and I could see the changes in a few seconds.&lt;/li&gt;
+&lt;li&gt;Hugo had neither. However it supports &lt;a href=&#34;https://gohugo.io/extras/shortcodes/&#34; target=&#34;_blank&#34;&gt;shortcodes&lt;/a&gt; and I could create both in a few minutes. I will talk about what I did and how I did it in the migration post.&lt;/li&gt;
+&lt;li&gt;Hugo does not have the classic Octopress theme and this was a big weakness compared to Pelican. But as you can see I made my own. It was a good exercise in learning about the inner workings of Hugo and &lt;code&gt;css&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Not only Hugo supports Markdown, it has an &lt;a href=&#34;https://gohugo.io/commands/hugo_import_jekyll/&#34; target=&#34;_blank&#34;&gt;import Jekyll&lt;/a&gt; module which works for Octopress. It seems like a good number of people have moved to Hugo from Jekyll because there are a good number Jekyll themes ported to Hugo. For a list of Hugo themes you can visit &lt;a href=&#34;https://github.com/spf13/hugoThemes/&#34; target=&#34;_blank&#34;&gt;this repo&lt;/a&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;conclusion:6e4dd96c118f451aabe1dc11a2f8644f&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;Hugo fit my criteria better than Pelican (or any other static website generator that I encountered during my search). It did not have the Octopress classic them but I created my own. In the next blog post I will talk about my migration from Octopress to Hugo.&lt;/p&gt;
+
+&lt;!-- links --&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>MarkDown and Cookie Clicker</title>
+      <link>http://parsiya.net/blog/2013-09-15-MarkDown-and-Cookie-Clicker/</link>
+      <pubDate>Sun, 15 Sep 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://parsiya.net/blog/2013-09-15-MarkDown-and-Cookie-Clicker/</guid>
+      <description>&lt;p&gt;Markdown looks like an easy-ish language to start (probably not so easy to master of course).
+Although compared to writing LaTeX source, it is a breeze. During my last year at JHU I started writing the reports and what not directly into LaTeX,
+I think using MarkDown for blogging and MS Office at work is going to take away my old skills.&lt;/p&gt;
+
+&lt;p&gt;On a side note, I am now up to around 500 million cookies per second (CpS) in
+&lt;strong&gt;&lt;a href=&#34;http://orteil.dashnet.org/cookieclicker/&#34; target=&#34;_blank&#34;&gt;Cookie Clicker&lt;/a&gt;&lt;/strong&gt;. I was stuck at 200 million CpS for a week or so until I could start making Antimatter Condensers. I may have missed them before
+as they were not visible in the side-bar and I had to scroll down to see them.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Hello Octopress</title>
+      <link>http://parsiya.net/blog/2013-09-14-Hello-Octopress/</link>
+      <pubDate>Sat, 14 Sep 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://parsiya.net/blog/2013-09-14-Hello-Octopress/</guid>
+      <description>&lt;p&gt;** Octopress is here **&lt;/p&gt;
+
+&lt;p&gt;To be honest setting it up took a while (I had this feeling that I should set it up on my host but well let&amp;rsquo;s say I am a n00b and am allowed to make mistakes) :D&lt;/p&gt;
+
+&lt;p&gt;Now I have to learn markdown which is probably a good thing, unless I can write blog posts in different formats. Note to self: search to see if we can write blogs in LaTeX. That would be too geeky.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

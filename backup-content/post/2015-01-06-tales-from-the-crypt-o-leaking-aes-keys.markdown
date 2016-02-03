@@ -16,7 +16,7 @@ First let’s talk a bit about the inner-workings of AES decryption. By inner-wo
 
 <!--more-->
 
-{{< imgcap src="" caption="" /images/2015/tales1/CBC-Mode-Wikipedia.jpg These are not the diagrams you are looking for - Source: Wikipedia >}}
+{{< imgcap src="" title="" /images/2015/tales1/CBC-Mode-Wikipedia.jpg These are not the diagrams you are looking for - Source: Wikipedia >}}
 
 Instead I am going to talk about what happens inside those rectangles labeled “block cipher encryption/decryption.” If you don’t want to know about the AES stuff, jump directly to [2. AES Keys in Action](#aeskeysinaction).
 
@@ -31,7 +31,7 @@ Each of these boxes consist of a few rounds. The number of rounds is based on ke
 
 That was easy. So what happens inside each of these rounds. Except the last round, there are four steps in each round (encryption/decryption). For the remainder of this section I am going to assume that we are using a 128-bit key (16 bytes) resulting in 10 rounds.
 
-{{< imgcap src="" caption="" /images/2015/tales1/AES-Rounds.jpg Inside AES - Source: [http://www.iis.ee.ethz.ch/~kgf/acacia/fig/aes.png](http://www.iis.ee.ethz.ch/~kgf/acacia/fig/aes.png) >}}
+{{< imgcap src="" title="" /images/2015/tales1/AES-Rounds.jpg Inside AES - Source: [http://www.iis.ee.ethz.ch/~kgf/acacia/fig/aes.png](http://www.iis.ee.ethz.ch/~kgf/acacia/fig/aes.png) >}}
 
 There are four different operations but I am going to go into some detail about ``AddRoundKey``. It is also the only operation which introduces an unknown element (key) into the process. The other operations are also simple and we can probably guess what they do based on their names.
 
@@ -381,7 +381,7 @@ EVP_DecryptFinal_ex(0x9ff5ce0, 0xbfdecd8c, 0xbfdecd24, 0xbfdecdec, 48) = 1
 EVP_CIPHER_CTX_free(0x9ff5ce0, 0xbfdecd8c, 0xbfdecd24, 0xbfdecdec, 48) = 0
 {% endcodeblock >}}
 
-{{< imgcap src="" caption="" /images/2015/tales1/Queen-Amused.jpg Her Majesty is amused – If you are offended please don’t send James Bond after me >}}
+{{< imgcap src="" title="" /images/2015/tales1/Queen-Amused.jpg Her Majesty is amused – If you are offended please don’t send James Bond after me >}}
 
 #### 2.4  Finding the Key (Using GDB) II: Electric Boogaloo
 That was too easy but we pleased a powerful friend. Let’s try and find it using GDB (gasp). Good thing that we compiled out binary using the ggdb switch. If not go ahead and do that. We know we are looking for ``EVP_DecryptInit_ex`` and we have already seen how to use GDB. We will ``set verbose on`` (in case stuff happens).
@@ -490,7 +490,7 @@ We can print the values of both key and IV. To do this in GDB we need to use thi
 0x8048d50:	 "ee12c03ceacdfb5d4c0e67c8f5ab3362"
 {% endcodeblock >}}
 
-{{< imgcap src="" caption="" /images/2015/tales1/Queen-Not-Amused.jpg Her Majesty is bored because of GDB >}}
+{{< imgcap src="" title="" /images/2015/tales1/Queen-Not-Amused.jpg Her Majesty is bored because of GDB >}}
 
 #### 2.5 Using GDB without Debug Info
 Our example is in a controlled environment, so we were able to build the binary with debug info. But in a real world scenario we do not have this luxury. In this section I will discuss how to get to  ``EVP_DecryptInit_ex`` without debug info.

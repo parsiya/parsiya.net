@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Encryption on Parsia&#39;s Den</title>
+    <link>http://parsiya.net/tags/encryption/</link>
+    <description>Recent content in Encryption on Parsia&#39;s Den</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 03 Jul 2014 01:30:18 +0000</lastBuildDate>
+    <atom:link href="http://parsiya.net/tags/encryption/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Apple&#39;s Common Crypto Library Defaults to a Zero IV if One is not Provided</title>
+      <link>http://parsiya.net/blog/2014-07-03-Apples-Common-Crypto-Library-Defaults-to-a-Zero-IV-if-One-is-not-Provided/</link>
+      <pubDate>Thu, 03 Jul 2014 01:30:18 +0000</pubDate>
+      
+      <guid>http://parsiya.net/blog/2014-07-03-Apples-Common-Crypto-Library-Defaults-to-a-Zero-IV-if-One-is-not-Provided/</guid>
+      <description>&lt;p&gt;Today I was writing some guidelines about generating keys for mobile applications at work. While providing code examples in Java and Obj-C for AES encryption I happened to look at Apple&amp;rsquo;s &lt;a href=&#34;http://opensource.apple.com/source/CommonCrypto/CommonCrypto-60049/lib/&#34; target=&#34;_blank&#34;&gt;Common Crypto&lt;/a&gt; library . While going through the source code for &lt;a href=&#34;http://opensource.apple.com/source/CommonCrypto/CommonCrypto-60049/lib/CommonCryptor.c&#34; target=&#34;_blank&#34;&gt;CommonCryptor.c&lt;/a&gt;, I noticed that IV is commented as &lt;code&gt;/* optional initialization vector */&lt;/code&gt;. This makes sense because not all ciphers use IV and not all AES modes of operation (e.g. ECB mode). However; if an IV is not provided, the library will default to a zero IV.&lt;/p&gt;
+
+&lt;p&gt;You can see the code here inside the function &lt;code&gt;ccInitCryptor&lt;/code&gt; (search for defaultIV) &lt;a href=&#34;http://opensource.apple.com/source/CommonCrypto/CommonCrypto-60049/lib/CommonCryptor.c&#34; target=&#34;_blank&#34;&gt;source&lt;/a&gt;. &lt;code&gt;CC_XZEROMEM&lt;/code&gt; resets all bytes of IV to zero (that is 0x00):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #719e07&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;inline&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;CCCryptorStatus&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;ccInitCryptor&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;(CCCryptor&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;*&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;ref,&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color: #DC322F&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;*&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;key,&lt;/span&gt; &lt;span style=&#34;color: #DC322F&#34;&gt;unsigned&lt;/span&gt; &lt;span style=&#34;color: #DC322F&#34;&gt;long&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;key_len,&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color: #DC322F&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;*&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;tweak_key,&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color: #DC322F&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;*&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;iv)&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;{&lt;/span&gt;
+   
+    &lt;span style=&#34;color: #DC322F&#34;&gt;size_t&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;blocksize&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;ccGetCipherBlockSize(ref);&lt;/span&gt;
+    &lt;span style=&#34;color: #DC322F&#34;&gt;uint8_t&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;defaultIV[blocksize];&lt;/span&gt;
+    
+    
+    &lt;span style=&#34;color: #719e07&#34;&gt;if&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;(iv&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color: #B58900&#34;&gt;NULL&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #93A1A1&#34;&gt;CC_XZEROMEM(defaultIV,&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;blocksize);&lt;/span&gt;
+        &lt;span style=&#34;color: #93A1A1&#34;&gt;iv&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;defaultIV;&lt;/span&gt;
+    &lt;span style=&#34;color: #93A1A1&#34;&gt;}&lt;/span&gt;
+    
+    &lt;span style=&#34;color: #93A1A1&#34;&gt;...&lt;/span&gt;
+    
+    &lt;span style=&#34;color: #719e07&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;kCCSuccess;&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;While I am told this is probably common behavior in crypto libraries, I think it&amp;rsquo;s dangerous. I ended up putting a comment in code examples warning developers about this behavior. So, heads up ;)&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

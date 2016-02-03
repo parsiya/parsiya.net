@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Burp on Parsia&#39;s Den</title>
+    <link>http://parsiya.net/categories/burp/</link>
+    <description>Recent content in Burp on Parsia&#39;s Den</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 25 Jun 2014 22:04:53 +0000</lastBuildDate>
+    <atom:link href="http://parsiya.net/categories/burp/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Piping SSL/TLS Traffic from SoapUI to Burp</title>
+      <link>http://parsiya.net/blog/2014-06-25-Piping-SSL/TLS-Traffic-from-SoapUI-to-Burp/</link>
+      <pubDate>Wed, 25 Jun 2014 22:04:53 +0000</pubDate>
+      
+      <guid>http://parsiya.net/blog/2014-06-25-Piping-SSL/TLS-Traffic-from-SoapUI-to-Burp/</guid>
+      <description>&lt;p&gt;Recently I was trying to test a web service. The traffic was over SSL/TLS and everything was fine. As I am better with Burp than SoapUI, I wanted to use Burp as a proxy for SoapUI. This should be an easy matter. Burp will create a custom certificate (signed by its root CA) for each site and effectively Man-in-the-Middle the connection. But this time it was different, I was getting the dreaded &lt;code&gt;Peer not Authenticated&lt;/code&gt; error. This meant that SoapUI did not recognize Burp&amp;rsquo;s custom certificate.&lt;/p&gt;
+
+&lt;p&gt;I Googled and found some solutions such as adding Burp&amp;rsquo;s CA to my certificate store (already done), adding it to SoapUI&amp;rsquo;s keystore (didn&amp;rsquo;t work) or using custom versions of SoapUI created for exactly this reason (again didn&amp;rsquo;t work).&lt;/p&gt;
+
+&lt;p&gt;After a suitably long period of weeping and gnashing of teeth I achieved salvation.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s how to do it:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Set Burp as proxy for SoapUI.&lt;br /&gt;
+In SoapUI go to &lt;code&gt;File &amp;gt; Preferences &amp;gt; Proxy Settings&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Modify target address to http from https&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;2.a. In SoapUI, modify the &lt;code&gt;Service Endpoint.&lt;/code&gt; Change &lt;code&gt;https://example.com&lt;/code&gt; to &lt;code&gt;http://example.com&lt;/code&gt;.&lt;br /&gt;
+Or&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;2.b. Modify the WSDL and change &lt;code&gt;wsdl:address location&lt;/code&gt; similarly and import it into SoapUI.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Edit Burp&amp;rsquo;s listener and check &lt;code&gt;Force use of SSL&lt;/code&gt; under &lt;code&gt;Request Handling.&lt;/code&gt;&lt;br /&gt;
+Notice that the &lt;code&gt;Redirect to port&lt;/code&gt; input field will be automatically populated with 443. If your service endpoint is using a different port, modify that accordingly.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Now you can send requests from SoapUI and intercept them in Burp. Responses will appear in both SoapUI and Burp like any proxied application.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Be sure to remove the &lt;code&gt;Force use of SSL&lt;/code&gt; after you are done. Otherwise you will be wondering why gmail is available under http in your browser (like &lt;s&gt;me&lt;/s&gt; someone I know).&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

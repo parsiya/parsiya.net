@@ -4,11 +4,10 @@ draft: true
 title: "Theme Readme Test"
 
 ---
-
 # Hugo-Octopress
-Hugo-Octopress is a port of the classic [Octopress][octopress-link] theme to [Hugo][hugo-link].
+Hugo-Octopress is a port of the classic [Octopress][octopress-link] theme to [Hugo][hugo-link]. For a live demo of the website please see [http://parsiya.net](http://parsiya.net).
 
-[insert screenshot here]
+![screenshot](/images/tn.png)
 
 ## Contents
 - [Config file parameters](#config)
@@ -27,7 +26,7 @@ Hugo-Octopress is a port of the classic [Octopress][octopress-link] theme to [Hu
 
 
 ## <a name="config"></a>Configuration
-This section talks about parameters in the [configuration file](https://gohugo.io/overview/configuration/) and how they can be used to customize the output. Below is a sample ``config.toml`` file with comments:
+This section is about parameters in the [configuration file](https://gohugo.io/overview/configuration/) and how they can be used to customize the output. A working config file `sample-config.toml`is provided and parameters are explained below:
 
 ``` python
 baseurl = "http://example.com/"
@@ -36,14 +35,14 @@ languageCode = "en-us"
 theme = "hugo-octopress"
 
 # this will appear in the header at the top of the page and in the landing page's title
-title = "Parsia's Den"
+title = "Website's title"
 
 # number of blog posts displayed in each page
 paginate = 6
 
 # change the article links
 [permalinks]
-post = "/blog/:year-:month-:day-:title/" 
+post = "/blog/:year-:month-:day-:title/"
 
 # to generate tags and categories
 # tags are generated using the template hugo-octopress/layouts/indexes/tags.html
@@ -55,11 +54,12 @@ post = "/blog/:year-:month-:day-:title/"
 
 [params]
 
-  # number of recent posts that will be shown in the sidebar
-  SidebarRecentLimit = 5 
+  # number of recent posts that will be shown in the sidebar - default is 5
+  SidebarRecentLimit = 5
 
-  # if false, all of the post will appear on front page (and in pagination) - not recommended
-  truncate = true 
+  # if false, all of posts' content will appear on front page (and in pagination) - not recommended
+  # be sure to use the <!--more--> delimiter
+  truncate = true
 
   # author's name (this will appear in metadata and at the bottom of posts)
   author = "Site Author"
@@ -67,11 +67,16 @@ post = "/blog/:year-:month-:day-:title/"
   # appears in the site header under website title
   subtitle = "Site Subtitle"
 
-  # text of the Continue Reading label. 
+  # text of the Continue Reading label - if not set, it will default to "Read On &rarr;"
   # &rarr; == right arrow, but it gets messed up in the string so it is added to hugo-octopress/layouts/index.html manually
+  # this can be modified in hugo-octopress/layouts/index.html
   continue_reading = "Would you like to know more?"
 
-  # Google analyrics
+  # disqus - simply enter your disqus - using the template from https://gohugo.io/extras/comments/ at /hugo-octopress/layouts/partials/disqus.html that disables disqus when running on localhost (if you are testing it offline remember to comment out the if in the template that checks for localhost)
+  # the template is injected into the pages in /hugo-octopress/layouts/partials/post-footer.html which is in every post (and not non-post pages like license.html)
+  disqusShortname = "your disqus short name"
+
+  # Google analytics - _internal/googleanalytics.html in injected in hugo-octopress/layouts/partials/header.html
   googleAnalytics = "Your Google Analytics tracking code"
 
   # switch to true to enable RSS icon link in the navigation menu
@@ -82,7 +87,7 @@ post = "/blog/:year-:month-:day-:title/"
 
   # keywords used in meta tags
   # does this even work in action?
-  defaultKeywords = ["Parsia Hakimian" , "Parsia" , "infosec" , "information security"]
+  # defaultKeywords = ["keyword1" , "keyword2" , "keyword3" , "keyword4"]
 
 ```
 
@@ -101,10 +106,10 @@ The following options in `config.toml` modify the behavior:
   pygmentsuseclasses = false
 
   # if nothing is set, then solarized_light is used
-  pygmentsstyle = "solarized_dark" 
+  # other styles can be viewed in [http://pygments.org/](http://pygments.org/)
+  pygmentsstyle = "solarized_dark"
 
-  # will make the highlight shortcode and code fences (```) being treated the same way
-  # otherwise they are treated differently
+  # will make the highlight shortcode and code fences (```) being treated similarly
   pygmentscodefences = true
 
   # pygment options can be added here
@@ -113,7 +118,7 @@ The following options in `config.toml` modify the behavior:
 ```
 ## <a name="markdown"></a>Markdown options
 
-Blackfriday is Hugo's markdown engine. For a list of options visit https://gohugo.io/overview/configuration/ (scroll down to "Configure Blackfriday rendering"). Blackfriday options can be set in the `config.toml` files as follows:
+Blackfriday is Hugo's markdown engine. For a list of options visit [https://gohugo.io/overview/configuration/](https://gohugo.io/overview/configuration/) (scroll down to `Configure Blackfriday rendering`). Blackfriday options can be set in the `config.toml` files as follows:
 
     [blackfriday]
       hrefTargetBlank = true # open the external links in a new window
@@ -121,6 +126,8 @@ Blackfriday is Hugo's markdown engine. For a list of options visit https://gohug
 
 ## <a name="menu"></a>Navigation menu
 Links to the left of the navigation menu (everything other than the search input field and RSS icon) can be configured here. Navigation menu is generated using the `hugo-octopress/layouts/partials/navigation.html` template.
+
+All links open in a new window except links to root. If the URL is "/" the link will not open in a new window.
 
 Links are sorted according to weight from left to right. For example a link with weight of `-10` will be to the left of another link with weight `0` or `10`. Links can be added to the `config.toml` as follows:
 
@@ -145,7 +152,7 @@ The searchengine can also be customized in the `config.toml` file as follows:
       search_engine_url = "https://www.google.com/search"
 
 ## <a name="sidebarlinks"></a>Sidebar links
-The sidebar is generated using the template at `hugo-octopress/layouts/partials/sidebar.html`.
+The sidebar is generated using the partial template at `hugo-octopress/layouts/partials/sidebar.html`.
 
 Sidebar links are read from the config file as follows:
 
@@ -160,7 +167,7 @@ Sidebar links are read from the config file as follows:
       youtube = ""
       facebook = ""
 
-If more than links are added, then add a `</br>` between the first four and the rest. Code to display links (and the idea to use icons) was taken from [Hyde-x](https://github.com/zyro/hyde-x/).
+If more than links are added, then add a `</br>` between the first four and the rest. Code to display links (and the idea to use these icons) was taken from [Hyde-x](https://github.com/zyro/hyde-x/).
 
 Icons are from [http://fontawesome.io](http://fontawesome.io) by Dave Gandy. To use icons with square dark backgrounds add `-square`. For example `<i class="fa fa-twitter-square fa-3x"></i>`. Size can be from 1 to 5 or `fa-lg` to be adaptive.
 
@@ -178,14 +185,13 @@ Shortcode usage (and source) is as follows (please note that parameters are name
   <figcaption>
     <span>{{ .Get "title" }}</span>
   </figcaption>
-  <div class="codewrapper"> 
+  <div class="codewrapper">
     {{ highlight .Inner (.Get "lang") "linenos=true" }}
   </div>
 </figure>
 {{< /codecaption >}}
-```
 
-And will look like this [insert picture of the code renedered in browser].
+And will look like this [picture](/images/codecaption.png).
 
 If the code inside the tag overflows, a horizontal sidebar will be added to the table. It took me a while to achieve this as the `highligh` function created tables that were out of my control. The output from `highlight` is wrapped in `<div class="codewrapper">` and the scrollbar will be for the whole `div`. The following in the `css` (starting from line 2225) enables this behavior:
 
@@ -203,7 +209,7 @@ This shortcode adds captions to pictures. Due to the way the original `css` file
 Usage is as follows (please note that parameters are named and not positional):
 
 ``` go
-{{< imgcap caption="Sample caption" src="/images/2016/thetheme/1.png" >}}
+{{< imgcap title="Sample caption" src="/images/2016/thetheme/1.png" >}}
 ```
 
 Will result in:
@@ -235,16 +241,8 @@ If you see any issues/bugs or you are looking for some features please use the G
 
 If you know how to clean it up, please let me know or better yet help me do it :)
 
-**Clean up the theme** from my own website's data.
-
-**Update `theme.toml`**  after code is uploaded to github with repo info and other items.
-
-**Fix Disqus**
-
-**Fix Google analytics**
-
 ## <a name="attribution"></a>Attribution
-* [Octopress](octopress-link) is created by [Brandon Mathis](https://github.com/imathis). Octopress source can be found on [Github](https://github.com/imathis/octopress).
+* [Octopress](octopress-link) is created by [Brandon Mathis](https://github.com/imathis). Octopress source can be found on [https://github.com/imathis/octopress](https://github.com/imathis/octopress).
 
 * Some code was taken from the [Hyde-x](https://github.com/zyro/hyde-x) Hugo theme by [Andrei Mihu](http://andreimihu.com/).
 
@@ -257,8 +255,7 @@ Ported by Parsia Hakimian:
 * twitter: [@CryptoGangsta](https://twitter.com/cryptogangsta)
 
 ## <a name="themelicense"></a>Theme license
-Open sourced under the MIT license [link to MIT license in the repo after upload].
-
+Open sourced under the [MIT license](https://github.com/parsiya/Hugo-Octopress/blob/master/LICENSE.md).
 
 
 [octopress-link]: http://octopress.org

@@ -17,7 +17,7 @@ However, it did not work for me out of the box. I created a test post with just 
 [original repo]: https://github.com/ctdk/octopress-image-popup
 <!--more-->
 
-{{< imgcap src="/images/2015/popup1/pew1.jpg" caption="test post" >}}
+{{< imgcap src="/images/2015/popup1/pew1.jpg" title="test post" >}}
 
 There is this text "Click the image for a larger view." and there is also an unresized copy of the image on the page.
 
@@ -64,7 +64,7 @@ I am not quite sure what this `erb` file does but it looks like to be a blueprin
 
 Another problem is after we click on the image. There is no space between image title and the "close" link.
 
-{{< imgcap src="/images/2015/popup1/pew2.jpg" caption="pew pew popup" >}}
+{{< imgcap src="/images/2015/popup1/pew2.jpg" title="pew pew popup" >}}
 
 To fix this we need to modify `img_popup.rb` (original at [https://github.com/ctdk/octopress-image-popup/blob/master/plugins/img_popup.rb][img_popup.rb]):
 

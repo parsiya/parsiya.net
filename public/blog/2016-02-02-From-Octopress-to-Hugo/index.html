@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1">
+
+  
+  <link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+  <link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <title>From Octopress to Hugo</title>
+
+  
+  <link rel="stylesheet" href="http://parsiya.net/css/hugo-octopress.css">
+
+  
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  
+
+  
+  <link href="http://parsiya.net/favicon.png" rel="icon">
+
+  
+  
+  
+  
+  
+
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="[Parsia Hakimian Parsia infosec information security]">
+
+  <meta name="author" content="Parsia">
+
+  
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  
+
+</head>
+<body>
+
+
+<header role="banner"><hgroup>
+  
+  <h1><a href="http://parsiya.net/">Parsia&#39;s Den</a></h1>
+    <h2>Because no one wants to be the other guy from Wham!</h2>
+</hgroup></header>
+
+
+<nav role="navigation">
+
+
+<ul class="main-navigation">
+  
+  
+    
+      <li><a href="http://parsiya.net/" title="Blog">Blog</a></li>
+    
+  
+    
+      <li><a href="https://www.google.com/search?q=andrew&#43;ridgeley" target="_blank" title="The other guy from Wham!">The other guy from Wham!</a></li>
+    
+  
+    
+      <li><a href="https://www.github.com/parsiya/hugo-octopress" target="_blank" title="This theme on Github">This theme on Github</a></li>
+    
+  
+</ul>
+
+
+<ul class="subscription">
+  <a href="http://parsiya.net/index.xml" target="_blank" type="application/rss+xml" title="RSS"><i class="fa fa-rss-square fa-lg"></i></a>
+
+  
+  
+
+</ul>
+
+
+<form action="https://www.google.com/search" method="get" target="_blank">
+  <fieldset role="search">
+  	<input class="search" type="text" name="q" results="0" placeholder="Search"/>
+    <input type="hidden" name="q" value="site:http://parsiya.net/" />
+  </fieldset>
+</form>
+
+</nav>
+
+
+
+<div id="main">
+  <div id="content">
+    <div>
+      <article class="hentry" role="article">
+        <header>
+          <h1 class="entry-title">
+            From Octopress to Hugo 
+          </h1>
+          <p class="meta">Feb 2, 2016 - 4 minute read -  <a href="http://parsiya.net/blog/2016-02-02-From-Octopress-to-Hugo/#disqus_thread">Comments</a>
+
+          
+
+          
+          
+          <a class="label" href="http://parsiya.net/categories/migration-to-hugo">migration to Hugo</a>
+          </p>
+        </header>
+        <div class="entry-content">
+          
+
+<p>In <a href="http://parsiya.net/blog/2016-01-31-Why-Hugo/" title="Why Hugo?" target="_blank">last post</a> I talked about why I moved from Octopress to Hugo. In this post I am going to talk about how I managed the migration and any interesting things that I encountered in the process. I will also introduce the <a href="https://github.com/parsiya/hugo-octopress/" target="_blank">Hugo-Octopress</a> theme (you are looking at it), which is the classic Octopress theme ported to Hugo.</p>
+
+<p>You can also see the last archive of my Octopress blog (previously a private repo on Bitbucket) on github: <a href="https://github.com/parsiya/Octopress-Blog" target="_blank">https://github.com/parsiya/Octopress-Blog</a>.</p>
+
+<h3 id="hugo-import-jekyll:4451b754531b2eca1dcd74c8f975ea86">hugo import jekyll</h3>
+
+<p>Hugo has an <a href="https://gohugo.io/commands/hugo_import_jekyll/" target="_blank">Import from Jekyll</a> feature. Octopress is also built on Jekyll but its directory structure is a bit different from Jekyll. Just running <code>hugo import jekyll</code> in will not work. In Jekyll posts are usually stored in <code>jekyll-blog/posts/</code> while in Octopress they are in <code>octopress-blog/source/_posts/</code>. When importing from Octopress you have to point it to the <code>source</code> directory like this:</p>
+<div class="highlight" style="background: #002B36"><pre style="line-height: 125%"><span style="color: #93A1A1">root</span><span style="color: #268BD2">@debian</span><span style="color: #93A1A1">:</span><span style="color: #719e07">~/</span><span style="color: #93A1A1">Desktop</span><span style="color: #719e07">/</span><span style="color: #93A1A1">octopress</span><span style="color: #719e07">-</span><span style="color: #93A1A1">blog</span><span style="color: #586E75"># hugo import jekyll source/ hugo-import/</span>
+<span style="color: #93A1A1">Importing</span><span style="color: #719e07">...</span>
+<span style="color: #93A1A1">Congratulations!</span> <span style="color: #2AA198">23</span> <span style="color: #93A1A1">posts</span> <span style="color: #93A1A1">imported!</span>
+<span style="color: #93A1A1">Now,</span> <span style="color: #93A1A1">start</span> <span style="color: #93A1A1">Hugo</span> <span style="color: #93A1A1">by</span> <span style="color: #93A1A1">yourself:</span>
+<span style="color: #93A1A1">$</span> <span style="color: #93A1A1">git</span> <span style="color: #93A1A1">clone</span> <span style="color: #93A1A1">https:</span><span style="color: #719e07">//</span><span style="color: #93A1A1">github</span><span style="color: #719e07">.</span><span style="color: #93A1A1">com</span><span style="color: #719e07">/</span><span style="color: #93A1A1">spf13</span><span style="color: #719e07">/</span><span style="color: #93A1A1">herring</span><span style="color: #719e07">-</span><span style="color: #93A1A1">cove</span><span style="color: #719e07">.</span><span style="color: #93A1A1">git</span> <span style="color: #93A1A1">hugo</span><span style="color: #719e07">-</span><span style="color: #93A1A1">import</span><span style="color: #719e07">//</span><span style="color: #93A1A1">themes</span><span style="color: #719e07">/</span><span style="color: #93A1A1">herring</span><span style="color: #719e07">-</span><span style="color: #93A1A1">cove</span>
+<span style="color: #93A1A1">$</span> <span style="color: #93A1A1">cd</span> <span style="color: #93A1A1">hugo</span><span style="color: #719e07">-</span><span style="color: #93A1A1">import</span><span style="color: #719e07">/</span>
+<span style="color: #93A1A1">$</span> <span style="color: #93A1A1">hugo</span> <span style="color: #93A1A1">server</span> <span style="color: #719e07">-</span><span style="color: #93A1A1">w</span> <span style="color: #719e07">--</span><span style="color: #93A1A1">theme</span><span style="color: #719e07">=</span><span style="color: #93A1A1">herring</span><span style="color: #719e07">-</span><span style="color: #93A1A1">cove</span>
+</pre></div>
+
+<p>Converted Markdown posts will be in <code>hugo-import/content/posts/</code> and almost everything else will in <code>hugo-import/static/</code>.</p>
+<div class="highlight" style="background: #002B36"><pre style="line-height: 125%"># before conversion
+---
+layout: post
+title: &quot;Proxying Hipchat Part 3: SSL Added and Removed Here :^)&quot;
+date: 2015-10-19 21:42:10 -0400
+comments: true
+categories: [&#39;Hipchat&#39;,&#39;Proxying&#39;,&#39;Burp&#39;, &#39;Python&#39;]
+---
+</pre></div>
+<div class="highlight" style="background: #002B36"><pre style="line-height: 125%"># after conversion
+---
+categories:
+- Hipchat
+- Proxying
+- Burp
+- Python
+comments: true
+date: 2015-10-19T21:42:10Z
+title: &#39;Proxying Hipchat Part 3: SSL Added and Removed Here :^)&#39;
+url: /2015/10/19/proxying-hipchat-part-3-ssl-added-and-removed-here/
+---
+</pre></div>
+
+<p>The only thing I needed to remove was <code>url</code> because I wanted my URLs to be similar to <code>/blog/2015-10-19-proxying-hipchat-part-3-ssl-added-and-removed-here/</code>. This can be accomplished by adding the following to the config file:</p>
+<div class="highlight" style="background: #002B36"><pre style="line-height: 125%"><span style="color: #719e07">[permalinks]</span>
+<span style="color: #93A1A1">post</span> <span style="color: #719e07">=</span> <span style="color: #2AA198">&quot;/blog/:year-:month-:day-:title/&quot;</span>
+</pre></div>
+
+<p>I deleted almost everything else in the <code>static</code> directory apart from the following:</p>
+
+<ul>
+<li><code>images</code> directory</li>
+<li><code>favicon.png</code>: because I wanted to keep the Octopress feel</li>
+<li><code>stylesheets/screen.css</code>: needed for porting the themes, although I moved it to <code>css\hugo-octopress.css</code></li>
+</ul>
+
+<p>Perhaps I did not use it properly, it is not built for Octopress anyways but the import process did not do much for me other than creating the basis for a new hugo blog (e.g. empty <code>layouts</code> directory). I could have copied the Markdown files and use a bunch of <code>sed</code> commands to replace the headers.</p>
+
+<h3 id="shortcodes:4451b754531b2eca1dcd74c8f975ea86">Shortcodes</h3>
+
+<p>I needed captions for images and codeblocks. Hugo does not have this by default but offers <a href="https://gohugo.io/extras/shortcodes/" target="_blank">shortcodes</a> which are very very simple create. Compared to plugin creation for Jekyll, Octopress or Pelican, it&rsquo;s a walk in the park. I managed to create these two shortcodes in a few minutes. Granted Octopress and Jekyll already have these plugins.</p>
+
+<h4 id="codecaption:4451b754531b2eca1dcd74c8f975ea86">Codecaption</h4>
+
+<p>The codecaption block was quite simple. You can also see the result here.</p>
+
+
+
+
+    
+
+<figure class="code">
+  <figcaption>
+  	<span>codecaption shortcode</span>
+  </figcaption>
+  <div class="codewrapper"> 
+    <table class="highlighttable"><tr><td><div class="linenodiv" style="background-color: #f0f0f0; padding-right: 10px"><pre style="line-height: 125%">1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="highlight" style="background: #002B36"><pre style="line-height: 125%"><span style="color: #93A1A1">&lt;</span><span style="color: #268BD2">figure</span> <span style="color: #93A1A1">class</span><span style="color: #719e07">=</span><span style="color: #2AA198">&quot;code&quot;</span><span style="color: #93A1A1">&gt;</span>
+  <span style="color: #93A1A1">&lt;</span><span style="color: #268BD2">figcaption</span><span style="color: #93A1A1">&gt;</span>
+  	<span style="color: #93A1A1">&lt;</span><span style="color: #268BD2">span</span><span style="color: #93A1A1">&gt;</span>{{ .Get &quot;title&quot; }}<span style="color: #93A1A1">&lt;/</span><span style="color: #268BD2">span</span><span style="color: #93A1A1">&gt;</span>
+  <span style="color: #93A1A1">&lt;/</span><span style="color: #268BD2">figcaption</span><span style="color: #93A1A1">&gt;</span>
+  <span style="color: #93A1A1">&lt;</span><span style="color: #268BD2">div</span> <span style="color: #93A1A1">class</span><span style="color: #719e07">=</span><span style="color: #2AA198">&quot;codewrapper&quot;</span><span style="color: #93A1A1">&gt;</span>
+    {{ highlight .Inner (.Get &quot;lang&quot;) &quot;linenos=true&quot; }}
+  <span style="color: #93A1A1">&lt;/</span><span style="color: #268BD2">div</span><span style="color: #93A1A1">&gt;</span>
+<span style="color: #93A1A1">&lt;/</span><span style="color: #268BD2">figure</span><span style="color: #93A1A1">&gt;</span>
+</pre></div>
+</td></tr></table>
+  </div>
+</figure>
+
+
+<p>The <code>highlight</code> function in Hugo, passes everything between the opening and closing tags <code>.Inner</code> to <code>pygments</code> along with the language and an option to enable line numbers. The output of the <code>highlight</code> function is a table with two rows:</p>
+<div class="highlight" style="background: #002B36"><pre style="line-height: 125%"><span style="color: #93A1A1">&lt;</span><span style="color: #268BD2">table</span> <span style="color: #93A1A1">class</span><span style="color: #719e07">=</span><span style="color: #2AA198">&quot;highlighttable&quot;</span><span style="color: #93A1A1">&gt;</span>
+  <span style="color: #93A1A1">&lt;</span><span style="color: #268BD2">tbody</span><span style="color: #93A1A1">&gt;</span>
+    <span style="color: #93A1A1">&lt;</span><span style="color: #268BD2">tr</span><span style="color: #93A1A1">&gt;</span>
+      <span style="color: #93A1A1">&lt;</span><span style="color: #268BD2">td</span><span style="color: #93A1A1">&gt;</span>
+        <span style="color: #93A1A1">&lt;</span><span style="color: #268BD2">div</span> <span style="color: #93A1A1">class</span><span style="color: #719e07">=</span><span style="color: #2AA198">&quot;linenodiv&quot;</span> <span style="color: #93A1A1">style</span><span style="color: #719e07">=</span><span style="color: #2AA198">&quot;background-color: #f0f0f0; padding-right: 10px&quot;</span><span style="color: #93A1A1">&gt;</span>
+          <span style="color: #93A1A1">&lt;</span><span style="color: #268BD2">pre</span> <span style="color: #93A1A1">style</span><span style="color: #719e07">=</span><span style="color: #2AA198">&quot;line-height: 125%&quot;</span><span style="color: #93A1A1">&gt;</span>
+             <span style="color: #586E75">&lt;!-- line numbers go here --&gt;</span>
+          <span style="color: #93A1A1">&lt;/</span><span style="color: #268BD2">pre</span><span style="color: #93A1A1">&gt;</span>
+        <span style="color: #93A1A1">&lt;/</span><span style="color: #268BD2">div</span><span style="color: #93A1A1">&gt;</span>
+      <span style="color: #93A1A1">&lt;/</span><span style="color: #268BD2">td</span><span style="color: #93A1A1">&gt;</span>
+      <span style="color: #93A1A1">&lt;</span><span style="color: #268BD2">td</span> <span style="color: #93A1A1">class</span><span style="color: #719e07">=</span><span style="color: #2AA198">&quot;code&quot;</span><span style="color: #93A1A1">&gt;</span>
+        <span style="color: #93A1A1">&lt;</span><span style="color: #268BD2">div</span> <span style="color: #93A1A1">class</span><span style="color: #719e07">=</span><span style="color: #2AA198">&quot;highlight&quot;</span> <span style="color: #93A1A1">style</span><span style="color: #719e07">=</span><span style="color: #2AA198">&quot;background: #002B36&quot;</span><span style="color: #93A1A1">&gt;</span>
+          <span style="color: #93A1A1">&lt;</span><span style="color: #268BD2">pre</span> <span style="color: #93A1A1">style</span><span style="color: #719e07">=</span><span style="color: #2AA198">&quot;line-height: 125%&quot;</span><span style="color: #93A1A1">&gt;</span>
+            <span style="color: #586E75">&lt;!-- highlighted code --&gt;</span>
+          <span style="color: #93A1A1">&lt;/</span><span style="color: #268BD2">pre</span><span style="color: #93A1A1">&gt;</span>
+        <span style="color: #93A1A1">&lt;/</span><span style="color: #268BD2">div</span><span style="color: #93A1A1">&gt;</span>
+      <span style="color: #93A1A1">&lt;/</span><span style="color: #268BD2">td</span><span style="color: #93A1A1">&gt;</span>
+    <span style="color: #93A1A1">&lt;/</span><span style="color: #268BD2">tr</span><span style="color: #93A1A1">&gt;</span>
+  <span style="color: #93A1A1">&lt;/</span><span style="color: #268BD2">tbody</span><span style="color: #93A1A1">&gt;</span>
+<span style="color: #93A1A1">&lt;/</span><span style="color: #268BD2">table</span><span style="color: #93A1A1">&gt;</span>
+</pre></div>
+
+<p>I needed to do something for when the code overflowed. By adding code-wrap in <code>css</code>, line numbers and code would lose alignment. By adding <code>overflow-x: auto</code> to the <code>highlight</code> div, it would get a horizontal scrollbar but that would again mess with the alignment with line numbers.</p>
+
+<p>The solution was to wrap the whole table in a div and then give the div the following properties in css:</p>
+<div class="highlight" style="background: #002B36"><pre style="line-height: 125%"><span style="color: #268BD2">div.codewrapper</span> <span style="color: #93A1A1">{</span>
+    <span style="color: #B58900">overflow-x</span><span style="color: #719e07">:</span> <span style="color: #B58900">auto</span><span style="color: #93A1A1">;</span>
+    <span style="color: #B58900">overflow-y</span><span style="color: #719e07">:</span> <span style="color: #B58900">hidden</span><span style="color: #93A1A1">;</span>
+    <span style="color: #B58900">background-color</span><span style="color: #719e07">:</span> <span style="color: #2AA198">#002B36</span><span style="color: #93A1A1">;</span>
+<span style="color: #93A1A1">}</span>
+</pre></div>
+
+<p>And that enables a horizontal scrollbar as you can see below:</p>
+
+
+
+
+    
+
+<figure class="code">
+  <figcaption>
+  	<span></span>
+  </figcaption>
+  <div class="codewrapper"> 
+    <table class="highlighttable"><tr><td><div class="linenodiv" style="background-color: #f0f0f0; padding-right: 10px"><pre style="line-height: 125%">1
+2</pre></div></td><td class="code"><div class="highlight" style="background: #002B36"><pre style="line-height: 125%">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+</pre></div>
+</td></tr></table>
+  </div>
+</figure>
+
+
+<p>Normal backtick blocks are converted into something like the following:</p>
+<div class="highlight" style="background: #002B36"><pre style="line-height: 125%"><span style="color: #93A1A1">&lt;</span><span style="color: #268BD2">div</span> <span style="color: #93A1A1">class</span><span style="color: #719e07">=</span><span style="color: #2AA198">&quot;highlight&quot;</span> <span style="color: #93A1A1">style</span><span style="color: #719e07">=</span><span style="color: #2AA198">&quot;background: #002B36&quot;</span><span style="color: #93A1A1">&gt;</span>
+  <span style="color: #93A1A1">&lt;</span><span style="color: #268BD2">pre</span> <span style="color: #93A1A1">style</span><span style="color: #719e07">=</span><span style="color: #2AA198">&quot;line-height: 125%&quot;</span><span style="color: #93A1A1">&gt;</span>
+    <span style="color: #586E75">&lt;!-- highlighted code --&gt;</span>
+  <span style="color: #93A1A1">&lt;/</span><span style="color: #268BD2">pre</span><span style="color: #93A1A1">&gt;</span>
+<span style="color: #93A1A1">&lt;/</span><span style="color: #268BD2">div</span><span style="color: #93A1A1">&gt;</span>
+</pre></div>
+
+<p>To give them the same capability for overflow would mean that I had to modify the css for <code>div.highlight</code>. But that interfered with the div.highlight in the codecaption output. Instead I used the following that only applies to div.highlights inside <code>div.entry-content</code> (which contains the contents of each post):</p>
+<div class="highlight" style="background: #002B36"><pre style="line-height: 125%"><span style="color: #268BD2">div.entry-content</span> <span style="color: #719e07">&gt;</span> <span style="color: #268BD2">div.highlight</span> <span style="color: #93A1A1">{</span>
+    <span style="color: #B58900">border-color</span><span style="color: #719e07">:</span> <span style="color: #2AA198">#002B36</span><span style="color: #93A1A1">;</span>
+    <span style="color: #B58900">overflow-x</span><span style="color: #719e07">:</span> <span style="color: #B58900">auto</span><span style="color: #93A1A1">;</span>
+    <span style="color: #B58900">overflow-y</span><span style="color: #719e07">:</span> <span style="color: #B58900">hidden</span><span style="color: #93A1A1">;</span>
+    <span style="color: #B58900">margin-bottom</span><span style="color: #719e07">:</span> <span style="color: #2AA198">0.4em</span><span style="color: #93A1A1">;</span>
+<span style="color: #93A1A1">}</span>
+</pre></div>
+
+<p>Finally codecaption&rsquo;s output is similar to this:</p>
+<div class="highlight" style="background: #002B36"><pre style="line-height: 125%"><span style="color: #93A1A1">&lt;</span><span style="color: #268BD2">figure</span> <span style="color: #93A1A1">class</span><span style="color: #719e07">=</span><span style="color: #2AA198">&quot;code&quot;</span><span style="color: #93A1A1">&gt;</span>
+  <span style="color: #93A1A1">&lt;</span><span style="color: #268BD2">figcaption</span><span style="color: #93A1A1">&gt;</span>
+  	<span style="color: #93A1A1">&lt;</span><span style="color: #268BD2">span</span><span style="color: #93A1A1">&gt;</span>codecaption shortcode<span style="color: #93A1A1">&lt;/</span><span style="color: #268BD2">span</span><span style="color: #93A1A1">&gt;</span>
+  <span style="color: #93A1A1">&lt;/</span><span style="color: #268BD2">figcaption</span><span style="color: #93A1A1">&gt;</span>
+  <span style="color: #93A1A1">&lt;</span><span style="color: #268BD2">div</span> <span style="color: #93A1A1">class</span><span style="color: #719e07">=</span><span style="color: #2AA198">&quot;codewrapper&quot;</span><span style="color: #93A1A1">&gt;</span>
+    <span style="color: #93A1A1">&lt;</span><span style="color: #268BD2">table</span> <span style="color: #93A1A1">class</span><span style="color: #719e07">=</span><span style="color: #2AA198">&quot;highlighttable&quot;</span><span style="color: #93A1A1">&gt;&lt;/</span><span style="color: #268BD2">table</span><span style="color: #93A1A1">&gt;</span>
+  <span style="color: #93A1A1">&lt;/</span><span style="color: #268BD2">div</span><span style="color: #93A1A1">&gt;</span>
+<span style="color: #93A1A1">&lt;/</span><span style="color: #268BD2">figure</span><span style="color: #93A1A1">&gt;</span>
+</pre></div>
+
+<h4 id="imagecap:4451b754531b2eca1dcd74c8f975ea86">imagecap</h4>
+
+<p>Image caption was similarly simple. I tried to imitate the output of <code>imgcap</code> plugin in Octopress.</p>
+
+<p>
+
+
+    
+
+<figure class="code">
+  <figcaption>
+  	<span>imgcap</span>
+  </figcaption>
+  <div class="codewrapper"> 
+    <table class="highlighttable"><tr><td><div class="linenodiv" style="background-color: #f0f0f0; padding-right: 10px"><pre style="line-height: 125%">1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight" style="background: #002B36"><pre style="line-height: 125%"><span style="color: #93A1A1">&lt;</span><span style="color: #268BD2">span</span> <span style="color: #93A1A1">class</span><span style="color: #719e07">=</span><span style="color: #2AA198">&quot;caption-wrapper&quot;</span><span style="color: #93A1A1">&gt;</span>
+  <span style="color: #93A1A1">&lt;</span><span style="color: #268BD2">img</span> <span style="color: #93A1A1">class</span><span style="color: #719e07">=</span><span style="color: #2AA198">&quot;caption&quot;</span> <span style="color: #93A1A1">src</span><span style="color: #719e07">=</span><span style="color: #2AA198">&quot;{{ .Get &quot;</span><span style="color: #93A1A1">src&quot;</span> <span style="color: #93A1A1">}}&quot;</span> <span style="color: #93A1A1">title</span><span style="color: #719e07">=</span><span style="color: #2AA198">&quot;{{ .Get &quot;</span><span style="color: #93A1A1">caption&quot;</span> <span style="color: #93A1A1">}}&quot;</span>
+   <span style="color: #93A1A1">alt</span><span style="color: #719e07">=</span><span style="color: #2AA198">&quot;{{ .Get &quot;</span><span style="color: #93A1A1">caption&quot;</span> <span style="color: #93A1A1">}}&quot;&gt;</span>
+  <span style="color: #93A1A1">&lt;</span><span style="color: #268BD2">span</span> <span style="color: #93A1A1">class</span><span style="color: #719e07">=</span><span style="color: #2AA198">&quot;caption-text&quot;</span><span style="color: #93A1A1">&gt;</span>{{ .Get &quot;caption&quot; }}<span style="color: #93A1A1">&lt;/</span><span style="color: #268BD2">span</span><span style="color: #93A1A1">&gt;</span>
+<span style="color: #93A1A1">&lt;/</span><span style="color: #268BD2">span</span><span style="color: #93A1A1">&gt;</span>
+</pre></div>
+</td></tr></table>
+  </div>
+</figure>
+</p>
+
+<h3 id="replacing-liquid-tags:4451b754531b2eca1dcd74c8f975ea86">Replacing Liquid tags</h3>
+
+<p>The next step was to replace the liquid tags used in Markdown files. I had a few different types of tags for images and codeblocks. I used a few <code>sed</code> commands to search and replace them</p>
+
+        </div>
+        
+
+<footer>
+  <p class="meta">
+    <span class="byline author vcard">Posted by <span class="fn">Parsia</span></span>
+    
+    <time>Feb 2, 2016</time>
+    <span class="categories">
+      Tags: 
+        
+        
+          <a class="category" href="http://parsiya.net/tags/octopress">Octopress</a>  <a class="category" href="http://parsiya.net/tags/hugo">Hugo</a>  
+        
+    </span>
+  </p>
+    
+  
+  
+
+  
+
+  <p class="meta">
+    
+        <a class="basic-alignment left" href="http://parsiya.net/blog/2016-01-31-Why-Hugo/" title="Why Hugo?">Why Hugo?</a>
+    
+
+    
+  </p>
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'parsiya';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</footer>
+
+ 
+      </article>
+    </div>
+    
+
+
+<aside class="sidebar thirds">
+  <section class="first odd">
+    <h1>Header in sidebar</h1>
+    <p>This is the rest of the sidebar - here's a link to <a target="_blank" href="http://google.com" title="Google">Google</a>.</p>
+    <p>If links are set in config file, there will be links to keybase/github/twitter/linkedin etc.</p>
+
+    
+  </section>
+
+  
+
+
+
+  <ul class="sidebar-nav">
+    <li class="sidebar-nav-item">
+    <a target="_blank" href="https://github.com/parsiya/" title="https://github.com/parsiya/"><i class="fa fa-github fa-3x"></i></a>
+    <a target="_blank" href="https://bitbucket.org/parsiya/" title="https://bitbucket.org/parsiya/"><i class="fa fa-bitbucket fa-3x"></i></a>
+    
+    
+    
+    
+    <a target="_blank" href="https://twitter.com/cryptogangsta/" title="https://twitter.com/cryptogangsta/"><i class="fa fa-twitter fa-3x"></i></a>
+    
+    <a target="_blank" href="https://keybase.io/parsiya/" title="https://keybase.io/parsiya/"><i class="fa fa-key fa-3x"></i></a> 
+
+    
+    
+    </li>
+  </ul>
+
+  
+  <section class="even">
+    <h1>Recent Posts</h1>
+
+    
+    <ul id="recent_posts">
+      
+      
+        
+      
+      
+      <li class="post">
+        <a href="/blog/2016-02-02-From-Octopress-to-Hugo/">From Octopress to Hugo</a>
+      </li>
+      
+      <li class="post">
+        <a href="/blog/2016-01-31-Why-Hugo/">Why Hugo?</a>
+      </li>
+      
+      <li class="post">
+        <a href="/blog/2015-11-14-Intro-to-.NET-Remoting-for-Hackers/">Intro to .NET Remoting for Hackers</a>
+      </li>
+      
+      <li class="post">
+        <a href="/blog/2015-10-19-proxying-hipchat-part-3-ssl-added-and-removed-here/">Proxying Hipchat Part 3: SSL Added and Removed Here :^)</a>
+      </li>
+      
+      <li class="post">
+        <a href="/blog/2015-10-09-Proxying-Hipchat-Part-2-So-You-Think-You-Can-Use-Burp/">Proxying Hipchat Part 2: So You Think You Can Use Burp?</a>
+      </li>
+      
+    </ul>
+  </section>
+
+</aside>
+
+  </div>
+</div>
+
+
+
+
+<footer role="contentinfo">
+  <p>Copyright &copy; 2016 Parsia - <a href="http://parsiya.net/license/">License</a> - 
+  <span class="credit">Powered by <a target="_blank" href="https://gohugo.io">Hugo</a> and <a target="_blank" href="https://github.com/parsiya/hugo-octopress/">Hugo-Octopress</a> theme.
+</p>
+
+</footer>
+
+
+<script>
+  var _gaq=[['_setAccount','UA-55491306-1'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+
