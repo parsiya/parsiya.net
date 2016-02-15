@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tls on Parsia&#39;s Den</title>
+    <link>http://parsiya.net/tags/tls/</link>
+    <description>Recent content in Tls on Parsia&#39;s Den</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 17 Nov 2013 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://parsiya.net/tags/tls/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>How do I TLS Ciphersuite?</title>
+      <link>http://parsiya.net/blog/2013-11-17-how-do-i-tls-ciphersuite/</link>
+      <pubDate>Sun, 17 Nov 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://parsiya.net/blog/2013-11-17-how-do-i-tls-ciphersuite/</guid>
+      <description>&lt;p&gt;“Should we use RC4 or AES-CBC ?”
+This is a legitimate question. Many have heard of the highly publicized attacks against AES-CBC (CRIME, BEAST etc) and lean towards RC4.
+If asked (granted no one asks me), my answer would be: If you can control web servers (not feasible in all situations) and users’ browsers
+(almost impossible), upgrade to TLS 1.2 and go with AES-GCM. However, not many browsers supported these and to be honest, more users trumps loss
+of security in many cases.&lt;/p&gt;
+
+&lt;p&gt;RC4 was a masterpiece for its time (it still is) but it has extreme biases in its PRNG and attacks are prevalent &lt;a href=&#34;http://www.isg.rhul.ac.uk/tls/&#34; target=&#34;_blank&#34;&gt;[1]&lt;/a&gt; and because it only takes a
+seed (with no nonce), if a key is re-used, one can find the XOR of plaintexts by XOR-ing two ciphertexts.
+A recent demonstration of this weakness was in the popular “Whatsapp” application where the same key was used in both directions &lt;a href=&#34;https://blog.thijsalkema.de/blog/2013/10/08/piercing-through-whatsapp-s-encryption/&#34; title=&#34;Octopress FTW&#34; target=&#34;_blank&#34;&gt;[2]&lt;/a&gt;. Granted
+This was an application design flaw but Whatsapp has quite the security history (google Whatsapp and IMEI).&lt;/p&gt;
+
+&lt;p&gt;A few days ago Microsoft released security advisory 2868725 “Recommendation to disable RC4.”
+They found out that less than 4% of their 5 million sample websites only worked with RC4 (although from my personal experience RC4 share is
+probably higher) &lt;a href=&#34;http://blogs.technet.com/b/srd/archive/2013/11/12/security-advisory-2868725-recommendation-to-disable-rc4.aspx&#34; target=&#34;_blank&#34;&gt;[3]&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Major browsers are also starting to support TL2 1.2 and AES-GCM.
+Chrome has had TLS 1.2 support for a while (Since Chrome 29) &lt;a href=&#34;https://src.chromium.org/viewvc/chrome?revision=203090&amp;amp;view=revision&#34; target=&#34;_blank&#34;&gt;[4]&lt;/a&gt; and Chrome 31 (released a few days ago) has support for AES-GCM &lt;a href=&#34;https://src.chromium.org/viewvc/chrome?revision=217716&amp;amp;view=revision&#34; target=&#34;_blank&#34;&gt;[5]&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Firefox has implemented TLS 1.2. &lt;a href=&#34;https://bugzilla.mozilla.org/show_bug.cgi?id=861266&#34; target=&#34;_blank&#34;&gt;[6]&lt;/a&gt; and AES-GCM &lt;a href=&#34;https://bugzilla.mozilla.org/show_bug.cgi?id=880543&#34; target=&#34;_blank&#34;&gt;[7]&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;IE 11 turns TLS 1.2 on by default &lt;a href=&#34;http://blogs.msdn.com/b/ie/archive/2013/11/12/ie11-automatically-makes-over-40-of-the-web-more-secure-while-making-sure-sites-continue-to-work.aspx&#34; title=&#34;has some good information in between IE propaganda&#34; target=&#34;_blank&#34;&gt;[8]&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;A day after I wrote the draft of this blog post, Adam Langley (author of patches in links &lt;a href=&#34;https://src.chromium.org/viewvc/chrome?revision=203090&amp;amp;view=revision&#34; target=&#34;_blank&#34;&gt;4&lt;/a&gt; and &lt;a href=&#34;https://src.chromium.org/viewvc/chrome?revision=217716&amp;amp;view=revision&#34; target=&#34;_blank&#34;&gt;5&lt;/a&gt;) wrote a blogpost named
+&amp;ldquo;A roster of TLS cipher suites weaknesses&amp;rdquo; &lt;a href=&#34;http://googleonlinesecurity.blogspot.com/2013/11/a-roster-of-tls-cipher-suites-weaknesses.html&#34; target=&#34;_blank&#34;&gt;[9]&lt;/a&gt;. He discusses the strengths and weaknesses of the aforementioned three different ciphersuites
+(RC4, AES-CBC and AES-GCM) on top of Chacha20,Poly1305 (if you do not know why the numbers are not powers of 2, google it :D).&lt;/p&gt;
+
+&lt;p&gt;tl;dr: seems like AES-GCM is the flavor of the month. More and more browsers are supporting it, it may be a good time to start moving towards it.&lt;/p&gt;
+
+&lt;p&gt;PS: I know, I will get the contact page fixed soon &amp;trade;.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

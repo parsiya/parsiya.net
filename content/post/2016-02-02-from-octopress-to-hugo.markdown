@@ -3,7 +3,7 @@ date: "2016-02-02T22:58:26-05:00"
 draft: false
 title: "From Octopress to Hugo"
 categories:
-- migration to Hugo
+- Migration to Hugo
 tags:
 - Octopress
 - Hugo

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Css on Parsia&#39;s Den</title>
+    <link>http://parsiya.net/tags/css/</link>
+    <description>Recent content in Css on Parsia&#39;s Den</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 22 Apr 2014 14:03:32 +0000</lastBuildDate>
+    <atom:link href="http://parsiya.net/tags/css/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Amazon S3 and CSS</title>
+      <link>http://parsiya.net/blog/2014-04-22-amazon-s3-and-css/</link>
+      <pubDate>Tue, 22 Apr 2014 14:03:32 +0000</pubDate>
+      
+      <guid>http://parsiya.net/blog/2014-04-22-amazon-s3-and-css/</guid>
+      <description>&lt;p&gt;After I deployed my blog to Amazon S3, I realized that there was no CSS applied to the pages. In Octopress, the look and feel of website is managed by &lt;code&gt;stylesheets/screen.css&lt;/code&gt;. It was fine in &lt;code&gt;rake preview&lt;/code&gt; but not on the S3 bucket. I looked around for a few hours to no avail. There was one other person who had the same issue on &lt;a href=&#34;http://stackoverflow.com/questions/17138615/discrepency-in-rake-preview-vs-rake-deploy&#34; target=&#34;_blank&#34;&gt;stackoverflow&lt;/a&gt; but no answers. Relevant &lt;a href=&#34;https://xkcd.com/979/&#34; target=&#34;_blank&#34;&gt;xkcd&lt;/a&gt;:&lt;/p&gt;
+
+
+
+
+
+
+
+
+
+&lt;span class=&#34;caption-wrapper&#34;&gt;
+  &lt;img class=&#34;caption&#34; src=&#34;http://imgs.xkcd.com/comics/wisdom_of_the_ancients.png&#34; title=&#34;Wisdom of the Ancients&#34; alt=&#34;Wisdom of the Ancients&#34;&gt;
+  &lt;span class=&#34;caption-text&#34;&gt;Wisdom of the Ancients&lt;/span&gt;
+&lt;/span&gt;
+
+
+&lt;p&gt;I finally found my answer. There are other static websites out there so I removed Octopress from my search terms (facepalm! I got my first MSc. in query expansion). This &lt;a href=&#34;http://stackoverflow.com/a/14807743&#34; target=&#34;_blank&#34;&gt;stackoverflow answer&lt;/a&gt; sent me to &lt;a href=&#34;http://www.adamwilcox.org/2012/05/04/css-on-amazon-s3/&#34; target=&#34;_blank&#34;&gt;Adam Wilcox&amp;rsquo;s website&lt;/a&gt; and saved the day. Thanks Adam.&lt;/p&gt;
+
+&lt;p&gt;Simple fix, go to Amazon S3 bucket web interface. Find &lt;code&gt;stylesheets/screen.css&lt;/code&gt;. Go to metadata tab and change &lt;code&gt;content-type&lt;/code&gt; to &lt;code&gt;text/css&lt;/code&gt;. This has to be repeated every time &lt;code&gt;screen.css&lt;/code&gt; is updated (unless I can find how to do this with &lt;code&gt;S3cmd&lt;/code&gt;). Usually this is not the case, when I generate my blog again I can see the following indicating that &lt;code&gt;screen.css&lt;/code&gt; is not changed (unless you change the theme?):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;root@kali:~/Desktop/octopress# rake generate
+&lt;span style=&#34;color: #586E75&#34;&gt;## Generating Site with Jekyll&lt;/span&gt;
+identical source/stylesheets/screen.css 
+Configuration from /root/Desktop/octopress/_config.yml
+Building site: &lt;span style=&#34;color: #B58900&#34;&gt;source&lt;/span&gt; -&amp;gt; public
+Successfully generated site: &lt;span style=&#34;color: #B58900&#34;&gt;source&lt;/span&gt; -&amp;gt; public
+&lt;/pre&gt;&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

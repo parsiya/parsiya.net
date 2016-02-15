@@ -8,10 +8,10 @@ tags:
 I am not quite sure about these licenses (I am not a developer if that is not obvious). I want people to be able to use anything if they want to with attribution and without warranty. I think the licenses satisfy this. If you have a suggestion please let me know.
 
 ### Content License
-Except where otherwise noted, non-code material on this website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/CC-BY">Creative Commons BY-NC-SA</a>.
+Except where otherwise noted, non-code material on this website is licensed under a <a rel="license"  target="_blank" href="https://creativecommons.org/licenses/by-nc/4.0/">Creative Commons BY-NC</a>.
 
 ### Code License
-Except where otherwise noted, my code on this website is licensed under the MIT License:
+Except where otherwise noted, **my code** on this website is licensed under the MIT License:
 
 >Copyright (c) 2016 Parsia Hakimian
 

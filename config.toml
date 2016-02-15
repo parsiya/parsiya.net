@@ -3,7 +3,7 @@
 
 baseurl = "http://parsiya.net/"
 # baseurl = "http://parsiya.io/"
-disablePathToLower = true
+disablePathToLower = false
 languageCode = "en-us"
 title = "Parsia's Den"
 theme = "hugo-octopress"
@@ -45,11 +45,22 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 	weight = -5
 
 [[menu.main]]
+	Name = "Archive"
+	URL = "http://parsiya.net/archive/"
+	weight = -2
+
+[[menu.main]]
+	Name = "License"
+	URL = "http://parsiya.net/license/"
+	weight = -1
+
+[[menu.main]]
 	Name = "This theme on Github"
 	URL = "https://www.github.com/parsiya/hugo-octopress"
+	weight = 0
+
 
 [params]
-
 	# number of recent posts that will be shown in the sidebar - default is 5
 	SidebarRecentLimit = 5
 

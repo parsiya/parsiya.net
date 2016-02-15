@@ -1,0 +1,690 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Network Traffic on Parsia&#39;s Den</title>
+    <link>http://parsiya.net/tags/network-traffic/</link>
+    <description>Recent content in Network Traffic on Parsia&#39;s Den</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 08 Oct 2015 23:05:24 +0000</lastBuildDate>
+    <atom:link href="http://parsiya.net/tags/network-traffic/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Proxying Hipchat Part 1: Where did the Traffic Go?</title>
+      <link>http://parsiya.net/blog/2015-10-08-proxying-hipchat-part-1-where-did-the-traffic-go/</link>
+      <pubDate>Thu, 08 Oct 2015 23:05:24 +0000</pubDate>
+      
+      <guid>http://parsiya.net/blog/2015-10-08-proxying-hipchat-part-1-where-did-the-traffic-go/</guid>
+      <description>
+
+&lt;p&gt;This is a slightly different version of a series of blog post that I wrote on our internal blog about proxying. I see that proxying traffic is a time consuming step in testing thick client applications so I thought I would share what I know. I tackled Hipchat. Why Hipchat? Because it uses a known protocol (XMPP) and I thought it&amp;rsquo;s an interesting application.&lt;/p&gt;
+
+&lt;p&gt;I used Hipchat Windows client version 2. At the time of writing version 4 is in beta. In this part we will see how we can identify endpoints from traffic captures even when they are behind a load balancer/shared hosting etc. In next parts we will start proxying.&lt;/p&gt;
+
+&lt;h3 id=&#34;0-setup-and-tools:45cd71e0a7c5e93aaf85b0f4020cc96b&#34;&gt;0. Setup and Tools&lt;/h3&gt;
+
+&lt;p&gt;I will be using the following tools in this part:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Microsoft Network Monitor (Netmon). You can also use Wireshark.&lt;/li&gt;
+&lt;li&gt;Powershell/Command Prompt/etc: I am using Windows but I am sure you can find the equivalent commands if you are fancy ;)&lt;/li&gt;
+&lt;li&gt;Procmon&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;You can deploy your own Hipchat server by &lt;a href=&#34;https://www.hipchat.com/server/get-it&#34; target=&#34;_blank&#34;&gt;downloading a VM&lt;/a&gt;. You will need a license (or an evaluation version) or you can buy a 10 license server for &lt;a href=&#34;https://www.atlassian.com/purchase/product/com.atlassian.hipchat.server&#34; target=&#34;_blank&#34;&gt;10 bucks&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Note: In these posts, the Hipchat server is named &lt;code&gt;hipchatserver.com&lt;/code&gt; and its IP is &lt;code&gt;10.10.10.10&lt;/code&gt; (these are just examples). Some of the screenshots are edited to hide the actual IPs and replace them with samples. My machine&amp;rsquo;s sample IP address for the network interface that hosts the Hipchat server is &lt;code&gt;10.10.10.9&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;1-traffic-attribution:45cd71e0a7c5e93aaf85b0f4020cc96b&#34;&gt;1. Traffic Attribution&lt;/h3&gt;
+
+&lt;p&gt;Run Netmon and Procmon as admin and run HipChat. We already know how to do &lt;a href=&#34;http://parsiya.net/blog/2015-08-01-network-traffic-attribution-on-windows/&#34; title=&#34;Network Traffic Attribution on Windows&#34; target=&#34;_blank&#34;&gt;traffic attribution&lt;/a&gt;. I was not logged into any chatrooms, so Hipchat is not loading any extra content (e.g. images linked in rooms).&lt;/p&gt;
+
+&lt;p&gt;In Netmon we also see the following endpoints:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;10.10.10.10&lt;/li&gt;
+&lt;li&gt;54.231.81.2&lt;/li&gt;
+&lt;li&gt;54.231.96.96&lt;/li&gt;
+&lt;li&gt;54.231.47.194&lt;/li&gt;
+&lt;li&gt;54.225.209.74&lt;/li&gt;
+&lt;/ol&gt;
+
+
+
+
+
+
+
+
+
+&lt;span class=&#34;caption-wrapper&#34;&gt;
+  &lt;img class=&#34;caption&#34; src=&#34;http://parsiya.net/images/2015/hipchat1/01-Traffic-in-Netmon.png&#34; title=&#34;Traffic in Netmon&#34; alt=&#34;Traffic in Netmon&#34;&gt;
+  &lt;span class=&#34;caption-text&#34;&gt;Traffic in Netmon&lt;/span&gt;
+&lt;/span&gt;
+
+
+&lt;p&gt;Traffic in Netmon, click to view full-size image.&lt;/p&gt;
+
+&lt;p&gt;You will notice that I have a slightly different layout in Netmon now. I have removed time related columns. Right click any column name and select &lt;code&gt;Choose Columns&lt;/code&gt;. There are also different layouts like &lt;code&gt;HTTP Troubleshoot&lt;/code&gt;.&lt;/p&gt;
+
+
+
+
+
+
+
+
+
+&lt;span class=&#34;caption-wrapper&#34;&gt;
+  &lt;img class=&#34;caption&#34; src=&#34;http://parsiya.net/images/2015/hipchat1/02-Endpoints-in-Netmon.png&#34; title=&#34;Endpoints in Netmon&#34; alt=&#34;Endpoints in Netmon&#34;&gt;
+  &lt;span class=&#34;caption-text&#34;&gt;Endpoints in Netmon&lt;/span&gt;
+&lt;/span&gt;
+
+
+&lt;p&gt;In Procmon we can see five endpoints:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;hipchatserver.com:5222&lt;/li&gt;
+&lt;li&gt;s3-website-us-east-1.amazonaws.com:http&lt;/li&gt;
+&lt;li&gt;s3-1.amazonaws.com:https&lt;/li&gt;
+&lt;li&gt;ec2-54-531-47-194.compute-1.amazonaws.com:https&lt;/li&gt;
+&lt;li&gt;ec2-54-225-209-74.compute-1.amazonaws.com:https&lt;/li&gt;
+&lt;/ol&gt;
+
+
+
+
+
+
+
+
+
+&lt;span class=&#34;caption-wrapper&#34;&gt;
+  &lt;img class=&#34;caption&#34; src=&#34;http://parsiya.net/images/2015/hipchat1/03-Endpoints-in-Procmon.png&#34; title=&#34;Endpoints in Procmon&#34; alt=&#34;Endpoints in Procmon&#34;&gt;
+  &lt;span class=&#34;caption-text&#34;&gt;Endpoints in Procmon&lt;/span&gt;
+&lt;/span&gt;
+
+
+&lt;p&gt;Procmon filters are:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;ProcessName is Hipchat.exe&lt;/li&gt;
+&lt;li&gt;Operation is TCP Connect&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;2-where-does-the-traffic-go:45cd71e0a7c5e93aaf85b0f4020cc96b&#34;&gt;2. Where does the traffic go?&lt;/h3&gt;
+
+&lt;p&gt;Now we need to find out more about these endpoints (e.g. their actual address/URL etc). Based on their temporal sequence in Procmon and Netmon we have some insights.&lt;/p&gt;
+
+&lt;h4 id=&#34;2-1-10-10-10-10-hipchatserver-com:45cd71e0a7c5e93aaf85b0f4020cc96b&#34;&gt;2.1 – 10.10.10.10 – hipchatserver.com&lt;/h4&gt;
+
+&lt;p&gt;This is easy. It’s the Hipchat server at &lt;code&gt;hipchatserver.com&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;PS C:\&amp;gt; nslookup 10.10.10.10
+Server:  zzzz.com
+Address:  10.10.10.2
+
+Name:    hipchatserver.com
+Address:  10.10.10.10
+
+PS C:\&amp;gt; ping -a 10.10.10.10
+Pinging hipchatserver.com [10.10.10.10] with 32 bytes of data:
+...
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h4 id=&#34;2-2-54-231-81-2-s3-website-us-east-1-amazonaws-com:45cd71e0a7c5e93aaf85b0f4020cc96b&#34;&gt;2.2 – 54.231.81.2 – s3-website-us-east-1.amazonaws.com&lt;/h4&gt;
+
+&lt;p&gt;This is where things start to become interesting. Let’s re-use our old tricks.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;PS C:\&amp;gt; nslookup 54.231.81.2
+Server:  zzzz.com
+Address:  10.10.10.2
+
+Name:    s3-website-us-east-1.amazonaws.com
+Address:  54.231.81.2
+
+PS C:\&amp;gt; ping -a 54.231.81.2
+Pinging s3-website-us-east-1.amazonaws.com [54.231.81.2] with 32 bytes of data:
+...
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;It seems like the second endpoint is hosted on an AWS S3 bucket. S3 buckets are mainly storage containers but they can also host static websites like this website. But we won&amp;rsquo;t find anything if we go to that address. &lt;code&gt;s3-website-us-east-1.amazonaws.com&lt;/code&gt; is the east coast AWS data center which is located in Northern Virginia. You will get a different endpoint based on where you are located.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s look at the conversation in Netmon. This is similar to &lt;code&gt;Follow TCP/UDP Stream&lt;/code&gt; in Wireshark but unfortunately not as good.&lt;/p&gt;
+
+
+
+
+
+
+
+
+
+&lt;span class=&#34;caption-wrapper&#34;&gt;
+  &lt;img class=&#34;caption&#34; src=&#34;http://parsiya.net/images/2015/hipchat1/04-bloginfo-fetch.png&#34; title=&#34;Fetching blog_info.html&#34; alt=&#34;Fetching blog_info.html&#34;&gt;
+  &lt;span class=&#34;caption-text&#34;&gt;Fetching blog_info.html&lt;/span&gt;
+&lt;/span&gt;
+
+
+&lt;p&gt;We are in luck, we can see a &lt;code&gt;GET&lt;/code&gt; request over HTTP. Let’s look at it’s payload:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #268BD2&#34;&gt;GET&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;/blog_info.html&lt;/span&gt; &lt;span style=&#34;color: #268BD2&#34;&gt;HTTP&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;1.1&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;Accept&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;User-Agent&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/538.1 (KHTML, like Gecko) HipChat/2.2.1388 Safari/538.1&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;Connection&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;Keep-Alive&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;Accept-Encoding&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;gzip, deflate&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;Accept-Language&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;en-US,*&lt;/span&gt;
+&lt;span style=&#34;color: #93A1A1&#34;&gt;Host&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;downloads.hipchat.com&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Note the User-Agent. Hipchat is fetching &lt;a href=&#34;http://downloads.hipchat.com/blog_info.html&#34; target=&#34;_blank&#34;&gt;http://downloads.hipchat.com/blog_info.html&lt;/a&gt;. This is the &lt;code&gt;Latest News&lt;/code&gt; at the bottom of the Hipchat client. Notice that it is being loaded over HTTP and surprisingly it is not available over TLS (try accessing &lt;a href=&#34;https://downloads.hipchat.com/blog_info.html&#34; target=&#34;_blank&#34;&gt;https://downloads.hipchat.com/blog_info.html&lt;/a&gt;) does not work. In fact you cannot access &lt;a href=&#34;https://downloads.hipchat.com/&#34; target=&#34;_blank&#34;&gt;https://downloads.hipchat.com&lt;/a&gt;.&lt;/p&gt;
+
+
+
+
+
+
+
+
+
+&lt;span class=&#34;caption-wrapper&#34;&gt;
+  &lt;img class=&#34;caption&#34; src=&#34;http://parsiya.net/images/2015/hipchat1/05-Latest-news-in-hipchat.png&#34; title=&#34;Latest News fetched over HTTP ;)&#34; alt=&#34;Latest News fetched over HTTP ;)&#34;&gt;
+  &lt;span class=&#34;caption-text&#34;&gt;Latest News fetched over HTTP ;)&lt;/span&gt;
+&lt;/span&gt;
+
+
+&lt;h5 id=&#34;2-2-1-but-what-if-this-request-was-over-tls:45cd71e0a7c5e93aaf85b0f4020cc96b&#34;&gt;2.2.1 But what if this request was over TLS?&lt;/h5&gt;
+
+&lt;p&gt;Then we would have seen the TLS handshake and then encrypted data. Even by looking at the Common Name (CN) field in server’s certificate in 2nd part of the TLS handshake (&lt;code&gt;Server Hello&lt;/code&gt;) we wouldn&amp;rsquo;t have been able to discover the endpoint.
+Traffic in Netmon, click to view full-size image.
+We are going to have to look at DNS requests. We know the endpoint’s IP address so we will try to find the DNS request that had this IP in its answer. The endpoint’s IP address is &lt;code&gt;54.231.81.2&lt;/code&gt; which is &lt;code&gt;36E75102&lt;/code&gt; in Hex. In Netmon, select &lt;code&gt;All Traffic&lt;/code&gt; (In Netmon DNS traffic is not included in process traffic) and enter the following filter:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;  DNS &amp;amp;&amp;amp; ContainsBin(FrameData, HEX, &amp;quot;36E75102&amp;quot;)
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This filter searches for the IP address in DNS traffic. It will find the DNS query that returned this IP address.&lt;/p&gt;
+
+
+
+
+
+
+
+
+
+&lt;span class=&#34;caption-wrapper&#34;&gt;
+  &lt;img class=&#34;caption&#34; src=&#34;http://parsiya.net/images/2015/hipchat1/06-Downloads.png&#34; title=&#34;downloads.hipchat.com&#34; alt=&#34;downloads.hipchat.com&#34;&gt;
+  &lt;span class=&#34;caption-text&#34;&gt;downloads.hipchat.com&lt;/span&gt;
+&lt;/span&gt;
+
+
+&lt;p&gt;As we can see, it is &lt;code&gt;downloads.hipchat.com&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;IP to Hex conversion can be done online, by hand or using Python:&lt;/p&gt;
+
+
+
+
+    
+
+&lt;figure class=&#34;code&#34;&gt;
+  &lt;figcaption&gt;
+  	&lt;span&gt;IP to Hex&lt;/span&gt;
+  &lt;/figcaption&gt;
+  &lt;div class=&#34;codewrapper&#34;&gt; 
+    &lt;table class=&#34;highlighttable&#34;&gt;&lt;tr&gt;&lt;td&gt;&lt;div class=&#34;linenodiv&#34; style=&#34;background-color: #f0f0f0; padding-right: 10px&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;1
+2
+3
+4
+5&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;PS&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;C:&lt;/span&gt;\&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;python&lt;/span&gt;
+&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;socket&lt;/span&gt;
+&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;binascii&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;hexlify&lt;/span&gt;
+&lt;span style=&#34;color: #719e07&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #719e07&#34;&gt;print&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;hexlify&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;(&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;socket&lt;/span&gt;&lt;span style=&#34;color: #719e07&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;inet_aton(&lt;/span&gt;&lt;span style=&#34;color: #2AA198&#34;&gt;&amp;quot;54.231.81.2&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #93A1A1&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #93A1A1&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;color: #2AA198&#34;&gt;36e75102&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+  &lt;/div&gt;
+&lt;/figure&gt;
+
+
+&lt;h4 id=&#34;2-3-54-231-96-96-s3-1-amazonaws-com:45cd71e0a7c5e93aaf85b0f4020cc96b&#34;&gt;2.3 – 54.231.96.96 – s3-1.amazonaws.com&lt;/h4&gt;
+
+&lt;p&gt;Same trick. &lt;code&gt;54.231.96.96&lt;/code&gt; in Hex is &lt;code&gt;36E76060&lt;/code&gt; so filter is:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;  DNS &amp;amp;&amp;amp; ContainsBin(FrameData, HEX, &amp;quot;36E76060&amp;quot;)
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;which points to &lt;code&gt;s3.amazonaws.com&lt;/code&gt;. As we will see in part two, this is the request to load the emoticon shown with latest news, in this case it is the &lt;code&gt;success kid&lt;/code&gt; image macro.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;- Dns: QueryId = 0xC28D, QUERY (Standard query), Response - Success, 53, 0 ... 
+    QueryIdentifier: 49805 (0xC28D)
+  + Flags:  Response, Opcode - QUERY (Standard query), RD, RA, Rcode - Success
+    QuestionCount: 1 (0x1)
+    AnswerCount: 3 (0x3)
+    NameServerCount: 0 (0x0)
+    AdditionalCount: 0 (0x0)
+  - QRecord: s3.amazonaws.com of type Host Addr on class Internet  PS C:\&amp;gt; python
+     QuestionName: s3.amazonaws.com
+     QuestionType: A, IPv4 address, 1(0x1)
+     QuestionClass: Internet, 1(0x1)
+  - ARecord: s3.amazonaws.com of type CNAME on class Internet: s3.a-geo.amazonaws.com
+     ResourceName: s3.amazonaws.com
+     ResourceType: CNAME, Canonical name for an alias, 5(0x5)
+     ResourceClass: Internet, 1(0x1)
+     TimeToLive: 2554 (0x9FA)
+     ResourceDataLength: 11 (0xB)
+     CName: s3.a-geo.amazonaws.com
+  - ARecord: s3.a-geo.amazonaws.com of type CNAME on class Internet: s3-1.amazonaws.com
+     ResourceName: s3.a-geo.amazonaws.com
+     ResourceType: CNAME, Canonical name for an alias, 5(0x5)
+     ResourceClass: Internet, 1(0x1)
+     TimeToLive: 1555 (0x613)
+     ResourceDataLength: 7 (0x7)
+     CName: s3-1.amazonaws.com
+  - ARecord: s3-1.amazonaws.com of type Host Addr on class Internet: 54.231.96.96
+     ResourceName: s3-1.amazonaws.com
+     ResourceType: A, IPv4 address, 1(0x1)
+     ResourceClass: Internet, 1(0x1)
+     TimeToLive: 4 (0x4)
+     ResourceDataLength: 4 (0x4)
+     IPAddress: 54.231.96.96
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h4 id=&#34;2-4-54-243-47-194-ec2-54-243-47-194-compute-1-amazonaws-com:45cd71e0a7c5e93aaf85b0f4020cc96b&#34;&gt;2.4 – 54.243.47.194 – ec2-54-243-47-194.compute-1.amazonaws.com&lt;/h4&gt;
+
+&lt;p&gt;This is easy, we can just go to &lt;a href=&#34;http://ec2-54-243-47-194.compute-1.amazonaws.com&#34; target=&#34;_blank&#34;&gt;http://ec2-54-243-47-194.compute-1.amazonaws.com&lt;/a&gt; and observe that it is &lt;a href=&#34;http://www.hipchat.com&#34; target=&#34;_blank&#34;&gt;http://www.hipchat.com&lt;/a&gt;. Interesting thing, if you go to &lt;a href=&#34;http://www.hipchat.com&#34; target=&#34;_blank&#34;&gt;http://www.hipchat.com&lt;/a&gt; in your browser, it will redirect to the HTTPs version of the website. Going to the Amazon EC2 address is the only way to access hipchat.com over HTTP.&lt;/p&gt;
+
+&lt;p&gt;We can also use this filter in Netmon:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;  DNS &amp;amp;&amp;amp; ContainsBin(FrameData, HEX, &amp;quot;36F32FC2&amp;quot;)
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Which results in:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;- Dns: QueryId = 0x1D07, QUERY (Standard query), Response - Success, 54.243.47.194 
+    QueryIdentifier: 7431 (0x1D07)
+  + Flags:  Response, Opcode - QUERY (Standard query), RD, RA, Rcode - Success
+    QuestionCount: 1 (0x1)
+    AnswerCount: 1 (0x1)
+    NameServerCount: 0 (0x0)
+    AdditionalCount: 0 (0x0)
+  - QRecord: www.hipchat.com of type Host Addr on class Internet
+     QuestionName: www.hipchat.com
+     QuestionType: A, IPv4 address, 1(0x1)
+     QuestionClass: Internet, 1(0x1)
+  - ARecord: www.hipchat.com of type Host Addr on class Internet: 54.243.47.194
+     ResourceName: www.hipchat.com
+     ResourceType: A, IPv4 address, 1(0x1)
+     ResourceClass: Internet, 1(0x1)
+     TimeToLive: 60 (0x3C)
+     ResourceDataLength: 4 (0x4)
+     IPAddress: 54.243.47.194
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h4 id=&#34;2-5-54-225-209-74-ec2-54-225-209-74-compute-1-amazonaws-com:45cd71e0a7c5e93aaf85b0f4020cc96b&#34;&gt;2.5 – 54.225.209.74 – ec2-54-225-209-74.compute-1.amazonaws.com&lt;/h4&gt;
+
+&lt;p&gt;This is the same as above with one small difference. Using this filter:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;DNS &amp;amp;&amp;amp; ContainsBin(FrameData, HEX, &amp;quot;36E1D14A&amp;quot;)
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;We can see that is points to hipchat.com (last IP was &lt;code&gt;www.hipchat.com&lt;/code&gt;).&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #002B36&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;- Dns: QueryId = 0x280E, QUERY (Standard query), Response - Success, 54.225.209.74 
+    QueryIdentifier: 10254 (0x280E)
+  + Flags:  Response, Opcode - QUERY (Standard query), RD, RA, Rcode - Success
+    QuestionCount: 1 (0x1)
+    AnswerCount: 1 (0x1)
+    NameServerCount: 0 (0x0)
+    AdditionalCount: 0 (0x0)
+  - QRecord: hipchat.com of type Host Addr on class Internet
+     QuestionName: hipchat.com
+     QuestionType: A, IPv4 address, 1(0x1)
+     QuestionClass: Internet, 1(0x1)
+  - ARecord: hipchat.com of type Host Addr on class Internet: 54.225.209.74
+     ResourceName: hipchat.com
+     ResourceType: A, IPv4 address, 1(0x1)
+     ResourceClass: Internet, 1(0x1)
+     TimeToLive: 59 (0x3B)
+     ResourceDataLength: 4 (0x4)
+     IPAddress: 54.225.209.74
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;So the application is communicating with both &lt;code&gt;www.hipchat.com&lt;/code&gt; and &lt;code&gt;hipchat.com&lt;/code&gt;. Probably because of a redirect as we can see later.&lt;/p&gt;
+
+&lt;p&gt;That&amp;rsquo;s enough for now. In part two we will talk about proxying.&lt;/p&gt;
+
+&lt;!-- links --&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Network Traffic Attribution on Windows</title>
+      <link>http://parsiya.net/blog/2015-08-01-network-traffic-attribution-on-windows/</link>
+      <pubDate>Sat, 01 Aug 2015 19:37:42 +0000</pubDate>
+      
+      <guid>http://parsiya.net/blog/2015-08-01-network-traffic-attribution-on-windows/</guid>
+      <description>
+
+&lt;p&gt;Thick client assessments come in different flavors. Most of our work is on &lt;code&gt;consumer applications&lt;/code&gt; where &lt;code&gt;consumer&lt;/code&gt; means either the customer or an employee of our client. But these applications usually have network communications.&lt;/p&gt;
+
+&lt;p&gt;When looking at thick client applications from a network traffic perspective, we face two big challenges:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Traffic Attribution&lt;/strong&gt; or &lt;strong&gt;Where does this traffic come from?&lt;/strong&gt;: How to we identify application’s traffic? The operating system (in this case Windows) is running many applications and services. Each of them may have network connectivity.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Proxying Traffic&lt;/strong&gt; or &lt;strong&gt;How do I look view/modify traffic?&lt;/strong&gt;: This is more challenging and involves capturing, modifying and in a lot of cases decrypting/decoding target application’s traffic. This could be as easy as setting up Burp via an application setting (EZ-mode) or as hard as setting up your own access point to capture a device’s traffic then developing your own decryption plugin for your proxy tool (good luck).&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;In this post, I will be talking about the much easier first challenge. I will be talking about some of the tools and techniques that I use to accomplish this. This is not a groundbreaking post ;). We will use a simple application, in this case &lt;code&gt;notepad++&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;1-our-setup:fb6cde2299cd5d6b2753d0a63519db51&#34;&gt;1. Our Setup&lt;/h3&gt;
+
+&lt;p&gt;I am using Windows 7 VM running via VirtualBox. You can probably use anything newer than Windows XP. You can get VMs from Microsoft at [&lt;a href=&#34;http://dev.modern.ie/tools/vms/windows/][modern-ie&#34; target=&#34;_blank&#34;&gt;http://dev.modern.ie/tools/vms/windows/][modern-ie&lt;/a&gt;]. These VMs have 90 day activation periods and are for testing different versions of IE but they are enough for our purpose. One downside is the huge virtual disk drive (110GB) that can be shrinked (from inside Windows) in half. Hard drive is still dynamically located but if you do not watch out, it wills tart filling up your hard drive (especially if you are making snapshots).&lt;/p&gt;
+
+&lt;h3 id=&#34;2-list-of-tools:fb6cde2299cd5d6b2753d0a63519db51&#34;&gt;2. List of Tools&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Microsoft Network Monitor (Netmon)&lt;/strong&gt;: &lt;a href=&#34;http://blogs.technet.com/b/netmon/p/downloads.aspx&#34; target=&#34;_blank&#34;&gt;http://blogs.technet.com/b/netmon/p/downloads.aspx&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Wireshark&lt;/strong&gt;: &lt;a href=&#34;https://www.wireshark.org/download.html&#34; target=&#34;_blank&#34;&gt;https://www.wireshark.org/download.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Process Monitor (Procmon)&lt;/strong&gt;: Part of Microsoft Sysinternals Suite: &lt;a href=&#34;https://technet.microsoft.com/en-us/sysinternals/bb842062.aspx&#34; target=&#34;_blank&#34;&gt;https://technet.microsoft.com/en-us/sysinternals/bb842062.aspx&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;3-test-application:fb6cde2299cd5d6b2753d0a63519db51&#34;&gt;3. Test Application&lt;/h3&gt;
+
+&lt;p&gt;I will be using &lt;code&gt;Notepad++ 6.7.9.2&lt;/code&gt;. it was the current version at the time of writing but by the time I got to publishing this post it has been updated to version &lt;code&gt;6.8&lt;/code&gt;. You can download it from &lt;a href=&#34;https://notepad-plus-plus.org/download/v6.7.9.2.html&#34; target=&#34;_blank&#34;&gt;https://notepad-plus-plus.org/download/v6.7.9.2.html&lt;/a&gt;. Install Notepad++ but make sure to select &lt;code&gt;Auto Updater&lt;/code&gt; and &lt;code&gt;Plugin Manager&lt;/code&gt; during installation. &lt;strong&gt;Do not run the application at the end of the installation process&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;4-traffic-attribution:fb6cde2299cd5d6b2753d0a63519db51&#34;&gt;4. Traffic Attribution&lt;/h3&gt;
+
+&lt;p&gt;Run Netmon, Wireshark and Procmon (as Administrator) then run &lt;code&gt;Notepad++&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Procmon Note&lt;/strong&gt;: Never select &lt;code&gt;Drop Filtered Events&lt;/code&gt; in the Filter menu. It will discard all events that are not shown by your filters. There is no going back to viewing filtered events.&lt;/p&gt;
+
+&lt;h4 id=&#34;4-1-netmon:fb6cde2299cd5d6b2753d0a63519db51&#34;&gt;4.1 Netmon&lt;/h4&gt;
+
+&lt;p&gt;We can see a bunch of traffic in Netmon. See this handy tree view to the left? That is why we are using it ;).&lt;/p&gt;
+
+&lt;p&gt;Click on &lt;code&gt;notepad++.exe&lt;/code&gt; in the tree view to view all of its traffic. We can see that it is communicating with &lt;code&gt;superb-dca2.dl.sourceforge.net&lt;/code&gt; and &lt;code&gt;downloads.sourceforge.net&lt;/code&gt; over HTTP &lt;em&gt;gasp&lt;/em&gt;. You may observe a different endpoint depending on your location (because Source forge).&lt;/p&gt;
+
+
+
+
+
+
+
+
+
+&lt;span class=&#34;caption-wrapper&#34;&gt;
+  &lt;img class=&#34;caption&#34; src=&#34;http://parsiya.net/images/2015/TrafficAttribution1/01.PNG&#34; title=&#34;Notepad&amp;#43;&amp;#43; traffic in Netmon&#34; alt=&#34;Notepad&amp;#43;&amp;#43; traffic in Netmon&#34;&gt;
+  &lt;span class=&#34;caption-text&#34;&gt;Notepad&amp;#43;&amp;#43; traffic in Netmon&lt;/span&gt;
+&lt;/span&gt;
+
+
+&lt;p&gt;There’s another &lt;code&gt;suspicious process&lt;/code&gt; up there. Select &lt;code&gt;gup.exe&lt;/code&gt; and we can see it is also related to &lt;code&gt;Notepad++&lt;/code&gt; as it&amp;rsquo;s creating a TLS connection to &lt;code&gt;notepad-plus-plus.org&lt;/code&gt;.&lt;/p&gt;
+
+
+
+
+
+
+
+
+
+&lt;span class=&#34;caption-wrapper&#34;&gt;
+  &lt;img class=&#34;caption&#34; src=&#34;http://parsiya.net/images/2015/TrafficAttribution1/02.PNG&#34; title=&#34;gup.exe traffic in Netmon&#34; alt=&#34;gup.exe traffic in Netmon&#34;&gt;
+  &lt;span class=&#34;caption-text&#34;&gt;gup.exe traffic in Netmon&lt;/span&gt;
+&lt;/span&gt;
+
+
+&lt;p&gt;But wait, there’s more. There may be traffic that is not correctly attributed due to the way that Netmon identifies traffic. We may be able to find some extra stuff there.&lt;br /&gt;
+Here’s a Catch-22, there may be traffic related to our application that Netmon wasn’t able to correlate back to the process but how can we identify it if we do not know the endpoints. We will be using Procmon to compile a more comprehensive endpoint collection later.&lt;/p&gt;
+
+&lt;h5 id=&#34;4-1-1-how-to-search-in-netmon:fb6cde2299cd5d6b2753d0a63519db51&#34;&gt;4.1.1 How to search in Netmon?&lt;/h5&gt;
+
+&lt;p&gt;&lt;code&gt;Contains&lt;/code&gt; is a filter that allows us to do case-insensitive searchs for strings. For example we can use this filter to search for packets with destinations containing the string &lt;code&gt;sourceforge&lt;/code&gt;. We can use the following filters (they both do the same thing):&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Contains(property.Destination, &amp;quot;sourceforge&amp;quot;)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Destination.Contains(&amp;quot;sourceforge&amp;quot;)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Be sure to select &lt;code&gt;All Traffic&lt;/code&gt; in the tree-view when applying filters search in all traffic.&lt;/p&gt;
+
+
+
+
+
+
+
+
+
+&lt;span class=&#34;caption-wrapper&#34;&gt;
+  &lt;img class=&#34;caption&#34; src=&#34;http://parsiya.net/images/2015/TrafficAttribution1/03.PNG&#34; title=&#34;Contains(property.Destination, &amp;#39;sourceforge&amp;#39;)&#34; alt=&#34;Contains(property.Destination, &amp;#39;sourceforge&amp;#39;)&#34;&gt;
+  &lt;span class=&#34;caption-text&#34;&gt;Contains(property.Destination, &amp;#39;sourceforge&amp;#39;)&lt;/span&gt;
+&lt;/span&gt;
+
+
+&lt;p&gt;We can search in different columns, one of the most common columns is &lt;code&gt;property.description&lt;/code&gt;. Description is a column with a lot of information and is usually our best bet. For example if we want to see all GET request we can use the following filters (again they both do the same thing):&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Contains(property.Description,&amp;quot;GET&amp;quot;)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Description.Contains(&amp;quot;GET&amp;quot;)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+
+
+
+
+
+
+
+
+&lt;span class=&#34;caption-wrapper&#34;&gt;
+  &lt;img class=&#34;caption&#34; src=&#34;http://parsiya.net/images/2015/TrafficAttribution1/04.PNG&#34; title=&#34;Contains(property.Description,&amp;#39;GET&amp;#39;)&#34; alt=&#34;Contains(property.Description,&amp;#39;GET&amp;#39;)&#34;&gt;
+  &lt;span class=&#34;caption-text&#34;&gt;Contains(property.Description,&amp;#39;GET&amp;#39;)&lt;/span&gt;
+&lt;/span&gt;
+
+
+&lt;p&gt;We can also see Windows checking for certificate revocation lists over HTTP &lt;em&gt;zomg&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;To search for binary data use &lt;code&gt;ContainsBin&lt;/code&gt;. For example to search for the CRLF binary string in frame data use this filter:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;ContainsBin(FrameData, HEX, &amp;quot;0D 0A&amp;quot;)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+
+
+
+
+
+
+
+
+&lt;span class=&#34;caption-wrapper&#34;&gt;
+  &lt;img class=&#34;caption&#34; src=&#34;http://parsiya.net/images/2015/TrafficAttribution1/05.PNG&#34; title=&#34;ContainsBin(FrameData, HEX, &amp;#39;0D 0A&amp;#39;)&#34; alt=&#34;ContainsBin(FrameData, HEX, &amp;#39;0D 0A&amp;#39;)&#34;&gt;
+  &lt;span class=&#34;caption-text&#34;&gt;ContainsBin(FrameData, HEX, &amp;#39;0D 0A&amp;#39;)&lt;/span&gt;
+&lt;/span&gt;
+
+
+&lt;p&gt;We can also search for strings using &lt;code&gt;ContainsBin&lt;/code&gt; by using &lt;code&gt;ASCII&lt;/code&gt;. But remember this search is case-sensitive. To replicate our previous search for &lt;code&gt;sourceforge&lt;/code&gt; we can use the following filter:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;ContainsBin(FrameData, ASCII, &amp;quot;sourceforge&amp;quot;)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;4-2-procmon:fb6cde2299cd5d6b2753d0a63519db51&#34;&gt;4.2 Procmon&lt;/h4&gt;
+
+&lt;p&gt;Procmon does not display traffic but it&amp;rsquo;s a great tool to identify enpoints. Stop the Procmon capture. It is time to add Procmon filters.&lt;/p&gt;
+
+&lt;p&gt;I am in the process of writing a longer blog entry about using Procmon but that is for another day. For now we will discuss some filters related to network endpoint discovery.&lt;/p&gt;
+
+&lt;p&gt;Procmon has a lot of filters but we will be using only a few of them. The first filter is &lt;code&gt;ProcessName&lt;/code&gt;. Using this filter we can see only events belonging to specific process(es). Select Filter from the Filter menu or press Ctrl+L. Now create this filter &lt;code&gt;ProcessName is Notepad++.exe&lt;/code&gt;. Note that Procmon will show you all processes with events in the drop down menu.&lt;/p&gt;
+
+
+
+
+
+
+
+
+
+&lt;span class=&#34;caption-wrapper&#34;&gt;
+  &lt;img class=&#34;caption&#34; src=&#34;http://parsiya.net/images/2015/TrafficAttribution1/06.PNG&#34; title=&#34;Creating a filter&#34; alt=&#34;Creating a filter&#34;&gt;
+  &lt;span class=&#34;caption-text&#34;&gt;Creating a filter&lt;/span&gt;
+&lt;/span&gt;
+
+
+&lt;p&gt;And we can see all events for &lt;code&gt;notepad++.exe&lt;/code&gt; in Procmon. Take a note of ProcessID (PID) for &lt;code&gt;notepad++.exe&lt;/code&gt;. In this case PID is &lt;code&gt;3964&lt;/code&gt;.&lt;/p&gt;
+
+
+
+
+
+
+
+
+
+&lt;span class=&#34;caption-wrapper&#34;&gt;
+  &lt;img class=&#34;caption&#34; src=&#34;http://parsiya.net/images/2015/TrafficAttribution1/07.PNG&#34; title=&#34;ProcessName is notepad&amp;#43;&amp;#43;.exe&#34; alt=&#34;ProcessName is notepad&amp;#43;&amp;#43;.exe&#34;&gt;
+  &lt;span class=&#34;caption-text&#34;&gt;ProcessName is notepad&amp;#43;&amp;#43;.exe&lt;/span&gt;
+&lt;/span&gt;
+
+
+&lt;p&gt;But we want to look at spawned processes too. Let’s remove this filter and find all child processes for &lt;code&gt;notepad++.exe&lt;/code&gt; using another filter. The new filter is &lt;code&gt;Parent PID is 3964&lt;/code&gt;and it will show captured events for &lt;code&gt;gup.exe&lt;/code&gt;.&lt;/p&gt;
+
+
+
+
+
+
+
+
+
+&lt;span class=&#34;caption-wrapper&#34;&gt;
+  &lt;img class=&#34;caption&#34; src=&#34;http://parsiya.net/images/2015/TrafficAttribution1/08.PNG&#34; title=&#34;ProcessName is Parent PID is 3964&#34; alt=&#34;ProcessName is Parent PID is 3964&#34;&gt;
+  &lt;span class=&#34;caption-text&#34;&gt;ProcessName is Parent PID is 3964&lt;/span&gt;
+&lt;/span&gt;
+
+
+&lt;p&gt;Doubleclick on the first line (&lt;code&gt;Process Start&lt;/code&gt;) to view command line parameters and other details for &lt;code&gt;gup.exe&lt;/code&gt;. Note that the &lt;code&gt;gup.exe&lt;/code&gt; application was ran with parameter &lt;code&gt;-v6.792&lt;/code&gt; (version of Notepad++). So theoretically we can pretend that we are any version. It would be nice to look at this request and play with it.&lt;/p&gt;
+
+
+
+
+
+
+
+
+
+&lt;span class=&#34;caption-wrapper&#34;&gt;
+  &lt;img class=&#34;caption&#34; src=&#34;http://parsiya.net/images/2015/TrafficAttribution1/09.PNG&#34; title=&#34;ProcessName is gup.exe and ProcessStart&#34; alt=&#34;ProcessName is gup.exe and ProcessStart&#34;&gt;
+  &lt;span class=&#34;caption-text&#34;&gt;ProcessName is gup.exe and ProcessStart&lt;/span&gt;
+&lt;/span&gt;
+
+
+&lt;p&gt;An alternate way to get the same results is to use these two filter:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;ProcessName is notepad++.exe&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Operation is Process Create&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If we want to make sure that we have identified all processes, we have to go one level deeper and check if &lt;code&gt;gup.exe&lt;/code&gt; spawned any other processes.&lt;/p&gt;
+
+&lt;p&gt;We have two options:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;ProcessName is gup.exe&lt;/code&gt; and &lt;code&gt;Operation is Process Create&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Parent PID is 3992&lt;/code&gt; (pid of &lt;code&gt;gup.exe&lt;/code&gt;)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;But as expected both filters return nothing. &lt;code&gt;gup.exe&lt;/code&gt; did not spawn anything.&lt;/p&gt;
+
+&lt;p&gt;Now we can add both &lt;code&gt;notepad++.exe&lt;/code&gt; and &lt;code&gt;gup.exe&lt;/code&gt; as filters to view all events related to our application in Procmon.&lt;/p&gt;
+
+&lt;p&gt;In order to watch network traffic we can use the handy &lt;code&gt;Operation is TCP Send&lt;/code&gt; filter. Note there are other operations (i.e. UDP ones). &lt;code&gt;TCP Connect&lt;/code&gt; will also work if you just want endpoints and less noise.&lt;/p&gt;
+
+&lt;p&gt;We use the following filters:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;ProcessName is notepad++.exe&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ProcessName is gup.exe&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Operation is TCP Send&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Operation is TCP Connect&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+
+
+
+
+
+
+
+
+&lt;span class=&#34;caption-wrapper&#34;&gt;
+  &lt;img class=&#34;caption&#34; src=&#34;http://parsiya.net/images/2015/TrafficAttribution1/10.PNG&#34; title=&#34;Operation is TCP Connect and TCP Send&#34; alt=&#34;Operation is TCP Connect and TCP Send&#34;&gt;
+  &lt;span class=&#34;caption-text&#34;&gt;Operation is TCP Connect and TCP Send&lt;/span&gt;
+&lt;/span&gt;
+
+
+&lt;p&gt;We have already seen &lt;code&gt;downloads.sourceforge.net&lt;/code&gt; but &lt;code&gt;ns378545.ip-91-121-64.eu&lt;/code&gt; is new.&lt;/p&gt;
+
+&lt;p&gt;If we ping it, we can see that the corresponding IP address is &lt;code&gt;91.121.64.34&lt;/code&gt;. We can filter the results in Netmon by using this filter &lt;code&gt;IPv4.Address == 91.121.64.34&lt;/code&gt; to view traffic related to his IP address.&lt;/p&gt;
+
+&lt;p&gt;
+
+
+
+
+
+
+
+&lt;span class=&#34;caption-wrapper&#34;&gt;
+  &lt;img class=&#34;caption&#34; src=&#34;http://parsiya.net/images/2015/TrafficAttribution1/11.PNG&#34; title=&#34;IPv4.Address == 91.121.64.34&#34; alt=&#34;IPv4.Address == 91.121.64.34&#34;&gt;
+  &lt;span class=&#34;caption-text&#34;&gt;IPv4.Address == 91.121.64.34&lt;/span&gt;
+&lt;/span&gt;
+&lt;/p&gt;
+
+&lt;p&gt;It is &lt;code&gt;notepad-plus-plus.org&lt;/code&gt;. Try pinging &lt;code&gt;notepad-plus-plus.org&lt;/code&gt; to get &lt;code&gt;91.121.64.34&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;That was easy wasn’t it?&lt;/p&gt;
+
+&lt;p&gt;What did we do? We used Netmon and Procmon to identify the endpoints that an specific application communicates with and isolate traffic belonging to that application. I told you this is nothing ground breaking :).&lt;/p&gt;
+
+&lt;h3 id=&#34;questions:fb6cde2299cd5d6b2753d0a63519db51&#34;&gt;Questions:&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;But what about Microsoft Message Analyzer (MMA)?&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;It is a good tool. But I do not like its UI but I saw an interesting feature in it to decrypt SSL traffic. I will be looking at that feature soon. It is also much more resource intensive than Netmon.&lt;/p&gt;
+
+&lt;p&gt;For more information: &lt;a href=&#34;http://blogs.technet.com/b/messageanalyzer/archive/2015/06/08/process-tracking-with-message-analyzer.aspx&#34; target=&#34;_blank&#34;&gt;http://blogs.technet.com/b/messageanalyzer/archive/2015/06/08/process-tracking-with-message-analyzer.aspx&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;But I want to use Wireshark&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Sure, go ahead. Use Procmon and filters to identify the endpoints and then add filters in Wireshark. Another good thing is that Netmon’s export format (*.cap files) can be opened in Wireshark. If you prefer Wireshark&amp;rsquo;s UI, you can isolate traffic by process in Netmon, save it and then open the resulting cap file in Wireshark.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Where are DNS requests? I do not see them in process traffic in Netmon&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Select all traffic and use the filter &lt;code&gt;DNS&lt;/code&gt;. Due to the way Netmon associates traffic with processes, DNS requests may be in Unknown or System.&lt;/p&gt;
+
+&lt;p&gt;
+
+
+
+
+
+
+
+&lt;span class=&#34;caption-wrapper&#34;&gt;
+  &lt;img class=&#34;caption&#34; src=&#34;http://parsiya.net/images/2015/TrafficAttribution1/12.PNG&#34; title=&#34;DNS&#34; alt=&#34;DNS&#34;&gt;
+  &lt;span class=&#34;caption-text&#34;&gt;DNS&lt;/span&gt;
+&lt;/span&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Note that while we had a DNS query for &lt;code&gt;superb-dca2.dl.sourceforge.net&lt;/code&gt;, we never connected to it so we did not see a &lt;code&gt;TCP Connect&lt;/code&gt; event for it in Procmon.&lt;/p&gt;
+
+&lt;h3 id=&#34;5-exercise:fb6cde2299cd5d6b2753d0a63519db51&#34;&gt;5. Exercise:&lt;/h3&gt;
+
+&lt;p&gt;Run the tools again and install a plugin. This can be accomplished by going to &lt;code&gt;Plugins &amp;gt; Plugin Manager &amp;gt; Show Plugin Manager&lt;/code&gt;. Try to locate the endpoints and traffic in this case. See what process is spawned by &lt;code&gt;notepad++.exe&lt;/code&gt; this time.&lt;/p&gt;
+
+&lt;p&gt;This time, it will not be as easy as last time because Netmon did not associate all packets with the process but you can find the endpoints via Procmon and filter them in Netmon.&lt;/p&gt;
+
+&lt;p&gt;I hope this was useful. If you have any questions, you know where to find me.&lt;/p&gt;
+
+&lt;!-- links --&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
