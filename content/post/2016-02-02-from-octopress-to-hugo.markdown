@@ -16,6 +16,8 @@ In this post I am going to talk about how I managed the migration and any intere
 [hugo-octopress-link]: https://github.com/parsiya/hugo-octopress/
 <!--more-->
 
+**Update (21 Feb 2016)**: I have added Atom editor code snippets for shortcodes to the README file on Github and to this post.
+
 ### hugo import jekyll
 Hugo has an [Import from Jekyll][hugo-import-jekyll] feature. Octopress is also built on Jekyll but its directory structure is a bit different from Jekyll. Just running `hugo import jekyll` in will not work. In Jekyll posts are usually stored in `jekyll-blog/posts/` while in Octopress they are in `octopress-blog/source/_posts/`. When importing from Octopress you have to point it to the `source` directory like this:
 
@@ -183,6 +185,29 @@ Image caption was also simple. I tried to imitate the output of `imgcap` plugin 
 {{< /codecaption >}}
 
 It can be used as follows (replace the space in `{{ <`): `{{ < imgcap title="image caption" src="/images/" >}}`.
+
+#### Atom Editor Code Snippets for Shortcodes
+I use Atom editor these days so I created a couple of snippets to insert these shortcodes while editing Markdown files. In order to read on how to create snippets please refer to [Atom's Snippets package](https://github.com/atom/snippets).
+
+Open your snippets file (on Windows it's `File > Open Your Snippets`) and paste the following in the file (remember to remove the space between `{{` and `<` that has been added to avoid triggering the shortcode):
+
+    '.source.gfm':
+     'imgcap':
+       'prefix': 'imgcap'
+       'body': '{{ < imgcap title="$1" src="/images/$2" >}}'
+
+    '.source.gfm':
+     'codecaption':
+       'prefix': 'codecap'
+       'body': """
+          {{ < codecaption title="$1" lang="$2"  >}}
+          $3
+          {{ < /codecaption >}}
+        """
+
+You can trigger the shortcodes by entering `imgcap` and `codecap` respectively and then pressing enter. You can change these by modifying the `prefix` in the code above. After inserting the shortcode, the cursor will go to the first location which is designated by `$1` which is `title` in both cases. After entering the value you can go to `$2` and `$3` by pressing `tab`.
+
+Hopefully these snippets help in using these shortcodes.
 
 ### Replacing Liquid tags
 Mext step was to replace the liquid tags used in Markdown files. I had a few different types of tags for images and codeblocks. I used a few `sed` commands to search and replace the items.
