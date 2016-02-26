@@ -52,3 +52,48 @@ rd /q /s public
 {{< /codecaption >}}
 
 ------
+
+**List all files (including hidden)**  
+`Get-ChildItem "searchterm" -recurse -force -path c:\ | select-object FullName`
+
+* `-recurse`: recursive. Loops through all directories
+* `-force`: list hidden files.
+* `select-object`: Selects each file from last point
+* `FullName`: Only display file name
+
+**Diff in Powershell**  
+`Compare-Object (Get-Content new1.txt) (Get-Content new2.txt) | Format-List >> Diff-Output`
+
+Output will be in format of
+
+* `InputObject`: `c:\users\cigital\somefile` -- line content
+* `SideIndicator`: `=>` -- exists in new2.txt (second file, file to the right)
+
+**grep on Powershell**  
+`findstr "something" *.txt`
+
+will include filename and line (no number AFAIK)
+
+    findstr /spin /c:"keyword" *.*
+    /s: recursive - will search through the current directory and all sub-directories
+    /p: skip binary files (or files with characters that cannot be printed)
+    /i: case-insensitive - remove if you want case sensitive search
+    /n: print line number
+
+If you want to search for different keywords (with OR) remove the `/c:`
+
+`findstr /spin "keyword1 keyword2" *.*`
+
+will search for keyword1 OR keyword2 in files
+
+https://technet.microsoft.com/en-us/library/Cc732459.aspx
+
+**grep in command outputs**  
+`whatever.exe | Select-String -pattern "admin"`
+
+**Get-Acl amd icacls.exe**  
+`Get-Acl -path c:\windows\whatever.exe | Format-List`
+
+`icacls.exe c:\windows\whatever.exe`
+
+-----------
