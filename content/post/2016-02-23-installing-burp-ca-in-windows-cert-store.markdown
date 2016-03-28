@@ -4,6 +4,7 @@ draft: false
 title: "Installing Burp Certificate Authority in Windows Certificate Store"
 categories:
 - Burp
+- Tutorial
 tags:
 - Burp
 - Certificate Authority

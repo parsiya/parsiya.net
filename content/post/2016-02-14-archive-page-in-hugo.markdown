@@ -16,7 +16,7 @@ Creating a custom archive page in Hugo is pretty simple. I think there are bette
 <!--more-->
 Content types in Hugo are determined in two ways:
 
-* Directory structure: For example in my blog, every blog post is in `content\post` and as a result is of type `post.` The template used to create each post is in `themes\Hugo-Octopress\layouts\post\single.html.` You can learn more by reading the [Content Types](https://gohugo.io/content/types/) section in Hugo documentation.
+* Directory structure: For example in my blog, every blog post is in `content\post` and as a result is of type `post`. The template used to create each post is in `themes\Hugo-Octopress\layouts\post\single.html.` You can learn more by reading the [Content Types](https://gohugo.io/content/types/) section in Hugo documentation.
 
 * Through a variable named `type` in [front matter](https://gohugo.io/content/front-matter). For example `type: mycustomtype` in the front matter will assign this type to the page. In this case, the page can be anywhere in the `content` directory and the directory structure is irrelevant.
 
@@ -29,6 +29,18 @@ type: myarchivetype
 ---
 Blog archive
 {{< /codecaption >}}
+
+Another way to assign a URL to a page is through the `url` parameter in front matter. This overrides the path set before.
+
+{{< codecaption title="markdown file with url tag" lang=""  >}}
+---
+title: "Archive page"
+type: myarchivetype
+url: "/path/to/archive/"
+---
+{{< /codecaption >}}
+
+This makes the page to appear in `baseurl/path/to/archive/`.
 
 The template used to generate this file is going to be located in `layouts\myarchivetype\single.html` (or `themes\theme-name\layouts\myarchivetype\single.html`). I have the following code in my this file:
 
