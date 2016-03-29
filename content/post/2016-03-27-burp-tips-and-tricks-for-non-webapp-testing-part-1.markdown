@@ -46,6 +46,7 @@ When I started this, I did not think I have so much stuff to write about Burp. S
 <li><a href="#3-bonus-tip-running-burp-with-a-set-amount-of-memory:dd27d7b63bfec82bf20dab0a96096152">3. Bonus tip: Running Burp with a Set Amount of Memory</a></li>
 </ul>
 
+{{< toc >}}
 
 ## 1. Interception
 Burp supports request/response interception and modification. You can configure most of these settings in `Proxy > Options`.
