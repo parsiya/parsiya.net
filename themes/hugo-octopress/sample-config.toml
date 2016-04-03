@@ -55,7 +55,7 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 	# sidebar text supports markdown
 	# new lines can be added with </br> or normal markdown (two spaces at the end of line or two new lines).
 	# when adding two new lines, remember to remove the indentation otherwise the new line will be treated as a codeblock
-	sidebar_text = """Sidebar text supports is passed to *markdownify* so it supports markdown. Here's a [link to google](https://www.google.com)
+	sidebar_text = """Sidebar text is passed to *markdownify* so it supports markdown. Here's a [link to google](https://www.google.com)
 	</br>
 	Second line
 	</br>
@@ -105,6 +105,12 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 	# paths should be relative to the `static` directory (either the website static directory or the theme one)
 	# custom_css = ["css/custom.css","css/custom2.css"]
 
+	# 404.html header and text -both support markdown
+	notfound_header = "There's nothing here"
+
+	notfound_text = """Please either go back or use the navigation/sidebar menus.
+	"""
+	
 # blackfriday is Hugo's markdown engine. Options are at: https://gohugo.io/overview/configuration/ (scroll down to "Configure Blackfriday rendering")
 [blackfriday]
 	hrefTargetBlank = true # open the external links in a new window

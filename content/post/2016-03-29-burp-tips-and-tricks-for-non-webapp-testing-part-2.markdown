@@ -8,7 +8,6 @@ categories:
 - Tutorial
 tags:
 - Burp
-- Tutorial
 ---
 In [part1]({{< ref "2016-03-27-burp-tips-and-tricks-for-non-webapp-testing-part-1.markdown" >}} "Burp Tips and Tricks for Non-Webapp Testing - Part 1: Interception and Proxy Listeners") I talked about some of Burp's functionalities with regards to testing non-webapps. I did not expect it to be that long, originally I had intended to just shared some quick tips that I use. Now you are forced to read my drivel.
 

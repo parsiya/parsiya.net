@@ -1,6 +1,6 @@
 ---
 categories:
-- Encryption
+- Crypto
 tags:
 - TLS
 - Ciphersuites
@@ -12,20 +12,20 @@ title: How do I TLS Ciphersuite?
 ---
 
 “Should we use RC4 or AES-CBC ?”
-This is a legitimate question. Many have heard of the highly publicized attacks against AES-CBC (CRIME, BEAST etc) and lean towards RC4. 
-If asked (granted no one asks me), my answer would be: If you can control web servers (not feasible in all situations) and users’ browsers 
-(almost impossible), upgrade to TLS 1.2 and go with AES-GCM. However, not many browsers supported these and to be honest, more users trumps loss 
+This is a legitimate question. Many have heard of the highly publicized attacks against AES-CBC (CRIME, BEAST etc) and lean towards RC4.
+If asked (granted no one asks me), my answer would be: If you can control web servers (not feasible in all situations) and users’ browsers
+(almost impossible), upgrade to TLS 1.2 and go with AES-GCM. However, not many browsers supported these and to be honest, more users trumps loss
 of security in many cases.
 
 <!--more-->
 
-RC4 was a masterpiece for its time (it still is) but it has extreme biases in its PRNG and attacks are prevalent [[1]][link1] and because it only takes a 
-seed (with no nonce), if a key is re-used, one can find the XOR of plaintexts by XOR-ing two ciphertexts. 
-A recent demonstration of this weakness was in the popular “Whatsapp” application where the same key was used in both directions [[2]][link2]. Granted 
+RC4 was a masterpiece for its time (it still is) but it has extreme biases in its PRNG and attacks are prevalent [[1]][link1] and because it only takes a
+seed (with no nonce), if a key is re-used, one can find the XOR of plaintexts by XOR-ing two ciphertexts.
+A recent demonstration of this weakness was in the popular “Whatsapp” application where the same key was used in both directions [[2]][link2]. Granted
 This was an application design flaw but Whatsapp has quite the security history (google Whatsapp and IMEI).
 
-A few days ago Microsoft released security advisory 2868725 “Recommendation to disable RC4.” 
-They found out that less than 4% of their 5 million sample websites only worked with RC4 (although from my personal experience RC4 share is 
+A few days ago Microsoft released security advisory 2868725 “Recommendation to disable RC4.”
+They found out that less than 4% of their 5 million sample websites only worked with RC4 (although from my personal experience RC4 share is
 probably higher) [[3]][link3].
 
 Major browsers are also starting to support TL2 1.2 and AES-GCM.
@@ -35,8 +35,8 @@ Firefox has implemented TLS 1.2. [[6]][link6] and AES-GCM [[7]][link7].
 
 IE 11 turns TLS 1.2 on by default [[8]][link8].
 
-A day after I wrote the draft of this blog post, Adam Langley (author of patches in links [4][link4] and [5][link5]) wrote a blogpost named 
-"A roster of TLS cipher suites weaknesses" [[9]][link9]. He discusses the strengths and weaknesses of the aforementioned three different ciphersuites 
+A day after I wrote the draft of this blog post, Adam Langley (author of patches in links [4][link4] and [5][link5]) wrote a blogpost named
+"A roster of TLS cipher suites weaknesses" [[9]][link9]. He discusses the strengths and weaknesses of the aforementioned three different ciphersuites
 (RC4, AES-CBC and AES-GCM) on top of Chacha20,Poly1305 (if you do not know why the numbers are not powers of 2, google it :D).
 
 tl;dr: seems like AES-GCM is the flavor of the month. More and more browsers are supporting it, it may be a good time to start moving towards it.

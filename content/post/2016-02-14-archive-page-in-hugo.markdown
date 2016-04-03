@@ -4,9 +4,11 @@ draft: false
 title: "Archive Page in Hugo"
 categories:
 - Migration to Hugo
+- Not Security
 tags:
 - Octopress
 - Hugo
+- Blog
 ---
 
 This is a re-hash of my answer on Hugo forums about creating a custom archive page. You can see the answer [here](https://discuss.gohugo.io/t/blog-archives-page/2577/16).

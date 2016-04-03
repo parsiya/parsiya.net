@@ -3,7 +3,6 @@ categories:
 - Burp
 tags:
 - SoapUI
-- Burp
 - Proxy
 comments: false
 date: 2014-06-25T22:04:53Z

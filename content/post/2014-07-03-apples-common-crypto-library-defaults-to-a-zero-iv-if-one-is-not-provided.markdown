@@ -1,6 +1,6 @@
 ---
 categories:
-- Encryption
+- Crypto
 tags:
 - Encryption
 - Common Crypto
@@ -16,18 +16,18 @@ You can see the code here inside the function ``ccInitCryptor`` (search for defa
 ``` c
 static inline CCCryptorStatus ccInitCryptor
 (CCCryptor *ref, const void *key, unsigned long key_len, const void *tweak_key, const void *iv) {
-   
+
     size_t blocksize = ccGetCipherBlockSize(ref);
     uint8_t defaultIV[blocksize];
-    
-    
+
+
     if(iv == NULL) {
         CC_XZEROMEM(defaultIV, blocksize);
         iv = defaultIV;
     }
-    
+
     ...
-    
+
     return kCCSuccess;
 }
 
@@ -37,4 +37,3 @@ While I am told this is probably common behavior in crypto libraries, I think it
 
 [CCLink]: http://opensource.apple.com/source/CommonCrypto/CommonCrypto-60049/lib/
 [CCLink2]: http://opensource.apple.com/source/CommonCrypto/CommonCrypto-60049/lib/CommonCryptor.c
-

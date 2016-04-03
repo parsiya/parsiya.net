@@ -4,9 +4,12 @@ draft: false
 title: "From Octopress to Hugo"
 categories:
 - Migration to Hugo
+- Not Security
 tags:
 - Octopress
 - Hugo
+- Blog
+- Hugo-Octopress
 ---
 
 In [my previous post]({{< ref "2016-01-31-why-hugo.markdown" >}} "Why Hugo?") I talked about why I moved from Octopress to Hugo. You can also see the last archive of my Octopress blog (previously a private repo on Bitbucket) on [github](https://github.com/parsiya/Octopress-Blog) and this is the new site. If I had wanted to use an already existing Hugo theme, it would have not taken more than a few hours.

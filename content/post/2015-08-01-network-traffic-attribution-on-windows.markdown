@@ -1,6 +1,6 @@
 ---
 categories:
-- Network Traffic
+- Traffic
 tags:
 - Netmon
 - Network Traffic

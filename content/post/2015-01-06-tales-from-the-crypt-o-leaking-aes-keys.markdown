@@ -1,11 +1,10 @@
 ---
 categories:
-- Encryption
+- Crypto
 - Reverse Engineering
 tags:
-- AES Keys
-- Cryptography
-- Reverse Engineering
+- AES
+- Encryption
 comments: true
 date: 2015-01-06T23:36:48Z
 title: Tales from the Crypt(o) - Leaking AES Keys

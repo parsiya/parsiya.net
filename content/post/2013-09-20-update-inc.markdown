@@ -1,8 +1,10 @@
 ---
 categories:
 - Octopress
+- Not Security
 tags:
-- update
+- Update
+- Blog
 comments: false
 date: 2013-09-20T00:00:00Z
 title: Update Inc

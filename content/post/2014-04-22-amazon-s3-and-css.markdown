@@ -1,10 +1,12 @@
 ---
 categories:
 - Amazon S3
+- Not Security
 tags:
 - Amazon S3
 - CSS
-- content-type
+- Content-type
+- Blog
 comments: true
 date: 2014-04-22T14:03:32Z
 title: Amazon S3 and CSS
@@ -21,7 +23,7 @@ Simple fix, go to Amazon S3 bucket web interface. Find ```stylesheets/screen.css
 ``` bash
 root@kali:~/Desktop/octopress# rake generate
 ## Generating Site with Jekyll
-identical source/stylesheets/screen.css 
+identical source/stylesheets/screen.css
 Configuration from /root/Desktop/octopress/_config.yml
 Building site: source -> public
 Successfully generated site: source -> public
@@ -31,4 +33,3 @@ Successfully generated site: source -> public
 [stackoverflowlink2]: http://stackoverflow.com/a/14807743
 [xkcdlink]: https://xkcd.com/979/
 [adamwilcoxlink]: http://www.adamwilcox.org/2012/05/04/css-on-amazon-s3/
-

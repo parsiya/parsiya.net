@@ -1,8 +1,10 @@
 ---
 categories:
 - Octopress
+- Not Security
 tags:
 - imgpopup
+- Blog
 comments: true
 date: 2015-07-26T23:02:58Z
 title: Image Popup and Octopress

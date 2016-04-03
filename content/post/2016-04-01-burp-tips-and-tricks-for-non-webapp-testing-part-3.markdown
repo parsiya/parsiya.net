@@ -9,7 +9,6 @@ tags:
 - Tutorial
 categories:
 - Burp
-- Tutorial
 ---
 
 Previous parts:

@@ -66,7 +66,6 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 	URL = "https://github.com/parsiya/hugo-octopress"
 	weight = 0
 
-
 [params]
 	# number of recent posts that will be shown in the sidebar - default is 5
 	SidebarRecentLimit = 10
@@ -79,6 +78,10 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 	</br></br>
 	My email is parsiya[att]google's email.
 	"""
+
+	notfound_header = "There's nothing here"
+
+	notfound_text = """You can never go back."""
 
 	# if false, all of the post will appear on front page (and in pagination)
 	truncate = true

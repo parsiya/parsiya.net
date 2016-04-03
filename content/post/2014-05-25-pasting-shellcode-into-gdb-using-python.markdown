@@ -2,9 +2,9 @@
 categories:
 - Python
 tags:
-- python
-- shellcode
-- interactive debugging
+- Python
+- Shellcode
+- Interactive Debugging
 comments: false
 date: 2014-05-25T18:39:58Z
 title: Pasting Shellcode in GDB using Python
@@ -70,7 +70,7 @@ while True:
         # quit gdb
         proc.stdin.write("quit\n")
         break
-	
+
     # paste shellcode
     if (mycommand == "dump"):
         proc.stdin.write(shellcode)
@@ -78,16 +78,16 @@ while True:
 
     # not a custom command? send it as-is
     else:
-        mycommand = mycommand + '\n' 
+        mycommand = mycommand + '\n'
         proc.stdin.write(mycommand)
         sleep(0.5)
 
-# close our pipe	
+# close our pipe
 proc.stdin.close()
 
 ```
 
-I think that this code can be modified and become a very simple fuzzer. We have control over stdin and can read stdout and stderr. Change input, record output, rinse and repeat. 
+I think that this code can be modified and become a very simple fuzzer. We have control over stdin and can read stdout and stderr. Change input, record output, rinse and repeat.
 
 ``subprocess`` is a very powerful module. For example to normally run an application with an argument we can write `` subprocess.call(['gdb','executable']) .``
 

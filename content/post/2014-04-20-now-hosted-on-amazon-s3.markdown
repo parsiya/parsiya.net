@@ -1,9 +1,10 @@
 ---
 categories:
 - Amazon S3
+- Not Security
 tags:
-- hosting
-- amazon s3
+- Amazon S3
+- Blog
 comments: true
 date: 2014-04-20T13:20:24Z
 title: Now hosted on Amazon S3

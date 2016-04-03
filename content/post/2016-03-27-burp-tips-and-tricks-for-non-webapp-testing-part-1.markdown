@@ -8,7 +8,6 @@ categories:
 - Tutorial
 tags:
 - Burp
-- Tutorial
 ---
 
 Burp is not just used for web application testing. I usually use it during mobile and thick client tests. If the application is using HTTP methods then Burp is your best friend.
