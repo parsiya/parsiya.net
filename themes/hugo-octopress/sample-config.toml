@@ -1,5 +1,5 @@
 baseurl = "http://example.com"
-disablePathToLower = true
+disablePathToLower = false
 languageCode = "en-us"
 title = "Parsia's Den"
 theme = "hugo-octopress"
@@ -23,7 +23,7 @@ pygmentscodefences = true
 [permalinks]
 post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the old ones
 
-
+# make tags and categories work
 [indexes]
 	tag = "tags"
 	category = "categories"
@@ -48,6 +48,19 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 
 	# number of recent posts that will be shown in the sidebar - default is 5
 	SidebarRecentLimit = 5
+
+	# sidebar customization - passed to markdownify
+	sidebar_header = "Sidebar Header"
+
+	# sidebar text supports markdown
+	# new lines can be added with </br> or normal markdown (two spaces at the end of line or two new lines).
+	# when adding two new lines, remember to remove the indentation otherwise the new line will be treated as a codeblock
+	sidebar_text = """Sidebar text supports is passed to *markdownify* so it supports markdown. Here's a [link to google](https://www.google.com)
+	</br>
+	Second line
+	</br>
+	Third line
+	"""
 
 	# if false, all of the post will appear on front page (and in pagination)
 	truncate = true
@@ -85,8 +98,12 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 
 	defaultDescription = ""
 
-	# does this even work in action?
+	# populate this with your own keywords
 	# defaultKeywords = ["keyword1" , "keyword2" , "keyword3" , "keyword4"]
+
+	# css override files
+	# paths should be relative to the `static` directory (either the website static directory or the theme one)
+	# custom_css = ["css/custom.css","css/custom2.css"]
 
 # blackfriday is Hugo's markdown engine. Options are at: https://gohugo.io/overview/configuration/ (scroll down to "Configure Blackfriday rendering")
 [blackfriday]

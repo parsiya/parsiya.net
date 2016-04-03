@@ -5,6 +5,7 @@ tags:
 - .NET
 categories:
 - Reverse Engineering
+toc: true
 comments: true
 date: 2015-11-14T16:22:36Z
 title: Intro to .NET Remoting for Hackers
@@ -26,18 +27,7 @@ If you know of any applications that use .NET Remoting please let me know. I wan
 [net-remoting-1]: https://msdn.microsoft.com/en-us/library/kwdt6w2k%28v=vs.71%29.aspx
 <!--more-->
 
-### Table of Contents:
-
-* [0. Ingredients and Setup](#ch0)
-* [1. Brief Intro to .NET Remoting](#ch1)
-* [2. Developing a .NET Remoting Application](#ch2)
-* [3. .NET Remoting Messages](#ch3)
-* [4. Debugging with dnSpy](#ch4)
-* [5. Re-creating the Vulnerability](#ch5)
-* [6. Modifying IL Instructions with dnSpy and Patching Binaries](#ch6)
-* [7. Remediation](#ch7)
-
-### <a name="ch0"></a> 0. Ingredients and Setup
+# 0. Ingredients and Setup
 
 * Windows 7 Virtual Machine
 * Visual Studio Community 2015: [https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx][vs2015]. We only need the C# components which are part of the default installation
@@ -45,7 +35,7 @@ If you know of any applications that use .NET Remoting please let me know. I wan
 * Wireshark to analyze captured traffic
 * [dnSpy (1.4.0.0)][dnspy1.4] to decompile and debug C# code
 
-### <a name="ch1"></a> 1. Brief Intro to .NET Remoting
+# 1. Brief Intro to .NET Remoting
 In simple words, .NET Remoting is a means to achieve InterProcess Communication (IPC). One application (let's call it server) exposes some remotable objects. Other applications (we will call them clients) create an instance of those objects and treat them like local objects. But these local objects will be executed on the server. Usually these remotable objects are in a shared library (e.g. DLL). Both client and server will have a copy of this DLL. .NET Remoting can use TCP, HTTP or named pipes to transfer the remotable objects.
 
 The concept of .NET Remoting is very similar to [Java Remote Method Invocation (Java RMI)][javarmi]. In Java RMI we will see serialized Java objects being passed around and in .NET Remoting we will see .NET objects.
@@ -54,7 +44,7 @@ Don't worry if you do not understand parts of it because this was a very short i
 
 **Note**: .NET Remoting is deprecated and you should not be using it. But who am I kidding? We are all using old technology all the time so we might as well get used to it.
 
-### <a name="ch2"></a> 2. Developing a .NET Remoting Application
+# 2. Developing a .NET Remoting Application
 I am going to create two version of my simple .NET Remoting applications. Both are very simple. The first application will act as tutorial about how to create a .NET Remoting client/server application and the second aims to re-create a vulnerable server that I encountered in one of my projects.
 
 I am going to be using [Visual Studio Community 2015][vs2015] which is free. We will have three different projects in one solution:
@@ -198,7 +188,7 @@ Now we can build the solution. If you look at the resulting executables we will 
 
 Now start `RawCap` and capture local traffic.
 
-### <a name="ch3"></a> 3. .NET Remoting Messages
+# 3. .NET Remoting Messages
 
 When you initially run the server, it will ask to be added to Windows Firewall's exceptions. You can safely deny that as both client and server are local. This is a major vulnerability in many .NET Remoting applications that work locally (like our example). If we do a `netstat` we can see that server is bound to `0.0.0.0` and is listening on all interfaces. Meaning anyone can connect to the server and execute exposed functions on our computer. We will read more about this later.
 
@@ -286,7 +276,7 @@ We can see the return value (which is again an Int32 and 4 bytes) at the end of 
 
 Messages for `Sub` are very similar. I am not going to talk about them because, ahem `they are left as an exercise for the reader`.
 
-### <a name="ch4"></a> 4. Debugging with dnSpy
+# 4. Debugging with dnSpy
 
 In this section, I assume you know basic debugging (e.g. breakpoints, step into/over/out) so I will not go into details. I will mostly just talk about (some of) dnSpy's features.
 
@@ -304,7 +294,7 @@ To set a breakpoint, you can either select a line and press `F2`, click on the s
 
 {{< imgcap src="/images/2015/remoting1/08.png" title="Breakpoint"   >}}
 
-#### 4.1 Finding Nemo
+## 4.1 Finding Nemo
 In this case, we can clearly see the `Add` function and where it is called. But let's assume that we only saw the traffic and opened the binary in dnSpy and didn't know where it is called. Our binary contains tons and tons of imaginary functions that may or may not call `Add`. How do we find `Add`?
 
 From the traffic we know that the function name is `Add` and it is in class `RemotingSample.Remotemath` and resides in `RemotingLibrary.dll`. Using these clues we can easily find the `Add` function in dnSpy.
@@ -313,14 +303,14 @@ From the traffic we know that the function name is `Add` and it is in class `Rem
 
 Our first instinct would be to put a breakpoint on `Add` and let the client `Continue`. But **this breakpoint will never trigger**. Because in .NET Remoting an instance of the function is created on the client and then executed on the server. If you don't believe me, try it. But how do we find who uses this function?
 
-#### 4.2 Analyze This
+## 4.2 Analyze This
 Now we can use the `Analyze` feature of dnSpy. Right click on the `Add` function in `RemotingLibrary.dll` and select `Analyze`. Now a very handy new pane (window? seriously what are these called?) named `Analyzer` pops up. We can see the function and two items `Uses` and `Used By`. `Uses` shows us the other functions (in loaded binaries in dnSpy) that are used by `Add` and `Used By` shows other functions that use `Add`.
 
 {{< imgcap src="/images/2015/remoting1/10.png" title="Analyze this"   >}}
 
 That is a very nifty feature, neh? As you can see we can go down the wormhole and follow the chain. In this case we see that the `Main` function calls `Add`. If we double click on `Main` we will go back to the original entry point.
 
-#### 4.3 .NET Remoting in Action
+## 4.3 .NET Remoting in Action
 Now we can `Step Into` the line that calls `Add` in the client. If you have not changed the default settings, you should land in `mscorlib.dll` or more exactly in `CommonLanguageRuntimeLibrary.System.Runtime.Remoting.Proxies.RealProxy.PrivateInvoke()`. dnSpy's default settings, will skip all the other code (like attribute get/set etc). You can change this in `View (menu) > Options (menu item) > Debugger (tab) > DebuggerBrowsable` and `Call string-conversion`.
 
 {{< imgcap src="/images/2015/remoting1/11.png" title="Landed in RealProxy"   >}}
@@ -363,7 +353,7 @@ If we `Step Out` we will land back in `Main`. Try doing the same for the `Sub` f
 
 Now we know the places to see the outgoing .NET Remoting message and return values. In a real world project we could do this to look at the messages instead of Wireshark or developing our own .NET Remoting proxy.
 
-### <a name="ch5"></a> 5. Re-creating the Vulnerability
+# 5. Re-creating the Vulnerability
 
 **Note:** Please run this application in a Virtual Machine disconnected from the internet. This application will make your machine vulnerable to unauthenticated RCE. Make sure that Windows firewall is not disabled and do not allow `Server.exe` through it. I believe the chance of someone getting compromised is very very slim because no one reads these posts anyway, but it never hurts to be careful.
 
@@ -402,7 +392,7 @@ namespace RemotingLibraryExpanded
 
 Now we can rebuild the solution. Client and server will run as before now we want to exploit this new method to do local privilege escalation (running the executable of our choice as SYSTEM). At this point we can either write code (which we already did) or modify the client application using dnSpy (and some other tools). I modified the application in my project because it was much easier than writing code from scratch because there were a lot of stuff happening before the client started making calls to server.
 
-### <a name="ch6"></a> 6. Modifying IL Instructions with dnSpy and Patching Binaries
+# 6. Modifying IL Instructions with dnSpy and Patching Binaries
 The easiest thing to do is to modify one of the function calls to call `StartProcess` and run an executable (e.g. `C:\Windows\System32\calc.exe`). Open the client in dnSpy and right click on the line that calls `Add` (line 16 in dnSpy). Choose `Edit IL Instructions`.
 
 {{< imgcap src="/images/2015/remoting1/15.png" title="IL instructions"   >}}
@@ -497,7 +487,7 @@ In the original project, server was running as SYSTEM, which means any standard 
 *How does this lead to Remote Code Execution (RCE)?*  
 As we saw at the start of this post, server is listening on `0.0.0.0` or all interfaces. This means any attacker can connect to the server and execute arbitrary commands. Windows Firewall will not help if you had added an exception for server when it was initially started.
 
-### <a name="ch7"></a> 7. Remediation
+# 7. Remediation
 Remediation is an important part of my day job. I am not an `infosec thoughtleader` but I think breaking is worth nothing if we don't want to/cannot talk to and work with the developers to fix things. So I am going to add remediation sections to my posts where appropriate and do my small part in helping. As with any other part of these posts, if you think there is a better way of doing things please let me know.
 
 {{< imgcap src="/images/2015/remoting1/24.jpg" title="[insert reference to Starship Troopers and killing bugs and call yourself a geek]"   >}}
@@ -508,7 +498,7 @@ I also have to reiterate that **this is deprecated technology** and it should no
 
 Start here for MSDN articles on this topic: [Security in Remoting][security-in-remoting].
 
-#### 7.1 RCE
+## 7.1 RCE
 In this scenario we should only be listening on `localhost`. We have to modify the server. If we look at [TcpChannel properties][tcpchannel-properties] we can see there is a `bindTo` property. We can add it to a dictionary and use it in the constructor as follows:
 
 {{< codecaption lang="csharp" title="Binding the server to localhost" >}}
@@ -535,7 +525,7 @@ And now we can see the server listening only on localhost.
 
 We can also [authenticate the client](https://msdn.microsoft.com/en-us/library/bb187429%28v=vs.85%29.aspx).
 
-#### 7.2 Channel Encryption and Authentication
+## 7.2 Channel Encryption and Authentication
 We can also encrypt the channel. Channels have a `Secure` property that will encrypt the channel if set to `true`. However, **both client and server channels should be set to secure**. We can simply add it to `tcpChannelProperties` in both client and server and set it to `true`:
 
 {{< codecaption lang="csharp" title="Securing the server channel" >}}

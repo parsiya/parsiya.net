@@ -18,7 +18,10 @@
           {{ end }}</p>
         </header>
         <div class="entry-content">
-          <!-- {{ .TableOfContents }} -->
+          {{ $.Scratch.Set "pagetoc" .TableOfContents }}
+          {{ if or (and (isset .Params "toc") (eq .Params.toc true)) (and (not (isset .Params "toc")) (eq .Site.Params.tableOfContents true)) }}
+            {{ $.Scratch.Get "pagetoc" }}
+          {{ end }}
           {{ .Content }}
         </div>
         {{ partial "post_footer.html" . }}

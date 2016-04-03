@@ -2,6 +2,7 @@
 date: "2016-02-21T14:42:41-05:00"
 draft: false
 title: "Installing Burp Certificate Authority in Windows Certificate Store"
+toc: true
 categories:
 - Burp
 - Tutorial
@@ -25,10 +26,10 @@ For instructions on installing/removing Burp's CA in other browsers and devices 
 
 <!--more-->
 
-### Obtaining the Root CA
+# Obtaining Burp's Root CA
 This tutorial assumes you have already installed Burp (both free and pro version have the same) and you are running Windows. Although accessing the certificate is OS agnostic.
 
-#### Using a Browser
+## Using a Browser
 Open up your browser and navigate to the following URL [http://burp/](http://burp/) or [http://127.0.0.1:8080](http://127.0.0.1:8080) (default settings for Burp's proxy listener), If you have set-up Burp's proxy listener on a different port, use that instead of `8080`. Please not that if you have disabled the Burp's web interface in `Proxy > Options > Miscellaneous > Disable web interface at http://burp`, this method will not work. You either have to enable the web interface or use the other method.
 
 {{< imgcap title="Burp's web interface" src="/images/2016/burp1/01.png" >}}
@@ -37,7 +38,7 @@ Click on `CA Certificate` to begin downloading the certificate.
 
 {{< imgcap title="Downloading Burp's CA" src="/images/2016/burp1/02.png" >}}
 
-#### Using Burp's Certificate Export Functionality
+## Using Burp's Certificate Export Functionality
 If you have disabled Burp's web interface, you can use Burp to export the certificate directly. This functionality also allows you to export the certificate along with its private key to use in other applications. This is useful if you want to sign your own custom certificates but do not want to generate a new root CA like I did for [Hipchat]({{< ref "2015-10-19-proxying-hipchat-part-3-ssl-added-and-removed-here.markdown#generatingtlscert" >}} "Proxying Hipchat Part 3: SSL Added and Removed Here :^\)").
 
 Open Burp and navigate to `Proxy > Options`. Look under `Proxy Listeners` at the top of the page for a button named `Import / export CA certificate`. Notice that you can also re-generate the certificate.
@@ -58,7 +59,7 @@ Now select a filename and path for the certificate.
 
 Click `Next` and then finally `Close`.
 
-### Installing Burp's Root CA in Windows Certificate Store
+# Installing Burp's Root CA in Windows Certificate Store
 Double click the certificate and then c lick `Install Certificate`.
 
 {{< imgcap title="Install certificate button" src="/images/2016/burp1/07.png" >}}

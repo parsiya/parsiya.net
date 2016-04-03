@@ -86,7 +86,7 @@ video {
     font-size: 100%;
     vertical-align: baseline;
     font-family: "PT Serif",Georgia,Times,"Times New Roman",serif;
-    
+
 }
 html {
     line-height: 1
@@ -281,7 +281,7 @@ p,
 article blockquote,
 ul,
 ol {
-    margin-bottom: 1em; /* changed this from 1.5em to 1 */
+    margin-bottom: 0.8em; /* changed this from 1.5em to 0.8 */
 }
 ul {
     list-style-type: disc
@@ -382,7 +382,7 @@ big {
 article blockquote {
     font-style: italic;
     position: relative;
-    font-size: 1.2em;
+    font-size: 1.0em;
     line-height: 1.5em;
     padding-left: 1em;
     border-left: 4px solid rgba(170, 170, 170, 0.5)
@@ -1070,9 +1070,7 @@ article header p.meta {
         padding-bottom: 1em;
     }
 }
-article h2 {
-    padding-top: 0.8em;
-}
+
 .entry-content article h2:first-child,
 article header+h2 {
     padding-top: 0
@@ -1222,7 +1220,7 @@ article>footer .byline ~ .categories:before {
     display: inline-block
 }
 /* pagination stuff */
-#content div.pagination {  
+#content div.pagination {
     text-align: center;
     font-size: .95em;
     position: relative;
@@ -1264,7 +1262,7 @@ p.meta+.sharing {
 .highlighttable,
 html .gist .gist-file .gist-syntax .gist-highlighttable {
     border-left: 1px solid #05232b !important;
-   
+
 }
 .highlighttable table td.code,
 html .gist .gist-file .gist-syntax .gist-highlighttable table td.code {
@@ -1883,23 +1881,22 @@ figure.code figcaption a:hover {
         margin-left: 5em
     }
     #blog-archives h2 {
-        margin-bottom: .3em;
+        margin-bottom: 0.3em;
         font-weight: normal;
         display: inline-block;
         position: relative;
         top: -1px;
-        float: left
-    }
-    #blog-archives h2:first-child {
-        padding-top: .75em
+        float: left;
+        margin-top: 1.7em;     /* align year with the rest */
     }
     #blog-archives time {
         position: absolute;
         text-align: right;
         left: 0em;
-        top: 3.2em; /* may need to change this to align the month/date on the tag/category (archive) pages with post name */
+        top: 3em; /* may need to change this to align the month/date on the tag/category (archive) pages with post name */
         font-family: "PT Sans","Helvetica Neue",Arial,sans-serif;
     }
+
    /* #blog-archives .year {
         display: none;
     }*/
@@ -1916,7 +1913,7 @@ figure.code figcaption a:hover {
     padding-left: 6.8em
 }
 #content>.category .year {
-    display: inline;    
+    display: inline;
 }
 .side-shadow-border,
 aside.sidebar section h1,
@@ -2203,7 +2200,7 @@ td.code {
 /* end of making mycode shortcode work */
 
 /* wrapped the whole output from the highlight function (which is a table) in a div to get a horizontal scrollbar for the whole row and not just the "pre" in the cell
-having a scrollbar for the cell will break alignment with line numbers    
+having a scrollbar for the cell will break alignment with line numbers
 */
 
 div.codewrapper {
@@ -2223,8 +2220,28 @@ div.entry-content > div.highlight {
     margin-bottom: 0.4em;
 }
 
-/* side bar code from hyde-x */
+/* decrease h1 size in article body so we can use it in the article as heading */
+div.entry-content > h1 {
+    font-size:1.7em;
+}
 
+div.entry-content > h2 {
+    font-size:1.5em;
+}
+
+/* decrease margin for article headings */
+div.entry-content >
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin-bottom: 0.5em;
+    margin-top: 0.8em;
+}
+
+/* side bar code from hyde-x */
 
 /*
  * Sidebar
@@ -2240,7 +2257,7 @@ div.entry-content > div.highlight {
   background-color: #202020;
 }
 
-/* aligns the side bar to the left, we want it to be on the right 
+/* aligns the side bar to the left, we want it to be on the right
 @media (min-width: 48em) {
   .sidebar {
     position: fixed;

@@ -7,6 +7,7 @@ tags:
 - Proxying
 - Burp
 comments: true
+toc: true
 date: 2015-10-09T22:34:37Z
 title: 'Proxying Hipchat Part 2: So You Think You Can Use Burp?'
 ---
@@ -17,7 +18,7 @@ This is specific to Hipchat client for Windows. The current version at the time 
 
 <!--more-->
 
-### 1. EZ-Mode Proxy Settings
+# 1. EZ-Mode Proxy Settings
 To see the proxy settings, log off and select Configure Connection. Note that in the most recent version (2.2.1395) this added to the settings menu inside the application and there is no need to logoff.
 
 {{< imgcap src="/images/2015/hipchat2/01-Hipchat-login-screen.png" title="Hipchat login screen" >}}
@@ -38,12 +39,12 @@ Now login. We will see some requests in Burp. We have seen them before, first on
 
     1. http://downloads.hipchat.com/blog_info.html
     # section 2.2 in part 1
-    
-    2. https://s3.amazonaws.com/uploads.hipchat.com/10804/368466/FM3tGM05hUCySVj/freddie.png 
+
+    2. https://s3.amazonaws.com/uploads.hipchat.com/10804/368466/FM3tGM05hUCySVj/freddie.png
     # emoticon in this case it is Freddie Mercury
     # note that this changes because last time I saw success kid
     # section 2.3 in part 1.
-    
+
     3.<?xml version='1.0'?><stream:stream to='chat.hipchat.com'
     # looks like the start of an XMPP handshake.
 
@@ -53,10 +54,10 @@ Note: `hipchatserver.com`, our imaginary Hipchat server's IP is `10.11.1.25` in 
 
 The third request looks like the start of an XMPP handshake which has been cut off by Burp. It should be something like this:
 
-    <?xml version='1.0'?><stream:stream to='chat.hipchat.com' xmlns='jabber:client' 
+    <?xml version='1.0'?><stream:stream to='chat.hipchat.com' xmlns='jabber:client'
     xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>
 
-### 2. Why did Burp, Burp?
+# 2. Why did Burp, Burp?
 
 To diagnose the problem, we must look at the traffic capture. Run Netmon and login to Hipchat again. Remember that you cannot capture Hipchat’s traffic to Burp with Netmon or Wireshark as it is local (from `127.0.0.1:49xxx` to `127.0.0.1:8080`) so you need to sniff local traffic with something like [RawCap][rawcap-download]. But we can look at Burp’s outbound traffic in Netmon. Look for traffic belonging to the `javaw.exe` process (for Burp).
 
@@ -68,7 +69,7 @@ Or using sequence diagram created on [https://www.websequencediagrams.com](https
 
 As we see the XMPP handshake is incomplete. In short, Burp somehow messes up the first part of the XMPP handshake and drops the packet just after it sees `to='chat.hipchat.com'` and sends an incomplete payload which causes the server to reject it and reset the connection.
 
-### 3. Burp’s SSL Pass Through
+# 3. Burp’s SSL Pass Through
 It’s time to talk about another one of Burp’s capabilities. This one is named `SSL Pass Through` and is very useful for exactly the situation we are in. We can specify endpoints (domain/IP and port) and tell Burp not to mess with the to/from those points and just pass it through as it is. This means that Burp will not Man-in-the-Middle (MitM) the connection and just ignore the traffic. It is located at `Proxy > Option > SSL Pass Through` (scroll all the way to the bottom). Let’s tell Burp not to proxy anything to/from the `hipchatserver.com` at `10.11.1.25:5222`.
 
 {{< imgcap src="/images/2015/hipchat2/06-SSL-Pass-Through.png" title="SSL Pass Through settings" >}}
@@ -147,7 +148,7 @@ Which results in **request 5**.
     Host: www.hipchat.com
 
 Response to request 5 is an RSS feed containing release versions of the Hipchat client for Windows. Click this link if you want to see it in action [https://www.hipchat.com/release_notes/appcast/qtwindows](https://www.hipchat.com/release_notes/appcast/qtwindows).
-	
+
     HTTP/1.1 200 OK
     Cache-control: no-cache="set-cookie"
     Content-Type: application/xml
@@ -189,7 +190,7 @@ Response to request 5 is an RSS feed containing release versions of the Hipchat 
 
 I think this RSS feed is used to check for updates.
 
-### 5. GET request over HTTP
+# 5. GET request over HTTP
 Now let’s take a look at request one. It is loading an HTML page and displays it in the app. directly We can intercept the response in Burp and modify it. The request is to [http://downloads.hipchat.com/blog_info.html](http://downloads.hipchat.com/blog_info.html) and that page is not available over TLS.
 
 {{< imgcap src="/images/2015/hipchat2/10-Changing-latest-news.png" title="It has crashed again!" >}}
@@ -204,7 +205,7 @@ This is not a serious vulnerability. The attacker needs to be on the same networ
 
 In my opinion the best strategy for an attacker is to inject links to phishing sites. Something along the lines of `Click to download the new version` and serve infected files or `Click to verify your account` and point to a phishing login screen. Doubly so because this is *the Hipchat link box* and users are expected to click these links. We should also remember that Hipchat is also used in non-corporate environments so the next person at Starbucks may be messing with your traffic.
 
-#### 5.1 The Container
+## 5.1 The Container
 The container looks like to be QtWebKit (remember the User-Agent?). It does not have JavaScript enabled so injected JS will not be executed. We can inject forms, but the actions will not work (e.g. I injected a simple form with one input field to pass its contents to do a Google search but nothing happens when the button is clicked). This part needs more investigation and I will probably get back to it. If you know about this container (whatever that is) please let me know.
 
 In part three, we will talk about proxying Hipchat client’s traffic with the Hipchat server that we skipped using Burp's SSL Pass Through and do more exciting stuff.
@@ -213,4 +214,3 @@ As usual if you have any questions/feedback/complaints or just want life advice 
 
 <!--links-->
 [rawcap-download]: http://www.netresec.com/?page=RawCap
-

@@ -2,6 +2,7 @@
 date: 2016-03-29T19:57:53-04:00
 title: "Burp Tips and Tricks for Non-Webapp Testing - Part 2: History, Intruder, Scanner and More"
 draft: false
+toc: true
 categories:
 - Burp
 - Tutorial
@@ -15,38 +16,7 @@ In this part I will talk about `Target > Scope`, `Proxy > HTTP History` and `Int
 
 <!--more-->
 
-## Table of Contents:
-
-<ul>
-<li><a href="#1-scope:7277eac1cfd1f9f94a8598c176eefb51">1. Scope</a></li>
-<li><a href="#2-http-history:7277eac1cfd1f9f94a8598c176eefb51">2. HTTP History</a></li>
-<li><a href="#3-scanner-only-available-in-pro-version:7277eac1cfd1f9f94a8598c176eefb51">3. Scanner (only available in Pro version)</a>
-<ul>
-<li><a href="#3-1-live-scanning:7277eac1cfd1f9f94a8598c176eefb51">3.1 Live Scanning</a></li>
-<li><a href="#3-2-options:7277eac1cfd1f9f94a8598c176eefb51">3.2 Options</a></li>
-</ul></li>
-<li><a href="#4-intruder-rate-limited-in-free-version:7277eac1cfd1f9f94a8598c176eefb51">4. Intruder (rate limited in Free version)</a>
-<ul>
-<li><a href="#4-1-positions:7277eac1cfd1f9f94a8598c176eefb51">4.1 Positions</a></li>
-<li><a href="#4-2-payloads:7277eac1cfd1f9f94a8598c176eefb51">4.2 Payloads</a>
-<ul>
-<li><a href="#4-2-1-payload-sets-and-payload-options:7277eac1cfd1f9f94a8598c176eefb51">4.2.1 Payload Sets and Payload Options</a></li>
-<li><a href="#4-2-2-payload-processing:7277eac1cfd1f9f94a8598c176eefb51">4.2.2 Payload Processing</a></li>
-</ul></li>
-<li><a href="#4-3-options:7277eac1cfd1f9f94a8598c176eefb51">4.3 Options</a>
-<ul>
-<li><a href="#4-3-1-grep-match:7277eac1cfd1f9f94a8598c176eefb51">4.3.1 Grep - Match</a></li>
-</ul></li>
-</ul></li>
-<li><a href="#5-repeater-decoder-comparer:7277eac1cfd1f9f94a8598c176eefb51">5. Repeater - Decoder - Comparer</a>
-<ul>
-<li><a href="#5-1-repeater:7277eac1cfd1f9f94a8598c176eefb51">5.1 Repeater</a></li>
-<li><a href="#5-2-decoder:7277eac1cfd1f9f94a8598c176eefb51">5.2 Decoder</a></li>
-<li><a href="#5-3-comparer:7277eac1cfd1f9f94a8598c176eefb51">5.3 Comparer</a></li>
-</ul></li>
-</ul>
-
-## 1. Scope
+# 1. Scope
 Ideally you want to add the application's endpoints to scope, this helps filter out the noise in many parts of Burp.
 
 Adding an endpoint to scope is easy. Right click a request and select `Add to scope`. Then you can navigate to `Target > Scope` and see that request added to scope. There is one big catch. Only *that* URL is added to scope. For example if I select the request to `GET` Google's logo and add it to scope, the rest of Google.com will not be in scope and have to be added manually.
@@ -70,7 +40,7 @@ If we want to add Google and all its subdomains in scope, we add the logo (or an
 
 {{< imgcap title="Adding `*.google.com` to scope" src="/images/2016/burp-tips-2/03.PNG" >}}
 
-## 2. HTTP History
+# 2. HTTP History
 `Proxy > HTTP History` is where we see all captured requests/responses in Burp. Roughly half of my time in Burp is spent here. One big part of the history is using the filter to reduce the noise. The filter can be opened by clicking on the tab with the text `Filter: Showing all items` (depending on your settings you may see a different text). I usually like to start with a clean slate.
 
 {{< imgcap title="HTTP History filter options" src="/images/2016/burp-tips-2/04.PNG" >}}
@@ -85,7 +55,7 @@ As you can see in the screenshot, the filter has a good number of options. Most 
 * In `Filter by file extension` I only use the `Hide` feature and usually add some extra extensions to it (for example fonts) that I am not interested in.
 * `Filter by listener` is especially useful when the an application is communicating on different ports and does not support proxy settings. In these cases we have to redirect the endpoint to localhost (for example using the `hosts` file) and create a different proxy listener for each port. Using this feature we can see traffic for select listeners.
 
-## 3. Scanner (only available in Pro version)
+# 3. Scanner (only available in Pro version)
 The Burp has a decent scanner. It is not as good as IBM Appscan Standard in terms of coverage and accuracy but it has a lot advantages especially for non-webapp testing.
 
 * Burp is much easier/faster to set-up. I can login, scan a single request and be done with it. While in Appscan I have to do the whole app at once (configure the scan, record login sequence, manual explore, automatic explore and then finally full scan). This does not take into account the fact that more often than not I have to troubleshoot Appscan because it cannot record some special login (you are shit out of luck if login needs a random token) sequence. ~~More rants about Appscan.~~
@@ -93,7 +63,7 @@ The Burp has a decent scanner. It is not as good as IBM Appscan Standard in term
 
 Results appear in `Issue activity` tab (a better place to observe the results is `Target > Site map`) and requests being scanned are in `Scan queue`.
 
-### 3.1 Live Scanning
+## 3.1 Live Scanning
 Burp has two scanning modes: active and passive. Both can be active at the same time.
 
 In passive scanning, it just looks at requests/responses and essentially greps according to its rule set without sending any requests. In active scanning, it actually generates payloads and sends them to the server (and analyzes requests/responses).
@@ -105,7 +75,7 @@ In this tab you can configure these modes:
 
 {{< imgcap title="Live scanning options" src="/images/2016/burp-tips-2/06.PNG" >}}
 
-### 3.2 Options
+## 3.2 Options
 Here you can configure the scanner options. Although I do not use live active scanning, these options need to be configured for individual request scanning.
 
 * `Attack Insertion Points`: You can select injection points. Add/remove as you like. Fewer injection points == faster scanning.
@@ -114,20 +84,20 @@ Here you can configure the scanner options. Although I do not use live active sc
 * `Passive Scanning Areas`: You can de-select everything and only add relevant items to reduce the noise but honestly I do not bother to change this.
 * `Static Code Analysis`: Enables static analysis on JavaScript code. You can drop this for most non-webapp tests.
 
-## 4. Intruder (rate limited in Free version)
+# 4. Intruder (rate limited in Free version)
 Intruder is the semi-automatic scanning part of Burp. Right click on any request and select `Send to Intruder`. In Intruder you can designate injection points and then either scan them using the internal scanner or use your own payloads.
 
-### 4.1 Positions
+## 4.1 Positions
 After sending the payload to Intruder open up the `Intruder > Positions` tab and see the injection points. I usually just `Clear` everything and then use the `Add` button to highlight my own injection points.
 
 {{< imgcap title="Using Burp Intruder" src="/images/2016/burp-tips-2/07.gif" >}}
 
 As you can see, I selected the familiar Google logo request and sent it to Intruder. Then cleared all pre-defined injection points and added the file name. Now we can right click and select `Actively scan defined insertion points` which sends this request to the Scanner but only scans this injection point or I can use the `Start Attack` button to start injecting my own designated payloads into this injection. As I have not selected any payloads, the second option does not work yet.
 
-### 4.2 Payloads
+## 4.2 Payloads
 Now we can set our payloads for the custom Intruder attack. Switch to the `Payloads` tab.
 
-#### 4.2.1 Payload Sets and Payload Options
+### 4.2.1 Payload Sets and Payload Options
 Here we can use different payloads. Burp has some complex payload sets that you can use in special circumstances. For example there is `Recursive grep`, which means that you can grab each payload from the response of the previous payload. `Case modification`, `Character substitution`, `Dates` and `Numbers` are some of the others.
 
 **Simple list** allows you to use your own payloads for all injection points. Copy all the payloads from a source (it's one payload per line) and paste them in `Payload Options`. You can also directly use the payloads in a file by selecting **Runtime file**. Using a file is the same as clicking the `Load` button and loading the file. You can also use some of Burp's internal payload lists which I think are only available in the Pro version.
@@ -140,25 +110,25 @@ The **Custom iterator** option allows Burp to do generate more complex payloads.
 
 One popular payload list is `FuzzDB` at [https://github.com/fuzzdb-project/fuzzdb][fuzzDB-github]. Be advised that it contains some payloads that are flagged by most Anti-Virus software.
 
-#### 4.2.2 Payload Processing
+### 4.2.2 Payload Processing
 Allows you to transform the payloads before injection. For example you can encode all payloads to base64 or send their hashes instead.
 
 {{< imgcap title="Payload Processing" src="/images/2016/burp-tips-2/10.PNG" >}}
 
-### 4.3 Options
+## 4.3 Options
 We can throttle the Intruder (similar to the Scanner) in `Request Engine` or delay it.
 
 `Payload Encoding` instructs Burp to URL-encode special characters.
 
-#### 4.3.1 Grep - Match
+### 4.3.1 Grep - Match
 We can grep for specific items in the responses. For example if we have injected SQLi payloads, we can instruct Burp to search for words in SQL error messages. For XSS I usually use payloads that inject `9999` (e.g. `alert(9999)`) and then grep for `9999` in responses.
 
 FuzzDB has its own regex patterns to analyze the responses. [This page][fuzzDB-regex] shows how to use them in with Burp.
 
-## 5. Repeater - Decoder - Comparer
+# 5. Repeater - Decoder - Comparer
 While these tabs do not have a lot of functionalities, they are quite useful.
 
-### 5.1 Repeater
+## 5.1 Repeater
 Repeater is where manual testing happens. Scanner is automated scanning and Intruder is semi-automated.
 
 In order to send a request to repeater, right click and then select `Send to Repeater`. We can modify requests, forward them and observe the responses.
@@ -169,13 +139,13 @@ Here I choose the logo GET request, send it to Repeater and forward it. Then mod
 
 Note than you can send modified items from Repeater to Intruder for scanning.
 
-### 5.2 Decoder
+## 5.2 Decoder
 Allows encoding/decoding to different formats. Also supports creating hashes. Double click any parameter to select it and then right click and select `Send to Decoder`. You can also select and item and copy it by pressing `Ctrl+C` and then paste it in decoder.
 
 {{< imgcap title="Using Burp decoder" src="/images/2016/burp-tips-2/12.gif" >}}
 
-### 5.3 Comparer
-Comparer is used for comparing two payloads. Again select, right click and `Send to Comparer`. Comparing can be done at a byte (for binary blobs) level or by words (usually for text).
+## 5.3 Comparer
+Comparer is used for comparing two payloads *and HTTP requests/responses*. Again select, right click and `Send to Comparer`. Comparing can be done at a byte (for binary blobs) level or by words (usually for text).
 
 ------------
 

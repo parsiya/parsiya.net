@@ -8,6 +8,7 @@ tags:
 - Netmon
 - Network Traffic
 comments: true
+toc: true
 date: 2015-10-08T23:05:24Z
 title: 'Proxying Hipchat Part 1: Where did the Traffic Go?'
 ---
@@ -18,7 +19,7 @@ I used Hipchat Windows client version 2. At the time of writing version 4 is in 
 
 <!--more-->
 
-### 0. Setup and Tools
+# 0. Setup and Tools
 I will be using the following tools in this part:
 
 1. Microsoft Network Monitor (Netmon). You can also use Wireshark.
@@ -29,7 +30,7 @@ You can deploy your own Hipchat server by [downloading a VM][hipchatova]. You wi
 
 Note: In these posts, the Hipchat server is named `hipchatserver.com` and its IP is `10.10.10.10` (these are just examples). Some of the screenshots are edited to hide the actual IPs and replace them with samples. My machine's sample IP address for the network interface that hosts the Hipchat server is `10.10.10.9`.
 
-### 1. Traffic Attribution
+# 1. Traffic Attribution
 Run Netmon and Procmon as admin and run HipChat. We already know how to do [traffic attribution]({{< ref "2015-08-01-network-traffic-attribution-on-windows.markdown" >}} "Network Traffic Attribution on Windows"). I was not logged into any chatrooms, so Hipchat is not loading any extra content (e.g. images linked in rooms).
 
 In Netmon we also see the following endpoints:
@@ -64,10 +65,10 @@ Procmon filters are:
 * ProcessName is Hipchat.exe
 * Operation is TCP Connect
 
-### 2. Where does the traffic go?
+# 2. Where does the traffic go?
 Now we need to find out more about these endpoints (e.g. their actual address/URL etc). Based on their temporal sequence in Procmon and Netmon we have some insights.
 
-#### 2.1 – 10.10.10.10 – hipchatserver.com
+## 2.1 – 10.10.10.10 – hipchatserver.com
 This is easy. It’s the Hipchat server at `hipchatserver.com`.
 
     PS C:\> nslookup 10.10.10.10
@@ -81,7 +82,7 @@ This is easy. It’s the Hipchat server at `hipchatserver.com`.
     Pinging hipchatserver.com [10.10.10.10] with 32 bytes of data:
     ...
 
-#### 2.2 – 54.231.81.2 – s3-website-us-east-1.amazonaws.com
+## 2.2 – 54.231.81.2 – s3-website-us-east-1.amazonaws.com
 This is where things start to become interesting. Let’s re-use our old tricks.
 
     PS C:\> nslookup 54.231.81.2
@@ -115,7 +116,7 @@ Note the User-Agent. Hipchat is fetching [http://downloads.hipchat.com/blog_info
 
 {{< imgcap src="/images/2015/hipchat1/05-Latest-news-in-hipchat.png" title="Latest News fetched over HTTP ;)" >}}
 
-##### 2.2.1 But what if this request was over TLS?
+### 2.2.1 But what if this request was over TLS?
 Then we would have seen the TLS handshake and then encrypted data. Even by looking at the Common Name (CN) field in server’s certificate in 2nd part of the TLS handshake (`Server Hello`) we wouldn't have been able to discover the endpoint.
 Traffic in Netmon, click to view full-size image.
 We are going to have to look at DNS requests. We know the endpoint’s IP address so we will try to find the DNS request that had this IP in its answer. The endpoint’s IP address is `54.231.81.2` which is `36E75102` in Hex. In Netmon, select `All Traffic` (In Netmon DNS traffic is not included in process traffic) and enter the following filter:
@@ -138,7 +139,7 @@ PS C:\> python
 36e75102
 {{< /codecaption >}}
 
-#### 2.3 – 54.231.96.96 – s3-1.amazonaws.com
+## 2.3 – 54.231.96.96 – s3-1.amazonaws.com
 
 Same trick. `54.231.96.96` in Hex is `36E76060` so filter is:
 
@@ -146,7 +147,7 @@ Same trick. `54.231.96.96` in Hex is `36E76060` so filter is:
 
 which points to `s3.amazonaws.com`. As we will see in part two, this is the request to load the emoticon shown with latest news, in this case it is the `success kid` image macro.
 
-    - Dns: QueryId = 0xC28D, QUERY (Standard query), Response - Success, 53, 0 ... 
+    - Dns: QueryId = 0xC28D, QUERY (Standard query), Response - Success, 53, 0 ...
         QueryIdentifier: 49805 (0xC28D)
       + Flags:  Response, Opcode - QUERY (Standard query), RD, RA, Rcode - Success
         QuestionCount: 1 (0x1)
@@ -179,7 +180,7 @@ which points to `s3.amazonaws.com`. As we will see in part two, this is the requ
          ResourceDataLength: 4 (0x4)
          IPAddress: 54.231.96.96
 
-#### 2.4 – 54.243.47.194 – ec2-54-243-47-194.compute-1.amazonaws.com
+## 2.4 – 54.243.47.194 – ec2-54-243-47-194.compute-1.amazonaws.com
 This is easy, we can just go to [http://ec2-54-243-47-194.compute-1.amazonaws.com](http://ec2-54-243-47-194.compute-1.amazonaws.com) and observe that it is [http://www.hipchat.com](http://www.hipchat.com). Interesting thing, if you go to [http://www.hipchat.com](http://www.hipchat.com) in your browser, it will redirect to the HTTPs version of the website. Going to the Amazon EC2 address is the only way to access hipchat.com over HTTP.
 
 We can also use this filter in Netmon:
@@ -187,8 +188,8 @@ We can also use this filter in Netmon:
 	  DNS && ContainsBin(FrameData, HEX, "36F32FC2")
 
 Which results in:
-    
-    - Dns: QueryId = 0x1D07, QUERY (Standard query), Response - Success, 54.243.47.194 
+
+    - Dns: QueryId = 0x1D07, QUERY (Standard query), Response - Success, 54.243.47.194
         QueryIdentifier: 7431 (0x1D07)
       + Flags:  Response, Opcode - QUERY (Standard query), RD, RA, Rcode - Success
         QuestionCount: 1 (0x1)
@@ -207,14 +208,14 @@ Which results in:
          ResourceDataLength: 4 (0x4)
          IPAddress: 54.243.47.194
 
-#### 2.5 – 54.225.209.74 – ec2-54-225-209-74.compute-1.amazonaws.com
+## 2.5 – 54.225.209.74 – ec2-54-225-209-74.compute-1.amazonaws.com
 This is the same as above with one small difference. Using this filter:
 
     DNS && ContainsBin(FrameData, HEX, "36E1D14A")
 
 We can see that is points to hipchat.com (last IP was `www.hipchat.com`).
 
-    - Dns: QueryId = 0x280E, QUERY (Standard query), Response - Success, 54.225.209.74 
+    - Dns: QueryId = 0x280E, QUERY (Standard query), Response - Success, 54.225.209.74
         QueryIdentifier: 10254 (0x280E)
       + Flags:  Response, Opcode - QUERY (Standard query), RD, RA, Rcode - Success
         QuestionCount: 1 (0x1)
@@ -241,4 +242,3 @@ That's enough for now. In part two we will talk about proxying.
 
 <!-- links -->
 [hipchatova]: https://www.hipchat.com/server/get-it
-

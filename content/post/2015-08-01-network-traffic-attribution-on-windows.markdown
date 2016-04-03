@@ -7,6 +7,7 @@ tags:
 comments: true
 date: 2015-08-01T19:37:42Z
 title: Network Traffic Attribution on Windows
+toc: true
 ---
 
 Thick client assessments come in different flavors. Most of our work is on `consumer applications` where `consumer` means either the customer or an employee of our client. But these applications usually have network communications.
@@ -21,27 +22,27 @@ In this post, I will be talking about the much easier first challenge. I will be
 
 <!--more-->
 
-### 1. Our Setup
+# 1. Our Setup
 
 I am using Windows 7 VM running via VirtualBox. You can probably use anything newer than Windows XP. You can get VMs from Microsoft at [http://dev.modern.ie/tools/vms/windows/][modern-ie]. These VMs have 90 day activation periods and are for testing different versions of IE but they are enough for our purpose. One downside is the huge virtual disk drive (110GB) that can be shrinked (from inside Windows) in half. Hard drive is still dynamically located but if you do not watch out, it wills tart filling up your hard drive (especially if you are making snapshots).
 
-### 2. List of Tools
+# 2. List of Tools
 
 1. **Microsoft Network Monitor (Netmon)**: [http://blogs.technet.com/b/netmon/p/downloads.aspx][netmon-dl]
 2. **Wireshark**: [https://www.wireshark.org/download.html][wireshark-dl]
 3. **Process Monitor (Procmon)**: Part of Microsoft Sysinternals Suite: [https://technet.microsoft.com/en-us/sysinternals/bb842062.aspx][sysinternals-dl]
 
-### 3. Test Application
+# 3. Test Application
 
 I will be using `Notepad++ 6.7.9.2`. it was the current version at the time of writing but by the time I got to publishing this post it has been updated to version `6.8`. You can download it from [https://notepad-plus-plus.org/download/v6.7.9.2.html][notepadpp-dl]. Install Notepad++ but make sure to select `Auto Updater` and `Plugin Manager` during installation. **Do not run the application at the end of the installation process**.
 
-### 4. Traffic Attribution
+# 4. Traffic Attribution
 
 Run Netmon, Wireshark and Procmon (as Administrator) then run `Notepad++`.
 
 **Procmon Note**: Never select `Drop Filtered Events` in the Filter menu. It will discard all events that are not shown by your filters. There is no going back to viewing filtered events.
 
-#### 4.1 Netmon
+## 4.1 Netmon
 
 We can see a bunch of traffic in Netmon. See this handy tree view to the left? That is why we are using it ;).
 
@@ -56,7 +57,7 @@ There’s another `suspicious process` up there. Select `gup.exe` and we can see
 But wait, there’s more. There may be traffic that is not correctly attributed due to the way that Netmon identifies traffic. We may be able to find some extra stuff there.  
 Here’s a Catch-22, there may be traffic related to our application that Netmon wasn’t able to correlate back to the process but how can we identify it if we do not know the endpoints. We will be using Procmon to compile a more comprehensive endpoint collection later.
 
-##### 4.1.1 How to search in Netmon?
+### 4.1.1 How to search in Netmon?
 `Contains` is a filter that allows us to do case-insensitive searchs for strings. For example we can use this filter to search for packets with destinations containing the string `sourceforge`. We can use the following filters (they both do the same thing):
 
 * `Contains(property.Destination, "sourceforge")`
@@ -85,7 +86,7 @@ We can also search for strings using `ContainsBin` by using `ASCII`. But remembe
 
 * `ContainsBin(FrameData, ASCII, "sourceforge")`
 
-#### 4.2 Procmon
+## 4.2 Procmon
 Procmon does not display traffic but it's a great tool to identify enpoints. Stop the Procmon capture. It is time to add Procmon filters.
 
 I am in the process of writing a longer blog entry about using Procmon but that is for another day. For now we will discuss some filters related to network endpoint discovery.
@@ -145,7 +146,7 @@ That was easy wasn’t it?
 
 What did we do? We used Netmon and Procmon to identify the endpoints that an specific application communicates with and isolate traffic belonging to that application. I told you this is nothing ground breaking :).
 
-### Questions:
+# Questions:
 
 **But what about Microsoft Message Analyzer (MMA)?**
 
@@ -165,7 +166,7 @@ Select all traffic and use the filter `DNS`. Due to the way Netmon associates tr
 
 Note that while we had a DNS query for `superb-dca2.dl.sourceforge.net`, we never connected to it so we did not see a `TCP Connect` event for it in Procmon.
 
-### 5. Exercise:
+# 5. Exercise:
 Run the tools again and install a plugin. This can be accomplished by going to `Plugins > Plugin Manager > Show Plugin Manager`. Try to locate the endpoints and traffic in this case. See what process is spawned by `notepad++.exe` this time.
 
 This time, it will not be as easy as last time because Netmon did not associate all packets with the process but you can find the endpoints via Procmon and filter them in Netmon.
@@ -179,4 +180,3 @@ I hope this was useful. If you have any questions, you know where to find me.
 [sysinternals-dl]: https://technet.microsoft.com/en-us/sysinternals/bb842062.aspx
 [notepadpp-dl]: https://notepad-plus-plus.org/download/v6.7.9.2.html
 [MMA-technet]: http://blogs.technet.com/b/messageanalyzer/archive/2015/06/08/process-tracking-with-message-analyzer.aspx
-

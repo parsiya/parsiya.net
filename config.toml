@@ -48,28 +48,37 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 
 [[menu.main]]
 	Name = "Archive"
-	URL = "http://parsiya.net/archive/"
+	URL = "/archive/"
 	weight = -4
 
 [[menu.main]]
 	Name = "Cheat Sheet"
-	URL = "http://parsiya.net/cheatsheet/"
+	URL = "/cheatsheet/"
 	weight = -3
 
 [[menu.main]]
 	Name = "License"
-	URL = "http://parsiya.net/license/"
+	URL = "/license/"
 	weight = -1
 
 [[menu.main]]
 	Name = "This theme on Github"
-	URL = "https://www.github.com/parsiya/hugo-octopress"
+	URL = "https://github.com/parsiya/hugo-octopress"
 	weight = 0
 
 
 [params]
 	# number of recent posts that will be shown in the sidebar - default is 5
 	SidebarRecentLimit = 10
+
+	sidebar_header = "Who am I?"
+
+	sidebar_text = """I am Parsia Hakimian. Current (mostly) Senior Consultant at [Cigital](https://www.cigital.com).
+	</br></br>
+	I am interested in infosec, reverse engineering, Python, C and EvE Online (not necessarily in that order).
+	</br></br>
+	My email is parsiya[att]google's email.
+	"""
 
 	# if false, all of the post will appear on front page (and in pagination)
 	truncate = true
@@ -104,6 +113,8 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 
 	# does this even work in action?
 	defaultKeywords = ["Parsia Hakimian" , "Parsia" , "infosec" , "information security"]
+
+	tableOfContents = false
 
 # blackfriday is Hugo's markdown engine. Options are at: https://gohugo.io/overview/configuration/ (scroll down to "Configure Blackfriday rendering")
 [blackfriday]

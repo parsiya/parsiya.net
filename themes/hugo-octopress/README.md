@@ -8,10 +8,13 @@ Hugo-Octopress is a port of the classic [Octopress][octopress-link] theme to [Hu
 - [Code highlight](#highlight)
 - [Navigation menu](#menu)
 - [Markdown options](#markdown)
+- [CSS override](#cssoverride)
 - [Sidebar](#sidebarlinks)
 - [Shortcodes](#shortcodes)
   - [Code caption](#codecaption)
   - [Image caption](#imgcap)
+    - [Atom snippets for shortcodes](#snippets)
+- [Hugo page summary bug](#summary)
 - [License page](#licensepage)
 - [Issues/TODO](#issues)
 - [Attribution](#attribution)
@@ -51,6 +54,17 @@ post = "/blog/:year-:month-:day-:title/"
   # number of recent posts that will be shown in the sidebar - default is 5
   SidebarRecentLimit = 5
 
+  # sidebar customization - passed to markdownify
+  sidebar_header = "Sidebar Header"
+
+  # sidebar text supports markdown
+  sidebar_text = """Sidebar text supports is passed to *markdownify* so it supports markdown. Here's a [link to google](https://www.google.com)
+  </br>
+  Second line
+  </br>
+  Third line
+  """
+
   # if false, all of posts' content will appear on front page (and in pagination) - not recommended
   # be sure to use the <!--more--> delimiter
   truncate = true
@@ -80,8 +94,10 @@ post = "/blog/:year-:month-:day-:title/"
   defaultDescription = ""
 
   # keywords used in meta tags
-  # does this even work in action?
   # defaultKeywords = ["keyword1" , "keyword2" , "keyword3" , "keyword4"]
+
+  # override the built-in css
+  # custom_css = ["css/custom.css","css/custom2.css"]
 
 ```
 
@@ -118,6 +134,14 @@ Blackfriday is Hugo's markdown engine. For a list of options visit [https://gohu
       hrefTargetBlank = true # open the external links in a new window
       fractions = false
 
+## <a name="cssoverride"></a>CSS override
+You can override the built-in css by using your own. Just put your own css files in the `static` directory of your website (the one in the theme directory also works but is not recommended) and modify the `custom_css` parameter in your config file. The path referenced in the parameter should be relative to the `static` folder. These css files will be added through the `header` partial after the built-in css file.
+
+For example, if your css files are `static/css/custom.css` and `static/css/custom2.css` then add the following to the config file:
+
+    [params]
+      custom_css = ["css/custom.css","css/custom2.css"]
+
 ## <a name="menu"></a>Navigation menu
 Links to the left of the navigation menu (everything other than Google search and RSS icon) can be configured here. Navigation menu is generated using the `hugo-octopress/layouts/partials/navigation.html` template.
 
@@ -145,8 +169,15 @@ The search engine can also be customized in the `config.toml` file as follows:
       # search enginer paramete in the navigation menu
       search_engine_url = "https://www.google.com/search"
 
-## <a name="sidebarlinks"></a>Sidebar links
+## <a name="sidebarlinks"></a>Sidebar
 The sidebar is generated using the partial template at `hugo-octopress/layouts/partials/sidebar.html`.
+
+Sidebar has two parts and both can be configured in the config file. Both values are passed to `markdownify`. For example you can add links and new lines.
+
+* Sidebar header which appear on top in a `<h1>` tag. Can be configured in the config file through the `sidebar_header` tag.
+* Sidebar text appears under the header and can be configured by modifying the `sidebar_text` tag in the config file.
+
+New lines can be added with `</br>` or normal markdown (two spaces at the end of line or two new lines). When adding two new lines, remember to remove the indentation in the config file otherwise the new line will be treated as a codeblock
 
 Sidebar links are read from the config file as follows:
 
@@ -166,7 +197,9 @@ If more than links are added, then add a `</br>` between the first four and the 
 Icons are from [http://fontawesome.io](http://fontawesome.io) by Dave Gandy. To use icons with square dark backgrounds add `-square`. For example `<i class="fa fa-twitter-square fa-3x"></i>`. Size can be from 1 to 5 or `fa-lg` to be adaptive.
 
 ## <a name="shortcodes"></a>Shortcodes
-Creating [shortcodes](https://gohugo.io/extras/shortcodes/) in Hugo was surprisingly easy. I used two plugins in Octopress that I re-created in Hugo using shortcodes. They add captions to code blocks and images. These shortcodes are located at `hugo-octopress/layouts/shortcodes/`
+Creating [shortcodes](https://gohugo.io/extras/shortcodes/) in Hugo was surprisingly easy. I used two plugins in Octopress that I re-created in Hugo using shortcodes. They add captions to code blocks and images. These shortcodes are located at `hugo-octopress/layouts/shortcodes/`.
+
+I have created a repository for all of my Hugo shortcodes at [https://github.com/parsiya/Hugo-Shortcodes](https://github.com/parsiya/Hugo-Shortcodes).
 
 ### <a name="codecaption"></a>Code caption
 This shortcode adds a caption to codeblocks. The codeblock is wrapped in a `<figure>` tag and caption is added using `<figcaption>`. It has two parameters, `title` which is the caption of the code block and `lang` which is the language that is passed to the Hugo `highlight` function along with `linenos=true` which adds line numbers to the codeblock.
@@ -217,6 +250,48 @@ Will result in:
   <span class="caption-text">Sample caption</span>
 </span>
 ```
+#### <a name="snippets"></a>Atom snippets for shortcodes
+I use Atom editor these days so I created a couple of snippets to insert these shortcodes while editing Markdown files. In order to read on how to create snippets please refer to [Atom's Snippets package](https://github.com/atom/snippets).
+
+Open your snippets file (on Windows it's `File > Open Your Snippets`) and paste the following in the file:
+
+``` coffee
+'.source.gfm':
+  'codecaption':
+    'prefix': 'codecap'
+    'body': """
+    {{< codecaption title="$1" lang="$2"  >}}
+    $3
+    {{< /codecaption >}}
+    """
+  'imgcap':
+    'prefix': 'imgcap'
+    'body': '{{< imgcap title="$1" src="/images/2016/$2" >}}'
+```
+
+My original mistake was to repeat `'.source.gfm'` before the `imgcap` snippet, seems like [cson keys should not be repeated](https://atom.io/docs/latest/using-atom-basic-customization#id-D9ATX).
+
+You can trigger the shortcodes by entering `imgcap` and `codecap` respectively and then pressing enter. You can change these by modifying the `prefix` in the code above. After inserting the shortcode, the cursor will go to the first location which is designated by `$1` which is `title` in both cases. After entering the value you can go to `$2` and `$3` by pressing `tab`.
+
+Hopefully these snippets help in using these shortcodes.
+
+## <a name="summary"></a>Hugo page summary bug
+If no page summary is selected, Hugo will take the first 70 words of your post (stripped on HTML tags) and displays them. This is ugly. Instead use the summary divider `<!--more-->` to specify where the summary ends. Hugo currently has a problem that reference style links in summary are not displayed. The reason behind this problem is that Hugo take the everything before the summary divider and passes it to the Markdown engine (currently BlackFriday) and if your reference style links are at the bottom of the page (they usually are), they are not passed. You can read more about this bug [here](https://discuss.gohugo.io/t/markdown-content-renders-as-regular-text-in-summary/1396/12).
+
+To be more specific, reference style links are like this:
+
+``` markdown
+This is a link to [Google][google-link].
+
+More stuff here
+
+[google-link]: https://www.google.com
+```
+
+Currently you can avoid this bug in two ways:
+
+1. Do not use reference style links in summary. Use normal links like this `[Google](https://www.google.com)`.
+2. Put the reference link before the summary divider.
 
 ## <a name="licensepage"></a>License page
 The generated license page will be located at `example.com/license/`. Markdown code for the license page can be anywhere in the content page, however the type of the markdown file should be set to `license` in front material. For example:

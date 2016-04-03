@@ -16,14 +16,20 @@
   <!-- goes into the title bar -->
   <title>{{ .Title }}</title>
 
-  <!-- CSS -->
+  <!-- css -->
+  <!-- original css -->
   <link rel="stylesheet" href="{{ "/css/hugo-octopress.css" | absURL }}">
+
+  <!-- css overrides -->
+  {{ range .Site.Params.custom_css }}
+    <link rel="stylesheet" href="{{ $.Site.BaseURL }}{{ . }}">
+  {{ end }}
 
   <!-- For sidebar icons - TODO: find local icons I guess-->
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
   <!-- if you want your own highlight.css -->
-  <!-- 
+  <!--
   {{ if isset .Site.Params "highlight" }}<link rel="stylesheet" href="{{ "/css/highlight/" | absURL }}{{ .Site.Params.highlight }}.css">{{ end }}
   -->
 
@@ -33,7 +39,7 @@
   <!-- RSS -->
   {{ $siteTitle := .Site.Title }}
   {{ $authorName := .Site.Author.name }}
-  
+
   <!--
   {{ with .RSSLink }}<link href="{{ . }}" rel="alternate" type="application/rss+xml" title="{{ $siteTitle }} &middot; {{ $authorName }}" />{{ end }}
   -->
@@ -45,8 +51,8 @@
 
   <meta name="author" content="{{ .Site.Params.author }}">
 
-  <!-- find a way to autoamtically put Hugo version here -->
-  <meta name="generator" content="Hugo 0.15" />
+  <!-- outputs the generator version for usage tacking -->
+  {{ .Hugo.Generator }}
 
   <!-- Google Analytics -->
   {{ template "_internal/google_analytics.html" . }}
@@ -59,4 +65,3 @@
 
 <!-- navigation -->
 <nav role="navigation">{{ partial "navigation.html" . }}</nav>
-
