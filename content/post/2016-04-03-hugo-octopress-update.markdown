@@ -12,7 +12,9 @@ title: Hugo Octopress Update
 ---
 I have made a good number of changes to the [Hugo-Octopress](https://github.com/parsiya/hugo-octopress) theme. As I have been using the theme more and more, I have realized there were a bunch of bugs (some were pointed out on Github).
 
-I had also hardcoded too many settings in the theme. For example, modifying the text in the sidebar had to be done by modifying the theme. Ideally using the theme should not need the user to modify anything in theme and can configure it by just using the config file. I created a bunch of issues and then closed them myself. I am not quite sure if this is correct but eh :D
+Apart from Bugs, I had hardcoded too many settings in the theme. For example, modifying the text in the sidebar could only be accomplished by changing the sidebar template. Ideally user should not need to modify anything in the theme and it should be customizable by just using the config file.
+
+In the end I created a bunch of issues on Github and then closed them myself. I am not quite sure if this is correct `git` but eh :D
 
 <!--more-->
 
@@ -30,4 +32,6 @@ I had also hardcoded too many settings in the theme. For example, modifying the 
 
 There's one big problem, I cannot use Hugo variables in the config file, because I pass everything to the `markdownify` function.
 
-That was it, if you want a feature or find a bug please create an issue on Github.
+I also changed a bit of my `runme.bat` file. It deletes the `post` folder (because everything is under blog). It also deletes the xml files generated for categories and tags. I have one xml file for the main RSS feed, tags and categories do not need RSS feed. These actions reduced the complete size of my blog from 17MB to 11MB.
+
+That was it, if you want a feature or find a bug please create an issue on Github or email me or leave a comment or send smoke signals.

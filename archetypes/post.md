@@ -1,5 +1,7 @@
 ---
 draft: true
+toc: false
+comments: true
 categories:
 - category1
 - category2
