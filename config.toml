@@ -57,18 +57,35 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 	weight = -3
 
 [[menu.main]]
-	Name = "Burp Posts"
-	URL = "/categories/burp/"
-	weight = -1
-
-[[menu.main]]
 	Name = "This theme on Github"
 	URL = "https://github.com/parsiya/hugo-octopress"
 	weight = 0
 
+# sidebar menus
+# enable with "sidebar_menu_enabled = true" in [oarams]
+# header text is "sidebar_menu_header" in [params]
+[[menu.sidebar]]
+	Name = "Burp"
+	URL = "/categories/burp/"
+	weight = 0
+
+[[menu.sidebar]]
+	Name = "Hipchat"
+	URL = "/categories/hipchat/"
+	weight = 1
+
+[[menu.sidebar]]
+	Name = "Reverse Engineering"
+	URL = "/categories/reverse-engineering/"
+	weight = 2
+
+[[menu.sidebar]]
+	Name = "Crypto"
+	URL = "/categories/crypto/"
+	weight = 3
+
 [params]
-	# number of recent posts that will be shown in the sidebar - default is 5
-	SidebarRecentLimit = 10
+	sidebarRecentLimit = 10
 
 	sidebar_header = "Who am I?"
 
@@ -79,8 +96,10 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 	My email is parsiya[att]google's email.
 	"""
 
-	notfound_header = "There's nothing here"
+	sidebar_menu_enabled = true
+	sidebar_menu_header = "Collections"
 
+	notfound_header = "There's nothing here"
 	notfound_text = """You can never go back."""
 
 	# if false, all of the post will appear on front page (and in pagination)
