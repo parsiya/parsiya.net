@@ -39,17 +39,17 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 [[menu.main]]
 	Name = "Blog"
 	URL = "/"
-	weight = -5
+	weight = -6
 
 [[menu.main]]
 	Name = "The other guy from Wham!"
 	URL = "https://www.google.com/search?q=andrew+ridgeley"
-	weight = -5
+	weight = -4
 
 [[menu.main]]
-	Name = "Archive"
+	Name = "All Posts"
 	URL = "/archive/"
-	weight = -4
+	weight = -5
 
 [[menu.main]]
 	Name = "Cheat Sheet"
@@ -83,6 +83,16 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 	Name = "Crypto"
 	URL = "/categories/crypto/"
 	weight = 3
+
+[[menu.sidebar]]
+	Name = "All Posts"
+	URL = "/archive/"
+	weight = 4
+
+[[menu.sidebar]]
+	Name = "Migration to Hugo"
+	URL = "/categories/crypto/"
+	weight = 5
 
 [params]
 	sidebarRecentLimit = 10

@@ -1,4 +1,4 @@
 ---
-title: "Archive"
+title: "All Posts"
 type: myarchivetype
 ---

@@ -22,6 +22,19 @@
               <span class="month">{{ .Date | dateFormat "Jan" }}</span> <!-- print publish month -->
               <span class="day">{{ .Date | dateFormat "2" }}</span> <!-- print publish day -->
             </time>
+            <footer>
+              <span class="categories"> <!-- show categories and tags -->
+                {{ if isset .Params "categories" }}
+                  Categories:
+                  {{ range .Params.categories }} <a class="category" href="{{ "/categories/" | absURL }}{{ . | urlize | lower }}">{{ . }}</a>{{ end }}
+                {{ end }}
+              </br>
+                {{ if isset .Params "tags" }}
+                  Tags:
+                  {{ range .Params.tags }} <a class="category" href="{{ "/tags/" | absURL }}{{ . | urlize | lower }}">{{ . }}</a>{{ end }}
+                {{ end }}
+              </span>
+            </footer>
               <!-- if you want pages summary you can print it here {{ .Summary }} -->
           </article>
           {{ end }}
