@@ -79,7 +79,7 @@ Output will be in format of
 * `InputObject`: `c:\users\cigital\somefile` -- line content
 * `SideIndicator`: `=>` -- exists in new2.txt (second file, file to the right)
 
-**grep on Powershell**  
+**grep in Powershell**  
 `findstr "something" *.txt`
 
 will include filename and line (no number AFAIK)
