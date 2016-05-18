@@ -1,5 +1,5 @@
 ---
-title: "Burp Tips and Tricks for Non-Webapp Testing - Part 3: Options and Extender"
+title: "Thick Client Proxying - Part 3: Burp Options and Extender"
 date: 2016-04-02T20:22:37-04:00
 # change the date later
 draft: false
@@ -9,6 +9,9 @@ tags:
 - Tutorial
 categories:
 - Burp
+- Thick Client Proxying
+aliases:
+- "/blog/2016-04-02-burp-tips-and-tricks-for-non-webapp-testing---part-3-options-and-extender/"
 
 ---
 

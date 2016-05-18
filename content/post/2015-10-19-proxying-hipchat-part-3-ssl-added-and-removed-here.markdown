@@ -71,7 +71,7 @@ Now let’s see how Burp works. Let's look at the capture file in Wireshark.
 
 ## 2.1 GET downloads.hipchat.com/blog_info.html
 
-~~Click for full-size image.~~ Doesn't apply anymore as I don't have imgpopup in Hugo.
+~~Click for full-size image.~~ Doesn't apply anymore as I don't have imgpopup in Hugo. [Here's a link to the full-size image](/images/2015/hipchat3/03-GET-blog_info-in-Wireshark.png).
 
 {{< imgcap src="/images/2015/hipchat3/03-GET-blog_info-in-Wireshark.png" title="GET blog_info.html in Wireshark" >}}
 

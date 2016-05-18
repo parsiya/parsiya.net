@@ -1,13 +1,16 @@
 ---
 date: "2016-03-27T02:45:03-04:00"
 draft: false
-title: "Burp Tips and Tricks for Non-Webapp Testing - Part 1: Interception and Proxy Listeners"
+title: "Thick Client Proxying - Part 1: Burp Interception and Proxy Listeners"
 toc: true
 categories:
 - Burp
+- Thick Client Proxying
 tags:
 - Burp
 - Tutorial
+aliases:
+- "/blog/2016-03-27-burp-tips-and-tricks-for-non-webapp-testing---part-1-interception-and-proxy-listeners/"
 ---
 
 Burp is not just used for web application testing. I usually use it during mobile and thick client tests. If the application is using HTTP methods then Burp is your best friend.

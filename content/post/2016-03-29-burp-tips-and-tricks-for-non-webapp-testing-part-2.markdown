@@ -1,13 +1,16 @@
 ---
 date: 2016-03-29T19:57:53-04:00
-title: "Burp Tips and Tricks for Non-Webapp Testing - Part 2: History, Intruder, Scanner and More"
+title: "Thick Client Proxying - Part 2: Burp History, Intruder, Scanner and More"
 draft: false
 toc: true
 categories:
 - Burp
+- Thick Client Proxying
 tags:
 - Burp
 - Tutorial
+aliases:
+- "/blog/2016-03-29-burp-tips-and-tricks-for-non-webapp-testing---part-2-history-intruder-scanner-and-more/"
 ---
 In [part1]({{< ref "2016-03-27-burp-tips-and-tricks-for-non-webapp-testing-part-1.markdown" >}} "Burp Tips and Tricks for Non-Webapp Testing - Part 1: Interception and Proxy Listeners") I talked about some of Burp's functionalities with regards to testing non-webapps. I did not expect it to be that long, originally I had intended to just shared some quick tips that I use. Now you are forced to read my drivel.
 
