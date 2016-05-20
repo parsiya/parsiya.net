@@ -13,16 +13,20 @@ tags:
 title: "Thick Client Proxying - Part 5: FileHippo App Manager or the Bloated Hippo"
 toc: true
 ---
-I have talked a lot about this and that but have done nothing in action. From this part moving forward I will talk about actually proxying applications. I will start with something easy, the [FileHippo App Manager][filehippo-dl1]. This app was chosen because it can be proxied with Burp, it does not use TLS and it has its own proxy settings and also supports using Internet Explorer proxy settings. The requests are also pretty simple to understand. I also like FileHippo because it archives older versions of software. For example I loved the non-bloated Yahoo! Messenger 8.0 when I used it (it's pretty popular where I was born) and used FileHippo to download the old versions.
+I have talked a lot about this and that but have done nothing in action. Now I will talk about proxying actual applications. I will start with something easy, the [FileHippo App Manager][filehippo-dl1]. This app was chosen because it can be proxied with Burp, it does not use TLS and it has its own proxy settings (also works with Internet Explorer proxy settings). The requests are pretty simple to understand. I like the FileHippo website because it archives old versions of software. For example I loved the non-bloated Yahoo! Messenger 8.0 when I used it (it's pretty popular in some places) and used FileHippo to download the old versions.
 
-During the testing I discovered something interesting, the app contains the AWS SDK and a fortunately invalid set of AWS Access/Secret keys.
+FileHippo App Manager turned out to be more interesting than I thought and this post turned into some .NET reverse engineering using dnSpy. Here's what I talk about in this post:
+
+* The app contains the AWS SDK and a fortunately invalid set of AWS Access/Secret keys. Both the SDK and the keys are in dead code.
+* Requests have an `AccessToken` header which is generated client-side. We will discuss how it is generated.
+* The application has a "hidden" DEBUG mode which unfortunately does nothing special. We will discover how to enable it.
 
 [filehippo-dl1]: http://filehippo.com/download_app_manager/
 <!--more-->
 
-Note: I attempted to contact both [Well Known Media][wkmedia-link] (parent company of FileHippo) and [FileHippo][filehippo-link] via their security addresses. `security@filehippo.com` and `security@wkmedia.com` do not exist. I contacted them via their only email on the Well Known Media website which is `adsales@wkemdia.com` and got no response. I tried to check the validity of the keys using the most non-intrusive way possible as discussed below and fortunately they were not valid so I went ahead and published the writeup.
+Note: I attempted to contact both [Well Known Media][wkmedia-link] (parent company of FileHippo) and [FileHippo][filehippo-link] via their security addresses. `security@filehippo.com` and `security@wkmedia.com` do not exist. I contacted them via their only email on the Well Known Media website which is `adsales@wkemdia.com` and got no response. I tried to check the validity of the keys using the most non-intrusive way possible as discussed below and fortunately they were not valid so I went ahead and shared the adventure.
 
-# 1. Setup
+# 1. Ingredients
 
 * Windows 7 VM
 * [FileHippo App Manager 2.0 beta 4][filehippo-dl1]
@@ -33,13 +37,13 @@ Note: I attempted to contact both [Well Known Media][wkmedia-link] (parent compa
 # 2. Proxying
 
 ## 2.1 Proxy settings
-Upon installing the application and running it. Click on the `Settings` gear icon to the left and then select the `Connection` tab to see the proxy settings.
+Install and run the application. Click on the `Settings` gear icon to the left and then select the `Connection` tab to see the proxy settings.
 
 {{< imgcap title="Application's proxy settings" src="/images/2016/thickclient-5-filehippo/01.PNG" >}}
 
-As you can see, the application supports its own proxy settings and also can use IE proxy settings via the `Auto-detect proxy settings for this network`. It does not really matter which method is chosen, we can use both of these to point the application to Burp. Run Burp and then press `Test`.
+As you can see, the application supports its own proxy settings and also can use IE proxy settings via the `Auto-detect proxy settings for this network`. It does not really matter which method is chosen, we can use both of these to point the application to Burp. Point it to Burp's proxy listener (default is `127.0.0.1:8080`), run Burp and then press `Test`.
 
-If Burp is set-up properly we can see two requests in Burp. First request is to get `update.filehippo.com` which is redirected with a `302 Found` response to http://filehippo.com/default.asp.
+We can see two requests in Burp. First request is to get `update.filehippo.com` which is redirected with a `302 Found` response to http://filehippo.com/default.asp.
 
 {{< codecaption title="GET update.filehippo.com and the 302 response" lang="html" >}}
 Request:
@@ -65,7 +69,7 @@ If we look at the traffic captured between the application and Burp we can see h
 
 {{< imgcap title="HTTP proxying in action" src="/images/2016/thickclient-5-filehippo/02.PNG" >}}
 
-[As we already know]({{< ref "2015-10-19-proxying-hipchat-part-3-ssl-added-and-removed-here.markdown#2-1-get-downloads-hipchat-com-blog-info-html" >}} "HTTP requests through a proxy"), there is no `CONNECT` because the proxy can see the `Host` header and forward the packets to the correct destination.
+[As we already know]({{< ref "2015-10-19-proxying-hipchat-part-3-ssl-added-and-removed-here.markdown#2-1-get-downloads-hipchat-com-blog-info-html" >}} "HTTP requests through a proxy"), there is no `CONNECT` because the proxy can see the `Host` header and forward the requests to the correct destination.
 
 ## 2.2 App Manager Scanning
 
@@ -89,7 +93,7 @@ Response body:
 
 Note the `AccessToken` which is a 40 byte blob in base64. For this request we can remove the `AccessToken` and it works. Why would the app get the date and time from the server?
 
-Then the app requests http://appmanager.filehippo.com/api/v1/ProgramDefinitions which is a list of all applications that are supported by the App Manager. The request contains a header named `Access Token` which contains a base64 encoded 40 byte blob. It seems like this access token is also time sensitive because if you send the request to Repeater and then send it after 10-15 minutes the response is `401 Unauthorized` while this did not happen in the `DateTime` request. At this point we do not know where this access token comes from because it is not in any of the responses (up until now we have only done the proxy test). There is also a 32 byte GUID named `ClientId`.
+Then the app requests http://appmanager.filehippo.com/api/v1/ProgramDefinitions which is a list of all applications that are supported by the App Manager. This request also contains the `AccessToken` header which contains a base64 encoded 40 byte blob. It seems like this access token is also time sensitive because if you send the request to Repeater and then send it after 10 minutes the response is `401 Unauthorized` while this did not happen in the `DateTime` request. At this point we do not know where this access token comes from because it is not in any of the responses (up until now we have only done the proxy test). There is also a 32 byte GUID named `ClientId`. Based on the previous request and the `ClientId` header, you can probably guess how the `AccessToken` is generated.
 
 {{< codecaption title="Retrieving program definitions" lang="json" >}}
 Request:
@@ -184,7 +188,7 @@ Notice that the download link is over HTTP, in fact `FileHippo.com` is served ov
 
 Next request is where the app _exfiltrates_ (hyperbole of course) data from our machine. Not super secret stuff but information about installed applications and the operating system. The previous request only contained applications supported by the App Manager but this one contains a lot more. It's a `POST` request to http://appmanager.filehippo.com/api/v1/InstallerPrograms with another JSON payload.
 
-The `ClientId` is the same between requests but the `Access Token` is different and we still do not know where it comes from.
+The `ClientId` is the same between requests but the `AccessToken` is different each time and we still do not know where it comes from.
 
 {{< codecaption title="InstallerPrograms" lang="json" >}}
 {
@@ -219,7 +223,7 @@ The `ClientId` is the same between requests but the `Access Token` is different 
         ...
 {{< /codecaption >}}
 
-Notice application data. It includes if the application is installed for all users (has entries in the `LocalMachine` registry hive) vs. installed for current user (has entries in the `CurrentUser` registry hive), the version, publisher and if it is a 64-bit application.
+Notice the *exfiltrated* data. It includes if the application is installed for all users (has entries in the `LocalMachine` registry hive) vs. installed for current user (has entries in the `CurrentUser` registry hive), the version, publisher and if it is a 64-bit application.
 
 The response to this message makes no sense (dots are added to the code block for better visibility).
 
@@ -238,7 +242,7 @@ Updating is pretty simple. I am going to update `Notepad++`.
 
 First the application sends a `GET` request over HTTP to download the new version. This link came from the `DownloadUrl` element in the `ScanResults` response that we saw above. The response is a `302 Moved Permanently` to a different download URL: http://dl1.filehippo.com/668e1f2d71fd4e9290c5396cb22af8c0/npp.6.9.1.Installer.exe?ttl=1463371091&token=045580ac50574f9e72be3a8db8337740.
 
-Then the installer is downloaded over HTTP and executed.
+Then the installer is downloaded over HTTP and executed. We will later see how.
 
 {{< imgcap title="All requests in Burp HTTP History" src="/images/2016/thickclient-5-filehippo/04-AllRequests.PNG" >}}
 
@@ -272,7 +276,7 @@ Response to CallHome
 Another `CallHome` response had a different internal IP in response `10.0.0.73`. Is the application leaking internal IPs in responses?
 
 ## 2.5 Self-Update
-From time to time, the application checks if it has been updated.
+Every once in a while the application checks if a new version of itself is published. The request and the response are both pretty simple.
 
 ``` json
 GET /api/v1/AppUpdateCheck HTTP/1.1
@@ -288,13 +292,15 @@ Response body:
 {"Url":null,"UpdateAvailable":false,"Status":0,"Message":null}
 ```
 
+## 2.6 Done with Proxying
+
 At this point we are pretty much done with the proxying, however we still have some questions such as:
 
 * How is the `AccessToken` header generated?
 * How does the installer get executed?
 
 # 3. Application Analysis via dnSpy
-The application does not have a lot of functionality. But the executable is around 10 MB which is huge for this application.
+It's a .NET application, so we can use our favorite tool for investigating managed code which is dnSpy. The application does not have a lot of functionality. But the executable is around 10 MBs which is interestingn.
 
 ``` asm
 PS C:\Program Files (x86)\FileHippo.com> ls
@@ -316,6 +322,7 @@ Let's open the application in dnSpy.
 The application contains the [Amazon SDK for .NET][amazon-sdk-dot-net].
 
 There are also other third party libraries:
+
 * Newtonsoft Json
 * Bouncy Castle? The application does not use any kind of encryption whatsoever (not even HTTPs).
 * log4net
@@ -326,7 +333,7 @@ There is a lot of dead code in the application. dnSpy supports searching through
 
 {{< imgcap title="FileHippo components" src="/images/2016/thickclient-5-filehippo/06-FileHippoComponents.PNG" >}}
 
-Select the application and then `File > Export to Project` to create a Visual Studio project using the decompiled code. But this contains all of the 3rd party libraries. The directory that we need is `\Decompiled-project-3\FileHippo.AppManager\FileHippo` which contains two directories:
+Select the application and then `File > Export to Project` to create a Visual Studio project using the decompiled code. But this contains all of the 3rd party libraries. The directory that we need is `\decompiled-project\FileHippo.AppManager\FileHippo` which contains two directories:
 
 * AppManager
 * Shared
@@ -347,7 +354,7 @@ AppManager/Core/WebClient/v1/Client.cs:                     string value = this.
 AppManager/Core/WebClient/v1/Client.cs:                     headers.Add("AccessToken", value);_
 {{< /codecaption >}}
 
-Look at line four. There is a function named `GenerateAccessToken` in `FileHippo.AppManager.Core.Authentication.AuthenticationProvider`. We can see the decompiled code here:
+Look at line four. There is a function named `GenerateAccessToken` in `FileHippo.AppManager.Core.Authentication.AuthenticationProvider`. We can see the function code here:
 
 {{< codecaption title="GenerateAccessToken(string clientId, DateTime requestTime)" lang="csharp" >}}
 // FileHippo.AppManager.Core.Authentication.AuthenticationProvider
@@ -364,7 +371,7 @@ public string GenerateAccessToken(string clientId, DateTime requestTime)
 It looks like that the application encrypts the `clientId` uses the current time. Using the current time in the token was the reason for the access tokens being invalidated after a while.
 
 ### 3.3.1 The Encryption Scheme
-Put a breakpoint on the return line of `GenerateAccessToken` function and run the application. Remember to close the previous instance of the application which is in the tray.
+Put a breakpoint on the return line of `GenerateAccessToken` function and run the application from inside dnSpy. Remember to close the previous instance of the application which may be in the Windows tray.
 
 {{< imgcap title="Encrypter information" src="/images/2016/thickclient-5-filehippo/07-EncrypterInformation.PNG" >}}
 
@@ -372,13 +379,13 @@ We see `3DES`, a 0x18 byte (24 byte or 192 bit) key and an 8 byte IV.
 
 {{< imgcap title="IV" src="/images/2016/thickclient-5-filehippo/08-IV.PNG" >}}
 
-IV is `30313A31353A3032` which is `01:15:32` in hex (quick hint: `0x3n` is ASCII-Hex for number `n`). This looks like time and the answer is right in front of our eyes in the previous screenshot. Look at the `requestTime`. Line number 7 generates the IV.
+IV is `30 31 3A 31 35 3A 30 32` which is `01:15:32` in hex (quick hint: `0x3n` is ASCII-Hex for number `n`). This looks like time and the answer is right in front of our eyes in the previous screenshot. Look at the `requestTime`. Line number 7 generates the IV.
 
 And we can see the key too which is `00020206040A060E08120A160C1A0E1E10221226142A162E` in hex.
 
 {{< imgcap title="Key" src="/images/2016/thickclient-5-filehippo/09-Key.PNG" >}}
 
-The key is different, because it is returned from a function. Later during static analysis we will see how the key is generated. For now, we want to see if it is hardcoded or no. Stop the application and run it again and look at the value of the key. It has not changed.
+The key is different from the IV, because it is the result of a function call. Later during static analysis we will see how the key is generated. For now, we want to see if it is hardcoded or no. Stop the application and run it again and look at the value of the key. It has not changed.
 
 Now let's `step into` the function.
 
@@ -390,7 +397,7 @@ public string EncryptString(string text)
 }
 ```
 
-Which counts for the base64 encoding.
+Which counts for the base64 encoding. Another step and we land in:
 
 ``` csharp
 // Token: 0x0600DD02 RID: 56578 RVA: 0x002027E8 File Offset: 0x002009E8
@@ -449,7 +456,7 @@ print key
 
 Which returns the same key: `00020206040A060E08120A160C1A0E1E10221226142A162E`.
 
-## 3.4 The Abandoned S3 Secret Key
+## 3.4 The Abandoned S3 Keys
 As I mentioned before, the application has the Amazon SDK. I usually grep for certain keywords in decompiled code. Keywords such as `username`, `password`, `encryption`, `decryption` and `secret`.
 
 So what happened when I searched for `secret` in application code?
@@ -492,7 +499,7 @@ But what is at http://cache.filehippo.com?
 Assuming these keys are valid, they can be used to modify the website and possibly put backdoored versions of the File Hippo App Manager application.
 
 ### 3.4.1 Checking the Validity of the Key Pair without Going to Jail
-I wanted to find a non-intrusive way of checking the validity of these keys. So I asked my colleague [John Roberts][john-roberts-linkedin] (not to be mistaken with Chief Justice of the United States) who teaches our cloud security courses.
+I wanted to find a non-intrusive way of checking the validity of these keys. So I asked one of my colleagues about it.
 
 We can use the AWS CLI application to get the bucket policy like [this][aws-cli-bucket-policy]:
 `aws s3api get-bucket-policy --bucket my-bucket`.
@@ -581,7 +588,7 @@ private void MainForm_Load(object sender, EventArgs e)
 `/background` switch just minimizes the app to Windows tray and does nothing interesting. While `/debug` sets `ApplicationManager.DebugMode` to true and runs `this.SetDebugLabelVisibility();`.
 
 ### 3.6.1 Activating the Debug Mode
-In order to see how the debug mode is set we need to follow the `ApplicationManager.DebugMode` and see where it is set. Again we can use the excellent `Analyze` feature to see what accesses `ApplicationManager.DebugMode`. First we go for the `set` method to see if anything other than the switch activates the debug mode.
+In order to see how the debug mode is activated we need to follow the `ApplicationManager.DebugMode` and see where it is set to `True`. Again we can use the excellent `Analyze` feature to see what accesses `ApplicationManager.DebugMode`. First we go for the `set` method to see if anything other than the command line switch activates the debug mode.
 
 {{< imgcap title="Where debug mode is set" src="/images/2016/thickclient-5-filehippo/14-SetDebugModeAnalysis.PNG" >}}
 
@@ -626,14 +633,14 @@ Run the application and press `Ctrl+Shift+D` to see the anticlimactic debug mode
 {{< imgcap title="Debug mode in action" src="/images/2016/thickclient-5-filehippo/17-DebugModeinAction.gif" >}}
 
 ### 3.6.2 What does the Debug Mode do?
-Go back to `MainForm_Load` and do `Analyze` on `ApplicationManager.DebugMode` but this time look at the `get` method. This time we want to see where this is accessed which means the places where the application checks if debug mode is active.
+Go back to `MainForm_Load` and do `Analyze` on `ApplicationManager.DebugMode` but this time look at the `get` method. This time we want to see where this is accessed which means the places where the application checks if debug mode is active. Most likely application behavior changes after checking the `DebugMode`.
 
 {{< imgcap title="Get debug mode functions" src="/images/2016/thickclient-5-filehippo/18-GetDebugMode.PNG" >}}
 
-We've already seen some of them such as `ProcessCmdKey`. I decided to pursue of the others.
+We've already seen some of them such as `ProcessCmdKey`. I decided to pursue a few of the others.
 
 #### 3.6.2.1 Scanner Debug Mode
-First function is `			FileHippo.AppManager.Core.UpdateChecker.CreateScanResultsRequest(...)` in which we see the following:
+First function is `FileHippo.AppManager.Core.UpdateChecker.CreateScanResultsRequest(...)` in which we see the following:
 
 ``` csharp
 Scanner scanner = new Scanner();
@@ -668,7 +675,7 @@ catch (DirectoryNotFoundException ex2)
 }
 {{< /codecaption >}}
 
-It seems like if the scanner cannot access a directory the application displays a message box. Nothing special.
+It seems like if the scanner cannot access a directory in debug mode, the application displays a message box. Nothing special.
 
 #### 3.6.2.2 (Obsolete) Debug Program Definitions
 Next one is `FileHippo.AppManager.Core.UpdateChecker.DownloadProgramDefinitions()`. This one is also interesting. It is never called. If you do `Analyze > Used By`, the list is empty. If you set a breakpoint in the function and run the app in debug mode, the breakpoint is never triggered. It looks like that it should change the program definition URL if the app is in debug mode and the function is called:
@@ -717,12 +724,11 @@ However, none of them are called in the application. As we have seen in Burp the
 You can continue to see what the rest of the stuff do. But none of them are interesting or give us any secrets. Most just display message boxes if errors occur. One also enabled the debug label.
 
 # 4. Conclusion
-It took me a while to find a suitable app. I like FileHippo because I can get older versions of popular software and decided to use this application for analysis by accident. This turned out to be much more interesting that I had anticipated (I wanted to just use it for proxying). Using dnSpy allowed me to dig deeper and discover some interesting things. Hopefully this can help readers use dnSpy.
+It took me a while to find a suitable app. I like FileHippo and decided to use this application for analysis by accident. It turned out to be much more interesting that I had anticipated (I wanted to just use it for proxying). dnSpy allowed me to dig deeper and discover some interesting things. Hopefully this can help readers in analyzing managed code.
 
-The AWS keys were another surprise. Fortunately the keys are invalid. I tried contacting World Known Media (owns FileHippo) and FileHippo both to report it but I got no answer. As leaking the keys pose no problems to my knowledge to, I decided to do the writeup.
+The AWS keys were another surprise. Fortunately the keys are invalid. I tried contacting World Known Media (owns FileHippo) and FileHippo both to report it but I got no answer. The keys are invalid to the best of my knowledge and have been accessible for a couple of years at least.
 
 Thanks for reading and as usual if you have any questions/complaints/suggestions, you know where to find me.
-
 
 <!-- links -->
 [filehippo-dl1]: http://filehippo.com/download_app_manager/

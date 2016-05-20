@@ -1,7 +1,7 @@
 ---
 categories:
-- Reverse Engineering
 - Hipchat
+- Thick Client Proxying
 tags:
 - Hipchat
 - Proxying
