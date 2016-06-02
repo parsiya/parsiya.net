@@ -1,0 +1,1190 @@
+---
+date: "2016-06-01T20:35:00-04:00"
+draft: false
+title: "Go Notes"
+url: "/go/"
+categories:
+- Go
+- cheatsheet
+tags:
+- tips and tricks
+- Golang
+toc: false
+---
+
+These are my notes when learning go from the [Tour of Go](https://tour.golang.org/) and some other sources. A lot of copy/pasted from them and I have used double-quotes to indicate those are not written by me to the best of my ability. Still this is not something original and is mostly here as a quick lookup reference while learning Go. I will update this as I learn more.
+
+# Basics
+
+## Packages, variables, and functions
+
+### Exported names
+In Go, a name is exported if it begins with a capital letter.
+
+When importing a package, you can refer only to its exported names. Any `unexported` names are not accessible from outside the package.
+
+### Functions
+Unlike C, type comes after variable name except pointers.
+
+Last `int` is function return type (obviously).
+
+``` go
+func add(x int, y int) int {
+	return x + y
+}
+```
+
+Then use it normally
+
+``` go
+fmt.Println(add(10,20))
+```
+
+### Multiple results
+A function can return any number of results. Gone are the days when we had to use pointers in function parameters as extra return values.
+
+``` go
+package main
+
+import "fmt"
+
+func addTwo1(x int, y int) (int, int) {
+	return x+2, y+2
+}
+
+func main() {
+	fmt.Println(addTwo1(10,20))
+}
+```
+
+### Named return values
+Go's return values may be named. If so, they are treated as variables defined at the top of the function.
+
+A return statement without arguments returns the named return values. This is known as a "naked" return. _Don't use them._
+
+``` go
+package main
+
+import "fmt"
+
+func addTwo2(x int, y int) (xPlusTwo int, yPlusTwo int) {
+	xPlusTwo = x + 2
+	yPlusTwo = y + 2
+
+	// Could do naked return too
+	return xPlusTwo, yPlusTwo
+}
+
+func main() {
+	fmt.Println(addTwo2(20,30))
+}
+```
+
+### Variables
+Use `var`.
+
+`var x int`
+
+Can be combined:
+
+`var x,y int` == `var x int, y int`. Similar to C when we had `int x,y;`.
+
+#### Initialize:
+
+`var a, b int = 10, 20` == `var a int = 10` and `var b int = 20`.
+
+If initializer is there then the type can be omitted like scripting languages (e.g. Python):
+
+`var sampleInt, sampleBoolean, sampleString = 30, true, "Hello"`
+
+``` go
+package main
+
+import "fmt"
+
+func main() {
+	var a, b int = 10, 20
+	var sampleInt, sampleBoolean, sampleString = 30, true, "Hello"
+
+	fmt.Println(a, b , sampleInt, sampleBoolean, sampleString)
+}
+```
+
+If no initial value is assigned to a declared variable, it will get a `zero` value:
+
+* 0 for numeric types (int, float, etc.)
+* false for the boolean type
+* "" (the empty string) for strings
+
+#### Short variable declarations
+Inside a function, the `:=` short assignment statement can be used in place of a `var` declaration with implicit type.
+
+Outside a function, every statement begins with a keyword (`var`, `func`, and so on) and so the `:=` construct is not available.
+
+``` go
+package main
+
+import "fmt"
+
+func main() {
+	sampleInt, sampleBoolean, sampleString := 30, true, "Hello"
+
+	fmt.Println(sampleInt, sampleBoolean, sampleString)
+}
+```
+
+We can also put `var` statements in different lines (increases readability):
+
+``` go
+var (
+	sampleInt			= 30
+	sampleBoolean		= true
+	sampleString 		= "Hello"
+)
+```
+
+### Basic types
+Go's basic types:
+
+``` go
+bool
+
+string
+
+int  int8  int16  int32  int64	// use int unless you want a specific size
+uint uint8 uint16 uint32 uint64 uintptr	// same here, use uint
+
+byte // alias for uint8
+
+rune // alias for int32
+     // represents a Unicode code point
+
+float32 float64
+
+complex64 complex128
+```
+
+### Casting
+Casting needs to be explicit, unlike C where some castings worked out of the box.
+
+For example one of my favorites in C was to make a division but put the result in an `int` to skip the remainder.
+
+Casting in Go is like this: `float32(whatever)`
+
+``` go
+package main
+
+import (
+	"fmt"
+)
+
+func main() {
+	var a, b int = 20, 30
+	var div float32 = float32(a)/float32(b) // need to convert a and b to float32 before the division
+	var divInt = int(div)
+	fmt.Println(div, divInt)
+}
+```
+
+`%T` is the print switch to print type of a variable. For example `fmt.Printf("v is of type %T\n", v)`.
+
+### Constants
+Declared with `const` keyword. Can be character, string, boolean or numeric. Cannot use `:=`. Make the first character capital for constants (coding standard?).
+
+``` go
+package main
+
+import "fmt"
+
+const Whatever = "whatever"
+
+func main() {
+	fmt.Println(Whatever)
+
+	const One = 1
+	fmt.Println(One)
+}
+```
+------
+
+## Flow control statements: for, if, else, switch and defer
+
+### For
+Similar to C with two differences:
+
+* No parenthesis around the three components. Having parenthesis will give you an error (*sigh*) when you are using the three components separated by semicolons.
+* Curly braces `{ }` are always required and the first one needs to be in the same line as for, if, etc.
+
+``` go
+sum := 0
+for i :=0; i <20; i++ {
+	sum += i
+}
+```
+
+Init and post (first and last) components are optional.
+
+``` go
+i := 0
+for ; i <20; {
+	i++
+}
+```
+
+Without the semicolons, it will be a `while` (*why not just have a while?*).
+
+``` go
+i := 0
+for i <20 { // while (i<20)
+	i++
+}
+```
+
+Without the condition it will loop forever or `while(1)`.
+
+``` go
+for {	// while(1)
+	...
+}
+```
+
+### if
+Does not need parenthesis (although you still can use them if you do not have a init component which is separated from the condition with a semicolon) but needs curly braces.
+
+"Like for, the if statement can start with a short statement to execute before the condition.
+
+Variables declared by the statement are only in scope until the end of the if."
+
+``` go
+package main
+
+import "fmt"
+
+func main() {
+	if whatever := 20; whatever > 10 {
+		fmt.Println("Inside if:", whatever)
+	}
+	// cannot use whatever here
+}
+```
+
+### else
+`else` is similar to C else.
+
+"Variables declared inside an if short statement are also available inside any of the else blocks."
+
+``` go
+package main
+
+import "fmt"
+
+func main() {
+
+	if whatever := 20; whatever > 100 {
+		fmt.Println("Inside if:", whatever)
+	} else {
+		// can use whatever here
+		fmt.Println("Inside else:", whatever)
+	}
+	// cannot use whatever here
+}
+```
+
+### switch
+Similar to C switch with some differences:
+
+* Doesn't automatically go to the next `switch` statement unless you have `fallthough` at the end. "The `fallthrough` must be the last thing in the case."
+* Can have a short statement similar to if (the statement before the case that gets executed).
+
+``` go
+// code taken from the tour
+package main
+
+import (
+	"fmt"
+	"runtime"
+)
+
+func main() {
+	fmt.Print("Go runs on ")
+	switch os := runtime.GOOS; os {
+	case "darwin":
+		fmt.Println("OS X.")
+	case "linux":
+		fmt.Println("Linux.")
+	default:
+		// freebsd, openbsd,
+		// plan9, windows...
+		fmt.Printf("%s.", os)
+	}
+}
+```
+
+We can still use `break` although it breaks at the end of every case.
+
+"switch with no value is `switch true` and can be used to create long `if-then-else` chains.""
+
+``` go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	t := time.Now()
+	switch {
+	case t.Hour() < 12:
+		fmt.Println("Good morning!")
+	case t.Hour() < 17:
+		fmt.Println("Good afternoon.")
+	default:
+		fmt.Println("Good evening.")
+	}
+}
+```
+
+### defer
+"A defer statement defers the execution of a function until the surrounding function returns.
+
+The deferred call's arguments are evaluated immediately, but the function call is not executed until the surrounding function returns."
+
+In each block, every time we get to a defer, it is pushed into a stack. When the function surrounding the block ends, then functions are popped from the stack and executed.
+
+``` go
+package main
+
+import "fmt"
+
+func main() {
+	defer fmt.Println("This runs after main")
+
+	fmt.Println("Main ended")
+}
+```
+
+-----------
+
+## More types: structs, slices, and maps
+
+### Pointers
+I mean come on!!1! (John Oliver).
+
+Similar to C:
+
+* Point with `*`: `var p *int` == `int *p;`
+* Generate pointer (get address of) with `&`: `i := 1` and `p = &i`
+
+"Unlike C, Go has no pointer arithmetic." *Thanks*.
+
+### Structs
+Similar to C.
+
+Do the field names need to be uppercase? It seems like. Because "lower case fields (labels in general) are not visible outside the defining package, reflect is outside."
+
+``` go
+package main
+
+import "fmt"
+
+type Student struct {
+	FirstName string
+	LastName string
+}
+
+func main() {
+	fmt.Println(Student{"John", "Smith"})
+
+	// but we usually want to make instances(?) of structs
+	studentOne := Student{"Parsia", "H"}
+
+	// now we can access the fields using documents
+	fmt.Println(studentOne.FirstName)
+
+	// we can just assign fields using names, anything not assigned will be initialized with zero as we have seen before
+	studentTwo := Student{FirstName: "Ender"}
+
+	fmt.Println(studentTwo)	// will print "{Ender }" notice the space after Ender which is supposed to be the delimiter between the fields, LastName is nil because it is not given a value
+
+	// can make a pointer to a struct
+	p := studentOne
+
+	// now instead of *p.LastName (which doesn't work) we can just use p.LastName
+	// fmt.Println((*p).LastName)	// will not work with error message: invalid indirect of p (type Student)
+	fmt.Println(p.LastName)
+
+	// can just create a pointer out of the blue
+	p2 := Student{"Hercule", "Poirot"}
+	fmt.Println(p2)
+}
+```
+
+### Arrays
+
+`var a [10]int` == `int a[10];`.
+
+Arrays cannot be resized.
+
+``` go
+package main
+
+import "fmt"
+
+func main() {
+	var a [5]int
+	a[0] = 10
+	a[4] = 20
+	fmt.Println(a)
+
+	// we can initialize arrays during creation
+	// str[3] is empty
+	str := [3]string{"Ronny", "Johnson"}
+
+	fmt.Println(str)
+}
+```
+
+### Slices
+Slice "is a dynamically-sized, flexible view into the elements of an array."
+
+"The type `[]T` is a slice with elements of type `T`."
+
+Seems like we can create a slice from members of an array.
+
+Slices _don't store anything_, they reference the array. If we change something via the slice, the array is modified.
+
+``` go
+package main
+
+import "fmt"
+
+func main() {
+	// our favorite characters from the ThatHappened subreddit
+	// if we do not specify a length, it will create a slice literal and an underlying array as we will see later
+	thatHappened := [3]string{"RonnyJohnson", "AlbertEinstein", "MargaretHello"}
+
+	// last index is non-inclusive - should have guessed
+	// allMembers []string := thatHappened[0:3]
+	var allMembers []string = thatHappened[0:3]
+	fmt.Println(allMembers)
+
+	var lastTwoMembers []string = thatHappened[1:3]
+	fmt.Println(lastTwoMembers)
+
+	// replace Ms.Hello with another popular character
+	allMembers[2] = "JoeDisney"
+
+	// Joe Disney added to the array
+	fmt.Println(thatHappened)
+
+	// the other slice changes
+	fmt.Println(lastTwoMembers)
+
+}
+```
+
+We can create array and slide literals. Meaning we can just initialize them by their members instead of assigning a length and then adding members.
+
+If a slice literal is created, the underlying array is also created. For now I do not know how I can reference this underlying array (instead of using the slice). I guess it's maybe impossible.
+
+``` go
+package main
+
+import "fmt"
+
+func main() {
+
+	// slide literal of type struct, the underlying array is created automatically
+	sliceStruct := []struct {
+		a,b int
+	}{
+		{1,2},
+		{3,4},
+		{5,6},	// need this comma in the end otherwise it will not work (why????)
+	}
+
+	fmt.Println(sliceStruct)
+
+}
+```
+
+When creating an array, if we do not specify a length we will get a slice literal as seen above.
+
+If we do not want to specify a length we can use `[...]`.
+
+``` go
+package main
+
+import "fmt"
+
+func main() {
+
+	thatHappened := [...]string{"RonnyJohnson", "AlbertEinstein", "MargaretHello"}
+
+	// Joe Disney added to the array
+	fmt.Println(thatHappened)
+
+}
+```
+
+#### Slice length and capacity
+Slices have length and capacity.
+
+* **Length** is the current number of items in the slice and can be returned via `len(slice)`.
+* **Capacity** is the maximum number of items in the slice returned via `cap(slice)`. Capacity is the number of items in the original arrays from the start of the slice and *not the size of array*. For example if the slice starts from the second item of the array, its capacity is `len(array)-1`. This ensures that the slice cannot go past the array.
+
+``` go
+package main
+
+import "fmt"
+
+func main() {
+
+	ints := [...]int{0, 1, 2, 3, 4, 5}
+	fmt.Println(ints)
+
+	slice1 := ints[2:6]
+
+	// len=4 and cap=4 (from 3rd item of the array until the end)
+	printSlice(slice1)
+
+	slice1 = ints[2:4]
+
+	// len=2 but cap will remain 4
+	printSlice(slice1)
+}
+
+// copied from the tour
+func printSlice(s []int) {
+	fmt.Printf("len=%d cap=%d %v\n", len(s), cap(s), s)
+}
+
+```
+
+#### make slices
+To create dynamically-sized arrays use `make`. `make` creates a zero-ed array and returns a slice to that array.
+
+`slice1 := make([]int, 10)` creates an int array of length 10.
+
+`slice2 := male([]int, 5, 10)` creates an int array of length 5 and capacity of 10.
+
+We can **append** stuff to slices and it grows as needed. `slice1 = append(slice1, 1)`. We can append multiple elements `slice1 = append(slice1, 1, 2, 3)`.
+
+In order to append one slice to the other (obviously they should be of the same type), we have to use `...` like this: `slice1 = append(slice1, slice2...)`.
+
+``` go
+package main
+
+import "fmt"
+
+func main() {
+
+	slice1 := make([]int, 10)
+	printSlice(slice1)
+	// len=10 cap=10 [0 0 0 0 0 0 0 0 0 0]
+
+	slice2 := make([]int, 5, 10)
+	printSlice(slice2)
+	// len=5 cap=10 [0 0 0 0 0]
+
+	slice3 := slice2[0:0]
+	printSlice(slice3)
+	// len=0 cap=10 []
+
+	slice1 = append(slice1, 1, 2)
+	printSlice(slice1)
+	// len=12 cap=20 [0 0 0 0 0 0 0 0 0 0 1 2]
+
+	slice1 = append(slice1, slice2...)
+	printSlice(slice1)
+	// len=17 cap=20 [0 0 0 0 0 0 0 0 0 0 1 2 0 0 0 0 0]
+}
+
+// copied from the tour
+func printSlice(x []int) {
+	fmt.Printf("len=%d cap=%d %v\n",
+		len(x), cap(x), x)
+}
+```
+
+#### Range
+range iterates over slices. It returns an index and *a copy of the item* stored at that index. `for index, value := range slice`.
+
+`value` is optional but `index` is not. To not use `index` use `_`.
+
+``` go
+package main
+
+import "fmt"
+
+func main() {
+	thatHappened := [3]string{"Ronny Johnson", "Albert Einstein", "Margaret Hello"}
+	for index, value := range thatHappened {
+		fmt.Printf("thatHappened[%d]: %s\n", index, value) // no newline at the end of Printf but Println does not support formatting :(
+	}
+
+	fmt.Println("-----------")
+
+	// only using index
+	for index := range thatHappened {
+		fmt.Printf("thatHappened[%d]: %s\n", index, thatHappened[index])
+	}
+
+	fmt.Println("-----------")
+	// dropping index
+	for _, value :=range thatHappened {
+		fmt.Printf("%s\n", value)
+	}
+}
+```
+
+---------------
+
+## Methods and interfaces
+
+### Methods
+Go doesn't have classes. Methods can be defined for types (e.g. structs). *what is this? C?*
+
+A method is a function with a special *receiver*, receiver is the type that this method is defined for.
+
+**How to do methods for slices:**
+For example we can re-write the `printSlice` function and define it for slices of type `int`.
+
+Problem is `[]int` is an unnamed type and cannot be a receiver. We have to create a type with that specific slice type (in this case `int`) like: `type IntSlice []int`.
+
+With a `value receiver` like what we have, operations are done on a *copy* of the object.
+
+``` go
+package main
+
+import "fmt"
+
+type IntSlice []int
+
+func (x IntSlice) PrintSlice() {
+	fmt.Printf("len=%d cap=%d %v\n",
+		len(x), cap(x), x)
+}
+
+func main() {
+
+	var slice1 IntSlice = make([]int, 10)
+	slice1.PrintSlice()	// len=10 cap=10 [0 0 0 0 0 0 0 0 0 0]
+
+	var slice2 IntSlice = make([]int, 5, 10)
+	slice2.PrintSlice()	// len=5 cap=10 [0 0 0 0 0]
+}
+```
+
+#### Pointer Receivers
+Pointer receivers get a pointer instead of a value but can modify the object that the pointer points to. Pointer receivers can be a pointer to a pointer (e.g. `**int`).
+
+By value receivers do not modify the object while by pointer receivers do.
+
+In the following code, Tuple's fields will be modified by `ModifyTuplePointer()` but not by `ModifyTupleValue()`.
+
+However, **this is not the case for slices** (e.g. `IntSlice` in the code). Both value and pointer receivers modify the slice. I do not know the reason but I assume it's because the slice is already a reference to an array somewhere.
+
+Pointer receivers are more efficient because they do not copy the original object. Probably only matters when passing large structs.
+
+**All methods for one type should either have value receivers or pointer receivers, do not mix and match like the code below :).**
+
+``` go
+package main
+
+import "fmt"
+
+type Tuple struct {
+	A, B int
+}
+
+// should not change the value of the object as it works on a copy of the object
+func (x Tuple) ModifyTupleValue() {
+	x.A = 2
+	x.B = 2
+}
+
+// should change the value of the object
+func (x *Tuple) ModifyTuplePointer() {
+	x.A = 3
+	x.B = 3
+}
+
+type IntSlice []int
+
+func (x IntSlice) PrintSlice() {
+	fmt.Printf("len=%d cap=%d %v\n",
+		len(x), cap(x), x)
+}
+
+// modifies the IntSlice although it's by value
+func (x IntSlice) ModifySliceValue()  {
+	x[0] = 1
+}
+
+// modifies the IntSlice
+func (x *IntSlice) ModifySlicePointer()  {
+	(*x)[0] = 2
+}
+
+func main() {
+
+	nem := Tuple{1, 1}
+
+	nem.ModifyTupleValue()
+	fmt.Println(nem)	// {1 1}
+
+
+	nem.ModifyTuplePointer()
+	fmt.Println(nem)	// {3 3}
+
+	var slice1 IntSlice = make([]int, 5)
+	slice1.PrintSlice()	// len=5 cap=5 [0 0 0 0 0]
+
+
+	slice1.ModifySliceValue()
+	slice1.PrintSlice()	// len=5 cap=5 [1 0 0 0 0]
+
+	slice1.ModifySlicePointer()
+	slice1.PrintSlice()	// len=5 cap=5 [2 0 0 0 0]
+}
+```
+
+### Interfaces
+"An _interface type_ is defined as a set of method signatures.
+
+A value of interface type can hold any value that implements those methods."
+
+For example we will define an interface which has the method `MyPrint()`, now each type that has that method can be assigned to an interface of that type
+
+``` go
+package main
+
+import "fmt"
+
+type MyPrinter interface {
+	MyPrint()
+}
+
+type MyInt int
+
+func (i MyInt) MyPrint() {
+	fmt.Println(i)
+}
+
+type MyFloat float64
+
+func (f MyFloat) MyPrint() {
+	fmt.Println(f)
+}
+
+func main() {
+
+	var thePrinter MyPrinter
+
+	float1 := MyFloat(1.2345)
+	int1 := MyInt(10)
+
+	thePrinter = float1
+	thePrinter.MyPrint()
+	// 1.2345
+
+	thePrinter = int1
+	thePrinter.MyPrint()
+	// 10
+
+}
+```
+
+**Empty Interface** is `interface {}` and can hold any type. Usually used to handle unknown types.
+
+``` go
+package main
+
+import "fmt"
+
+var emptyInterface interface{}
+
+type Tuple struct {
+	A, B int
+}
+
+func main() {
+
+	// use int
+	int1 := 10
+	emptyInterface = int1
+	fmt.Println(emptyInterface)
+	// 10
+
+	// use float
+	float1 := 1.2345
+	emptyInterface = float1
+	fmt.Println(emptyInterface)
+	// 1.2345
+
+	// use custom struct
+	tuple1 := Tuple{5, 5}
+	emptyInterface = tuple1
+	fmt.Println(emptyInterface)
+	// {5 5}
+
+}
+```
+
+We can access the value inside the interface like this `myFloat := myInterface(float64)`. If the interface does not contain a float, this will trigger a panic.
+
+In order to handle it properly we use it like this `myFloat, ok := myInterface(float64)`. This will prevent the panic. If the interface has a float, `ok` will be `true` and otherwise `false`.
+
+``` go
+package main
+
+import "fmt"
+
+func main() {
+	var myInterface interface{} = 1234.5
+
+	myFloat, ok := myInterface.(float64)
+	fmt.Println(myFloat, ok)
+	// 1234.5 true
+
+	myInt, ok := myInterface.(int)
+	fmt.Println(myInt, ok)
+	// 0 false -- which means it does not contain an int
+
+	// this will trigger a panic
+	// myInt = myInterface.(int)
+}
+```
+
+#### Type switch
+Do a switch on `interface.(type)`. Similar to what we did above.
+
+Code copied from the tutorial
+``` go
+package main
+
+import "fmt"
+
+func do(i interface{}) {
+	switch v := i.(type) {
+	case int:
+		fmt.Printf("Twice %v is %v\n", v, v*2)
+	case string:
+		fmt.Printf("%q is %v bytes long\n", v, len(v))
+	default:
+		fmt.Printf("I don't know about type %T!\n", v)
+	}
+}
+
+func main() {
+	do(21)	// Twice 21 is 42
+	do("hello")	// "hello" is 5 bytes long
+	do(true)	// I don't know about type bool!
+}
+```
+
+#### Stringers
+Defined by the `fmt` package. Can describe itself as string.
+
+``` go
+type Stringer interface {
+    String() string
+}
+```
+
+If we implement it for any struct, it will be called when calling `Println` (and others) on it. Essentially create a method for that struct named `String()` which returns a `string`.
+
+This is also what gets printed when we want to print an instance of that type with the `%v` format string switch.
+
+``` go
+package main
+
+import "fmt"
+
+type Tuple struct {
+	A, B int
+}
+
+func (t Tuple) String() string {
+	return fmt.Sprintf("A: %d, B: %d", t.A, t.B)
+}
+
+func main() {
+
+	tuple1 := Tuple{10, 10}
+	tuple2 := Tuple{20, 20}
+	fmt.Println(tuple1)	// A: 10, B: 10
+	fmt.Println(tuple2)	// A: 20, B: 20
+}
+```
+
+### Solution to the Stringers exercise
+
+``` go
+package main
+
+import "fmt"
+
+type IPAddr [4]byte
+
+// TODO: Add a "String() string" method to IPAddr.
+func (ip IPAddr) String() string {
+	return fmt.Sprintf("%v.%v.%v.%v", ip[0], ip[1], ip[2], ip[3])
+}
+
+func main() {
+	hosts := map[string]IPAddr{
+		"loopback":  {127, 0, 0, 1},
+		"googleDNS": {8, 8, 8, 8},
+	}
+	for name, ip := range hosts {
+		fmt.Printf("%v: %v\n", name, ip)
+	}
+}
+```
+
+### Errors
+`error` type is similar to `Stringer()`.
+
+``` go
+type error interface {
+    Error() string
+}
+```
+
+Create a method for the struct type named `Error()` to return error codes/messages.
+
+``` go
+func (e MyType) Error() string {
+	return fmt.Sprintf("Error message")
+}
+```
+
+Most built-in and package methods return an error value if an error occurs, otherwise they will return `nil` for error which means no error.
+
+### Solution to the Errors exercise
+
+``` go
+package main
+
+import "fmt"
+
+type ErrNegativeSqrt float64
+
+func (e ErrNegativeSqrt) Error() string {
+	return fmt.Sprintf("cannot Sqrt negative number: %v", float64(e))
+}
+
+func Sqrt(x float64) (float64, error) {
+
+	if (x < 0) {
+		return 0, ErrNegativeSqrt(x)
+	}
+
+	// don't need else here
+	return 0, nil
+}
+
+func main() {
+	fmt.Println(Sqrt(2))
+	fmt.Println(Sqrt(-2))
+}
+```
+
+_Skipped the rest of the module._
+
+----------------------
+
+## Concurrency
+
+`go function(a, b)` runs the function in parallel and continues with the rest of the program.
+
+### Channels
+Typed conduit. Support sending and receiving values using `<-`.
+
+Channels must be created before use. "By default, sends and receives block until the other side is ready."
+
+``` go
+// make a channel of type int in honor of the famous hacker
+// note that we can only send/receive int via this channel
+fourChan := make(chan int)
+
+// send to channel
+fourChan <- someInt
+
+// receive data from channel
+newInt := <- fourChan
+```
+
+#### Buffered channels
+If channels are `buffered` then they will only block when the buffer is full. `fiveChan := make (chan int, 100)` will create a channel with a buffer size of `100`.
+
+#### Closing channels
+To test if a channel is closed do `someInt, ok := <- fourChan`. If channel is not closed, ok with be `true`, otherwise `false` means channel is closed. Sending items to a closed channel will cause a panic.
+
+To close a channel do `close(fourChan)`.
+
+#### Reading information from channels
+Use a `range` in a `for` to receive values from the channel in a loop until it closes like `for i:=range fourChan`. If you want to read something from an open channel and there's nothing there, the program will block(?) and wait until it gets something.
+
+#### select
+`select` has some `case`s. It will block until one of the cases is ready and runs it. If multiple are ready, it will choose one at random.
+
+``` go
+select{
+case fourChan <- x:
+	// whatever
+case c <- fiveChan:
+	// whatever
+default:
+	// this is run if no other case is ready
+}
+```
+
+### sync.Mutex
+`sync.Mutex` has two methods, `lock` and `unlock`. We can also `defer` the `unlock` if we want to return something and then unlock it like the `Value` method from the example.
+
+``` go
+// Value returns the current value of the counter for the given key.
+func (c *SafeCounter) Value(key string) int {
+	c.mux.Lock()
+	// Lock so only one goroutine at a time can access the map c.v.
+	defer c.mux.Unlock()
+	return c.v[key]
+}
+```
+
+----------
+
+## Printf from Go by example
+Taken from `Go by Example` and `Effective Go`.
+
+These three need a format string:
+
+* `fmt.Sprintf` returns a string.
+* `fmt.Fprintf` takes any objects that implements `io.Writer` for example `os.Stdout` and `os.Stderr`.
+* `fmt.Printf` prints to stdout(?).
+
+The following are similar to the above but do not need a format string:
+
+* `fmt.Print` and `fmt.Println`.
+* `fmt.Fprint` - `fmt.Fprint(os.Stdout, "Ronny", "Johnson", "$100%")`.
+* `fmt.Sprint`.
+
+### Switches
+
+#### Decimals
+`%d`: digits = numbers.
+
+`%nd`: n = width of number. Right justified and padded with spaces. To left justify use `-` like `%-nd`. If n is less than the number of digits nothing happens.
+
+`%b`: number in binary.
+
+`%c`: `chr(int)`, prints the character corresponding to the number.
+
+`%x`: hex.
+
+#### Floats
+`%f`: float.
+
+`%n.mf`: n = decimal width, m = float width. Right justified. To left justify use `-` like `%-n.mf`. If n is less than the number of digits nothing happens.
+
+`%e` and `%E`: scientific notation (output is a bit different from each other).
+
+#### Value
+`%v` or value: catch all format. Will print based on value.
+
+`%+v`: will print struct's field names if we are printing a struct. Has no effect on anything else.
+
+`%#v`: prints a "Go syntax representation of the value, i.e. the source code snippet that would produce that value." For example for a struct instance it will give code that creates such a struct instance and initializes it with the current values of the struct instance.
+
+#### Strings
+`%q`: "To double-quote strings as in Go source, use `%q`."
+
+`%s`: string.
+
+`%ns`: control width of string. Right justified, padded with spaces. To left justify use `-` like `%-ns`. If n is less than the length of the string, nothing happens.
+
+#### Others
+
+`%t`: boolean.
+
+`%T`: prints the type of a value. For example `int` or `main.myType`.
+
+``` go
+package main
+
+import "fmt"
+
+type myType struct {
+	field1 int
+	field2 string
+	field3 float64
+}
+
+func main() {
+
+	// struct type
+	struct1 := myType{10, "Ronny", -10.2}
+	fmt.Printf("%v\n", struct1)	// {10 Ronny -10.2}
+	fmt.Printf("%+v\n", struct1)	// {field1:10 field2:Ronny field3:-10.2}
+	fmt.Printf("%#v\n", struct1)	// main.myType{field1:10, field2:"Ronny", field3:-10.2}
+	fmt.Printf("%T\n", struct1)	// main.myType
+
+	// int
+	int1 := 123
+	fmt.Printf("%v\n", int1)	// 123
+	fmt.Printf("%d\n", int1)	// 123
+	fmt.Printf("|%6d|\n", int1)	// |   123|
+	fmt.Printf("|%-6d|\n", int1)	// |123   |
+	fmt.Printf("%T\n", int1)	// int
+	fmt.Printf("%x\n", int1)	// 7b
+	fmt.Printf("%b\n", int1)	// 1111011
+	fmt.Printf("%e\n", int1)	// %!e(int=123)
+	fmt.Printf("%c\n", int1)	// {
+
+	// float
+	float1 := 1234.56
+	fmt.Printf("%f\n", float1)	// 1234.560000
+	fmt.Printf("|%3.2f|\n", float1)	// |1234.56|
+	fmt.Printf("|%-3.2f|\n", float1)	// |1234.56|
+	fmt.Printf("%e\n", float1)	// 1.234560e+03
+	fmt.Printf("%E\n", float1)	// 1.234560E+03
+
+	// string
+	string1 := "Ronny"
+	fmt.Printf("%s\n", string1)	// Ronny
+	fmt.Printf("|%10s|\n", string1)	// |     Ronny|
+	fmt.Printf("|%-10s|\n", string1)	// |Ronny     |
+	fmt.Printf("%T\n", string1)	// string
+
+	// boolean
+	boolean1 := true
+	fmt.Printf("%t\n", boolean1)	// true
+	fmt.Printf("%T\n", boolean1)	// bool
+
+}
+```
+
+-------
+
+## Maps
+Go map == hash table. Fast lookup/add/delete. Each key is associated with a value (Python dict?).
+
+Declare an initialized map: `mapName := make(map[KeyType]ValueType)`. `KeyType` needs to be a `comparable` type. `ValueType` can be anything.
+
+If a key does not exist, the result is a zero value. For example `0` for `int`.
+
+To check if a key exists or not (0 might be a valid value in the map) `value, ok := mapName[key]`. If `ok` is true then the key exists (and false if the key is not there).
+
+To test for a key without getting the value drop the value like this `_, ok := mapName[key]` and then just check `ok`.
+
+`range` iterates over the contents of a map as we have seen before for arrays/slices. In this case we get keys instead of indexes. Use it with a `for`.
+
+`for key, value := range mapName`.
+
+We can initialize a map using data.
+
+We can also initialize an empty map instead of the `make` (`mapName = map[KeyType]ValueType{}`).
