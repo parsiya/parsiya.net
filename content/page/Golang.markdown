@@ -186,7 +186,7 @@ func main() {
 }
 ```
 
-`%T` is the print switch to print type of a variable. For example `fmt.Printf("v is of type %T\n", v)`.
+`%T` is the print ~~switch~~ verb to print type of a variable. For example `fmt.Printf("v is of type %T\n", v)`.
 
 ### Constants
 Declared with `const` keyword. Can be character, string, boolean or numeric. Cannot use `:=`. Make the first character capital for constants (coding standard?).
@@ -246,6 +246,19 @@ Without the condition it will loop forever or `while(1)`.
 for {	// while(1)
 	...
 }
+```
+
+From `Effective Go` a better C/Golang comparison:
+
+``` go
+// Like a C for
+for init; condition; post { }
+
+// Like a C while
+for condition { }
+
+// Like a C for(;;)
+for { }
 ```
 
 ### if
@@ -896,7 +909,7 @@ type Stringer interface {
 
 If we implement it for any struct, it will be called when calling `Println` (and others) on it. Essentially create a method for that struct named `String()` which returns a `string`.
 
-This is also what gets printed when we want to print an instance of that type with the `%v` format string switch.
+This is also what gets printed when we want to print an instance of that type with the `%v` format string ~~switch~~ verb.
 
 ``` go
 package main
@@ -1073,7 +1086,8 @@ The following are similar to the above but do not need a format string:
 * `fmt.Fprint` - `fmt.Fprint(os.Stdout, "Ronny", "Johnson", "$100%")`.
 * `fmt.Sprint`.
 
-### Switches
+### ~~Switches~~ Verbs
+Better info here: https://golang.org/pkg/fmt/#hdr-Printing
 
 #### Decimals
 `%d`: digits = numbers.
@@ -1167,8 +1181,7 @@ func main() {
 
 }
 ```
-
--------
+<!--  -->
 
 ## Maps
 Go map == hash table. Fast lookup/add/delete. Each key is associated with a value (Python dict?).
@@ -1188,3 +1201,147 @@ To test for a key without getting the value drop the value like this `_, ok := m
 We can initialize a map using data.
 
 We can also initialize an empty map instead of the `make` (`mapName = map[KeyType]ValueType{}`).
+
+<!--  -->
+
+## Errors
+To do a custom error, import the `errors` package and use it like this.
+
+``` go
+package main
+
+import "errors"
+
+func randomFunction() (return1 interface{}, err error) {
+	// whatever
+	var result interface{}
+	return result, errors.New("Custom error string")
+}
+```
+
+<!--  -->
+
+## Hexdump
+`encoding/hex` package is your friend: https://golang.org/pkg/encoding/hex/.
+
+`encoding/hex.Dump` - `func Dump(data []byte) string`: Returns a string containing a normal hex dump (e.g. offset - hex - printable characters). Internally it calls the `Dumper` function - [source](https://golang.org/src/encoding/hex/hex.go?s=2676:2705#L93).
+
+`encoding/hex.Dumper` - `func Dumper(w io.Writer) io.WriteCloser`: Returns an `io.WriteCloser` (I don't know exactly what it is, but it seems like we can call `Write`)
+
+Seems like there is no way to remove the offset. Either I can modify the [source](https://golang.org/src/encoding/hex/hex.go?s=3321:3375#L133) or write my own. There's also this [MIT licensed package](https://github.com/glycerine/golang-hex-dumper) that looks easier to modify. In both cases, the modification looks pretty straightforward.
+
+<!--  -->
+
+## Named imports
+We can do named imports like Python.
+
+``` go
+package main
+
+import (
+	thisIsFMT "fmt"
+)
+
+func main() {
+	thisIsFMT.Println("whatever")
+}
+```
+
+<!--  -->
+
+## Importing a package into the current namespace
+Using `import . "packagename"` means we can omit the package name. In the example below we can omit `fmt`.
+
+No clue how name collisions are handled (e.g. two packages imported into the namespace having the same function name).
+
+``` go
+package main
+
+import (
+	. "fmt"
+)
+
+func main() {
+	Println("whatever")
+}
+```
+
+## Avoiding the damn unused warnings
+Yeah it's nice to get "better" code (although that is debatable but I am not a dev so I am biased), but it's a pain when debugging/testing. Send them to `_`.
+
+``` go
+package main
+
+import (
+    _ "package name" // gone to the dogs
+)
+
+func main() {
+    unUsedVar := "whatever"
+    _ = unUsedVar	// gone to the dogs
+}
+```
+
+<!--  -->
+
+## Unix Timestamp to String
+
+``` go
+import "strconv"
+
+strconv.FormatInt(time.Now().Unix(), 10)
+```
+
+<!--  -->
+## Spawn a new thread (goroutine) on the spot
+
+``` go
+func main() {
+
+	// whatever
+
+	go func() {
+		// whatever happens in this goroutine
+	}()
+
+}
+```
+
+<!--  -->
+## Write to a file or io.buffer from goroutines - DON'T
+Instead use a buffered channel (will make it async). Make a channel before goroutines, send stuff to the channel from goroutines. Make another goroutine that creates a file, does `defer fileHandle.Close()` (which makes closes the file after this goroutine ends) and then has an infinite loop where it reads from the channel and writes to a file.
+
+``` go
+// ...
+// Logging channel- buffered so it's async
+fourChan := make(chan string, 100)
+
+go func() {
+	for {
+			// Do something and get a string
+			fourChan <- string1
+		}
+	}
+}()
+
+go func() {
+	for {
+
+		// Do something else
+		fourChan <- string2
+		}
+	}
+}()
+
+go func() {
+	// Get a unique filename
+	dumpFile, _ := os.Create("whatever.txt")
+	defer dumpFile.Close()  // finally a good use for defer
+	for {
+		dumpFile.WriteString(<- fourChan)
+	}
+}()
+// ...
+```
+
+<!--  -->
