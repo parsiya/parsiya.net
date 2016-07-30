@@ -79,7 +79,7 @@ Output will be in format of
 * `InputObject`: `c:\users\cigital\somefile` -- line content
 * `SideIndicator`: `=>` -- exists in new2.txt (second file, file to the right)
 
-**grep in Powershell**  
+**Pseudo-grep in Powershell**  
 `findstr "something" *.txt`
 
 will include filename and line (no number AFAIK)
@@ -122,3 +122,18 @@ I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The 
 
 `Youtube-dl` can be downloaded using `pip`. For example on Windows:  
 `python -m pip install youtube-dl`.
+
+----------
+
+### Delete file or directory with a path or name over the Windows limit
+
+Answer from [superuser.com](http://superuser.com/a/467814).
+
+``` posh
+mkdir empty_dir
+robocopy empty_dir the_dir_to_delete /s /mir
+rmdir empty_dir
+rmdir the_dir_to_delete
+```
+
+----------

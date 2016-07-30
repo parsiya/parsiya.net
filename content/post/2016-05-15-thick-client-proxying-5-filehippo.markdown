@@ -10,6 +10,7 @@ tags:
 - FileHippo
 - dnSpy
 - AWS
+- Tutorial
 title: "Thick Client Proxying - Part 5: FileHippo App Manager or the Bloated Hippo"
 toc: true
 ---
