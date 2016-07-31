@@ -105,11 +105,13 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 	weight = 5
 
 [params]
+
+	navigationNewWindow = true
 	sidebarRecentLimit = 10
 
-	sidebar_header = "Who am I?"
+	sidebarHeader = "Who am I?"
 
-	sidebar_text = """I am Parsia Hakimian. Current (mostly) Senior Consultant at [Cigital](https://www.cigital.com).
+	sidebarText = """I am Parsia Hakimian. Current (mostly) Senior Consultant at [Cigital](https://www.cigital.com).
 	</br></br>
 	I am interested in infosec, reverse engineering, Python, C and EvE Online (not necessarily in that order).
 	</br></br>
@@ -118,11 +120,11 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 	You can contact me via my email parsia.h[att]google's email.
 	"""
 
-	sidebar_menu_enabled = true
-	sidebar_menu_header = "Collections"
+	sidebarMenuEnabled = true
+	sidebarMenuHeader = "Collections"
 
-	notfound_header = "There's nothing here"
-	notfound_text = """You can never go back."""
+	notfoundHeader = "There's nothing here"
+	notfoundText = """You can never go back."""
 
 	# if false, all of the post will appear on front page (and in pagination)
 	truncate = true
@@ -134,10 +136,10 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 	subtitle = "Because no one wants to be the other guy from Wham!"
 
 	# used in the search engine
-	search_engine_url = "https://www.google.com/search"
+	searchEngineURL = "https://www.google.com/search"
 
 	# Text of the Continue Reading label. &rarr; == right arrow, but it gets messed up in the string so we will add it to index.html manually
-	continue_reading = "Would you like to know more?"
+	continueReading = "Would you like to know more?"
 
 	# Google analytics code
 	googleAnalytics = "UA-55491306-1"
