@@ -137,3 +137,45 @@ rmdir the_dir_to_delete
 ```
 
 ----------
+
+### Some Git stuff because I keep forgetting them
+
+**Create new branch and merge**  
+This works with small branches (e.g. one fix or so). Adapted from a [Bitbucket tutorial](https://confluence.atlassian.com/bitbucket/use-a-git-branch-to-merge-a-file-681902555.html).
+
+1. Create new branch - `git branch fix-whatever`  
+This will create a branch of whatever branch you are currently on so make sure you are creating a branch from the branch you want.
+
+2. Switch to the branch - `git checkout fix-whatever`
+
+3. Make changes and commit - `git add - git commit`  
+Make any changes you want to do, then stage and commit.
+
+4. Push the branch to remote repo [optional] - `git push`  
+This can be safely done because it's an obscure branch and no one else cares about it.
+
+5. Go back to the original branch to merge - `git checkout master`  
+Master or whatever branch you were at step one.
+
+6. Merge the branches - `git merge fix-whatever`
+
+7. Delete branch - `git branch -d fix-whatever`  
+We don't need it anymore. If it was pushed to remote, then we need to delete it there too.
+
+**Only clone a certain branch**  
+`git clone -b <branch> <remote_repo>`
+
+Otherwise master will be cloned.
+
+**Undo remote git history after push**  
+Because this keeps happening to me.
+
+1. Reset the head in local repo N commits back. - `git reset HEAD~N`  
+Where N is the number of commits that you want to revert.
+
+2. Make changes and stage them - `git add`
+
+3. Commit the changes - `git commit`
+
+4. Force push the local repo to remote - `git push -f`  
+Note this will force the update and erase the commit history online. If not one else is using the repo in between it's ok.

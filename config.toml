@@ -24,6 +24,8 @@ pygmentsstyle = "solarized_dark"
 # will make the highlight shortcode and ``` do the same thing - otherwise they are treated differently and we do not want that
 pygmentscodefences = true
 
+disqusShortname = "parsiya"
+
 # can pass in pygments options here, it can also be added in the highlight shortcode
 # pygmentsoptions = "linenos=true"
 
@@ -31,138 +33,135 @@ pygmentscodefences = true
 post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the old ones
 
 [indexes]
-	tag = "tags"
-	category = "categories"
+  tag = "tags"
+  category = "categories"
 
 # menu
 # links will open in a new window except links to "/" - links are added to navigation in hugo-octopress/layouts/partials/navigation.html
 [[menu.main]]
-	Name = "Blog"
-	URL = "/"
-	weight = -6
+  Name = "Blog"
+  URL = "/"
+  weight = -6
 
 [[menu.main]]
-	Name = "The other guy from Wham!"
-	URL = "https://www.google.com/search?q=andrew+ridgeley"
-	weight = -4
+  Name = "The other guy from Wham!"
+  URL = "https://www.google.com/search?q=andrew+ridgeley"
+  weight = -4
 
 [[menu.main]]
-	Name = "All Posts"
-	URL = "/archive/"
-	weight = -5
+  Name = "All Posts"
+  URL = "/archive/"
+  weight = -5
 
 [[menu.main]]
-	Name = "Cheat Sheet"
-	URL = "/cheatsheet/"
-	weight = -3
+  Name = "Cheat Sheet"
+  URL = "/cheatsheet/"
+  weight = -3
 
 [[menu.main]]
-	Name = "This theme on Github"
-	URL = "https://github.com/parsiya/hugo-octopress"
-	weight = 0
+  Name = "This theme on Github"
+  URL = "https://github.com/parsiya/hugo-octopress"
+  weight = 0
 
 # sidebar menus
 # enable with "sidebar_menu_enabled = true" in [oarams]
 # header text is "sidebar_menu_header" in [params]
 [[menu.sidebar]]
-	Name = "Thick Client Proxying "
-	URL = "/categories/thick-client-proxying/"
-	weight = -1
+  Name = "Thick Client Proxying "
+  URL = "/categories/thick-client-proxying/"
+  weight = -1
 
 [[menu.sidebar]]
-	Name = "Burp"
-	URL = "/categories/burp/"
-	weight = 0
+  Name = "Burp"
+  URL = "/categories/burp/"
+  weight = 0
 
 [[menu.sidebar]]
-	Name = "Hipchat"
-	URL = "/categories/hipchat/"
-	weight = 1
+  Name = "Hipchat"
+  URL = "/categories/hipchat/"
+  weight = 1
 
 [[menu.sidebar]]
-	Name = "Learning Golang"
-	URL = "/categories/go/"
-	weight = 1.5
+  Name = "Learning Golang"
+  URL = "/categories/go/"
+  weight = 1.5
 
 [[menu.sidebar]]
-	Name = "Reverse Engineering"
-	URL = "/categories/reverse-engineering/"
-	weight = 2
+  Name = "Reverse Engineering"
+  URL = "/categories/reverse-engineering/"
+  weight = 2
 
 [[menu.sidebar]]
-	Name = "Crypto"
-	URL = "/categories/crypto/"
-	weight = 3
+  Name = "Crypto"
+  URL = "/categories/crypto/"
+  weight = 3
 
 [[menu.sidebar]]
-	Name = "All Posts"
-	URL = "/archive/"
-	weight = 4
+  Name = "All Posts"
+  URL = "/archive/"
+  weight = 4
 
 [[menu.sidebar]]
-	Name = "Migration to Hugo"
-	URL = "/categories/migration-to-hugo/"
-	weight = 5
+  Name = "Migration to Hugo"
+  URL = "/categories/migration-to-hugo/"
+  weight = 5
 
 [params]
 
-	navigationNewWindow = true
-	sidebarRecentLimit = 10
+  navigationNewWindow = true
+  sidebarRecentLimit = 10
 
-	sidebarHeader = "Who am I?"
+  sidebarHeader = "Who am I?"
 
-	sidebarText = """I am Parsia Hakimian. Current (mostly) Senior Consultant at [Cigital](https://www.cigital.com).
-	</br></br>
-	I am interested in infosec, reverse engineering, Python, C and EvE Online (not necessarily in that order).
-	</br></br>
-	This website is mostly for my own benefit to document my knowledge and a place to look things up. Hopefully it is useful for others.
-	</br></br>
-	You can contact me via my email parsia.h[att]google's email.
-	"""
+  sidebarText = """I am Parsia Hakimian. Current (mostly) Senior Consultant at [Cigital](https://www.cigital.com).
+  </br></br>
+  I am interested in infosec, reverse engineering, Python, C and EvE Online (not necessarily in that order).
+  </br></br>
+  This website is mostly for my own benefit to document my knowledge and a place to look things up. Hopefully it is useful for others.
+  </br></br>
+  You can contact me via my email parsia.h[att]google's email.
+  """
 
-	sidebarMenuEnabled = true
-	sidebarMenuHeader = "Collections"
+  sidebarMenuEnabled = true
+  sidebarMenuHeader = "Collections"
 
-	notfoundHeader = "There's nothing here"
-	notfoundText = """You can never go back."""
+  notfoundHeader = "There's nothing here"
+  notfoundText = """You can never go back."""
 
-	# if false, all of the post will appear on front page (and in pagination)
-	truncate = true
+  # if false, all of the post will appear on front page (and in pagination)
+  truncate = true
 
-	# author's name (this will appear in metadata and under posts)
-	author = "Parsia"
+  # author's name (this will appear in metadata and under posts)
+  author = "Parsia"
 
-	# appears in the site header under website title
-	subtitle = "Because no one wants to be the other guy from Wham!"
+  # appears in the site header under website title
+  subtitle = "Because no one wants to be the other guy from Wham!"
 
-	# used in the search engine
-	searchEngineURL = "https://www.google.com/search"
+  # used in the search engine
+  searchEngineURL = "https://www.google.com/search"
 
-	# Text of the Continue Reading label. &rarr; == right arrow, but it gets messed up in the string so we will add it to index.html manually
-	continueReading = "Would you like to know more?"
+  # Text of the Continue Reading label. &rarr; == right arrow, but it gets messed up in the string so we will add it to index.html manually
+  continueReading = "Would you like to know more?"
 
-	# Google analytics code
-	googleAnalytics = "UA-55491306-1"
+  # Google analytics code
+  googleAnalytics = "UA-55491306-1"
 
-	# disqus shortcode
-	disqusShortname = "parsiya"
+  bitbucket = "https://bitbucket.org/parsiya/"
+  twitter = "https://twitter.com/cryptogangsta/"
+  keybase = "https://keybase.io/parsiya/"
+  github = "https://github.com/parsiya/"
+  linkedin = "https://www.linkedin.com/in/parsiya"
 
-	bitbucket = "https://bitbucket.org/parsiya/"
-	twitter = "https://twitter.com/cryptogangsta/"
-	keybase = "https://keybase.io/parsiya/"
-	github = "https://github.com/parsiya/"
-	linkedin = "https://www.linkedin.com/in/parsiya"
+  rss = true  # switch to true to enable RSS icon link
 
-	rss = true  # switch to true to enable RSS icon link
+  defaultDescription = ""
 
-	defaultDescription = ""
+  # does this even work in action?
+  defaultKeywords = ["Parsia Hakimian" , "Parsiya" , "infosec" , "information security"]
 
-	# does this even work in action?
-	defaultKeywords = ["Parsia Hakimian" , "Parsiya" , "infosec" , "information security"]
-
-	tableOfContents = false
+  tableOfContents = false
 
 # blackfriday is Hugo's markdown engine. Options are at: https://gohugo.io/overview/configuration/ (scroll down to "Configure Blackfriday rendering")
 [blackfriday]
-	hrefTargetBlank = true # open the external links in a new window
-	fractions = false
+  hrefTargetBlank = true # open the external links in a new window
+  fractions = false
