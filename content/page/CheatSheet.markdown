@@ -179,3 +179,34 @@ Where N is the number of commits that you want to revert.
 
 4. Force push the local repo to remote - `git push -f`  
 Note this will force the update and erase the commit history online. If not one else is using the repo in between it's ok.
+
+--------------
+
+### Print Envelopes Using the Brother Printer and LibreOffice
+Before printing, get to printer physically and use the following instructions:
+
+* http://support.brother.com/g/b/faqend.aspx?c=gb&lang=en&prod=hl2170w_all&faqid=faq00000063_025
+
+1. Open the back.
+2. Press the two green handles down.
+3. Open manual feed in front.
+4. Adjust the paper guide and put the envelope in.
+5. Put the envelope face up (the side that has the addresses should be up).
+6. Insert it until the printer says `Please Wait` and grabs the paper.
+
+Now open LibreOffice and use these instructions:
+
+- https://www.pcmech.com/article/how-to-print-an-envelope-with-libreoffice/
+
+1. Create new document in LibreOffice Writer (Word).
+2. `Insert > Envelope`.
+3. Enter destination in `Addressee`.
+4. Check `Sender` and enter your own address in the bottom textbox.
+5. Select `Printer` tab.
+6. Select printer and press `Setup`.
+7. Select the Brother printer and press `Properties`.
+8. Select the following options:
+    * Paper Size: `Com-10`.
+    * Media Type: `Envelopes`.
+    * Paper Source > First Page: `Manual`.
+9. Print
