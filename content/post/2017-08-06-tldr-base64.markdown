@@ -1,0 +1,91 @@
+---
+title: "TLDR: Base64"
+date: 2017-08-06T13:54:45-04:00
+draft: false
+toc: true
+comments: true
+categories:
+- base64
+tags:
+- Burp
+---
+
+Some quick notes about base64 encoding. URL safe and avoiding a pitfall when using Burp Decoder.
+
+This document assumes you already know what base64 is and some of the major use-cases.
+
+<!--more-->
+
+# Quick Intro
+
+* Wikipedia link: https://en.wikipedia.org/wiki/Base64
+* Usually used convert binary data into text.
+  * Storage: Text file or DB field.
+  * Transport: Email, HTTP parameters/payloads.
+* Takes 3 bytes, returns 4.
+* No header/footer.
+* Alphabet: `A-Z a-z 0-9 + / =`
+  * `=` padding character.
+* See also [uuencoding on Wikipedia](https://en.wikipedia.org/wiki/Uuencoding#Disadvantages) if you happen to encounter one in the wild.
+
+# Padding 
+`=` is the padding char. It is used to pad the string to a multiple of four. You can remove them from the final result without any issues, as a result a lot of times you see base64 encoded characters without padding.
+
+This is usually not an issue because you can just pad it back to a multiple of four and decode it. Due to the format, you will only see one or two padding chars.
+
+# URL-Safe Base64 Encoding
+In order to use it in URLs and file names, the special characters are replaced:
+
+* `+` -> `-`
+* `/` -> `_`
+* `=` -> `.` but usually removed
+
+# Base64 in Burp Decoder Issues
+Burp Decoder support multiple encoding/decoding/functions including base64.
+
+## Pad Strings before Decoding with Burp Decoder
+You should remember two things when using Burp Decoder to decode base64 without padding.
+
+* If input is not padded, it will not be padded automatically.
+* The last group of input will be copied as-is to output if not a multiple of four.
+
+As a result when decoding a base64 string without padding in Burp Decoder you might see the wrong output.
+
+For example the hex blob `0a0b0c0d` converted to bytes and then base64 results in `CgsMDQ==`.
+
+{{< codecaption title="Base64 conversion in Python" lang="python" >}}
+from base64 import b64encode
+from binascii import unhexlify
+
+print b64encode(unhexlify("0a0b0c0d"))
+CgsMDQ==
+{{< /codecaption >}}
+
+If padding chars are not stored/transmitted and we paste `CgsMDQ` in Burp Decoder we get `0a0b0c4451`. Burp decodes the string in blocks of four characters but when it reaches the last block, if the length is less than four it just displays `DQ` or `4451` in the output. If the input string is big, you might not notice the length difference or the last chars.
+
+Padding the string with `=` returns the correct output.
+
+{{< imgcap title="Adding padding string in Burp Decoder" src="/images/2017/base64/1-burpdecoder.gif" >}}
+
+## Convert URL-Safe Base64 to Standard before Decoding with Burp Decoder
+Burp Decoder does not Recognize URL-Safe Base64 strings. If it reaches a block containing these characters, it copies it to the output and moves to the next block.
+
+We can see both of these behaviors in this example. The hex blob `20939e8f6202fcd43ef603` in URL-safe base64 and without padding is `IJOej2IC_NQ-9gM`.
+
+{{< codecaption title="URL-Safe base64 conversion in Python" lang="python" >}}
+from base64 import urlsafe_b64encode, b64encode
+
+print urlsafe_b64encode(unhexlify("20939e8f6202fcd43ef603"))
+IJOej2IC_NQ-9gM=
+
+print b64encode(unhexlify("20939e8f6202fcd43ef603"))
+IJOej2IC/NQ+9gM=
+{{< /codecaption >}}
+
+In Burp Decoder we see block 3 directly in output because it doesn't contain standard base64 characters. Block 4 is also not decoded because it's not a multiple of 4.
+
+{{< imgcap title="URL-safe base64 string in Burp Decoder" src="/images/2017/base64/2-urlsafe.png" >}}
+
+The standard string with padding is displayed correctly.
+
+{{< imgcap title="Standard base64 in Burp Decoder" src="/images/2017/base64/3-standard.png" >}}
