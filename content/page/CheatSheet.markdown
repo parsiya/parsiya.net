@@ -10,23 +10,57 @@ tags:
 ---
 Often I need to do something that I have done many times in the past but I have forgotten how to do it. This is a page (or a series of pages if it grows large enough) to give me a simple repository of how-tos that I can access online. In this page you may find those commands and tips that I need from time to time (and usually forget when I need them).
 
-------
-### Tar
+<!-- MarkdownTOC -->
 
-**Compressing a directory using tar**  
+- [Tar](#tar)
+  - [Compressing a directory using tar](#compressing-a-directory-using-tar)
+  - [Decompressing a tar.gz file](#decompressing-a-targz-file)
+- [OpenSSL](#openssl)
+  - [Dumping the TLS certificate using OpenSSL](#dumping-the-tls-certificate-using-openssl)
+  - [TLS connection with a specific ciphersuite using OpenSSL](#tls-connection-with-a-specific-ciphersuite-using-openssl)
+- [Amazon S3](#amazon-s3)
+  - [Syncing a folder with an Amazon S3 bucket using s3cmd](#syncing-a-folder-with-an-amazon-s3-bucket-using-s3cmd)
+  - [Changing the mime-type of CSS file after it is uploaded to avoid an old issue](#changing-the-mime-type-of-css-file-after-it-is-uploaded-to-avoid-an-old-issue)
+- [Powershell](#powershell)
+  - [List all files \(including hidden\)](#list-all-files-including-hidden)
+  - [Diff in Powershell](#diff-in-powershell)
+  - [Pseudo-grep in Powershell](#pseudo-grep-in-powershell)
+  - [grep in command outputs](#grep-in-command-outputs)
+  - [Get-Acl and icacls.exe](#get-acl-and-icaclsexe)
+- [Some Git stuff because I keep forgetting them](#some-git-stuff-because-i-keep-forgetting-them)
+  - [Create new branch and merge](#create-new-branch-and-merge)
+  - [Only clone a certain branch](#only-clone-a-certain-branch)
+  - [Undo remote git history after push](#undo-remote-git-history-after-push)
+- [Download Youtube videos with substitles](#download-youtube-videos-with-substitles)
+- [Delete file or directory with a path or name over the Windows limit](#delete-file-or-directory-with-a-path-or-name-over-the-windows-limit)
+- [Print Envelopes Using the Brother Printer and LibreOffice](#print-envelopes-using-the-brother-printer-and-libreoffice)
+
+<!-- /MarkdownTOC -->
+
+------
+<a name="tar"></a>
+## Tar
+Insert xkcd, hur dur!
+
+<a name="compressing-a-directory-using-tar"></a>
+### Compressing a directory using tar
 `tar -zcvf target_tar.tar.gz directory_to_be_compressed`
 
-**Decompressing a tar.gz file**  
-`tar -zcvf target_tar.tar.gz path/to/decompress/`
+<a name="decompressing-a-targz-file"></a>
+### Decompressing a tar.gz file
+`tar -zxvf target_tar.tar.gz path/to/decompress/`
 
 ------
 
-### OpenSSL
+<a name="openssl"></a>
+## OpenSSL
 
-**Dumping the TLS certificate using OpenSSL**  
+<a name="dumping-the-tls-certificate-using-openssl"></a>
+### Dumping the TLS certificate using OpenSSL
 `echo | openssl s_client -connect HOST:PORT 2>/dev/null | openssl x509 -text -noout`
 
-**TLS connection with a specific ciphersuite using OpenSSL**  
+<a name="tls-connection-with-a-specific-ciphersuite-using-openssl"></a>
+### TLS connection with a specific ciphersuite using OpenSSL
 `openssl s_client -connect HOST:PORT -cipher cipher-name -brief`
 
 * `-brief`: reduced output
@@ -34,9 +68,11 @@ Often I need to do something that I have done many times in the past but I have 
 
 ------
 
-### Amazon S3
+<a name="amazon-s3"></a>
+## Amazon S3
 
-**Synching a folder with an Amazon S3 bucket using s3cmd**  
+<a name="syncing-a-folder-with-an-amazon-s3-bucket-using-s3cmd"></a>
+### Syncing a folder with an Amazon S3 bucket using s3cmd
 `python s3cmd sync --acl-public --delete-removed --rr directory-to-sync/ s3://bucket-name`
 
 For example uploading the Hugo public directory to my website:  
@@ -45,7 +81,8 @@ For example uploading the Hugo public directory to my website:
 * `--acl-public`: Anyone can only read.
 * `--delte-removed`: Delete remove objects with no corresponding local files.
 
-**Changing the mime-type of `css` file after it is uploaded to avoid [an old issue]({{< ref "2014-04-22-amazon-s3-and-css.markdown" >}} "Amazon S3 and CSS")**  
+<a name="changing-the-mime-type-of-css-file-after-it-is-uploaded-to-avoid-an-old-issue"></a>
+### Changing the mime-type of CSS file after it is uploaded to avoid [an old issue]({{< ref "2014-04-22-amazon-s3-and-css.markdown" >}} "Amazon S3 and CSS")
 `python s3cmd --acl-public --no-preserve --mime-type="text/css" put public/css/hugo-octopress.css s3://parsiya.net/css/hugo-octopress.css`
 
 {{< codecaption title="My runme.bat to upload my Hugo blog to the S3 bucket" lang="powershell"  >}}
@@ -61,9 +98,11 @@ rd /q /s public
 {{< /codecaption >}}
 
 ------
-### Powershell
+<a name="powershell"></a>
+## Powershell
 
-**List all files (including hidden)**  
+<a name="list-all-files-including-hidden"></a>
+### List all files (including hidden)
 `Get-ChildItem "searchterm" -recurse -force -path c:\ | select-object FullName`
 
 * `-recurse`: recursive. Loops through all directories
@@ -71,7 +110,8 @@ rd /q /s public
 * `select-object`: Selects each file from last point
 * `FullName`: Only display file name
 
-**Diff in Powershell**  
+<a name="diff-in-powershell"></a>
+### Diff in Powershell
 `Compare-Object (Get-Content new1.txt) (Get-Content new2.txt) | Format-List >> Diff-Output`
 
 Output will be in format of
@@ -79,7 +119,8 @@ Output will be in format of
 * `InputObject`: `c:\users\cigital\somefile` -- line content
 * `SideIndicator`: `=>` -- exists in new2.txt (second file, file to the right)
 
-**Pseudo-grep in Powershell**  
+<a name="pseudo-grep-in-powershell"></a>
+### Pseudo-grep in Powershell
 `findstr "something" *.txt`
 
 will include filename and line (no number AFAIK)
@@ -98,49 +139,23 @@ will search for keyword1 OR keyword2 in files
 
 https://technet.microsoft.com/en-us/library/Cc732459.aspx
 
-**grep in command outputs**  
+<a name="grep-in-command-outputs"></a>
+### grep in command outputs
 `whatever.exe | Select-String -pattern "admin"`
 
-**Get-Acl amd icacls.exe**  
+<a name="get-acl-and-icaclsexe"></a>
+### Get-Acl and icacls.exe
 `Get-Acl -path c:\windows\whatever.exe | Format-List`
 
 `icacls.exe c:\windows\whatever.exe`
 
 -----------
 
-### Download Youtube videos with substitles  
-I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The following [youtube-dl](https://github.com/rg3/youtube-dl/) command will download the 56 episode HQ quality Chinese TV  series called `Xiao Ao Jiang Hu` or `Laughing in the Wind` (also called `The Smiling Proud Wanderer` or `Swordsman`).
+<a name="some-git-stuff-because-i-keep-forgetting-them"></a>
+## Some Git stuff because I keep forgetting them
 
-`youtube-dl --ignore-errors --write-srt --sub-lang en --yes-playlist 'https://www.youtube.com/playlist?list=PLuGy72vdo4_ScwTYb1bAynhBs3KgowvvQ'`
-
-```
---ignore-errors: continue after errors (in the case of a playlist we do not want to be interrupted for one error)
---write-srt    : download substitles
---sub-lang     : subtitle language (in this case English)
---yes-playlist : link to a Youtube playlist
-```
-
-`Youtube-dl` can be downloaded using `pip`. For example on Windows:  
-`python -m pip install youtube-dl`.
-
-----------
-
-### Delete file or directory with a path or name over the Windows limit
-
-Answer from [superuser.com](http://superuser.com/a/467814).
-
-``` posh
-mkdir empty_dir
-robocopy empty_dir the_dir_to_delete /s /mir
-rmdir empty_dir
-rmdir the_dir_to_delete
-```
-
-----------
-
-### Some Git stuff because I keep forgetting them
-
-**Create new branch and merge**  
+<a name="create-new-branch-and-merge"></a>
+### Create new branch and merge
 This works with small branches (e.g. one fix or so). Adapted from a [Bitbucket tutorial](https://confluence.atlassian.com/bitbucket/use-a-git-branch-to-merge-a-file-681902555.html).
 
 1. Create new branch - `git branch fix-whatever`  
@@ -157,17 +172,18 @@ This can be safely done because it's an obscure branch and no one else cares abo
 5. Go back to the original branch to merge - `git checkout master`  
 Master or whatever branch you were at step one.
 
-6. Merge the branches - `git merge fix-whatever`
+6. Merge the branches - `git merge fix-whatever`.  
+Alternatively squash all commits into one `git merge --squash fix-whatever` and then `git commit -m "One message for all commits in merge"`.
 
 7. Delete branch - `git branch -d fix-whatever`  
 We don't need it anymore. If it was pushed to remote, then we need to delete it there too.
 
-**Only clone a certain branch**  
+<a name="only-clone-a-certain-branch"></a>
+### Only clone a certain branch
 `git clone -b <branch> <remote_repo>`
 
-Otherwise master will be cloned.
-
-**Undo remote git history after push**  
+<a name="undo-remote-git-history-after-push"></a>
+### Undo remote git history after push
 Because this keeps happening to me.
 
 1. Reset the head in local repo N commits back. - `git reset HEAD~N`  
@@ -180,9 +196,42 @@ Where N is the number of commits that you want to revert.
 4. Force push the local repo to remote - `git push -f`  
 Note this will force the update and erase the commit history online. If not one else is using the repo in between it's ok.
 
---------------
+-----------
 
-### Print Envelopes Using the Brother Printer and LibreOffice
+<a name="download-youtube-videos-with-substitles"></a>
+## Download Youtube videos with substitles  
+I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The following [youtube-dl](https://github.com/rg3/youtube-dl/) command will download the 56 episode HQ quality Chinese TV  series called `Xiao Ao Jiang Hu` or `Laughing in the Wind` (also called `The Smiling Proud Wanderer` or `Swordsman`).
+
+`youtube-dl --ignore-errors --write-srt --sub-lang en --yes-playlist 'https://www.youtube.com/playlist?list=PLuGy72vdo4_ScwTYb1bAynhBs3KgowvvQ'`
+
+```
+--ignore-errors: continue after errors (in the case of a playlist we do not want to be interrupted for one error)
+--write-srt    : download substitles
+--sub-lang     : subtitle language (in this case English)
+--yes-playlist : link to a Youtube playlist
+```
+
+`Youtube-dl` can be downloaded using `pip`. For example on Windows:  
+`python -m pip install youtube-dl`.
+
+----------
+
+<a name="delete-file-or-directory-with-a-path-or-name-over-the-windows-limit"></a>
+## Delete file or directory with a path or name over the Windows limit
+
+Answer from [superuser.com](http://superuser.com/a/467814).
+
+``` posh
+mkdir empty_dir
+robocopy empty_dir the_dir_to_delete /s /mir
+rmdir empty_dir
+rmdir the_dir_to_delete
+```
+
+----------
+
+<a name="print-envelopes-using-the-brother-printer-and-libreoffice"></a>
+## Print Envelopes Using the Brother Printer and LibreOffice
 Before printing, get to printer physically and use the following instructions:
 
 * http://support.brother.com/g/b/faqend.aspx?c=gb&lang=en&prod=hl2170w_all&faqid=faq00000063_025
