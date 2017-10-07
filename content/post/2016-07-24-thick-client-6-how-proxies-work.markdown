@@ -207,7 +207,7 @@ Now we can see how Cloudfront works (simplified):
 
 In this case Cloudfront is acting like a TLS terminating proxy. On one side it has HTTPs (browser <-> Cloudfront) and on the other side it has HTTP (Cloudfront <-> S3). But instead of using the `CONNECT` request we use SNI. This makes sense because Cloudfront is not set as a proxy for the browser.
 
-# 4. Proxy-Aware Clients
+# 5. Proxy-Aware Clients
 Now I can talk about proxy-aware clients. We have already seen them and know what they do.
 
 Proxy-aware clients know when they are connected to a proxy and if so, do the following:
@@ -217,8 +217,8 @@ Proxy-aware clients know when they are connected to a proxy and if so, do the fo
 
 Usually proxy-aware clients have proxy settings or honor some OS specific ones (e.g. IE proxy settings). This signals that the browser is connected to a proxy and should act accordingly. Almost all browsers are proxy-aware.
 
-# 5. Conclusion and Future Plans
-Well that was all folks. Hopfully this is useful. Now we know how proxies work internally. Next time Burp messes up, capture the local traffic between the client and Burp and diagnose the problem. Pay attention to Burp's alert tab, usually TLS problems show up there too.
+# 6. Conclusion and Future Plans
+Well that was all folks. Hopefully this is useful. Now we know how proxies work internally. Next time Burp messes up, capture the local traffic between the client and Burp and diagnose the problem. Pay attention to Burp's alert tab, usually TLS problems show up there too.
 
 My plans for next part is to talk about traffic redirection techniques.
 

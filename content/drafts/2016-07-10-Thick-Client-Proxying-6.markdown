@@ -10,7 +10,7 @@ tags:
 title: "Thick Client Proxying - Part 6: Traffic Redirection Techniques"
 toc: false
 ---
-In this post I am going to talk about the different ways that we can redirect application's traffic to the proxy. It's mainly focused on Windows (and I have already explained the reasons behind it) but the main concepts are transferrable to other operating systems.
+In this post I am going to talk about the different ways that we can redirect application's traffic to the proxy. It's mainly focused on Windows (and I have already explained the reasons behind it) but the main concepts are transferable to other operating systems.
 
 <!--more-->
 
