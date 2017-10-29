@@ -92,4 +92,4 @@ Update August 1, 2015: The tag adds this annoying extra line(s) before the image
 [original repo]: https://github.com/ctdk/octopress-image-popup
 [img_popup.html.erb]: https://github.com/ctdk/octopress-image-popup/blob/master/plugins/img_popup.html.erb
 [img_popup.rb]: https://github.com/ctdk/octopress-image-popup/blob/master/plugins/img_popup.rb
-[modified_code]: https://bitbucket.org/parsiya/octopress-image-popup-forked
+[modified_code]: https://github.com/parsiya/Random-Code/tree/master/octopress-image-popup-forked

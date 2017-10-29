@@ -61,7 +61,12 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 [[menu.main]]
   Name = "This theme on Github"
   URL = "https://github.com/parsiya/hugo-octopress"
-  weight = 0
+  weight = -2
+
+[[menu.main]]
+  Name = "AWSome.pw"
+  URL = "http://awsome.pw"
+  weight = -1
 
 # sidebar menus
 # enable with "sidebar_menu_enabled = true" in [oarams]

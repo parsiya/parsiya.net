@@ -16,11 +16,13 @@ url: /blog/2015-10-19-proxying-hipchat-part-3-ssl-added-and-removed-here/
 
 Finally we are at part 3 of proxying Hipchat. This has been quite the adventure. In [**part1**]({{< ref "2015-10-08-hipchat-part-1-where-did-the-traffic-go.markdown" >}} "Proxying Hipchat Part 1: Where did the Traffic Go?") we identified the endpoints. In [**part2**]({{< ref "2015-10-09-proxying-hipchat-part-2-so-you-think-you-can-use-burp.markdown" >}} "Proxying Hipchat Part 2: So You Think You Can Use Burp?") we answered the question “So you think you can use Burp” with yes and proxied some of Hipchat’s traffic with Burp.
 
-In this part we will talk about developing our own proxy in Python to view Hipchat’s traffic to/form `hipchatserver.com` (which our example Hipchat server). First we are going to discuss how proxies work and we will get over Burp breaking our heart by creating our own proxy in Python to observe and dump the traffic in plaintext.
+In this part we will talk about developing our own proxy in Python to view Hipchat’s traffic to/form `hipchatserver.com` (our example Hipchat server). First we are going to discuss how proxies work and we will get over Burp breaking our heart by creating our own proxy in Python to observe and dump the traffic in plaintext.
 
-Related (crappy) code is at: [https://bitbucket.org/parsiya/hipchat-proxy/src/](https://bitbucket.org/parsiya/hipchat-proxy/src/).
+Related (crappy) code is at now in my clone at:
 
-For a similar effort (although with a much more complex proxy in ``erlang``) look at this post: [http://blog.silentsignal.eu/2015/10/02/proxying-nonstandard-https-traffic/](http://blog.silentsignal.eu/2015/10/02/proxying-nonstandard-https-traffic/).
+- [https://github.com/parsiya/Parsia-Clone/tree/master/code/hipchat-proxy](https://github.com/parsiya/Parsia-Clone/tree/master/code/hipchat-proxy)
+
+For a similar effort (although with a much more complex proxy in `erlang`) look at [http://blog.silentsignal.eu/2015/10/02/proxying-nonstandard-https-traffic/](http://blog.silentsignal.eu/2015/10/02/proxying-nonstandard-https-traffic/).
 
 <!--more-->
 
@@ -33,8 +35,8 @@ Oops we just broke someone’s EULA. Note to people from the future: This is <de
 
 # 0. Ingredients
 I am going to continue where we left last time. I assume you have proxied Hipchat with Burp and have a general idea of what is happening here.
-We will need Python. I am writing my code in 2.7.x because why not? But it should be easily portable to 3.x if not as it is. There are no dependencies as we will only use two standard libraries ``socket`` and ``ssl``.
-We will also need ``OpenSSL`` or another way to create a Certificate Authority (CA) and a signed TLS certificate for ``hipchatserver.com``.
+We will need Python. I am writing my code in 2.7.x because why not? But it should be easily portable to 3.x if not as it is. There are no dependencies as we will only use two standard libraries `socket` and `ssl`.
+We will also need `OpenSSL` or another way to create a Certificate Authority (CA) and a signed TLS certificate for `hipchatserver.com`.
 
 # 1. Hipchat Update
 Since last part, Hipchat has been update to version **2.2.1395**. If we start Hipchat, we can see one extra request in Burp as follows:
@@ -46,14 +48,14 @@ Since last part, Hipchat has been update to version **2.2.1395**. If we start Hi
 
 {{< imgcap src="/images/2015/hipchat3/01-New-Request.png" title="Request to retrieve patch notes"   >}}
 
-Let’s update and see what happens. The application sends a GET request to retrieve the new installer from ``https://s3.amazonaws.com/downloads.hipchat.com/windows/HipChat-2.2.1395-win32.msi``, and then executes it. After logging in we can see that the requests logged in Burp have not changed from last update.
+Let’s update and see what happens. The application sends a GET request to retrieve the new installer from `https://s3.amazonaws.com/downloads.hipchat.com/windows/HipChat-2.2.1395-win32.msi`, and then executes it. After logging in we can see that the requests logged in Burp have not changed from last update.
 
 {{< imgcap src="/images/2015/hipchat3/02-Patch-Notes.png" title="Patch notes in Hipchat"   >}}
 
 # 2. How does a Proxy Work?
 In order to create our own proxy, we must know how proxies work. We have all used Burp before but we don’t really care what happens under the hood until something goes wrong.
 
-At first look Burp stands between our browser and the server, It receives requests from the browser, relays them to the server and vice versa. But it does a lot more than that. In order to exactly see what happens we need to look at network traffic or in other words ``pcap or it did not happen``. But capturing this traffic a bit tricky as Hipchat’s traffic to Burp is local so Wireshark/Netmon cannot record it. To demonstrate Burp in action I had three choices:
+At first look Burp stands between our browser and the server, It receives requests from the browser, relays them to the server and vice versa. But it does a lot more than that. In order to exactly see what happens we need to look at network traffic or in other words `pcap or it did not happen`. But capturing this traffic a bit tricky as Hipchat’s traffic to Burp is local so Wireshark/Netmon cannot record it. To demonstrate Burp in action I had three choices:
 
 1. Use Microsoft Message Analyzer to capture both sides of traffic.
   * Good: Capture everything in one go.
@@ -105,21 +107,21 @@ I am not going to mark the Wireshark screenshot this time. Because the sequence 
 
 {{< imgcap src="/images/2015/hipchat3/06-GET-Freddie-Sequence-Diagram.png" title="GET Freddie.png sequence diagram"   >}}
 
-This is very similar to the previous HTTP request. One difference is that Burp will generate its own certificate (signed by its own root Certificate Authority or root CA) for ``s3.amazonaws.com`` and present it to Hipchat. Hipchat then checks this certificate for validity and if it is signed by a valid root CA. If you have Burp, you have already added Burp’s CA to Windows’ certificate store (right?) so this fake certificate will be valid.
+This is very similar to the previous HTTP request. One difference is that Burp will generate its own certificate (signed by its own root Certificate Authority or root CA) for `s3.amazonaws.com` and present it to Hipchat. Hipchat then checks this certificate for validity and if it is signed by a valid root CA. If you have Burp, you have already added Burp’s CA to Windows’ certificate store (right?) so this fake certificate will be valid.
 
 ### 2.2.1 What is this CONNECT?
-We did not see it last time. This is Hipchat’s way of telling the proxy (Burp) about the destination before starting the TLS handshake. In a normal connection everything after the TLS handshake is encrypted (doh) so the proxy does not see anything inside. And lower level data in the packet (e.g. destination IP) do not have this information either because packets are headed for Burp’s IP which is 127.0.0.1 (or IP address of Burp). Before a TLS connection is established Hipchat will do send the ``CONNECT`` request to tell the proxy (in this case Burp) of the destination where the packets should be forwarded.
+We did not see it last time. This is Hipchat’s way of telling the proxy (Burp) about the destination before starting the TLS handshake. In a normal connection everything after the TLS handshake is encrypted (doh) so the proxy does not see anything inside. And lower level data in the packet (e.g. destination IP) do not have this information either because packets are headed for Burp’s IP which is 127.0.0.1 (or IP address of Burp). Before a TLS connection is established Hipchat will do send the `CONNECT` request to tell the proxy (in this case Burp) of the destination where the packets should be forwarded.
 
-Remember that while Burp is a Man-in-the-Middle (MitM) proxy and can decrypt TLS connections, most proxies (especially in corporate environments) are just forwarding proxies so they need this ``CONNECT`` to work properly. For example if we did not have this ``CONNECT`` request, our SSL pass through in part two would have not worked as Burp was not decrypting traffic for that endpoint. Burp is just forwarding whatever it receives to the destination and does not see the content of requests.
+Remember that while Burp is a Man-in-the-Middle (MitM) proxy and can decrypt TLS connections, most proxies (especially in corporate environments) are just forwarding proxies so they need this `CONNECT` to work properly. For example if we did not have this `CONNECT` request, our SSL pass through in part two would have not worked as Burp was not decrypting traffic for that endpoint. Burp is just forwarding whatever it receives to the destination and does not see the content of requests.
 
 Burp is sending this request because it is proxy-aware as we used its option to designate burp as proxy. For non-proxy-aware clients we have to use another one of Burp’s capabilities.
 
 ### 2.2.2 Burp’s Invisible Proxying
 In each blog post we are learning a new Burp thing. It seems like we’re becoming quite the Burp expert neh? ;)
 
-If the client is non-proxy-aware and does not send the ``CONNECT`` before the TLS handshake (because it doesn’t know it is connected to a proxy), Burp needs to know where to send the requests. As Burp is a MitM proxy and is terminating TLS, it can look inside the payloads and determine the destination from the ``host`` header. This is called Burp’s ``invisible proxying``.
+If the client is non-proxy-aware and does not send the `CONNECT` before the TLS handshake (because it doesn’t know it is connected to a proxy), Burp needs to know where to send the requests. As Burp is a MitM proxy and is terminating TLS, it can look inside the payloads and determine the destination from the `host` header. This is called Burp’s `invisible proxying`.
 
-It can be enabled at ``Proxy > Options``. Select the proxy listener, click ``edit`` and under ``Request Handling`` select ``Support invisible proxying (enable only if needed)``.
+It can be enabled at `Proxy > Options`. Select the proxy listener, click `edit` and under `Request Handling` select `Support invisible proxying (enable only if needed)`.
 
 {{< imgcap src="/images/2015/hipchat3/07-Burp-invisible-proxy-mode.png" title="Burp invisible proxying option (enable only if needed!!1!)" >}}
 
@@ -147,13 +149,13 @@ If you remember part two where we proxied the traffic through Burp, it would but
 # 4. Proxy Design
 Let’s reiterate what the proxy needs to do:
 
-1. Create a TCP socket and start listening on port ``5222`` (Hipchat port). Let’s call it the client socket.
+1. Create a TCP socket and start listening on port `5222` (Hipchat port). Let’s call it the client socket.
 1. When a connection is made, read the first part of XMPP handshake from client.
 1. Create a TCP connection to hipchatserver.com. Let’s call it the server socket.
 1. Send the message relayed from client to server.
-1. Read the server’s response (2nd part of XMPP handshake) from server socket and relay it back to client. This will contain the ``STARTTLS`` requirement.
-1. Read the ``STARTTLS`` message from client (indicating) that it is ready to start doing TLS and send it to server.
-1. Receive ``PROCEED`` from server and send it to client.
+1. Read the server’s response (2nd part of XMPP handshake) from server socket and relay it back to client. This will contain the `STARTTLS` requirement.
+1. Read the `STARTTLS` message from client (indicating) that it is ready to start doing TLS and send it to server.
+1. Receive `PROCEED` from server and send it to client.
 1. Convert both client and server connections to TLS.
 1. Read from client socket, decrypt the message and send it to server via the (now TLS) server socket.
 1. Read from server socket, decrypt the message and send it to client via client socket.
@@ -161,14 +163,14 @@ Let’s reiterate what the proxy needs to do:
 Seems easy enough right? To be honest it is (you were expecting me to say wrong didn’t you? :D).
 
 ## 4.1 TLS Certificate Blues
-We need to create a TLS certificate for ``hipchatserver.com`` to present to Hipchat when we upgrade the connection to TLS. Here’s a catch, you can create a self-signed certificate which means that it is signed by itself. Self-signed certificate is also used in a different situation in the field which means an organization is signing their own certificates. In both cases, it means that the certificate is not valid. Hipchat will freak out if you give it a self-signed certificate signed by itself.
+We need to create a TLS certificate for `hipchatserver.com` to present to Hipchat when we upgrade the connection to TLS. Here’s a catch, you can create a self-signed certificate which means that it is signed by itself. Self-signed certificate is also used in a different situation in the field which means an organization is signing their own certificates. In both cases, it means that the certificate is not valid. Hipchat will freak out if you give it a self-signed certificate signed by itself.
 
 {{< imgcap src="/images/2015/hipchat3/10-self-signed-cert-error-in-hipchat-client.png" title="Self signed cert error in Hipchat" >}}
 
 Even if you select “I know what I’m doing” and try to proceed, Hipchat will break the connection. So we need to generate our own root CA and sign our certificate with it and finally add this root CA to the list of trusted certificate authorities in Windows certificate store (just like we did with Burp’s CA).
 
 ## 4.2 Generating TLS Certificates {#generatingtlscert}
-I generated my certificates using ``OpenSSL`` in ``Cygwin``. First we need to create a pair of RSA keys and then use them to create a root CA.
+I generated my certificates using `OpenSSL` in `Cygwin`. First we need to create a pair of RSA keys and then use them to create a root CA.
 
 {{< codecaption lang="bash" title="creating our root CA" >}}
 # Generate a 2048 bit RSA key pair
@@ -218,7 +220,7 @@ Email Address []:
 
 {{< /codecaption >}}
 
-Now we need to create our certificate for ``hipchatserver.com`` and then sign it.
+Now we need to create our certificate for `hipchatserver.com` and then sign it.
 
 {{< codecaption lang="bash" title="creating the certificate for Hipchat server" >}}
 # First we need to create a key pair for the new certificate
@@ -273,14 +275,14 @@ $ ls
 host.crt host.csr host.key rootCA.crt rootCA.key rootCA.srl
 {{< /codecaption >}}
 
-Notice that I entered ``hipchatserver.com`` for the certificate’s Common Name (CN), this is handy in case the client is checking this field against the server. Obviously you should keep the key files secret.
+Notice that I entered `hipchatserver.com` for the certificate’s Common Name (CN), this is handy in case the client is checking this field against the server. Obviously you should keep the key files secret.
 
-This can also be done on the fly in our proxy but I decided to do it outside to keep it simple. A proxy can discover the endpoint via the ``CONNECT`` request and create a certificate for that domain. In a non-proxy aware situation where the ``CONNECT`` is not sent, we either have to tell the proxy to create a proxy for a specific endpoint or just present a certificate with a random CN and hope for the best. In Burp we can specify the endpoint manually and/or tell Burp to create a certificate with a specific CN for each proxy listener.
+This can also be done on the fly in our proxy but I decided to do it outside to keep it simple. A proxy can discover the endpoint via the `CONNECT` request and create a certificate for that domain. In a non-proxy aware situation where the `CONNECT` is not sent, we either have to tell the proxy to create a proxy for a specific endpoint or just present a certificate with a random CN and hope for the best. In Burp we can specify the endpoint manually and/or tell Burp to create a certificate with a specific CN for each proxy listener.
 
 # 5. Redirecting Traffic from Non-Proxy-Aware Clients
-This is another problem. Assuming we are listening on ``127.0.0.1:5222`` how are we going to redirect Hipchat’s traffic to our proxy? We can use Hipchat’s proxy configuration to do this but let’s not use that because I want to talk about redirecting traffic for non-proxy-aware clients.
+This is another problem. Assuming we are listening on `127.0.0.1:5222` how are we going to redirect Hipchat’s traffic to our proxy? We can use Hipchat’s proxy configuration to do this but let’s not use that because I want to talk about redirecting traffic for non-proxy-aware clients.
 
-We only need traffic to hipchatserver.com all traffic must be redirected to ``127.0.0.1`` or ``localhost``. On Windows this can be done through the ``hosts`` file. Open your favorite text editor as administrator and open it at the following location:
+We only need traffic to hipchatserver.com all traffic must be redirected to `127.0.0.1` or `localhost`. On Windows this can be done through the `hosts` file. Open your favorite text editor as administrator and open it at the following location:
 
     %windir%\system32\drivers\etc\hosts
     or
@@ -290,14 +292,14 @@ Add the following line to the file and save:
 
     127.0.0.1 hipchatserver.com
 
-We could also do it with a kernel driver like ``WinDivert`` like we did in ``[redacted internal proxy tool]``. Although the traffic is redirected, the port does not change so our proxy needs to listen on port ``5222``.
+We could also do it with a kernel driver like `WinDivert` like we did in `[redacted internal proxy tool]`. Although the traffic is redirected, the port does not change so our proxy needs to listen on port `5222`.
 
 Let's remove proxy settings from Hipchat and we are good to go.
 
 # 6. HipProxy
 Now let’s look at our proxy code. Comments should give us enough info.
 
-Remember to copy ``host.crt`` and ``host.key`` into the directory where the Python code is (or modify their paths in the source code):
+Remember to copy `host.crt` and `host.key` into the directory where the Python code is (or modify their paths in the source code):
 
 {{< codecaption lang="python" title="HipProxy-commented.py" >}}
 # listen on 127.0.0.1:5222
@@ -438,7 +440,7 @@ while 1:
 
 If you run the proxy, you will see that after the connection is made, server starts sending the whole address book and any messages in all available chatrooms (even if you are not logged into them), after the initial barrage of data from the server, the rest will be mild unless you are in very crowded chatrooms.
 
-The proxy is also slow as it is printing everything to console, I have a different version of it that dumps the traffic to text files named ``HipProxy-filedump.py``. This is a lot faster and allows us to look at the traffic offline. There will be three (almost) text files ``everything.dump``, ``fromclient.dump`` and ``fromserver.dump``.
+The proxy is also slow as it is printing everything to console, I have a different version of it that dumps the traffic to text files named `HipProxy-filedump.py`. This is a lot faster and allows us to look at the traffic offline. There will be three (almost) text files `everything.dump`, `fromclient.dump` and `fromserver.dump`.
 
 ## 6.1 Connection Juggling
 As you saw, I juggled the TLS connections. After both TCP connections were converted to TLS (did you see how easy it was to do it in Python?) both client and server sockets were converted to non-blocking and their timeouts set to 0.5 seconds. At any given time, one socket is receiving and the other is sending. Each socket will send/receive for half a second before timing out and raising an exception (because they non-blocking). Then I caught these exceptions and checked if the exception text contained “timed out.” If this occurs we have not encountered any problems and keep juggling. This method not optimal but is a pretty simple concept and works. We are not transferring large chunks of data and only have two connections.
@@ -454,18 +456,18 @@ I will probably revisit the proxy later and start analyzing Hipchat’s traffic 
 ## 7.1 Auth
 Open the file fromclient.dump and look at the data sent by the client. The second message is the auth message and is in the following form:
 
-```xml
+``xml
 <auth xmlns='http://hipchat.com'>some base64 data</auth>
-```
+``
 
 If you decode this base64 blob you can see the following:
 
     0x00username0x00Password0x00windows
 
 ## 7.2 Ian Ate the Hash
-XMPP supports using hash functions for integrity checks but in Hipchat we see the value of hash function is set to ``IANWASHERE``. In a normal XMPP message, it contains the name of a hash function and there is a base64 encoded hash (of something):
+XMPP supports using hash functions for integrity checks but in Hipchat we see the value of hash function is set to `IANWASHERE`. In a normal XMPP message, it contains the name of a hash function and there is a base64 encoded hash (of something):
 
-```xml
+``xml
 # Hipchat message
 <presence>
   <c xmlns="http://jabber.org/protocol/caps"
@@ -481,7 +483,7 @@ XMPP supports using hash functions for integrity checks but in Hipchat we see th
      node='http://code.google.com/p/exodus'
      ver='QgayPKawpkPSDYmwT/WM94uAlu0='/>
 </presence>
-```
+``
 
 ## 7.3 Server’s Data Dump at Startup
 If you look at the data coming from server, you can see that the server sends the address book (everyone’s information) after establishing the connection. We can also see all messages in all accessible chatrooms being downloaded (although I was not logged into any chatroom) perhaps for caching purposes. This is why the connection is so slow at start but stabilizes after a while.

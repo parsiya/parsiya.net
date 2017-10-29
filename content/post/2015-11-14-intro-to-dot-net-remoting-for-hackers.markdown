@@ -24,6 +24,10 @@ In this post we will:
 
 If you know of any applications that use .NET Remoting please let me know. I want to look at them.
 
+Code is at:
+
+- [https://github.com/parsiya/Parsia-Clone/tree/master/code/net-remoting](https://github.com/parsiya/Parsia-Clone/tree/master/code/net-remoting)
+
 [net-remoting-1]: https://msdn.microsoft.com/en-us/library/kwdt6w2k%28v=vs.71%29.aspx
 <!--more-->
 
@@ -53,7 +57,7 @@ I am going to be using [Visual Studio Community 2015][vs2015] which is free. We 
 * Server
 * Client
 
-If you want to play along, Visual Studio solutions are at [https://bitbucket.org/parsiya/net-remoting/src/](https://bitbucket.org/parsiya/net-remoting/src/.). With compiled executables being in the `Executables` directory (keep in mind that these are executables from a stranger on the internet so treat them accordingly).
+If you want to play along, Visual Studio solutions are at [https://github.com/parsiya/Parsia-Clone/tree/master/code/net-remoting](https://github.com/parsiya/Parsia-Clone/tree/master/code/net-remoting). With compiled executables being in the `Executables` directory (keep in mind that these are executables from a stranger on the internet so treat them accordingly).
 
 First the DLL. Create a solution and a new project. Choose `Class Library` as type of the project. According to [this MSDN article][remotableobjects], in order for an object to be remotable it should either be `Serializable` or inherit [`MarshalByRefObject`][marshalbyref] class. I am taking the `MarshalByRefObject` route. For more information please refer to [Making Objects Remotable][makingobjectsremotable].
 

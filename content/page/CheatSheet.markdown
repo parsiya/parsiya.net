@@ -18,9 +18,11 @@ Often I need to do something that I have done many times in the past but I have 
 - [OpenSSL](#openssl)
   - [Dumping the TLS certificate using OpenSSL](#dumping-the-tls-certificate-using-openssl)
   - [TLS connection with a specific ciphersuite using OpenSSL](#tls-connection-with-a-specific-ciphersuite-using-openssl)
+- [Windows](#windows)
+  - [Shortcut to IE \(or WinINET\) Proxy Settings](#shortcut-to-ie-or-wininet-proxy-settings)
 - [Amazon S3](#amazon-s3)
   - [Syncing a folder with an Amazon S3 bucket using s3cmd](#syncing-a-folder-with-an-amazon-s3-bucket-using-s3cmd)
-  - [Changing the mime-type of CSS file after it is uploaded to avoid an old issue](#changing-the-mime-type-of-css-file-after-it-is-uploaded-to-avoid-an-old-issue)
+  - [Changing the mime-type of CSS file after upload to fix CSS not displaying correctly](#changing-the-mime-type-of-css-file-after-upload-to-fix-css-not-displaying-correctly)
 - [Powershell](#powershell)
   - [List all files \(including hidden\)](#list-all-files-including-hidden)
   - [Diff in Powershell](#diff-in-powershell)
@@ -31,6 +33,8 @@ Often I need to do something that I have done many times in the past but I have 
   - [Create new branch and merge](#create-new-branch-and-merge)
   - [Only clone a certain branch](#only-clone-a-certain-branch)
   - [Undo remote git history after push](#undo-remote-git-history-after-push)
+  - [Update local fork from original repo](#update-local-fork-from-original-repo)
+  - [Use Notepad++ as git editor on Windows via Cygwin](#use-notepad-as-git-editor-on-windows-via-cygwin)
 - [Download Youtube videos with substitles](#download-youtube-videos-with-substitles)
 - [Delete file or directory with a path or name over the Windows limit](#delete-file-or-directory-with-a-path-or-name-over-the-windows-limit)
 - [Print Envelopes Using the Brother Printer and LibreOffice](#print-envelopes-using-the-brother-printer-and-libreoffice)
@@ -68,6 +72,16 @@ Insert xkcd, hur dur!
 
 ------
 
+<a name="windows"></a>
+## Windows
+
+<a name="shortcut-to-ie-or-wininet-proxy-settings"></a>
+### Shortcut to IE (or WinINET) Proxy Settings
+
+`control inetcpl.cpl,,4`
+
+----------
+
 <a name="amazon-s3"></a>
 ## Amazon S3
 
@@ -75,29 +89,30 @@ Insert xkcd, hur dur!
 ### Syncing a folder with an Amazon S3 bucket using s3cmd
 `python s3cmd sync --acl-public --delete-removed --rr directory-to-sync/ s3://bucket-name`
 
-For example uploading the Hugo public directory to my website:  
+For example uploading the Hugo public directory to my website:\\
 `python s3cmd sync --acl-public --delete-removed --rr public/ s3://parsiya.net`
 
 * `--acl-public`: Anyone can only read.
-* `--delte-removed`: Delete remove objects with no corresponding local files.
+* `--delte-removed`: Delete objects with no corresponding local files.
 
-<a name="changing-the-mime-type-of-css-file-after-it-is-uploaded-to-avoid-an-old-issue"></a>
-### Changing the mime-type of CSS file after it is uploaded to avoid [an old issue]({{< ref "2014-04-22-amazon-s3-and-css.markdown" >}} "Amazon S3 and CSS")
+<a name="changing-the-mime-type-of-css-file-after-upload-to-fix-css-not-displaying-correctly"></a>
+### Changing the mime-type of CSS file after upload to fix CSS not displaying correctly
 `python s3cmd --acl-public --no-preserve --mime-type="text/css" put public/css/hugo-octopress.css s3://parsiya.net/css/hugo-octopress.css`
 
-{{< codecaption title="My runme.bat to upload my Hugo blog to the S3 bucket" lang="powershell"  >}}
+{{< codecaption title="My runme.bat to upload my Hugo blog to the S3 bucket" lang="powershell"\\>}}
 rd /q /s public
 hugo
 rd /q /s public\post
 del /s /a .\*thumbs*.db
 del /s /a public\categories\*index*.xml
 del /s /a public\tags\*index*.xml
-python s3cmd sync --acl-public --delete-removed -MP --rr public/ s3://parsiya.net
-python s3cmd --acl-public --no-preserve --mime-type="text/css" put public/css/hugo-octopress.css s3://parsiya.net/css/hugo-octopress.css
+python s3cmd sync --acl-public --cf-invalidate --delete-removed -MP --no-preserve --rr public/ s3://parsiya.net
+python s3cmd --acl-public --no-preserve --cf-invalidate --add-header="Expires: Sat, 20 Nov 2286 19:00:00 GMT" --mime-type="text/css" put public/css/hugo-octopress.css s3://parsiya.net/css/hugo-octopress.css
 rd /q /s public
 {{< /codecaption >}}
 
 ------
+
 <a name="powershell"></a>
 ## Powershell
 
@@ -125,11 +140,12 @@ Output will be in format of
 
 will include filename and line (no number AFAIK)
 
-    findstr /spin /c:"keyword" *.*
-    /s: recursive - will search through the current directory and all sub-directories
-    /p: skip binary files (or files with characters that cannot be printed)
-    /i: case-insensitive - remove if you want case sensitive search
-    /n: print line number
+`findstr /spin /c:"keyword" *.*`
+
+* /s: recursive - will search through the current directory and all sub-directories
+* /p: skip binary files (or files with characters that cannot be printed)
+* /i: case-insensitive - remove if you want case sensitive search
+* /n: print line number
 
 If you want to search for different keywords (with OR) remove the `/c:`
 
@@ -158,24 +174,24 @@ https://technet.microsoft.com/en-us/library/Cc732459.aspx
 ### Create new branch and merge
 This works with small branches (e.g. one fix or so). Adapted from a [Bitbucket tutorial](https://confluence.atlassian.com/bitbucket/use-a-git-branch-to-merge-a-file-681902555.html).
 
-1. Create new branch - `git branch fix-whatever`  
+1. Create new branch - `git branch fix-whatever`\\
 This will create a branch of whatever branch you are currently on so make sure you are creating a branch from the branch you want.
 
 2. Switch to the branch - `git checkout fix-whatever`
 
-3. Make changes and commit - `git add - git commit`  
+3. Make changes and commit - `git add - git commit`\\
 Make any changes you want to do, then stage and commit.
 
-4. Push the branch to remote repo [optional] - `git push`  
+4. Push the branch to remote repo [optional] - `git push`\\
 This can be safely done because it's an obscure branch and no one else cares about it.
 
-5. Go back to the original branch to merge - `git checkout master`  
+5. Go back to the original branch to merge - `git checkout master`\\
 Master or whatever branch you were at step one.
 
-6. Merge the branches - `git merge fix-whatever`.  
+6. Merge the branches - `git merge fix-whatever`.\\
 Alternatively squash all commits into one `git merge --squash fix-whatever` and then `git commit -m "One message for all commits in merge"`.
 
-7. Delete branch - `git branch -d fix-whatever`  
+7. Delete branch - `git branch -d fix-whatever`\\
 We don't need it anymore. If it was pushed to remote, then we need to delete it there too.
 
 <a name="only-clone-a-certain-branch"></a>
@@ -186,21 +202,53 @@ We don't need it anymore. If it was pushed to remote, then we need to delete it 
 ### Undo remote git history after push
 Because this keeps happening to me.
 
-1. Reset the head in local repo N commits back. - `git reset HEAD~N`  
+1. Reset the head in local repo N commits back. - `git reset HEAD~N`\\
 Where N is the number of commits that you want to revert.
 
 2. Make changes and stage them - `git add`
 
 3. Commit the changes - `git commit`
 
-4. Force push the local repo to remote - `git push -f`  
+4. Force push the local repo to remote - `git push -f`\\
 Note this will force the update and erase the commit history online. If not one else is using the repo in between it's ok.
+
+<a name="update-local-fork-from-original-repo"></a>
+### Update local fork from original repo
+
+1. See current remotes - `git remote -v`
+
+2. Make original repo the new remote upstream -\\
+`git remote add upstream https://github.com/whatever/original-repo/`
+
+3. Now we should see the new upstream with - `git remote -v`
+
+4. Fetch upstream - `git fetch upstream`
+
+5. Switch to your local master branch - `git checkout master`
+
+6. Merge upstream/master into local master - `git merge upstream/master`
+
+7. Push changes - `git push`
+
+<a name="use-notepad-as-git-editor-on-windows-via-cygwin"></a>
+### Use Notepad++ as git editor on Windows via Cygwin
+Create a file called `npp` with the following content and copy it to `cygwin\bin`. Modify the path of notepad++ to point to your installation.
+
+``` bash
+'C:/Program Files (x86)/Notepad++/notepad++.exe' -multiInst -notabbar -nosession -noPlugin "$(cygpath -w "$*")"
+```
+
+Run the following command in Cygwin to set it as global git editor:
+
+```
+$  git config --global core.editor npp
+```
 
 -----------
 
 <a name="download-youtube-videos-with-substitles"></a>
-## Download Youtube videos with substitles  
-I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The following [youtube-dl](https://github.com/rg3/youtube-dl/) command will download the 56 episode HQ quality Chinese TV  series called `Xiao Ao Jiang Hu` or `Laughing in the Wind` (also called `The Smiling Proud Wanderer` or `Swordsman`).
+## Download Youtube videos with substitles
+I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The following [youtube-dl](https://github.com/rg3/youtube-dl/) command will download the 56 episode HQ quality Chinese TV series called `Xiao Ao Jiang Hu` or `Laughing in the Wind` (also called `The Smiling Proud Wanderer` or `Swordsman`).
 
 `youtube-dl --ignore-errors --write-srt --sub-lang en --yes-playlist 'https://www.youtube.com/playlist?list=PLuGy72vdo4_ScwTYb1bAynhBs3KgowvvQ'`
 
@@ -211,7 +259,7 @@ I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The 
 --yes-playlist : link to a Youtube playlist
 ```
 
-`Youtube-dl` can be downloaded using `pip`. For example on Windows:  
+`Youtube-dl` can be downloaded using `pip`. For example on Windows:\\
 `python -m pip install youtube-dl`.
 
 ----------
