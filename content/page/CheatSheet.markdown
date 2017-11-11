@@ -253,7 +253,7 @@ I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The 
 `youtube-dl --ignore-errors --write-srt --sub-lang en --yes-playlist 'https://www.youtube.com/playlist?list=PLuGy72vdo4_ScwTYb1bAynhBs3KgowvvQ'`
 
 ```
---ignore-errors: continue after errors (in the case of a playlist we do not want to be interrupted for one error)
+--ignore-errors: continue after errors
 --write-srt    : download substitles
 --sub-lang     : subtitle language (in this case English)
 --yes-playlist : link to a Youtube playlist

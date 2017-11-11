@@ -291,5 +291,6 @@ In short type the trigger (or parts of it if it's unique) and press `tab`. If th
 - Typing `snippet` in the command palette will show all snippets for the current scope along with their triggers.
 
 <!-- Reference links -->
+
 [hugo-codecap-link]: https://github.com/parsiya/Hugo-Shortcodes#codecaption-codecaptionhtml
 [hugo-imgcap-link]:  https://github.com/parsiya/Hugo-Shortcodes#image-caption-imgcaphtml
