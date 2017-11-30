@@ -14,15 +14,83 @@ toc: false
 
 These are my notes when learning go from the [Tour of Go](https://tour.golang.org/) and some other sources. A lot of copy/pasted from them and I have used double-quotes to indicate those are not written by me to the best of my ability. Still this is not something original and is mostly here as a quick lookup reference while learning Go. I will update this as I learn more.
 
-# Basics
+<!-- MarkdownTOC -->
 
+- [Packages, variables, and functions](#packages-variables-and-functions)
+	- [Exported names](#exported-names)
+	- [Functions](#functions)
+	- [Multiple results](#multiple-results)
+	- [Named return values](#named-return-values)
+	- [Variables](#variables)
+		- [Initialize:](#initialize)
+		- [Short variable declarations](#short-variable-declarations)
+	- [Basic types](#basic-types)
+	- [Casting](#casting)
+	- [Constants](#constants)
+- [Flow control statements: for, if, else, switch and defer](#flow-control-statements-for-if-else-switch-and-defer)
+	- [For](#for)
+	- [if](#if)
+	- [else](#else)
+	- [switch](#switch)
+	- [defer](#defer)
+- [More types: structs, slices, and maps](#more-types-structs-slices-and-maps)
+	- [Pointers](#pointers)
+	- [Structs](#structs)
+	- [Arrays](#arrays)
+	- [Slices](#slices)
+		- [Slice length and capacity](#slice-length-and-capacity)
+		- [make slices](#make-slices)
+		- [Range](#range)
+- [Methods and interfaces](#methods-and-interfaces)
+	- [Methods](#methods)
+		- [Pointer Receivers](#pointer-receivers)
+	- [Interfaces](#interfaces)
+		- [Type switch](#type-switch)
+		- [Stringers](#stringers)
+	- [Solution to the Stringers exercise](#solution-to-the-stringers-exercise)
+	- [Errors](#errors)
+	- [Solution to the Errors exercise](#solution-to-the-errors-exercise)
+- [Concurrency](#concurrency)
+	- [Channels](#channels)
+		- [Buffered channels](#buffered-channels)
+		- [Closing channels](#closing-channels)
+		- [Reading information from channels](#reading-information-from-channels)
+		- [select](#select)
+	- [sync.Mutex](#syncmutex)
+- [Printf from Go by example](#printf-from-go-by-example)
+	- [~~Switches~~ Verbs](#%7E%7Eswitches%7E%7E-verbs)
+		- [Decimals](#decimals)
+		- [Floats](#floats)
+		- [Value](#value)
+		- [Strings](#strings)
+		- [Others](#others)
+- [Maps](#maps)
+- [Other tips and tricks](#other-tips-and-tricks)
+	- [Errors](#errors-1)
+	- [Hexdump](#hexdump)
+	- [Named imports](#named-imports)
+	- [Importing a package into the current namespace](#importing-a-package-into-the-current-namespace)
+	- [Avoiding the damn unused warnings](#avoiding-the-damn-unused-warnings)
+	- [Unix Timestamp to String](#unix-timestamp-to-string)
+	- [Spawn a new thread \(goroutine\) on the spot](#spawn-a-new-thread-goroutine-on-the-spot)
+	- [Write to a file or io.buffer from goroutines - DON'T](#write-to-a-file-or-iobuffer-from-goroutines---dont)
+- [Stuff learned from Cryptopals](#stuff-learned-from-cryptopals)
+	- [Long string on multiple lines](#long-string-on-multiple-lines)
+	- [Compare two \[\]bytes with bytes.equal](#compare-two-bytes-with-bytesequal)
+	- [Sorting a array/slice of struct by field](#sorting-a-arrayslice-of-struct-by-field)
+
+<!-- /MarkdownTOC -->
+
+<a name="packages-variables-and-functions"></a>
 ## Packages, variables, and functions
 
+<a name="exported-names"></a>
 ### Exported names
 In Go, a name is exported if it begins with a capital letter.
 
 When importing a package, you can refer only to its exported names. Any `unexported` names are not accessible from outside the package.
 
+<a name="functions"></a>
 ### Functions
 Unlike C, type comes after variable name except pointers.
 
@@ -40,6 +108,7 @@ Then use it normally
 fmt.Println(add(10,20))
 ```
 
+<a name="multiple-results"></a>
 ### Multiple results
 A function can return any number of results. Gone are the days when we had to use pointers in function parameters as extra return values.
 
@@ -57,6 +126,7 @@ func main() {
 }
 ```
 
+<a name="named-return-values"></a>
 ### Named return values
 Go's return values may be named. If so, they are treated as variables defined at the top of the function.
 
@@ -80,6 +150,7 @@ func main() {
 }
 ```
 
+<a name="variables"></a>
 ### Variables
 Use `var`.
 
@@ -89,6 +160,7 @@ Can be combined:
 
 `var x,y int` == `var x int, y int`. Similar to C when we had `int x,y;`.
 
+<a name="initialize"></a>
 #### Initialize:
 
 `var a, b int = 10, 20` == `var a int = 10` and `var b int = 20`.
@@ -116,6 +188,7 @@ If no initial value is assigned to a declared variable, it will get a `zero` val
 * false for the boolean type
 * "" (the empty string) for strings
 
+<a name="short-variable-declarations"></a>
 #### Short variable declarations
 Inside a function, the `:=` short assignment statement can be used in place of a `var` declaration with implicit type.
 
@@ -143,8 +216,8 @@ var (
 )
 ```
 
+<a name="basic-types"></a>
 ### Basic types
-Go's basic types:
 
 ``` go
 bool
@@ -164,6 +237,7 @@ float32 float64
 complex64 complex128
 ```
 
+<a name="casting"></a>
 ### Casting
 Casting needs to be explicit, unlike C where some castings worked out of the box.
 
@@ -180,7 +254,8 @@ import (
 
 func main() {
 	var a, b int = 20, 30
-	var div float32 = float32(a)/float32(b) // need to convert a and b to float32 before the division
+	// Need to convert a and b to float32 before the division
+	var div float32 = float32(a)/float32(b)
 	var divInt = int(div)
 	fmt.Println(div, divInt)
 }
@@ -188,6 +263,7 @@ func main() {
 
 `%T` is the print ~~switch~~ verb to print type of a variable. For example `fmt.Printf("v is of type %T\n", v)`.
 
+<a name="constants"></a>
 ### Constants
 Declared with `const` keyword. Can be character, string, boolean or numeric. Cannot use `:=`. Make the first character capital for constants (coding standard?).
 
@@ -205,10 +281,11 @@ func main() {
 	fmt.Println(One)
 }
 ```
-------
 
+<a name="flow-control-statements-for-if-else-switch-and-defer"></a>
 ## Flow control statements: for, if, else, switch and defer
 
+<a name="for"></a>
 ### For
 Similar to C with two differences:
 
@@ -261,6 +338,7 @@ for condition { }
 for { }
 ```
 
+<a name="if"></a>
 ### if
 Does not need parenthesis (although you still can use them if you do not have a init component which is separated from the condition with a semicolon) but needs curly braces.
 
@@ -277,10 +355,11 @@ func main() {
 	if whatever := 20; whatever > 10 {
 		fmt.Println("Inside if:", whatever)
 	}
-	// cannot use whatever here
+	// Cannot use the variable whatever here
 }
 ```
 
+<a name="else"></a>
 ### else
 `else` is similar to C else.
 
@@ -296,13 +375,14 @@ func main() {
 	if whatever := 20; whatever > 100 {
 		fmt.Println("Inside if:", whatever)
 	} else {
-		// can use whatever here
+		// Can use whatever here
 		fmt.Println("Inside else:", whatever)
 	}
-	// cannot use whatever here
+	// Cannot use whatever here
 }
 ```
 
+<a name="switch"></a>
 ### switch
 Similar to C switch with some differences:
 
@@ -310,7 +390,7 @@ Similar to C switch with some differences:
 * Can have a short statement similar to if (the statement before the case that gets executed).
 
 ``` go
-// code taken from the tour
+// Code taken from the tour
 package main
 
 import (
@@ -358,6 +438,7 @@ func main() {
 }
 ```
 
+<a name="defer"></a>
 ### defer
 "A defer statement defers the execution of a function until the surrounding function returns.
 
@@ -379,8 +460,10 @@ func main() {
 
 -----------
 
+<a name="more-types-structs-slices-and-maps"></a>
 ## More types: structs, slices, and maps
 
+<a name="pointers"></a>
 ### Pointers
 I mean come on!!1! (John Oliver).
 
@@ -391,6 +474,7 @@ Similar to C:
 
 "Unlike C, Go has no pointer arithmetic." *Thanks*.
 
+<a name="structs"></a>
 ### Structs
 Similar to C.
 
@@ -409,30 +493,35 @@ type Student struct {
 func main() {
 	fmt.Println(Student{"John", "Smith"})
 
-	// but we usually want to make instances(?) of structs
+	// But we usually want to make instances(?) of structs
 	studentOne := Student{"Parsia", "H"}
 
-	// now we can access the fields using documents
+	// Now we can access the fields using documents
 	fmt.Println(studentOne.FirstName)
 
-	// we can just assign fields using names, anything not assigned will be initialized with zero as we have seen before
+	// We can just assign fields using names, anything not assigned will be
+	// initialized with zero as we have seen before
 	studentTwo := Student{FirstName: "Ender"}
 
-	fmt.Println(studentTwo)	// will print "{Ender }" notice the space after Ender which is supposed to be the delimiter between the fields, LastName is nil because it is not given a value
+	// We will print "{Ender }" notice the space after Ender which is supposed
+	// to be the delimiter between the fields, LastName is nil because it is not
+	// given a value
+	fmt.Println(studentTwo)	
 
-	// can make a pointer to a struct
+	// Can make a pointer to a struct
 	p := studentOne
 
-	// now instead of *p.LastName (which doesn't work) we can just use p.LastName
-	// fmt.Println((*p).LastName)	// will not work with error message: invalid indirect of p (type Student)
+	// Now instead of *p.LastName (doesn't work) we can just use p.LastName
+	// fmt.Println((*p).LastName) will not work with error message: invalid indirect of p (type Student)
 	fmt.Println(p.LastName)
 
-	// can just create a pointer out of the blue
+	// Can just create a pointer out of the blue
 	p2 := Student{"Hercule", "Poirot"}
 	fmt.Println(p2)
 }
 ```
 
+<a name="arrays"></a>
 ### Arrays
 
 `var a [10]int` == `int a[10];`.
@@ -450,7 +539,7 @@ func main() {
 	a[4] = 20
 	fmt.Println(a)
 
-	// we can initialize arrays during creation
+	// We can initialize arrays during creation
 	// str[3] is empty
 	str := [3]string{"Ronny", "Johnson"}
 
@@ -458,6 +547,7 @@ func main() {
 }
 ```
 
+<a name="slices"></a>
 ### Slices
 Slice "is a dynamically-sized, flexible view into the elements of an array."
 
@@ -473,11 +563,12 @@ package main
 import "fmt"
 
 func main() {
-	// our favorite characters from the ThatHappened subreddit
-	// if we do not specify a length, it will create a slice literal and an underlying array as we will see later
+	// Our favorite characters from the ThatHappened subreddit
+	// If we do not specify a length, it will create a slice literal and
+	// an underlying array as we will see later
 	thatHappened := [3]string{"RonnyJohnson", "AlbertEinstein", "MargaretHello"}
 
-	// last index is non-inclusive - should have guessed
+	// Last index is non-inclusive - should have guessed
 	// allMembers []string := thatHappened[0:3]
 	var allMembers []string = thatHappened[0:3]
 	fmt.Println(allMembers)
@@ -485,19 +576,19 @@ func main() {
 	var lastTwoMembers []string = thatHappened[1:3]
 	fmt.Println(lastTwoMembers)
 
-	// replace Ms.Hello with another popular character
+	// Replace Ms.Hello with another popular character
 	allMembers[2] = "JoeDisney"
 
 	// Joe Disney added to the array
 	fmt.Println(thatHappened)
 
-	// the other slice changes
+	// The other slice changes
 	fmt.Println(lastTwoMembers)
 
 }
 ```
 
-We can create array and slide literals. Meaning we can just initialize them by their members instead of assigning a length and then adding members.
+We can create array and slice literals. Meaning we can just initialize them by their members instead of assigning a length and then adding members.
 
 If a slice literal is created, the underlying array is also created. For now I do not know how I can reference this underlying array (instead of using the slice). I guess it's maybe impossible.
 
@@ -508,13 +599,13 @@ import "fmt"
 
 func main() {
 
-	// slide literal of type struct, the underlying array is created automatically
+	// Slice literal of type struct, the underlying array is created automatically
 	sliceStruct := []struct {
 		a,b int
 	}{
 		{1,2},
 		{3,4},
-		{5,6},	// need this comma in the end otherwise it will not work (why????)
+		{5,6},	// need this comma in the end otherwise it will not work (why?)
 	}
 
 	fmt.Println(sliceStruct)
@@ -541,6 +632,7 @@ func main() {
 }
 ```
 
+<a name="slice-length-and-capacity"></a>
 #### Slice length and capacity
 Slices have length and capacity.
 
@@ -568,19 +660,20 @@ func main() {
 	printSlice(slice1)
 }
 
-// copied from the tour
+// Copied from the tour
 func printSlice(s []int) {
 	fmt.Printf("len=%d cap=%d %v\n", len(s), cap(s), s)
 }
 
 ```
 
+<a name="make-slices"></a>
 #### make slices
 To create dynamically-sized arrays use `make`. `make` creates a zero-ed array and returns a slice to that array.
 
 `slice1 := make([]int, 10)` creates an int array of length 10.
 
-`slice2 := male([]int, 5, 10)` creates an int array of length 5 and capacity of 10.
+`slice2 := make([]int, 5, 10)` creates an int array of length 5 and capacity of 10.
 
 We can **append** stuff to slices and it grows as needed. `slice1 = append(slice1, 1)`. We can append multiple elements `slice1 = append(slice1, 1, 2, 3)`.
 
@@ -614,13 +707,13 @@ func main() {
 	// len=17 cap=20 [0 0 0 0 0 0 0 0 0 0 1 2 0 0 0 0 0]
 }
 
-// copied from the tour
+// Copied from the tour
 func printSlice(x []int) {
-	fmt.Printf("len=%d cap=%d %v\n",
-		len(x), cap(x), x)
+	fmt.Printf("len=%d cap=%d %v\n", len(x), cap(x), x)
 }
 ```
 
+<a name="range"></a>
 #### Range
 range iterates over slices. It returns an index and *a copy of the item* stored at that index. `for index, value := range slice`.
 
@@ -634,18 +727,19 @@ import "fmt"
 func main() {
 	thatHappened := [3]string{"Ronny Johnson", "Albert Einstein", "Margaret Hello"}
 	for index, value := range thatHappened {
-		fmt.Printf("thatHappened[%d]: %s\n", index, value) // no newline at the end of Printf but Println does not support formatting :(
+		// No newline in the end of Printf but Println does not support formatting
+		fmt.Printf("thatHappened[%d]: %s\n", index, value) 
 	}
 
 	fmt.Println("-----------")
 
-	// only using index
+	// Only using index
 	for index := range thatHappened {
 		fmt.Printf("thatHappened[%d]: %s\n", index, thatHappened[index])
 	}
 
 	fmt.Println("-----------")
-	// dropping index
+	// Dropping index
 	for _, value :=range thatHappened {
 		fmt.Printf("%s\n", value)
 	}
@@ -654,8 +748,10 @@ func main() {
 
 ---------------
 
+<a name="methods-and-interfaces"></a>
 ## Methods and interfaces
 
+<a name="methods"></a>
 ### Methods
 Go doesn't have classes. Methods can be defined for types (e.g. structs). *what is this? C?*
 
@@ -690,6 +786,7 @@ func main() {
 }
 ```
 
+<a name="pointer-receivers"></a>
 #### Pointer Receivers
 Pointer receivers get a pointer instead of a value but can modify the object that the pointer points to. Pointer receivers can be a pointer to a pointer (e.g. `**int`).
 
@@ -712,13 +809,13 @@ type Tuple struct {
 	A, B int
 }
 
-// should not change the value of the object as it works on a copy of the object
+// Should not change the value of the object as it works on a copy of it
 func (x Tuple) ModifyTupleValue() {
 	x.A = 2
 	x.B = 2
 }
 
-// should change the value of the object
+// Should change the value of the object
 func (x *Tuple) ModifyTuplePointer() {
 	x.A = 3
 	x.B = 3
@@ -731,12 +828,12 @@ func (x IntSlice) PrintSlice() {
 		len(x), cap(x), x)
 }
 
-// modifies the IntSlice although it's by value
+// Modifies the IntSlice although it's by value
 func (x IntSlice) ModifySliceValue()  {
 	x[0] = 1
 }
 
-// modifies the IntSlice
+// Modifies the IntSlice
 func (x *IntSlice) ModifySlicePointer()  {
 	(*x)[0] = 2
 }
@@ -764,6 +861,7 @@ func main() {
 }
 ```
 
+<a name="interfaces"></a>
 ### Interfaces
 "An _interface type_ is defined as a set of method signatures.
 
@@ -825,19 +923,19 @@ type Tuple struct {
 
 func main() {
 
-	// use int
+	// Use int
 	int1 := 10
 	emptyInterface = int1
 	fmt.Println(emptyInterface)
 	// 10
 
-	// use float
+	// Use float
 	float1 := 1.2345
 	emptyInterface = float1
 	fmt.Println(emptyInterface)
 	// 1.2345
 
-	// use custom struct
+	// Use custom struct
 	tuple1 := Tuple{5, 5}
 	emptyInterface = tuple1
 	fmt.Println(emptyInterface)
@@ -866,16 +964,17 @@ func main() {
 	fmt.Println(myInt, ok)
 	// 0 false -- which means it does not contain an int
 
-	// this will trigger a panic
+	// This will trigger a panic
 	// myInt = myInterface.(int)
 }
 ```
 
+<a name="type-switch"></a>
 #### Type switch
 Do a switch on `interface.(type)`. Similar to what we did above.
 
-Code copied from the tutorial
 ``` go
+// Code copied from the tutorial
 package main
 
 import "fmt"
@@ -892,12 +991,13 @@ func do(i interface{}) {
 }
 
 func main() {
-	do(21)	// Twice 21 is 42
+	do(21)		// Twice 21 is 42
 	do("hello")	// "hello" is 5 bytes long
 	do(true)	// I don't know about type bool!
 }
 ```
 
+<a name="stringers"></a>
 #### Stringers
 Defined by the `fmt` package. Can describe itself as string.
 
@@ -933,6 +1033,7 @@ func main() {
 }
 ```
 
+<a name="solution-to-the-stringers-exercise"></a>
 ### Solution to the Stringers exercise
 
 ``` go
@@ -958,6 +1059,7 @@ func main() {
 }
 ```
 
+<a name="errors"></a>
 ### Errors
 `error` type is similar to `Stringer()`.
 
@@ -977,6 +1079,7 @@ func (e MyType) Error() string {
 
 Most built-in and package methods return an error value if an error occurs, otherwise they will return `nil` for error which means no error.
 
+<a name="solution-to-the-errors-exercise"></a>
 ### Solution to the Errors exercise
 
 ``` go
@@ -996,7 +1099,7 @@ func Sqrt(x float64) (float64, error) {
 		return 0, ErrNegativeSqrt(x)
 	}
 
-	// don't need else here
+	// Don't need else here
 	return 0, nil
 }
 
@@ -1010,52 +1113,59 @@ _Skipped the rest of the module._
 
 ----------------------
 
+<a name="concurrency"></a>
 ## Concurrency
 
 `go function(a, b)` runs the function in parallel and continues with the rest of the program.
 
+<a name="channels"></a>
 ### Channels
 Typed conduit. Support sending and receiving values using `<-`.
 
 Channels must be created before use. "By default, sends and receives block until the other side is ready."
 
 ``` go
-// make a channel of type int in honor of the famous hacker
-// note that we can only send/receive int via this channel
+// Make a channel of type int in honor of the famous hacker
+// Note that we can only send/receive int via this channel
 fourChan := make(chan int)
 
-// send to channel
+// Send to channel
 fourChan <- someInt
 
-// receive data from channel
+// Receive data from channel
 newInt := <- fourChan
 ```
 
+<a name="buffered-channels"></a>
 #### Buffered channels
 If channels are `buffered` then they will only block when the buffer is full. `fiveChan := make (chan int, 100)` will create a channel with a buffer size of `100`.
 
+<a name="closing-channels"></a>
 #### Closing channels
 To test if a channel is closed do `someInt, ok := <- fourChan`. If channel is not closed, ok with be `true`, otherwise `false` means channel is closed. Sending items to a closed channel will cause a panic.
 
 To close a channel do `close(fourChan)`.
 
+<a name="reading-information-from-channels"></a>
 #### Reading information from channels
 Use a `range` in a `for` to receive values from the channel in a loop until it closes like `for i:=range fourChan`. If you want to read something from an open channel and there's nothing there, the program will block(?) and wait until it gets something.
 
+<a name="select"></a>
 #### select
 `select` has some `case`s. It will block until one of the cases is ready and runs it. If multiple are ready, it will choose one at random.
 
 ``` go
 select{
 case fourChan <- x:
-	// whatever
+	// Whatever
 case c <- fiveChan:
-	// whatever
+	// Whatever
 default:
-	// this is run if no other case is ready
+	// This is run if no other case is ready
 }
 ```
 
+<a name="syncmutex"></a>
 ### sync.Mutex
 `sync.Mutex` has two methods, `lock` and `unlock`. We can also `defer` the `unlock` if we want to return something and then unlock it like the `Value` method from the example.
 
@@ -1071,6 +1181,7 @@ func (c *SafeCounter) Value(key string) int {
 
 ----------
 
+<a name="printf-from-go-by-example"></a>
 ## Printf from Go by example
 Taken from `Go by Example` and `Effective Go`.
 
@@ -1086,9 +1197,11 @@ The following are similar to the above but do not need a format string:
 * `fmt.Fprint` - `fmt.Fprint(os.Stdout, "Ronny", "Johnson", "$100%")`.
 * `fmt.Sprint`.
 
+<a name="%7E%7Eswitches%7E%7E-verbs"></a>
 ### ~~Switches~~ Verbs
 Better info here: https://golang.org/pkg/fmt/#hdr-Printing
 
+<a name="decimals"></a>
 #### Decimals
 `%d`: digits = numbers.
 
@@ -1100,6 +1213,7 @@ Better info here: https://golang.org/pkg/fmt/#hdr-Printing
 
 `%x`: hex.
 
+<a name="floats"></a>
 #### Floats
 `%f`: float.
 
@@ -1107,6 +1221,7 @@ Better info here: https://golang.org/pkg/fmt/#hdr-Printing
 
 `%e` and `%E`: scientific notation (output is a bit different from each other).
 
+<a name="value"></a>
 #### Value
 `%v` or value: catch all format. Will print based on value.
 
@@ -1114,6 +1229,7 @@ Better info here: https://golang.org/pkg/fmt/#hdr-Printing
 
 `%#v`: prints a "Go syntax representation of the value, i.e. the source code snippet that would produce that value." For example for a struct instance it will give code that creates such a struct instance and initializes it with the current values of the struct instance.
 
+<a name="strings"></a>
 #### Strings
 `%q`: "To double-quote strings as in Go source, use `%q`."
 
@@ -1121,6 +1237,7 @@ Better info here: https://golang.org/pkg/fmt/#hdr-Printing
 
 `%ns`: control width of string. Right justified, padded with spaces. To left justify use `-` like `%-ns`. If n is less than the length of the string, nothing happens.
 
+<a name="others"></a>
 #### Others
 
 `%t`: boolean.
@@ -1142,37 +1259,37 @@ func main() {
 
 	// struct type
 	struct1 := myType{10, "Ronny", -10.2}
-	fmt.Printf("%v\n", struct1)	// {10 Ronny -10.2}
+	fmt.Printf("%v\n", struct1)		// {10 Ronny -10.2}
 	fmt.Printf("%+v\n", struct1)	// {field1:10 field2:Ronny field3:-10.2}
 	fmt.Printf("%#v\n", struct1)	// main.myType{field1:10, field2:"Ronny", field3:-10.2}
-	fmt.Printf("%T\n", struct1)	// main.myType
+	fmt.Printf("%T\n", struct1)		// main.myType
 
 	// int
 	int1 := 123
-	fmt.Printf("%v\n", int1)	// 123
-	fmt.Printf("%d\n", int1)	// 123
-	fmt.Printf("|%6d|\n", int1)	// |   123|
+	fmt.Printf("%v\n", int1)		// 123
+	fmt.Printf("%d\n", int1)		// 123
+	fmt.Printf("|%6d|\n", int1)		// |   123|
 	fmt.Printf("|%-6d|\n", int1)	// |123   |
-	fmt.Printf("%T\n", int1)	// int
-	fmt.Printf("%x\n", int1)	// 7b
-	fmt.Printf("%b\n", int1)	// 1111011
-	fmt.Printf("%e\n", int1)	// %!e(int=123)
-	fmt.Printf("%c\n", int1)	// {
+	fmt.Printf("%T\n", int1)		// int
+	fmt.Printf("%x\n", int1)		// 7b
+	fmt.Printf("%b\n", int1)		// 1111011
+	fmt.Printf("%e\n", int1)		// %!e(int=123)
+	fmt.Printf("%c\n", int1)		// {
 
 	// float
 	float1 := 1234.56
-	fmt.Printf("%f\n", float1)	// 1234.560000
-	fmt.Printf("|%3.2f|\n", float1)	// |1234.56|
+	fmt.Printf("%f\n", float1)			// 1234.560000
+	fmt.Printf("|%3.2f|\n", float1)		// |1234.56|
 	fmt.Printf("|%-3.2f|\n", float1)	// |1234.56|
-	fmt.Printf("%e\n", float1)	// 1.234560e+03
-	fmt.Printf("%E\n", float1)	// 1.234560E+03
+	fmt.Printf("%e\n", float1)			// 1.234560e+03
+	fmt.Printf("%E\n", float1)			// 1.234560E+03
 
 	// string
 	string1 := "Ronny"
-	fmt.Printf("%s\n", string1)	// Ronny
-	fmt.Printf("|%10s|\n", string1)	// |     Ronny|
+	fmt.Printf("%s\n", string1)			// Ronny
+	fmt.Printf("|%10s|\n", string1)		// |     Ronny|
 	fmt.Printf("|%-10s|\n", string1)	// |Ronny     |
-	fmt.Printf("%T\n", string1)	// string
+	fmt.Printf("%T\n", string1)			// string
 
 	// boolean
 	boolean1 := true
@@ -1181,8 +1298,9 @@ func main() {
 
 }
 ```
-<!--  -->
 
+
+<a name="maps"></a>
 ## Maps
 Go map == hash table. Fast lookup/add/delete. Each key is associated with a value (Python dict?).
 
@@ -1202,9 +1320,15 @@ We can initialize a map using data.
 
 We can also initialize an empty map instead of the `make` (`mapName = map[KeyType]ValueType{}`).
 
-<!--  -->
+-----
 
-## Errors
+<!-- Other tips and tricks -->
+
+<a name="other-tips-and-tricks"></a>
+## Other tips and tricks
+
+<a name="errors-1"></a>
+### Errors
 To do a custom error, import the `errors` package and use it like this.
 
 ``` go
@@ -1213,15 +1337,14 @@ package main
 import "errors"
 
 func randomFunction() (return1 interface{}, err error) {
-	// whatever
+	// Whatever
 	var result interface{}
 	return result, errors.New("Custom error string")
 }
 ```
 
-<!--  -->
-
-## Hexdump
+<a name="hexdump"></a>
+### Hexdump
 `encoding/hex` package is your friend: https://golang.org/pkg/encoding/hex/.
 
 `encoding/hex.Dump` - `func Dump(data []byte) string`: Returns a string containing a normal hex dump (e.g. offset - hex - printable characters). Internally it calls the `Dumper` function - [source](https://golang.org/src/encoding/hex/hex.go?s=2676:2705#L93).
@@ -1230,9 +1353,8 @@ func randomFunction() (return1 interface{}, err error) {
 
 Seems like there is no way to remove the offset. Either I can modify the [source](https://golang.org/src/encoding/hex/hex.go?s=3321:3375#L133) or write my own. There's also this [MIT licensed package](https://github.com/glycerine/golang-hex-dumper) that looks easier to modify. In both cases, the modification looks pretty straightforward.
 
-<!--  -->
-
-## Named imports
+<a name="named-imports"></a>
+### Named imports
 We can do named imports like Python.
 
 ``` go
@@ -1247,9 +1369,8 @@ func main() {
 }
 ```
 
-<!--  -->
-
-## Importing a package into the current namespace
+<a name="importing-a-package-into-the-current-namespace"></a>
+### Importing a package into the current namespace
 Using `import . "packagename"` means we can omit the package name. In the example below we can omit `fmt`.
 
 No clue how name collisions are handled (e.g. two packages imported into the namespace having the same function name).
@@ -1266,7 +1387,8 @@ func main() {
 }
 ```
 
-## Avoiding the damn unused warnings
+<a name="avoiding-the-damn-unused-warnings"></a>
+### Avoiding the damn unused warnings
 Yeah it's nice to get "better" code (although that is debatable but I am not a dev so I am biased), but it's a pain when debugging/testing. Send them to `_`.
 
 ``` go
@@ -1282,9 +1404,8 @@ func main() {
 }
 ```
 
-<!--  -->
-
-## Unix Timestamp to String
+<a name="unix-timestamp-to-string"></a>
+### Unix Timestamp to String
 
 ``` go
 import "strconv"
@@ -1292,23 +1413,23 @@ import "strconv"
 strconv.FormatInt(time.Now().Unix(), 10)
 ```
 
-<!--  -->
-## Spawn a new thread (goroutine) on the spot
+<a name="spawn-a-new-thread-goroutine-on-the-spot"></a>
+### Spawn a new thread (goroutine) on the spot
 
 ``` go
 func main() {
 
-	// whatever
+	// Whatever
 
 	go func() {
-		// whatever happens in this goroutine
+		// Whatever happens in this goroutine
 	}()
 
 }
 ```
 
-<!--  -->
-## Write to a file or io.buffer from goroutines - DON'T
+<a name="write-to-a-file-or-iobuffer-from-goroutines---dont"></a>
+### Write to a file or io.buffer from goroutines - DON'T
 Instead use a buffered channel (will make it async). Make a channel before goroutines, send stuff to the channel from goroutines. Make another goroutine that creates a file, does `defer fileHandle.Close()` (which makes closes the file after this goroutine ends) and then has an infinite loop where it reads from the channel and writes to a file.
 
 ``` go
@@ -1344,4 +1465,78 @@ go func() {
 // ...
 ```
 
-<!--  -->
+-----
+
+<a name="stuff-learned-from-cryptopals"></a>
+## Stuff learned from Cryptopals
+I learned a bunch after I returned to go after a year and tried to do the Cryptopals challenge.
+
+<a name="long-string-on-multiple-lines"></a>
+### Long string on multiple lines
+
+``` go
+const Input = "49276d206b696c6c696e6720796f7572" +
+              "20627261696e206c696b65206120706f" +
+              "69736f6e6f7573206d757368726f6f6d"
+```
+
+<a name=""></a>
+<a name="compare-two-bytes-with-bytesequal"></a>
+### Compare two []bytes with bytes.equal
+Works with slices too.
+
+Use `bytes.equal`:
+
+``` go
+package main
+
+import (
+	"bytes"
+	"fmt"
+)
+
+func main() {
+
+	bytes1 := []byte("Hello")
+	bytes2 := []byte("Hello")
+	bytes3 := []byte("Bye")
+
+	if eval := bytes.Equal(bytes1, bytes2); eval {
+		fmt.Println("1 and 2 are equal")
+	} else {
+		fmt.Println("1 and 2 are different")
+	}
+
+	if eval := bytes.Equal(bytes2, bytes3); eval {
+		fmt.Println("2 and 3 are equal")
+	} else {
+		fmt.Println("2 and 3 are different")
+	}
+}
+```
+
+<a name="sorting-a-arrayslice-of-struct-by-field"></a>
+### Sorting a array/slice of struct by field
+Code from [https://stackoverflow.com/a/28999886](https://stackoverflow.com/a/28999886).
+
+Arrays need to be passed through a slice but the underlying array will also be sorted.
+
+``` go
+type MyObj struct {
+    Name string
+    Score int
+    Code []byte
+}
+
+myObjects := make([]MyObj, 10)
+
+// ...
+
+// Sort by Score
+// We are passing a slice before sorting but underlying array will be sorted
+sort.Slice(myObjects[:], func(i, j int) bool {
+    return myObjects[i].Score < myObjects[j].Score
+})
+```
+
+

@@ -9,6 +9,7 @@ categories:
 - reverse engineering
 tags:
 - python
+- function hooking
 ---
 
 In [part one]({{< ref "2017-11-09-winappdbg-1-basics.markdown" >}} "WinAppDbg - Part 1 - Basics") we talked about the basics of WinAppDbg. In this part we are going to learn a few new things:
@@ -21,7 +22,7 @@ In [part one]({{< ref "2017-11-09-winappdbg-1-basics.markdown" >}} "WinAppDbg - 
 - **Function Hooking**: It's very easy in WinAppDbg and we will learn how to do it a couple of different ways.
     + We will hook pre-TLS encryption data for Internet Explorer and Firefox to hack the Gibson.
 
-Copy this directory https://github.com/parsiya/Parsia-Clone/tree/master/code/winappdbg somewhere and let's go.
+Copy this directory [https://github.com/parsiya/Parsia-Clone/tree/master/code/winappdbg][winappdbg-clone] to your VM and let's go.
 
 [winappdbg-clone]: https://github.com/parsiya/Parsia-Clone/tree/master/code/winappdbg "WinAppDbg code in Parsia-Clone"
 [winapputil-github]: https://github.com/parsiya/WinAppUtil "WinAppDbg repository on Github"
@@ -1016,10 +1017,10 @@ If you have feedback, you know where to find me. And check out the rest of the [
 [eventhandler-source]: https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/event.py
 [PEB-msdn]: https://msdn.microsoft.com/en-us/library/windows/desktop/aa813706(v=vs.85).aspx "Process Environment Block structure - MSDN"
 [PEB-LDR-msdn]: https://msdn.microsoft.com/en-us/library/windows/desktop/aa813708(v=vs.85).aspx "PEB_LDR_DATA structure - MSDN"
-[GetModuleInformation-blog]: https://blogs.msdn.microsoft.com/oldnewthing/20150716-00/?p=45131 "Why do I get ERROR_INVALID_HANDLE from GetModuleFileNameEx when I know the process handle is valid? - Old New Thing"
+[GetModuleInformation-blog]: https://blogs.msdn.microsoft.com/oldnewthing/20150716-00/?p=45131 "Why do I get ERROR_INVALID_HANDLE from GetModuleFileNameEx when I know the process handle is valid? - The Old New Thing"
 [module-py]: https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/module.py#L75
 [GetModuleInformation-msdn]: https://msdn.microsoft.com/en-us/library/ms683201(v=VS.85).aspx "GetModuleInformation - MSDN"
-[old-new-thing]: https://blogs.msdn.microsoft.com/oldnewthing/ "Old New Thing - Raymond Chen's MSDN blog"
+[old-new-thing]: https://blogs.msdn.microsoft.com/oldnewthing/ "The Old New Thing - Raymond Chen's MSDN blog"
 [get-size-source]: https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/module.py#L260
 [GetModuleInformation-winappdbg]: https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/win32/psapi.py#L330
 [GetModuleFileNameEx-msdn]: https://msdn.microsoft.com/en-us/library/windows/desktop/ms683198(v=vs.85).aspx "GetModuleFileNameEx - MSDN"

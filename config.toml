@@ -80,44 +80,44 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 # enable with "sidebar_menu_enabled = true" in [oarams]
 # header text is "sidebar_menu_header" in [params]
 [[menu.sidebar]]
-  Name = "Thick Client Proxying "
+  Name = "Thick Client Proxying"
   URL = "/categories/thick-client-proxying/"
-  weight = -1
+  weight = 5
+
+[[menu.sidebar]]
+  Name = "WinAppDbg"
+  URL = "/categories/winappdbg/"
+  weight = 10
 
 [[menu.sidebar]]
   Name = "Burp"
   URL = "/categories/burp/"
-  weight = 0
-
-[[menu.sidebar]]
-  Name = "Hipchat"
-  URL = "/categories/hipchat/"
-  weight = 1
-
-[[menu.sidebar]]
-  Name = "Learning Golang"
-  URL = "/categories/go/"
-  weight = 1.5
+  weight = 20
 
 [[menu.sidebar]]
   Name = "Reverse Engineering"
   URL = "/categories/reverse-engineering/"
-  weight = 2
+  weight = 15
 
 [[menu.sidebar]]
   Name = "Crypto"
   URL = "/categories/crypto/"
-  weight = 3
+  weight = 25
 
-[[menu.sidebar]]
-  Name = "All Posts"
-  URL = "/archive/"
-  weight = 4
+# [[menu.sidebar]]
+#   Name = "Hipchat"
+#   URL = "/categories/hipchat/"
+#   weight = 10
 
-[[menu.sidebar]]
-  Name = "Migration to Hugo"
-  URL = "/categories/migration-to-hugo/"
-  weight = 5
+# [[menu.sidebar]]
+#   Name = "Learning Golang"
+#   URL = "/categories/go/"
+#   weight = 15
+
+# [[menu.sidebar]]
+#   Name = "Migration to Hugo"
+#   URL = "/categories/migration-to-hugo/"
+#   weight = 30
 
 [params]
 
