@@ -78,6 +78,7 @@ These are my notes when learning go from the [Tour of Go](https://tour.golang.or
 	- [Long string on multiple lines](#long-string-on-multiple-lines)
 	- [Compare two \[\]bytes with bytes.equal](#compare-two-bytes-with-bytesequal)
 	- [Sorting a array/slice of struct by field](#sorting-a-arrayslice-of-struct-by-field)
+	- [Append two slices](#append-two-slices)
 
 <!-- /MarkdownTOC -->
 
@@ -1469,7 +1470,7 @@ go func() {
 
 <a name="stuff-learned-from-cryptopals"></a>
 ## Stuff learned from Cryptopals
-I learned a bunch after I returned to go after a year and tried to do the Cryptopals challenge.
+I learned a bunch after I returned to go after a while and tried to do the Cryptopals challenge.
 
 <a name="long-string-on-multiple-lines"></a>
 ### Long string on multiple lines
@@ -1539,4 +1540,68 @@ sort.Slice(myObjects[:], func(i, j int) bool {
 })
 ```
 
+<a name="append-two-slices"></a>
+### Append two slices
+With [append](https://golang.org/pkg/builtin/#append) you can append a slice and a primitive of that slice. For example to append a []byte with a byte you can do:
 
+``` go
+package main
+
+import "fmt"
+
+func main() {
+	bytes := []byte("Some string")
+	byte1 := byte(0x31)
+
+	bytes = append(bytes, byte1)
+	
+	fmt.Println(string(bytes))
+}
+
+// Some string1
+```
+
+Now if we want to append two slices (e.g. two []byte) we need to do a bit of magic because the second argument to append needs to be a `byte`:
+
+``` go
+package main
+
+import "fmt"
+
+func main() {
+	bytes1 := []byte("Some string")
+	bytes2 := []byte(" Another string")
+
+	bytes1 = append(bytes1, bytes2)
+	
+	fmt.Println(string(bytes1))
+}
+```
+
+We will get this error:
+
+- cannot use bytes2 (type []byte) as type byte in append
+
+What we can do is pass the second slice with `...`. I am not quite sure how this works but it seems like we are passing the slice as a collection of all of its members
+
+
+``` go
+package main
+
+import "fmt"
+
+func main() {
+	bytes1 := []byte("Some string")
+	bytes2 := []byte(" Another string")
+
+	bytes1 = append(bytes1, bytes2...)
+	
+	fmt.Println(string(bytes1))
+}
+
+// Some string Another string
+```
+
+According to the documentation "As a special case, it is legal to append a string to a byte slice, like this:""
+
+- `slice = append([]byte("hello "), "world"...)"`
