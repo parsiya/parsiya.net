@@ -1,0 +1,42 @@
+{{ partial "header.html" . }}
+
+<div id="main">
+ <div id="content">
+  <div class="blog-index">
+    {{ $paginator := .Paginate (where .Data.Pages "Type" "post") }}
+    {{ range $paginator.Pages }}
+    <article>
+
+        {{ .Scratch.Set "isHome" true }}
+        {{ partial "post_header.html" . }}
+
+        {{ if eq .Site.Params.truncate false }}
+        {{ .Content }}
+        {{ else if .Description }}
+        {{ .Description }}
+          <footer>
+            <a href="{{ .Permalink }}" rel="full-article">{{ with .Site.Params.continueReadingText }}{{ . }}{{ else }}Read On{{ end }} &rarr;</a>
+          </footer>
+        {{ else }}
+          <p>{{ .Summary }}</p>
+
+          {{ if .Truncated }}
+              <footer>
+                  <a href="{{ .Permalink }}" rel="full-article">{{ with .Site.Params.continueReadingText }}{{ . }}{{ else }}Read On{{ end }} &rarr;</a>
+              </footer>
+          {{ end }}
+
+        {{ end }}
+
+    </article>
+    {{ end }}
+    <!-- {{ template "_internal/pagination.html" . }} default pagination -->
+    {{ partial "pagination.html" . }}  <!-- use custom pagination -->
+
+  </div>
+
+  {{ partial "sidebar.html" . }}    <!-- sidebar -->
+ </div>
+</div>
+
+{{ partial "footer.html" . }}   <!-- footer -->

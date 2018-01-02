@@ -11,9 +11,9 @@ I am not quite sure about these licenses (I am not a developer if that is not ob
 Except where otherwise noted, **my non-code content** on this website is licensed under a <a rel="license"  target="_blank" href="https://creativecommons.org/licenses/by-nc/4.0/">Creative Commons BY-NC 4.0</a> (Creative Commons Attribution-Non Commercial 4.0).
 
 ### Code License
-Except where otherwise noted, **my code** on this website is licensed under the MIT:
+Except where otherwise noted, **my code** on this website is licensed under MIT:
 
->Copyright (c) 2017 Parsia Hakimian
+>Copyright (c) 2018 Parsia Hakimian
 
 > Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

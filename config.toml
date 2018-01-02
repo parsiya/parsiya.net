@@ -48,33 +48,38 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 
 [[menu.main]]
   Name = "All Posts"
-  URL = "/archive/"
+  URL = "/"
   weight = 1
+
+[[menu.main]]
+  Name = "About Me!"
+  URL = "/about/"
+  weight = 2
 
 [[menu.main]]
   Name = "Cheat Sheet"
   URL = "/cheatsheet/"
-  weight = 2
+  weight = 5
 
 [[menu.main]]
   Name = "My Clone"
   URL = "https://github.com/parsiya/Parsia-Clone"
-  weight = 3
+  weight = 10
 
 [[menu.main]]
-  Name = "This theme on Github"
+  Name = "This theme"
   URL = "https://github.com/parsiya/hugo-octopress"
-  weight = 4
+  weight = 15
 
 [[menu.main]]
   Name = "AWSome.pw"
   URL = "http://awsome.pw"
-  weight = 5
+  weight = 20
 
 [[menu.main]]
   Name = "The other guy from Wham!"
   URL = "https://www.google.com/search?q=andrew+ridgeley"
-  weight = 6
+  weight = 25
 
 # sidebar menus
 # enable with "sidebar_menu_enabled = true" in [oarams]
@@ -87,6 +92,11 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 [[menu.sidebar]]
   Name = "WinAppDbg"
   URL = "/categories/winappdbg/"
+  weight = 10
+
+[[menu.sidebar]]
+  Name = "Go/Golang"
+  URL = "/categories/go/"
   weight = 10
 
 [[menu.sidebar]]
@@ -130,7 +140,7 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
   </br></br>
   I am interested in application security, reverse engineering, Python, C and computer games (not necessarily in that order).
   </br></br>
-  You can contact me via email parsia.h[att]google's email or any method below.
+  If you want to know more, click on [About Me!](/about/).
   """
 
   sidebarMenuEnabled = true
@@ -146,7 +156,7 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
   author = "Parsia"
 
   # appears in the site header under website title
-  subtitle = "Because no one wants to be the other guy from Wham!"
+  subtitle = "The knowledge of anything, since all things have causes, is not acquired or complete unless it is known by its causes. - Avicenna"
 
   # used in the search engine
   searchEngineURL = "https://www.google.com/search"

@@ -18,11 +18,12 @@ Often I need to do something that I have done many times in the past but I have 
 - [OpenSSL](#openssl)
   - [Dumping the TLS certificate using OpenSSL](#dumping-the-tls-certificate-using-openssl)
   - [TLS connection with a specific ciphersuite using OpenSSL](#tls-connection-with-a-specific-ciphersuite-using-openssl)
-- [Windows](#windows)
-  - [Shortcut to IE \(or WinINET\) Proxy Settings](#shortcut-to-ie-or-wininet-proxy-settings)
 - [Amazon S3](#amazon-s3)
   - [Syncing a folder with an Amazon S3 bucket using s3cmd](#syncing-a-folder-with-an-amazon-s3-bucket-using-s3cmd)
   - [Changing the mime-type of CSS file after upload to fix CSS not displaying correctly](#changing-the-mime-type-of-css-file-after-upload-to-fix-css-not-displaying-correctly)
+- [Windows](#windows)
+  - [Shortcut to IE \(or WinINET\) Proxy Settings](#shortcut-to-ie-or-wininet-proxy-settings)
+  - [Fix "MarGo build failed" for GoSublime on Windows](#fix-margo-build-failed-for-gosublime-on-windows)
 - [Powershell](#powershell)
   - [List all files \(including hidden\)](#list-all-files-including-hidden)
   - [Diff in Powershell](#diff-in-powershell)
@@ -72,16 +73,6 @@ Insert xkcd, hur dur!
 
 ------
 
-<a name="windows"></a>
-## Windows
-
-<a name="shortcut-to-ie-or-wininet-proxy-settings"></a>
-### Shortcut to IE (or WinINET) Proxy Settings
-
-`control inetcpl.cpl,,4`
-
-----------
-
 <a name="amazon-s3"></a>
 ## Amazon S3
 
@@ -112,6 +103,46 @@ rd /q /s public
 {{< /codecaption >}}
 
 ------
+
+<a name="windows"></a>
+## Windows
+
+<a name="shortcut-to-ie-or-wininet-proxy-settings"></a>
+### Shortcut to IE (or WinINET) Proxy Settings
+
+`control inetcpl.cpl,,4`
+
+<a name="fix-margo-build-failed-for-gosublime-on-windows"></a>
+### Fix "MarGo build failed" for GoSublime on Windows
+GoSublime's executable has Go version in it. In most cases, it cannot grab the version on Windows machine and as a result the build will fail like this:
+
+```
+MarGo: MarGo build failed
+cmd: `['C:\\Go\\bin\\go.exe', 'build', '-tags', '', '-v', '-o', 
+       'gosublime.margo_r17.12.17-1_go?.exe', 'gosublime/cmd/margo']`
+```
+
+Where `?` is the go version that is unknown.
+
+Edit this file:
+
+- `%AppData%\Sublime Text 3\Packages\GoSublime\gosubl\sh.py`
+
+Find these lines:
+
+``` python
+cmd = ShellCommand('go run sh-bootstrap.go')
+cmd.wd = gs.dist_path('gosubl')
+cr = cmd.run()
+raw_ver = ''
+ver = ''     # Edit this to '1'
+```
+
+Edit `ver` to whatever, I usually do `1`. Restart Sublime Text and it should work.
+
+**Unforunately this needs to be done for every new GoSublime version.**
+
+----------
 
 <a name="powershell"></a>
 ## Powershell
@@ -282,7 +313,7 @@ rmdir the_dir_to_delete
 ## Print Envelopes Using the Brother Printer and LibreOffice
 Before printing, get to printer physically and use the following instructions:
 
-* http://support.brother.com/g/b/faqend.aspx?c=gb&lang=en&prod=hl2170w_all&faqid=faq00000063_025
+- http://support.brother.com/g/b/faqend.aspx?c=gb&lang=en&prod=hl2170w_all&faqid=faq00000063_025
 
 1. Open the back.
 2. Press the two green handles down.
