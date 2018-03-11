@@ -12,6 +12,10 @@ tags:
 toc: false
 ---
 
+**Note: Use my notes at Hacking with Go instead:**
+
+- [https://github.com/parsiya/Hacking-with-G0](https://github.com/parsiya/Hacking-with-Go)
+
 These are my notes when learning go from the [Tour of Go](https://tour.golang.org/) and some other sources. A lot of copy/pasted from them and I have used double-quotes to indicate those are not written by me to the best of my ability. Still this is not something original and is mostly here as a quick lookup reference while learning Go. I will update this as I learn more.
 
 <!-- MarkdownTOC -->

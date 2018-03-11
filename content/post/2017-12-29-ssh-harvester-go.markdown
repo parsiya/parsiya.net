@@ -57,7 +57,7 @@ Go to `Parsing SSH certificates` to skip the fodder.
         - [IsHostAuthority callback](#ishostauthority-callback)
     - [IsRevoked](#isrevoked)
         - [IsRevoked callback](#isrevoked-callback)
-            - [Question!!!!](#question)
+            - [~~Question!!!!~~ Solved](#%7E%7Equestion%7E%7E-solved)
     - [HostKeyFallback](#hostkeyfallback)
     - [Step 3: Create ssh.ClientConfig](#step-3-create-sshclientconfig)
         - [Banner callback](#banner-callback)
@@ -519,11 +519,13 @@ Inside `IsRevoked` we have access to the SSH certificate. Here we just assign it
 
 **If you want to verify the certificate, this is the place**.
 
-<a name="question"></a>
-##### Question!!!!
-Help me if you can. I don't like returning unnamed functions like this. But unless I create global variables, I need to be able to access `s *SSHServer` inside `certCallback` to populate it. The function type is strict so I cannot add arguments.
+<a name="%7E%7Equestion%7E%7E-solved"></a>
+##### ~~Question!!!!~~ Solved
+~~Help me if you can. I don't like returning unnamed functions like this. But unless I create global variables, I need to be able to access `s *SSHServer` inside `certCallback` to populate it. The function type is strict so I cannot add arguments.~~
 
-I think defining the inside function as a method will work. Am I write? Wrong? Please let me know if you know the answer.
+~~I think defining the inside function as a method will work. Am I write? Wrong? Please let me know if you know the answer.~~
+
+Method is the way to go or just use anonymous functions. I don't like them but there's nothing wrong with using one.
 
 <a name="hostkeyfallback"></a>
 ### HostKeyFallback

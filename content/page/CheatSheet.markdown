@@ -23,21 +23,29 @@ Often I need to do something that I have done many times in the past but I have 
   - [Changing the mime-type of CSS file after upload to fix CSS not displaying correctly](#changing-the-mime-type-of-css-file-after-upload-to-fix-css-not-displaying-correctly)
 - [Windows](#windows)
   - [Shortcut to IE \(or WinINET\) Proxy Settings](#shortcut-to-ie-or-wininet-proxy-settings)
-  - [Fix "MarGo build failed" for GoSublime on Windows](#fix-margo-build-failed-for-gosublime-on-windows)
+  - [VHD File is Open in System \(and cannot be Deleted\)](#vhd-file-is-open-in-system-and-cannot-be-deleted)
+  - [Base64 encode/decode without PowerShell](#base64-encodedecode-without-powershell)
+  - [Where.exe](#whereexe)
+  - [Delete file or directory with a path or name longer than the Windows limit](#delete-file-or-directory-with-a-path-or-name-longer-than-the-windows-limit)
+- [Install "Bash for Windows" without Windows Store](#install-bash-for-windows-without-windows-store)
 - [Powershell](#powershell)
   - [List all files \(including hidden\)](#list-all-files-including-hidden)
   - [Diff in Powershell](#diff-in-powershell)
   - [Pseudo-grep in Powershell](#pseudo-grep-in-powershell)
   - [grep in command outputs](#grep-in-command-outputs)
   - [Get-Acl and icacls.exe](#get-acl-and-icaclsexe)
+  - [time in PowerShell](#time-in-powershell)
 - [Some Git stuff because I keep forgetting them](#some-git-stuff-because-i-keep-forgetting-them)
   - [Create new branch and merge](#create-new-branch-and-merge)
   - [Only clone a certain branch](#only-clone-a-certain-branch)
   - [Undo remote git history after push](#undo-remote-git-history-after-push)
   - [Update local fork from original repo](#update-local-fork-from-original-repo)
   - [Use Notepad++ as git editor on Windows via Cygwin](#use-notepad-as-git-editor-on-windows-via-cygwin)
+  - [Tab size 4 in Github web interface](#tab-size-4-in-github-web-interface)
+- [Sublime Text 3](#sublime-text-3)
+  - [Fix "MarGo build failed" for GoSublime on Windows](#fix-margo-build-failed-for-gosublime-on-windows)
+  - [Open the same file in a new tab](#open-the-same-file-in-a-new-tab)
 - [Download Youtube videos with substitles](#download-youtube-videos-with-substitles)
-- [Delete file or directory with a path or name over the Windows limit](#delete-file-or-directory-with-a-path-or-name-over-the-windows-limit)
 - [Print Envelopes Using the Brother Printer and LibreOffice](#print-envelopes-using-the-brother-printer-and-libreoffice)
 
 <!-- /MarkdownTOC -->
@@ -112,35 +120,41 @@ rd /q /s public
 
 `control inetcpl.cpl,,4`
 
-<a name="fix-margo-build-failed-for-gosublime-on-windows"></a>
-### Fix "MarGo build failed" for GoSublime on Windows
-GoSublime's executable has Go version in it. In most cases, it cannot grab the version on Windows machine and as a result the build will fail like this:
+<a name="vhd-file-is-open-in-system-and-cannot-be-deleted"></a>
+### VHD File is Open in System (and cannot be Deleted)
+You clicked on a VHD file and now cannot delete it. Use this PowerShell command but the path to VHD should be full.
+
+`Dismount-DiskImage -ImagePath 'C:\full\path\to\whatever.vhd'`
+
+<a name="base64-encodedecode-without-powershell"></a>
+### Base64 encode/decode without PowerShell
+Use `certutil` for bootleg base64 encoding/decoding:
+
+- `certutil -encode whatever.exe whatever.base64`
+- `certutil -decode whetever.base64 whatever.exe`
+
+<a name="whereexe"></a>
+### Where.exe
+`where.exe` searches for files. Without any locations, it searches in the local directory and then in PATH.
+
+- `/R` searches recursively in a specific location.
+- `/T` displays file size.
+- `/?` for help.
+
+<a name="delete-file-or-directory-with-a-path-or-name-longer-than-the-windows-limit"></a>
+### Delete file or directory with a path or name longer than the Windows limit
+Answer from [superuser.com](http://superuser.com/a/467814).
 
 ```
-MarGo: MarGo build failed
-cmd: `['C:\\Go\\bin\\go.exe', 'build', '-tags', '', '-v', '-o', 
-       'gosublime.margo_r17.12.17-1_go?.exe', 'gosublime/cmd/margo']`
+mkdir empty_dir
+robocopy empty_dir the_dir_to_delete /s /mir
+rmdir empty_dir
+rmdir the_dir_to_delete
 ```
 
-Where `?` is the go version that is unknown.
-
-Edit this file:
-
-- `%AppData%\Sublime Text 3\Packages\GoSublime\gosubl\sh.py`
-
-Find these lines:
-
-``` python
-cmd = ShellCommand('go run sh-bootstrap.go')
-cmd.wd = gs.dist_path('gosubl')
-cr = cmd.run()
-raw_ver = ''
-ver = ''     # Edit this to '1'
-```
-
-Edit `ver` to whatever, I usually do `1`. Restart Sublime Text and it should work.
-
-**Unforunately this needs to be done for every new GoSublime version.**
+<a name="install-bash-for-windows-without-windows-store"></a>
+## Install "Bash for Windows" without Windows Store
+`lxrun /install`.
 
 ----------
 
@@ -195,6 +209,10 @@ https://technet.microsoft.com/en-us/library/Cc732459.aspx
 `Get-Acl -path c:\windows\whatever.exe | Format-List`
 
 `icacls.exe c:\windows\whatever.exe`
+
+<a name="time-in-powershell"></a>
+### time in PowerShell
+`Measure-Command {python whatever.py}`
 
 -----------
 
@@ -275,6 +293,52 @@ Run the following command in Cygwin to set it as global git editor:
 $  git config --global core.editor npp
 ```
 
+<a name="tab-size-4-in-github-web-interface"></a>
+### Tab size 4 in Github web interface
+Yes I know Github != Git but cba to create a different category.
+
+Add `?ts=4` to end of file URL.
+
+-----------
+
+<a name="sublime-text-3"></a>
+## Sublime Text 3
+Tips for using the Sublime Text 3 editor.
+
+<a name="fix-margo-build-failed-for-gosublime-on-windows"></a>
+### Fix "MarGo build failed" for GoSublime on Windows
+GoSublime's executable has Go version in it. In most cases, it cannot grab the version on Windows machine and as a result the build will fail like this:
+
+```
+MarGo: MarGo build failed
+cmd: `['C:\\Go\\bin\\go.exe', 'build', '-tags', '', '-v', '-o', 
+       'gosublime.margo_r17.12.17-1_go?.exe', 'gosublime/cmd/margo']`
+```
+
+Where `?` is the go version that is unknown.
+
+Edit this file:
+
+- `%AppData%\Sublime Text 3\Packages\GoSublime\gosubl\sh.py`
+
+Find these lines:
+
+``` python
+cmd = ShellCommand('go run sh-bootstrap.go')
+cmd.wd = gs.dist_path('gosubl')
+cr = cmd.run()
+raw_ver = ''
+ver = ''     # Edit this to '1'
+```
+
+Edit `ver` to whatever, I usually do `1`. Restart Sublime Text and it should work.
+
+**Unfortunately this needs to be done for every new GoSublime version.**
+
+<a name="open-the-same-file-in-a-new-tab"></a>
+### Open the same file in a new tab
+`File > New view into File`. Then drag the pane to a second screen/location.
+
 -----------
 
 <a name="download-youtube-videos-with-substitles"></a>
@@ -292,20 +356,6 @@ I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The 
 
 `Youtube-dl` can be downloaded using `pip`. For example on Windows:\\
 `python -m pip install youtube-dl`.
-
-----------
-
-<a name="delete-file-or-directory-with-a-path-or-name-over-the-windows-limit"></a>
-## Delete file or directory with a path or name over the Windows limit
-
-Answer from [superuser.com](http://superuser.com/a/467814).
-
-``` posh
-mkdir empty_dir
-robocopy empty_dir the_dir_to_delete /s /mir
-rmdir empty_dir
-rmdir the_dir_to_delete
-```
 
 ----------
 

@@ -17,7 +17,7 @@ A couple of years ago I looked at Razer Comms. I found a bunch of stuff that I n
 
 I did not look very hard but Razer Comms was essentially a webapp running via the [Chromium Embedded Framework](https://bitbucket.org/chromiumembedded/cef). There were no checks on channel authorizations. You could read every channel including passworded ones.
 
-You can my notes at https://github.com/parsiya/Random-Notes/tree/master/razercomms.
+You can my notes at https://github.com/parsiya/Parsia-Clone/tree/master/clone/research/razer-comms.
 
 <!--more-->
 
