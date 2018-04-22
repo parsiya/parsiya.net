@@ -14,30 +14,22 @@ paginate = 6
 # frontmatter will be generated in yaml format
 metadataformat = "yaml"
 
-# use internal highlighter instead of Chroma
-pygmentsUseClassic=true
-
-pygmentsuseclasses = false
-pygmentsstyle = "solarized_dark"
-
-# you need to install Solarized from https://github.com/john2x/solarized-pygment.git
-# Octopress blog used Solarized_dark
-# options are solarized_dark (octopress), solarized_dark256 and default (solarized light)
+# code highlight options
+pygmentsuseclasses = true
 
 # will make the highlight shortcode and ``` do the same thing - otherwise they are treated differently and we do not want that
 pygmentscodefences = true
 
 disqusShortname = "parsiya"
 
-# can pass in pygments options here, it can also be added in the highlight shortcode
-# pygmentsoptions = "linenos=true"
+# disable RSS on everything other than home
+[outputs]
+  section = ["HTML"]
+  taxonomy = ["HTML"]
+  taxonomyTerm = ["HTML"]
 
 [permalinks]
-post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the old ones
-
-[indexes]
-  tag = "tags"
-  category = "categories"
+  post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the old ones
 
 # menu
 # links will open in a new window except links to "/" - links are added to navigation in hugo-octopress/layouts/partials/navigation.html
@@ -46,10 +38,10 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
 #   URL = "/"
 #   weight = 0
 
-[[menu.main]]
-  Name = "All Posts"
-  URL = "/"
-  weight = 1
+# [[menu.main]]
+#   Name = "All Posts"
+#   URL = "/"
+#   weight = 1
 
 [[menu.main]]
   Name = "About Me!"
@@ -90,55 +82,40 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
   weight = 5
 
 [[menu.sidebar]]
-  Name = "WinAppDbg"
-  URL = "/categories/winappdbg/"
-  weight = 10
-
-[[menu.sidebar]]
   Name = "Go/Golang"
   URL = "/categories/go/"
   weight = 10
 
 [[menu.sidebar]]
-  Name = "Burp"
-  URL = "/categories/burp/"
+  Name = "Blockchain/DLT"
+  URL = "/categories/blockchain/"
+  weight = 15
+
+[[menu.sidebar]]
+  Name = "WinAppDbg"
+  URL = "/categories/winappdbg/"
   weight = 20
+
+[[menu.sidebar]]
+  Name = "Crypto(graphy)"
+  URL = "/categories/crypto/"
+  weight = 30
 
 [[menu.sidebar]]
   Name = "Reverse Engineering"
   URL = "/categories/reverse-engineering/"
-  weight = 15
-
-[[menu.sidebar]]
-  Name = "Crypto"
-  URL = "/categories/crypto/"
   weight = 25
-
-# [[menu.sidebar]]
-#   Name = "Hipchat"
-#   URL = "/categories/hipchat/"
-#   weight = 10
-
-# [[menu.sidebar]]
-#   Name = "Learning Golang"
-#   URL = "/categories/go/"
-#   weight = 15
-
-# [[menu.sidebar]]
-#   Name = "Migration to Hugo"
-#   URL = "/categories/migration-to-hugo/"
-#   weight = 30
 
 [params]
 
   navigationNewWindow = true
-  sidebarRecentLimit = 5
+  sidebarRecentLimit = 0
 
   sidebarHeader = "Who am I?"
 
   sidebarText = """I am Parsia Hakimian. Senior Security Consultant at [Synopsys](https://www.synopsys.com/software-integrity.html).
   </br></br>
-  This is my personal site where I document my interestes such as application security, reverse engineering, Go, cryptography and computer games.
+  This is my personal site where I document my interests such as application security, reverse engineering, Go, cryptography and computer games.
   </br></br>
   If you want to know more, click on [About Me!](/about/).
   """
@@ -183,7 +160,7 @@ post = "/blog/:year-:month-:day-:title/" # change the post URL to look like the 
   tableOfContents = false
 
   # generate taxonomy list and stuff
-  # generateTaxonomyList = true
+  generateTaxonomyList = true
 
 # blackfriday is Hugo's markdown engine. Options are at: https://gohugo.io/overview/configuration/ (scroll down to "Configure Blackfriday rendering")
 [blackfriday]

@@ -52,27 +52,33 @@ Often I need to do something that I have done many times in the past but I have 
 
 ------
 <a name="tar"></a>
+<a id="tar"></a>
 ## Tar
 Insert xkcd, hur dur!
 
 <a name="compressing-a-directory-using-tar"></a>
+<a id="compressing-a-directory-using-tar"></a>
 ### Compressing a directory using tar
 `tar -zcvf target_tar.tar.gz directory_to_be_compressed`
 
 <a name="decompressing-a-targz-file"></a>
+<a id="decompressing-a-targz-file"></a>
 ### Decompressing a tar.gz file
 `tar -zxvf target_tar.tar.gz path/to/decompress/`
 
 ------
 
 <a name="openssl"></a>
+<a id="openssl"></a>
 ## OpenSSL
 
 <a name="dumping-the-tls-certificate-using-openssl"></a>
+<a id="dumping-the-tls-certificate-using-openssl"></a>
 ### Dumping the TLS certificate using OpenSSL
 `echo | openssl s_client -connect HOST:PORT 2>/dev/null | openssl x509 -text -noout`
 
 <a name="tls-connection-with-a-specific-ciphersuite-using-openssl"></a>
+<a id="tls-connection-with-a-specific-ciphersuite-using-openssl"></a>
 ### TLS connection with a specific ciphersuite using OpenSSL
 `openssl s_client -connect HOST:PORT -cipher cipher-name -brief`
 
@@ -82,9 +88,11 @@ Insert xkcd, hur dur!
 ------
 
 <a name="amazon-s3"></a>
+<a id="amazon-s3"></a>
 ## Amazon S3
 
 <a name="syncing-a-folder-with-an-amazon-s3-bucket-using-s3cmd"></a>
+<a id="syncing-a-folder-with-an-amazon-s3-bucket-using-s3cmd"></a>
 ### Syncing a folder with an Amazon S3 bucket using s3cmd
 `python s3cmd sync --acl-public --delete-removed --rr directory-to-sync/ s3://bucket-name`
 
@@ -92,9 +100,10 @@ For example uploading the Hugo public directory to my website:\\
 `python s3cmd sync --acl-public --delete-removed --rr public/ s3://parsiya.net`
 
 * `--acl-public`: Anyone can only read.
-* `--delte-removed`: Delete objects with no corresponding local files.
+* `--delete-removed`: Delete objects with no corresponding local files.
 
 <a name="changing-the-mime-type-of-css-file-after-upload-to-fix-css-not-displaying-correctly"></a>
+<a id="changing-the-mime-type-of-css-file-after-upload-to-fix-css-not-displaying-correctly"></a>
 ### Changing the mime-type of CSS file after upload to fix CSS not displaying correctly
 `python s3cmd --acl-public --no-preserve --mime-type="text/css" put public/css/hugo-octopress.css s3://parsiya.net/css/hugo-octopress.css`
 
@@ -113,20 +122,24 @@ rd /q /s public
 ------
 
 <a name="windows"></a>
+<a id="windows"></a>
 ## Windows
 
 <a name="shortcut-to-ie-or-wininet-proxy-settings"></a>
+<a id="shortcut-to-ie-or-wininet-proxy-settings"></a>
 ### Shortcut to IE (or WinINET) Proxy Settings
 
 `control inetcpl.cpl,,4`
 
 <a name="vhd-file-is-open-in-system-and-cannot-be-deleted"></a>
+<a id="vhd-file-is-open-in-system-and-cannot-be-deleted"></a>
 ### VHD File is Open in System (and cannot be Deleted)
 You clicked on a VHD file and now cannot delete it. Use this PowerShell command but the path to VHD should be full.
 
 `Dismount-DiskImage -ImagePath 'C:\full\path\to\whatever.vhd'`
 
 <a name="base64-encodedecode-without-powershell"></a>
+<a id="base64-encodedecode-without-powershell"></a>
 ### Base64 encode/decode without PowerShell
 Use `certutil` for bootleg base64 encoding/decoding:
 
@@ -134,6 +147,7 @@ Use `certutil` for bootleg base64 encoding/decoding:
 - `certutil -decode whetever.base64 whatever.exe`
 
 <a name="whereexe"></a>
+<a id="whereexe"></a>
 ### Where.exe
 `where.exe` searches for files. Without any locations, it searches in the local directory and then in PATH.
 
@@ -142,6 +156,7 @@ Use `certutil` for bootleg base64 encoding/decoding:
 - `/?` for help.
 
 <a name="delete-file-or-directory-with-a-path-or-name-longer-than-the-windows-limit"></a>
+<a id="delete-file-or-directory-with-a-path-or-name-longer-than-the-windows-limit"></a>
 ### Delete file or directory with a path or name longer than the Windows limit
 Answer from [superuser.com](http://superuser.com/a/467814).
 
@@ -153,15 +168,18 @@ rmdir the_dir_to_delete
 ```
 
 <a name="install-bash-for-windows-without-windows-store"></a>
+<a id="install-bash-for-windows-without-windows-store"></a>
 ## Install "Bash for Windows" without Windows Store
 `lxrun /install`.
 
 ----------
 
 <a name="powershell"></a>
+<a id="powershell"></a>
 ## Powershell
 
 <a name="list-all-files-including-hidden"></a>
+<a id="list-all-files-including-hidden"></a>
 ### List all files (including hidden)
 `Get-ChildItem "searchterm" -recurse -force -path c:\ | select-object FullName`
 
@@ -171,6 +189,7 @@ rmdir the_dir_to_delete
 * `FullName`: Only display file name
 
 <a name="diff-in-powershell"></a>
+<a id="diff-in-powershell"></a>
 ### Diff in Powershell
 `Compare-Object (Get-Content new1.txt) (Get-Content new2.txt) | Format-List >> Diff-Output`
 
@@ -180,6 +199,7 @@ Output will be in format of
 * `SideIndicator`: `=>` -- exists in new2.txt (second file, file to the right)
 
 <a name="pseudo-grep-in-powershell"></a>
+<a id="pseudo-grep-in-powershell"></a>
 ### Pseudo-grep in Powershell
 `findstr "something" *.txt`
 
@@ -201,25 +221,30 @@ will search for keyword1 OR keyword2 in files
 https://technet.microsoft.com/en-us/library/Cc732459.aspx
 
 <a name="grep-in-command-outputs"></a>
+<a id="grep-in-command-outputs"></a>
 ### grep in command outputs
 `whatever.exe | Select-String -pattern "admin"`
 
 <a name="get-acl-and-icaclsexe"></a>
+<a id="get-acl-and-icaclsexe"></a>
 ### Get-Acl and icacls.exe
 `Get-Acl -path c:\windows\whatever.exe | Format-List`
 
 `icacls.exe c:\windows\whatever.exe`
 
 <a name="time-in-powershell"></a>
+<a id="time-in-powershell"></a>
 ### time in PowerShell
 `Measure-Command {python whatever.py}`
 
 -----------
 
 <a name="some-git-stuff-because-i-keep-forgetting-them"></a>
+<a id="some-git-stuff-because-i-keep-forgetting-them"></a>
 ## Some Git stuff because I keep forgetting them
 
 <a name="create-new-branch-and-merge"></a>
+<a id="create-new-branch-and-merge"></a>
 ### Create new branch and merge
 This works with small branches (e.g. one fix or so). Adapted from a [Bitbucket tutorial](https://confluence.atlassian.com/bitbucket/use-a-git-branch-to-merge-a-file-681902555.html).
 
@@ -244,10 +269,12 @@ Alternatively squash all commits into one `git merge --squash fix-whatever` and 
 We don't need it anymore. If it was pushed to remote, then we need to delete it there too.
 
 <a name="only-clone-a-certain-branch"></a>
+<a id="only-clone-a-certain-branch"></a>
 ### Only clone a certain branch
 `git clone -b <branch> <remote_repo>`
 
 <a name="undo-remote-git-history-after-push"></a>
+<a id="undo-remote-git-history-after-push"></a>
 ### Undo remote git history after push
 Because this keeps happening to me.
 
@@ -262,6 +289,7 @@ Where N is the number of commits that you want to revert.
 Note this will force the update and erase the commit history online. If not one else is using the repo in between it's ok.
 
 <a name="update-local-fork-from-original-repo"></a>
+<a id="update-local-fork-from-original-repo"></a>
 ### Update local fork from original repo
 
 1. See current remotes - `git remote -v`
@@ -280,6 +308,7 @@ Note this will force the update and erase the commit history online. If not one 
 7. Push changes - `git push`
 
 <a name="use-notepad-as-git-editor-on-windows-via-cygwin"></a>
+<a id="use-notepad-as-git-editor-on-windows-via-cygwin"></a>
 ### Use Notepad++ as git editor on Windows via Cygwin
 Create a file called `npp` with the following content and copy it to `cygwin\bin`. Modify the path of notepad++ to point to your installation.
 
@@ -294,6 +323,7 @@ $  git config --global core.editor npp
 ```
 
 <a name="tab-size-4-in-github-web-interface"></a>
+<a id="tab-size-4-in-github-web-interface"></a>
 ### Tab size 4 in Github web interface
 Yes I know Github != Git but cba to create a different category.
 
@@ -302,12 +332,14 @@ Add `?ts=4` to end of file URL.
 -----------
 
 <a name="sublime-text-3"></a>
+<a id="sublime-text-3"></a>
 ## Sublime Text 3
 Tips for using the Sublime Text 3 editor.
 
 <a name="fix-margo-build-failed-for-gosublime-on-windows"></a>
+<a id="fix-margo-build-failed-for-gosublime-on-windows"></a>
 ### Fix "MarGo build failed" for GoSublime on Windows
-GoSublime's executable has Go version in it. In most cases, it cannot grab the version on Windows machine and as a result the build will fail like this:
+GoSublime's executable has Go version in it. In most cases, it cannot grab the version on Windows and the build will fail like this:
 
 ```
 MarGo: MarGo build failed
@@ -331,17 +363,19 @@ raw_ver = ''
 ver = ''     # Edit this to '1'
 ```
 
-Edit `ver` to whatever, I usually do `1`. Restart Sublime Text and it should work.
+Edit `ver` to whatever, I usually do `1`. Restart Sublime Text and Margo will build.
 
 **Unfortunately this needs to be done for every new GoSublime version.**
 
 <a name="open-the-same-file-in-a-new-tab"></a>
+<a id="open-the-same-file-in-a-new-tab"></a>
 ### Open the same file in a new tab
 `File > New view into File`. Then drag the pane to a second screen/location.
 
 -----------
 
 <a name="download-youtube-videos-with-substitles"></a>
+<a id="download-youtube-videos-with-substitles"></a>
 ## Download Youtube videos with substitles
 I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The following [youtube-dl](https://github.com/rg3/youtube-dl/) command will download the 56 episode HQ quality Chinese TV series called `Xiao Ao Jiang Hu` or `Laughing in the Wind` (also called `The Smiling Proud Wanderer` or `Swordsman`).
 
@@ -360,6 +394,7 @@ I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The 
 ----------
 
 <a name="print-envelopes-using-the-brother-printer-and-libreoffice"></a>
+<a id="print-envelopes-using-the-brother-printer-and-libreoffice"></a>
 ## Print Envelopes Using the Brother Printer and LibreOffice
 Before printing, get to printer physically and use the following instructions:
 
