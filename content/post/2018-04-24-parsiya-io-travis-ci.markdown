@@ -6,10 +6,11 @@ toc: false
 comments: true
 categories:
 - Not Security
-- Hugo
+- Clone
 tags:
 - Blog
 - Travis CI
+- Hugo
 ---
 
 I finally managed to automate deployment of [parsiya.io](http://parsiya.io) with Travis CI. Not having dones this before, I encountered some pitfalls. Additionally I had two extra problems:
@@ -105,7 +106,7 @@ deploy:
 9. Add the AWS keys in `Settings > Environment Variables` (do not include `$`):
     - `AWS_ACCESS_KEY`
     - `AWS_SECRET_KEY`
-10.Push any object and enjoy the deployed blog in your bucket.
+10. Push any object and enjoy the deployed blog in your bucket.
 
 Now for the longer version.
 
@@ -191,12 +192,12 @@ Initially when adding the environmental variables, I had added them as they appe
 
 - `The previous command failed, possibly due to a malformed secure environment variable.`
 
-**Solution:** Don't add your environmental variables with
+**Solution:** Don't add your environmental variables with `$`.
 
 ### Error with go get Hugo
 To build Hugo from source, I initially had setup the container to have `Go` and then use `go get` to download and build Hugo. I got this error `imports context: unrecognized import path "context"`.
 
-```
+``` go
 $ go get github.com/gohugoio/hugo
 package github.com/gohugoio/hugo
     imports context: unrecognized import path "context"
@@ -240,8 +241,6 @@ This error message in general means you do not have enough access. I had initial
 - `s3:AbortMultipartUpload`
 - `s3:GetObjectAcl`
 - `s3:PutObjectAcl`
-
-
 
 <!-- Links -->
 
