@@ -2,25 +2,31 @@
 title: "Learning Go-Fuzz 1: iprange"
 date: 2018-04-29T19:25:10-04:00
 draft: false
-toc: false
+toc: true
 comments: true
 categories:
 - Go
 - Fuzzing
 tags:
 - Go-Fuzz
+- twitterImage: 03-running.png
 ---
 
-[Go-Fuzz][go-fuzz] is like AFL but for Go. If you have a Go package that parses some input, you might be able fuzz it with Go-Fuzz (terms and conditions apply). Not everything can be fuzzed very easily. For example Go-Fuzz does not like cycling imports, so if one of your sub-packages imports the main package then you are in trouble (I am looking at your [Chroma][chroma-github].
+[Go-Fuzz][go-fuzz] is like AFL but for Go. If you have a Go package that parses some input, you might be able fuzz it with Go-Fuzz (terms and conditions apply). Not everything can be fuzzed very easily. For example Go-Fuzz does not like cycling imports, so if one of your sub-packages imports the main package then you are in trouble (I am looking at your [Chroma][chroma-github]).
 
 The rest of the article will show how to use Go-Fuzz to fuzz a Go library named `iprange` at:
 
 - [https://github.com/malfunkt/iprange][iprange-github]
 
+Code and fuzzing artifacts are at:
+
+- [https://github.com/parsiya/Go-Security/tree/master/go-fuzz/iprange][iprange-gosecurity]
+
 <!-- Summary Links -->
 [go-fuzz]: https://github.com/dvyukov/go-fuzz
 [chroma-github]: https://github.com/alecthomas/chroma
 [iprange-github]: https://github.com/malfunkt/iprange
+[iprange-gosecurity]: https://github.com/parsiya/Go-Security/tree/master/go-fuzz/iprange
 
 <!--more-->
 
