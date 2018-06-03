@@ -14,7 +14,7 @@ twitterImage: 02-fuzzer-crash.png
 
 Previously on `Learning Go-Fuzz`:
 
-* ["Learning Go-Fuzz 1: iprange"]({{< relref "2018-29-04-learning-go-fuzz-1" >}} "Learning Go-Fuzz 1: iprange")
+* ["Learning Go-Fuzz 1: iprange"]({{< relref "2018-04-29-learning-go-fuzz-1" >}} "Learning Go-Fuzz 1: iprange")
 
 This time I am looking at a different package. This is a package called `goexif` at [https://github.com/rwcarlsen/goexif][goexif-github]. Being a file parser, it's a prime target for `Go-Fuzz`. Unfortunately it has not been updated for a while. Instead we will be looking at a fork at [https://github.com/xor-gate/goexif2][goexif2-github].
 

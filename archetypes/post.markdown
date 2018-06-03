@@ -4,6 +4,7 @@ date: {{ .Date }}
 draft: true
 toc: false
 comments: true
+twitterImage: .png
 categories:
 - category1
 - category2
