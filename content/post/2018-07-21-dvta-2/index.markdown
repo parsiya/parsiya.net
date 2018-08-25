@@ -31,21 +31,21 @@ It's time for dnSpy again. Make a copy of the modified binary and drop it into d
 
 We want to enable the login button. Our best guess is to navigate to `DVTA > Login`. One of the methods is the `btnLogin_Click`. By now you have figured out the login button is probably named `btnlogin` but let's assume we do not know that. We need to hunt down button name button in the method.
 
-{{< imgcap title="Login button method and name in dnSpy" src="01.png" >}}
+{{< imgcap title="Login button method and name in dnSpy" src="img/01.png" >}}
 
 Right-click on the method and select `Analyze`, I cannot emphasize how useful this functionality is. We can list where this method is used and what it uses.
 
-{{< imgcap title="Tracing btnLogin_Click" src="02.png" >}}
+{{< imgcap title="Tracing btnLogin_Click" src="img/02.png" >}}
 
 Clicking on `Login.InitializeComponent` brings us to a page where we can see login button's properties. This line shows where the method is assigned to the button object.
 
-{{< imgcap title="Setting btnlogin properties" src="03.png" >}}
+{{< imgcap title="Setting btnlogin properties" src="img/03.png" >}}
 
 A few lines before, we can see the line that disabled the button. We can use dnSpy to enable it. At work, I would have enabled it and moved on but we are here to learn. I think there's more to the button than just this workaround. We must detect where the button is enabled to bypass that control.
 
 Right click `btnLogin` and select `Analyze`, then open `Read By` to see `Login.button1_Click`.
 
-{{< imgcap title="Hunting btnlogin" src="04.png" >}}
+{{< imgcap title="Hunting btnlogin" src="img/04.png" >}}
 
 It's enabled in `button1_Click`. It's not hard to guess that `button1` is the `Fetch Login Token` button on the login page (this another one of protections added in this fork). Look at the decompiled code:
 
@@ -120,11 +120,11 @@ I am going with method two to demonstrate patching with dnSpy.
 ## Patching login.PinPublicKey
 You should know how to edit the method by now. Edit the method and change the return value to `true`.
 
-{{< imgcap title="Patched login.PinPublicKey" src="05.png" >}}
+{{< imgcap title="Patched login.PinPublicKey" src="img/05.png" >}}
 
 Now we can use the button. Notice how the label changed to a number. But the login button is still not active so there must be a different check.
 
-{{< imgcap title="Certificate Pinning bypassed" src="06.png" >}}
+{{< imgcap title="Certificate Pinning bypassed" src="img/06.png" >}}
 
 # Enabling the Login Button
 The login button is still disabled. We need to figure how to enable it.
@@ -146,7 +146,7 @@ if (timeResp.ContentLength < 143L)
 
 After login, `label` is replaced with response length. This length is checked against `143` in the `if`. In my case, response length was `30500` bytes did not satisfy the condition. We have acquired enough knowledge to easily reverse this check.
 
-{{< imgcap title="Response length check" src="07.png" >}}
+{{< imgcap title="Response length check" src="img/07.png" >}}
 
 But this is too easy, let's learn a bit of IL instead.
 
@@ -158,7 +158,7 @@ CIL is a stack based assembly language. Meaning values are pushed to the stack b
 ## Patching IL with dnSpy
 Right-click on the `if (timeResp.ContentLength < 143L)` line and select `Edit IL Instructions...`. A new page pops up with five instructions highlighted. These instructions implement that `if`.
 
-{{< imgcap title="IL instructions for the condition" src="08.png" >}}
+{{< imgcap title="IL instructions for the condition" src="img/08.png" >}}
 
 {{< codecaption title="IL instructions for if" lang="nasm" >}}
 003D	ldloc.0
@@ -185,15 +185,15 @@ See more info about `bge.s` on MSDN:
 
 Click on `bge.s` and see how dnSpy helps us with providing a list of IL instructions.
 
-{{< imgcap title="dnSpy's list of IL instructions" src="09.png" >}}
+{{< imgcap title="dnSpy's list of IL instructions" src="img/09.png" >}}
 
 Select `ble.s` and close the IL window. See decompiled C# code is now modified.
 
-{{< imgcap title="Modified C# code after IL patching" src="10.png" >}}
+{{< imgcap title="Modified C# code after IL patching" src="img/10.png" >}}
 
 Save the patched executable and try again. Login button is now enabled. Now we can login normally.
 
-{{< imgcap title="Login button enabled" src="11.png" >}}
+{{< imgcap title="Login button enabled" src="img/11.png" >}}
 
 # Conclusion
 In this part we learned how to use the very very useful `Analyze` feature of dnSpy. We did a bit of normal patching and finally learned a bit of IL assembly. In next part we will start with network traffic and do a bit of proxying.

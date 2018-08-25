@@ -35,14 +35,14 @@ Download and install npcap from https://github.com/nmap/npcap/releases and then 
 ## Recon with Wireshark
 Run Wireshark, choose `Npcap Loopback Adapter`, and the VM's LAN. Then start capturing traffic.
 
-{{< imgcap title="Setting up Wireshark to capture traffic" src="01.png" >}}
+{{< imgcap title="Setting up Wireshark to capture traffic" src="img/01.png" >}}
 
 Run the patched application from the previous post but don't do anything.
 
 ### Fetch Login Token
 Click on the `Fetch Login Token` button. We already know where it goes, but let's inspect it with Wireshark.
 
-{{< imgcap title="Captured traffic to time.is in Wireshark" src="02.png" >}}
+{{< imgcap title="Captured traffic to time.is in Wireshark" src="img/02.png" >}}
 
 Looking at the capture, it's clear what the application is doing.
 
@@ -53,15 +53,15 @@ Looking at the capture, it's clear what the application is doing.
 ### Normal User Login
 Clear the capture and this time login with a valid set of non-admin credentials (e.g. `rebecca:rebecca`).
 
-{{< imgcap title="MSSQL traffic captured in Wireshark" src="03.png" >}}
+{{< imgcap title="MSSQL traffic captured in Wireshark" src="img/03.png" >}}
 
 First, we see the TCP connection and then the login traffic to port `49622`. To decode the traffic with Wireshark, right-click on any outgoing packet and select `Decode As...`. Then select `TDS` for the combo box under `Current`. This tells Wireshark to decode all traffic to that port using the `TDS` dissector.
 
-{{< imgcap title="Choosing the TDS dissector for MSSQL traffic" src="04.png" >}}
+{{< imgcap title="Choosing the TDS dissector for MSSQL traffic" src="img/04.png" >}}
 
 And now packets are annotated.
 
-{{< imgcap title="Annotated MSSQL traffic in Wireshark" src="05.png" >}}
+{{< imgcap title="Annotated MSSQL traffic in Wireshark" src="img/05.png" >}}
 
 Some observations:
 
@@ -70,7 +70,7 @@ Some observations:
 
 Going through the packets, select the one that says `SQL batch` and see the SQL query is created client-side and sent out. Any time you see client-side queries, you should be concerned.
 
-{{< imgcap title="Client querying MSSQL server" src="06.png" >}}
+{{< imgcap title="Client querying MSSQL server" src="img/06.png" >}}
 
 The following query is executed (later we will come back and play with this):
 
@@ -78,7 +78,7 @@ The following query is executed (later we will come back and play with this):
 
 The response contains the query results which leaks the structure of the `users` table:
 
-{{< imgcap title="Login query response" src="13.png" >}}
+{{< imgcap title="Login query response" src="img/13.png" >}}
 
 ### Admin Login
 We know administrators can login to the application and backup data to an FTP server. We want to observe this traffic with Wireshark.
@@ -92,7 +92,7 @@ Looking at Wireshark, we will see two different streams of traffic:
 
 The connection to the MSSQL server is similar to what we have seen before (port `49622`).
 
-{{< imgcap title="Backup traffic to MSSQL server" src="07.png" >}}
+{{< imgcap title="Backup traffic to MSSQL server" src="img/07.png" >}}
 
 The application connects and runs the following query:
 
@@ -100,20 +100,20 @@ The application connects and runs the following query:
 
 Next is the FTP connection to `localhost:22`. We can see it's in cleartext and user/pass is visible.
 
-{{< imgcap title="FTP traffic and password displayed in Wireshark" src="08.png" >}}
+{{< imgcap title="FTP traffic and password displayed in Wireshark" src="img/08.png" >}}
 
 For easier visualization, right-click on any packet in the stream and select `Follow > TCP Stream`.
 
-{{< imgcap title="Following the TCP stream in Wireshark" src="09.png" >}}
+{{< imgcap title="Following the TCP stream in Wireshark" src="img/09.png" >}}
 
 Application logins with `dvta:p@ssw0rd` and then stores `admin.csv` on the FTP server (which we can assume contains information from the `expenses` table).
 
-{{< imgcap title="All FTP traffic in stream displayed in Wireshark" src="10.png" >}}
+{{< imgcap title="All FTP traffic in stream displayed in Wireshark" src="img/10.png" >}}
 
 ### Register Functionality
 We can also register new users. Users will not be administrators. Let's look at that traffic too.
 
-{{< imgcap title="SQL statement to register a new user" src="12.png" >}}
+{{< imgcap title="SQL statement to register a new user" src="img/12.png" >}}
 
 As we can see, traffic is similar to the previous parts. This time we are sending an `insert` query:
 
@@ -129,7 +129,7 @@ Quit the application, run it again, login as admin and backup the data. Then run
 * `Process Name contains dvta`. I have set this to `contains` because I have versioned patched executables from part 2. 
 * `Operation is TCP Connect`. Or you could only enable network activity like part 1 ([DVTA - Part 1 - Setup - Discover the FTP Address]({{< relref "post/2018-07-15-dvta-1/index.markdown#discover-the-ftp-address" >}} "DVTA - Part 1 - Setup - Discover the FTP Address")).
 
-{{< imgcap title="Application endpoints displayed in Procmon" src="11.png" >}}
+{{< imgcap title="Application endpoints displayed in Procmon" src="img/11.png" >}}
 
 We can see connections to:
 

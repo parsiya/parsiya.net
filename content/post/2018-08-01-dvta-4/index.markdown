@@ -34,7 +34,7 @@ I will need a lot of pages to talk about these and document what I have learned 
 Depending on the interception method, you can bypass some of these challenges. For example, by hooking application's function calls that send the data, you can omit the first two (traffic redirection and server emulation). This is exactly what we are going to do to manipulate traffic in two ways:
 
 1. Debugging with dnSpy - this part.
-2. Hooking with WinAppDbg - next part.
+2. ~~Hooking with WinAppDbg - next part.~~ Seems like this is much harder than I expected. I need to learn about hooking .NET functions with WinAppDbg (or in general). Added to my TODO list.
 
 # Debugging with dnSpy
 My first interaction with dnSpy was when version 1 was released. I used it to modify the outgoing traffic and make myself admin. It was one of my first thick client tests and I was so proud of myself. We are going to do the same here. We will debug the application with dnSpy and then view/modify the outgoing data. We need to:
@@ -52,29 +52,29 @@ Putting a breakpoint where the traffic is being transmitted is also viable in so
 ## Login
 We will start with the login request. We already know where it happens but let's pretend we do not[^2]. Drag and drop `dvta.exe` into dnSpy. Then click on `Start`. Note the dialog box allows you to enter command line parameters and set initial breakpoints. None is needed in our case so we will just press `Ok`.
 
-{{< imgcap title="Starting the application with dnSpy" src="01.png" >}}
+{{< imgcap title="Starting the application with dnSpy" src="img/01.png" >}}
 
 The anti-debug does not get triggered. We could have easily removed it anyway. Fetch the login token and try to login with dummy credentials. After it fails, do not close the `Invalid Login` button.
 
 In dnSpy click on the pause button (tooltip says `Break All`).
 
-{{< imgcap title="\"Break All\" button" src="02.png" >}}
+{{< imgcap title="\"Break All\" button" src="img/02.png" >}}
 
 We break in `System.Windows.Forms.dll > MessageBox`.
 
-{{< imgcap title="MessageBox break" src="03.png" >}}
+{{< imgcap title="MessageBox break" src="img/03.png" >}}
 
 This is a system DLL and not part of the application. Time for another useful dnSpy feature. Use `Debug (menu) > Windows > Call Stack` or `Ctrl+Alt+C`.
 
-{{< imgcap title="Viewing call Stack" src="04.png" >}}
+{{< imgcap title="Viewing call Stack" src="img/04.png" >}}
 
 Call stack allows us to see how we got here.
 
-{{< imgcap title="Call stack displayed in dnSpy" src="05.png" >}}
+{{< imgcap title="Call stack displayed in dnSpy" src="img/05.png" >}}
 
 `Login.btnLogin_Click` is in the call chain. We can double-click on it to get to the code.
 
-{{< imgcap title="btnLogin_Click" src="06.png" >}}
+{{< imgcap title="btnLogin_Click" src="img/06.png" >}}
 
 Username and password are passed to `db.checkLogin`. Click on it:
 
@@ -99,24 +99,24 @@ Query is created in a way that is vulnerable to SQL injection (but we were expec
 
 Right-click on the `string text =` line and select `Add Breakpoint` or click on the grey edge to the left of the line number (where the red circle is in the following image):
 
-{{< imgcap title="Breakpoint set" src="07.png" >}}
+{{< imgcap title="Breakpoint set" src="img/07.png" >}}
 
 Click on `Continue` and try to login again. The breakpoint will get triggered. Close the call stack window and you should see a new window named `Locals`. This window is used to view and modify the value of variables in scope.
 
-{{< imgcap title="Breakpoint triggered" src="08.png" >}}
+{{< imgcap title="Breakpoint triggered" src="img/08.png" >}}
 
 Like any other debugger, we can `Step Into`, `Step Over`, and the rest of the usual control. You can navigate with the shortcut keys or the buttons to the right of `Start/Continue`. Press `F10` or `Step Over` to get to the next decompiled instruction which is `Console.WriteLine(text);`.
 
-{{< imgcap title="text cannot be modified" src="09.png" >}}
+{{< imgcap title="text cannot be modified" src="img/09.png" >}}
 
 We have a problem inside dnSpy. We cannot modify the value of `text`. The [cs0103](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-messages/cs0103) error means variable does not exist (e.g. not in scope). I am not sure why this is happening but we can modify the value in a different place. Set a breakpoint on `return new SqlCommand ...` and click `Continue`.
 
-{{< imgcap title="Breakpoint at return triggered" src="10.png" >}}
+{{< imgcap title="Breakpoint at return triggered" src="img/10.png" >}}
 
 ### Bypassing Login
 This time, we want to jump inside the function call. Click `Step Into`.
 
-{{< imgcap title="Inside SqlCommand constructor" src="11.png" >}}
+{{< imgcap title="Inside SqlCommand constructor" src="img/11.png" >}}
 
 Here we can modify the value of the query. Double-click on the value in the `Locals` window and type the following (don't forget the double quotes because we are modifying a string):
 
@@ -124,33 +124,33 @@ Here we can modify the value of the query. Double-click on the value in the `Loc
 
 Then press `Enter` and notice the modified value is highlighted:
 
-{{< imgcap title="SQL query modified" src="12.png" >}}
+{{< imgcap title="SQL query modified" src="img/12.png" >}}
 
 Press `Continue` and let this query run. We are logged in as admin.
 
-{{< imgcap title="Logged in as admin" src="13.png" >}}
+{{< imgcap title="Logged in as admin" src="img/13.png" >}}
 
 Note that we can change this query to anything we want (e.g. `INSERT` or `DELETE`).
 
 ## Register
 Messing with the register function is similar. Run the application with dnSpy and attempt to register any user. Do not close the message box and stop dnSpy with `Break All` like we saw before.
 
-{{< imgcap title="dnSpy after Break All" src="14.png" >}}
+{{< imgcap title="dnSpy after Break All" src="img/14.png" >}}
 
 Next, use the call stack to discover where it was called.
 
-{{< imgcap title="btnReg_Click" src="15.png" >}}
+{{< imgcap title="btnReg_Click" src="img/15.png" >}}
 
 Click on `RegisterUser` in line 64 `if (dbaccessClass.RegisterUser(username, password, email))` to see the query being created. Set a breakpoint on line 93 `cmd.ExecuteNonQuery();` and press `Continue`.
 
-{{< imgcap title="RegisterUser" src="16.png" >}}
+{{< imgcap title="RegisterUser" src="img/16.png" >}}
 
 ### Registering Admins
 New users cannot be admin. The admin account is hardcoded. We can bypass this restriction and register a new admin.
 
 Try to register again. When the breakpoint is reached, expand the `cmd` object in the `Locals` window to see the `CommandText`:
 
-{{< imgcap title="Register user SQL statement" src="17.png" >}}
+{{< imgcap title="Register user SQL statement" src="img/17.png" >}}
 
 The statement looks like this:
 
@@ -158,11 +158,11 @@ The statement looks like this:
 
 We already know the last value is `isAdmin`. We can modify this to create a new admin.
 
-{{< imgcap title="Modified register payload" src="18.png" >}}
+{{< imgcap title="Modified register payload" src="img/18.png" >}}
 
 Press `Continue` and login as admin with `user2:pass2`.
 
-{{< imgcap title="New admin user in the database" src="19.png" >}}
+{{< imgcap title="New admin user in the database" src="img/19.png" >}}
 
 **Note**: We could have done this in different ways. Another way (because in the real world you are not usually creating queries client-side and contacting the DB directly), was to put a breakpoint where the SQL statement is created and flip the value of `isadmin` to `1`.
 
@@ -173,18 +173,20 @@ We already know where the SQL queries are created. Go back to the `cmd.ExecuteNo
 
 After the breakpoint is triggered, open the `Locals` window and expand `this`. We can see a variable called `decryptedDBPassword` with value `p@ssw0rd`. This means the password was stored in some encrypted format. In future sections we will return to figure out how it's encrypted.
 
-{{< imgcap title="DB password" src="20.png" >}}
+{{< imgcap title="DB password" src="img/20.png" >}}
 
 To see the complete connection string, expand `conn` and scroll down to `_connectionString`:
 
-{{< imgcap title="Connection string" src="21.png" >}}
+{{< imgcap title="Connection string" src="img/21.png" >}}
 
 # Conclusion
 In this part, we learned how to debug with dnSpy. We used our new power to manipulate the outgoing traffic, made ourselves admin, and managed to discover the database credentials.
 
-In next part, we will use WinAppDbg to hook function calls and intercept/modify traffic. To get started see my WinAppDbg posts:
+In the next part, we will focus on client-side and break some encryption. By client-side I mean what is stored on the machine, where, and how it can be accessed.
 
-* https://parsiya.net/categories/winappdbg/
+~~In next part, we will use WinAppDbg to hook function calls and intercept/modify traffic. To get started see my WinAppDbg posts:~~
+
+* ~~https://parsiya.net/categories/winappdbg/~~
 
 <!-- Footnote -->
 [^1]: Same with any other sort of encryption, but those are rare these days.
