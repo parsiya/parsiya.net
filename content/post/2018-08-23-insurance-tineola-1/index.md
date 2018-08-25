@@ -1,5 +1,5 @@
 ---
-title: "Breaking 'Build Blockchain Insurance App' with Tineola"
+title: "Committing Insurance Fraud with Tineola"
 date: 2018-08-23T21:18:32-04:00
 draft: false
 toc: true
@@ -19,7 +19,7 @@ We recently presented our tool at the DefCon 26 conference in Vegas. Amazing tim
 
 * https://github.com/tineola/tineola
 
-During the talk Stark demoed our tool and showed how to completely break the [Build Blockchain Insurance App](https://github.com/IBM/build-blockchain-insurance-app). You can see the videos on the [DefCon Media Server](https://media.defcon.org/DEF%20CON%2026/DEF%20CON%2026%20presentations/Stark%20Riedesel%20and%20Parsia%20Hakimian/DEFCON-26-Stark-Riedesel-and-Parsia-Hakimian-Demo-Videos/), the slides on that server are outdated.
+During the talk Stark demoed our tool and showed how to completely break the [Build Blockchain Insurance App](https://github.com/IBM/build-blockchain-insurance-app). You can see the videos on the [DefCon Media Server](https://media.defcon.org/DEF%20CON%2026/DEF%20CON%2026%20presentations/Stark%20Riedesel%20and%20Parsia%20Hakimian/DEFCON-26-Stark-Riedesel-and-Parsia-Hakimian-Demo-Videos/), the slides on that server are outdated so please use the slides from our repository on Github.
 
 This blog post will teach you how to use Tineola and commit insurance fraud.
 
