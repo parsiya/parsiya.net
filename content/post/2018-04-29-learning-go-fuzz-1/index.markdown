@@ -9,7 +9,7 @@ categories:
 - Fuzzing
 tags:
 - Go-Fuzz
-- twitterImage: 03-running.png
+twitterImage: 03-running.png
 ---
 
 [Go-Fuzz][go-fuzz] is like AFL but for Go. If you have a Go package that parses some input, you might be able fuzz it with Go-Fuzz (terms and conditions apply). Not everything can be fuzzed very easily. For example Go-Fuzz does not like cycling imports, so if one of your sub-packages imports the main package then you are in trouble (I am looking at your [Chroma][chroma-github]).

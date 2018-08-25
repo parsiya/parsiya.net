@@ -2,7 +2,6 @@
 # https://gohugo.io/overview/configuration/
 
 baseurl = "https://parsiya.net/"
-# baseurl = "http://parsiya.io/"
 disablePathToLower = false
 languageCode = "en-us"
 title = "Parsia's Den"
@@ -87,7 +86,7 @@ disqusShortname = "parsiya"
   weight = 10
 
 [[menu.sidebar]]
-  Name = "Blockchain/DLT"
+  Name = "Blockchain/Distributed Ledgers"
   URL = "/categories/blockchain/"
   weight = 15
 
@@ -109,6 +108,7 @@ disqusShortname = "parsiya"
 [params]
 
   navigationNewWindow = true
+  # disable recent posts section in sidebar
   sidebarRecentLimit = 0
 
   sidebarHeader = "Who am I?"

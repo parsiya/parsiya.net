@@ -8,6 +8,8 @@ tags:
 comments: false
 date: 2014-05-25T18:39:58Z
 title: Pasting Shellcode in GDB using Python
+aliases:
+- "/blog/2014-05-25-pasting-shellcode-into-gdb-using-python/"
 ---
 
 A few days ago I was trying to write an exploit for a buffer overflow with GDB. This was a console application and pasting shellcode would mess with it.

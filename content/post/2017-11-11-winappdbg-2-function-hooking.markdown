@@ -16,7 +16,7 @@ In [part one]({{< ref "2017-11-09-winappdbg-1-basics.markdown" >}} "WinAppDbg - 
 
 - I wrote a [simple python module][winapputil-github] to simplify my use of WinAppDbg. It will most likely be modified later, but I have included a version that works with the tutorials at:
     + [https://github.com/parsiya/Parsia-Clone/tree/master/code/winappdbg][winappdbg-clone]
-    + We do not need to type the full anymore if the executable is in PATH. Note Run Line (`win+r`) pulls stuff from more locations than PATH, so we cannot call `chrome.exe`. I have written about it [here]({{< ref "2017-10-23-windows-run-line-vs-cmd.markdown" >}} "Run Line vs. cmd vs. PowerShell").
+    + We do not need to type the full filename anymore if the executable is in PATH. Note Run Line (`win+r`) pulls stuff from more locations than PATH, so we cannot call `chrome.exe`. I have written about it [here]({{< ref "2017-10-23-windows-run-line-vs-cmd.markdown" >}} "Run Line vs. cmd vs. PowerShell").
 - **DLL enumeration**: We're going to implement one of procmon's features.
 - **Process/Thread tracing**: Another procmon feature.
 - **Function Hooking**: It's very easy in WinAppDbg and we will learn how to do it a couple of different ways.
