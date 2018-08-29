@@ -22,14 +22,14 @@ Often I need to do something that I have done many times in the past but I have 
   - [Syncing a folder with an Amazon S3 bucket using s3cmd](#syncing-a-folder-with-an-amazon-s3-bucket-using-s3cmd)
   - [Changing the mime-type of CSS file after upload to fix CSS not displaying correctly](#changing-the-mime-type-of-css-file-after-upload-to-fix-css-not-displaying-correctly)
 - [Windows](#windows)
-  - [Shortcut to IE \(or WinINET\) Proxy Settings](#shortcut-to-ie-or-wininet-proxy-settings)
-  - [VHD File is Open in System \(and cannot be Deleted\)](#vhd-file-is-open-in-system-and-cannot-be-deleted)
+  - [Shortcut to IE (or WinINET) Proxy Settings](#shortcut-to-ie-or-wininet-proxy-settings)
+  - [VHD File is Open in System (and cannot be Deleted)](#vhd-file-is-open-in-system-and-cannot-be-deleted)
   - [Base64 encode/decode without PowerShell](#base64-encodedecode-without-powershell)
   - [Where.exe](#whereexe)
   - [Delete file or directory with a path or name longer than the Windows limit](#delete-file-or-directory-with-a-path-or-name-longer-than-the-windows-limit)
 - [Install "Bash for Windows" without Windows Store](#install-bash-for-windows-without-windows-store)
 - [Powershell](#powershell)
-  - [List all files \(including hidden\)](#list-all-files-including-hidden)
+  - [List all files (including hidden)](#list-all-files-including-hidden)
   - [Diff in Powershell](#diff-in-powershell)
   - [Pseudo-grep in Powershell](#pseudo-grep-in-powershell)
   - [grep in command outputs](#grep-in-command-outputs)
@@ -42,6 +42,9 @@ Often I need to do something that I have done many times in the past but I have 
   - [Update local fork from original repo](#update-local-fork-from-original-repo)
   - [Use Notepad++ as git editor on Windows via Cygwin](#use-notepad-as-git-editor-on-windows-via-cygwin)
   - [Tab size 4 in Github web interface](#tab-size-4-in-github-web-interface)
+  - [Change Remote for an Existing Git Repository](#change-remote-for-an-existing-git-repository)
+  - [List All Authors in a Git Repository](#list-all-authors-in-a-git-repository)
+  - [Rewrite Author for Older Commits](#rewrite-author-for-older-commits)
 - [Sublime Text 3](#sublime-text-3)
   - [Fix "MarGo build failed" for GoSublime on Windows](#fix-margo-build-failed-for-gosublime-on-windows)
   - [Open the same file in a new tab](#open-the-same-file-in-a-new-tab)
@@ -176,7 +179,7 @@ rmdir the_dir_to_delete
 
 Output will be in format of
 
-* `InputObject`: `c:\users\cigital\somefile` -- line content
+* `InputObject`: `c:\users\username\somefile` -- line content
 * `SideIndicator`: `=>` -- exists in new2.txt (second file, file to the right)
 
 <a id="pseudo-grep-in-powershell"></a>
@@ -291,7 +294,7 @@ Create a file called `npp` with the following content and copy it to `cygwin\bin
 Run the following command in Cygwin to set it as global git editor:
 
 ```
-$  git config --global core.editor npp
+git config --global core.editor npp
 ```
 
 <a id="tab-size-4-in-github-web-interface"></a>
@@ -299,6 +302,42 @@ $  git config --global core.editor npp
 Yes I know Github != Git but cba to create a different category.
 
 Add `?ts=4` to end of file URL.
+
+<a id="change-remote-git"></a>
+### Change Remote for an Existing Git Repository
+A.K.A. when moving `repository` from bitbucket to github or vice versa.
+
+```
+git remote set-url origin git@github.com:parsiya/repository.git
+```
+
+<a id="list-authors-git"></a>
+### List All Authors in a Git Repository
+For when I wanted to see if I was still showing up as `root`.
+
+```
+git shortlog -s | cut -c8-
+```
+
+<a id="rewrite-author-git"></a>
+### Rewrite Author for Older Commits
+`parsiya.net` had commits as `root` from when I was using it offline. I wanted to change everything to myself.
+
+* Source: https://stackoverflow.com/a/3042512
+
+
+1. If you want to start at root - `git rebase -i --root`
+
+2. If you want to start from commit AAAA - `git rebase -i AAAA`
+
+3. Change `pick` to `edit` for every commit with the old author and save. Rebase starts and pauses at every commit with `edit`.
+
+4. Change the author - \\
+`git commit --amend --author="Author Name <email@address.com>"`
+
+5. Continue the rebase - `git rebase --continue`
+
+6. Rinse and repeat.
 
 -----------
 

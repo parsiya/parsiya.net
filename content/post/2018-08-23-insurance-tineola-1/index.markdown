@@ -19,19 +19,19 @@ We recently presented our tool at the DefCon 26 conference in Vegas. Amazing tim
 
 * https://github.com/tineola/tineola
 
-During the talk Stark demoed our tool and showed how to completely break the [Build Blockchain Insurance App](https://github.com/IBM/build-blockchain-insurance-app). You can see the videos on the [DefCon Media Server](https://media.defcon.org/DEF%20CON%2026/DEF%20CON%2026%20presentations/Stark%20Riedesel%20and%20Parsia%20Hakimian/DEFCON-26-Stark-Riedesel-and-Parsia-Hakimian-Demo-Videos/), the slides on that server are outdated so please use the slides from our repository on Github.
+During the talk, Stark demoed our tool and showed how to completely break the [Build Blockchain Insurance App](https://github.com/IBM/build-blockchain-insurance-app). You can see the videos on the [DefCon Media Server](https://media.defcon.org/DEF%20CON%2026/DEF%20CON%2026%20presentations/Stark%20Riedesel%20and%20Parsia%20Hakimian/DEFCON-26-Stark-Riedesel-and-Parsia-Hakimian-Demo-Videos/).
 
 This blog post will teach you how to use Tineola and commit insurance fraud.
 
 <!--more-->
 
 # Setup
-This guide assumes you start with a clean Ubuntu 16 VM although it will most likely work on most distros.
+This guide assumes you start with a clean Ubuntu 16 Virtual Machine although it will most likely work on most distros.
 
-If you have previous Fabric images and containers in the VM, you can delete them all with `docker images -a`.
+If you have Fabric images and containers in the VM, they can be deleted with `docker images -a`.
 
 ## Pre-requisites
-In this section we discuss installing the insurance app and dependencies for Tineola and Fabric.
+In this section, we discuss installing the insurance app and dependencies for Tineola and Fabric.
 
 ### Install Node.js 8.x and npm
 Using instructions at [nodejs.org](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions):
