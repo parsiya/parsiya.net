@@ -87,4 +87,4 @@ Notice that I have used `{{ range (where .Site.Pages "Type" "post") }}` to only 
 
 The `{{ .Content }}` variable points to the content of the `archive.markdown` page outside the `range` and to each page's content inside it.
 
-You can see it in action at [Archive page]({{< ref "archive.markdown" >}}).
+You can see it in action at [Archive page]({{< ref "/archive.markdown" >}}).

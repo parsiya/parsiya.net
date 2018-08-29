@@ -17,8 +17,8 @@ In this part, we will focus on network traffic. More often than not, thick clien
 
 Previous parts are:
 
-* [DVTA - Part 1 - Setup]({{< relref "post/2018-07-15-dvta-1/index.markdown" >}} "DVTA - Part 1 - Setup")
-* [DVTA - Part 2 - Cert Pinning and Login Button]({{< relref "post/2018-07-21-dvta-2/index.markdown" >}} "DVTA - Part 2 - Cert Pinning and Login Button")
+* [DVTA - Part 1 - Setup]({{< relref "/post/2018-07-15-dvta-1/index.markdown" >}} "DVTA - Part 1 - Setup")
+* [DVTA - Part 2 - Cert Pinning and Login Button]({{< relref "/post/2018-07-21-dvta-2/index.markdown" >}} "DVTA - Part 2 - Cert Pinning and Login Button")
 
 <!--more-->
 
@@ -127,7 +127,7 @@ We can do the same with Sysinternals Procmon. We can see the traffic but we can 
 Quit the application, run it again, login as admin and backup the data. Then run Procmon and set the following filters similar to what we did in part 1 to identify the FTP endpoint (ZZZ Link to part 1 procmon anchor):
 
 * `Process Name contains dvta`. I have set this to `contains` because I have versioned patched executables from part 2. 
-* `Operation is TCP Connect`. Or you could only enable network activity like part 1 ([DVTA - Part 1 - Setup - Discover the FTP Address]({{< relref "post/2018-07-15-dvta-1/index.markdown#discover-the-ftp-address" >}} "DVTA - Part 1 - Setup - Discover the FTP Address")).
+* `Operation is TCP Connect`. Or you could only enable network activity like part 1 ([DVTA - Part 1 - Setup - Discover the FTP Address]({{< relref "/post/2018-07-15-dvta-1/index.markdown#discover-the-ftp-address" >}} "DVTA - Part 1 - Setup - Discover the FTP Address")).
 
 {{< imgcap title="Application endpoints displayed in Procmon" src="img/11.png" >}}
 

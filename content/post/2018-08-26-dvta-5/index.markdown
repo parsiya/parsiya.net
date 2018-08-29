@@ -16,10 +16,10 @@ Thick clients store ample information on the device. In this part, we are going 
 
 Previous parts are at:
 
-* [DVTA - Part 1 - Setup]({{< relref "post/2018-07-15-dvta-1/index.markdown" >}} "DVTA - Part 1 - Setup")
-* [DVTA - Part 2 - Cert Pinning and Login Button]({{< relref "post/2018-07-21-dvta-2/index.markdown" >}} "DVTA - Part 2 - Cert Pinning and Login Button")
-* [DVTA - Part 3 - Network Recon]({{< relref "post/2018-07-30-dvta-3/index.markdown" >}} "DVTA - Part 3 - Network Recon")
-* [DVTA - Part 4 - Traffic Tampering with dnSpy]({{< relref "post/2018-08-01-dvta-4/index.markdown" >}} "DVTA - Part 4 - Traffic Tampering with dnSpy")
+* [DVTA - Part 1 - Setup]({{< relref "/post/2018-07-15-dvta-1/index.markdown" >}} "DVTA - Part 1 - Setup")
+* [DVTA - Part 2 - Cert Pinning and Login Button]({{< relref "/post/2018-07-21-dvta-2/index.markdown" >}} "DVTA - Part 2 - Cert Pinning and Login Button")
+* [DVTA - Part 3 - Network Recon]({{< relref "/post/2018-07-30-dvta-3/index.markdown" >}} "DVTA - Part 3 - Network Recon")
+* [DVTA - Part 4 - Traffic Tampering with dnSpy]({{< relref "/post/2018-08-01-dvta-4/index.markdown" >}} "DVTA - Part 4 - Traffic Tampering with dnSpy")
 
 <!--more-->
 

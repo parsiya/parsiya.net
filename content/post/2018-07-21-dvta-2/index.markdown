@@ -18,7 +18,7 @@ In this section, we will bypass the certificate pinning, enable the login button
 
 You can see previous parts here:
 
-* [Damn Vulnerable Thick Client Application - Part 1 - Setup]({{< relref "post/2018-07-15-dvta-1/index.markdown" >}} "DVTA - Part 1 - Setup")
+* [Damn Vulnerable Thick Client Application - Part 1 - Setup]({{< relref "/post/2018-07-15-dvta-1/index.markdown" >}} "DVTA - Part 1 - Setup")
 
 <!--more-->
 
