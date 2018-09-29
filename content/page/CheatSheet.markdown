@@ -19,8 +19,10 @@ Often I need to do something that I have done many times in the past but I have 
   - [Dumping the TLS certificate using OpenSSL](#dumping-the-tls-certificate-using-openssl)
   - [TLS connection with a specific ciphersuite using OpenSSL](#tls-connection-with-a-specific-ciphersuite-using-openssl)
 - [Amazon S3](#amazon-s3)
+  - [Using s3deploy](#using-s3deploy)
   - [Syncing a folder with an Amazon S3 bucket using s3cmd](#syncing-a-folder-with-an-amazon-s3-bucket-using-s3cmd)
   - [Changing the mime-type of CSS file after upload to fix CSS not displaying correctly](#changing-the-mime-type-of-css-file-after-upload-to-fix-css-not-displaying-correctly)
+  - [Setting the index to a non-root file in static website hosted on S3](#setting-the-index-to-a-non-root-file-in-static-website-hosted-on-s3)
 - [Windows](#windows)
   - [Shortcut to IE (or WinINET) Proxy Settings](#shortcut-to-ie-or-wininet-proxy-settings)
   - [VHD File is Open in System (and cannot be Deleted)](#vhd-file-is-open-in-system-and-cannot-be-deleted)
@@ -54,28 +56,22 @@ Often I need to do something that I have done many times in the past but I have 
 <!-- /MarkdownTOC -->
 
 ------
-<a id="tar"></a>
 ## Tar
 Insert xkcd, hur dur!
 
-<a id="compressing-a-directory-using-tar"></a>
 ### Compressing a directory using tar
 `tar -zcvf target_tar.tar.gz directory_to_be_compressed`
 
-<a id="decompressing-a-targz-file"></a>
 ### Decompressing a tar.gz file
 `tar -zxvf target_tar.tar.gz path/to/decompress/`
 
 ------
 
-<a id="openssl"></a>
 ## OpenSSL
 
-<a id="dumping-the-tls-certificate-using-openssl"></a>
 ### Dumping the TLS certificate using OpenSSL
 `echo | openssl s_client -connect HOST:PORT 2>/dev/null | openssl x509 -text -noout`
 
-<a id="tls-connection-with-a-specific-ciphersuite-using-openssl"></a>
 ### TLS connection with a specific ciphersuite using OpenSSL
 `openssl s_client -connect HOST:PORT -cipher cipher-name -brief`
 
@@ -84,10 +80,50 @@ Insert xkcd, hur dur!
 
 ------
 
-<a id="amazon-s3"></a>
 ## Amazon S3
 
-<a id="syncing-a-folder-with-an-amazon-s3-bucket-using-s3cmd"></a>
+### Using s3deploy
+I have switched to s3deploy from s3cmd. https://github.com/bep/s3deploy
+
+To make it work, create a file named `.s3deploy.yaml` (not the period) in the root of your website. I use this:
+
+``` yaml
+routes:
+    - route: "^.+\\.(js|css|svg|ttf|eot|woff|woff2)$"
+      #  cache static assets for 20 years
+      headers:
+         Cache-Control: "max-age=630720000, no-transform, public"
+      gzip: true
+    - route: "^.+\\.(png|jpg)$"
+      headers:
+         Cache-Control: "max-age=630720000, no-transform, public"
+      gzip: true
+    - route: "^.+\\.(html|xml|json|js)$"
+      gzip: true
+```
+
+The file should be self-explanatory. Don't set `gzip` for `txt` files, **it will break your keybase proof**.
+
+Then run (change region if needed):
+
+```
+s3deploy.exe -source=public/ -region=us-east-1 -bucket=[bucketname]
+```
+
+To pass your AWS key and secret, you can either set them in an environment variable or in this file:
+
+```
+c:\Users\[your user]\.aws\credentials
+```
+
+Then inside the file:
+
+```
+[default]
+aws_access_key_id=
+aws_secret_access_key=
+```
+
 ### Syncing a folder with an Amazon S3 bucket using s3cmd
 `python s3cmd sync --acl-public --delete-removed --rr directory-to-sync/ s3://bucket-name`
 
@@ -97,7 +133,6 @@ For example uploading the Hugo public directory to my website:\\
 * `--acl-public`: Anyone can only read.
 * `--delete-removed`: Delete objects with no corresponding local files.
 
-<a id="changing-the-mime-type-of-css-file-after-upload-to-fix-css-not-displaying-correctly"></a>
 ### Changing the mime-type of CSS file after upload to fix CSS not displaying correctly
 `python s3cmd --acl-public --no-preserve --mime-type="text/css" put public/css/hugo-octopress.css s3://parsiya.net/css/hugo-octopress.css`
 
@@ -113,30 +148,30 @@ python s3cmd --acl-public --no-preserve --cf-invalidate --add-header="Expires: S
 rd /q /s public
 {{< /codecaption >}}
 
+### Setting the index to a non-root file in static website hosted on S3
+When setting up a static website in an S3 bucket, you need to specify an index and an error page. The index cannot be in a sub-directory but the error page can be. Set the index to a non-existent file (e.g. `whatever.crap`) and set the error page to the actual index page. Source: https://stackoverflow.com/a/20273548
+
+If you are relying on error pages, this will mess with your site because every error will be redirected to the index. Another way is to set a meta redirect in the index file in the root directory and redirecting that page.
+
 ------
 
-<a id="windows"></a>
 ## Windows
 
-<a id="shortcut-to-ie-or-wininet-proxy-settings"></a>
 ### Shortcut to IE (or WinINET) Proxy Settings
 
 `control inetcpl.cpl,,4`
 
-<a id="vhd-file-is-open-in-system-and-cannot-be-deleted"></a>
 ### VHD File is Open in System (and cannot be Deleted)
 You clicked on a VHD file and now cannot delete it. Use this PowerShell command but the path to VHD should be full.
 
 `Dismount-DiskImage -ImagePath 'C:\full\path\to\whatever.vhd'`
 
-<a id="base64-encodedecode-without-powershell"></a>
 ### Base64 encode/decode without PowerShell
 Use `certutil` for bootleg base64 encoding/decoding:
 
 - `certutil -encode whatever.exe whatever.base64`
 - `certutil -decode whetever.base64 whatever.exe`
 
-<a id="whereexe"></a>
 ### Where.exe
 `where.exe` searches for files. Without any locations, it searches in the local directory and then in PATH.
 
@@ -144,7 +179,6 @@ Use `certutil` for bootleg base64 encoding/decoding:
 - `/T` displays file size.
 - `/?` for help.
 
-<a id="delete-file-or-directory-with-a-path-or-name-longer-than-the-windows-limit"></a>
 ### Delete file or directory with a path or name longer than the Windows limit
 Answer from [superuser.com](http://superuser.com/a/467814).
 
@@ -155,16 +189,13 @@ rmdir empty_dir
 rmdir the_dir_to_delete
 ```
 
-<a id="install-bash-for-windows-without-windows-store"></a>
 ## Install "Bash for Windows" without Windows Store
 `lxrun /install`.
 
 ----------
 
-<a id="powershell"></a>
 ## Powershell
 
-<a id="list-all-files-including-hidden"></a>
 ### List all files (including hidden)
 `Get-ChildItem "searchterm" -recurse -force -path c:\ | select-object FullName`
 
@@ -173,7 +204,6 @@ rmdir the_dir_to_delete
 * `select-object`: Selects each file from last point
 * `FullName`: Only display file name
 
-<a id="diff-in-powershell"></a>
 ### Diff in Powershell
 `Compare-Object (Get-Content new1.txt) (Get-Content new2.txt) | Format-List >> Diff-Output`
 
@@ -182,7 +212,6 @@ Output will be in format of
 * `InputObject`: `c:\users\username\somefile` -- line content
 * `SideIndicator`: `=>` -- exists in new2.txt (second file, file to the right)
 
-<a id="pseudo-grep-in-powershell"></a>
 ### Pseudo-grep in Powershell
 `findstr "something" *.txt`
 
@@ -204,26 +233,21 @@ will search for keyword1 OR keyword2 in files
 https://technet.microsoft.com/en-us/library/Cc732459.aspx
 
 
-<a id="grep-in-command-outputs"></a>
 ### grep in command outputs
 `whatever.exe | Select-String -pattern "admin"`
 
-<a id="get-acl-and-icaclsexe"></a>
 ### Get-Acl and icacls.exe
 `Get-Acl -path c:\windows\whatever.exe | Format-List`
 
 `icacls.exe c:\windows\whatever.exe`
 
-<a id="time-in-powershell"></a>
 ### time in PowerShell
 `Measure-Command {python whatever.py}`
 
 -----------
 
-<a id="some-git-stuff-because-i-keep-forgetting-them"></a>
 ## Some Git stuff because I keep forgetting them
 
-<a id="create-new-branch-and-merge"></a>
 ### Create new branch and merge
 This works with small branches (e.g. one fix or so). Adapted from a [Bitbucket tutorial](https://confluence.atlassian.com/bitbucket/use-a-git-branch-to-merge-a-file-681902555.html).
 
@@ -247,11 +271,9 @@ Alternatively squash all commits into one `git merge --squash fix-whatever` and 
 7. Delete branch - `git branch -d fix-whatever`\\
 We don't need it anymore. If it was pushed to remote, then we need to delete it there too.
 
-<a id="only-clone-a-certain-branch"></a>
 ### Only clone a certain branch
 `git clone -b <branch> <remote_repo>`
 
-<a id="undo-remote-git-history-after-push"></a>
 ### Undo remote git history after push
 Because this keeps happening to me.
 
@@ -265,7 +287,6 @@ Where N is the number of commits that you want to revert.
 4. Force push the local repo to remote - `git push -f`\\
 Note this will force the update and erase the commit history online. If not one else is using the repo in between it's ok.
 
-<a id="update-local-fork-from-original-repo"></a>
 ### Update local fork from original repo
 
 1. See current remotes - `git remote -v`
@@ -283,7 +304,6 @@ Note this will force the update and erase the commit history online. If not one 
 
 7. Push changes - `git push`
 
-<a id="use-notepad-as-git-editor-on-windows-via-cygwin"></a>
 ### Use Notepad++ as git editor on Windows via Cygwin
 Create a file called `npp` with the following content and copy it to `cygwin\bin`. Modify the path of notepad++ to point to your installation.
 
@@ -297,13 +317,11 @@ Run the following command in Cygwin to set it as global git editor:
 git config --global core.editor npp
 ```
 
-<a id="tab-size-4-in-github-web-interface"></a>
 ### Tab size 4 in Github web interface
 Yes I know Github != Git but cba to create a different category.
 
 Add `?ts=4` to end of file URL.
 
-<a id="change-remote-git"></a>
 ### Change Remote for an Existing Git Repository
 A.K.A. when moving `repository` from bitbucket to github or vice versa.
 
@@ -311,7 +329,6 @@ A.K.A. when moving `repository` from bitbucket to github or vice versa.
 git remote set-url origin git@github.com:parsiya/repository.git
 ```
 
-<a id="list-authors-git"></a>
 ### List All Authors in a Git Repository
 For when I wanted to see if I was still showing up as `root`.
 
@@ -319,7 +336,6 @@ For when I wanted to see if I was still showing up as `root`.
 git shortlog -s | cut -c8-
 ```
 
-<a id="rewrite-author-git"></a>
 ### Rewrite Author for Older Commits
 `parsiya.net` had commits as `root` from when I was using it offline. I wanted to change everything to myself.
 
@@ -341,11 +357,9 @@ git shortlog -s | cut -c8-
 
 -----------
 
-<a id="sublime-text-3"></a>
 ## Sublime Text 3
 Tips for using the Sublime Text 3 editor.
 
-<a id="fix-margo-build-failed-for-gosublime-on-windows"></a>
 ### Fix "MarGo build failed" for GoSublime on Windows
 GoSublime's executable has Go version in it. In most cases, it cannot grab the version on Windows and the build will fail like this:
 
@@ -375,13 +389,11 @@ Edit `ver` to whatever, I usually do `1`. Restart Sublime Text and Margo will bu
 
 **Unfortunately this needs to be done for every new GoSublime version.**
 
-<a id="open-the-same-file-in-a-new-tab"></a>
 ### Open the same file in a new tab
 `File > New view into File`. Then drag the pane to a second screen/location.
 
 -----------
 
-<a id="download-youtube-videos-with-substitles"></a>
 ## Download Youtube videos with substitles
 I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The following [youtube-dl](https://github.com/rg3/youtube-dl/) command will download the 56 episode HQ quality Chinese TV series called `Xiao Ao Jiang Hu` or `Laughing in the Wind` (also called `The Smiling Proud Wanderer` or `Swordsman`).
 
@@ -399,7 +411,6 @@ I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The 
 
 ----------
 
-<a id="print-envelopes-using-the-brother-printer-and-libreoffice"></a>
 ## Print Envelopes Using the Brother Printer and LibreOffice
 Before printing, get to printer physically and use the following instructions:
 
