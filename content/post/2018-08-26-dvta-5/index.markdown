@@ -24,7 +24,7 @@ Previous parts are at:
 <!--more-->
 
 # Grabbing Database Credentials via Static Analysis
-In [Part 4]({{< relref "post/2018-08-01-dvta-4/index.markdown#grabbing-the-database-credentials" >}} "Part 4 - Grabbing the Database Credentials") we discovered the MSSQL credentials through dynamic analysis with dnSpy. The credentials are `admin:p@ssw0rd`. This time we are going to see where they are stored and how.
+In [Part 4]({{< relref "/post/2018-08-01-dvta-4/index.markdown#grabbing-the-database-credentials" >}} "Part 4 - Grabbing the Database Credentials") we discovered the MSSQL credentials through dynamic analysis with dnSpy. The credentials are `admin:p@ssw0rd`. This time we are going to see where they are stored and how.
 
 Open up dnSpy and load the application. Search for the `RegisterUser` method (if the search is not successful manually drag and drop `DBAccess.dll`). Right-click on the `RegisterUser` method and select `Analyze`. Note we are not in the main application anymore but inside `DBAccess.dll`. Under `Used By` we can see `btnReg_Click`.
 
@@ -42,7 +42,7 @@ The application is reading some information from `ConfigurationManager.AppSettin
 
 I have written about configuration files before in context of proxying. More background material here:
 
-* [Thick Client Proxying - Part 7 - Proxying .NET Applications via Config File]({{< relref "post/2017-10-07-thick-client-proxying-7-proxying-dotNet-applications.markdown" >}} "Thick Client Proxying - Part 7 - Proxying .NET Applications via Config File").
+* [Thick Client Proxying - Part 7 - Proxying .NET Applications via Config File]({{< relref "/post/2017-10-07-thick-client-proxying-7-proxying-dotNet-applications.markdown" >}} "Thick Client Proxying - Part 7 - Proxying .NET Applications via Config File").
 
 Open the configuration file `dvta-master\DVTA\DVTA\bin\Release\DVTA.exe.config` and look inside. It's an XML file with an `appSettings` section:
 

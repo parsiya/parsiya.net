@@ -21,4 +21,6 @@ In the meanwhile, I have been doing [Gophercises](https://gophercises.com/exerci
 
 * https://github.com/parsiya/Parsia-Code/tree/master/gophercises
 
+{{< imgcap title="Babbling about blockchain at DEF CON 26" src="tineola-defcon.jpg" >}}
+
 <!--more-->
