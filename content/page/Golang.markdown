@@ -15,6 +15,7 @@ toc: false
 **Note: Use my notes at Hacking with Go instead:**
 
 - [https://github.com/parsiya/Hacking-with-Go](https://github.com/parsiya/Hacking-with-Go)
+- [Gophercises - Lessons Learned]({{< relref "/post/2018-10-06-gophercises-lessons-learned/index.markdown" >}} "Gophercises - Lessons Learned") 
 
 These are my notes when learning go from the [Tour of Go](https://tour.golang.org/) and some other sources. A lot of copy/pasted from them and I have used double-quotes to indicate those are not written by me to the best of my ability. Still this is not something original and is mostly here as a quick lookup reference while learning Go. I will update this as I learn more.
 
@@ -62,7 +63,7 @@ These are my notes when learning go from the [Tour of Go](https://tour.golang.or
 		- [select](#select)
 	- [sync.Mutex](#syncmutex)
 - [Printf from Go by example](#printf-from-go-by-example)
-	- [~~Switches~~ Verbs](#%7E%7Eswitches%7E%7E-verbs)
+	- [~~Switches~~ Verbs](#switches-verbs)
 		- [Decimals](#decimals)
 		- [Floats](#floats)
 		- [Value](#value)
@@ -76,11 +77,11 @@ These are my notes when learning go from the [Tour of Go](https://tour.golang.or
 	- [Importing a package into the current namespace](#importing-a-package-into-the-current-namespace)
 	- [Avoiding the damn unused warnings](#avoiding-the-damn-unused-warnings)
 	- [Unix Timestamp to String](#unix-timestamp-to-string)
-	- [Spawn a new thread \(goroutine\) on the spot](#spawn-a-new-thread-goroutine-on-the-spot)
+	- [Spawn a new thread (goroutine) on the spot](#spawn-a-new-thread-goroutine-on-the-spot)
 	- [Write to a file or io.buffer from goroutines - DON'T](#write-to-a-file-or-iobuffer-from-goroutines---dont)
 - [Stuff learned from Cryptopals](#stuff-learned-from-cryptopals)
 	- [Long string on multiple lines](#long-string-on-multiple-lines)
-	- [Compare two \[\]bytes with bytes.equal](#compare-two-bytes-with-bytesequal)
+	- [Compare two []bytes with bytes.equal](#compare-two-bytes-with-bytesequal)
 	- [Sorting a array/slice of struct by field](#sorting-a-arrayslice-of-struct-by-field)
 	- [Append two slices](#append-two-slices)
 
