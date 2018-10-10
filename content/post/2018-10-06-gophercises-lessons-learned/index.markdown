@@ -12,7 +12,7 @@ tags:
 - Gophercises
 ---
 
-I recently finished [Gophercises](https://gophercises.com), an great set of Go practice lessons by [Jon Calhoun](https://www.calhoun.io/). I think it took me around a month from start to finish with some stuff in the middle. Most were nice, some were tedious. For example, the last exercise was about [PDF generation](https://gophercises.com/exercises/pdf) and went boring quickly.
+I recently finished [Gophercises](https://gophercises.com), a great set of Go practice lessons by [Jon Calhoun](https://www.calhoun.io/). I think it took me around a month from start to finish with some stuff in the middle. Most were nice, some were tedious. For example, the last exercise was about [PDF generation](https://gophercises.com/exercises/pdf) and went to boring quickly.
 
 After every lesson, I wrote down "Lessons Learned" in the README. This page collects most of them. All code is here:
 
@@ -70,6 +70,10 @@ func (e *Exam) Shuffle() {
 * Then pass the custom handler to `http.ListenAndServe(":8080", customHandler)`
 
 # JSON to Objects Mappings
+Your best friend:
+
+* https://mholt.github.io/json-to-go/
+* Doublecheck where you need to have maps. Doesn't detect them all the time.
 
 Maps to a `[]object` or array of objects:
 
@@ -141,7 +145,7 @@ Maps to a map of `[string]object`
     * `<a href="example.net">`: `key` = `href` and `value` = `example.net`.
 
 # strings.Builder
-Strings are immutable, use this to make strings for better efficiency.
+Strings are immutable, use this to append to strings for better efficiency.
 
 * Example: https://golang.org/pkg/strings/#example_Builder
 
@@ -209,15 +213,6 @@ type URL struct {
 * rune to string with `string('a')`.
 * string to rune with `rune("a")`.
 * string to int with `int("a")`.
-
-# urfave/cli Package
-
-* godoc: [https://godoc.org/github.com/urfave/cli](https://godoc.org/github.com/urfave/cli)
-
-Examples:
-
-* http://securitygobyexample.com/urfave-cli-subcommands
-* http://securitygobyexample.com/urfave-cli-flags
 
 # BoltDB
 
@@ -533,8 +528,9 @@ if err := enc.Decode(&obj2); err != nil {
 
 // Now json is populated from file.
 ```
+# Twitter APIs
 
-# Twitter Application-Only Auth-Flow
+## Twitter Application-Only Auth-Flow
 Docs: https://developer.twitter.com/en/docs/basics/authentication/overview/application-only
 
 1. Create an application and a set of read-only consumer API keys. Twitter will ask you to write 300 words about your application and other crap.
@@ -559,7 +555,7 @@ Docs: https://developer.twitter.com/en/docs/basics/authentication/overview/appli
 6. ???
 7. Profit
 
-# Get Retweeters
+## Get Retweeters
 GET request to https://api.twitter.com/1.1/statuses/retweets/tweetID.json?count=100.
 
 * https://developer.twitter.com/en/docs/tweets/post-and-engage/api-reference/get-statuses-retweets-id
@@ -625,9 +621,6 @@ Pass the arguments inside `launch.json` like this.
     "key3",
 ],
 ```
-
-# Encrypter and Decrypter
-I wasted a lot of time (a Sunday) debugging the code because my decrypted values where only correct for the first block. Finally, I saw I am encrypting again inside `Decrypter`. On a positive note, I learned how to use Delve debugger and looked at the internals of json encoder/decoder.
 
 # HTML Input type File
 We can use something like this
