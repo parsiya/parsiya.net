@@ -57,7 +57,7 @@ It takes a byte slice coming from the fuzzer and returns an integer. This gives 
 
 The output of `Fuzz` is our feedback to the fuzzer. If the input was valid (usually in the correct format), it should return `1` and `0` otherwise.
 
-Having roughly correctly formatted input is important. Usually we are dealing for formatted data. Just randomly sending byte blobs to the program is not going to do much. We want data that can bypass format checks. Usually we pass the blob to either the target package or another function (e.g. some format converter) and check if it passes the parser check without any errors. If so, `Fuzz` must return `1` to tell `go-fuzz` that our format was good.
+Having roughly correctly formatted input is important. Usually, we are dealing with formatted data. Just randomly sending byte blobs to the program is not going to do much. We want data that can bypass format checks. We pass the blob to either the target package or another function (e.g. some format converter) and check if it passes the parser check without any errors. If so, `Fuzz` must return `1` to tell `go-fuzz` that our format was good.
 
 For a good example, look at the `PNG` fuzz function from the readme file:
 
@@ -112,7 +112,7 @@ Next step is using `go-fuzz-build` to make the magic blob. Create a directory (I
 
 - `go-fuzz-build github.com/malfunkt/iprange`
 
-Note you need to use forward slashes on Windows too. If `Fuzz` was written correctly we will get a zip file named `iprange-fuzz.zip`, otherwise we get errors.
+Note you need to use forward slashes on Windows too. If `Fuzz` was written correctly we will get a zip file named `iprange-fuzz.zip`.
 
 Note: This step usually takes a while. If the command line is not responsive after a few minutes, press enter a couple of times to check if it has finished. Sometimes the file is created but the command line does not display the results.
 
@@ -219,7 +219,7 @@ exit status 2
 ```
 
 ### Parse
-Next item in the chain is at [https://github.com/malfunkt/iprange/blob/master/y.go#L309][iprange-parse]. But it's a huge method, however we know the method that was called so we can just search for `Uint32`. The cuplrit is inside [case 5][iprange-case5].
+Next item in the chain is at [https://github.com/malfunkt/iprange/blob/master/y.go#L309][iprange-parse]. It's a huge method but we know the method that was called so we can just search for `Uint32`. The culprit is inside [case 5][iprange-case5].
 
 {{< codecaption title="Original y.go case 5" lang="go" >}}
 case 5:
@@ -347,7 +347,7 @@ Just pointing out bugs is not useful. Being a security engineer is not just find
 
 The quick solution is checking the values of `min` and `mask` before calling `Uint32`.
 
-A better solution is to check the input for validity and good format before processing. For example for IPv4 masks we can check if they are in in `16-30`.
+A better solution is to check the input for validity and good format before processing. For example, for IPv4 masks we can check if they are in in `16-30`.
 
 # Conclusion
 Well that was it folks! We learned how to use `go-fuzz` and investigated a simple panic. I think this is a good first tutorial.

@@ -16,7 +16,7 @@ Previously on `Learning Go-Fuzz`:
 
 * ["Learning Go-Fuzz 1: iprange"]({{< relref "2018-04-29-learning-go-fuzz-1" >}} "Learning Go-Fuzz 1: iprange")
 
-This time I am looking at a different package. This is a package called `goexif` at [https://github.com/rwcarlsen/goexif][goexif-github]. Being a file parser, it's a prime target for `Go-Fuzz`. Unfortunately it has not been updated for a while. Instead we will be looking at a fork at [https://github.com/xor-gate/goexif2][goexif2-github].
+This time I am looking at a different package. This is a package called `goexif` at [https://github.com/rwcarlsen/goexif][goexif-github]. Being a file parser, it's a prime target for `Go-Fuzz`. Unfortunately it has not been updated for a while. Instead, we will be looking at a fork at [https://github.com/xor-gate/goexif2][goexif2-github].
 
 Code and fuzzing artifacts are at:
 
@@ -43,7 +43,7 @@ Steps are similar to the previous part.
 6. ???
 7. Crashes!
 
-If panics have been fixed, you can clone the repository and do a hard reset to commit `e5a111b2b4bd00d5214b1030deb301780110358d`. 
+If panics have been fixed, you can clone the commit `e5a111b2b4bd00d5214b1030deb301780110358d`. 
 
 # Fuzz
 The `Fuzz` function is easy straight forward:
@@ -103,7 +103,7 @@ This means we are running out of memory and it's not a legitimate crash. Before 
 
 **Lesson #0:** Fix `Go-Fuzz` running out of memory:
 
-* Fix bugs that result in allocation of large chunks of memory.
+* Fix bugs that result in the allocation of large chunks of memory.
 * Run fewer workers with `-procs`. By default `Go-Fuzz` uses all of your CPU cores (including virtual).
 
 # Analyzing Crashes
@@ -225,7 +225,7 @@ func main() {
 
 Running this in the Windows 10 64-bit VM, does not return an error. While running the same program in Go playground returns this error `prog.go:8:11: constant 2684354560 overflows int32`.
 
-This means the playground is using 32 bit `int`s and locally we are using 64 bit ones. Local is obvious because we are in a 64 bit OS. To get the OS of playground we can use this other small program:
+This means the playground is using 32 bit `int`s and locally we are using 64 bit ones. Local is obvious because we are in a 64 bit OS. To get the OS of the Go playground we can use this other small program:
 
 {{< codecaption title="goos-goarch.go" lang="go" >}}
 // Get OS and architecture.
@@ -505,7 +505,7 @@ for i := 0; i < int(t.Count); i++ {
 Looking at the function we can see by ignoring the errors, we will have garbage data in the JSON. However, I don't think we need to return errors here but I could be wrong.
 
 # Adding Crashes to Tests
-After things are fixed, we need to add the crashes to tests. This will discover if these bug regress in the future. Unfortunately the package uses `go generate` to generate tests and I have no clue how to use it. But I know how to write normal Go test using the [testing][go-testing] package. Our payloads are pretty small so we will embed them in the test file instead of adding extra files to the package.
+After things are fixed, we need to add the crashes to tests. This will discover if these bug regress in the future. Unfortunately, the package uses `go generate` to generate tests and I have no clue how to use it. But I know how to write normal Go test using the [testing][go-testing] package. Our payloads are pretty small so we will embed them in the test file instead of adding extra files to the package.
 
 {{< codecaption title="gofuzz_test.go" lang="go" >}}
 package exif
@@ -571,7 +571,7 @@ We used our newly acquired knowledge of `Go-Fuzz` on an image parser.
 * `Go-Fuzz` can crash when running out of memory and return false positives. We can throttle it or fix memory allocation bugs before resuming.
 * Use data types with explicit lengths such as `int32` and `int64` instead of OS dependent ones like `int`.
 * Amount of memory available for malloc is OS dependent and somewhat arbitrary.
-* Manually check size before allocating memory for slices.
+* Manually check the size before allocating memory for slices.
 * Check data (esp. field lengths) for validity after reading them.
 * Check index against array length before access.
 * Add `Go-Fuzz` crashes to unit tests.

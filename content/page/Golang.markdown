@@ -17,7 +17,7 @@ toc: false
 - [https://github.com/parsiya/Hacking-with-Go](https://github.com/parsiya/Hacking-with-Go)
 - [Gophercises - Lessons Learned]({{< relref "/post/2018-10-06-gophercises-lessons-learned/index.markdown" >}} "Gophercises - Lessons Learned") 
 
-These are my notes when learning go from the [Tour of Go](https://tour.golang.org/) and some other sources. A lot of copy/pasted from them and I have used double-quotes to indicate those are not written by me to the best of my ability. Still this is not something original and is mostly here as a quick lookup reference while learning Go. I will update this as I learn more.
+These are my notes when learning go from the [Tour of Go](https://tour.golang.org/) and some other sources. A lot of copy/pasted from them and I have used double-quotes to indicate those are not written by me to the best of my ability. This is not something original and is mostly here as a quick lookup reference while learning Go. I will update this as I learn more.
 
 <!-- MarkdownTOC -->
 

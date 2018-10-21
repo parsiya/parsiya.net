@@ -155,6 +155,15 @@ sb.WriteString("whatever")  // Write to it. We can use fmt.Sprintf as param too.
 return sb.String()  // Get the final string.
 ```
 
+We can also pass one as a pointer as `io.Writer`. For example, `json.NewEncoder(&sb)`.
+
+# io.Reader for string
+Get an `io.Reader` from a string.
+
+``` go
+reader: = strings.NewReader("Whatever")
+```
+
 # net.URL
 
 * https://golang.org/pkg/net/url/
