@@ -20,4 +20,6 @@ I sound somewhat comprehensible. That was a nice surprise. Credit goes to Travis
 
 Airport and TSA diaries, Elon Musk jokes, we have it all.
 
+{{< youtube xKYIde5jh_8 >}}
+
 <!--more-->
