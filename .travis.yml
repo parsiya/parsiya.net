@@ -1,0 +1,20 @@
+# safelist
+branches:
+  only:
+  - master
+
+before_install:
+- git submodule update --init --recursive
+
+install:
+# Download and install Hugo
+- wget https://github.com/gohugoio/hugo/releases/download/v0.49.2/hugo_0.49.2_Linux-64bit.deb
+- sudo dpkg -i hugo*.deb
+
+# Download and install s3deploy
+- wget https://github.com/bep/s3deploy/releases/download/v2.2.0/s3deploy_2.2.0_Linux-64bit.deb
+- sudo dpkg -i s3deploy*.deb
+
+script:
+- hugo --minify
+- s3deploy -source=public/ -region=us-east-1 -bucket=parsiya.net -distribution-id EL7QFR3TG43UJ

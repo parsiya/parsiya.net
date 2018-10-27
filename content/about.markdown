@@ -22,9 +22,9 @@ Current goals in progress:
     - https://parsiya.net/categories/go/
 - Learning more about security of smart contracts and enterprise blockchains.
     - My post on our corporate blog: [Tineola: Taking a Bite out of Enterprise Blockchain](https://www.synopsys.com/blogs/software-security/tineola-enterprise-blockchain/ "Tineola: Taking a Bite out of Enterprise Blockchain")
-    - Our DEF CON 26 talk (video is not released yet): https://www.defcon.org/html/defcon-26/dc-26-speakers.html#Riedesel.
+    - Our DEF CON 26 video is out: https://www.youtube.com/watch?v=xKYIde5jh_8
     - Tineola: https://github.com/tineola/tineola
 - In-memory fuzzing via binary instrumentation (aka traversing arbitrary assembly blobs over and over and over).
     - https://parsiya.net/categories/winappdbg/
 - Automation:
-    - [Reflections on "Manual Work is a Bug"]({{< relref "/post/2018-10-03-manual-work-bug/index.markdown" >}} "Reflections on "Manual Work is a Bug\"") 
+    - [Reflections on "Manual Work is a Bug"]({{< relref "/post/2018-10-03-manual-work-bug/index.markdown" >}} "Reflections on "Manual Work is a Bug\"")
