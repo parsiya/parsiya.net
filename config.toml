@@ -96,14 +96,14 @@ disqusShortname = "parsiya"
   weight = 20
 
 [[menu.sidebar]]
+Name = "Reverse Engineering"
+URL = "/categories/reverse-engineering/"
+weight = 25
+
+[[menu.sidebar]]
   Name = "Crypto(graphy)"
   URL = "/categories/crypto/"
   weight = 30
-
-[[menu.sidebar]]
-  Name = "Reverse Engineering"
-  URL = "/categories/reverse-engineering/"
-  weight = 25
 
 [params]
 
@@ -113,9 +113,9 @@ disqusShortname = "parsiya"
 
   sidebarHeader = "Who am I?"
 
-  sidebarText = """I am Parsia Hakimian. Senior Security Consultant at [Synopsys](https://www.synopsys.com/software-integrity.html).
+  sidebarText = """I am Parsia. Senior Security Consultant at [Synopsys](https://www.synopsys.com/software-integrity.html).
   </br></br>
-  This is my personal site where I document my interests such as application security, reverse engineering, Go, cryptography and computer games.
+ Here I document my interests such as application security, reverse engineering, Go, cryptography and computer games.
   </br></br>
   If you want to know more, click on [About Me!](/about/).
   """
@@ -171,7 +171,7 @@ disqusShortname = "parsiya"
   # Don't inclue the @.
   twitterCardAuthor = "CryptoGangsta"
 
-# blackfriday is Hugo's markdown engine. Options are at: https://gohugo.io/overview/configuration/ (scroll down to "Configure Blackfriday rendering")
+# blackfriday is Hugo's markdown engine. Options are at: https://gohugo.io/getting-started/configuration/#configure-blackfriday
 [blackfriday]
   hrefTargetBlank = true # open the external links in a new window
   fractions = false
