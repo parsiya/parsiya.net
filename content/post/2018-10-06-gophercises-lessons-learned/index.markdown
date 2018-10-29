@@ -8,6 +8,7 @@ twitterImage: github-sc.jpg
 categories:
 - Go
 - Not Security
+- Lessons Learned
 tags:
 - Gophercises
 ---
