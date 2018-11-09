@@ -52,6 +52,7 @@ Often I need to do something that I have done many times in the past but I have 
   - [Open the same file in a new tab](#open-the-same-file-in-a-new-tab)
 - [Download Youtube videos with substitles](#download-youtube-videos-with-substitles)
 - [Print Envelopes Using the Brother Printer and LibreOffice](#print-envelopes-using-the-brother-printer-and-libreoffice)
+- [Microphone not working in Discord?](#microphone-not-working-in-discord)
 
 <!-- /MarkdownTOC -->
 
@@ -409,7 +410,7 @@ I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The 
 `Youtube-dl` can be downloaded using `pip`. For example on Windows:\\
 `python -m pip install youtube-dl`.
 
-----------
+-----------
 
 ## Print Envelopes Using the Brother Printer and LibreOffice
 Before printing, get to printer physically and use the following instructions:
@@ -439,3 +440,16 @@ Now open LibreOffice and use these instructions:
     * Media Type: `Envelopes`.
     * Paper Source > First Page: `Manual`.
 9. Print
+
+-----------
+
+## Microphone not working in Discord?
+You might have enabled the privacy settings in Windows 10.
+
+1. Settings.
+2. Search for Privacy.
+3. `Microphone privacy settings`.
+4. Allow apps to access your Microphone.
+5. Enable for `Win32WebViewHost`.
+6. ???
+7. Yell at your raid group for standing in fire.

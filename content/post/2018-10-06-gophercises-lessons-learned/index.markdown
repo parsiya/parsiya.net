@@ -350,63 +350,28 @@ func walkWithMe0(path string, info os.FileInfo, err error) error {
 }
 ```
 
-`walkWithMe` is good for listing things but bad for saving info. To do so, we pass a function that returns an anonymous `filepath.WalkFunc` (same signature as walkWithMe) and then pass a pointer to that function.
+`walkWithMe` is good for listing things but bad for saving info. The easiest way to pass into out is using an anonymous (or inline) function.
 
 ``` go
 func main() {
 
-	var f []string
 	// Make a list of all files in sample.
-	err := filepath.Walk("sample", walkWithMe1(&f))
+	err := filepath.Walk("sample", func(path string, info os.FileInfo, err error) error {
+
+		// Now we can do what we want with os.FileInfo.
+		fmt.Printf("Visiting %v\n", info.Name())
+		return nil
+	})
 	if err != nil {
 		log.Println(err)
 	}
-
-	for _, v := range f {
-		fmt.Println(v)
-	}
-}
-
-// walkWithMe1 stores the list of files in a slice.
-func walkWithMe1(f *[]string) filepath.WalkFunc {
-	return func(path string, info os.FileInfo, err error) error {
-		// Return error if we got an error.
-		if err != nil {
-			return err
-		}
-		*f = append(*f, path)
-		return nil
-	}
 }
 ```
 
-This lists all files. If we want to only list files (or directories) we can use [info.IsDir()](https://golang.org/pkg/os/#FileInfo).
-
-
-``` go
-// walkWithMe2 stores the list of files but no directories in a slice.
-func walkWithMe2(f *[]string) filepath.WalkFunc {
-	return func(path string, info os.FileInfo, err error) error {
-		// Return error if we got an error.
-		if err != nil {
-			return err
-		}
-		if info.IsDir() {
-			return nil
-		}
-		*f = append(*f, path)
-		fmt.Printf("%+v\n", info.Sys())
-		return nil
-	}
-}
-```
-
-On Windows [*syscall.Win32FileAttributeData](https://golang.org/pkg/syscall/?GOOS=windows&GOARCH=amd64#Win32FileAttributeData).
-
-
-[info.path.Ext()](https://golang.org/pkg/path/filepath/#Ext) returns the extension which just does some text processing on path. **It returns the period (e.g. ".txt").**
-
-[info.path.Match](https://golang.org/pkg/path/filepath/#Match) can be used to match filenames.
+* Detect directories: [info.IsDir()](https://golang.org/pkg/os/#FileInfo).
+* On Windows [*syscall.Win32FileAttributeData](https://golang.org/pkg/syscall/?GOOS=windows&GOARCH=amd64#Win32FileAttributeData).
+* Get file extension: [info.path.Ext()](https://golang.org/pkg/path/filepath/#Ext) returns the extension which just does some text processing on path. **It returns the period (e.g. ".txt").**
+* To match filenames: [info.path.Match](https://golang.org/pkg/path/filepath/#Match).
 
 # Print Stacktrace
 
@@ -672,7 +637,7 @@ Gets the first file in the param (usually POST body).
 Response.PostForm is a map of `url.Values` (`map[string][]string`).
 
 # Access Struct Fields with the Reflect Package
-Don't use `relfection` I guess. But this is fun. Seems like it will panic if unexported fields are accessed.
+Don't use `reflect` I guess. But this is fun. Seems like it will panic if unexported fields are accessed.
 
 In this case, our struct only has string fields so we only check for empty string.
 
