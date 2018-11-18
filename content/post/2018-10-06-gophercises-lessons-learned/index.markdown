@@ -342,7 +342,7 @@ func main() {
 }
 
 // walkWithMe0 returns info about files.
-func walkWithMe0(path string, info os.FileInfo, err error) error {
+func walkWithMe0(file string, info os.FileInfo, err error) error {
 
 	// Now we can do what we want with os.FileInfo.
 	fmt.Printf("Visiting %v\n", info.Name())
@@ -356,7 +356,7 @@ func walkWithMe0(path string, info os.FileInfo, err error) error {
 func main() {
 
 	// Make a list of all files in sample.
-	err := filepath.Walk("sample", func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk("sample", func(file string, info os.FileInfo, err error) error {
 
 		// Now we can do what we want with os.FileInfo.
 		fmt.Printf("Visiting %v\n", info.Name())
@@ -370,8 +370,8 @@ func main() {
 
 * Detect directories: [info.IsDir()](https://golang.org/pkg/os/#FileInfo).
 * On Windows [*syscall.Win32FileAttributeData](https://golang.org/pkg/syscall/?GOOS=windows&GOARCH=amd64#Win32FileAttributeData).
-* Get file extension: [info.path.Ext()](https://golang.org/pkg/path/filepath/#Ext) returns the extension which just does some text processing on path. **It returns the period (e.g. ".txt").**
-* To match filenames: [info.path.Match](https://golang.org/pkg/path/filepath/#Match).
+* Get file extension: [file.Ext()](https://golang.org/pkg/path/filepath/#Ext) returns the extension which just does some text processing on path. **It returns the period (e.g. ".txt").** Edit from the future: Read more about `ext` at: [filepath.Ext Notes]({{< relref "/post/2018-11-10-filepath-ext/index.markdown" >}} "filepath.Ext Notes").
+* To match filenames: [file.Match](https://golang.org/pkg/path/filepath/#Match).
 
 # Print Stacktrace
 
