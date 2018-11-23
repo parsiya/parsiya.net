@@ -1,20 +1,40 @@
 # parsiya.net [![Build Status](https://travis-ci.org/parsiya/parsiya.net.svg?branch=master)](https://travis-ci.org/parsiya/parsiya.net)
 This is the source for my personal website at https://parsiya.net.
 
-It is generated using [Hugo](https://gohugo.io/) and the [Hugo-Octopress Theme](https://github./parsiya/hugo-octopress) (made by yours truly). Looking at the theme, you can see it's a port of [Octopress](https://github.com/octopress/octopress).
+It is generated using [Hugo](https://gohugo.io/) and the [Hugo-Octopress Theme](https://github./parsiya/hugo-octopress) (made by yours truly). It's a port of [Octopress](https://github.com/octopress/octopress).
+
+## Workflow
+
+1. Create a new post with `hugo new post/2018-11-23-post-name/index.markdown` (or `index.md`) because I like page bundles.
+2. Edit the post and proofread with `hugo serve -v`. Pictures are added in the same directory to take advantage of page bundles.
+3. Push to Github.
+4. [Travis CI](https://travis-ci.org/parsiya/parsiya.net) takes over and publishes the blog.
+    * See Travis CI section.
+5. [s3deploy](https://github.com/bep/s3deploy) deploys the blog to AWS and invalidates the CloudFront cache for updated resources.
+    * See s3deploy section.
+6. ???
+7. Profit. The website is now updated. Add CI/CD to your resume.
 
 ## Hosting
-The website is hosted in an S3 bucket with CloudFront in front of it to leverage the CDN and provide TLS.
+The website is hosted in an S3 bucket. CloudFront provides CDN and TLS.
 
-When updating the contents of the bucket, be sure to invalidate the CloudFront cache. This can be done either in the console or tools. AWS charges by "invalidation URL" (free 1000/month URLs) so when in doubt just do a complete purge with `/*` (which counts as one URL).
+## Travis CI
+My [.travis.yml](.travis.yml) is very simple.
 
-## Deployment
-Currently I use [s3deploy](https://github.com/bep/s3deploy). It reads its configuration from the [.s3deploy.yml](.s3deploy.yml) file. [The example](https://github.com/bep/s3deploy#advanced-configuration) is suitable (with a bit of modification) for most static websites.
+* The theme is a submodule. It's updated first.
+* Install two debs. Hugo and s3deploy. I like to control the versions as both software are under heavy development.
+* `language:minimal` reduces build time by 20 seconds (compared to the default container).
+* AWS key and secret are in `AWS_ACCESS_KEY` and `AWS_SECRET_ACCESS_KEY` respectively. These are used by s3deploy.
 
-Note: If you enable `gzip compression` for keybase proofs, your proof will break.
+[deploy.bat](deploy.bat) does the same thing for manual deployment.
 
-Manual update is via [deploy.bat](deploy.bat) or CI integration with [.travis.yml](.travis.yml). Both roughly do the same thing, build the website and then push it to the bucket with s3deploy.
+## s3deploy
+I use [s3deploy](https://github.com/bep/s3deploy) to deploy the blog to AWS. The configuration is inside [.s3deploy.yml](.s3deploy.yml). [The example](https://github.com/bep/s3deploy#advanced-configuration) is suitable (with a bit of modification) for most static websites.
 
-Use the s3deploy's [example IAM policy](https://github.com/bep/s3deploy#cloudfront-cdn-cache-invalidation). AWS does not support addressing separate CloudFront distributions with ARNs (Amazon Resource Names) so the user can list and invalidate all distributions. I have published the CloudFront distribution ID to this repository. I could not find any information saying it should be secret.
+Static resources (fonts, images, css, etc.) are set to never expire. Everything else is set to use gzip compression. When a resource is updated, s3deploy invalidates its CloudFront cache.
+
+Note: If you enable `gzip compression` for Keybase proofs (see [static/keybase.txt](static/keybase.txt)), the proof will break.
+
+Use the s3deploy's [example IAM policy](https://github.com/bep/s3deploy#cloudfront-cdn-cache-invalidation). AWS does not support addressing separate CloudFront distributions with ARNs (Amazon Resource Names) so the resulting key can list and invalidate all distributions.
 
 Previously I used [s3cmd](https://github.com/s3tools/s3cmd). You can see the batch file in [runme.batold](runme.batold).
