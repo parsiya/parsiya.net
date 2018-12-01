@@ -12,7 +12,7 @@ tags:
 toc: false
 ---
 
-**Note: Use my notes at Hacking with Go instead:**
+**Note: Use these notes instead:**
 
 - [https://github.com/parsiya/Hacking-with-Go](https://github.com/parsiya/Hacking-with-Go)
 - [Gophercises - Lessons Learned]({{< relref "/post/2018-10-06-gophercises-lessons-learned/index.markdown" >}} "Gophercises - Lessons Learned") 

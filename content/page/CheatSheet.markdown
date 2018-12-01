@@ -57,6 +57,7 @@ Often I need to do something that I have done many times in the past but I have 
 <!-- /MarkdownTOC -->
 
 ------
+
 ## Tar
 Insert xkcd, hur dur!
 
@@ -193,7 +194,7 @@ rmdir the_dir_to_delete
 ## Install "Bash for Windows" without Windows Store
 `lxrun /install`.
 
-----------
+------
 
 ## Powershell
 
@@ -245,7 +246,7 @@ https://technet.microsoft.com/en-us/library/Cc732459.aspx
 ### time in PowerShell
 `Measure-Command {python whatever.py}`
 
------------
+------
 
 ## Some Git stuff because I keep forgetting them
 
@@ -356,7 +357,7 @@ git shortlog -s | cut -c8-
 
 6. Rinse and repeat.
 
------------
+------
 
 ## Sublime Text 3
 Tips for using the Sublime Text 3 editor.
@@ -393,7 +394,7 @@ Edit `ver` to whatever, I usually do `1`. Restart Sublime Text and Margo will bu
 ### Open the same file in a new tab
 `File > New view into File`. Then drag the pane to a second screen/location.
 
------------
+------
 
 ## Download Youtube videos with substitles
 I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The following [youtube-dl](https://github.com/rg3/youtube-dl/) command will download the 56 episode HQ quality Chinese TV series called `Xiao Ao Jiang Hu` or `Laughing in the Wind` (also called `The Smiling Proud Wanderer` or `Swordsman`).
@@ -410,7 +411,7 @@ I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The 
 `Youtube-dl` can be downloaded using `pip`. For example on Windows:\\
 `python -m pip install youtube-dl`.
 
------------
+------
 
 ## Print Envelopes Using the Brother Printer and LibreOffice
 Before printing, get to printer physically and use the following instructions:
@@ -441,7 +442,7 @@ Now open LibreOffice and use these instructions:
     * Paper Source > First Page: `Manual`.
 9. Print
 
------------
+------
 
 ## Microphone not working in Discord?
 You might have enabled the privacy settings in Windows 10.
