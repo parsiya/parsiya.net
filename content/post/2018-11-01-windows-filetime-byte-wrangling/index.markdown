@@ -7,7 +7,6 @@ comments: true
 twitterImage: filetime.png
 categories:
 - Go
-- category2
 tags:
 - filetime
 ---
