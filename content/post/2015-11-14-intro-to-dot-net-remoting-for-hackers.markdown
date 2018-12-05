@@ -214,8 +214,8 @@ If we look at the traffic in Wireshark and filter all traffic to/from port `8888
 
 You can read about the format and structure of .NET Remoting packets in the following documents:
 
-* [[MS-NRTP].NET Core Protocol - PDF][msnrtp] or just search for `[MS-NRTP]`.
-* [[MS-NRBF] .NET Remoting: Binary Format Data Structure - PDF][msnrbf] or just search for `[MS-NRBF]`.
+* [[MS-NRTP].NET Core Protocol][msnrtp] or just search for `[MS-NRTP]`.
+* [[MS-NRBF] .NET Remoting: Binary Format Data Structure][msnrbf] or just search for `[MS-NRBF]`.
 
 After the TCP handshake we see the first packet from client to server. According to section `2.2.3.3 Message Frame Structure` of `[MS-NRTP]` every message should start with `ProtocolId` which is 4 bytes and should be `0x54454E2E` or `.NET`.
 
@@ -591,8 +591,8 @@ Hopefully this was useful. This will pave the way for another blog post where I 
 [javarmi]: http://www.oracle.com/technetwork/java/javase/tech/index-jsp-138781.html
 [marshalbyref]: https://msdn.microsoft.com/en-us/library/system.marshalbyrefobject%28v=vs.110%29.aspx
 [remotableobjects]: https://msdn.microsoft.com/en-us/library/vstudio/h8f0y3fc%28v=vs.100%29.aspx
-[msnrtp]: http://download.microsoft.com/download/9/5/E/95EF66AF-9026-4BB0-A41D-A4F81802D92C/%5BMS-NRTP%5D.pdf
-[msnrbf]: http://download.microsoft.com/download/9/5/E/95EF66AF-9026-4BB0-A41D-A4F81802D92C/%5BMS-NRBF%5D.pdf
+[msnrtp]: https://msdn.microsoft.com/en-us/library/cc237297.aspx
+[msnrbf]: https://msdn.microsoft.com/en-us/library/cc236844.aspx
 [linqpad-dl]: https://www.linqpad.net/Download.aspx
 [tcpchannel-properties]: https://msdn.microsoft.com/library/bb397830%28v=vs.100%29.aspx
 [channelconfig]: https://msdn.microsoft.com/en-us/library/ms973907.aspx
