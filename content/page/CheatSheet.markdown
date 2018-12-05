@@ -37,7 +37,7 @@ Often I need to do something that I have done many times in the past but I have 
   - [grep in command outputs](#grep-in-command-outputs)
   - [Get-Acl and icacls.exe](#get-acl-and-icaclsexe)
   - [time in PowerShell](#time-in-powershell)
-- [Some Git stuff because I keep forgetting them](#some-git-stuff-because-i-keep-forgetting-them)
+- [Git](#git)
   - [Create new branch and merge](#create-new-branch-and-merge)
   - [Only clone a certain branch](#only-clone-a-certain-branch)
   - [Undo remote git history after push](#undo-remote-git-history-after-push)
@@ -50,6 +50,8 @@ Often I need to do something that I have done many times in the past but I have 
 - [Sublime Text 3](#sublime-text-3)
   - [Fix "MarGo build failed" for GoSublime on Windows](#fix-margo-build-failed-for-gosublime-on-windows)
   - [Open the same file in a new tab](#open-the-same-file-in-a-new-tab)
+- [Burp](#burp)
+  - [Selected text in Burp is black](#selected-text-in-burp-is-black)
 - [Download Youtube videos with substitles](#download-youtube-videos-with-substitles)
 - [Print Envelopes Using the Brother Printer and LibreOffice](#print-envelopes-using-the-brother-printer-and-libreoffice)
 - [Microphone not working in Discord?](#microphone-not-working-in-discord)
@@ -248,7 +250,8 @@ https://technet.microsoft.com/en-us/library/Cc732459.aspx
 
 ------
 
-## Some Git stuff because I keep forgetting them
+## Git
+I know a total of 5-6 git commands and that is fine.
 
 ### Create new branch and merge
 This works with small branches (e.g. one fix or so). Adapted from a [Bitbucket tutorial](https://confluence.atlassian.com/bitbucket/use-a-git-branch-to-merge-a-file-681902555.html).
@@ -332,7 +335,7 @@ git remote set-url origin git@github.com:parsiya/repository.git
 ```
 
 ### List All Authors in a Git Repository
-For when I wanted to see if I was still showing up as `root`.
+I wanted to see if I was still showing up as `root`.
 
 ```
 git shortlog -s | cut -c8-
@@ -384,7 +387,7 @@ cmd = ShellCommand('go run sh-bootstrap.go')
 cmd.wd = gs.dist_path('gosubl')
 cr = cmd.run()
 raw_ver = ''
-ver = ''     # Edit this to '1'
+ver = ''     # Change this to '1'
 ```
 
 Edit `ver` to whatever, I usually do `1`. Restart Sublime Text and Margo will build.
@@ -393,6 +396,28 @@ Edit `ver` to whatever, I usually do `1`. Restart Sublime Text and Margo will bu
 
 ### Open the same file in a new tab
 `File > New view into File`. Then drag the pane to a second screen/location.
+
+------
+
+## Burp
+
+### Selected text in Burp is black
+This might happen inside Virtual Box.
+
+![Burp 3D rendering issue](/images/cheatsheet/burp-3d-issue.png)
+
+You have two options:
+
+1. Disable 3D rendering in Virtual Box. Don't.
+2. Run Burp with 3D disabled (make a shortcut):
+
+    ```
+    java.exe "-Dsun.java2d.d3d=false" -jar burp.jar
+    ```
+
+Source - credit to `floyd`:
+
+* https://support.portswigger.net/customer/portal/questions/16802069-text-highlighted-in-black
 
 ------
 

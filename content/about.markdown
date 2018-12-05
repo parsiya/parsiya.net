@@ -24,6 +24,7 @@ Current goals in progress:
     - Our DEF CON 26 video is out: https://www.youtube.com/watch?v=xKYIde5jh_8
     - My post on our corporate blog: [Tineola: Taking a Bite out of Enterprise Blockchain](https://www.synopsys.com/blogs/software-security/tineola-enterprise-blockchain/ "Tineola: Taking a Bite out of Enterprise Blockchain")
     - Tineola: https://github.com/tineola/tineola
+    - Random musings as I learn: https://parsiya.net/categories/blockchain/
 - In-memory fuzzing via binary instrumentation (aka traversing arbitrary assembly blobs over and over and over).
     - https://parsiya.net/categories/winappdbg/
 - Automation:
