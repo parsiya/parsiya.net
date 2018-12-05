@@ -71,12 +71,14 @@ Which means `HEAD` will not have a `Content-Length` header (or `0` if we are unm
 
 {{< imgcap title="HEAD on Vue.js 0.8.6 tarball" src="07-vue-not-found-head.png" >}}
 
-# Why does it Work for tarballs?
+# Why does it Work for tarballs (most of the time)?
 Now you could say this method will work for most files and you would be correct. But `tar.gz` files are different.
 
 Let's assume you want to modify a JavaScript file without altering the size. Remove comments, whitespace etc and add your own code. One character removed for every character added. If it's done to multiple files in the package, the total size of files will stay the same. If you `tar` them, they are all concatenated into one big file. `tar` of the modified version and the original version will have the same size (I think).
 
 That's when `gzip` jumps in. It's a compression tool, uses dictionaries and everything. It's going to be impossible to have modified files that produce the same size after compression. The dictionary and other artifacts will be different.
+
+**Correction**: My esteemed colleagues, more specifically [Robert Hill](https://www.linkedin.com/in/robertallenhill) and [Travis Biehn](https://www.linkedin.com/in/travisbiehn) (the guy I call "my boss" in the DEF CON video, fortunately for him, he is not my boss), have pointed out that `gz` files can be padded with random files and still be valid. If your modified package is smaller than the original, you can just pad it to reach the original size. Of course, why didn't I think like that? I have done this to PNGs for data exfil. Well there goes my patent.
 
 # Conclusion
 This is a nice trick. I explained it to a group recently and was asked why I did not download the files instead. I felt damn clever after explaining it. Let me have my moment.
