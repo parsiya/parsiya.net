@@ -78,7 +78,9 @@ Let's assume you want to modify a JavaScript file without altering the size. Rem
 
 That's when `gzip` jumps in. It's a compression tool, uses dictionaries and everything. It's going to be impossible to have modified files that produce the same size after compression. The dictionary and other artifacts will be different.
 
-**Correction**: My esteemed colleagues, more specifically [Robert Hill](https://www.linkedin.com/in/robertallenhill) and [Travis Biehn](https://www.linkedin.com/in/travisbiehn) (the guy I call "my boss" in the DEF CON video, fortunately for him, he is not my boss), have pointed out that `gz` files can be padded with random files and still be valid. If your modified package is smaller than the original, you can just pad it to reach the original size. Of course, why didn't I think like that? I have done this to PNGs for data exfil. Well there goes my patent.
+**Correction**: My esteemed colleagues, more specifically [Robert Hill](https://www.linkedin.com/in/robertallenhill) and [Travis Biehn](https://www.linkedin.com/in/travisbiehn)[^1], have pointed out that `gz` files can be padded with random files and still be valid. If your modified package is smaller than the original, you can just pad it to reach the original size. Of course, why didn't I think like that? I have done this to PNGs for data exfil. Well there goes my patent.
 
 # Conclusion
 This is a nice trick. I explained it to a group recently and was asked why I did not download the files instead. I felt damn clever after explaining it. Let me have my moment.
+
+[^1]: In the DEF CON video I say "my boss is sitting right here" and point to Travis. Fortunately for him, he is not my manager.
