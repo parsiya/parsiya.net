@@ -12,7 +12,7 @@ title: Image Popup and Octopress
 
 **Update**: I have migrated the blog to [Hugo](https://gohugo.io) and I do not use this anymore. However, it is still in the repository.
 
-I finally realized that I need an image popup plugin. The image plugins that I usually use do not support this. They are fine for normal images but not for larger ones. When I see an screenshot of a tool, I want to be able to zoom in. In my quest I looked at a few plugins and methods and finally decided to use [https://github.com/ctdk/octopress-image-popup][original repo]. It creates resized thumbnails automatically and the installation procedure is short and simple.
+I finally realized that I need an image popup plugin. The image plugins that I usually use do not support this. They are fine for normal images but not for larger ones. When I see a screenshot of a tool, I want to be able to zoom in. In my quest I looked at a few plugins and methods and finally decided to use [https://github.com/ctdk/octopress-image-popup][original repo]. It creates resized thumbnails automatically and the installation procedure is short and simple.
 
 However, it did not work for me out of the box. I created a test post with just an image and while the plugin worked, there are things that I did not like about it.
 

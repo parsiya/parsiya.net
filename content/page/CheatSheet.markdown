@@ -12,6 +12,7 @@ Often I need to do something that I have done many times in the past but I have 
 
 <!-- MarkdownTOC -->
 
+- [- tips and tricks](#--tips-and-tricks)
 - [Tar](#tar)
   - [Compressing a directory using tar](#compressing-a-directory-using-tar)
   - [Decompressing a tar.gz file](#decompressing-a-targz-file)
@@ -47,6 +48,7 @@ Often I need to do something that I have done many times in the past but I have 
   - [Change Remote for an Existing Git Repository](#change-remote-for-an-existing-git-repository)
   - [List All Authors in a Git Repository](#list-all-authors-in-a-git-repository)
   - [Rewrite Author for Older Commits](#rewrite-author-for-older-commits)
+  - [Remove Uncommitted Files from Staging](#remove-uncommitted-files-from-staging)
 - [Sublime Text 3](#sublime-text-3)
   - [Fix "MarGo build failed" for GoSublime on Windows](#fix-margo-build-failed-for-gosublime-on-windows)
   - [Open the same file in a new tab](#open-the-same-file-in-a-new-tab)
@@ -359,6 +361,13 @@ git shortlog -s | cut -c8-
 5. Continue the rebase - `git rebase --continue`
 
 6. Rinse and repeat.
+
+### Remove Uncommitted Files from Staging
+You have added files with `git add` but have not committed them and want to remove some (not all) instead of `git reset`.
+
+```
+git reset HEAD -- file/directory
+```
 
 ------
 

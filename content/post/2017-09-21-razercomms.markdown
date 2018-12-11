@@ -7,6 +7,7 @@ comments: true
 categories:
 - Razer Comms
 - Thick Client Proxying
+- Writeup
 tags:
 - proxy
 - CEF

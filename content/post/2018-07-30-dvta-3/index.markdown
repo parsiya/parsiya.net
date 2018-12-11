@@ -8,6 +8,7 @@ twitterImage: 10.png
 categories:
 - Reverse Engineering
 - DVTA
+- Writeup
 tags:
 - Wireshark
 - Procmon

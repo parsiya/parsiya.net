@@ -8,6 +8,7 @@ twitterImage: img/22.png
 categories:
 - Reverse Engineering
 - DVTA
+- Writeup
 tags:
 - dnSpy
 ---

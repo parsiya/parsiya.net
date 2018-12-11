@@ -1,6 +1,8 @@
 ---
 categories:
 - Reverse Engineering
+- Writeup
+- CTF
 tags:
 - FlareOn
 - Writeup

@@ -7,7 +7,6 @@ comments: true
 twitterImage: 04-head.png
 categories:
 - npm
-- Burp
 ---
 
 **tl;dr:** HEAD returns file size in `Content-Length` response header.
