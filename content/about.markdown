@@ -7,7 +7,7 @@ comments: false
 type: about
 ---
 
-I am Parsia ~~Hackerman~~ Hakimian. Current (mostly) Senior Security Consultant at [Synopsys Software Integrity Group](https://www.synopsys.com/software-integrity.html) based out of the Washington DC area in the United States.
+I am Parsia Hakimian. Current (mostly) Senior Security Consultant at [Synopsys Software Integrity Group](https://www.synopsys.com/software-integrity.html) based out of the Washington DC area in the United States.
 
 This website is mostly my own security research and notes. It doubles as my cheat sheet and knowledge base along with [parsiya.io](http://parsiya.io). I look up pages or send links to this website at least a few times every day.
 
@@ -29,3 +29,4 @@ Current goals in progress:
     - https://parsiya.net/categories/winappdbg/
 - Automation:
     - [Reflections on "Manual Work is a Bug"]({{< relref "/post/2018-10-03-manual-work-bug/index.markdown" >}} "Reflections on "Manual Work is a Bug\"")
+    - My project and note management app: https://github.com/parsiya/borrowedtime/

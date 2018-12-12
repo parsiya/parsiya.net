@@ -14,8 +14,6 @@ categories:
 
 In this part, I want to show how to use Burp macros to detect invalid session and add a custom bearer token header to the requests.
 
-* Session validation with Bearer tokens.
-
 <!--more-->
 
 I used the instructions to spin up a [docker container][tiredful-docker] and used it with the free Burp Community Edition 1.7.36.
@@ -25,21 +23,21 @@ Often times the session times out in the middle of testing or scanning. I only u
 
 Usually, the session is maintained by cookies and Burp's cookie jar can be automatically updated to refresh the session. In the case of this API, we are using a Bearer token. But this method can be used for any custom header containing a token.
 
-## Login Request
+# Login Request
 The login request is simple. While this example has only one request, the process for multiple-step requests is similar. The application has two registered users. We are using `batman:Batman@123`.
 
 {{< imgcap title="Successful login request" src="01-login.png" >}}
 
 The `access_token` must be added to every authenticated request like `Authorization : Bearer [token]`.
 
-## Invalid Session Response
+# Invalid Session Response
 We also need to detect invalidate sessions. To do so, navigate to http://192.168.99.100:8000/api/v1/advertisements/ to see the response.
 
 {{< imgcap title="Invalid request" src="04-invalid-session.png" >}}
 
 We are going to use the header `401 Unauthorized` to detect invalid requests.
 
-## Login Macro
+# Login Macro
 We should create a login macro to login as `batman`. This macro will be executed when Burp detects an invalid/expired session.
 
 1. Go to `Project Options > Sessions` and scroll down to `Macros`.
@@ -49,13 +47,13 @@ We should create a login macro to login as `batman`. This macro will be executed
 1. Select a name and press `Ok` in `Macro Editor` to create the macro. If the request had specific parameters (e.g. a CSRF token), we could designate it in `Configure item`. This example does not need it.
 {{< imgcap title="Finish macro recording" src="03-macro2.png" >}}
 
-## Session Validation
+# Session Validation
 We need to make Burp perform two action:
 
 1. Create a session handling rule. Burp should run the macro whenever a session is invalid.
 2. Add the `access_token` as a custom header to that request and resend it.
 
-### Add Custom Header Extension
+## Add Custom Header Extension
 In order to accomplish number two, we need to use an extension. Burp vanilla does not support adding headers to requests in session validation rules. However, cookies and normal GET/POST parameters (e.g. `form-urlencoded` ) can be updated.
 
 1. Install the `Add Custom Header` extension at https://github.com/lorenzog/burpAddCustomHeader. It's also available in the Burp App Store.
@@ -64,7 +62,7 @@ In order to accomplish number two, we need to use an extension. Burp vanilla doe
 4. We need to change the regex. Our response is a bit different. Ours has an extra space after `access_token":`. Our regex will be `access_token": "(.*?)"` instead.
 {{< imgcap title="Add Custom Header setup" src="08-add-custom-header.png" >}}
 
-### Session Handling Rule
+## Session Handling Rule
 
 1. In the same screen (`Project Options > Sessions`) click `Add` under `Session Handling Rules`.
 2. Type in a rule description. E.g., `session-validation`.
@@ -84,7 +82,7 @@ In order to accomplish number two, we need to use an extension. Burp vanilla doe
 13. Under `URL Scope` select `Use suite scope`. We will set it later.
 {{< imgcap title="Setting scope" src="09-session-rule-4.png" >}}
 
-### Alternate Session Handling Rule
+## Alternate Session Handling Rule
 Instead of detecting the session, we can use an easier rule and run the macro and add the header to every request. I went with the more complicated process because I wanted to practice setting it up.
 
 1. The alternate rule is the same in every aspect, except the `Rule Actions` which is `Add (button) > Run a Macro`.
@@ -93,12 +91,12 @@ Instead of detecting the session, we can use an easier rule and run the macro an
 4. Enable `After running the macro` and select `Add Custom Header`.
 {{< imgcap title="Alternate rule" src="10-alternate-rule.png" >}}
 
-### Setting the Scope
+## Setting the Scope
 In this example, we do not have to set the scope. But usually, we want to only operate in a specific scope. In my VM, the address is `http://192.168.99.100:8000` so I added it in `Target > Scope` tab. I also excluded the login and logout API endpoints.
 
 {{< imgcap title="Scope" src="11-scope.png" >}}
 
-## Burp in Action
+# Burp in Action
 Now it's time to see the fruit of our labor. Right click the request to `http://192.168.99.100:8000/api/v1/advertisements/` in Burp history and send it to Repeater. Click `Send` and see the header added to the request and get a valid response. It's empty but it's valid.
 
 {{< imgcap title="Burp in Action" src="12-burp-in-action.gif" >}}
