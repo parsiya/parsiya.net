@@ -4,7 +4,7 @@ date: 2018-12-17T01:11:11-05:00
 draft: false
 toc: true
 comments: true
-twitterImage: .png
+twitterImage: 08-sitemap.png
 categories:
 - Burp
 - Writeup
