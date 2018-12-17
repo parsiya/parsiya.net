@@ -4,7 +4,7 @@ date: 2018-12-11T00:15:07-05:00
 draft: false
 toc: true
 comments: true
-twitterImage: .png
+twitterImage: 06-session-rule-2.png
 categories:
 - Burp
 - Writeup
