@@ -13,6 +13,8 @@ tags:
 
 We can create and load Python/Java utility modules in Burp and then use them in extensions. It's a somewhat unknown/unused capability in Burp's Python/Java extensions.
 
+**Note:** Alternatively, the modules can be placed in the same path as the extension and loaded/used the same way. For example, instead of putting the Burp Exceptions file in the modules folder, store it in the extension directory.
+
 <!--more-->
 
 # Loading Modules
