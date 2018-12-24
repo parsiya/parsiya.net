@@ -4,7 +4,7 @@ date: 2018-12-24T01:00:14-05:00
 draft: false
 toc: true
 comments: true
-twitterImage: .png
+twitterImage: 10-v3-action.gif
 categories:
 - Burp
 - Crypto
