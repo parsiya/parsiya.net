@@ -189,7 +189,7 @@ See the code in `pycrypto-aescfb128.py`. And it works!
 {{< imgcap title="AES-CFB128 with PyCrypto" src="05-pycrypto3.png" >}}
 
 # Conclusion
-~~Go is faster Python with types~~ Go is awesome. Python is a dead language abandoned by its creator and it doesn't even have AES support in its standard library. Generics? What?! I cannot hear you.
+~~Go is faster Python with types~~ Go is awesome. Python is a [dead language abandoned by its creator][guido-break] and it doesn't even have AES support in its standard library. Generics? What?! I cannot hear you.
 
 {{< imgcap title="It's almost 2019, why are you still using stale memes?" src="06-picard.jpg" >}}
 
@@ -201,3 +201,4 @@ It's a joke. Calm down, you people.
 [pycrypto-github]: https://github.com/dlitz/pycrypto
 [m2crypto-gitlab]: https://gitlab.com/m2crypto/m2crypto
 [cyberchef-link]: https://gchq.github.io/CyberChef/#recipe=From_Base64('A-Za-z0-9%2B/%3D',true)AES_Decrypt(%7B'option':'UTF8','string':'0123456789012345'%7D,%7B'option':'UTF8','string':'9876543210987654'%7D,'CFB','Raw','Raw',%7B'option':'Hex','string':''%7D)&input=amFKVzhRSmJLcUhFZzV6eUZVUmUybzU2NS93RFZjYTk
+[guido-break]: https://mail.python.org/pipermail/python-committers/2018-July/005664.html
