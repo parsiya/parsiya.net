@@ -5,14 +5,11 @@ title: "Cheat Sheet"
 url: "/cheatsheet/"
 categories:
 - cheatsheet
-tags:
-- tips and tricks
+
 ---
+
 Often I need to do something that I have done many times in the past but I have forgotten how to do it. This is a page (or a series of pages if it grows large enough) to give me a simple repository of how-tos that I can access online. In this page you may find those commands and tips that I need from time to time (and usually forget when I need them).
 
-<!-- MarkdownTOC -->
-
-- [- tips and tricks](#--tips-and-tricks)
 - [Tar](#tar)
   - [Compressing a directory using tar](#compressing-a-directory-using-tar)
   - [Decompressing a tar.gz file](#decompressing-a-targz-file)
@@ -27,8 +24,8 @@ Often I need to do something that I have done many times in the past but I have 
 - [Windows](#windows)
   - [Shortcut to IE (or WinINET) Proxy Settings](#shortcut-to-ie-or-wininet-proxy-settings)
   - [VHD File is Open in System (and cannot be Deleted)](#vhd-file-is-open-in-system-and-cannot-be-deleted)
-  - [Base64 encode/decode without PowerShell](#base64-encodedecode-without-powershell)
-  - [Where.exe](#whereexe)
+  - [Base64 encode and decode without PowerShell](#base64-encode-and-decode-without-powershell)
+  - [where.exe](#whereexe)
   - [Delete file or directory with a path or name longer than the Windows limit](#delete-file-or-directory-with-a-path-or-name-longer-than-the-windows-limit)
 - [Install "Bash for Windows" without Windows Store](#install-bash-for-windows-without-windows-store)
 - [Powershell](#powershell)
@@ -57,8 +54,6 @@ Often I need to do something that I have done many times in the past but I have 
 - [Download Youtube videos with substitles](#download-youtube-videos-with-substitles)
 - [Print Envelopes Using the Brother Printer and LibreOffice](#print-envelopes-using-the-brother-printer-and-libreoffice)
 - [Microphone not working in Discord?](#microphone-not-working-in-discord)
-
-<!-- /MarkdownTOC -->
 
 ------
 
@@ -172,13 +167,13 @@ You clicked on a VHD file and now cannot delete it. Use this PowerShell command 
 
 `Dismount-DiskImage -ImagePath 'C:\full\path\to\whatever.vhd'`
 
-### Base64 encode/decode without PowerShell
+### Base64 encode and decode without PowerShell
 Use `certutil` for bootleg base64 encoding/decoding:
 
 - `certutil -encode whatever.exe whatever.base64`
 - `certutil -decode whetever.base64 whatever.exe`
 
-### Where.exe
+### where.exe
 `where.exe` searches for files. Without any locations, it searches in the local directory and then in PATH.
 
 - `/R` searches recursively in a specific location.
@@ -422,6 +417,13 @@ You have two options:
 
     ```
     java.exe "-Dsun.java2d.d3d=false" -jar burp.jar
+    ```
+3. The complete command for the default install on Windows is:
+
+    ```
+    "C:\Program Files\BurpSuiteCommunity\jre\bin\java.exe"
+      "-Dsun.java2d.d3d=false"
+      -jar "C:\Program Files\BurpSuiteCommunity\burpsuite_community.jar"
     ```
 
 Source - credit to `floyd`:
