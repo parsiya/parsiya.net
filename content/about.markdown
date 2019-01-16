@@ -9,6 +9,10 @@ type: about
 
 I am Parsia Hakimian. Current (mostly) Senior Security Consultant at [Synopsys Software Integrity Group](https://www.synopsys.com/software-integrity.html) based out of the Washington DC area in the United States.
 
+{{< imgcap title="Hackerman" src="/images/2018/hackerman.jpg" >}}
+
+*Hackerman* is a character from the movie [Kung Fury](https://www.youtube.com/watch?v=bS5P_LAqiVg). He has also a [hacking tutorial](https://www.youtube.com/watch?v=KEkrWRHCDQU).
+
 This website is mostly my own security research and notes. It doubles as my cheat sheet and knowledge base along with [parsiya.io](http://parsiya.io). I look up pages or send links to this website at least a few times every day.
 
 The bulk of my professional work falls under one-off projects with unique challenges. I have tested enterprise blockchains, online multiplayer games, stock exchange platforms, mobile device management suites, network appliances, embedded and IoT devices on top of a long list of thickclient/mobile/web applications we all use on a daily basis.
@@ -29,4 +33,4 @@ Current goals in progress:
     - https://parsiya.net/categories/winappdbg/
 - Automation:
     - [Reflections on "Manual Work is a Bug"]({{< relref "/post/2018-10-03-manual-work-bug/index.markdown" >}} "Reflections on "Manual Work is a Bug\"")
-    - My project and note management app: https://github.com/parsiya/borrowedtime/
+    - Project and note management app: https://github.com/parsiya/borrowedtime/
