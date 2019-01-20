@@ -1,5 +1,5 @@
 ---
-title: "Damn Vulnerable Thick Client Application - Part 1 - Setup"
+title: "DVTA - Part 1 - Setup"
 date: 2018-07-15T21:26:41-04:00
 draft: false
 toc: true
@@ -11,6 +11,8 @@ categories:
 - Writeup
 tags:
 - dnSpy
+aliases:
+- "/blog/2018-07-15-damn-vulnerable-thick-client-application---part-1---setup/"
 ---
 
 I have written a lot about thick clients. However, I have not done more than a few practical examples that I can show my co-workers or anyone else asking questions. Recently, I came across the Damn Vulnerable Thick Client Application by SecVulture at https://github.com/secvulture/dvta.

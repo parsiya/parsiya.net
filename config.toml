@@ -32,16 +32,6 @@ disqusShortname = "parsiya"
 
 # menu
 # links will open in a new window except links to "/" - links are added to navigation in hugo-octopress/layouts/partials/navigation.html
-# [[menu.main]]
-#   Name = "Blog"
-#   URL = "/"
-#   weight = 0
-
-# [[menu.main]]
-#   Name = "All Posts"
-#   URL = "/"
-#   weight = 1
-
 [[menu.main]]
   Name = "About Me!"
   URL = "/about/"
@@ -101,9 +91,14 @@ weight = 25
   weight = 30
 
 [[menu.sidebar]]
-  Name = "AWSome.pw - my very very legit branded vulnerability"
-  URL = "http://awsome.pw"
+  Name = "CTFs/Writeups"
+  URL = "/categories/ctf/"
   weight = 35
+
+[[menu.sidebar]]
+  Name = "AWSome.pw - S3 bucket squatting - my very legit branded vulnerability"
+  URL = "http://awsome.pw"
+  weight = 40
 
 [params]
 
@@ -113,7 +108,7 @@ weight = 25
 
   sidebarHeader = "Who am I?"
 
-  sidebarText = """I am Parsia ~~Hackerman~~, senior consultant at [Synopsys Software Integrity Group](https://www.synopsys.com/software-integrity.html).
+  sidebarText = """I am Parsia Hakimian senior consultant at [Synopsys Software Integrity Group](https://www.synopsys.com/software-integrity.html).
   </br></br>
  Here I document my interests such as application security, reverse engineering, Go, cryptography and computer games.
   </br></br>
@@ -152,7 +147,7 @@ weight = 25
 
   rss = true  # switch to true to enable RSS icon link
 
-  defaultDescription = ""
+  description = ""
 
   # does this even work in action?
   defaultKeywords = ["Parsia Hakimian" , "Parsiya" , "infosec" , "information security"]
