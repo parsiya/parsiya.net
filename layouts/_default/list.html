@@ -1,0 +1,39 @@
+{{ partial "header.html" . }}
+
+<style>
+table.allposts, td.allposts-date, td.allposts-title {
+  border:none;
+}
+
+td.allposts-date {
+    padding: 0 10px 0 0;
+}
+
+td.allposts-title {
+    font-size: 110%;
+}
+</style>
+
+<div id="main">
+  <div id="content">
+    <div>
+      <article role="article">
+        <header>
+          <h1 class="entry-title">
+              {{ .Title }}
+          </h1>
+        </header>
+        <table class="allposts">
+          {{ range .Data.Pages }}
+              <tr>
+                <td class="allposts-date"><strong>{{ .Date | dateFormat "2006"}} {{ .Date | dateFormat "Jan" }} {{ .Date | dateFormat "2" }}</strong></td>
+                <td class="allposts-title"><a href="{{ .Permalink }}" title="{{ .Title }}">{{ .Title }}</a></td>
+              </tr>
+          {{ end }}
+        </table>
+      </article>
+    </div>
+    {{ partial "sidebar.html" . }}
+  </div>
+</div>
+{{ partial "footer.html" . }}
