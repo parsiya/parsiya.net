@@ -6,7 +6,6 @@ toc: false
 comments: true
 categories:
 - Game Hacking
-- Gaming
 tags:
 - Car mechanic simulator 2015
 ---
