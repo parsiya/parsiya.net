@@ -1,6 +1,6 @@
 ---
 title: "Cheating at Moonlighter - Part 1 - Save File"
-date: 2019-01-23T00:03:08-05:00
+date: 2019-01-23T20:03:08-05:00
 draft: false
 toc: true
 comments: true
@@ -9,6 +9,7 @@ categories:
 - Game Hacking
 tags:
 - Moonlighter
+- procmon
 ---
 
 [Moonlighter](http://moonlighterthegame.com/) is a nice game. Over the new year break, I played it for 10 hours a day for 2-3 days. It's your typical dungeon crawler with a twist. You have a shop and you can sell items in your shop and do a bit of price manipulation based on supply and demand.
@@ -308,13 +309,24 @@ Items can also be enchanted (and cursed for elemental items).`enchantmentLevel` 
 
 And now Will has all these shiny items (I made a mistake and gave him 10 chest plates).
 
-{{< imgcap title="Items added to Will's inventory" src="10-items-adde.png" >}}
+{{< imgcap title="Items added to Will's inventory" src="10-items-added.png" >}}
 
 Equip them and trigger another save event. For example, enter a dungeon and then leave using the pendant.
 
 {{< imgcap title="Items equipped in game" src="11-items-equipped.png" >}}
 
 {{< imgcap title="Equipped items in save file" src="12-equipped-items-in-save-file.png" >}}
+
+We can update the `willEquippedItems` array:
+
+* 0: Head slot - `Fabric Bandana IV`.
+* 1: Chest slot - `Fabric Chestplate IV`.
+* 2: Leg slot - `Fabric Boots IV`.
+* 3: Weapon Slot 1 - `Training Sword`.
+* 4: Weapon Slot 2 - `Broom Spear`.
+* 5 and 6: Unknown - `Dash`.
+* 7: Potion slot: `HP Potion I`.
+* 8 and 9: Unknown - empty.
 
 Adding items to the shop and chests is similar. Later in the game, we get quests. People ask Will to get them a certain number of an item in a few days. Quests appear in the save file under `willActiveQuests` and completed quests are under `completedQuests`. We can modify the quest and rewards to anything we want to get that money. This is a completed quest.
 
