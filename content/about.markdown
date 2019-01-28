@@ -9,8 +9,6 @@ type: about
 
 I am Parsia Hakimian. Current (mostly) Senior Security Consultant at [Synopsys Software Integrity Group](https://www.synopsys.com/software-integrity.html) based out of the Washington DC area in the United States.
 
-{{< imgcap title="Hackerman" src="/images/2018/hackerman.jpg" >}}
-
 *Hackerman* is a character from the movie [Kung Fury](https://www.youtube.com/watch?v=bS5P_LAqiVg). He has also a [hacking tutorial](https://www.youtube.com/watch?v=KEkrWRHCDQU).
 
 This website is mostly my own security research and notes. It doubles as my cheat sheet and knowledge base along with [parsiya.io](http://parsiya.io). I look up pages or send links to this website at least a few times every day.
