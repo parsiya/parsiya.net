@@ -225,7 +225,7 @@ There's more stuff here. For example, item drop probabilities.
 
 Other files here contain other things such as items (we can get a list of all items), recipes, and enemy stats. By editing these files, we can change enemy stats, items stats, recipes, and more.
 
-# Conclusion
+# Lesssons Learned
 We learned:
 
 * How to edit game logic for Unity games.

@@ -358,7 +358,7 @@ Adding items to the shop and chests is similar. Later in the game, we get quests
 
 I am not going to talk about the rest of the save file. It's pretty obvious.
 
-# Conclusion
+# Lessons Learned
 We learned:
 
 * How to locate the save file of Moonlighter (Steam edition).
