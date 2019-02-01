@@ -14,7 +14,7 @@ tags:
 
 In this part, I am going to use dnSpy to enable the Debug HUD. We will analyze how it's enabled and how it can be accessed.
 
-* [Cheating at Moonlighter - Part 1 - Save File]({{< relref "/post/2019-01-23-moonlighter-1/index.markdown#anchor" >}} "Cheating at Moonlighter - Part 1 - Save File")
+* [Cheating at Moonlighter - Part 1 - Save File]({{< relref "/post/2019-01-23-moonlighter-1/index.markdown" >}} "Cheating at Moonlighter - Part 1 - Save File")
 * [Cheating at Moonlighter - Part 2 - Changing Game Logic with dnSpy]({{< relref "/post/2019-01-27-moonlighter-2/index.markdown" >}} "Cheating at Moonlighter - Part 2 - Changing Game Logic with dnSpy")
 
 <!--more-->
