@@ -1,0 +1,179 @@
+# https://gohugo.io/overview/configuration/
+
+baseurl: "https://parsiya.net/"
+disablePathToLower: false
+languageCode: en-us
+title: Hackerman's Hacking Tutorials
+theme: Hugo-Octopress
+
+# Number of blog posts displayed on each pagination page.
+# No need for pagination in the current setup.
+# paginate: 0
+
+# Frontmatter will be in yaml.
+metadataformat: yaml
+
+# Highlight shortcode and codefences (```) perform the same way.
+pygmentscodefences: true
+
+# Highlight style.
+pygmentsStyle: solarized-dark
+
+# Disqus configuration.
+disqusShortname: parsiya
+
+# Only generate HTML output for these places. No need for RSS/XML/whatever.
+outputs:
+  section:
+    - HTML
+  taxonomy:
+    - HTML
+  taxonomyTerm:
+    - HTML
+
+# Permalink URL type. Don't change this because it will invalidate all old links
+# unless you like to do a ton of aliases.
+permalinks:
+  post: "/blog/:year-:month-:day-:title/"
+
+# Menu
+menu:
+  # Navigation menu.
+  # All links except home ("/") will open in a new window.
+  # Template: {{theme-dir}}/layouts/partials/navigation.html.
+  main:
+    - Name: About Me!
+      URL: /about/
+      weight: 2
+    - Name: Cheat Sheet
+      URL: /cheatsheet/
+      weight: 5
+    - Name: My Clone
+      URL: "http://parsiya.io/"
+      weight: 10
+    - Name: How This Website is Built
+      URL: "https://github.com/parsiya/parsiya.net"
+      weight: 15
+    - Name: The Other Guy from WHAM!
+      URL: "https://www.google.com/search?q=andrew+ridgeley"
+      weight: 25
+
+  # Sidebar menu items.
+  sidebar:
+    - Name: Thick Client Proxying
+      URL: /categories/thick-client-proxying/
+      weight: 5
+    - Name: Go/Golang
+      URL: /categories/go/
+      weight: 10
+    - Name: Blockchain/Distributed Ledgers
+      URL: /categories/blockchain/
+      weight: 15
+    - Name: WinAppDbg
+      URL: /categories/winappdbg/
+      weight: 20
+    - Name: Reverse Engineering
+      URL: /categories/reverse-engineering/
+      weight: 25
+    - Name: Crypto(graphy)
+      URL: /categories/crypto/
+      weight: 30
+    - Name: CTFs/Writeups
+      URL: /categories/ctf/
+      weight: 35
+    - Name: AWSome.pw - S3 bucket squatting - my very legit branded vulnerability
+      URL: "http://awsome.pw"
+      weight: 40
+
+# Parameters.
+params:
+
+  # Open all menu links in a new window.
+  navigationNewWindow: true
+
+  # Sidebar configuration.
+  # Disable recent posts section in the sidebar.
+  sidebarRecentLimit: 0
+  # The big, bold text on top of the sidebar.
+  sidebarHeader: Who am I?
+  # Appears directly under the sidebar header.
+  sidebarText: |-
+    I am Parsia Hakimian, senior consultant at
+      [Synopsys Software Integrity Group](https://www.synopsys.com/software-integrity.html).
+    </br></br>
+    I usually write things about application security, reverse engineering,
+      Go, cryptography, and computer games.
+    </br></br>
+    If you want to know more, click on [About Me!](/about/).
+
+  # Enable links in the side bar. They are under menu.sidebar.
+  sidebarMenuEnabled: true
+  # Name of the links section.
+  sidebarMenuHeader: Collections
+
+  # Sidebar links
+  bitbucket: "https://bitbucket.org/parsiya/"
+  twitter: "https://twitter.com/cryptogangsta/"
+  keybase: "https://keybase.io/parsiya/"
+  github: "https://github.com/parsiya/"
+  linkedin: "https://www.linkedin.com/in/parsiya"
+
+  # 404 page. Header and text.
+  notfoundHeader: There's nothing here.
+  notfoundText: You can never go back.
+
+  # Do not display all posts' content on the front page (and in pagination).
+  truncate: true
+
+  # Author's name. Appears in metadata and under posts.
+  author: Parsia
+
+  # Text that appears in the website header under the website title.
+  subtitle: |-
+    The knowledge of anything, since all things have causes, is not acquired or
+    complete unless it is known by its causes. - Avicenna
+
+  # Search engine URL.
+  searchEngineURL: "https://www.google.com/search"
+
+  # "Continue Reading" text that appears under truncated posts.
+  continueReadingText: Would you like to know more? 
+
+  # Enable the RSS icon in navigation.
+  rss: true
+
+  description: ""
+  defaultKeywords:
+    - Parsia Hakimian
+    - Parsiya
+    - infosec
+    - information security
+  
+  # Enable table of contents for post by setting this to true. Otherwise, you
+  # can enable/disable them individually via frontmatter.
+  # tableOfContents: false
+
+  # Generate taxonomy list under /categories/ and /tags/
+  generateTaxonomyList: true
+
+  # Twitter card config.
+  # Enable twitter card.
+  twitterCardEnabled: true
+  # Twitter card domain.
+  twitterCardDomain: parsiya.net
+  # Your twitter username, do not include the @.
+  twitterCardAuthor: CryptoGangsta
+  # Not sure what this is used for, but my twitter card works without it.
+  # twitterCardSite = 
+
+  # Use the compact index.
+  compactIndex: true
+
+# Blackfriday (Hugo's markdown engine) options.
+# See: https://gohugo.io/getting-started/configuration/#configure-blackfriday
+blackfriday:
+  # Open the external links in a new window
+  hrefTargetBlank: true
+  fractions: false
+  # Disable smart quotes, etc.
+  smartypants: false
