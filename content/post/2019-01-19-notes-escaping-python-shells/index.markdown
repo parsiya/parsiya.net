@@ -59,7 +59,7 @@ os.system("id")
 ```
 
 ## compile
-Takes turns a string into bytecode.
+Turns a string into bytecode.
 
 ``` python
 code = compile("im" + "port os", "", "single") # single means only compile this single line.
@@ -80,7 +80,7 @@ os.system("id")
 ```
 
 ## exec, eval, import and compile are blocked
-Go to a different Python interpreter, make the function you want
+Go to a different Python interpreter, make the function you want. Interpreter versions should somewhat match (e.g. both 2.7 or 3.5):
 
 ``` python
 def bypass():

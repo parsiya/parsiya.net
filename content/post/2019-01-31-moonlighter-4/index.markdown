@@ -6,6 +6,7 @@ toc: false
 comments: true
 categories:
 - Game Hacking
+- Soapbox
 tags:
 - Moonlighter
 ---

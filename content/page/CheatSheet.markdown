@@ -23,11 +23,9 @@ Often I need to do something that I have done many times in the past but I have 
   - [Setting the index to a non-root file in static website hosted on S3](#setting-the-index-to-a-non-root-file-in-static-website-hosted-on-s3)
 - [Windows](#windows)
   - [Shortcut to IE (or WinINET) Proxy Settings](#shortcut-to-ie-or-wininet-proxy-settings)
-  - [VHD File is Open in System (and cannot be Deleted)](#vhd-file-is-open-in-system-and-cannot-be-deleted)
-  - [Base64 encode and decode without PowerShell](#base64-encode-and-decode-without-powershell)
   - [where.exe](#whereexe)
   - [Delete file or directory with a path or name longer than the Windows limit](#delete-file-or-directory-with-a-path-or-name-longer-than-the-windows-limit)
-- [Install "Bash for Windows" without Windows Store](#install-bash-for-windows-without-windows-store)
+  - [Install "Bash for Windows" without Windows Store](#install-bash-for-windows-without-windows-store)
 - [Powershell](#powershell)
   - [List all files (including hidden)](#list-all-files-including-hidden)
   - [Diff in Powershell](#diff-in-powershell)
@@ -35,6 +33,9 @@ Often I need to do something that I have done many times in the past but I have 
   - [grep in command outputs](#grep-in-command-outputs)
   - [Get-Acl and icacls.exe](#get-acl-and-icaclsexe)
   - [time in PowerShell](#time-in-powershell)
+  - [VHD File is Open in System (and cannot be Deleted)](#vhd-file-is-open-in-system-and-cannot-be-deleted)
+  - [Base64 encode and decode without PowerShell](#base64-encode-and-decode-without-powershell)
+  - [Change the hardware UUID of cloned Windows VMs to avoid reactivation](#change-the-hardware-uuid-of-cloned-windows-vms-to-avoid-reactivation)
 - [Git](#git)
   - [Create new branch and merge](#create-new-branch-and-merge)
   - [Only clone a certain branch](#only-clone-a-certain-branch)
@@ -162,17 +163,6 @@ If you are relying on error pages, this will mess with your site because every e
 
 `control inetcpl.cpl,,4`
 
-### VHD File is Open in System (and cannot be Deleted)
-You clicked on a VHD file and now cannot delete it. Use this PowerShell command but the path to VHD should be full.
-
-`Dismount-DiskImage -ImagePath 'C:\full\path\to\whatever.vhd'`
-
-### Base64 encode and decode without PowerShell
-Use `certutil` for bootleg base64 encoding/decoding:
-
-- `certutil -encode whatever.exe whatever.base64`
-- `certutil -decode whetever.base64 whatever.exe`
-
 ### where.exe
 `where.exe` searches for files. Without any locations, it searches in the local directory and then in PATH.
 
@@ -190,7 +180,7 @@ rmdir empty_dir
 rmdir the_dir_to_delete
 ```
 
-## Install "Bash for Windows" without Windows Store
+### Install "Bash for Windows" without Windows Store
 `lxrun /install`.
 
 ------
@@ -244,6 +234,29 @@ https://technet.microsoft.com/en-us/library/Cc732459.aspx
 
 ### time in PowerShell
 `Measure-Command {python whatever.py}`
+
+### VHD File is Open in System (and cannot be Deleted)
+You clicked on a VHD file and now cannot delete it. Use this PowerShell command but the path to VHD should be full.
+
+`Dismount-DiskImage -ImagePath 'C:\full\path\to\whatever.vhd'`
+
+### Base64 encode and decode without PowerShell
+Use `certutil` for bootleg base64 encoding/decoding:
+
+- `certutil -encode whatever.exe whatever.base64`
+- `certutil -decode whetever.base64 whatever.exe`
+
+### Change the hardware UUID of cloned Windows VMs to avoid reactivation
+You cloned a Windows VirtualBox VM and now you have to activate it again. This script changes the hardware UUID of the cloned machine to the old one. No reactivation needed.
+
+``` powershell
+$ORIGVirtualMachineName="Windows 10 - Base"   # Old VM name as it appears in VirtualBox
+$clonedVirtualMachineName="Win10Clone"        # New VM name
+$vboxDir="c:\Program Files\Oracle\VirtualBox" # Directory containing VBoxManage
+cd $vboxDir
+$uid=$($($(.\VBoxManage.exe showvminfo $ORIGVirtualMachineName|select-string "Hardware UUID:").ToString()).Split())[4]
+.\VBoxManage modifyvm $clonedVirtualMachineName --hardwareuuid $uid
+```
 
 ------
 
