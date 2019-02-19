@@ -125,7 +125,7 @@ Note the `0` in the end. It's setting the `isadmin` column that we observed earl
 ## Recon with Procmon
 We can do the same with Sysinternals Procmon. We can see the traffic but we can identify the endpoints. For the record, Procmon does a lot more than what we are using it for.
 
-Quit the application, run it again, login as admin and backup the data. Then run Procmon and set the following filters similar to what we did in part 1 to identify the FTP endpoint (ZZZ Link to part 1 procmon anchor):
+Quit the application, run it again, login as admin and backup the data. Then run Procmon and set the following filters similar to what we did in part 1 to identify the FTP endpoint:
 
 * `Process Name contains dvta`. I have set this to `contains` because I have versioned patched executables from part 2. 
 * `Operation is TCP Connect`. Or you could only enable network activity like part 1 ([DVTA - Part 1 - Setup - Discover the FTP Address]({{< relref "/post/2018-07-15-dvta-1/index.markdown#discover-the-ftp-address" >}} "DVTA - Part 1 - Setup - Discover the FTP Address")).

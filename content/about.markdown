@@ -7,7 +7,7 @@ comments: false
 type: about
 ---
 
-I am Parsia Hakimian. Current (mostly) Senior Security Consultant at [Synopsys Software Integrity Group](https://www.synopsys.com/software-integrity.html) based out of the Washington DC area in the United States.
+My name is Parsia Hakimian. I am a Senior Security Consultant at [Synopsys Software Integrity Group](https://www.synopsys.com/software-integrity.html) based out of the Washington DC area in the United States.
 
 *Hackerman* is a character from the movie [Kung Fury](https://www.youtube.com/watch?v=bS5P_LAqiVg). He has also a [hacking tutorial](https://www.youtube.com/watch?v=KEkrWRHCDQU).
 
@@ -17,12 +17,12 @@ The bulk of my professional work falls under one-off projects with unique challe
 
 Current goals in progress:
 
-- Using Golang in security tooling.
+- Using Go in security tooling. I have replaced Python with Go in my workflow.
     - https://github.com/parsiya/Hacking-with-Go
     - https://github.com/parsiya/Go-Security
     - https://github.com/parsiya/Parsia-Code
     - https://parsiya.net/categories/go/
-- Learning more about security of smart contracts and enterprise blockchains.
+- Enterprise blockchain security:
     - Our DEF CON 26 video is out: https://www.youtube.com/watch?v=xKYIde5jh_8
     - My post on our corporate blog: [Tineola: Taking a Bite out of Enterprise Blockchain](https://www.synopsys.com/blogs/software-security/tineola-enterprise-blockchain/ "Tineola: Taking a Bite out of Enterprise Blockchain")
     - Tineola: https://github.com/tineola/tineola
@@ -31,4 +31,4 @@ Current goals in progress:
     - https://parsiya.net/categories/winappdbg/
 - Automation:
     - [Reflections on "Manual Work is a Bug"]({{< relref "/post/2018-10-03-manual-work-bug/index.markdown" >}} "Reflections on "Manual Work is a Bug\"")
-    - Project and note management app: https://github.com/parsiya/borrowedtime/
+    - My project and note management app: https://github.com/parsiya/borrowedtime/

@@ -5,7 +5,7 @@ tags:
 - license
 ---
 
-I want people to be able to use anything if they want to with attribution and without warranty. I think these licenses are appropriate. If you have suggestions please let me know.
+I want people to be able to use anything if they want to with attribution and without warranty. I think these licenses are appropriate. Please let me know if there are better licenses that achieve this goal.
 
 ### Content License
 Except where otherwise noted, **my non-code content** on this website is licensed under a <a rel="license"  target="_blank" href="https://creativecommons.org/licenses/by-nc/4.0/">Creative Commons BY-NC 4.0</a> (Creative Commons Attribution-Non Commercial 4.0).

@@ -8,7 +8,6 @@ categories:
 - cheatsheet
 tags:
 - tips and tricks
-- Golang
 toc: false
 ---
 
