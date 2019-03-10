@@ -15,7 +15,7 @@ aliases:
 
 Burp is not just used for web application testing. I usually use it during mobile and thick client tests. If the application is using HTTP methods then Burp is your best friend.
 
-I am going to document a bunch of Burp tips and tricks that have helped me during my work. One purpose is to share it with the world and not be the other gun from Wham! (:D) and the other is to have it in an accessible place (similar to the cheat sheet in the menu).
+I am going to document a bunch of Burp tips and tricks that have helped me during my work. One purpose is to share it with the world and not be the other guy from Wham! (:D) and the other is to have it in an accessible place (similar to the cheat sheet in the menu).
 
 This part one I talk about Interception and Proxy listeners which are configured via `Proxy > Options`.
 
