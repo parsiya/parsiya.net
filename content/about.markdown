@@ -12,7 +12,7 @@ My name is Parsia Hakimian. I am a Security Engineer at the Game and Product Sec
 Previously, I was a Senior Security Consultant at [Synopsys Software Integrity Group](https://www.synopsys.com/software-integrity.html) based out of the Washington DC area in the United States.
 
 **Who is Hackerman?**\\
-*Hackerman* is a character from the movie [Kung Fury](https://www.youtube.com/watch?v=bS5P_LAqiVg). He has also a [hacking tutorial](https://www.youtube.com/watch?v=KEkrWRHCDQU).
+*Hackerman* is a character from the movie [Kung Fury](https://www.youtube.com/watch?v=bS5P_LAqiVg). He is the greatest hacker of all time and can hack people through time. He also has a [hacking tutorial](https://www.youtube.com/watch?v=KEkrWRHCDQU).
 
 **What is this website?**\\
 This website is my security research and notes. It doubles as my cheat sheet and knowledge base along with [parsiya.io](http://parsiya.io). I look up pages or send links to this website at least a few times every day. It's part of my brand. You don't wanna be the other guy from Wham!
