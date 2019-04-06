@@ -8,6 +8,7 @@ twitterImage: 10-v3-action.gif
 categories:
 - Burp
 - Crypto
+- Burp extension
 tags:
 - Python
 - AES

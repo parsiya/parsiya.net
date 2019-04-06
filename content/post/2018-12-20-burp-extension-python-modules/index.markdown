@@ -7,6 +7,7 @@ comments: true
 twitterImage: 01-extender-options.png
 categories:
 - Burp
+- Burp extension
 tags:
 - Python
 ---
@@ -65,7 +66,7 @@ The only way to get an object to use these methods is through the [IBurpExtender
 
 Let's look at a minimal example based on the `custom editor tab` example at https://github.com/PortSwigger/example-custom-editor-tab/blob/master/python/CustomEditorTab.py.
 
-Wwe will see a complete example in the next blog post. The `callbacks` object is available inside the [registerExtenderCallbacks][register-extender-callbacks]
+We will see a complete example in the next blog post. The `callbacks` object is available inside the [registerExtenderCallbacks][register-extender-callbacks]
 
 
 ``` python
