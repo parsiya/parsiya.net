@@ -25,7 +25,8 @@ Often I need to do something that I have done many times in the past but I have 
   - [Shortcut to IE (or WinINET) Proxy Settings](#shortcut-to-ie-or-wininet-proxy-settings)
   - [where.exe](#whereexe)
   - [Delete file or directory with a path or name longer than the Windows limit](#delete-file-or-directory-with-a-path-or-name-longer-than-the-windows-limit)
-  - [Install "Bash for Windows" without Windows Store](#install-bash-for-windows-without-windows-store)
+  - [Install 'Bash on Windows'](#install-bash-on-windows)
+  - [Setup Github-Gitlab SSH Keys in 'Bash on Windows'](#setup-github-gitlab-ssh-keys-in-bash-on-windows)
 - [Powershell](#powershell)
   - [List all files (including hidden)](#list-all-files-including-hidden)
   - [Diff in Powershell](#diff-in-powershell)
@@ -48,7 +49,7 @@ Often I need to do something that I have done many times in the past but I have 
   - [Rewrite Author for Older Commits](#rewrite-author-for-older-commits)
   - [Remove Uncommitted Files from Staging](#remove-uncommitted-files-from-staging)
 - [Sublime Text 3](#sublime-text-3)
-  - [Fix "MarGo build failed" for GoSublime on Windows](#fix-margo-build-failed-for-gosublime-on-windows)
+  - [Fix "MarGo build failed" for GoSublime on Windows](#fix-%22margo-build-failed%22-for-gosublime-on-windows)
   - [Open the same file in a new tab](#open-the-same-file-in-a-new-tab)
 - [Burp](#burp)
   - [Selected text in Burp is black](#selected-text-in-burp-is-black)
@@ -180,8 +181,54 @@ rmdir empty_dir
 rmdir the_dir_to_delete
 ```
 
-### Install "Bash for Windows" without Windows Store
-`lxrun /install`.
+### Install 'Bash on Windows'
+~~`lxrun /install`.~~ This does not work anymore.
+
+1. Run the following command in an admin PowerShell and restart.
+   * `Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux`
+2. Search for `Ubuntu` in Windows store and install Ubuntu.
+3. Type `bash` in a command prompt.
+
+### Setup Github-Gitlab SSH Keys in 'Bash on Windows'
+Main instructions here:
+
+* https://help.github.com/en/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+
+1. Generate a key inside bash and save it at the default location inside `home`.
+   * `ssh-keygen -t rsa -b 4096 -C "your_email@example.com"`
+2. Make sure you have `ssh-agent` installed in WSL. It should be installed out of the box.
+3. Add the following lines to `~/.bashrc` to start `ssh-agent` and add your key everytime you run `bash`.
+
+    ``` bash
+    env=~/.ssh/agent.env
+    agent_load_env () { test -f "$env" && . "$env" >| /dev/null ; }
+
+    agent_start () {
+        (umask 077; ssh-agent >| "$env")
+        . "$env" >| /dev/null ; }
+
+    agent_load_env
+
+    # agent_run_state: 0=agent running w/ key; 1=agent w/o key; 2= agent not running
+    agent_run_state=$(ssh-add -l >| /dev/null 2>&1; echo $?)
+
+    if [ ! "$SSH_AUTH_SOCK" ] || [ $agent_run_state = 2 ]; then
+        agent_start
+        ssh-add
+    elif [ "$SSH_AUTH_SOCK" ] && [ $agent_run_state = 1 ]; then
+        ssh-add
+    fi
+
+    unset env
+
+    # adding the github key to ssh-agent
+    # change if the private key file changes
+    ssh-add ~/.ssh/id_rsa
+    ```
+4. Add the SSH key to github/gitlab.
+5. Navigate to your git folder in a normal command prompt and run `bash` and use git normally.
+6. ???
+7. Profit
 
 ------
 
@@ -333,7 +380,7 @@ git config --global core.editor npp
 ```
 
 ### Tab size 4 in Github web interface
-Yes I know Github != Git but cba to create a different category.
+Yes I know `Github != Git` but I CBA to create a different category.
 
 Add `?ts=4` to end of file URL.
 
