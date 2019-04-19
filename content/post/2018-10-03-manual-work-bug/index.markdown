@@ -8,7 +8,6 @@ twitterImage: .png
 categories:
 - Not Security
 - Clone
-tags:
 - Automation
 ---
 
