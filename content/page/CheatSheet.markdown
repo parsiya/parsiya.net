@@ -27,6 +27,7 @@ Often I need to do something that I have done many times in the past but I have 
   - [Delete file or directory with a path or name longer than the Windows limit](#delete-file-or-directory-with-a-path-or-name-longer-than-the-windows-limit)
   - [Install 'Bash on Windows'](#install-bash-on-windows)
   - [Setup Github-Gitlab SSH Keys in 'Bash on Windows'](#setup-github-gitlab-ssh-keys-in-bash-on-windows)
+  - [Restart Clipboard Functionality in VirtualBox After Guest Resume](#restart-clipboard-functionality-in-virtualbox-after-guest-resume)
 - [Powershell](#powershell)
   - [List all files (including hidden)](#list-all-files-including-hidden)
   - [Diff in Powershell](#diff-in-powershell)
@@ -49,7 +50,7 @@ Often I need to do something that I have done many times in the past but I have 
   - [Rewrite Author for Older Commits](#rewrite-author-for-older-commits)
   - [Remove Uncommitted Files from Staging](#remove-uncommitted-files-from-staging)
 - [Sublime Text 3](#sublime-text-3)
-  - [Fix "MarGo build failed" for GoSublime on Windows](#fix-%22margo-build-failed%22-for-gosublime-on-windows)
+  - [Fix "MarGo build failed" for GoSublime on Windows](#fix-margo-build-failed-for-gosublime-on-windows)
   - [Open the same file in a new tab](#open-the-same-file-in-a-new-tab)
 - [Burp](#burp)
   - [Selected text in Burp is black](#selected-text-in-burp-is-black)
@@ -229,6 +230,17 @@ Main instructions here:
 5. Navigate to your git folder in a normal command prompt and run `bash` and use git normally.
 6. ???
 7. Profit
+
+### Restart Clipboard Functionality in VirtualBox After Guest Resume
+Sometimes disabling and enables clipboard in VirtualBox menu works
+
+Assuming you have a Windows guest. Inside the Windows guest do:
+
+1. Kill `VBoxTray.exe` in task manager.
+2. Start `VBoxTray.exe` again.
+3. Clipboard should work.
+
+Source: https://superuser.com/a/691337
 
 ------
 
