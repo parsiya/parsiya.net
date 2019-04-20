@@ -33,7 +33,7 @@ I discovered the article last year. I love it. You can read my initial observati
 
 Recently, I left my job after almost six years (70 months to be exact).
 By the end, I had automated some of my weekly routines and had this huge
-knowledge on the internal network called `Parsia-Clone` (it dwarfs my externalone).
+knowledge on the internal network called `Parsia-Clone` (it dwarfs my external one).
 We had this running joke that the clone will become sentient one day and do my job.
 
 I realized I have forgotten why I made some important decisions and why I was
@@ -52,7 +52,7 @@ With a clean slate:
 * I have time to do stuff.
 
 ## Time, It Needs Time, To Win Back Your Love Again
-Having time. That's kind of important. And that is my beef issue with the
+Having time. That's kind of important. And that is my biggest issue with the
 original article. It tells the tale of two sysadmins. Both are busy, intelligent
 and can write code.
 
@@ -68,7 +68,9 @@ But they do things differently
 Both sysadmins are overworked and under pressure but one (let's call them The Automator)
 manages to write a lot of code/documentation.
 
-How does The Automator find the time? Can they even manage to finish assigned work?
+* How does The Automator find the time?
+* Can they even manage to finish assigned work? 
+
 Remember both sysadmins are already overloaded.
 
 Writing documentation/steps/code takes time. A lot of time. Especially when you
@@ -83,13 +85,13 @@ The time has to come from somewhere.
 So The Automator most likely:
 
 * Got fired because they wrote documentation instead of closing tickets.
-* Burned out because is working after hours.
+* Burned out because they worked after hours.
 
 I was the second person. I worked long hours and almost burned out. People with
-family and obligations cannot do this and let's be honest, no one should do this.
+family and obligations cannot do this and let's be honest, no one should.
 
 **Even the mythical Russian build engineer had this problem.** \\
-Originally appeared in [bash.im][bash.im]. Read the translation at [jitbit][jitbit].
+The myth started in [bash.im][bash.im]. Read the translation at [jitbit][jitbit].
 It's about this legendary Russian build engineer who had [scripts][hacker-scripts]
 for everything. For example, one:
 
@@ -97,14 +99,13 @@ for everything. For example, one:
 > The job fires if there are active SSH-sessions on the server after 9pm with his login.
 
 Seems like even automation legends overwork. Our ideal person is someone who has
-automated his excuses for working long hours.
+automated his excuses for working long hours. SAD!
 
 ## But Automation Gives You Time
 Sure it does, it's most likely a net benefit in the long run. Automation will
 give you some free time to do more automation (well, hopefully).
 
-But the successful sysadmin probably had no life for a while (assuming he was
-not fired).
+But The Automator probably had no life for a while (assuming not fired).
 
 ## Should Everyone Automate?
 Each person needs to figure out if it's worth the time and energy.
@@ -116,6 +117,9 @@ Ask yourself the following questions:
 * Do you have the extra time?
 * Do you like doing it?
   * It shouldn't be a hassle and a second job.
+* What do you get out of it?
+  * Does corporate care?
+  * Does it help you and other people?
 
 There's also the option of automating your job but not sharing it. See the
 following urban legends:
