@@ -7,6 +7,7 @@ comments: true
 categories:
 - Not Security
 - Clone
+- Automation
 tags:
 - Blog
 - Travis CI
