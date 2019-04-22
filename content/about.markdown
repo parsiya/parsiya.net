@@ -20,10 +20,10 @@ This website is my security research and notes. It doubles as my cheat sheet and
 **What does "don't be the other guy from Wham!" mean?**\\
 [Wham!](https://en.wikipedia.org/wiki/Wham!) was a popular UK music duo. Most people remember one of its members, George Michael. No one remembers the other guy, [Andrew Ridgeley](https://www.google.com/search?q=andrew+ridgeley). Write a blog, don't be afraid to promote yourself. It's worth it.
 
-**What do you do?**\\
+<!-- **What do you do?**\\
 I hack videogames at Electronic Arts. The bulk of my professional work falls under one-off projects with unique challenges.
 
-I have tested enterprise blockchains, online multiplayer games, stock exchange platforms, mobile device management suites, network appliances, embedded and IoT devices on top of a long list of thickclient/mobile/web applications we all use on a daily basis.
+I have tested enterprise blockchains, online multiplayer games, stock exchange platforms, mobile device management suites, network appliances, embedded and IoT devices on top of a long list of thickclient/mobile/web applications we all use on a daily basis. -->
 
 **Goals in progress:**
 
@@ -35,7 +35,7 @@ I have tested enterprise blockchains, online multiplayer games, stock exchange p
 - In-memory fuzzing via binary instrumentation (aka traversing arbitrary assembly blobs over and over and over).
     - https://parsiya.net/categories/winappdbg/
 - Automation:
-    - [Reflections on "Manual Work is a Bug"]({{< relref "/post/2018-10-03-manual-work-bug/index.markdown" >}} "Reflections on "Manual Work is a Bug\"")
+    - http://localhost:1313/categories/automation/
     - My project and note management app: https://github.com/parsiya/borrowedtime/
 
 **Done and dusted:**
