@@ -214,8 +214,6 @@ be used to trace Java methods, look at their parameters and modify their
 contents. I played with it a bit and it seemed to work somewhat. It's definitely
 something I am going to use in the future.
 
-
-
 ## Decompiling
 To hook, we need to figure out what is sending out the requests.
 Most classes in Burp's jar are obfuscated[^obfuscation]. I tried a few
