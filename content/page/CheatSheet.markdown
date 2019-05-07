@@ -183,7 +183,7 @@ rmdir the_dir_to_delete
 ```
 
 ### Install 'Bash on Windows'
-~~`lxrun /install`.~~ This does not work anymore.
+`lxrun /install` does not work anymore.
 
 1. Run the following command in an admin PowerShell and restart.
    * `Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux`
@@ -238,7 +238,6 @@ Assuming you have a Windows guest. Inside the Windows guest do:
 
 1. Kill `VBoxTray.exe` in task manager.
 2. Start `VBoxTray.exe` again.
-3. Clipboard should work.
 
 Source: https://superuser.com/a/691337
 

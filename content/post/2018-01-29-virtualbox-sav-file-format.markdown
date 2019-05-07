@@ -19,8 +19,9 @@ To make it easier, I have uploaded the live state from our previous MysteryVM se
 <!--more-->
 
 # Dive into sav
-According to [this thread](https://www.virtualbox.org/pipermail/vbox-dev/2012-October/010986.html), "
-A .sav file is created using the SSM (saved state manager) code. You find the API in include/VBox/vmm/ssm.h and src/VBox/VMM/VMMR3/SSM.cpp."
+According to [this thread](https://www.virtualbox.org/pipermail/vbox-dev/2012-October/010986.html):
+
+> A .sav file is created using the SSM (saved state manager) code. You find the API in include/VBox/vmm/ssm.h and src/VBox/VMM/VMMR3/SSM.cpp.
 
 These are the relevant files:
 
@@ -89,7 +90,7 @@ First 32 bytes contain the `magic string`.
 Then the rest (in little-endian):
 
 - `05 00`: Major version number == `5`.
-- `00 10`: Minor version number == `1`.
+- `10 00`: Minor version number == `1`.
 - `1c 00 00 00`: Build number == `28`.
 - `d0 cc 01 00`: SVN revision == `117968`.
 - `40`: Host bits == `64` (32 bit or 64 bit host).
@@ -138,7 +139,7 @@ Try it at [play.golang.org][crc32-playground].
 For some reason CyberChef does not show the correct CRC-32 checksum while other online calculators do. Some info might be lost when convert hex bytes to chars and calculating the checksum.
 
 ### Flags
-In short, flag is `01` if it's' a live save state (which was in our case) and `00` if the stream is checksummed up to the footer (not sure what this flag value is used for).
+In short, flag is `01` if it's a live save state (which was in our case) and `00` if the stream is checksummed up to the footer (not sure what this flag value is used for).
 
 Flags are defined as follows:
 
@@ -222,8 +223,8 @@ In this data unit we have `0a 55 6e 69 74 0a 00 00` or `\nUnit\n\0`.
 Starting from offset `0x40` we have:
 
 - `40 00 00 00`: Offset of this unit in the stream. For this unit it's `0x40`. In other words, if we go this offset in the sav file, we will see this data unit.
-- `00 00 00 00`: The CRC-in-progress value this unit starts at. No idea what this is. It could be the default value of the CRC bytes when we are creating the CRC checksum (see above). At has been zero for this data unit in all live states I have seen.
-- `91 d4 5f f6`: Checksum of the data unit with these bytes set to zero.
+- `00 00 00 00`: "The CRC-in-progress value this unit starts at." No idea what this is. It could be the default value of the CRC bytes when we are creating the CRC checksum (see above). It has been zero for this data unit in all live states I have seen.
+- `91 d4 5f f6`: Checksum of the data unit with the checksum bytes set to zero.
 - `13 12 1d eb`: Data version == `eb 1d 12 13`. (?)
 - `01 00 00 00`: Instance number == `01`. (?)
 - `00 00 00 00`: Data pass number == `00`. (?)
@@ -242,14 +243,18 @@ Going back up the [SSM.cpp][ssm-cpp] file we can see the specifications for the 
 000000a0  64 36 34 00 00 00 00 00 00 00 00                 |d64........|
 ```
 
-"The first byte in the record header indicates the type and flags." We have `0x92` or `1001 0010`:
+> The first byte in the record header indicates the type and flags.
+
+We have `0x92` or `1001 0010`:
 
 - bits 0..3 - Record type `0010`: type = Raw data record.
 - bit 4: `1` if important and `0` if it can be skipped. This is an important data unit.
 - bits 5, 6: Must be `0`.
 - bit 7: Always `1`.
 
-"Record header byte 2 (optionally thru 7) is the size of the following data encoded in UTF-8 style." We have `0x39` or `57` decimal. So we will read 57 bytes.
+> Record header byte 2 (optionally thru 7) is the size of the following data encoded in UTF-8 style.
+
+We have `0x39` or `57` decimal. So we will read 57 bytes.
 
 This part is easy. Read a little-endian uint32, that's field length. Then read that many bytes to get the field. This is a typical Pascal style string (as seen in ASN.1 format) which do not have null/string terminators.
 
@@ -277,7 +282,7 @@ We can see it at offset `0x4C7A712`:
 00000020  ff ff ff ff 00 00 00 00 00 00 00 00              |ÿÿÿÿ........|
 ```
 
-End data unit does not have any data, it's just header and does not have a name. Using the `SSMFILEUNITHDRV2` struct we can dissect the data here:
+End data unit does not have any data, it only has a header and does not have a name. Using the `SSMFILEUNITHDRV2` struct we can dissect it:
 
 - `0a 54 68 65 45 6e 64 00`: Header `"\nTheEnd"`.
 - `12 a7 c7 04`: Offset of this unit == `04 c7 a7 12`.
@@ -286,7 +291,7 @@ End data unit does not have any data, it's just header and does not have a name.
 - `47 2b 45 32`: Data version. (?)
 - `00 00 00 00`: Instance number.
 - `00 00 00 00`: Data pass number.
-- `ff ff ff ff`: Not in spec, but appear in every data unit.
+- `ff ff ff ff`: Not in spec, but appears in every data unit.
 - `00 00 00 00`: Flags reserved for future extensions. Must be zero.
 - `00 00 00 00`: Size of data unit name in bytes. Zero here.
 
@@ -333,10 +338,10 @@ typedef struct SSMFILEDIR
 - `ef 86 a6 b5`: CRC-32 of the whole directory.
 - `22 00 00 00`: Number of directories `0x22` == `34` decimal.
 
-Then we have 34 directory (each directory is 16 bytes) of type `SSMFILEDIRENTRY`.
+Then we have 34 directories (each directory is 16 bytes) of type `SSMFILEDIRENTRY`.
 
 ## Directories - SSMFILEDIRENTRY
-Directories have a simple structure.
+The directories have a simple structure.
 
 {{< codecaption title="SSMFILEDIRENTRY - SSM.cpp" lang="cpp" >}}
 /**
