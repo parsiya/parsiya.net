@@ -8,7 +8,7 @@ categories:
 
 ---
 
-Often I need to do something that I have done many times in the past but I have forgotten how to do it. This is a page (or a series of pages if it grows large enough) to give me a simple repository of how-tos that I can access online. In this page you may find those commands and tips that I need from time to time (and usually forget when I need them).
+Often I need to do something that I have done many times in the past but I have forgotten how to do it. This is a page ~~(or a series of pages if it grows large enough)~~ to complement [my clone](http://parsiya.io) and give me a simple repository of how-tos I can access online. In this page you may find those commands and tips that I need from time to time (and usually forget when I need them).
 
 - [Tar](#tar)
   - [Compressing a directory using tar](#compressing-a-directory-using-tar)
@@ -27,7 +27,6 @@ Often I need to do something that I have done many times in the past but I have 
   - [Delete file or directory with a path or name longer than the Windows limit](#delete-file-or-directory-with-a-path-or-name-longer-than-the-windows-limit)
   - [Install 'Bash on Windows'](#install-bash-on-windows)
   - [Setup Github-Gitlab SSH Keys in 'Bash on Windows'](#setup-github-gitlab-ssh-keys-in-bash-on-windows)
-  - [Restart Clipboard Functionality in VirtualBox After Guest Resume](#restart-clipboard-functionality-in-virtualbox-after-guest-resume)
 - [Powershell](#powershell)
   - [List all files (including hidden)](#list-all-files-including-hidden)
   - [Diff in Powershell](#diff-in-powershell)
@@ -37,7 +36,10 @@ Often I need to do something that I have done many times in the past but I have 
   - [time in PowerShell](#time-in-powershell)
   - [VHD File is Open in System (and cannot be Deleted)](#vhd-file-is-open-in-system-and-cannot-be-deleted)
   - [Base64 encode and decode without PowerShell](#base64-encode-and-decode-without-powershell)
-  - [Change the hardware UUID of cloned Windows VMs to avoid reactivation](#change-the-hardware-uuid-of-cloned-windows-vms-to-avoid-reactivation)
+- [VirtualBox](#virtualbox)
+  - [Restart Clipboard Functionality in VirtualBox After Guest Resume](#restart-clipboard-functionality-in-virtualbox-after-guest-resume)
+  - [Change the Hardware UUID of Cloned Windows VMs to Avoid Reactivation](#change-the-hardware-uuid-of-cloned-windows-vms-to-avoid-reactivation)
+  - [Increase VM Disk Size](#increase-vm-disk-size)
 - [Git](#git)
   - [Create new branch and merge](#create-new-branch-and-merge)
   - [Only clone a certain branch](#only-clone-a-certain-branch)
@@ -231,16 +233,6 @@ Main instructions here:
 6. ???
 7. Profit
 
-### Restart Clipboard Functionality in VirtualBox After Guest Resume
-Sometimes disabling and enables clipboard in VirtualBox menu works
-
-Assuming you have a Windows guest. Inside the Windows guest do:
-
-1. Kill `VBoxTray.exe` in task manager.
-2. Start `VBoxTray.exe` again.
-
-Source: https://superuser.com/a/691337
-
 ------
 
 ## Powershell
@@ -304,8 +296,24 @@ Use `certutil` for bootleg base64 encoding/decoding:
 - `certutil -encode whatever.exe whatever.base64`
 - `certutil -decode whetever.base64 whatever.exe`
 
-### Change the hardware UUID of cloned Windows VMs to avoid reactivation
-You cloned a Windows VirtualBox VM and now you have to activate it again. This script changes the hardware UUID of the cloned machine to the old one. No reactivation needed.
+------
+
+## VirtualBox
+
+### Restart Clipboard Functionality in VirtualBox After Guest Resume
+Sometimes disabling and enables clipboard in VirtualBox menu works
+
+Assuming you have a Windows guest. Inside the Windows guest do:
+
+1. Kill `VBoxTray.exe` in task manager.
+2. Start `VBoxTray.exe` again.
+
+Source: https://superuser.com/a/691337
+
+### Change the Hardware UUID of Cloned Windows VMs to Avoid Reactivation
+You cloned a Windows VirtualBox VM and now you have to activate it again.
+This script changes the hardware UUID of the cloned machine to the old one.
+No reactivation needed.
 
 ``` powershell
 $ORIGVirtualMachineName="Windows 10 - Base"   # Old VM name as it appears in VirtualBox
@@ -315,6 +323,29 @@ cd $vboxDir
 $uid=$($($(.\VBoxManage.exe showvminfo $ORIGVirtualMachineName|select-string "Hardware UUID:").ToString()).Split())[4]
 .\VBoxManage modifyvm $clonedVirtualMachineName --hardwareuuid $uid
 ```
+
+### Increase VM Disk Size
+The default modern.ie VMs come with a 40GB vmdk hard drive and I want to resize
+them to 100GB. VirtualBox cannot resize it. We can clone it to vdi, resize it
+and convert it back to vdmk.
+
+`VBoxManage` is at `c:\Program Files\Oracle\VirtualBox` (default installation).
+
+1. Convert vmdk hard disk to vdi:
+    * `VBoxManage clonemedium "MSEdge - Win10.vmdk" "MSEdge - Win10.vdi" --format vdi`
+2. Resize vdi.
+    * `VBoxManage modifymedium "MSEdge - Win10.vdi" --resize 102400`
+3. Convert vdi back to vdmk (I usually just keep it as vdi).
+    * `VBoxManage clonemedium "MSEdge - Win10.vdi" "MSEdge - Win10-resized.vdi" --format vmdk`
+4. Extend the original partition in guest with `Disk Management` (Windows).
+    1. Run `diskmgmt.msc`.
+    2. Click on the existing partition and select `Extend`.
+    3. Use the wizard and add the new empty space to the origin partition.
+5. Delete unused vdi or vmdk files.
+6. ???
+7. Enjoy 100 GBs of space. Well, 83GB on the defaul Win10 x64.
+
+Source: https://stackoverflow.com/a/12456219
 
 ------
 
@@ -560,4 +591,4 @@ You might have enabled the privacy settings in Windows 10.
 4. Allow apps to access your Microphone.
 5. Enable for `Win32WebViewHost`.
 6. ???
-7. Yell at your raid group for standing in fire.
+7. Yell at ~~your raid group~~ DPS for standing in fire.
