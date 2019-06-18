@@ -35,7 +35,7 @@ I have tested enterprise blockchains, online multiplayer games, stock exchange p
 - In-memory fuzzing via binary instrumentation (aka traversing arbitrary assembly blobs over and over and over).
     - https://parsiya.net/categories/winappdbg/
 - Automation:
-    - http://localhost:1313/categories/automation/
+    - https://parsiya.net/categories/automation/
     - My project and note management app: https://github.com/parsiya/borrowedtime/
 
 **Done and dusted:**

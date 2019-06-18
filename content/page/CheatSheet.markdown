@@ -10,60 +10,62 @@ categories:
 
 Often I need to do something that I have done many times in the past but I have forgotten how to do it. This is a page ~~(or a series of pages if it grows large enough)~~ to complement [my clone](http://parsiya.io) and give me a simple repository of how-tos I can access online. In this page you may find those commands and tips that I need from time to time (and usually forget when I need them).
 
-- [Tar](#tar)
-  - [Compressing a directory using tar](#compressing-a-directory-using-tar)
-  - [Decompressing a tar.gz file](#decompressing-a-targz-file)
-- [OpenSSL](#openssl)
-  - [Dumping the TLS certificate using OpenSSL](#dumping-the-tls-certificate-using-openssl)
-  - [TLS connection with a specific ciphersuite using OpenSSL](#tls-connection-with-a-specific-ciphersuite-using-openssl)
-- [Amazon S3](#amazon-s3)
-  - [Using s3deploy](#using-s3deploy)
-  - [Syncing a folder with an Amazon S3 bucket using s3cmd](#syncing-a-folder-with-an-amazon-s3-bucket-using-s3cmd)
-  - [Changing the mime-type of CSS file after upload to fix CSS not displaying correctly](#changing-the-mime-type-of-css-file-after-upload-to-fix-css-not-displaying-correctly)
-  - [Setting the index to a non-root file in static website hosted on S3](#setting-the-index-to-a-non-root-file-in-static-website-hosted-on-s3)
-- [Windows](#windows)
-  - [Shortcut to IE (or WinINET) Proxy Settings](#shortcut-to-ie-or-wininet-proxy-settings)
+- [Tar](#Tar)
+  - [Compressing a directory using tar](#Compressing-a-directory-using-tar)
+  - [Decompressing a tar.gz file](#Decompressing-a-targz-file)
+- [OpenSSL](#OpenSSL)
+  - [Dumping the TLS certificate using OpenSSL](#Dumping-the-TLS-certificate-using-OpenSSL)
+  - [TLS connection with a specific ciphersuite using OpenSSL](#TLS-connection-with-a-specific-ciphersuite-using-OpenSSL)
+- [Amazon S3](#Amazon-S3)
+  - [Using s3deploy](#Using-s3deploy)
+  - [Syncing a folder with an Amazon S3 bucket using s3cmd](#Syncing-a-folder-with-an-Amazon-S3-bucket-using-s3cmd)
+  - [Changing the mime-type of CSS file after upload to fix CSS not displaying correctly](#Changing-the-mime-type-of-CSS-file-after-upload-to-fix-CSS-not-displaying-correctly)
+  - [Setting the index to a non-root file in static website hosted on S3](#Setting-the-index-to-a-non-root-file-in-static-website-hosted-on-S3)
+- [Windows](#Windows)
+  - [Shortcut to IE (or WinINET) Proxy Settings](#Shortcut-to-IE-or-WinINET-Proxy-Settings)
   - [where.exe](#whereexe)
-  - [Delete file or directory with a path or name longer than the Windows limit](#delete-file-or-directory-with-a-path-or-name-longer-than-the-windows-limit)
-  - [Install 'Bash on Windows'](#install-bash-on-windows)
-  - [Setup Github-Gitlab SSH Keys in 'Bash on Windows'](#setup-github-gitlab-ssh-keys-in-bash-on-windows)
-- [Powershell](#powershell)
-  - [List all files (including hidden)](#list-all-files-including-hidden)
-  - [Diff in Powershell](#diff-in-powershell)
-  - [Pseudo-grep in Powershell](#pseudo-grep-in-powershell)
+  - [Delete file or directory with a path or name longer than the Windows limit](#Delete-file-or-directory-with-a-path-or-name-longer-than-the-Windows-limit)
+  - [Install 'Bash on Windows'](#Install-Bash-on-Windows)
+  - [Setup Github-Gitlab SSH Keys in 'Bash on Windows'](#Setup-Github-Gitlab-SSH-Keys-in-Bash-on-Windows)
+- [Powershell](#Powershell)
+  - [List all files (including hidden)](#List-all-files-including-hidden)
+  - [Diff in Powershell](#Diff-in-Powershell)
+  - [Pseudo-grep in Powershell](#Pseudo-grep-in-Powershell)
   - [grep in command outputs](#grep-in-command-outputs)
-  - [Get-Acl and icacls.exe](#get-acl-and-icaclsexe)
-  - [time in PowerShell](#time-in-powershell)
-  - [VHD File is Open in System (and cannot be Deleted)](#vhd-file-is-open-in-system-and-cannot-be-deleted)
-  - [Base64 encode and decode without PowerShell](#base64-encode-and-decode-without-powershell)
-- [VirtualBox](#virtualbox)
-  - [Restart Clipboard Functionality in VirtualBox After Guest Resume](#restart-clipboard-functionality-in-virtualbox-after-guest-resume)
-  - [Change the Hardware UUID of Cloned Windows VMs to Avoid Reactivation](#change-the-hardware-uuid-of-cloned-windows-vms-to-avoid-reactivation)
-  - [Increase VM Disk Size](#increase-vm-disk-size)
-- [Git](#git)
-  - [Create new branch and merge](#create-new-branch-and-merge)
-  - [Only clone a certain branch](#only-clone-a-certain-branch)
-  - [Undo remote git history after push](#undo-remote-git-history-after-push)
-  - [Update local fork from original repo](#update-local-fork-from-original-repo)
-  - [Use Notepad++ as git editor on Windows via Cygwin](#use-notepad-as-git-editor-on-windows-via-cygwin)
-  - [Tab size 4 in Github web interface](#tab-size-4-in-github-web-interface)
-  - [Change Remote for an Existing Git Repository](#change-remote-for-an-existing-git-repository)
-  - [List All Authors in a Git Repository](#list-all-authors-in-a-git-repository)
-  - [Rewrite Author for Older Commits](#rewrite-author-for-older-commits)
-  - [Remove Uncommitted Files from Staging](#remove-uncommitted-files-from-staging)
-- [Sublime Text 3](#sublime-text-3)
-  - [Fix "MarGo build failed" for GoSublime on Windows](#fix-margo-build-failed-for-gosublime-on-windows)
-  - [Open the same file in a new tab](#open-the-same-file-in-a-new-tab)
-- [Burp](#burp)
-  - [Selected text in Burp is black](#selected-text-in-burp-is-black)
-- [Download Youtube videos with substitles](#download-youtube-videos-with-substitles)
-- [Print Envelopes Using the Brother Printer and LibreOffice](#print-envelopes-using-the-brother-printer-and-libreoffice)
-- [Microphone not working in Discord?](#microphone-not-working-in-discord)
+  - [Get-Acl and icacls.exe](#Get-Acl-and-icaclsexe)
+  - [time in PowerShell](#time-in-PowerShell)
+  - [VHD File is Open in System (and cannot be Deleted)](#VHD-File-is-Open-in-System-and-cannot-be-Deleted)
+  - [Base64 encode and decode without PowerShell](#Base64-encode-and-decode-without-PowerShell)
+- [VirtualBox](#VirtualBox)
+  - [Restart Clipboard Functionality in VirtualBox After Guest Resume](#Restart-Clipboard-Functionality-in-VirtualBox-After-Guest-Resume)
+  - [Change the Hardware UUID of Cloned Windows VMs to Avoid Reactivation](#Change-the-Hardware-UUID-of-Cloned-Windows-VMs-to-Avoid-Reactivation)
+  - [Increase VM Disk Size](#Increase-VM-Disk-Size)
+- [Git](#Git)
+  - [Create new branch and merge](#Create-new-branch-and-merge)
+  - [Only clone a certain branch](#Only-clone-a-certain-branch)
+  - [Undo remote git history after push](#Undo-remote-git-history-after-push)
+  - [Update local fork from original repo](#Update-local-fork-from-original-repo)
+  - [Use Notepad++ as git editor on Windows via Cygwin](#Use-Notepad-as-git-editor-on-Windows-via-Cygwin)
+  - [Tab size 4 in Github web interface](#Tab-size-4-in-Github-web-interface)
+  - [Change Remote for an Existing Git Repository](#Change-Remote-for-an-Existing-Git-Repository)
+  - [List All Authors in a Git Repository](#List-All-Authors-in-a-Git-Repository)
+  - [Rewrite Author for Older Commits](#Rewrite-Author-for-Older-Commits)
+  - [Remove Uncommitted Files from Staging](#Remove-Uncommitted-Files-from-Staging)
+- [Visual Studio Code](#Visual-Studio-Code)
+  - [Associate an Extension with a Speicifc Language](#Associate-an-Extension-with-a-Speicifc-Language)
+- [Sublime Text 3](#Sublime-Text-3)
+  - [Fix "MarGo build failed" for GoSublime on Windows](#Fix-MarGo-build-failed-for-GoSublime-on-Windows)
+  - [Open the same file in a new tab](#Open-the-same-file-in-a-new-tab)
+- [Burp](#Burp)
+  - [Selected text in Burp is black](#Selected-text-in-Burp-is-black)
+- [Download Youtube videos with substitles](#Download-Youtube-videos-with-substitles)
+- [Print Envelopes Using the Brother Printer and LibreOffice](#Print-Envelopes-Using-the-Brother-Printer-and-LibreOffice)
+- [Microphone not working in Discord?](#Microphone-not-working-in-Discord)
 
 ------
 
 ## Tar
-Insert xkcd, hur dur!
+Insert [XKCD 1168](https://xkcd.com/1168/), hur dur!
 
 ### Compressing a directory using tar
 `tar -zcvf target_tar.tar.gz directory_to_be_compressed`
@@ -468,8 +470,26 @@ git reset HEAD -- file/directory
 
 ------
 
+## Visual Studio Code
+My current (as of June 2019) editor of choice. Settings are at
+http://parsiya.io/categories/configs/vscode/.
+
+### Associate an Extension with a Speicifc Language
+This allows us to have specific language highlighting for custom extensions. Add
+the following to `settings.json`:
+
+``` json
+    "files.associations": {
+        "*.whatever": "cpp",
+        "*.generics": "go"
+    }
+```
+
+------
+
 ## Sublime Text 3
-Tips for using the Sublime Text 3 editor.
+Tips for using the Sublime Text 3 editor. I don't use Sublime Text anymore so
+this section ~~might be~~ is probably outdated.
 
 ### Fix "MarGo build failed" for GoSublime on Windows
 GoSublime's executable has Go version in it. In most cases, it cannot grab the version on Windows and the build will fail like this:
@@ -480,7 +500,7 @@ cmd: `['C:\\Go\\bin\\go.exe', 'build', '-tags', '', '-v', '-o',
        'gosublime.margo_r17.12.17-1_go?.exe', 'gosublime/cmd/margo']`
 ```
 
-Where `?` is the go version that is unknown.
+Where `?` is the Go version that is unknown.
 
 Edit this file:
 
@@ -498,7 +518,7 @@ ver = ''     # Change this to '1'
 
 Edit `ver` to whatever, I usually do `1`. Restart Sublime Text and Margo will build.
 
-**Unfortunately this needs to be done for every new GoSublime version.**
+**This must to be done for every new GoSublime version.**
 
 ### Open the same file in a new tab
 `File > New view into File`. Then drag the pane to a second screen/location.
@@ -520,7 +540,7 @@ You have two options:
     ```
     java.exe "-Dsun.java2d.d3d=false" -jar burp.jar
     ```
-3. The complete command for the default install on Windows is:
+   * The complete command for the default install on Windows is:
 
     ```
     "C:\Program Files\BurpSuiteCommunity\jre\bin\java.exe"
@@ -552,7 +572,9 @@ I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The 
 ------
 
 ## Print Envelopes Using the Brother Printer and LibreOffice
-Before printing, get to printer physically and use the following instructions:
+I gave away the printer when I moved but I am keeping the instructions just in
+case. Before printing, get to printer physically and use the following
+instructions:
 
 - http://support.brother.com/g/b/faqend.aspx?c=gb&lang=en&prod=hl2170w_all&faqid=faq00000063_025
 

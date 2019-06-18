@@ -21,7 +21,7 @@ This part one I talk about Interception and Proxy listeners which are configured
 
 At the time of writing the current version of Burp Pro is `1.6.39` and most items should apply to the current Burp Free version (`1.6.32`). Most settings have not changed since I started working with Burp (v1.5). You can download Burp from: [https://portswigger.net/burp/download.html](https://portswigger.net/burp/download.html).
 
-When I started this, I did not think I have so much stuff to write about Burp. So I divided it to different parts.  Please not that this is not targeted towards web application testing so I may have skipped some functionalities. If you have any favorite tips or usecases and want them included with credit please let me know, as usual feedback is always welcome.
+When I started this, I did not think I have so much stuff to write about Burp. So I broke it into multiple parts. Please note that these series of posts are not targeted towards web application testing so I have skipped some functionalities. If you have any favorite tips or usecases and want them included with credit please let me know, as usual feedback is always welcome.
 
 <!--more-->
 
