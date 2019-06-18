@@ -4,7 +4,7 @@ date: 2019-06-18T13:03:53-07:00
 draft: false
 toc: true
 comments: true
-twitterImage: .png
+twitterImage: 08-calc-in-vm.png
 categories:
 - writeup
 tags:
