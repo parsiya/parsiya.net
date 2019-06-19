@@ -152,7 +152,7 @@ interact with it.
 
 # Vuln 1: Listening on All Interfaces
 The Kestrel web server listening on all interfaces. If it gets permission to
-open ports or if do not have a firewall (disable on Windows or
+open ports or if you do not have a firewall (disable on Windows or
 running on an OS without one), anyone can connect to it from outside.
 
 I created a host-only network interface between the guest VM and the host. After
@@ -277,9 +277,9 @@ function GetCollectors() {
 {{< /codecaption >}}
 
 There's no input validation or output encoding for `data.RunId`. Interestingly,
-the IDs appear output encoded in the `Result` tab. Not being [Lewis
-Ardern][lewis-twitter] (solid 5/7 JavaScript guy), I am glad this simple payload
-worked.
+the IDs appear output encoded in the `Result` tab. Not being
+[Lewis Ardern][lewis-twitter] (solid 5/7 JavaScript guy), I am glad this simple
+payload worked.
 
 ## XSS in Guest from Remote Payloads
 We have this reflected XSS which is pretty much worthless. Ok, not completely
