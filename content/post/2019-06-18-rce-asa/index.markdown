@@ -440,9 +440,9 @@ The issue was reported to [Microsoft Security Response Center][msrc-link] on May
 | Report                         | 22 May 2019  |
 | Acknowledgement                | 22 May 2019  |
 | MSRC asked for clarification   | 28 May 2019  |
-| MSRC confirmed fix was applied | 06 July 2019 |
-| Fix was confirmed              | 14 July 2019 |
-| Disclosure                     | 18 July 2019 |
+| MSRC confirmed fix was applied | 06 June 2019 |
+| Fix was confirmed              | 14 June 2019 |
+| Disclosure                     | 18 June 2019 |
 
 <!-- Links -->
 [asa-github]: https://github.com/microsoft/AttackSurfaceAnalyzer
