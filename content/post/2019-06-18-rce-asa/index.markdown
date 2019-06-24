@@ -4,7 +4,7 @@ date: 2019-06-18T13:03:53-07:00
 draft: false
 toc: true
 comments: true
-twitterImage: 08-calc-in-vm.png
+twitterImage: 11-localhost.gif
 categories:
 - writeup
 tags:
@@ -32,9 +32,13 @@ moving forward) GUI version.
 Around a month ago someone posted a link to the new version of the
  tool from Microsoft.
 
-[Matt](https://twitter.com/mattt_cyber) who is my ultimate boss said:
+[Matt][matt-twitter] who is my ultimate boss said:
 
 > Wrote the first version of that with John Lambert over a holiday break...
+
+Edit: See their conversation about the tool and a link to a presentation talking about it at:
+
+* [https://twitter.com/JohnLaTwC/status/1141765341061627904][lambert-twitter-convo]
 
 I had never seen the tool before but I had used an internal tool which basically
 did the same thing and more.
@@ -420,10 +424,11 @@ your applications on a prod VM. But these VMs are still connected to something.\
 1. Don't bind the web server to all interfaces.
 2. Output encode `Run Id`s in the progress page.
 3. Enable `NodeIntegration` and other Electron Defenses in Electron.NET.
-    * See [Security, Native Capabilities, and Your Responsibility][electron-security]
+    * See [Security, Native Capabilities, and Your Responsibility][electron-security].
 
 The issue was reported to [Microsoft Security Response Center][msrc-link] on May
 22nd 2019.
+
 
 ## Fixes
 
@@ -445,7 +450,6 @@ The issue was reported to [Microsoft Security Response Center][msrc-link] on May
 | Disclosure                     | 18 June 2019 |
 
 <!-- Links -->
-[asa-github]: https://github.com/microsoft/AttackSurfaceAnalyzer
 [electron.net-github]: https://github.com/ElectronNET/Electron.NET
 [matt-twitter]: https://twitter.com/mattt_cyber
 [electron-website]: https://electronjs.org/
@@ -460,7 +464,8 @@ The issue was reported to [Microsoft Security Response Center][msrc-link] on May
 [kestrel-filtering]: https://docs.microsoft.com/en-us/aspnet/core/fundamentals/servers/kestrel#host-filtering
 [electron-security]: https://github.com/electron/electron/blob/master/docs/tutorial/security.md
 [msrc-link]: https://msrc.microsoft.com/
-[218-commit]: https://github.com/microsoft/AttackSurfaceAnalyzer/commit/0dffa1a04a4c047ddd7f682c0def740a8f17c810
-[220-commit]: https://github.com/microsoft/AttackSurfaceAnalyzer/commit/37bce60e86e1d727970be6e5aa6ba1a1d8083b35
+[218-commit]: https://github.com/microsoft/AttackSurfaceAnalyzer/pull/218
+[220-commit]: https://github.com/microsoft/AttackSurfaceAnalyzer/pull/220
 [launchSettings-link]: https://github.com/microsoft/AttackSurfaceAnalyzer/blob/37bce60e86e1d727970be6e5aa6ba1a1d8083b35/Gui/Properties/launchSettings.json#L30
 [collect-link]: https://github.com/microsoft/AttackSurfaceAnalyzer/blob/3dec668982b513f92cb9bc8a00ff57fdaada14da/Gui/wwwroot/js/Collect.js#L59-L98
+[lambert-twitter-convo]: https://twitter.com/JohnLaTwC/status/1141765341061627904
