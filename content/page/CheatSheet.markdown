@@ -26,6 +26,7 @@ Often I need to do something that I have done many times in the past but I have 
   - [Delete file or directory with a path or name longer than the Windows limit](#delete-file-or-directory-with-a-path-or-name-longer-than-the-windows-limit)
   - [Install 'Bash on Windows'](#install-bash-on-windows)
   - [Setup Github-Gitlab SSH Keys in 'Bash on Windows'](#setup-github-gitlab-ssh-keys-in-bash-on-windows)
+  - [Exit Status 3221225781](#exit-status-3221225781)
 - [Powershell](#powershell)
   - [List all files (including hidden)](#list-all-files-including-hidden)
   - [Diff in Powershell](#diff-in-powershell)
@@ -236,6 +237,35 @@ Main instructions here:
 6. ???
 7. Profit
 
+### Exit Status 3221225781
+**TL;DR:** `exit status 3221225781` means a DLL is missing on Windows. In this
+case, `diff.exe` was missing `libintl3.dll` and it made `gorename` stop working.
+Get and install it from:
+
+* http://gnuwin32.sourceforge.net/packages/libintl.htm
+
+`gorename` stopped working and I got the following error in the VS Code console:
+
+```
+Rename failed: gorename: computing diff: exit status 3221225781 gorename:
+    computing diff: exit status 3221225781 gorename: failed to rewrite 2 files 
+```
+
+Searching for `3221225781` got me to
+[Rust language issue 42744](https://github.com/rust-lang/rust/issues/42744)
+which means a DLL is missing. Run `where diff` to find out where it is and it
+was in `\Go\bin\diff.exe`. Running `diff.exe` manually got this prompt.
+
+```
+The code execution cannot proceed because libintl3.dll was not found.
+Reinstalling the program may fix this problem.
+```
+
+Go to http://gnuwin32.sourceforge.net/packages.html and click on `Setup` in
+front of `DiffUtils`. It will download a package which contains the utils and
+two DLLs: `libintl3.dll` and `libiconv2.dll`. Copy all of them to where the
+original `diff.exe` was and it should work.
+
 ------
 
 ## Powershell
@@ -358,24 +388,22 @@ I know a total of 5-6 git commands and that is fine.
 ### Create new branch and merge
 This works with small branches (e.g. one fix or so). Adapted from a [Bitbucket tutorial](https://confluence.atlassian.com/bitbucket/use-a-git-branch-to-merge-a-file-681902555.html).
 
-1. Create new branch - `git branch fix-whatever`\\
-This will create a branch of whatever branch you are currently on so make sure you are creating a branch from the branch you want.
+1. Create new branch and checkout - `git checkout -b fix-whatever`\\
+This will create a branch of whatever branch you are currently on so make sure you are creating a branch from the branch you want. This is the same as `git branch whatever` and `git checkout whatever`.
 
-2. Switch to the branch - `git checkout fix-whatever`
-
-3. Make changes and commit - `git add - git commit`\\
+2. Make changes and commit - `git add - git commit`\\
 Make any changes you want to do, then stage and commit.
 
-4. Push the branch to remote repo [optional] - `git push`\\
+3. Push the branch to remote repo [optional] - `git push`\\
 This can be safely done because it's an obscure branch and no one else cares about it.
 
-5. Go back to the original branch to merge - `git checkout master`\\
+4. Go back to the original branch to merge - `git checkout master`\\
 Master or whatever branch you were at step one.
 
-6. Merge the branches - `git merge fix-whatever`.\\
+5. Merge the branches - `git merge fix-whatever`.\\
 Alternatively squash all commits into one `git merge --squash fix-whatever` and then `git commit -m "One message for all commits in merge"`.
 
-7. Delete branch - `git branch -d fix-whatever`\\
+6. Delete branch - `git branch -d fix-whatever`\\
 We don't need it anymore. If it was pushed to remote, then we need to delete it there too.
 
 ### Only clone a certain branch
