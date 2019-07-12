@@ -7,7 +7,12 @@ categories:
 - cheatsheet
 ---
 
-Often I need to do something that I have done many times in the past but I have forgotten how to do it. This is a page ~~(or a series of pages if it grows large enough)~~ to complement [my clone](http://parsiya.io) and give me a simple repository of how-tos I can access online. In this page you may find those commands and tips that I need from time to time (and usually forget when I need them).
+Often I need to do something that I have done many times in the past but I have
+forgotten how to do it. This is a page ~~(or a series of pages if it grows large
+enough)~~ to complement [my clone at parsiya.io](http://parsiya.io) and give me
+a simple repository of how-tos I can access online. In this page you may find
+those commands and tips that I need from time to time (and usually forget when I
+need them).
 
 - [Tar](#tar)
   - [Compressing a directory using tar](#compressing-a-directory-using-tar)
@@ -53,13 +58,15 @@ Often I need to do something that I have done many times in the past but I have 
   - [Remove Uncommitted Files from Staging](#remove-uncommitted-files-from-staging)
   - [Exclude a Committed File with gitignore](#exclude-a-committed-file-with-gitignore)
 - [Visual Studio Code](#visual-studio-code)
-  - [Associate an Extension with a Speicifc Language](#associate-an-extension-with-a-speicifc-language)
+  - [Associate an Extension with a Specific Language](#associate-an-extension-with-a-specific-language)
   - [Install a Specific Version of an Extension](#install-a-specific-version-of-an-extension)
 - [Sublime Text 3](#sublime-text-3)
   - [Fix "MarGo build failed" for GoSublime on Windows](#fix-margo-build-failed-for-gosublime-on-windows)
   - [Open the same file in a new tab](#open-the-same-file-in-a-new-tab)
 - [Burp](#burp)
   - [Selected text in Burp is black](#selected-text-in-burp-is-black)
+- [Linux](#linux)
+  - [Python module installed with pip but command is not available](#python-module-installed-with-pip-but-command-is-not-available)
 - [Download Youtube videos with substitles](#download-youtube-videos-with-substitles)
 - [Print Envelopes Using the Brother Printer and LibreOffice](#print-envelopes-using-the-brother-printer-and-libreoffice)
 - [Microphone not working in Discord?](#microphone-not-working-in-discord)
@@ -519,7 +526,7 @@ Note: Also overwrite history if the file had secrets/sensitive info.
 My current (as of June 2019) editor of choice. Settings are at
 http://parsiya.io/categories/configs/vscode/.
 
-### Associate an Extension with a Speicifc Language
+### Associate an Extension with a Specific Language
 This allows us to have specific language highlighting for custom extensions. Add
 the following to `settings.json`:
 
@@ -608,6 +615,14 @@ You have two options:
 Source - credit to `floyd`:
 
 * https://support.portswigger.net/customer/portal/questions/16802069-text-highlighted-in-black
+
+------
+
+## Linux
+I'd just like to interject for a moment. What you’re referring to as Linux, is in fact, GNU/Linux, or as I’ve recently taken to calling it, GNU plus Linux.
+
+### Python module installed with pip but command is not available
+It's installed in `~/.local/bin`. Add it to your `$PATH`.
 
 ------
 
