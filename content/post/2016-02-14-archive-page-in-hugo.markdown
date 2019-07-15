@@ -20,7 +20,7 @@ Content types in Hugo are determined in two ways:
 
 * Directory structure: For example in my blog, every blog post is in `content\post` and as a result is of type `post`. The template used to create each post is in `themes\Hugo-Octopress\layouts\post\single.html.` You can learn more by reading the [Content Types](https://gohugo.io/content/types/) section in Hugo documentation.
 
-* Through a variable named `type` in [front matter](https://gohugo.io/content/front-matter). For example `type: mycustomtype` in the front matter will assign this type to the page. In this case, the page can be anywhere in the `content` directory and the directory structure is irrelevant.
+* Through a variable named `type` in [front matter](https://gohugo.io/content/front-matter). For example `type: mycustomtype` in the front matter will assign this type to the page. In this case, the page can be anywhere in the `content` directory and the directory structure is irrelevant. It's also possible to set the relative URL of the page with the `url` frontmatter variable.
 
 To create an archive page, create a Markdown file in `content` and create a new type for it. The name of the file is going to determine the path of the generating file. If the file is named `content\archive.markdown` then it will be located at `baseurl/archive/` in my case. The name of the type does not have any effect on the path. Here's what I have in this file:
 
