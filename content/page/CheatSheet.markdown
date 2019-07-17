@@ -68,6 +68,7 @@ need them).
 - [Linux](#linux)
   - [Python module installed with pip but command is not available](#python-module-installed-with-pip-but-command-is-not-available)
 - [Download Youtube videos with substitles](#download-youtube-videos-with-substitles)
+- [docker](#docker)
 - [Print Envelopes Using the Brother Printer and LibreOffice](#print-envelopes-using-the-brother-printer-and-libreoffice)
 - [Microphone not working in Discord?](#microphone-not-working-in-discord)
 
@@ -640,6 +641,27 @@ I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The 
 
 `Youtube-dl` can be downloaded using `pip`. For example on Windows:\\
 `python -m pip install youtube-dl`.
+
+------
+
+## docker
+
+* See images: `docker images`
+* Delete image(s): `docker rmi img1 img2`
+    * By name: `docker rmi whatever/blah`
+    * By ID: `docker rmi f20d`
+* See all running containers: `docker container ls -a` - `docker ps -a`
+* Only show running containers: `docker ps`
+* Stop container: `docker stop d194 3f4a`
+* Delete container(s): `docker container rm d194 3f4a`
+* Build image from file:
+    * `docker build . -f file -t whatever/blah`
+    * `DockerFile` it does not need to be mentioned. `docker build -t whatever/blah`
+    * `docker image` should display the image now.
+* Run a container from an image:
+* centOS cmd for `DockerFile`: `CMD ["/usr/sbin/init"]`
+* Create and run a centOS container: `docker run -it whatever/blah sh`
+    * `--rm` to delete the container after it exits. This is useful when testing.
 
 ------
 
