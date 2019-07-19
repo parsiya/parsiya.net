@@ -32,6 +32,7 @@ need them).
   - [Install 'Bash on Windows'](#install-bash-on-windows)
   - [Setup Github-Gitlab SSH Keys in 'Bash on Windows'](#setup-github-gitlab-ssh-keys-in-bash-on-windows)
   - [Exit Status 3221225781](#exit-status-3221225781)
+  - [Map a drive to a specific directory](#map-a-drive-to-a-specific-directory)
 - [Powershell](#powershell)
   - [List all files (including hidden)](#list-all-files-including-hidden)
   - [Diff in Powershell](#diff-in-powershell)
@@ -67,8 +68,8 @@ need them).
   - [Selected text in Burp is black](#selected-text-in-burp-is-black)
 - [Linux](#linux)
   - [Python module installed with pip but command is not available](#python-module-installed-with-pip-but-command-is-not-available)
+- [Docker](#docker)
 - [Download Youtube videos with substitles](#download-youtube-videos-with-substitles)
-- [docker](#docker)
 - [Print Envelopes Using the Brother Printer and LibreOffice](#print-envelopes-using-the-brother-printer-and-libreoffice)
 - [Microphone not working in Discord?](#microphone-not-working-in-discord)
 
@@ -273,6 +274,37 @@ Go to http://gnuwin32.sourceforge.net/packages.html and click on `Setup` in
 front of `DiffUtils`. It will download a package which contains the utils and
 two DLLs: `libintl3.dll` and `libiconv2.dll`. Copy all of them to where the
 original `diff.exe` was and it should work.
+
+### Map a drive to a specific directory
+This is useful when you want to refer to a specific directory as a driver.
+
+* `subst X: C:\path\to\source\code`
+
+There are two issues:
+
+1. This is not persistent. To make it persistent, use the solutions
+[here](https://superuser.com/questions/29072/how-to-make-subst-mapping-persistent-across-reboots/926426).
+2. It cannot be shared with docker. For example, when trying to share a
+   directory with source code with docker for
+   [VS Code docker development](https://code.visualstudio.com/docs/remote/containers#_installation).
+   The drive is not shared.
+
+We could use `net use` as follows but it does not show up in Docker
+`settings > Shared Drives` either.
+
+* `net use W: \\localhost\$c\path\to\source\code`
+
+To share a drive, create a VHD mount and share it instead.
+
+**ZZZ Placeholder for a blog postZZZ**
+
+Use these instructions to create a VHD and mount it:
+
+* https://gist.github.com/zaenk/97cb663738ca8e0225da25a28f2feb75#mount-a-vhd
+
+Use these instructions to automount it at startup:
+
+* http://woshub.com/auto-mount-vhd-at-startup/
 
 ------
 
@@ -623,28 +655,11 @@ Source - credit to `floyd`:
 I'd just like to interject for a moment. What you’re referring to as Linux, is in fact, GNU/Linux, or as I’ve recently taken to calling it, GNU plus Linux.
 
 ### Python module installed with pip but command is not available
-It's installed in `~/.local/bin`. Add it to your `$PATH`.
+They are installed in `~/.local/bin`. Add it to your `$PATH`.
 
 ------
 
-## Download Youtube videos with substitles
-I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The following [youtube-dl](https://github.com/rg3/youtube-dl/) command will download the 56 episode HQ quality Chinese TV series called `Xiao Ao Jiang Hu` or `Laughing in the Wind` (also called `The Smiling Proud Wanderer` or `Swordsman`).
-
-`youtube-dl --ignore-errors --write-srt --sub-lang en --yes-playlist 'https://www.youtube.com/playlist?list=PLuGy72vdo4_ScwTYb1bAynhBs3KgowvvQ'`
-
-```
---ignore-errors: continue after errors
---write-srt    : download substitles
---sub-lang     : subtitle language (in this case English)
---yes-playlist : link to a Youtube playlist
-```
-
-`Youtube-dl` can be downloaded using `pip`. For example on Windows:\\
-`python -m pip install youtube-dl`.
-
-------
-
-## docker
+## Docker
 
 * See images: `docker images`
 * Delete image(s): `docker rmi img1 img2`
@@ -662,6 +677,23 @@ I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The 
 * centOS cmd for `DockerFile`: `CMD ["/usr/sbin/init"]`
 * Create and run a centOS container: `docker run -it whatever/blah sh`
     * `--rm` to delete the container after it exits. This is useful when testing.
+
+------
+
+## Download Youtube videos with substitles
+I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The following [youtube-dl](https://github.com/rg3/youtube-dl/) command will download the 56 episode HQ quality Chinese TV series called `Xiao Ao Jiang Hu` or `Laughing in the Wind` (also called `The Smiling Proud Wanderer` or `Swordsman`).
+
+`youtube-dl --ignore-errors --write-srt --sub-lang en --yes-playlist 'https://www.youtube.com/playlist?list=PLuGy72vdo4_ScwTYb1bAynhBs3KgowvvQ'`
+
+```
+--ignore-errors: continue after errors
+--write-srt    : download substitles
+--sub-lang     : subtitle language (in this case English)
+--yes-playlist : link to a Youtube playlist
+```
+
+`Youtube-dl` can be downloaded using `pip`. For example on Windows:\\
+`python -m pip install youtube-dl`.
 
 ------
 

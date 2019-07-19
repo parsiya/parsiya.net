@@ -7,17 +7,18 @@ comments: false
 type: about
 ---
 
-My name is Parsia Hakimian. I am a Security Engineer at the Game and Platform
-Security Engineering group at [Electronic Arts](https://www.ea.com/security)
-based out of Vancouver in Canada.
+I am Parsia, a Security Engineer, part of the Game and Platform Security
+Engineering group at [Electronic Arts](https://www.ea.com/security) based out of
+Vancouver in Canada.
 [Realistic video of me hacking videogames at work](https://www.youtube.com/watch?v=BRWvfMLl4ho).
 
-Previously, I was a Senior Security Consultant at
+From 2013 to 2019, I was a Senior Security Consultant at
 [Synopsys Software Integrity Group](https://www.synopsys.com/software-integrity.html)
-based out of the Washington DC area in the United States. I tested enterprise
-blockchains, online multiplayer games, stock exchange platforms, mobile device
-management suites, network appliances, embedded and IoT devices on top of a long
-list of thickclient/mobile/web applications we all use on a daily basis.
+through the 2016 Cigital acquisition based out of the Washington DC area in the
+United States. I tested enterprise blockchains, online multiplayer games, stock
+exchange platforms, mobile device management suites, network appliances,
+embedded and IoT devices on top of a long list of thickclient/mobile/web
+applications we all use on a daily basis.
 
 **Who is Hackerman?**\\
 *Hackerman* is a character from the movie
