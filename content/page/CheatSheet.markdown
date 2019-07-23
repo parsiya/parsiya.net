@@ -68,7 +68,10 @@ need them).
   - [Selected text in Burp is black](#selected-text-in-burp-is-black)
 - [Linux](#linux)
   - [Python module installed with pip but command is not available](#python-module-installed-with-pip-but-command-is-not-available)
+  - [Add user to sudoers on Debian](#add-user-to-sudoers-on-debian)
 - [Docker](#docker)
+  - [Commands](#commands)
+  - [Troubleshooting](#troubleshooting)
 - [Download Youtube videos with substitles](#download-youtube-videos-with-substitles)
 - [Print Envelopes Using the Brother Printer and LibreOffice](#print-envelopes-using-the-brother-printer-and-libreoffice)
 - [Microphone not working in Discord?](#microphone-not-working-in-discord)
@@ -657,26 +660,52 @@ I'd just like to interject for a moment. What you’re referring to as Linux, is
 ### Python module installed with pip but command is not available
 They are installed in `~/.local/bin`. Add it to your `$PATH`.
 
+### Add user to sudoers on Debian
+I need to search this every time.
+
+1. `su -`: If you do `su` alone, you might not find `usermod` in your path.
+    * "Starting su with the option " -" gives you the full path root would have
+      when logging in to the system after startup. So directories like
+      /usr/sbin, /sbin or /opt/kde/bin become part of roots path variable after
+      doing su and will be searched for commands."
+      [source](https://www.linuxquestions.org/questions/linux-newbie-8/command-usermod-not-found-385901/#post1967095)
+2. `usermod -aG sudo user-name`
+3. Restart (or logoff and login?).
+
 ------
 
 ## Docker
 
-* See images: `docker images`
-* Delete image(s): `docker rmi img1 img2`
-    * By name: `docker rmi whatever/blah`
-    * By ID: `docker rmi f20d`
-* See all running containers: `docker container ls -a` - `docker ps -a`
-* Only show running containers: `docker ps`
-* Stop container: `docker stop d194 3f4a`
-* Delete container(s): `docker container rm d194 3f4a`
-* Build image from file:
-    * `docker build . -f file -t whatever/blah`
-    * `DockerFile` it does not need to be mentioned. `docker build -t whatever/blah`
-    * `docker image` should display the image now.
-* Run a container from an image:
-* centOS cmd for `DockerFile`: `CMD ["/usr/sbin/init"]`
-* Create and run a centOS container: `docker run -it whatever/blah sh`
-    * `--rm` to delete the container after it exits. This is useful when testing.
+### Commands
+
+* Images:
+    * All images: `docker images`
+    * Delete image(s): `docker rmi img1 img2`
+        * By name: `docker rmi whatever/blah`
+        * By ID: `docker rmi f20d`
+    * Build image from file:
+        * `docker build . -f file -t whatever/blah`
+        * `DockerFile` it does not need to be mentioned. `docker build -t whatever/blah`
+        * `docker image` should display the image now.
+* Containers:
+    * All running containers: `docker container ls -a` - `docker ps -a`
+    * Only show running containers: `docker ps`
+    * Stop one container: `docker stop d194 3f4a`
+    * Stop all containers:
+        * PowerShell: `docker ps -a -q | ForEach { docker stop $_ }`
+        * Bash: `docker stop $(docker ps -a -q)`
+    * Delete container(s): `docker container rm d194 3f4a`
+    * Run a container from an image:
+        * `docker run -it whatever/blah [command]` where command is usually `/bin/bash`.
+        * `--rm` to delete the container after it exits. This is useful when testing.
+* centOS specific:
+    * centOS cmd for `DockerFile`: `CMD ["/usr/sbin/init"]`
+    * Create and run a centOS container: `docker run -it whatever/blah sh`
+
+### Troubleshooting
+
+* Error starting userland proxy: mkdir ... : input/output error.
+    * Restart docker. On Windows, right click the docker tray icon and select `Restart...`.
 
 ------
 
