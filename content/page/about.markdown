@@ -44,13 +44,14 @@ blog, don't be afraid to promote yourself. It's worth it.
     - https://github.com/parsiya/Hacking-with-Go
     - https://github.com/parsiya/Go-Security
     - https://github.com/parsiya/Parsia-Code
-    - https://parsiya.net/categories/go/
+    - [https://parsiya.net/categories/go/]({{< relref "categories/go" >}} "https://parsiya.net/categories/go/") 
 - In-memory fuzzing via binary instrumentation (aka traversing arbitrary
   assembly blobs over and over and over).
-    - https://parsiya.net/categories/winappdbg/
+    - [https://parsiya.net/categories/winappdbg/]({{< relref "categories/winappdbg" >}} "https://parsiya.net/categories/winappdbg/") 
 - Automation:
-    - https://parsiya.net/categories/automation/
-    - My project and note management app: https://github.com/parsiya/borrowedtime/
+    - [https://parsiya.net/categories/automation/]({{< relref "categories/automation" >}} "https://parsiya.net/categories/automation/") 
+    - Borrowed Time: My project and note management app
+        - https://github.com/parsiya/borrowedtime/
 
 **Done and dusted:**
 
@@ -58,4 +59,4 @@ blog, don't be afraid to promote yourself. It's worth it.
     - **DEF CON 26 video** is out: https://www.youtube.com/watch?v=xKYIde5jh_8
     - My post on Synopsys' corporate blog: [Tineola: Taking a Bite out of Enterprise Blockchain](https://www.synopsys.com/blogs/software-security/tineola-enterprise-blockchain/ "Tineola: Taking a Bite out of Enterprise Blockchain")
     - Tineola: https://github.com/tineola/tineola
-    - Random posts as I learned: https://parsiya.net/categories/blockchain/
+    - Random posts as I learned: [https://parsiya.net/categories/blockchain/]({{< relref "categories/blockchain" >}} "https://parsiya.net/categories/blockchain/") 
