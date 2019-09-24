@@ -42,6 +42,10 @@ need them).
   - [time in PowerShell](#time-in-powershell)
   - [VHD File is Open in System (and cannot be Deleted)](#vhd-file-is-open-in-system-and-cannot-be-deleted)
   - [Base64 encode and decode without PowerShell](#base64-encode-and-decode-without-powershell)
+- [Hyper-V](#hyper-v)
+  - [Cannot Create Virtual Switch](#cannot-create-virtual-switch)
+  - [Cloning VMs in Hyper-V](#cloning-vms-in-hyper-v)
+  - [Guest Has No Internet](#guest-has-no-internet)
 - [VirtualBox](#virtualbox)
   - [Restart Clipboard Functionality in VirtualBox After Guest Resume](#restart-clipboard-functionality-in-virtualbox-after-guest-resume)
   - [Change the Hardware UUID of Cloned Windows VMs to Avoid Reactivation](#change-the-hardware-uuid-of-cloned-windows-vms-to-avoid-reactivation)
@@ -371,6 +375,27 @@ Use `certutil` for bootleg base64 encoding/decoding:
 
 - `certutil -encode whatever.exe whatever.base64`
 - `certutil -decode whetever.base64 whatever.exe`
+
+------
+
+## Hyper-V
+Switching from VirtualBox for Hyper-V had its own set of tradeoffs.
+
+### Cannot Create Virtual Switch
+When creating a Virtual Switch in Hyper-V you get an error along the lines of
+"failed adding ports to the switch" and "a parameter passed was invalid."
+
+1. Open an admin command prompt and run `netcfg -d`.
+2. Restart the host machine.
+
+### Cloning VMs in Hyper-V
+You cannot clone VMs in Hyper-V like VirtualBox. Create a copy of the vhd(x)
+hard disk and use it in a new VM. Yes, it's as manual as it sounds.
+
+### Guest Has No Internet
+The internet recommends creating an external virtual switch but it did not work
+for me. I deleted the external switch and used the default switch and it somehow
+worked so try doing that.
 
 ------
 
