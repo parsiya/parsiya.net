@@ -8,11 +8,13 @@ categories:
 ---
 
 Often I need to do something that I have done many times in the past but I have
-forgotten how to do it. This is a page ~~(or a series of pages if it grows large
-enough)~~ to complement [my clone at parsiya.io](http://parsiya.io) and give me
-a simple repository of how-tos I can access online. In this page you may find
-those commands and tips that I need from time to time (and usually forget when I
-need them).
+forgotten how to do it. This is a page to complement
+[my clone at parsiya.io](http://parsiya.io) and give me a simple repository of
+how-tos I can access online.
+
+In this page you may find those commands and tips that I need from time to time
+(and usually forget when I need them). Look at the table of contents
+below or `ctrl+f` and search for keywords.
 
 - [Tar](#tar)
     - [Compressing a directory using tar](#compressing-a-directory-using-tar)
@@ -35,6 +37,7 @@ need them).
     - [Map a drive to a specific directory](#map-a-drive-to-a-specific-directory)
     - [Disable monitors going to sleep after locking the computer](#disable-monitors-going-to-sleep-after-locking-the-computer)
     - [Convert plist file to xml on Windows](#convert-plist-file-to-xml-on-windows)
+    - [Oneliner to find unquoted service paths](#oneliner-to-find-unquoted-service-paths)
 - [Powershell](#powershell)
     - [List all files (including hidden)](#list-all-files-including-hidden)
     - [Diff in Powershell](#diff-in-powershell)
@@ -79,9 +82,10 @@ need them).
 - [Docker](#docker)
     - [Commands](#commands)
     - [Troubleshooting](#troubleshooting)
-- [Download Youtube videos with substitles](#download-youtube-videos-with-substitles)
-- [Print Envelopes Using the Brother Printer and LibreOffice](#print-envelopes-using-the-brother-printer-and-libreoffice)
-- [Microphone not working in Discord?](#microphone-not-working-in-discord)
+- [Misc](#misc)
+    - [Download Youtube videos with substitles](#download-youtube-videos-with-substitles)
+    - [Print envelopes using the Brother DW2280 printer and LibreOffice](#print-envelopes-using-the-brother-dw2280-printer-and-libreoffice)
+    - [Microphone not working in Discord?](#microphone-not-working-in-discord)
 
 ------
 
@@ -336,6 +340,9 @@ After locking the computer the monitor might go to sleep. To disable:
 * `plutil` is in `C:\Program Files\Common Files\Apple\Apple Application Support`.
 
 Source: https://superuser.com/a/1264369
+
+### Oneliner to find unquoted service paths
+`wmic service get displayname,pathname|findstr /IV "C:\Windows"|findstr /IV """`
 
 ------
 
@@ -634,7 +641,7 @@ Source: https://github.com/microsoft/vscode/issues/30579#issuecomment-456028574
 
 ## Sublime Text 3
 Tips for using the Sublime Text 3 editor. I don't use Sublime Text anymore so
-this section ~~might be~~ is probably outdated.
+this section is probably outdated.
 
 ### Fix "MarGo build failed" for GoSublime on Windows
 GoSublime's executable has Go version in it. In most cases, it cannot grab the version on Windows and the build will fail like this:
@@ -752,7 +759,9 @@ I need to search this every time.
 
 ------
 
-## Download Youtube videos with substitles
+## Misc
+
+### Download Youtube videos with substitles
 I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The following [youtube-dl](https://github.com/rg3/youtube-dl/) command will download the 56 episode HQ quality Chinese TV series called `Xiao Ao Jiang Hu` or `Laughing in the Wind` (also called `The Smiling Proud Wanderer` or `Swordsman`).
 
 `youtube-dl --ignore-errors --write-srt --sub-lang en --yes-playlist 'https://www.youtube.com/playlist?list=PLuGy72vdo4_ScwTYb1bAynhBs3KgowvvQ'`
@@ -767,9 +776,7 @@ I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The 
 `Youtube-dl` can be downloaded using `pip`. For example on Windows:\\
 `python -m pip install youtube-dl`.
 
-------
-
-## Print Envelopes Using the Brother Printer and LibreOffice
+### Print envelopes using the Brother DW2280 printer and LibreOffice
 I gave away the printer when I moved but I am keeping the instructions just in
 case. Before printing, get to printer physically and use the following
 instructions:
@@ -800,9 +807,7 @@ Now open LibreOffice and use these instructions:
     * Paper Source > First Page: `Manual`.
 9. Print
 
-------
-
-## Microphone not working in Discord?
+### Microphone not working in Discord?
 You might have enabled the privacy settings in Windows 10.
 
 1. Settings.
