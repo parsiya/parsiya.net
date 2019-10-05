@@ -15,67 +15,70 @@ those commands and tips that I need from time to time (and usually forget when I
 need them).
 
 - [Tar](#tar)
-  - [Compressing a directory using tar](#compressing-a-directory-using-tar)
-  - [Decompressing a tar.gz file](#decompressing-a-targz-file)
+    - [Compressing a directory using tar](#compressing-a-directory-using-tar)
+    - [Decompressing a tar.gz file](#decompressing-a-targz-file)
 - [OpenSSL](#openssl)
-  - [Dumping the TLS certificate using OpenSSL](#dumping-the-tls-certificate-using-openssl)
-  - [TLS connection with a specific ciphersuite using OpenSSL](#tls-connection-with-a-specific-ciphersuite-using-openssl)
+    - [Dumping the TLS certificate using OpenSSL](#dumping-the-tls-certificate-using-openssl)
+    - [TLS connection with a specific ciphersuite using OpenSSL](#tls-connection-with-a-specific-ciphersuite-using-openssl)
 - [Amazon S3](#amazon-s3)
-  - [Using s3deploy](#using-s3deploy)
-  - [Syncing a folder with an Amazon S3 bucket using s3cmd](#syncing-a-folder-with-an-amazon-s3-bucket-using-s3cmd)
-  - [Changing the mime-type of CSS file after upload to fix CSS not displaying correctly](#changing-the-mime-type-of-css-file-after-upload-to-fix-css-not-displaying-correctly)
-  - [Setting the index to a non-root file in static website hosted on S3](#setting-the-index-to-a-non-root-file-in-static-website-hosted-on-s3)
+    - [Using s3deploy](#using-s3deploy)
+    - [Syncing a folder with an Amazon S3 bucket using s3cmd](#syncing-a-folder-with-an-amazon-s3-bucket-using-s3cmd)
+    - [Changing the mime-type of CSS file after upload to fix CSS not displaying correctly](#changing-the-mime-type-of-css-file-after-upload-to-fix-css-not-displaying-correctly)
+    - [Setting the index to a non-root file in static website hosted on S3](#setting-the-index-to-a-non-root-file-in-static-website-hosted-on-s3)
 - [Windows](#windows)
-  - [Shortcut to IE (or WinINET) Proxy Settings](#shortcut-to-ie-or-wininet-proxy-settings)
-  - [where.exe](#whereexe)
-  - [Delete file or directory with a path or name longer than the Windows limit](#delete-file-or-directory-with-a-path-or-name-longer-than-the-windows-limit)
-  - [Install 'Bash on Windows'](#install-bash-on-windows)
-  - [Setup Github-Gitlab SSH Keys in 'Bash on Windows'](#setup-github-gitlab-ssh-keys-in-bash-on-windows)
-  - [Exit Status 3221225781](#exit-status-3221225781)
-  - [Map a drive to a specific directory](#map-a-drive-to-a-specific-directory)
+    - [Shortcut to IE (or WinINET) Proxy Settings](#shortcut-to-ie-or-wininet-proxy-settings)
+    - [where.exe](#whereexe)
+    - [Delete file or directory with a path or name longer than the Windows limit](#delete-file-or-directory-with-a-path-or-name-longer-than-the-windows-limit)
+    - [Install 'Bash on Windows'](#install-bash-on-windows)
+    - [Setup Github-Gitlab SSH Keys in 'Bash on Windows'](#setup-github-gitlab-ssh-keys-in-bash-on-windows)
+    - [Exit Status 3221225781](#exit-status-3221225781)
+    - [Map a drive to a specific directory](#map-a-drive-to-a-specific-directory)
+    - [Disable monitors going to sleep after locking the computer](#disable-monitors-going-to-sleep-after-locking-the-computer)
+    - [Convert plist file to xml on Windows](#convert-plist-file-to-xml-on-windows)
 - [Powershell](#powershell)
-  - [List all files (including hidden)](#list-all-files-including-hidden)
-  - [Diff in Powershell](#diff-in-powershell)
-  - [Pseudo-grep in Powershell](#pseudo-grep-in-powershell)
-  - [grep in command outputs](#grep-in-command-outputs)
-  - [Get-Acl and icacls.exe](#get-acl-and-icaclsexe)
-  - [time in PowerShell](#time-in-powershell)
-  - [VHD File is Open in System (and cannot be Deleted)](#vhd-file-is-open-in-system-and-cannot-be-deleted)
-  - [Base64 encode and decode without PowerShell](#base64-encode-and-decode-without-powershell)
+    - [List all files (including hidden)](#list-all-files-including-hidden)
+    - [Diff in Powershell](#diff-in-powershell)
+    - [Pseudo-grep in Powershell](#pseudo-grep-in-powershell)
+    - [grep in command outputs](#grep-in-command-outputs)
+    - [Get-Acl and icacls.exe](#get-acl-and-icaclsexe)
+    - [time in PowerShell](#time-in-powershell)
+    - [VHD File is Open in System (and cannot be Deleted)](#vhd-file-is-open-in-system-and-cannot-be-deleted)
+    - [Base64 encode and decode without PowerShell](#base64-encode-and-decode-without-powershell)
+    - [Load a managed DLL from PowerShell](#load-a-managed-dll-from-powershell)
 - [Hyper-V](#hyper-v)
-  - [Cannot Create Virtual Switch](#cannot-create-virtual-switch)
-  - [Cloning VMs in Hyper-V](#cloning-vms-in-hyper-v)
-  - [Guest Has No Internet](#guest-has-no-internet)
+    - [Cannot Create Virtual Switch](#cannot-create-virtual-switch)
+    - [Cloning VMs in Hyper-V](#cloning-vms-in-hyper-v)
+    - [Guest Has No Internet](#guest-has-no-internet)
 - [VirtualBox](#virtualbox)
-  - [Restart Clipboard Functionality in VirtualBox After Guest Resume](#restart-clipboard-functionality-in-virtualbox-after-guest-resume)
-  - [Change the Hardware UUID of Cloned Windows VMs to Avoid Reactivation](#change-the-hardware-uuid-of-cloned-windows-vms-to-avoid-reactivation)
-  - [Increase VM Disk Size](#increase-vm-disk-size)
+    - [Restart Clipboard Functionality in VirtualBox After Guest Resume](#restart-clipboard-functionality-in-virtualbox-after-guest-resume)
+    - [Change the Hardware UUID of Cloned Windows VMs to Avoid Reactivation](#change-the-hardware-uuid-of-cloned-windows-vms-to-avoid-reactivation)
+    - [Increase VM Disk Size](#increase-vm-disk-size)
 - [Git](#git)
-  - [Create new branch and merge](#create-new-branch-and-merge)
-  - [Only clone a certain branch](#only-clone-a-certain-branch)
-  - [Undo remote git history after push](#undo-remote-git-history-after-push)
-  - [Update local fork from original repo](#update-local-fork-from-original-repo)
-  - [Use Notepad++ as git editor on Windows via Cygwin](#use-notepad-as-git-editor-on-windows-via-cygwin)
-  - [Tab size 4 in Github web interface](#tab-size-4-in-github-web-interface)
-  - [Change Remote for an Existing Git Repository](#change-remote-for-an-existing-git-repository)
-  - [List All Authors in a Git Repository](#list-all-authors-in-a-git-repository)
-  - [Rewrite Author for Older Commits](#rewrite-author-for-older-commits)
-  - [Remove Uncommitted Files from Staging](#remove-uncommitted-files-from-staging)
-  - [Exclude a Committed File with gitignore](#exclude-a-committed-file-with-gitignore)
+    - [Create new branch and merge](#create-new-branch-and-merge)
+    - [Only clone a certain branch](#only-clone-a-certain-branch)
+    - [Undo remote git history after push](#undo-remote-git-history-after-push)
+    - [Update local fork from original repo](#update-local-fork-from-original-repo)
+    - [Use Notepad++ as git editor on Windows via Cygwin](#use-notepad-as-git-editor-on-windows-via-cygwin)
+    - [Tab size 4 in Github web interface](#tab-size-4-in-github-web-interface)
+    - [Change Remote for an Existing Git Repository](#change-remote-for-an-existing-git-repository)
+    - [List All Authors in a Git Repository](#list-all-authors-in-a-git-repository)
+    - [Rewrite Author for Older Commits](#rewrite-author-for-older-commits)
+    - [Remove Uncommitted Files from Staging](#remove-uncommitted-files-from-staging)
+    - [Exclude a Committed File with gitignore](#exclude-a-committed-file-with-gitignore)
 - [Visual Studio Code](#visual-studio-code)
-  - [Associate an Extension with a Specific Language](#associate-an-extension-with-a-specific-language)
-  - [Install a Specific Version of an Extension](#install-a-specific-version-of-an-extension)
+    - [Associate an Extension with a Specific Language](#associate-an-extension-with-a-specific-language)
+    - [Install a Specific Version of an Extension](#install-a-specific-version-of-an-extension)
 - [Sublime Text 3](#sublime-text-3)
-  - [Fix "MarGo build failed" for GoSublime on Windows](#fix-margo-build-failed-for-gosublime-on-windows)
-  - [Open the same file in a new tab](#open-the-same-file-in-a-new-tab)
+    - [Fix "MarGo build failed" for GoSublime on Windows](#fix-margo-build-failed-for-gosublime-on-windows)
+    - [Open the same file in a new tab](#open-the-same-file-in-a-new-tab)
 - [Burp](#burp)
-  - [Selected text in Burp is black](#selected-text-in-burp-is-black)
+    - [Selected text in Burp is black](#selected-text-in-burp-is-black)
 - [Linux](#linux)
-  - [Python module installed with pip but command is not available](#python-module-installed-with-pip-but-command-is-not-available)
-  - [Add user to sudoers on Debian](#add-user-to-sudoers-on-debian)
+    - [Python module installed with pip but command is not available](#python-module-installed-with-pip-but-command-is-not-available)
+    - [Add user to sudoers on Debian](#add-user-to-sudoers-on-debian)
 - [Docker](#docker)
-  - [Commands](#commands)
-  - [Troubleshooting](#troubleshooting)
+    - [Commands](#commands)
+    - [Troubleshooting](#troubleshooting)
 - [Download Youtube videos with substitles](#download-youtube-videos-with-substitles)
 - [Print Envelopes Using the Brother Printer and LibreOffice](#print-envelopes-using-the-brother-printer-and-libreoffice)
 - [Microphone not working in Discord?](#microphone-not-working-in-discord)
@@ -303,8 +306,6 @@ We could use `net use` as follows but it does not show up in Docker
 
 To share a drive, create a VHD mount and share it instead.
 
-**ZZZ Placeholder for a blog postZZZ**
-
 Use these instructions to create a VHD and mount it:
 
 * https://gist.github.com/zaenk/97cb663738ca8e0225da25a28f2feb75#mount-a-vhd
@@ -312,6 +313,29 @@ Use these instructions to create a VHD and mount it:
 Use these instructions to automount it at startup:
 
 * http://woshub.com/auto-mount-vhd-at-startup/
+
+### Disable monitors going to sleep after locking the computer
+After locking the computer the monitor might go to sleep. To disable:
+
+1. Open the following registry key:
+    ```
+    HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\PowerSettings\
+    7516b95f-f776-4464-8c53-06167f40cc99\8EC4B3A5-6868-48c2-BE75-4F3044BE88A7
+    ```
+2. Look at the value `Attributes` and change it from `0x00000001` to `0x00000002`.
+3. Open the Control Panel (control.exe) and go to `Power Options`.
+4. Click `Change plan settings` in front of the selected power plan.
+5. Click `Change advanced power settings`.
+6. Now under `Display` there should be a new item: `Console lock display off timeout`.
+7. Change this to whatever you want.
+
+### Convert plist file to xml on Windows
+`plutil -convert xmlfile.xml com.apple.springboard.plist` where:
+
+* `plutil` is installed with iTunes.
+* `plutil` is in `C:\Program Files\Common Files\Apple\Apple Application Support`.
+
+Source: https://superuser.com/a/1264369
 
 ------
 
@@ -353,7 +377,6 @@ will search for keyword1 OR keyword2 in files
 
 https://technet.microsoft.com/en-us/library/Cc732459.aspx
 
-
 ### grep in command outputs
 `whatever.exe | Select-String -pattern "admin"`
 
@@ -375,6 +398,9 @@ Use `certutil` for bootleg base64 encoding/decoding:
 
 - `certutil -encode whatever.exe whatever.base64`
 - `certutil -decode whetever.base64 whatever.exe`
+
+### Load a managed DLL from PowerShell
+Source: https://www.leeholmes.com/blog/2006/10/27/load-a-custom-dll-from-powershell/
 
 ------
 
@@ -444,7 +470,7 @@ and convert it back to vdmk.
     3. Use the wizard and add the new empty space to the origin partition.
 5. Delete unused vdi or vmdk files.
 6. ???
-7. Enjoy 100 GBs of space. Well, 83GB on the defaul Win10 x64.
+7. Enjoy 100 GBs of space. Well, 83GB on the default Win10 x64.
 
 Source: https://stackoverflow.com/a/12456219
 
@@ -542,21 +568,15 @@ git shortlog -s | cut -c8-
 ### Rewrite Author for Older Commits
 `parsiya.net` had commits as `root` from when I was using it offline. I wanted to change everything to myself.
 
-* Source: https://stackoverflow.com/a/3042512
-
-
 1. If you want to start at root - `git rebase -i --root`
-
 2. If you want to start from commit AAAA - `git rebase -i AAAA`
-
 3. Change `pick` to `edit` for every commit with the old author and save. Rebase starts and pauses at every commit with `edit`.
-
-4. Change the author - \\
+4. Change the author: \\
 `git commit --amend --author="Author Name <email@address.com>"`
-
 5. Continue the rebase - `git rebase --continue`
-
 6. Rinse and repeat.
+
+* Source: https://stackoverflow.com/a/3042512
 
 ### Remove Uncommitted Files from Staging
 You have added files with `git add` but have not committed them and want to remove some (not all) instead of `git reset`.
@@ -659,14 +679,12 @@ This might happen inside Virtual Box.
 
 You have two options:
 
-1. Disable 3D rendering in Virtual Box. Don't.
-2. Run Burp with 3D disabled (make a shortcut):
-
+1. Disable 3D rendering in Virtual Box. Not recommended.
+2. Run Burp with 3D disabled (make a shortcut): \\
     ```
     java.exe "-Dsun.java2d.d3d=false" -jar burp.jar
     ```
-   * The complete command for the default install on Windows is:
-
+* The complete command for the default install on Windows is:
     ```
     "C:\Program Files\BurpSuiteCommunity\jre\bin\java.exe"
       "-Dsun.java2d.d3d=false"
