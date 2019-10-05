@@ -14,9 +14,13 @@ tags:
 
 **TL;DR**: No matter what you do, your Burp extension cannot modify requests before they hit the HTTP History panel. You can modify requests after that and before they are sent out. We will discuss two ways to modify them with extensions. While the Match/Replace functionality is special, it has the same limitation (note how it has a separate tab that says `auto-modified`?).
 
-I am looking at this application and my HTTP history is full of CORS preflight requests. I wanted to filter all these `OPTIONS`.
+Update October 2019: Latest version using [burputils](https://github.com/parsiya/burputils/) is at:
+
+* [https://github.com/parsiya/Parsia-Code/tree/master/burp-filter-options](https://github.com/parsiya/Parsia-Code/tree/master/burp-filter-options)
 
 <!--more-->
+
+While testing this application, my HTTP history is full of CORS preflight requests. I wanted to filter all these `OPTIONS`.
 
 {{< imgcap title="Options! Options everywhere!" src="01.png" >}}
 
@@ -60,7 +64,7 @@ Let's do something similar. Remember to add support for [github.com/securityMB/b
 
 You can remove it in your final extension but it's very useful for debugging. Code for this extension is at:
 
-* https://github.com/parsiya/Parsia-Code/blob/master/burp-filter-options/burp1.py
+* https://github.com/parsiya/Parsia-Code/blob/master/burp-filter-options/blog/burp1.py
 
 This part is easy, we register a listener.
 
@@ -186,7 +190,7 @@ This blog post [Automatically Adding New Header with Burp - optiv.com](https://w
 
 This second method allows us to perform an action on each request based on a session handling rule. To do so we must create a second version of our extension.
 
-* Code: https://github.com/parsiya/Parsia-Code/blob/master/burp-filter-options/burp2.py
+* Code: https://github.com/parsiya/Parsia-Code/blob/master/burp-filter-options/blog/burp2.py
 
 ``` python
 from burp import IBurpExtender
@@ -299,7 +303,7 @@ So it's not what we are looking for. What is the solution then?
 # Adding Content-Type to the Responses
 The solution is adding `Content-Type: text/css` to the response of each `OPTIONS` request. I modified the first extension using a listener but the other one should work too.
 
-* Code: https://github.com/parsiya/Parsia-Code/blob/master/burp-filter-options/burp3.py
+* Code: https://github.com/parsiya/Parsia-Code/blob/master/burp-filter-options/blog/burp3.py
 
 ``` python
 def processHttpMessage(self, toolFlag, messageIsRequest, messageInfo):
