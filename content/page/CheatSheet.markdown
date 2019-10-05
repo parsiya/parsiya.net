@@ -62,7 +62,6 @@ below or `ctrl+f` and search for keywords.
     - [Undo remote git history after push](#undo-remote-git-history-after-push)
     - [Update local fork from original repo](#update-local-fork-from-original-repo)
     - [Use Notepad++ as git editor on Windows via Cygwin](#use-notepad-as-git-editor-on-windows-via-cygwin)
-    - [Tab size 4 in Github web interface](#tab-size-4-in-github-web-interface)
     - [Change Remote for an Existing Git Repository](#change-remote-for-an-existing-git-repository)
     - [List All Authors in a Git Repository](#list-all-authors-in-a-git-repository)
     - [Rewrite Author for Older Commits](#rewrite-author-for-older-commits)
@@ -86,6 +85,7 @@ below or `ctrl+f` and search for keywords.
     - [Download Youtube videos with substitles](#download-youtube-videos-with-substitles)
     - [Print envelopes using the Brother DW2280 printer and LibreOffice](#print-envelopes-using-the-brother-dw2280-printer-and-libreoffice)
     - [Microphone not working in Discord?](#microphone-not-working-in-discord)
+    - [Tab size 4 in Github web interface](#tab-size-4-in-github-web-interface)
 
 ------
 
@@ -553,11 +553,6 @@ Run the following command in Cygwin to set it as global git editor:
 git config --global core.editor npp
 ```
 
-### Tab size 4 in Github web interface
-Yes I know `Github != Git` but I CBA to create a different category.
-
-Add `?ts=4` to end of file URL.
-
 ### Change Remote for an Existing Git Repository
 A.K.A. when moving `repository` from bitbucket to github or vice versa.
 
@@ -762,7 +757,11 @@ I need to search this every time.
 ## Misc
 
 ### Download Youtube videos with substitles
-I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The following [youtube-dl](https://github.com/rg3/youtube-dl/) command will download the 56 episode HQ quality Chinese TV series called `Xiao Ao Jiang Hu` or `Laughing in the Wind` (also called `The Smiling Proud Wanderer` or `Swordsman`).
+I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The
+following [youtube-dl](https://github.com/rg3/youtube-dl/) command will download
+the 56 episode HQ quality Chinese TV series called `Xiao Ao Jiang Hu` or
+`Laughing in the Wind` (also called `The Smiling Proud Wanderer` or
+`Swordsman`).
 
 `youtube-dl --ignore-errors --write-srt --sub-lang en --yes-playlist 'https://www.youtube.com/playlist?list=PLuGy72vdo4_ScwTYb1bAynhBs3KgowvvQ'`
 
@@ -817,3 +816,6 @@ You might have enabled the privacy settings in Windows 10.
 5. Enable for `Win32WebViewHost`.
 6. ???
 7. Yell at ~~your raid group~~ DPS for standing in fire.
+
+### Tab size 4 in Github web interface
+Add `?ts=4` to end of the file URL.
