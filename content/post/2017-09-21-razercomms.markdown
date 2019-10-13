@@ -16,9 +16,9 @@ tags:
 
 A couple of years ago I looked at Razer Comms. I found a bunch of stuff that I never reported or pursued. I discovered the application is [now retired](http://support.razerzone.com/software/comms) so I am publishing these.
 
-I did not look very hard but Razer Comms was essentially a webapp running via the [Chromium Embedded Framework](https://bitbucket.org/chromiumembedded/cef). There were no checks on channel authorizations. You could read every channel including passworded ones.
+I did not look very hard but Razer Comms was essentially a webapp running via the [Chromium Embedded Framework](https://bitbucket.org/chromiumembedded/cef). There were no checks on channel authorizations. You could read every channel including ones protected with passwords.
 
-You can my notes at https://github.com/parsiya/Parsia-Clone/tree/master/clone/research/razer-comms.
+You can see my notes at https://github.com/parsiya/Parsia-Clone/tree/master/research/razer-comms.
 
 <!--more-->
 

@@ -19,13 +19,13 @@ Previously on WinAppDbg-TV:
 
 As usual, code is in my clone on Github. Download that directory to your VM and follow along:
 
-- [https://github.com/parsiya/Parsia-Clone/tree/master/code/winappdbg][winappdbg-clone]
+- [https://github.com/parsiya/Parsia-Code/tree/master/winappdbg][winappdbg-clone]
 
 In part two we learned how to hook functions by hooking IE and Firefox to see pre-TLS traffic. Just looking at function calls is fun but often not enough. We need to be able to modify function parameters and return values.
 
 In this part we will learn how to do that (and a few other things). We will start with something simple and then move on to more complex examples.
 
-[winappdbg-clone]: https://github.com/parsiya/Parsia-Clone/tree/master/code/winappdbg "WinAppDbg code in Parsia-Clone"
+[winappdbg-clone]: https://github.com/parsiya/Parsia-Code/tree/master/winappdbg "WinAppDbg code in Parsia-Code"
 
 <!--more-->
 
@@ -53,7 +53,7 @@ I did not want to install Visual Studio on my VM so I used gcc. I found two diff
 
 I wrote something in my clone about it, use these instructions to install MinGW (or use any other means to build the program):
 
-- [https://github.com/parsiya/Parsia-Clone/blob/master/clone/random/mingw-windows.md][clone-mingw]
+- [https://github.com/parsiya/Parsia-Clone/blob/master/random/mingw-windows.md][clone-mingw]
 
 There are most likely better/easier ways of doing this. If so, please let me know so I can update my notes.
 
@@ -626,7 +626,7 @@ But function hooking is not all we can do with WinAppDbg. In part four we will l
 
 <!-- Links -->
 
-[clone-mingw]: https://github.com/parsiya/Parsia-Clone/blob/master/clone/random/mingw-windows.md
+[clone-mingw]: https://github.com/parsiya/Parsia-Clone/blob/master/random/mingw-windows.md
 [wizche-blog]: http://blog.wizche.ch/2015/07/06/modify-intercepted-windows-api.html "Modify intercepted Windows API functions parameters with WinAppDbg - Sergio Paganoni"
 [sleep-msdn]: https://msdn.microsoft.com/en-us/library/windows/desktop/ms686298(v=vs.85).aspx " Sleep - MSDN"
 [calling-x86]: https://blogs.msdn.microsoft.com/oldnewthing/20040108-00/?p=41163/ "The history of calling conventions, part 3 - Old New Thing"

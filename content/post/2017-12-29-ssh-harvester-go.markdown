@@ -19,7 +19,7 @@ Here's my step by step guide to writing this tool by piggybacking on SSH host ve
 
 You can find the code here:
 
-- [https://github.com/parsiya/Parsia-Clone/blob/master/code/go-infosec/ssh-harvester/SSHHarvesterv1.go](https://github.com/parsiya/Parsia-Clone/blob/master/code/go-infosec/ssh-harvester/SSHHarvesterv1.go?ts=4)
+- [https://github.com/parsiya/SSH-Scanner/blob/master/SSHHarvesterv1.go](https://github.com/parsiya/SSH-Scanner/blob/master/SSHHarvesterv1.go?ts=4)
 
 ### TL;DR: verifying SSH servers
 
@@ -41,6 +41,7 @@ Go to `Parsing SSH certificates` to skip the fodder.
 
 <!-- MarkdownTOC -->
 
+- [Table of Contents](#table-of-contents)
 - [Before we start](#before-we-start)
 - [Code analysis](#code-analysis)
     - [Constants and usage](#constants-and-usage)
@@ -57,7 +58,7 @@ Go to `Parsing SSH certificates` to skip the fodder.
         - [IsHostAuthority callback](#ishostauthority-callback)
     - [IsRevoked](#isrevoked)
         - [IsRevoked callback](#isrevoked-callback)
-            - [~~Question!!!!~~ Solved](#%7E%7Equestion%7E%7E-solved)
+            - [~~Question!!!!~~ Solved](#question-solved)
     - [HostKeyFallback](#hostkeyfallback)
     - [Step 3: Create ssh.ClientConfig](#step-3-create-sshclientconfig)
         - [Banner callback](#banner-callback)

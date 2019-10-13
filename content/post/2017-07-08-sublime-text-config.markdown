@@ -15,7 +15,7 @@ I have moved from Atom to Sublime. Atom is a nice editor with a lot of features 
 
 Below is my setup for reference. When I want to do it again in a year (or a new machine) I can just use everything here or just use the config files. You can find the config files in my clone:
 
-- https://github.com/parsiya/Parsia-Clone/tree/master/clone/configs/sublime-text
+- https://github.com/parsiya/Parsia-Clone/tree/master/configs/sublime-text
 
 <!--more-->
 

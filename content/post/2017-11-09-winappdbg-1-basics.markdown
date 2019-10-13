@@ -19,12 +19,12 @@ Here's the result of my learning. I am sharing it to fill the gap that I encount
 
 Code is in my clone at:
 
-- [https://github.com/parsiya/Parsia-Clone/tree/master/code/winappdbg][winappdbg-clone]
+- [https://github.com/parsiya/Parsia-Code/tree/master/winappdbg][winappdbg-clone]
 
 [winappdbg-docs]: https://winappdbg.readthedocs.io/en/latest/ "WinAppDbg documentation on readthedocs"
 [winappdbg-github]: https://github.com/MarioVilas/winappdbg "WinAppDbg repository on Github"
 [mario-twitter]: https://twitter.com/Mario_Vilas "Mario Vilas Twitter account"
-[winappdbg-clone]: https://github.com/parsiya/Parsia-Clone/tree/master/code/winappdbg "WinAppDbg code in Parsia-Clone"
+[winappdbg-clone]: https://github.com/parsiya/Parsia-Code/tree/master/winappdbg "WinAppDbg code in Parsia-Code"
 <!--more-->
 
 Let's get started.

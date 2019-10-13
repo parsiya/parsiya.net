@@ -25,9 +25,9 @@ I will (hopefully) mostly talk about solving the challenge and not a lot of reco
 
 Code is in my clone:
 
-- [https://github.com/parsiya/Parsia-Clone/tree/master/code/winappdbg][winappdbg-clone]
+- [https://github.com/parsiya/Parsia-Code/tree/master/winappdbg][winappdbg-clone]
 
-[winappdbg-clone]: https://github.com/parsiya/Parsia-Clone/tree/master/code/winappdbg "WinAppDbg code in Parsia-Clone"
+[winappdbg-clone]: https://github.com/parsiya/Parsia-Code/tree/master/winappdbg "WinAppDbg code in Parsia-Code"
 [flare-solutions]: https://www.fireeye.com/blog/threat-research/2017/10/2017-flare-on-challenge-solutions.html
 <!--more-->
 

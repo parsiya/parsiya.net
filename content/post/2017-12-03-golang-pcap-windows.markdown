@@ -15,9 +15,9 @@ I was trying to solve a challenge where the "hidden data" were in ICMP echo payl
 
 Code is in my clone at:
 
-- [https://github.com/parsiya/Parsia-Clone/tree/master/code/go-infosec/pcap-tutorial][go-infosec-pcap]
+- [https://github.com/parsiya/Go-Security/tree/master/pcap-tutorial][go-infosec-pcap]
 
-[go-infosec-pcap]: https://github.com/parsiya/Parsia-Clone/tree/master/code/go-infosec/pcap-tutorial
+[go-infosec-pcap]: https://github.com/parsiya/Go-Security/tree/master/pcap-tutorial
 
 <!--more-->
 
@@ -268,7 +268,7 @@ The rest is easy. Complete code for this section is in `pcap-3.go`.
 
 <!-- Links -->
 
-[mingw-clone]: https://github.com/parsiya/Parsia-Clone/blob/master/clone/random/mingw-windows.md#using-win-buildsorg
+[mingw-clone]: https://github.com/parsiya/Parsia-Clone/blob/master/random/mingw-windows.md#using-win-buildsorg
 [npcap-windows]: https://nmap.org/npcap/
 [winpcap-devel]: https://www.winpcap.org/devel.htm
 [stackoverflow-compile-gopacket]: https://stackoverflow.com/a/38069376 "compile gopacket on windows 64bit"

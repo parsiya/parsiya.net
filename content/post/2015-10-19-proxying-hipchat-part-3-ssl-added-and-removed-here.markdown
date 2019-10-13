@@ -20,7 +20,7 @@ In this part we will talk about developing our own proxy in Python to view Hipch
 
 Related (crappy) code is at now in my clone at:
 
-- [https://github.com/parsiya/Parsia-Clone/tree/master/code/hipchat-proxy](https://github.com/parsiya/Parsia-Clone/tree/master/code/hipchat-proxy)
+- [https://github.com/parsiya/Parsia-Code/tree/master/hipchat-proxy](https://github.com/parsiya/Parsia-Code/tree/master/hipchat-proxy)
 
 For a similar effort (although with a much more complex proxy in `erlang`) look at [http://blog.silentsignal.eu/2015/10/02/proxying-nonstandard-https-traffic/](http://blog.silentsignal.eu/2015/10/02/proxying-nonstandard-https-traffic/).
 

@@ -18,7 +18,7 @@ Hugo has switched to [Chroma][chroma] for syntax highlighting from Pygments. Whi
 
 The process is decently simple because Chroma has a [built-in tool for converting styles][chroma-styles] `_tools/style.py`. You can see the files inside my clone:
 
-- https://github.com/parsiya/Parsia-Clone/tree/master/clone/random/chroma-pygments-convert
+- https://github.com/parsiya/Parsia-Clone/tree/master/random/chroma-pygments-convert
 
 <!-- Links before summary -->
 
