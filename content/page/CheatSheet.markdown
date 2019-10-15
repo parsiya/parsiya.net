@@ -22,11 +22,12 @@ below or `ctrl+f` and search for keywords.
 - [OpenSSL](#openssl)
     - [Dumping the TLS certificate using OpenSSL](#dumping-the-tls-certificate-using-openssl)
     - [TLS connection with a specific ciphersuite using OpenSSL](#tls-connection-with-a-specific-ciphersuite-using-openssl)
-- [Amazon S3](#amazon-s3)
+- [AWS](#aws)
     - [Using s3deploy](#using-s3deploy)
     - [Syncing a folder with an Amazon S3 bucket using s3cmd](#syncing-a-folder-with-an-amazon-s3-bucket-using-s3cmd)
     - [Changing the mime-type of CSS file after upload to fix CSS not displaying correctly](#changing-the-mime-type-of-css-file-after-upload-to-fix-css-not-displaying-correctly)
     - [Setting the index to a non-root file in static website hosted on S3](#setting-the-index-to-a-non-root-file-in-static-website-hosted-on-s3)
+    - [Use AWS CLI without credentials](#use-aws-cli-without-credentials)
 - [Windows](#windows)
     - [Shortcut to IE (or WinINET) Proxy Settings](#shortcut-to-ie-or-wininet-proxy-settings)
     - [where.exe](#whereexe)
@@ -48,6 +49,7 @@ below or `ctrl+f` and search for keywords.
     - [VHD File is Open in System (and cannot be Deleted)](#vhd-file-is-open-in-system-and-cannot-be-deleted)
     - [Base64 encode and decode without PowerShell](#base64-encode-and-decode-without-powershell)
     - [Load a managed DLL from PowerShell](#load-a-managed-dll-from-powershell)
+    - [Zip a folder](#zip-a-folder)
 - [Hyper-V](#hyper-v)
     - [Cannot Create Virtual Switch](#cannot-create-virtual-switch)
     - [Cloning VMs in Hyper-V](#cloning-vms-in-hyper-v)
@@ -74,6 +76,7 @@ below or `ctrl+f` and search for keywords.
     - [Fix "MarGo build failed" for GoSublime on Windows](#fix-margo-build-failed-for-gosublime-on-windows)
     - [Open the same file in a new tab](#open-the-same-file-in-a-new-tab)
 - [Burp](#burp)
+    - [Quality of Life Tips and Tricks for Burp](#quality-of-life-tips-and-tricks-for-burp)
     - [Selected text in Burp is black](#selected-text-in-burp-is-black)
 - [Linux](#linux)
     - [Python module installed with pip but command is not available](#python-module-installed-with-pip-but-command-is-not-available)
@@ -113,7 +116,7 @@ Insert [XKCD 1168](https://xkcd.com/1168/), hur dur!
 
 ------
 
-## Amazon S3
+## AWS
 
 ### Using s3deploy
 I have switched to s3deploy from s3cmd. https://github.com/bep/s3deploy
@@ -185,6 +188,11 @@ rd /q /s public
 When setting up a static website in an S3 bucket, you need to specify an index and an error page. The index cannot be in a sub-directory but the error page can be. Set the index to a non-existent file (e.g. `whatever.crap`) and set the error page to the actual index page. Source: https://stackoverflow.com/a/20273548
 
 If you are relying on error pages, this will mess with your site because every error will be redirected to the index. Another way is to set a meta redirect in the index file in the root directory and redirecting that page.
+
+### Use AWS CLI without credentials
+Use `--no-sign-request`. E.g., to list all items in a world-readable bucket:
+
+* `aws s3 ls s3://bucket-name --no-sign-request --recursive`
 
 ------
 
@@ -408,6 +416,15 @@ Use `certutil` for bootleg base64 encoding/decoding:
 
 ### Load a managed DLL from PowerShell
 Source: https://www.leeholmes.com/blog/2006/10/27/load-a-custom-dll-from-powershell/
+
+### Zip a folder
+
+* `Compress-Archive -Path C:\path\to\folder\ -DestinationPath c:\path\to\destination\archive`
+
+Note the destination file will be `archive.zip` but we do not need to
+provide the extension in the command.
+
+* https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.archive/compress-archive
 
 ------
 
@@ -673,6 +690,10 @@ Edit `ver` to whatever, I usually do `1`. Restart Sublime Text and Margo will bu
 ------
 
 ## Burp
+
+### Quality of Life Tips and Tricks for Burp
+
+* See my blog post: [Quality of Life Tips and Tricks - Burp Suite]({{< relref "/post/2019-10-13-quality-of-life-burp/index.markdown" >}} "Quality of Life Tips and Tricks - Burp Suite") 
 
 ### Selected text in Burp is black
 This might happen inside Virtual Box.
