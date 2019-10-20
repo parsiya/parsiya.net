@@ -425,7 +425,7 @@ To perform encryption/decryption we need to create the following objects:
 * [javax.crypto.spec.IvParameterSpec][javax-ivparameterspec] creates the Initialization Vector (IV)
 * [javax.crypto.spec.SecretKeySpec][javax-secretkeyspec] creates the key
 
-``` python
+{{< codecaption title="encrypt and decrypt in Jython" lang="python" >}}
 # encryptJython uses javax.crypto.Cipher to encrypt payload with key/iv
 # using AES/CFB/NOPADDING
 def encryptJython(payload, key, iv):
@@ -445,7 +445,7 @@ def decryptJython(payload, key, iv):
     cipher = Cipher.getInstance("AES/CFB/NOPADDING")
     cipher.init(Cipher.DECRYPT_MODE, aesKey, aesIV)
     return cipher.doFinal(decoded)
-```
+{{< /codecaption >}}
 
 ## extension.py
 In this version of the extension, I just swapped the old encrypt/decrypt functions with the functions.
