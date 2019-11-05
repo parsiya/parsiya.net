@@ -401,9 +401,9 @@ To be honest, any time you feel like it. I have used it in the following circums
 # Using Jython
 The previous technique was slow. We can do better using Jython. Most people write encryption-related extensions in Java. However, we can just import and use Java classes that are available to any Java extension. Look for files in the `3-jython` directory.
 
-I used this page to familiarize myself with Jython and Java:
+I used `Chapter 10: Jython and Java Integration` learn about Jython and Java:
 
-* http://www.jython.org/jythonbook/en/1.0/JythonAndJavaIntegration.html
+* https://jython.readthedocs.io/en/latest/chapter10/
 
 ## library.py
 I am adding a few new functions to the library. These do encryption/decryption using Java classes.
