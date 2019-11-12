@@ -219,6 +219,13 @@ we have added two [JLabels][jlabel-doc]. We can move the divider manually.
 
 {{< imgcap title="Basic JSplitPane" src="05-splitpane.png" >}}
 
+**Update 11 Oct 2019:** JSplitPane has a method name `setDividerLocation`. This
+method sets the divider. There are two variants of the method. One accepts an
+[int parameter][setdivider-int-doc] which is the size of divider in pixels. This
+can be set before the component is painted. The other one accepts a
+[double parameter][setdivider-double-doc] and sets a percentage. This does not
+work before the component is painted. If you set it, it has not effect.
+
 ## JScrollPane
 We want the left pane to display a list of items. This is accomplished by adding
 a `JScrollPane` to it.
@@ -548,6 +555,8 @@ go wrong.
 [defaultstyle-doc]: https://docs.oracle.com/javase/8/docs/api/javax/swing/text/StyleContext.html#DEFAULT_STYLE
 [addstyle-doc]: https://docs.oracle.com/javase/8/docs/api/javax/swing/text/DefaultStyledDocument.html#addStyle-java.lang.String-javax.swing.text.Style-
 [style-doc]: https://docs.oracle.com/javase/8/docs/api/javax/swing/text/Style.html
+[setdivider-int-doc]: https://docs.oracle.com/javase/8/docs/api/javax/swing/JSplitPane.html#setDividerLocation-int-
+[setdivider-double-doc]: https://docs.oracle.com/javase/8/docs/api/javax/swing/JSplitPane.html#setDividerLocation-double-
 
 <!-- Footnotes -->
 [^defaultstyle]: I could be wrong about this but all examples do the same.
