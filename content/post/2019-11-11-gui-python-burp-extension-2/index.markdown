@@ -162,6 +162,10 @@ layout = GroupLayout(self.getContentPane())
 self.getContentPane().setLayout(layout)
 ```
 
+Note: In Python we can also pass `self` instead of `self.getContentPane()` but
+in Java, passing `this` will result in a "GroupLayout can only be used with one
+container at a time" error. Instead we must to `this.getContentPane()`.
+
 # Using a JPanel
 We do not want a detached frame. We want our extension to be in the Burp tab. To
 display our creation in a Burp tab we need to convert it to a panel. I tried
