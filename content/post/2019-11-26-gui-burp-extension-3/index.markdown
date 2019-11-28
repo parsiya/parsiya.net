@@ -156,29 +156,29 @@ on it later), but it's simple and quick.
   button's action can be assigned:
     * `btn1 = JButton("Button Label", actionPerformed=buttonAction)`
 
-```python
-class BurpExtender(IBurpExtender, IContextMenuFactory):
-    def registerExtenderCallbacks(self, callbacks):
-        # ...
+        ```python
+        class BurpExtender(IBurpExtender, IContextMenuFactory):
+            def registerExtenderCallbacks(self, callbacks):
+                # ...
 
-    def actionMenu1(self, event):
-        # do something when menu item 1 is clicked
-        jitem = event.getSource()
-    
-    def createMenuItems(self, invocation):
-        from javax.swing import JMenuItem
-        menuItem1 = JMenuItem("Label for menu item 1",
-            actionPerformed=actionMenu1)
-        menuItem2 = JMenuItem("Label for menu item 2")
-        # add action listeners to menuitems (see below)
-        
-        from java.util import ArrayList
-        menuArray = ArrayList()
-        menuArray.add(menuItem1)
-        menuArray.add(menuItem2)
+            def actionMenu1(self, event):
+                # do something when menu item 1 is clicked
+                jitem = event.getSource()
+            
+            def createMenuItems(self, invocation):
+                from javax.swing import JMenuItem
+                menuItem1 = JMenuItem("Label for menu item 1",
+                    actionPerformed=actionMenu1)
+                menuItem2 = JMenuItem("Label for menu item 2")
+                # add action listeners to menuitems (see below)
+                
+                from java.util import ArrayList
+                menuArray = ArrayList()
+                menuArray.add(menuItem1)
+                menuArray.add(menuItem2)
 
-        return menuArray
-```
+                return menuArray
+        ```
 
 The most useful method inside the function is `event.getSource()`.
 [getSource][getsource-doc] returns the Swing element that was the source of the
@@ -241,19 +241,19 @@ getting information.
   selected when the item was clicked. This useful when the extension wants to do
   something with the message(s). For example, sending them to a different tab.
     * Note: This method returns an *array* of [IHttpRequestResponse][ihttprequestresponse-doc].
-    ```python
-    def actionPerformed(self, event):
-        """Invoked when the context menu item is selected."""
-        # now we can use both the event and the invocation
-        requestResponses = self.invocation.getSelectedMessages()
-        for reqResp in requestResponses:
-            request = reqResp.getRequest()
-            # note: not every message has a response
-            response = reqResp.getResponse()
-            # https://portswigger.net/burp/extender/api/burp/IHttpService.html#getHost()
-            host = reqResp.getHttpService().getHost()
-            # do somethings with these
-    ```
+        ```python
+        def actionPerformed(self, event):
+            """Invoked when the context menu item is selected."""
+            # now we can use both the event and the invocation
+            requestResponses = self.invocation.getSelectedMessages()
+            for reqResp in requestResponses:
+                request = reqResp.getRequest()
+                # note: not every message has a response
+                response = reqResp.getResponse()
+                # https://portswigger.net/burp/extender/api/burp/IHttpService.html#getHost()
+                host = reqResp.getHttpService().getHost()
+                # do somethings with these
+        ```
 * `getToolFlag()` returns the tool flag. For example, `TOOL_PROXY` is `4`.
     * See all of them at [burp.IBurpExtenderCallbacks enums][toolflag-enums].
 
