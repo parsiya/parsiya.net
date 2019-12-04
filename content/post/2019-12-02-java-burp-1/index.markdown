@@ -173,7 +173,25 @@ important section is adding the [Burp Extender interface Maven repository][burp-
 This gives us build support and the equally important code completion in
 IntelliCode.
 
-# Writing an Skeleton Extension
+Any extra dependencies are added similar to the Burp extender interface. For example, adding [Google's Gson version 2.8.6][gson-maven-link] can be added like this:
+
+```
+dependencies {
+    // Add the Burp Extender interface
+    compile 'net.portswigger.burp.extender:burp-extender-api:2.1'
+    compile 'com.google.code.gson:gson:2.8.6'
+}
+```
+
+## Gradle Wrapper
+Gradle Wrapper is way to get reliable builds regardless of installed Gradle
+version. Note you need Gradle to install the Wrapper.
+
+If you just want to initiate the Wrapper. Run `gradle wrapper` in the extension
+directory. To build the project with the Wrapper, replace `gradle` in your
+command with `gradlew` (*nix) or `gradlew.bat` (Windows).
+
+# Creating a Skeleton Extension
 
 1. Create the `src\burp` directory. This directory will contain the `burp`
    package.
@@ -200,14 +218,14 @@ public class BurpExtender implements IBurpExtender
 }
 {{< /codecaption >}}
 
-Note: If your extension is small enough to only have one package (or a few
-files), put all your files inside `src`.
+Note: If your extension only has one package  (or a few files), put all your
+files inside `src`.
 
 # Setting up VS Code Tasks
 To make our life easier, we are going to assign the `bigJar` Gradle task to the
 default build task in VS Code.
 
-1. Press `Ctrl+Shift+P` to open the VS Code command palette.
+1. Press `Ctrl+Shift+P` or `F1` to open the VS Code command palette.
 2. Type `task` and select `Configure Default Build Task`.
 3. Select `Create tasks.json file from template`.
 4. Select `Others`.
@@ -224,6 +242,8 @@ default build task in VS Code.
             "label": "gradle",
             "type": "shell",
             "command": "gradle bigjar",
+            // "command": "gradlew.bat bigjar", // Wrapper on Windows
+            // "command": "gradlew bigjar",     // Wrapped on *nix
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -233,9 +253,9 @@ default build task in VS Code.
 }
 {{< /codecaption >}}
 
-Now we can build our project by:
+Now we can build our project with:
 
-1. Pressing `Ctrl+Shift+B`. Recommended.
+1. Pressing `Ctrl+Shift+B`. **Recommended**.
 2. `Terminal (menu) > Run Task (sub menu) > gradle`.
 3. Opening the command palette and typing `tasks` then selecting `Run Build Task`.
 
@@ -251,7 +271,7 @@ imported interfaces from the `burp` package.
 Every time, a new dependency is added (or we get the same error again), we need
 to clean the Java language server.
 
-1. Open the VS Code command palette with `Ctrl+Shift+P`.
+1. Open the VS Code command palette with `Ctrl+Shift+P` or `F1`.
 2. Type `java clean` and select `Java Clean the Java language server workspace`.
 3. Restart VS Code when asked.
 4. Now we have IntelliCode support.
@@ -265,7 +285,7 @@ each build.
 Modify `BurpExtender.java`. See how IntelliCode is making our
 life easier.
 
-{{< imgcap title="IntelliCode in action" src="04-intellicode2.gif" >}}
+{{< imgcap title="IntelliCode in action, woot!" src="04-intellicode2.gif" >}}
 
 {{< codecaption title="BurpExtender.java" lang="java" >}}
 package burp;
@@ -427,3 +447,4 @@ will build the extension and copy it to `@jar\burp-sample-extension-java-all.jar
 [burp-maven]: https://mvnrepository.com/artifact/net.portswigger.burp.extender/burp-extender-api/2.1
 [stackcrash-twitter]: https://twitter.com/StackCrash
 [support-ticket]: https://support.portswigger.net/customer/portal/questions/16709362-debug-java-project
+[gson-maven-link]: https://mvnrepository.com/artifact/com.google.code.gson/gson/2.8.6
