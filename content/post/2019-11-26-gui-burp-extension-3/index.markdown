@@ -425,7 +425,7 @@ public static void printError(String s) {
 }
 ```
 
-# Equivalent of Jython toString() is __repr()__ in Python
+# Equivalent of Jython toString() is \__repr()\_\_ in Python
 When creating a class, you might want to create a `toString()` method. The
 equivalent of it in Python is not `__str()__` but instead `__repr()__`.
 
