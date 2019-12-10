@@ -73,7 +73,7 @@ below or `ctrl+f` and search for keywords.
     - [Associate an Extension with a Specific Language](#associate-an-extension-with-a-specific-language)
     - [Install a Specific Version of an Extension](#install-a-specific-version-of-an-extension)
 - [Sublime Text 3](#sublime-text-3)
-    - [Fix "MarGo build failed" for GoSublime on Windows](#fix-margo-build-failed-for-gosublime-on-windows)
+    - [Fix &quot;MarGo build failed&quot; for GoSublime on Windows](#fix-quotmargo-build-failedquot-for-gosublime-on-windows)
     - [Open the same file in a new tab](#open-the-same-file-in-a-new-tab)
 - [Burp](#burp)
     - [Quality of Life Tips and Tricks for Burp](#quality-of-life-tips-and-tricks-for-burp)
@@ -225,7 +225,9 @@ rmdir the_dir_to_delete
 1. Run the following command in an admin PowerShell and restart.
    * `Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux`
 2. Search for `Ubuntu` in Windows store and install Ubuntu.
-3. Type `bash` in a command prompt.
+3. After Ubuntu is installed, search for `Ubuntu` in the start menu and run it.
+4. Follow the prompts to choose a username and password.
+5. Type `bash` in a command prompt to start it.
 
 ### Setup Github-Gitlab SSH Keys in 'Bash on Windows'
 Main instructions here:
@@ -235,7 +237,7 @@ Main instructions here:
 1. Generate a key inside bash and save it at the default location inside `home`.
    * `ssh-keygen -t rsa -b 4096 -C "your_email@example.com"`
 2. Make sure you have `ssh-agent` installed in WSL. It should be installed out of the box.
-3. Add the following lines to `~/.bashrc` to start `ssh-agent` and add your key everytime you run `bash`.
+3. Add the following lines to `~/.bashrc` to start `ssh-agent` and add your key every time you run `bash`.
 
     ``` bash
     env=~/.ssh/agent.env
