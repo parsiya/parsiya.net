@@ -17,53 +17,53 @@ In this page you may find those commands and tips that I need from time to time
 below or `ctrl+f` and search for keywords.
 
 - [Tar](#tar)
-    - [Compressing a directory using tar](#compressing-a-directory-using-tar)
-    - [Decompressing a tar.gz file](#decompressing-a-targz-file)
+    - [Compress a Directory Using tar](#compress-a-directory-using-tar)
+    - [Decompress a tar.gz file](#decompress-a-targz-file)
 - [OpenSSL](#openssl)
-    - [Dumping the TLS certificate using OpenSSL](#dumping-the-tls-certificate-using-openssl)
-    - [TLS connection with a specific ciphersuite using OpenSSL](#tls-connection-with-a-specific-ciphersuite-using-openssl)
+    - [Dump a Domain's TLS Certificate with OpenSSL](#dump-a-domains-tls-certificate-with-openssl)
+    - [TLS Connection with a Specific Ciphersuite with OpenSSL](#tls-connection-with-a-specific-ciphersuite-with-openssl)
 - [AWS](#aws)
-    - [Using s3deploy](#using-s3deploy)
-    - [Syncing a folder with an Amazon S3 bucket using s3cmd](#syncing-a-folder-with-an-amazon-s3-bucket-using-s3cmd)
-    - [Changing the mime-type of CSS file after upload to fix CSS not displaying correctly](#changing-the-mime-type-of-css-file-after-upload-to-fix-css-not-displaying-correctly)
-    - [Setting the index to a non-root file in static website hosted on S3](#setting-the-index-to-a-non-root-file-in-static-website-hosted-on-s3)
-    - [Use AWS CLI without credentials](#use-aws-cli-without-credentials)
+    - [How to Use s3deploy](#how-to-use-s3deploy)
+    - [Sync a Directory with an Amazon S3 bucket with s3cmd](#sync-a-directory-with-an-amazon-s3-bucket-with-s3cmd)
+    - [Change the MIME-Type of the CSS file After Upload to Fix CSS not Displaying Correctly](#change-the-mime-type-of-the-css-file-after-upload-to-fix-css-not-displaying-correctly)
+    - [Set the Website Index to a Non-Root file in a Static Website on S3](#set-the-website-index-to-a-non-root-file-in-a-static-website-on-s3)
+    - [Use AWS CLI Without Credentials](#use-aws-cli-without-credentials)
 - [Windows](#windows)
     - [Shortcut to IE (or WinINET) Proxy Settings](#shortcut-to-ie-or-wininet-proxy-settings)
     - [where.exe](#whereexe)
-    - [Delete file or directory with a path or name longer than the Windows limit](#delete-file-or-directory-with-a-path-or-name-longer-than-the-windows-limit)
+    - [Delete File or Directory with a Path or Name Longer than the Windows Limit](#delete-file-or-directory-with-a-path-or-name-longer-than-the-windows-limit)
     - [Install 'Bash on Windows'](#install-bash-on-windows)
     - [Setup Github-Gitlab SSH Keys in 'Bash on Windows'](#setup-github-gitlab-ssh-keys-in-bash-on-windows)
     - [Exit Status 3221225781](#exit-status-3221225781)
-    - [Map a drive to a specific directory](#map-a-drive-to-a-specific-directory)
-    - [Disable monitors going to sleep after locking the computer](#disable-monitors-going-to-sleep-after-locking-the-computer)
-    - [Convert plist file to xml on Windows](#convert-plist-file-to-xml-on-windows)
-    - [Oneliner to find unquoted service paths](#oneliner-to-find-unquoted-service-paths)
+    - [Map a Drive to a Specific Directory](#map-a-drive-to-a-specific-directory)
+    - [Disable Monitors Going to Sleep after Locking the Computer](#disable-monitors-going-to-sleep-after-locking-the-computer)
+    - [Convert a plist File to XML on Windows](#convert-a-plist-file-to-xml-on-windows)
+    - [Oneliner to Find Unquoted Service Paths](#oneliner-to-find-unquoted-service-paths)
 - [Powershell](#powershell)
-    - [List all files (including hidden)](#list-all-files-including-hidden)
+    - [List All Files (Including Hidden Files)](#list-all-files-including-hidden-files)
     - [Diff in Powershell](#diff-in-powershell)
     - [Pseudo-grep in Powershell](#pseudo-grep-in-powershell)
-    - [grep in command outputs](#grep-in-command-outputs)
+    - [grep in Command Results](#grep-in-command-results)
     - [Get-Acl and icacls.exe](#get-acl-and-icaclsexe)
     - [time in PowerShell](#time-in-powershell)
-    - [VHD File is Open in System (and cannot be Deleted)](#vhd-file-is-open-in-system-and-cannot-be-deleted)
-    - [Base64 encode and decode without PowerShell](#base64-encode-and-decode-without-powershell)
-    - [Load a managed DLL from PowerShell](#load-a-managed-dll-from-powershell)
-    - [Zip a folder](#zip-a-folder)
+    - [VHD File is Open in System (and Cannot be Deleted)](#vhd-file-is-open-in-system-and-cannot-be-deleted)
+    - [Base64 Encode and Decode without PowerShell](#base64-encode-and-decode-without-powershell)
+    - [Load a Managed DLL from PowerShell](#load-a-managed-dll-from-powershell)
+    - [Zip a Directory with PowerShell](#zip-a-directory-with-powershell)
 - [Hyper-V](#hyper-v)
     - [Cannot Create Virtual Switch](#cannot-create-virtual-switch)
     - [Cloning VMs in Hyper-V](#cloning-vms-in-hyper-v)
-    - [Guest Has No Internet](#guest-has-no-internet)
+    - [The Guest Has No Internet](#the-guest-has-no-internet)
 - [VirtualBox](#virtualbox)
     - [Restart Clipboard Functionality in VirtualBox After Guest Resume](#restart-clipboard-functionality-in-virtualbox-after-guest-resume)
-    - [Change the Hardware UUID of Cloned Windows VMs to Avoid Reactivation](#change-the-hardware-uuid-of-cloned-windows-vms-to-avoid-reactivation)
+    - [Change the Hardware UUID of Cloned Windows VMs to Avoid Windows Reactivation](#change-the-hardware-uuid-of-cloned-windows-vms-to-avoid-windows-reactivation)
     - [Increase VM Disk Size](#increase-vm-disk-size)
 - [Git](#git)
-    - [Create new branch and merge](#create-new-branch-and-merge)
-    - [Only clone a certain branch](#only-clone-a-certain-branch)
-    - [Undo remote git history after push](#undo-remote-git-history-after-push)
-    - [Update local fork from original repo](#update-local-fork-from-original-repo)
-    - [Use Notepad++ as git editor on Windows via Cygwin](#use-notepad-as-git-editor-on-windows-via-cygwin)
+    - [Create New Branch and Merge](#create-new-branch-and-merge)
+    - [Only Clone a Certain Branch](#only-clone-a-certain-branch)
+    - [Undo Remote git History after push](#undo-remote-git-history-after-push)
+    - [Update Local Fork from the Original Repo](#update-local-fork-from-the-original-repo)
+    - [Use Notepad++ as git Editor on Windows via Cygwin](#use-notepad-as-git-editor-on-windows-via-cygwin)
     - [Change Remote for an Existing Git Repository](#change-remote-for-an-existing-git-repository)
     - [List All Authors in a Git Repository](#list-all-authors-in-a-git-repository)
     - [Rewrite Author for Older Commits](#rewrite-author-for-older-commits)
@@ -78,37 +78,38 @@ below or `ctrl+f` and search for keywords.
 - [Burp](#burp)
     - [Quality of Life Tips and Tricks for Burp](#quality-of-life-tips-and-tricks-for-burp)
     - [Selected text in Burp is black](#selected-text-in-burp-is-black)
+    - [Using iptables to Proxy Android App with Burp](#using-iptables-to-proxy-android-app-with-burp)
 - [Linux](#linux)
-    - [Python module installed with pip but command is not available](#python-module-installed-with-pip-but-command-is-not-available)
-    - [Add user to sudoers on Debian](#add-user-to-sudoers-on-debian)
+    - [Python Module Installed with pip but Command is not Available](#python-module-installed-with-pip-but-command-is-not-available)
+    - [Add a User to sudoers on Debian](#add-a-user-to-sudoers-on-debian)
 - [Docker](#docker)
     - [Commands](#commands)
     - [Troubleshooting](#troubleshooting)
 - [Misc](#misc)
-    - [Download Youtube videos with substitles](#download-youtube-videos-with-substitles)
-    - [Print envelopes using the Brother DW2280 printer and LibreOffice](#print-envelopes-using-the-brother-dw2280-printer-and-libreoffice)
-    - [Microphone not working in Discord?](#microphone-not-working-in-discord)
-    - [Tab size 4 in Github web interface](#tab-size-4-in-github-web-interface)
+    - [Download Youtube Videos with Substitles](#download-youtube-videos-with-substitles)
+    - [Print Envelopes with the Brother DW2280 printer and LibreOffice](#print-envelopes-with-the-brother-dw2280-printer-and-libreoffice)
+    - [Microphone does not Work in Discord?](#microphone-does-not-work-in-discord)
+    - [Tab Size 4 in the Github Web Interface](#tab-size-4-in-the-github-web-interface)
 
 ------
 
 ## Tar
 Insert [XKCD 1168](https://xkcd.com/1168/), hur dur!
 
-### Compressing a directory using tar
+### Compress a Directory Using tar
 `tar -zcvf target_tar.tar.gz directory_to_be_compressed`
 
-### Decompressing a tar.gz file
+### Decompress a tar.gz file
 `tar -zxvf target_tar.tar.gz path/to/decompress/`
 
 ------
 
 ## OpenSSL
 
-### Dumping the TLS certificate using OpenSSL
+### Dump a Domain's TLS Certificate with OpenSSL
 `echo | openssl s_client -connect HOST:PORT 2>/dev/null | openssl x509 -text -noout`
 
-### TLS connection with a specific ciphersuite using OpenSSL
+### TLS Connection with a Specific Ciphersuite with OpenSSL
 `openssl s_client -connect HOST:PORT -cipher cipher-name -brief`
 
 * `-brief`: reduced output
@@ -118,10 +119,11 @@ Insert [XKCD 1168](https://xkcd.com/1168/), hur dur!
 
 ## AWS
 
-### Using s3deploy
-I have switched to s3deploy from s3cmd. https://github.com/bep/s3deploy
+### How to Use s3deploy
+I have switched to s3deploy from s3cmd. https://github.com/bep/s3deploy. 
 
-To make it work, create a file named `.s3deploy.yaml` (not the period) in the root of your website. I use this:
+Create a file named `.s3deploy.yaml` (not the period) in the root of website. I
+use this:
 
 ``` yaml
 routes:
@@ -138,21 +140,23 @@ routes:
       gzip: true
 ```
 
-The file should be self-explanatory. Don't set `gzip` for `txt` files, **it will break your keybase proof**.
+The file should be self-explanatory. Don't set `gzip` for `txt` files,
+**it will break your keybase proof**.
 
-Then run (change region if needed):
+Then run (change the region if needed):
 
 ```
 s3deploy.exe -source=public/ -region=us-east-1 -bucket=[bucketname]
 ```
 
-To pass your AWS key and secret, you can either set them in an environment variable or in this file:
+To pass your AWS key and secret, you can either set them in an environment
+variable or in this file:
 
 ```
 c:\Users\[your user]\.aws\credentials
 ```
 
-Then inside the file:
+Like this:
 
 ```
 [default]
@@ -160,16 +164,16 @@ aws_access_key_id=
 aws_secret_access_key=
 ```
 
-### Syncing a folder with an Amazon S3 bucket using s3cmd
+### Sync a Directory with an Amazon S3 bucket with s3cmd
 `python s3cmd sync --acl-public --delete-removed --rr directory-to-sync/ s3://bucket-name`
 
-For example uploading the Hugo public directory to my website:\\
+E.g., uploading the Hugo public directory to my website:\\
 `python s3cmd sync --acl-public --delete-removed --rr public/ s3://parsiya.net`
 
 * `--acl-public`: Anyone can only read.
 * `--delete-removed`: Delete objects with no corresponding local files.
 
-### Changing the mime-type of CSS file after upload to fix CSS not displaying correctly
+### Change the MIME-Type of the CSS file After Upload to Fix CSS not Displaying Correctly
 `python s3cmd --acl-public --no-preserve --mime-type="text/css" put public/css/hugo-octopress.css s3://parsiya.net/css/hugo-octopress.css`
 
 {{< codecaption title="My runme.bat to upload my Hugo blog to the S3 bucket" lang="powershell"\\>}}
@@ -184,12 +188,19 @@ python s3cmd --acl-public --no-preserve --cf-invalidate --add-header="Expires: S
 rd /q /s public
 {{< /codecaption >}}
 
-### Setting the index to a non-root file in static website hosted on S3
-When setting up a static website in an S3 bucket, you need to specify an index and an error page. The index cannot be in a sub-directory but the error page can be. Set the index to a non-existent file (e.g. `whatever.crap`) and set the error page to the actual index page. Source: https://stackoverflow.com/a/20273548
+### Set the Website Index to a Non-Root file in a Static Website on S3
+When setting up a static website in an S3 bucket, you need to specify an index
+and an error page. The index cannot be in a sub-directory but the error page can
+be. Set the index to a non-existent file (e.g. `whatever.crap`) and set the
+error page to the actual index page.
 
-If you are relying on error pages, this will mess with your site because every error will be redirected to the index. Another way is to set a meta redirect in the index file in the root directory and redirecting that page.
+* Source: https://stackoverflow.com/a/20273548
 
-### Use AWS CLI without credentials
+If you are relying on error pages, this will mess with your site because every
+error will be redirected to the index. Another way is to set a meta redirect in
+the index file in the root directory and redirecting that page.
+
+### Use AWS CLI Without Credentials
 Use `--no-sign-request`. E.g., to list all items in a world-readable bucket:
 
 * `aws s3 ls s3://bucket-name --no-sign-request --recursive`
@@ -203,14 +214,14 @@ Use `--no-sign-request`. E.g., to list all items in a world-readable bucket:
 `control inetcpl.cpl,,4`
 
 ### where.exe
-`where.exe` searches for files. Without any locations, it searches in the local directory and then in PATH.
+`where.exe` searches for files. If no location is passed it searches in the
+local directory and then in PATH.
 
 - `/R` searches recursively in a specific location.
 - `/T` displays file size.
 - `/?` for help.
 
-### Delete file or directory with a path or name longer than the Windows limit
-Answer from [superuser.com](http://superuser.com/a/467814).
+### Delete File or Directory with a Path or Name Longer than the Windows Limit
 
 ```
 mkdir empty_dir
@@ -218,6 +229,8 @@ robocopy empty_dir the_dir_to_delete /s /mir
 rmdir empty_dir
 rmdir the_dir_to_delete
 ```
+
+* Source: http://superuser.com/a/467814
 
 ### Install 'Bash on Windows'
 `lxrun /install` does not work anymore.
@@ -230,14 +243,16 @@ rmdir the_dir_to_delete
 5. Type `bash` in a command prompt to start it.
 
 ### Setup Github-Gitlab SSH Keys in 'Bash on Windows'
-Main instructions here:
+Main instructions:
 
 * https://help.github.com/en/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
 
 1. Generate a key inside bash and save it at the default location inside `home`.
    * `ssh-keygen -t rsa -b 4096 -C "your_email@example.com"`
-2. Make sure you have `ssh-agent` installed in WSL. It should be installed out of the box.
-3. Add the following lines to `~/.bashrc` to start `ssh-agent` and add your key every time you run `bash`.
+2. Make sure you have `ssh-agent` installed in WSL. It should be installed out
+   of the box.
+3. Add the following lines to `~/.bashrc` to start `ssh-agent` and add your key
+   every time you run `bash`.
 
     ``` bash
     env=~/.ssh/agent.env
@@ -266,7 +281,8 @@ Main instructions here:
     ssh-add ~/.ssh/id_rsa
     ```
 4. Add the SSH key to github/gitlab.
-5. Navigate to your git folder in a normal command prompt and run `bash` and use git normally.
+5. Navigate to your git folder in a normal command prompt and run `bash` and use
+   git normally.
 6. ???
 7. Profit
 
@@ -284,7 +300,7 @@ Rename failed: gorename: computing diff: exit status 3221225781 gorename:
     computing diff: exit status 3221225781 gorename: failed to rewrite 2 files 
 ```
 
-Searching for `3221225781` got me to
+Searching for `3221225781` sent me to
 [Rust language issue 42744](https://github.com/rust-lang/rust/issues/42744)
 which means a DLL is missing. Run `where diff` to find out where it is and it
 was in `\Go\bin\diff.exe`. Running `diff.exe` manually got this prompt.
@@ -299,7 +315,7 @@ front of `DiffUtils`. It will download a package which contains the utils and
 two DLLs: `libintl3.dll` and `libiconv2.dll`. Copy all of them to where the
 original `diff.exe` was and it should work.
 
-### Map a drive to a specific directory
+### Map a Drive to a Specific Directory
 This is useful when you want to refer to a specific directory as a driver.
 
 * `subst X: C:\path\to\source\code`
@@ -328,7 +344,7 @@ Use these instructions to automount it at startup:
 
 * http://woshub.com/auto-mount-vhd-at-startup/
 
-### Disable monitors going to sleep after locking the computer
+### Disable Monitors Going to Sleep after Locking the Computer
 After locking the computer the monitor might go to sleep. To disable:
 
 1. Open the following registry key:
@@ -343,7 +359,7 @@ After locking the computer the monitor might go to sleep. To disable:
 6. Now under `Display` there should be a new item: `Console lock display off timeout`.
 7. Change this to whatever you want.
 
-### Convert plist file to xml on Windows
+### Convert a plist File to XML on Windows
 `plutil -convert xmlfile.xml com.apple.springboard.plist` where:
 
 * `plutil` is installed with iTunes.
@@ -351,14 +367,14 @@ After locking the computer the monitor might go to sleep. To disable:
 
 Source: https://superuser.com/a/1264369
 
-### Oneliner to find unquoted service paths
+### Oneliner to Find Unquoted Service Paths
 `wmic service get displayname,pathname|findstr /IV "C:\Windows"|findstr /IV """`
 
 ------
 
 ## Powershell
 
-### List all files (including hidden)
+### List All Files (Including Hidden Files)
 `Get-ChildItem "searchterm" -recurse -force -path c:\ | select-object FullName`
 
 * `-recurse`: recursive. Loops through all directories
@@ -381,7 +397,8 @@ will include filename and line (no number AFAIK)
 
 `findstr /spin /c:"keyword" *.*`
 
-* /s: recursive - will search through the current directory and all sub-directories
+* /s: recursive - will search through the current directory and all
+  sub-directories
 * /p: skip binary files (or files with characters that cannot be printed)
 * /i: case-insensitive - remove if you want case sensitive search
 * /n: print line number
@@ -394,7 +411,7 @@ will search for keyword1 OR keyword2 in files
 
 https://technet.microsoft.com/en-us/library/Cc732459.aspx
 
-### grep in command outputs
+### grep in Command Results
 `whatever.exe | Select-String -pattern "admin"`
 
 ### Get-Acl and icacls.exe
@@ -405,21 +422,22 @@ https://technet.microsoft.com/en-us/library/Cc732459.aspx
 ### time in PowerShell
 `Measure-Command {python whatever.py}`
 
-### VHD File is Open in System (and cannot be Deleted)
-You clicked on a VHD file and now cannot delete it. Use this PowerShell command but the path to VHD should be full.
+### VHD File is Open in System (and Cannot be Deleted)
+You clicked on a VHD file and now cannot delete it. Use this PowerShell command
+but the path to VHD should be full.
 
 `Dismount-DiskImage -ImagePath 'C:\full\path\to\whatever.vhd'`
 
-### Base64 encode and decode without PowerShell
+### Base64 Encode and Decode without PowerShell
 Use `certutil` for bootleg base64 encoding/decoding:
 
 - `certutil -encode whatever.exe whatever.base64`
 - `certutil -decode whetever.base64 whatever.exe`
 
-### Load a managed DLL from PowerShell
+### Load a Managed DLL from PowerShell
 Source: https://www.leeholmes.com/blog/2006/10/27/load-a-custom-dll-from-powershell/
 
-### Zip a folder
+### Zip a Directory with PowerShell
 
 * `Compress-Archive -Path C:\path\to\folder\ -DestinationPath c:\path\to\destination\archive`
 
@@ -444,7 +462,7 @@ When creating a Virtual Switch in Hyper-V you get an error along the lines of
 You cannot clone VMs in Hyper-V like VirtualBox. Create a copy of the vhd(x)
 hard disk and use it in a new VM. Yes, it's as manual as it sounds.
 
-### Guest Has No Internet
+### The Guest Has No Internet
 The internet recommends creating an external virtual switch but it did not work
 for me. I deleted the external switch and used the default switch and it somehow
 worked so try doing that.
@@ -454,7 +472,7 @@ worked so try doing that.
 ## VirtualBox
 
 ### Restart Clipboard Functionality in VirtualBox After Guest Resume
-Sometimes disabling and enables clipboard in VirtualBox menu works
+Sometimes disabling and enables clipboard in VirtualBox menu works.
 
 Assuming you have a Windows guest. Inside the Windows guest do:
 
@@ -463,7 +481,7 @@ Assuming you have a Windows guest. Inside the Windows guest do:
 
 Source: https://superuser.com/a/691337
 
-### Change the Hardware UUID of Cloned Windows VMs to Avoid Reactivation
+### Change the Hardware UUID of Cloned Windows VMs to Avoid Windows Reactivation
 You cloned a Windows VirtualBox VM and now you have to activate it again.
 This script changes the hardware UUID of the cloned machine to the old one.
 No reactivation needed.
@@ -505,8 +523,9 @@ Source: https://stackoverflow.com/a/12456219
 ## Git
 I know a total of 5-6 git commands and that is fine.
 
-### Create new branch and merge
-This works with small branches (e.g. one fix or so). Adapted from a [Bitbucket tutorial](https://confluence.atlassian.com/bitbucket/use-a-git-branch-to-merge-a-file-681902555.html).
+### Create New Branch and Merge
+This works with small branches (e.g. one fix or so). Adapted from a
+[Bitbucket tutorial](https://confluence.atlassian.com/bitbucket/use-a-git-branch-to-merge-a-file-681902555.html).
 
 1. Create new branch and checkout - `git checkout -b fix-whatever`\\
 This will create a branch of whatever branch you are currently on so make sure you are creating a branch from the branch you want. This is the same as `git branch whatever` and `git checkout whatever`.
@@ -526,10 +545,10 @@ Alternatively squash all commits into one `git merge --squash fix-whatever` and 
 6. Delete branch - `git branch -d fix-whatever`\\
 We don't need it anymore. If it was pushed to remote, then we need to delete it there too.
 
-### Only clone a certain branch
+### Only Clone a Certain Branch
 `git clone -b <branch> <remote_repo>`
 
-### Undo remote git history after push
+### Undo Remote git History after push
 Because this keeps happening to me.
 
 1. Reset the head in local repo N commits back. - `git reset HEAD~N`\\
@@ -542,7 +561,7 @@ Where N is the number of commits that you want to revert.
 4. Force push the local repo to remote - `git push -f`\\
 Note this will force the update and erase the commit history online. If not one else is using the repo in between it's ok.
 
-### Update local fork from original repo
+### Update Local Fork from the Original Repo
 
 1. See current remotes - `git remote -v`
 
@@ -559,8 +578,9 @@ Note this will force the update and erase the commit history online. If not one 
 
 7. Push changes - `git push`
 
-### Use Notepad++ as git editor on Windows via Cygwin
-Create a file called `npp` with the following content and copy it to `cygwin\bin`. Modify the path of notepad++ to point to your installation.
+### Use Notepad++ as git Editor on Windows via Cygwin
+Create a file called `npp` with the following content and copy it to
+`cygwin\bin`. Modify the path of notepad++ to point to your installation.
 
 ``` bash
 'C:/Program Files (x86)/Notepad++/notepad++.exe' -multiInst -notabbar -nosession -noPlugin "$(cygpath -w "$*")"
@@ -587,7 +607,8 @@ git shortlog -s | cut -c8-
 ```
 
 ### Rewrite Author for Older Commits
-`parsiya.net` had commits as `root` from when I was using it offline. I wanted to change everything to myself.
+`parsiya.net` had commits as `root` from when I was using it offline. I wanted
+to change everything to myself.
 
 1. If you want to start at root - `git rebase -i --root`
 2. If you want to start from commit AAAA - `git rebase -i AAAA`
@@ -600,7 +621,8 @@ git shortlog -s | cut -c8-
 * Source: https://stackoverflow.com/a/3042512
 
 ### Remove Uncommitted Files from Staging
-You have added files with `git add` but have not committed them and want to remove some (not all) instead of `git reset`.
+You have added files with `git add` but have not committed them and want to
+remove some (not all) instead of `git reset`.
 
 ```
 git reset HEAD -- file/directory
@@ -649,7 +671,7 @@ because it disables auto-update for that extension.
 4. Select the version.
 5. The extension will not auto-update from that version.
 
-Source: https://github.com/microsoft/vscode/issues/30579#issuecomment-456028574
+* Source: https://github.com/microsoft/vscode/issues/30579#issuecomment-456028574
 
 ------
 
@@ -658,7 +680,8 @@ Tips for using the Sublime Text 3 editor. I don't use Sublime Text anymore so
 this section is probably outdated.
 
 ### Fix "MarGo build failed" for GoSublime on Windows
-GoSublime's executable has Go version in it. In most cases, it cannot grab the version on Windows and the build will fail like this:
+GoSublime's executable has Go version in it. In most cases, it cannot grab the
+version on Windows and the build will fail like this:
 
 ```
 MarGo: MarGo build failed
@@ -682,7 +705,8 @@ raw_ver = ''
 ver = ''     # Change this to '1'
 ```
 
-Edit `ver` to whatever, I usually do `1`. Restart Sublime Text and Margo will build.
+Edit `ver` to whatever, I usually do `1`. Restart Sublime Text and Margo will
+build.
 
 **This must to be done for every new GoSublime version.**
 
@@ -720,16 +744,40 @@ Source - credit to `floyd`:
 
 * https://support.portswigger.net/customer/portal/questions/16802069-text-highlighted-in-black
 
+### Using iptables to Proxy Android App with Burp
+Technically this works with any proxy.
+
+1. Add Burp's certificate to the device.
+2. If there's certificate pinning, bypass it.
+3. Enable [invisible proxying][invisible-proxy] for the target listener.
+4. Root the device, iptables commands need root.
+
+Let's assume we want to redirect all traffic to `443` and `80` to Burp's
+listener at `192.168.137.1:8080`. This is the default IP address of a Windows
+machine if the mobile hotsport network is enabled:
+
+```
+iptables -t nat -A OUTPUT -p tcp --dport 443 -j DNAT --to-destination 192.168.137.1:8080
+iptables -t nat -A OUTPUT -p tcp --dport 80 -j DNAT --to-destination 192.168.137.1:8080
+
+iptables -t nat -A POSTROUTING -p tcp --dport 80 -j MASQUERADE
+iptables -t nat -A POSTROUTING -p tcp --dport 443 -j MASQUERADE
+```
+
+Source: http://blog.dornea.nu/2014/12/02/howto-proxy-non-proxy-aware-android-applications-through-burp/
+
+[invisible-proxy]: https://portswigger.net/burp/documentation/desktop/tools/proxy/options/invisible
+
 ------
 
 ## Linux
-I'd just like to interject for a moment. What you’re referring to as Linux, is in fact, GNU/Linux, or as I’ve recently taken to calling it, GNU plus Linux.
+I'd just like to interject for a moment. What you’re referring to as Linux, is
+in fact, GNU/Linux, or as I’ve recently taken to calling it, GNU plus Linux.
 
-### Python module installed with pip but command is not available
+### Python Module Installed with pip but Command is not Available
 They are installed in `~/.local/bin`. Add it to your `$PATH`.
 
-### Add user to sudoers on Debian
-I need to search this every time.
+### Add a User to sudoers on Debian
 
 1. `su -`: If you do `su` alone, you might not find `usermod` in your path.
     * "Starting su with the option " -" gives you the full path root would have
@@ -779,7 +827,7 @@ I need to search this every time.
 
 ## Misc
 
-### Download Youtube videos with substitles
+### Download Youtube Videos with Substitles
 I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The
 following [youtube-dl](https://github.com/rg3/youtube-dl/) command will download
 the 56 episode HQ quality Chinese TV series called `Xiao Ao Jiang Hu` or
@@ -798,9 +846,9 @@ the 56 episode HQ quality Chinese TV series called `Xiao Ao Jiang Hu` or
 `Youtube-dl` can be downloaded using `pip`. For example on Windows:\\
 `python -m pip install youtube-dl`.
 
-### Print envelopes using the Brother DW2280 printer and LibreOffice
-I gave away the printer when I moved but I am keeping the instructions just in
-case. Before printing, get to printer physically and use the following
+### Print Envelopes with the Brother DW2280 printer and LibreOffice
+I gave away the printer when I moved to Canada but I am keeping the instructions
+just in case. Before printing, get to printer physically and use the following
 instructions:
 
 - http://support.brother.com/g/b/faqend.aspx?c=gb&lang=en&prod=hl2170w_all&faqid=faq00000063_025
@@ -829,7 +877,7 @@ Now open LibreOffice and use these instructions:
     * Paper Source > First Page: `Manual`.
 9. Print
 
-### Microphone not working in Discord?
+### Microphone does not Work in Discord?
 You might have enabled the privacy settings in Windows 10.
 
 1. Settings.
@@ -840,5 +888,5 @@ You might have enabled the privacy settings in Windows 10.
 6. ???
 7. Yell at ~~your raid group~~ DPS for standing in fire.
 
-### Tab size 4 in Github web interface
+### Tab Size 4 in the Github Web Interface
 Add `?ts=4` to end of the file URL.
