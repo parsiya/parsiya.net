@@ -12,25 +12,26 @@ tags:
 - Java
 ---
 
-A few days ago, I released the [Bug Diaries](https://github.com/parsiya/bug-diaries).
-It's a Burp extension that aims to mimic Burp issues for the community (free)
-version. For reasons, I decided to rewrite it in Java. This is the first part of
-my series on what I learned doing it.
+A few days ago, I released the [Bug Diaries](https://github.com/parsiya/bug-diaries)
+Burp extension. It's a Burp extension that aims to mimic Burp issues for the
+community (free) version. For reasons, I decided to rewrite it in Java. This is
+the first part of my series on what I learned switching to Java.
 
 This part discusses how my environment is set up for development with
 [Visual Studio Code](https://code.visualstudio.com/). Things like
-auto-completion, Gradle builds and most importantly debugging extensions.
+auto-completion, Gradle builds and most importantly debugging.
 
-To skip some of the steps in the guide. I still recommend doing them if you are
-not familiar with Gradle and Burp development, clone the following repository:
+Clone the repository to skip some of the steps in the blog. I still recommend
+doing them yourself if you are not familiar with Gradle and Burp development,
+clone the following repository:
 
 * https://github.com/parsiya/burp-sample-extension-java
 
 <!--more-->
 
 # Bug Diaries in Python
-The original extension was in Python. All of my Burp extensions had been in
-Python. I documented what I learned:
+The original extension was in Python. To that day, all of my Burp extensions had
+been in Python. I documented what I learned:
 
 * [Swing in Python Burp Extensions - Part 1]({{< relref
   "/post/2019-11-04-gui-python-burp-extension-1/index.markdown" >}} "Swing in
@@ -54,12 +55,13 @@ This is how my development VM is arranged.
 2. Install the [Java Extension Pack][java-extension-pack].
 
 There is also a VS Code installer for Java developers at
-https://aka.ms/vscode-java-installer-win. But I did not use it.
+https://aka.ms/vscode-java-installer-win. I did not use it.
 
 # Install OpenJDK
 I use OpenJDK because of the shitty licensing requirements of Oracle.
 
-1. Download OpenJDK 11 (see below why). I used the installer from [AdoptOpenJDK.com](https://adoptopenjdk.com).
+1. Download OpenJDK 11 (see below why). I used the installer from
+   [AdoptOpenJDK.net](https://adoptopenjdk.net).
     * Red Hat has binaries at
       https://developers.redhat.com/products/openjdk/download. You will need a
       free developer account.
@@ -78,10 +80,10 @@ OpenJDK Runtime Environment AdoptOpenJDK (build 11.0.5+10)
 OpenJDK 64-Bit Server VM AdoptOpenJDK (build 11.0.5+10, mixed mode
 ```
 
-**Note**: If you install the JDK 13 or newer, you cannot use the Burp's
-executable to load your extension. As of December 2019, The Burp's `exe` file,
-uses a bundled JRE which is built with JDK 11 (version 55.0). If you try to load
-an extension that is built with a later Java version, you will get this error:
+**Note**: If you install the JDK 13 or newer, you cannot use the Burp's exe file
+to load your extension. As of December 2019, The Burp's `exe` file, uses a
+bundled JRE which is built with JDK 11 (version 55.0). If you try to load an
+extension that is built with a later Java version, you will get this error:
 
 ```
 java.lang.UnsupportedClassVersionError: burp/BurpExtender has been compiled by
@@ -93,6 +95,8 @@ Solution:
 
 1. Use an earlier version to build your extension. Recommended.
 2. Run the Burp's jar file directly using your installed Java.
+    * I actually don't know if this works. If you try and it works, please let
+      me know. 
 
 # Gradle
 [Gradle][gradle-website] does not have an installer either.
@@ -124,7 +128,7 @@ OS:           Windows 10 10.0 amd64
 ```
 
 # Setting up Gradle
-Create a directory to develop the extension. In the root of this directory run
+Create a directory for extension development. In the root of this directory run
 the following command:
 
 * `gradle init --type basic`
@@ -170,10 +174,12 @@ task bigJar(type: Jar) {
 
 Read the comments inside the file to see what each section does. The most
 important section is adding the [Burp Extender interface Maven repository][burp-maven].
-This gives us build support and the equally important code completion in
-IntelliCode.
+This gives us build support and the equally important code completion with
+IntelliCode (iT's Ai BaSeD!!1!).
 
-Any extra dependencies are added similar to the Burp extender interface. For example, adding [Google's Gson version 2.8.6][gson-maven-link] can be added like this:
+Any extra dependencies are added similar to the Burp extender interface. For
+example, [Google's Gson version 2.8.6][gson-maven-link] can be added like
+this:
 
 ```
 dependencies {
@@ -184,22 +190,23 @@ dependencies {
 ```
 
 ## Gradle Wrapper
-Gradle Wrapper is way to get reliable builds regardless of installed Gradle
-version. Note you need Gradle to install the Wrapper.
+The Gradle Wrapper is a way to get reliable builds regardless of the local
+Gradle version. Note you need Gradle to install the Wrapper.
 
-If you just want to initiate the Wrapper. Run `gradle wrapper` in the extension
-directory. To build the project with the Wrapper, replace `gradle` in your
-command with `gradlew` (*nix) or `gradlew.bat` (Windows).
+If you just want to initiate the Wrapper, you need to have Gradle. Run
+`gradle wrapper` in the extension directory. To build the project with the
+Wrapper, replace `gradle` in your commands with `gradlew` (*nix) or
+`gradlew.bat` (Windows). For example, `gradlew.bat build`.
 
 # Creating a Skeleton Extension
 
 1. Create the `src\burp` directory. This directory will contain the `burp`
    package.
-    * Other packages will go under `src`.
-2. Under `src\burp` create a file named `BurpExtender.java`.
+    * All packages will be under `src`.
+2. In `src\burp` create a file named `BurpExtender.java`.
     * This file will be the extension's entry point.
     {{< imgcap title="Extension directory at this step" src="01-burpextender.png" >}}
-3. Edit `BurpExtender.java` and add the following code.
+3. Edit `BurpExtender.java` and add this code.
 
 {{< codecaption title="BurpExtender.java" lang="java" >}}
 package burp;
@@ -218,18 +225,20 @@ public class BurpExtender implements IBurpExtender
 }
 {{< /codecaption >}}
 
-Note: If your extension only has one package  (or a few files), put all your
-files inside `src`.
+Note: If your extension only has one package (or a few files), you can put all
+your files inside `src` directly.
 
 # Setting up VS Code Tasks
 To make our life easier, we are going to assign the `bigJar` Gradle task to the
-default build task in VS Code.
+default build task in VS Code. This is important if your extension uses non-Burp
+dependencies (like `gson` above). In this case you need to publish this
+jar file.
 
 1. Press `Ctrl+Shift+P` or `F1` to open the VS Code command palette.
 2. Type `task` and select `Configure Default Build Task`.
 3. Select `Create tasks.json file from template`.
 4. Select `Others`.
-    1. This will create the `.vscode\tasks.json` file.
+    1. VS Code will create the `.vscode\tasks.json` file.
 5. Open `.vscode\tasks.json` and paste the following in it:
 
 {{< codecaption title="tasks.json" lang="json" >}}
@@ -255,14 +264,14 @@ default build task in VS Code.
 
 Now we can build our project with:
 
-1. Pressing `Ctrl+Shift+B`. **Recommended**.
+1. Pressing `Ctrl+Shift+B`. **Recommended**, it's faster and looks 1337.
 2. `Terminal (menu) > Run Task (sub menu) > gradle`.
-3. Opening the command palette and typing `tasks` then selecting `Run Build Task`.
+3. Opening the command palette, typing `tasks` then selecting `Run Build Task`.
 
 Run it once to download the Burp Extender interface and build the library. The
 output jar will be in `build\libs\burp-sample-extension-java-all.jar`.
 
-# Getting IntelliCode
+# Setting Up IntelliCode
 Our build works but You might have noticed that VS Code does not recognize
 imported interfaces from the `burp` package.
 
@@ -278,12 +287,13 @@ to clean the Java language server.
 
 {{< imgcap title="IntelliCode support" src="03-intellicode.png" >}}
 
+**Note:** This is the solution to most `vscode-java` extension problems.
+
 # Burp Setup
 Let's add some code to the extension to show how I test the extension after
 each build.
 
-Modify `BurpExtender.java`. See how IntelliCode is making our
-life easier.
+Modify `BurpExtender.java`. See how IntelliCode is making our life easier.
 
 {{< imgcap title="IntelliCode in action, woot!" src="04-intellicode2.gif" >}}
 
@@ -306,8 +316,8 @@ public class BurpExtender implements IBurpExtender
 }
 {{< /codecaption >}}
 
-This will print the extension file name to the console. Build the extension with
-`Ctrl+Shift+B`.
+This code prints the extension file name to the console. Build the extension
+with `Ctrl+Shift+B`.
 
 {{< imgcap title="Extension built" src="05-build.png" >}}
 
@@ -315,16 +325,20 @@ The jar file will appear in `build\libs`.
 
 {{< imgcap title="Built jar" src="06-built-jar.png" >}}
 
-To test the extension I start Burp in a second monitor. Then detach the
-`Extender` window via `Window (menu) > Detach Extender`. Then press `Windows +
-Left Arrow Key` to send to the corner of a screen. Windows will show a list of
-other processes and ask me to select the other window in that screen. I will
-choose Burp this time. Then I can grab the border between these two windows and
-make Extender smaller.
+Visual setup:
+
+1. Start Burp in a second monitor.
+2. Detach the `Extender` window via `Window (menu) > Detach Extender`.
+3. Press `Windows+Left Arrow` to send it to the corner of the screen.
+4. Windows will show a list of other processes and ask me to select the other
+   window in that screen.
+5. Choose Burp so the Extender and Burp appear side by side in the second
+   screen.
+6. Grab the border between these two windows to adjust their sizes.
 
 My extension development cycle is:
 
-1. Edit code in monitor 1.
+1. Edit code in monitor 1 in VS Code.
 2. Press `Ctrl+Shift+B` to build.
 3. `Ctrl+Left-Click` on the checkbox in front of the extension in Extender to
    reload it (this is in monitor 2).
@@ -347,13 +361,14 @@ extensions in VS Code. Looking around, I could only find a few references:
       burp.StartBurp.main()"
 
 The VS Code Java extension pack comes with a Java debugger. To use it we need to
-run Burp with this command-line parameter:
+run Burp with this command-line option:
 
 * `-agentlib:jdwp=transport=dt_socket,address=localhost:8000,server=y,suspend=n`
 
 This will run the debug server at `localhost:8000`. Note that most examples on
-the internet run the server without the `localhost` so the server will listen on
-`0.0.0.0` which is not good.
+the internet run the server with just the port so the server will listen on
+`0.0.0.0` which is obviously not good (unless you want to debug from a remote
+machine).
 
 Next, we have to run Burp's jar file with the following parameter. Burp's jar
 file is at this path in a default installation:
@@ -383,12 +398,12 @@ adding the following line to the file:
 Now we can run the `exe` and debug our extensions. I have included a sample 
 `.vmoptions` file in the git repository.
 
-Now we have to launch the Java debugger in VS Code and connect to it. Put a
-breakpoint on the `callbacks.printOutput(fileName);` line. Then select
-`Debug (menu) > Start Debugging` or press `F5`.
+Next we have to launch the Java debugger in VS Code and connect to the debug
+port. Put a breakpoint on the `callbacks.printOutput(fileName);` line. Then
+select `Debug (menu) > Start Debugging` or press `F5`.
 
-This will create the `.vscode\launch.json` file and open it. Paste the following
-code into it:
+This will create the `.vscode\launch.json` file and open it. Paste this code
+into it and save:
 
 {{< codecaption title="launch.json" lang="json" >}}
 {
@@ -405,12 +420,15 @@ code into it:
 }
 {{< /codecaption >}}
 
-Start debugging again. Windows Firewall might pop-up, not giving access
-should not disrupt anything because the server only listening on localhost. If
-the debugger times out while the firewall window is active, debug again (`F5`).
+The file is very simple. The only important options are the `hostName` and
+`port` which should point to the debug port specified above (`localhost:8000`).
 
-After the debugger is attached, reload the extension again (`Ctrl+Right-Click`
-on the checkbox) and see the debugger break.
+Start debugging again. Windows Firewall dialog might pop-up. If it does and you
+are not debugging a remote machine, press cancel. If the debugger times out
+while the firewall dialog is active, debug again (`F5`).
+
+After the debugger is attached, reload the extension with `Ctrl+Right-Click`
+on the checkbox and see the debugger break.
 
 {{< imgcap title="Achievement unlocked: Debugging in VS Code" src="08-debugging.png" >}}
 
@@ -418,18 +436,20 @@ Pretty nifty and super useful.
 
 # Storing the Extension's Jar in a Different Path
 If you look inside the `build` directory, you will see a lot of class files. We
-do not want these in our source control. It's wise to add `build` to the
-`.gitignore` file. However, that means our final jar file is also ignored.
+do not want these in our source control. It's wise to add the `build` directory
+to the `.gitignore` file. But this means our final jar file is also ignored and
+we want our final jar file in the repository so people can just grab it and use
+it.
 
-We can change the location of the extension's jar file by modifying
-`build.gradle`. The `libsDirName` property will be where the final jar file will
-be located.
+We can change the location of the extension's jar file by modifying the
+`libsDirName` property in `build.gradle`.
 
 ```
 libsDirName = "../@jar"
 ```
 
-will build the extension and copy it to `@jar\burp-sample-extension-java-all.jar`.
+This config copy the final jar file to
+`@jar\burp-sample-extension-java-all.jar`.
 
 # What Did We Learn Here Today?
 
@@ -437,7 +457,7 @@ will build the extension and copy it to `@jar\burp-sample-extension-java-all.jar
 2. Setup Gradle and build the extension.
 3. Enable Java IntelliCode in VS Code.
 4. Debug Java Burp extensions in VS Code.
-5. Change the location of the built jar file.
+5. Change the location of the final jar file.
 
 <!-- Links -->
 [imsgeditor-doc]: https://portswigger.net/burp/extender/api/burp/IMessageEditor.html

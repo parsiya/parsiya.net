@@ -780,7 +780,7 @@ Important part is here:
 
 There are multiple ways to do this:
 
-* Set a breakpoint on `mov DWORD PTR [rbp-0x4],eax` and modified the value of `eax` to `0x04C9`.
+* Set a breakpoint on `mov DWORD PTR [rbp-0x4],eax` and modify the value of `eax` to `0x04C9`.
 * Set a breakpoint on `jne 0x555555555597 <main+205>` and change the `ZF`.
 * And more.
 
@@ -1052,7 +1052,7 @@ if ($(netstat -ano | Select-String "127.0.0.1:8080").Length -ne 0 -or (Get-WmiOb
 ## 9.3 Stop the Malware
 **The answer is `yippeekiyaa.aaay`.**
 
-We are looking for a killswitch [similar to WannaCry(https://www.wired.com/2017/05/accidental-kill-switch-slowed-fridays-massive-ransomware-attack/)]. The WannaCry checked for a non-registered domain and if it got a response from that domain, it would not activate. In the malware source code we can check termination by looking for `return` instructions.
+We are looking for a killswitch [similar to WannaCry](https://www.wired.com/2017/05/accidental-kill-switch-slowed-fridays-massive-ransomware-attack/). The WannaCry ransomware checked for a non-registered domain and if it got a response from that domain, it would not activate. In the malware source code we can check termination by looking for `return` instructions.
 
 The following `return` check looks familiar:
 
