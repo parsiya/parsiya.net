@@ -243,7 +243,7 @@ default build task in VS Code.
             "type": "shell",
             "command": "gradle bigjar",
             // "command": "gradlew.bat bigjar", // Wrapper on Windows
-            // "command": "gradlew bigjar",     // Wrapped on *nix
+            // "command": "gradlew bigjar",     // Wrapper on *nix
             "group": {
                 "kind": "build",
                 "isDefault": true
