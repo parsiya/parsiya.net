@@ -345,8 +345,16 @@ extension does.
 It's also possible to compile the string into a class file and then execute it.
 To make a class file, we can either do it programmatically with
 [Context.compileString][compilestring-doc]. The result is a [Script][script-doc]
-that can be executed with `exec`. This is not useful here because we are not
-executing the script.
+that can be executed with `exec`. In this case, `exec` will the equivalent of
+`evaluateString`.
+
+So for `beautify.js` we can also use:
+
+```java
+Script scr = cx.compileString(jsbeautifyFile, "beautify.js", 0, null);
+scr.exec(cx, scope);
+Object fjsBeautify = scope.get("beautify", scope);
+```
 
 ## Creating Class Files from JavaScript Files
 We can create a class file from a JavaScript file using the Rhino jar.
@@ -360,6 +368,8 @@ We can create a class file from a JavaScript file using the Rhino jar.
 See the options at:
 
 * https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Rhino/JavaScript_Compiler
+
+I do not know how to use this yet.
 
 ## js_beautify Options
 The `js_beautify` function has a second optional parameter. This is a JSON
