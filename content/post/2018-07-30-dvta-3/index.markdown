@@ -99,7 +99,7 @@ The application connects and runs the following query:
 
 * `select * from expenses`
 
-Next is the FTP connection to `localhost:22`. We can see it's in cleartext and user/pass is visible.
+Next is the FTP connection to `localhost:21`. We can see it's in cleartext and user/pass is visible.
 
 {{< imgcap title="FTP traffic and password displayed in Wireshark" src="img/08.png" >}}
 
@@ -136,7 +136,7 @@ We can see connections to:
 
 * Fetching login token from `time.is:443`.
 * MSSQL server at `localhost:49622`.
-* FTP at `localhost:22` and `54823` (ephemeral port for actual `STOR` action).
+* FTP at `localhost:21` and `54823` (ephemeral port for actual `STOR` action).
 
 # Conclusion
 We learned how to identify network endpoints using two tools. We did some limited traffic analysis. In the next part, we will learn how to manipulate traffic in different ways.
