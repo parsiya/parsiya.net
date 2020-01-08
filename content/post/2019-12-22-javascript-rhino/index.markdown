@@ -13,13 +13,13 @@ tags:
 - Rhino
 ---
 
-This post discusses what I learned about executing JavaScript modules in Java
+This post discusses what I learned about executing JavaScript code in Java
 with Mozilla Rhino. By the end of this post, you will know:
 
 1. What Rhino is.
 2. How to use Rhino in your Java application (e.g., a Burp extension).
 3. Some tips and tricks when dealing with Rhino.
-4. Alternative options.
+4. Alternative options to using Rhino.
 
 Code is at:
 
@@ -44,7 +44,7 @@ extension to see if it still works (the last update was more than 6 years ago)
 but when I modified it in my example application, I got an error.
 
 If your extension is in Python, `js-beautify` has
-[Python bindings][js-beautify-python] that can be used in your extension.
+[Python bindings][js-beautify-python].
 
 For the remainder of the blog, I will work on an example that reads minified
 JavaScript from a file, beautifies it, and stores it in another file.
@@ -54,12 +54,14 @@ Let's start with a skeleton project. This is not a Burp extension but we can use
 the instructions from [Developing and Debugging Java Burp Extensions with VisualStudio Code]
 ({{< relref "/post/2019-12-02-java-burp-1/index.markdown" >}} "Developing and Debugging Java Burp Extensions with VisualStudio Code").
 
-Our `build.gradle` is a bit different this time because we are making a
-standalone application. See the comments to figure out what was changed. The
-most important part is adding Rhino as a dependency with: `compile
-'org.mozilla:rhino:1.7.11'`.
+Our `build.gradle` is different this time because we are making a standalone
+application. See the comments to figure out what was changed. The most important
+parts are:
 
-```
+* Adding Rhino as a dependency with `compile 'org.mozilla:rhino:1.7.11'`.
+* Creating the `Main-Class` attribute to be able to do `java -jar whatever.jar`.
+
+```json
 // Apply the application plugin (runs the 'java' plugin implicitly).
 apply plugin: 'application'
 
@@ -133,9 +135,9 @@ public static String getResourceFile(Class cls, String name) throws IOException 
 }
 ```
 
-If you are already using the [Apache Commons IO][commons-io-github]
-library then this function is not an overhead. The following utility function does
-the same but without the extra dependency.
+If you are already using the [Apache Commons IO][commons-io-github] library then
+this function is not an overhead. The following utility function does the same
+but without the extra dependency.
 
 ```java
 public static String getResourceFile(String name) throws IOException {
@@ -192,8 +194,8 @@ Follow the BurpSuiteJSBeautifier extension source code at
 * or this solution on [Stack Overflow][beautify-stackoverflow].
 
 Tl;DR, we need to add a `global` variable to our scope because the `js_beautify`
-function is added to the global variable. See the last few lines of `beautify.js` in the
-following snippet:
+function is added to the global variable. See the last few lines of
+`beautify.js` in the following snippet:
 
 ```javascript
 var js_beautify = legacy_beautify_js;
@@ -226,12 +228,12 @@ String jsbeautifyFile = getResourceFile(Beautify.class, "/beautify.js");
 cx.evaluateString(scope, "var global = {}; "+jsbeautifyFile, "global", 0, null);
 ```
 
-If you do not include the initial forward-slash before the file name, you will
-waste a few hours as I did.
+Note the initial forward slash in the file name `/beautify.js`. This wasted a
+few hours of my life.
 
-Next is what wasted a few more hours of my life. In both the extension and the
-Stack Overflow solution, the function is retrieved from the scope directly like
-this:
+Next is what wasted a few more hours of my life. In both the Burp extension and
+the Stack Overflow solution, the function is retrieved from the scope directly
+like this:
 
 ```java
 // Solution: https://stackoverflow.com/a/16338524 -- doesn't work
@@ -248,7 +250,7 @@ Instead, what I did was add a new script to scope.
 cx.evaluateString(scope, "var js_beautify = global.js_beautify;", "export", 0, null);
 ```
 
-Now we can get this new function with:
+We can get this new function with:
 
 ```java
 // Get the function.
@@ -343,7 +345,7 @@ extension does.
 
 # Precompiling to Bytecode
 It's also possible to compile the string into a class file and then execute it.
-To make a class file, we can either do it programmatically with
+To make a class file, we can do it programmatically with
 [Context.compileString][compilestring-doc]. The result is a [Script][script-doc]
 that can be executed with `exec`. In this case, `exec` will the equivalent of
 `evaluateString`.
@@ -360,7 +362,7 @@ Object fjsBeautify = scope.get("beautify", scope);
 We can create a class file from a JavaScript file using the Rhino jar.
 
 1. Download the Rhino jar file to a path.
-    1. For example, `rhino-1.7.11.jar` from https://github.com/mozilla/rhino/releases/tag/Rhino1_7_11_Release.
+    1. E.g., `rhino-1.7.11.jar` from https://github.com/mozilla/rhino/releases/tag/Rhino1_7_11_Release.
 2. Run the following command.
     1. `java -cp rhino-1.7.11.jar org.mozilla.javascript.tools.jsc.Main beautify.js`
 3. Load the resulting class file and use objects/functions/etc.
@@ -369,7 +371,7 @@ See the options at:
 
 * https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Rhino/JavaScript_Compiler
 
-I do not know how to use this yet.
+I have not been able to load the compiled strings in Rhino and execute them yet.
 
 ## js_beautify Options
 The `js_beautify` function has a second optional parameter. This is a JSON
@@ -380,16 +382,17 @@ string with options. See an example at:
 # Alternatives
 Instead of using Rhino, it's possible to call `js-beautify` via the command
 line. This method requires the https://www.npmjs.com/package/js-beautify to be
-installed globally.
+installed globally or your Java code should point to
+`node_modules/.bin/js-beautify`.
 
 Then we can call `js-beautify -f inputfile -o output-file`.
 
-Another option is to create an executable using https://github.com/zeit/pkg and
-calling it similarly. This means we do not need to install the package. The
-executable on Windows is around 40 MBs.
+Another option is to create an executable using https://github.com/zeit/pkg.
+This means we do not need to install the package. The executable size on Windows
+is around 40 MBs.
 
-These two might be better your usecase. However, that means you have to create
-the dependencies yourself and or ship them your app.
+These two might be better your use case. However, that means you have to create
+the dependencies yourself and or ship them with your app.
 
 # What Did We Learn Here Today?
 
