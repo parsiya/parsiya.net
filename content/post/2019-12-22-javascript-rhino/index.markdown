@@ -55,19 +55,20 @@ the instructions from [Developing and Debugging Java Burp Extensions with Visual
 ({{< relref "/post/2019-12-02-java-burp-1/index.markdown" >}} "Developing and Debugging Java Burp Extensions with VisualStudio Code").
 
 Our `build.gradle` is different this time because we are making a standalone
-application. See the comments to figure out what was changed. The most important
-parts are:
+application. The most important parts are:
 
 * Adding Rhino as a dependency with `compile 'org.mozilla:rhino:1.7.11'`.
 * Creating the `Main-Class` attribute to be able to do `java -jar whatever.jar`.
 
-```json
+See the comments to figure out what was changed.
+
+```java
 // Apply the application plugin (runs the 'java' plugin implicitly).
 apply plugin: 'application'
 
 // Use Maven (because Burp Extender is on Maven)
 repositories {
-     mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
