@@ -380,10 +380,6 @@ class BurpExtender(IBurpExtender, ITab, IHttpListener, IMessageEditorController,
         self._responseViewer = callbacks.createMessageEditor(self, False)
 ```
 
-In my extension `Bug Diaries`, it was a nightmare. I had to implement
-`IHttpRequestResponse`, `IHttpService` and this interface. It did not work out
-in the end. I will update this section if I figure it out.
-
 # Select the Current Text When Control is Selected
 When tabbing between controls that have text (e.g., JTextField, JTextArea), we
 want the current selection. This allows us to replace the default text with new
