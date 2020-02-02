@@ -36,9 +36,10 @@ below or `ctrl+f` and search for keywords.
     - [Setup Github-Gitlab SSH Keys in 'Bash on Windows'](#setup-github-gitlab-ssh-keys-in-bash-on-windows)
     - [Exit Status 3221225781](#exit-status-3221225781)
     - [Map a Drive to a Specific Directory](#map-a-drive-to-a-specific-directory)
-    - [Disable Monitors Going to Sleep after Locking the Computer](#disable-monitors-going-to-sleep-after-locking-the-computer)
+    - [Prevent Monitors from Going to Sleep after Locking the Computer](#prevent-monitors-from-going-to-sleep-after-locking-the-computer)
     - [Convert a plist File to XML on Windows](#convert-a-plist-file-to-xml-on-windows)
     - [Oneliner to Find Unquoted Service Paths](#oneliner-to-find-unquoted-service-paths)
+    - [Run Edge(Chromium) with a Proxy](#run-edgechromium-with-a-proxy)
 - [Powershell](#powershell)
     - [List All Files (Including Hidden Files)](#list-all-files-including-hidden-files)
     - [Diff in Powershell](#diff-in-powershell)
@@ -73,18 +74,27 @@ below or `ctrl+f` and search for keywords.
     - [Associate an Extension with a Specific Language](#associate-an-extension-with-a-specific-language)
     - [Install a Specific Version of an Extension](#install-a-specific-version-of-an-extension)
 - [Sublime Text 3](#sublime-text-3)
-    - [Fix &quot;MarGo build failed&quot; for GoSublime on Windows](#fix-quotmargo-build-failedquot-for-gosublime-on-windows)
+    - [Fix "MarGo build failed" for GoSublime on Windows](#fix-margo-build-failed-for-gosublime-on-windows)
     - [Open the same file in a new tab](#open-the-same-file-in-a-new-tab)
 - [Burp](#burp)
     - [Quality of Life Tips and Tricks for Burp](#quality-of-life-tips-and-tricks-for-burp)
     - [Selected text in Burp is black](#selected-text-in-burp-is-black)
     - [Using iptables to Proxy Android App with Burp](#using-iptables-to-proxy-android-app-with-burp)
+    - [Regex to Search for URLs in Burp Responses](#regex-to-search-for-urls-in-burp-responses)
 - [Linux](#linux)
     - [Python Module Installed with pip but Command is not Available](#python-module-installed-with-pip-but-command-is-not-available)
     - [Add a User to sudoers on Debian](#add-a-user-to-sudoers-on-debian)
 - [Docker](#docker)
     - [Commands](#commands)
     - [Troubleshooting](#troubleshooting)
+- [Python](#python)
+    - [Create All Possible Combinations of Two Lists of Strings](#create-all-possible-combinations-of-two-lists-of-strings)
+    - [Multi-line String](#multi-line-string)
+    - [Main](#main)
+    - [Format String with {}](#format-string-with-)
+    - [bytearray](#bytearray)
+    - [Cyclic XOR on bytearrays](#cyclic-xor-on-bytearrays)
+- [Cyclic XOR on Strings](#cyclic-xor-on-strings)
 - [Misc](#misc)
     - [Download Youtube Videos with Substitles](#download-youtube-videos-with-substitles)
     - [Print Envelopes with the Brother DW2280 printer and LibreOffice](#print-envelopes-with-the-brother-dw2280-printer-and-libreoffice)
@@ -344,7 +354,7 @@ Use these instructions to automount it at startup:
 
 * http://woshub.com/auto-mount-vhd-at-startup/
 
-### Disable Monitors Going to Sleep after Locking the Computer
+### Prevent Monitors from Going to Sleep after Locking the Computer
 After locking the computer the monitor might go to sleep. To disable:
 
 1. Open the following registry key:
@@ -369,6 +379,18 @@ Source: https://superuser.com/a/1264369
 
 ### Oneliner to Find Unquoted Service Paths
 `wmic service get displayname,pathname|findstr /IV "C:\Windows"|findstr /IV """`
+
+### Run Edge(Chromium) with a Proxy
+The new Edge uses Chromium. Chromium uses the WinINET proxy settings. Instead of
+redirecting everything to the browser, we can set the proxy using the command
+line:
+
+* `"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --proxy-server="http://localhost:8080"`
+
+The following does the same but falls back to direct connect if the proxy is not
+available. Don't use this because you will not know if the fall back happens:
+
+* `"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --proxy-server="http://localhost:8080,direct://"`
 
 ------
 
@@ -768,6 +790,19 @@ Source: http://blog.dornea.nu/2014/12/02/howto-proxy-non-proxy-aware-android-app
 
 [invisible-proxy]: https://portswigger.net/burp/documentation/desktop/tools/proxy/options/invisible
 
+### Regex to Search for URLs in Burp Responses
+Not the best regex but does the job:
+
+* `http([^"])*\.([^"])+`
+
+Better but more expensive one:
+
+```
+/(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)
+    (?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*
+    (?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])
+```
+
 ------
 
 ## Linux
@@ -822,6 +857,82 @@ They are installed in `~/.local/bin`. Add it to your `$PATH`.
 
 * Error starting userland proxy: mkdir ... : input/output error.
     * Restart docker. On Windows, right click the docker tray icon and select `Restart...`.
+
+------
+
+## Python
+
+### Create All Possible Combinations of Two Lists of Strings
+
+```python
+from itertools import product
+
+if __name__ == "__main__": 
+    set1 = ["https://example.net", "https://google.com"]
+    set2 = ["/whatever", "/something"]
+  
+for e1, e2 in product(set1, set2):
+    print(e1+e2)
+```
+
+### Multi-line String
+Note the space on second line.
+
+``` python
+string1 = "This is line one of the string that is going to be over 80"
+          " characters and thus needs to be broken into two or more lines."
+```
+
+### Main
+Because I always forget.
+
+```python
+def main():
+    # whatever
+
+if __name__ == "__main__":
+    main()
+```
+
+### Format String with {}
+
+```python
+"{}*{} = {}".format(x, y, x*y)
+```
+
+### bytearray
+With Python 3, it's not that useful but still:
+
+* [http://dabeaz.blogspot.com/2010/01/few-useful-bytearray-tricks.html](http://dabeaz.blogspot.com/2010/01/few-useful-bytearray-tricks.html)
+
+### Cyclic XOR on bytearrays
+
+```python
+import itertools
+
+def xor_byte(payload, key):
+    """
+    Get a bytearray, XOR it with a key (bytearray) and repeat the key
+    Return bytearray
+    """
+    return bytearray((mybyte ^ keybyte) for (mybyte, keybyte) in
+                     itertools.izip(payload, itertools.cycle(key)))
+```
+
+## Cyclic XOR on Strings
+Same as above but string
+
+```python
+import itertools
+
+def xor_str(payload, key):
+    """
+    Get a string, XOR it with a key (string) and repeat the key
+    Return string
+    """
+    return "".join(chr(ord(mybyte) ^ ord(keybyte)) for (mybyte, keybyte) in
+                   itertools.izip(payload, itertools.cycle(key)))
+```
 
 ------
 
