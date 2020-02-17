@@ -22,11 +22,19 @@ Code is in my clone at:
 <!--more-->
 
 # gopacket
-[gopacket][gopacket-godoc] is the official Go library for packet manipulation. It also supports reading and writing pcap files through `gopacket/pcap`.
+[gopacket][gopacket-godoc] is the official Go library for packet manipulation.
+It also supports reading and writing pcap files through `gopacket/pcap`.
 
-I started following [this tutorial from dev dungeon][dev-dungeon-go] (skipped the capturing part because I have a pcap file in hand). We need to `go get` both `gopacket` and `gopacket/pcap`.
+I started following [this tutorial from dev dungeon][dev-dungeon-go] (skipped
+the capturing part because I have a pcap file in hand). We need to `go get` both
+`gopacket` and `gopacket/pcap`.
 
-`go get github.com/google/gopacket/pcap` won't work on Windows. I searched around and found an [answer on Stack Overflow][stackoverflow-compile-gopacket]. I got it to work with some modification.
+`go get github.com/google/gopacket/pcap` won't work on Windows. I searched
+around and found an [answer on Stack Overflow][stackoverflow-compile-gopacket].
+I got it to work with some modification.
+
+Update February 2020: Seems like this is not an issue anymore. Running the `go
+get` command above worked for me on Windows 10.
 
 ## go get pcap on Windows
 
@@ -44,7 +52,8 @@ I started following [this tutorial from dev dungeon][dev-dungeon-go] (skipped th
 10. Finally `go get github.com/google/gopacket/pcap`.
 
 # Reading pcaps
-Following the tutorial I started making code snippets to do what I wanted. Most code is based on the tutorial.
+Following the tutorial I started making code snippets to do what I wanted. Most
+code is based on the tutorial.
 
 Gopacket godoc and source are also your friends:
 
@@ -98,10 +107,15 @@ $ go run go-pcap-test1.go
 exit status 1
 ```
 
-Seems like the original file was in `pcapng` format which is not supported by `gopacket`. Converting the file to `pcap` worked. The new file is named `conv.pcap`.
+Seems like the original file was in `pcapng` format which is not supported by
+`gopacket`. Converting the file to `pcap` worked. The new file is named
+`conv.pcap`.
 
 ## Setting Filters
-Reading everything in the pcap file is good but not what we want. We want to set a filter and only read certain packets. This can be done with `handle.SetBPFFilter(filter)` in which `filter` is a string containing a filter in [BPF syntax][bpf-syntax]. We just pass the filter `icmp`:
+Reading everything in the pcap file is good but not what we want. We want to set
+a filter and only read certain packets. This can be done with
+`handle.SetBPFFilter(filter)` in which `filter` is a string containing a filter
+in [BPF syntax][bpf-syntax]. We just pass the filter `icmp`:
 
 {{< codecaption title="Setting filters - pcap-2.go" lang="go" >}}
 // How to set a filter and only read certain packets from the pcap file
@@ -151,9 +165,13 @@ func main() {
 This code only reads packets of type `icmp`.
 
 ## Layers
-`gopacket` is based on layers. You can get each layer from raw packet data (either from the pcap file or just bytes). Layers are in `github.com/google/gopacket/layers`. We are interested in IPv4 pings so I used `ipLayer := packet.Layer(layers.LayerTypeIPv4)`.
+`gopacket` is based on layers. You can get each layer from raw packet data
+(either from the pcap file or just bytes). Layers are in
+`github.com/google/gopacket/layers`. We are interested in IPv4 pings so I used
+`ipLayer := packet.Layer(layers.LayerTypeIPv4)`.
 
-Now `ipLayer` is a `*layers.IPv4` (don't worry about it being a pointer) and we can print it with `fmt.Printf("%+v", ipLayer)` to get:
+Now `ipLayer` is a `*layers.IPv4` (don't worry about it being a pointer) and we
+can print it with `fmt.Printf("%+v", ipLayer)` to get:
 
 {{< codecaption title="ipLayer contents" lang="go" >}}
 &{BaseLayer:{Contents:[69 0 0 114 185 229 64 0 64 1 29 246 172 16 133 141 172
@@ -168,16 +186,22 @@ Protocol:ICMPv4 Checksum:7670 SrcIP:172.16.133.141 DstIP:172.16.133.1
 Options:[] Padding:[]}
 {{< /codecaption >}}
 
-Remember those are printed in decimal (bytes are just uint8 in go) and not hex. Personally I prefer printing in hex because it's easier for me to read ASCII-Hex.
+Remember those are printed in decimal (bytes are just uint8 in go) and not hex.
+Personally I prefer printing in hex because it's easier for me to read
+ASCII-Hex.
 
 ### IPv4 Layer
-At this point you would think we could just do `ipLayer.Payload` and read it but we get:
+At this point you would think we could just do `ipLayer.Payload` and read it but
+we get:
 
 `ipLayer.Payload undefined (type gopacket.Layer has no field or method Payload)`
 
-But if we print the type with `%T` we get `*layers.IPv4` and when we print it with `%+v` we can see the `Payload` field.
+But if we print the type with `%T` we get `*layers.IPv4` and when we print it
+with `%+v` we can see the `Payload` field.
 
-What we have is an interface and the compiler does not know it's going to be populated by `*layers.IPv4` at runtime. We need to cast the packet to `*layers.IPv4` manually. Then we can access `Payload`:
+What we have is an interface and the compiler does not know it's going to be
+populated by `*layers.IPv4` at runtime. We need to cast the packet to
+`*layers.IPv4` manually. Then we can access `Payload`:
 
 {{< codecaption title="Casting ipLayer to ip" lang="go" >}}
 ip, _ := ipLayer.(*layers.IPv4)
@@ -201,9 +225,12 @@ Which results in
           IG1pbmltIGJvdWRp
 {{< /codecaption >}}
 
-For more info see section [Pointers to Known Layers][gopacket-godoc-pointers] in gopacket docs.
+For more info see section [Pointers to Known Layers][gopacket-godoc-pointers] in
+gopacket docs.
 
-So we mostly got everything, the payload is some headers and then base64 encoded data. We could just discard the first 8 (header) + 9 (`$$START$$`) and grab what we want. But let's do things properly.
+So we mostly got everything, the payload is some headers and then base64 encoded
+data. We could just discard the first 8 (header) + 9 (`$$START$$`) and grab what
+we want. But let's do things properly.
 
 ## Creating an ICMP Message in Go
 We can create an `icmp` message from the IPv4 layer payload.
@@ -221,7 +248,9 @@ const (
 msg, err := icmp.ParseMessage(ProtocolICMP, ip.Payload)
 {{< /codecaption >}}
 
-`ProtocolICMP` and `ProtocolIPv6ICMP` are defined in `golang.org/x/net/internal/iana`. It's an internal package and we cannot use it directly. Instead I have copied the constants directly in my code.
+`ProtocolICMP` and `ProtocolIPv6ICMP` are defined in
+`golang.org/x/net/internal/iana`. It's an internal package and we cannot use it
+directly. Instead I have copied the constants directly in my code.
 
 The result is [*icmp.Message][icmp-message-godoc]:
 
@@ -234,7 +263,8 @@ type Message struct {
 }
 {{< /codecaption >}}
 
-We are interested in `Body` of type [MessageBody][messagebody-icmp-godoc] which is again an interface. If we print the value and type we get:
+We are interested in `Body` of type [MessageBody][messagebody-icmp-godoc] which
+is again an interface. If we print the value and type we get:
 
 {{< codecaption title="ip.Body" lang="go" >}}
 &{ID:4164 Seq:256
@@ -247,7 +277,8 @@ We are interested in `Body` of type [MessageBody][messagebody-icmp-godoc] which 
 {{< /codecaption >}}
 
 ### Getting ICMP Payload
-But again we need to cast it to `*icmp.Echo` before we can get the `Data` field which contains the payload.
+But again we need to cast it to `*icmp.Echo` before we can get the `Data` field
+which contains the payload.
 
 {{< codecaption title="Casting ip.Body to *icmp.Echo" lang="go" >}}
 if body, err := msg.Body.(*icmp.Echo); err {
