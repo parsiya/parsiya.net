@@ -741,7 +741,7 @@ build.
 
 ### Quality of Life Tips and Tricks for Burp
 
-* See my blog post: [Quality of Life Tips and Tricks - Burp Suite]({{< relref "/post/2019-10-13-quality-of-life-burp/index.markdown" >}} "Quality of Life Tips and Tricks - Burp Suite") 
+* See my blog post: [Quality of Life Tips and Tricks - Burp Suite]({{< relref "post/2019/2019-10-13-quality-of-life-burp/index.markdown" >}} "Quality of Life Tips and Tricks - Burp Suite") 
 
 ### Selected text in Burp is black
 This might happen inside Virtual Box.
