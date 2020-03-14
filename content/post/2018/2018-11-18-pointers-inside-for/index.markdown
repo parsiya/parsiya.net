@@ -9,7 +9,7 @@ categories:
 - Go
 ---
 
-Do not directly assign the for counter/range variables to a slice as pointers. Read this by Jon Calhoun [Variables declared in for loops are passed by reference](https://www.calhoun.io/gotchas-and-common-mistakes-with-closures-in-go/#variables-declared-in-for-loops-are-passed-by-reference). "[...] the variables aren’t being redeclared with each iteration [...]".
+Do not directly assign the for counter/range variables to a slice as pointers. Read this by Jon Calhoun [Variables declared in for loops are passed by reference](https://www.calhoun.io/gotchas-and-common-mistakes-with-closures-in-go/#variables-declared-in-for-loops-are-passed-by-reference). "[...] the variables aren't being redeclared with each iteration [...]".
 
 I have written so much buggy code that I am going to write this down.
 

@@ -212,7 +212,7 @@ Asymmetric key cryptography usage in blockchains:
 
 <a name="24-addresses-and-address-derivation"></a>
 ## 2.4 Addresses and Address Derivation
-Address is a short, alphanumeric string derived from the user’s public key usually through a hash function. Addresses are used in transactions (e.g. transferring money). Addresses are sometimes converted to QR codes for easier use.
+Address is a short, alphanumeric string derived from the user's public key usually through a hash function. Addresses are used in transactions (e.g. transferring money). Addresses are sometimes converted to QR codes for easier use.
 
 <a name="241-private-key-storage"></a>
 ### 2.4.1 Private Key Storage
@@ -241,7 +241,7 @@ How distributed ledgers work (simplified):
 
 <a name="26-blocks"></a>
 ## 2.6 Blocks
-A block contains a list of validated transactions. "‘Validity’ is ensured by checking that the providers of funds in each transaction (listed in the transaction’s ‘input’ values) have each cryptographically signed the transaction."
+A block contains a list of validated transactions. "‘Validity' is ensured by checking that the providers of funds in each transaction (listed in the transaction's ‘input' values) have each cryptographically signed the transaction."
 
 **Parsia's note: I think there's a step missing here, nodes should also check if sender has enough assets for the transfer**.
 

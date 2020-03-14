@@ -13,7 +13,7 @@ title: How do I TLS Ciphersuite?
 
 “Should we use RC4 or AES-CBC ?”
 This is a legitimate question. Many have heard of the highly publicized attacks against AES-CBC (CRIME, BEAST etc) and lean towards RC4.
-If asked (granted no one asks me), my answer would be: If you can control web servers (not feasible in all situations) and users’ browsers
+If asked (granted no one asks me), my answer would be: If you can control web servers (not feasible in all situations) and users' browsers
 (almost impossible), upgrade to TLS 1.2 and go with AES-GCM. However, not many browsers supported these and to be honest, more users trumps loss
 of security in many cases.
 

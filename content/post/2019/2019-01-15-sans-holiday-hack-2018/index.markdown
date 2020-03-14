@@ -1297,7 +1297,7 @@ After decrypting the file, we can see it's a SQLite database file. It starts wit
 # 10. Who Is Behind It All?
 **The answer is `Santa`.** He wanted us to help defend the castle so he made up the challenges. Hans was pretending to be the villain and the toy soldiers are elves in disguise.
 
-> "Based on your victory… next year, I’m going to ask for your help in defending my whole operation from evil bad guys."
+> "Based on your victory… next year, I'm going to ask for your help in defending my whole operation from evil bad guys."
 
 I guess next year's challenge is mostly blue team stuff? Sounds fun.
 

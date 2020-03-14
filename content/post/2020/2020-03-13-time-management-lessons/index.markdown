@@ -51,7 +51,7 @@ I have written about it:
 {{< imgcap title="Time Management for Jedis" src="JFO-skilltree.jpg" >}}
 
 ## The Cycle
-Every morning go somewhere quiet and do these for 10 minutes. It’s OK to take
+Every morning go somewhere quiet and do these for 10 minutes. It's OK to take
 more time especially when starting.
 
 1. Write down all tasks you need to do that day.
@@ -89,9 +89,9 @@ more time especially when starting.
 When you get a new task. You can do one of the following:
 
 * **Delegate**: If someone else can do it, delegate it to them.
-* **Record**: If only you can do the request, but it isn’t urgent, record the
+* **Record**: If only you can do the request, but it isn't urgent, record the
   request and read the summary to the person with the task (your customer).
-    * Record it for later action in a place where it won’t get lost.
+    * Record it for later action in a place where it won't get lost.
     * Make sure that the customer sees you taking action.
     * Ask "Anything else I should capture?"
 * **Do**: If the request is truly urgent, drop what you are working on and do it.
@@ -108,7 +108,7 @@ What tasks are more urgent?
 * Tasks that are due today.
 * Tasks from your boss.
     * Your boss decides your next raise/promotion.
-    * If your boss asks you to do something, and it’s a quick task (not a major
+    * If your boss asks you to do something, and it's a quick task (not a major
       project), do it right away.
 * Tasks that will block another person's work (e.g., resetting a password).
 * "Hurry up and wait" tasks: These tasks start a lengthy process. E.g., ordering
@@ -132,7 +132,7 @@ What tasks are more urgent?
 * Shorten the task (reduce the scope of the task).
 * Change the time estimate.
 * Delegate it to someone else.
-* Don’t work late unless it’s absolutely necessary.
+* Don't work late unless it's absolutely necessary.
 
 ### Which Tasks First?
 
@@ -183,9 +183,9 @@ What tasks are more urgent?
     * Make sure your boss knows your career goals. YMMV.
 * Know when to use upward delegation.
     * Upward delegation means giving an action item to your boss.
-    * Upward delegate only when it leverages your boss’s authority.
+    * Upward delegate only when it leverages your boss's authority.
 * Understand and contribute to their goals.
-    * Understand and help accomplish your boss’s goals.
+    * Understand and help accomplish your boss's goals.
     * When you visibly contribute to making your boss a success, it opens many
       doors
 
@@ -202,7 +202,7 @@ What tasks are more urgent?
         * Mailing lists
             * Review your mailing lists every month and unsubscribe from the
               ones you do not read.
-            * If you aren’t sure if an email list is useful, it isn’t.
+            * If you aren't sure if an email list is useful, it isn't.
         * Ticketing system automated messages.
     * Read and
         * Delete: Things that require no action from you.
@@ -246,14 +246,14 @@ What tasks are more urgent?
 ### Develop Your Own Routines
 Look for:
 
-* Repeated events that aren’t scheduled.
+* Repeated events that aren't scheduled.
 * Maintenance tasks.
 * Relationships and career networking:
     * E.g., 1:1 with your boss, peers and mentors.
 * When procrastinating takes longer than action.
 * Things you forget often
 * Inconsequential or low-priority tasks that can be skipped occasionally but
-  shouldn’t be
+  shouldn't be
     * You can skip them a few times but after that something bad happens.
 * Developing new skills.
 * Keeping up-to-date.
@@ -302,7 +302,7 @@ Write down your goals:
 1. Decide when the goal deadline is.
 2. Break each goal down to specific tasks.
 3. Break tasks into steps.
-    * Don’t worry about writing the steps in chronological order. This can be
+    * Don't worry about writing the steps in chronological order. This can be
       changed.
 4. Write down all tasks and steps.
 5. Schedule the tasks in your calendar according to the deadline.

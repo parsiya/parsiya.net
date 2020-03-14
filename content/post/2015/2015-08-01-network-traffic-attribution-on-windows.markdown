@@ -14,9 +14,9 @@ Thick client assessments come in different flavors. Most of our work is on `cons
 
 When looking at thick client applications from a network traffic perspective, we face two big challenges:
 
-1. **Traffic Attribution** or **Where does this traffic come from?**: How to we identify application’s traffic? The operating system (in this case Windows) is running many applications and services. Each of them may have network connectivity.
+1. **Traffic Attribution** or **Where does this traffic come from?**: How to we identify application's traffic? The operating system (in this case Windows) is running many applications and services. Each of them may have network connectivity.
 
-2. **Proxying Traffic** or **How do I look view/modify traffic?**: This is more challenging and involves capturing, modifying and in a lot of cases decrypting/decoding target application’s traffic. This could be as easy as setting up Burp via an application setting (EZ-mode) or as hard as setting up your own access point to capture a device’s traffic then developing your own decryption plugin for your proxy tool (good luck).
+2. **Proxying Traffic** or **How do I look view/modify traffic?**: This is more challenging and involves capturing, modifying and in a lot of cases decrypting/decoding target application's traffic. This could be as easy as setting up Burp via an application setting (EZ-mode) or as hard as setting up your own access point to capture a device's traffic then developing your own decryption plugin for your proxy tool (good luck).
 
 In this post, I will be talking about the much easier first challenge. I will be talking about some of the tools and techniques that I use to accomplish this. This is not a groundbreaking post ;). We will use a simple application, in this case `notepad++`.
 
@@ -50,12 +50,12 @@ Click on `notepad++.exe` in the tree view to view all of its traffic. We can see
 
 {{< imgcap src="/images/2015/TrafficAttribution1/01.PNG" title="Notepad++ traffic in Netmon" >}}
 
-There’s another `suspicious process` up there. Select `gup.exe` and we can see it is also related to `Notepad++` as it's creating a TLS connection to `notepad-plus-plus.org`.
+There's another `suspicious process` up there. Select `gup.exe` and we can see it is also related to `Notepad++` as it's creating a TLS connection to `notepad-plus-plus.org`.
 
 {{< imgcap src="/images/2015/TrafficAttribution1/02.PNG" title="gup.exe traffic in Netmon" >}}
 
-But wait, there’s more. There may be traffic that is not correctly attributed due to the way that Netmon identifies traffic. We may be able to find some extra stuff there.  
-Here’s a Catch-22, there may be traffic related to our application that Netmon wasn’t able to correlate back to the process but how can we identify it if we do not know the endpoints. We will be using Procmon to compile a more comprehensive endpoint collection later.
+But wait, there's more. There may be traffic that is not correctly attributed due to the way that Netmon identifies traffic. We may be able to find some extra stuff there.  
+Here's a Catch-22, there may be traffic related to our application that Netmon wasn't able to correlate back to the process but how can we identify it if we do not know the endpoints. We will be using Procmon to compile a more comprehensive endpoint collection later.
 
 ### 4.1.1 How to search in Netmon?
 `Contains` is a filter that allows us to do case-insensitive searchs for strings. For example we can use this filter to search for packets with destinations containing the string `sourceforge`. We can use the following filters (they both do the same thing):
@@ -99,7 +99,7 @@ And we can see all events for `notepad++.exe` in Procmon. Take a note of Process
 
 {{< imgcap src="/images/2015/TrafficAttribution1/07.PNG" title="ProcessName is notepad++.exe" >}}
 
-But we want to look at spawned processes too. Let’s remove this filter and find all child processes for `notepad++.exe` using another filter. The new filter is `Parent PID is 3964`and it will show captured events for `gup.exe`.
+But we want to look at spawned processes too. Let's remove this filter and find all child processes for `notepad++.exe` using another filter. The new filter is `Parent PID is 3964`and it will show captured events for `gup.exe`.
 
 {{< imgcap src="/images/2015/TrafficAttribution1/08.PNG" title="ProcessName is Parent PID is 3964" >}}
 
@@ -142,7 +142,7 @@ If we ping it, we can see that the corresponding IP address is `91.121.64.34`. W
 
 It is `notepad-plus-plus.org`. Try pinging `notepad-plus-plus.org` to get `91.121.64.34`.
 
-That was easy wasn’t it?
+That was easy wasn't it?
 
 What did we do? We used Netmon and Procmon to identify the endpoints that an specific application communicates with and isolate traffic belonging to that application. I told you this is nothing ground breaking :).
 
@@ -156,7 +156,7 @@ For more information: [http://blogs.technet.com/b/messageanalyzer/archive/2015/0
 
 **But I want to use Wireshark**
 
-Sure, go ahead. Use Procmon and filters to identify the endpoints and then add filters in Wireshark. Another good thing is that Netmon’s export format (*.cap files) can be opened in Wireshark. If you prefer Wireshark's UI, you can isolate traffic by process in Netmon, save it and then open the resulting cap file in Wireshark.
+Sure, go ahead. Use Procmon and filters to identify the endpoints and then add filters in Wireshark. Another good thing is that Netmon's export format (*.cap files) can be opened in Wireshark. If you prefer Wireshark's UI, you can isolate traffic by process in Netmon, save it and then open the resulting cap file in Wireshark.
 
 **Where are DNS requests? I do not see them in process traffic in Netmon**
 

@@ -847,7 +847,7 @@ We are not getting everything. That means we need to hook more functions.
 
 At this point I am moving on to a different program because the three people that will read this blog are already bored. *ahem* I will leave the rest of IE stuff *as an exercise for the readers*. Academia, amirite fellow intellectuals?
 
-> Here in my university ivory tower, just published this new paper here. It’s fun to look myself up on Google Scholar. But you know what I like more than being cited? KNOWLEDGE.
+> Here in my university ivory tower, just published this new paper here. It's fun to look myself up on Google Scholar. But you know what I like more than being cited? KNOWLEDGE.
 
 # 14 - Not Echo Mirage - Firefox
 The other item in that malware hooking table (well part of the table that I copied) is Firefox.

@@ -39,4 +39,4 @@ Payment processing did not choose this. In order for payment processing to work,
 Did you honestly believe I would forget this edge case?[^1]  I had the same "brilliant moment." If the POS is connected to the network then it's not partitioned. Check mate atheists.
 
 <!-- Footnote -->
-[^1]: Complete quote from Kael'thas: "Don’t look so smug! I know what you’re thinking, but Tempest Keep was merely a set back. **Did you honestly believe I would trust the future to some blind, half-night elf mongrel?** Hahahaha… Oh no, no, no, he was merely an instrument, a stepping stone to a much larger plan! It has all led to this…and this time, you will not interfere!"
+[^1]: Complete quote from Kael'thas: "Don't look so smug! I know what you're thinking, but Tempest Keep was merely a set back. **Did you honestly believe I would trust the future to some blind, half-night elf mongrel?** Hahahaha… Oh no, no, no, he was merely an instrument, a stepping stone to a much larger plan! It has all led to this…and this time, you will not interfere!"

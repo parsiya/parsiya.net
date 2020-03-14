@@ -192,7 +192,7 @@ Burp projects for long-term or cloud storage, I want to reduce their size.
 2. Choose Top/bottom or left/right split.
 
 ### Why?
-When creating screenshots for reports, it’s better to have the tabs on top of
+When creating screenshots for reports, it's better to have the tabs on top of
 each other. Reports are usually in portrait mode. With the top/bottom split, we
 can show both tabs and get a nicer image.
 

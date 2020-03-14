@@ -30,8 +30,8 @@ Seems like the location of header files have moved since then. [This stackoverfl
 {{< codecaption lang="bash" title="more errors" >}}
 $ make
 gcc -Wall -O9    memfetch.c   -o memfetch
-memfetch.c: In function ‘main’:
-memfetch.c:284:25: error: ‘PAGE_SIZE’ undeclared (first use in this function)
+memfetch.c: In function ‘main':
+memfetch.c:284:25: error: ‘PAGE_SIZE' undeclared (first use in this function)
 memfetch.c:284:25: note: each undeclared identifier is reported only once for each function it appears in
 make: *** [memfetch] Error 1
 {{< /codecaption >}}

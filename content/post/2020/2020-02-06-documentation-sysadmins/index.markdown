@@ -30,7 +30,7 @@ Follow five simple rules when setting out to write your documentation:
     1. Know who will be reading your documentation.
     2. Know what they need to get out of it.
 2. Know your content.
-    3. Know what type of information you’re going to present and what level of detail is appropriate for your audience.
+    3. Know what type of information you're going to present and what level of detail is appropriate for your audience.
 3. Know your requirements.
     4. Define requirements before you start.
 4. Make it a habit.
@@ -68,7 +68,7 @@ Procedural documentation addresses multiple goals:
 ## Informational Documentation
 
 * Configuration data, software inventories, etc.
-* Looks static but it’s not. Changes all the time.
+* Looks static but it's not. Changes all the time.
 * If it changes a lot, consider using another way of documenting it.
     * E.g., automation.
 
@@ -100,7 +100,7 @@ Good documentation is:
 
 * Review the documentation regularly to ensure that it continues to meet these criteria.
 * First review immediately after writing and before publication.
-* Reviews whenever changes are made that directly impact the document’s content.
+* Reviews whenever changes are made that directly impact the document's content.
 * Allow users to submit feedback.
 
 # 3. Documentation Format
@@ -142,11 +142,11 @@ Provide it to the following people in order:
 3. At least one person outside the target audience.
 
 # 5. Documentation Strategy
-What if there’s no documentation and no policy?
+What if there's no documentation and no policy?
 
-1. Identify what’s necessary.
+1. Identify what's necessary.
     1. For a week or two write down anything you need to do.
-2. Identify what’s available.
+2. Identify what's available.
     2. Gather everything that is available and categorize it.
     3. Can you reuse anything here for tasks in the last step?
         1. Re-examine it and revise it if needed.
@@ -156,7 +156,7 @@ What if there’s no documentation and no policy?
         3. Documents that are necessary and adequate.
         4. Documents that are necessary but need work.
         5. Unnecessary documents.
-3. Identify what’s important.
+3. Identify what's important.
     6. Prioritize documentation.
         6. Some are more important.
         7. Some are easy work.

@@ -124,7 +124,7 @@ Ask yourself the following questions:
 There's also the option of automating your job but not sharing it. See the
 following urban legends:
 
-* [Is it unethical for me to not tell my employer I’ve automated my job?][automated-stack-exchange]
+* [Is it unethical for me to not tell my employer I've automated my job?][automated-stack-exchange]
 * [Finally fired after 6 years - reddit][fired-after-six-years]
 
 ## What Did We Learn Here Today?

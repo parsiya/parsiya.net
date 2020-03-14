@@ -11,20 +11,20 @@ title: Tales from the Crypt(o) - Leaking AES Keys
 toc: true
 ---
 
-This post is part one of a two part internal blog entry on creating a Pintool for an assessment. Unfortunately I cannot talk about it, so I decided to put the first part out. If I find an opensource program similar to the assessment I will try and recreate the tool (but I am not holding my breath). As this part is essentially a build up, it may not be coherent at times. Alterntively, if you really want to read it, you can join us. We are almost always hiring (let me do the referal though ;).
+This post is part one of a two part internal blog entry on creating a Pintool for an assessment. Unfortunately I cannot talk about it, so I decided to put the first part out. If I find an opensource program similar to the assessment I will try and recreate the tool (but I am not holding my breath). As this part is essentially a build up, it may not be coherent at times. Alteratively, if you really want to read it, you can join us. We are almost always hiring (let me do the referral though ;).
 
 Today we are going to talk about discovering encryption keys in sneaky ways. We will start with simple examples, do a bit of Digital Forensics or DF (for low standards of DF) and finally in part two we will use our recently acquired knowledge of Pintool to do ``[redacted]``.
 
-First let’s talk a bit about the inner-workings of AES decryption. By inner-workings of AES I do not mean the following diagrams that you have seen so many times.
+First let's talk a bit about the inner-workings of AES decryption. By inner-workings of AES I do not mean the following diagrams that you have seen so many times.
 
 <!--more-->
 
 {{< imgcap src="/images/2015/tales1/CBC-Mode-Wikipedia.jpg" title="These are not the diagrams you are looking for - Source: Wikipedia" >}}
 
-Instead I am going to talk about what happens inside those rectangles labeled “block cipher encryption/decryption.” If you don’t want to know about the AES stuff, jump directly to [2. AES Keys in Action](#2-aes-keys-in-action:2cbddf826dbc10ef777e4fb8d0b66a21).
+Instead I am going to talk about what happens inside those rectangles labeled “block cipher encryption/decryption.” If you don't want to know about the AES stuff, jump directly to [2. AES Keys in Action](#2-aes-keys-in-action:2cbddf826dbc10ef777e4fb8d0b66a21).
 
 # 1. Thinking Inside the Box
-Each of these boxes consist of a few rounds. The number of rounds is based on key size in AES. Keep in mind that AES is a subset of the *Rijndael* family of ciphers (and I still do not know how to pronounce the name). NIST (National Institute of Standards and Technology) selected a fixed block size (16 bytes) and three different key sizes (128, 192 and 256 bits) and called it AES (Advanced Encryption Standard) because that’s what NIST does (other than allegedly embedding backdoors in [almost never used](https://www.mail-archive.com/openssl-announce@openssl.org/msg00127.html) random number generators, see [DUAL_EC_DRBG](http://blog.cryptographyengineering.com/2013/09/the-many-flaws-of-dualecdrbg.html) ;)). You do not need to memorize the formula that calculates the number of rounds based on key and block size. You can see the result of my painstaking calculations in the following table:
+Each of these boxes consist of a few rounds. The number of rounds is based on key size in AES. Keep in mind that AES is a subset of the *Rijndael* family of ciphers (and I still do not know how to pronounce the name). NIST (National Institute of Standards and Technology) selected a fixed block size (16 bytes) and three different key sizes (128, 192 and 256 bits) and called it AES (Advanced Encryption Standard) because that's what NIST does (other than allegedly embedding backdoors in [almost never used](https://www.mail-archive.com/openssl-announce@openssl.org/msg00127.html) random number generators, see [DUAL_EC_DRBG](http://blog.cryptographyengineering.com/2013/09/the-many-flaws-of-dualecdrbg.html) ;)). You do not need to memorize the formula that calculates the number of rounds based on key and block size. You can see the result of my painstaking calculations in the following table:
 
     |
     | Key Size (bits)  | Number of Rounds (potatoes) |
@@ -41,14 +41,14 @@ That was easy. So what happens inside each of these rounds. Except the last roun
 There are four different operations but I am going to go into some detail about ``AddRoundKey``. It is also the only operation which introduces an unknown element (key) into the process. The other operations are also simple and we can probably guess what they do based on their names.
 
 ## 1.1 AddRoundKey
-It’s a simple XOR. A 16 byte round key is XOR-ed with the current block. If we count the number of `AddRoundKey` operations for Nr==10, we get 11. But we only have one 16 byte key and need 16*11 or 176 bytes.
+It's a simple XOR. A 16 byte round key is XOR-ed with the current block. If we count the number of `AddRoundKey` operations for Nr==10, we get 11. But we only have one 16 byte key and need 16*11 or 176 bytes.
 
 *“How am I going to create the extra 160 (176-16) bytes?”* one may ask. This is done through some magic known as ``key expansion`` which creates bytes out of thin air. It expands the original key into the 176 bytes also known as ``key schedule``.
 
 ### 1.1.1 AES Key Schedule (aka Rijndael Key Schedule)
 The key expansion algorithm takes the original key and returns the key schedule. I could talk about the boring details of it but you are already bored and I am lazy. Search for Rijndael Key Schedule if you want to know more. Instead we are going to talk about some interesting stuff.
 
-Don’t make the convenient mistake of thinking of the key schedule as a Pseudo-Random Number Generator (PRNG) where we enter the original key as the seed and then reap bytes. In a good PRNG, we should not be able to discover the seed by observing the output. In the Rijndael/AES key schedule there is direct correlation between the original key and each round key.
+Don't make the convenient mistake of thinking of the key schedule as a Pseudo-Random Number Generator (PRNG) where we enter the original key as the seed and then reap bytes. In a good PRNG, we should not be able to discover the seed by observing the output. In the Rijndael/AES key schedule there is direct correlation between the original key and each round key.
 
 In AES-128, knowing a single round key (regardless of round number) is enough to generate the original key. In AES-256 we need to know two consecutive round keys and that is a good thing for AES-256. If not, the schedule had reduced the entropy of a 256-bit key to 128 bits. In a lot of hardware (a.k.a limited on-board memory), the first (actual encryption key) and last round keys (first two and last two round keys for AES-256) are stored for encryption/decryption and the rest are generated when needed from them.
 
@@ -60,7 +60,7 @@ Great, so we have 16 bytes that are XOR-ed with something in each round. For dec
 Notice the first AddRoundKey block in both encryption and decryption. In encryption this is first 16 bytes of the original key (or the whole key in case of AES-128). In decryption, this is the last round key. Keep this in mind, we are going to use it later.
 
 # 2. AES Keys in Action
-By now we know how AES keys are used. Let’s do some stuff. We’re going to use the same set up as last time. A Kali 32-bit VM running in VirtualBox.
+By now we know how AES keys are used. Let's do some stuff. We're going to use the same set up as last time. A Kali 32-bit VM running in VirtualBox.
 
 ## 2.1 Function Calls
 External function calls leak information. I am going to divide them into two parts ``System Calls`` (syscalls) and ``Library Calls``. Basically these are functions that you can call and use in your program. If these functions part of the Operating System they are System Calls and if they are provided by a 3rd party library (shared library, DLL etc) they are Library Calls. For an excellent description of system calls, read the blog post by Gustavo Duartes named [System Calls Make the World Go Round]() (also read the rest of his blog).
@@ -236,7 +236,7 @@ To monitor these calls, we have a few tools at hand. On *nix operating systems w
 Assuming we are approaching this application from a black-box perspective, we need to discover the shared libraries first. This can be done in different ways. We will talk about ``ldd``, ``nm``, ``strings`` or just ``ltrace``. Just using ltrace may do the job but if there are a lot of library calls, we need to spot critical/interesting libraries to filter out the noise.
 
 ## 2.2.1.1 ldd
-``ldd`` “prints shared library dependencies” according to the [man](http://man7.org/linux/man-pages/man1/ldd.1.html) page. Let’s run it.
+``ldd`` “prints shared library dependencies” according to the [man](http://man7.org/linux/man-pages/man1/ldd.1.html) page. Let's run it.
 
 {{< codecaption lang="bash" title="running ldd" >}}
 $ldd sampleaes
@@ -251,7 +251,7 @@ $ldd sampleaes
 In line 3 we can see [libcrypto](http://wiki.openssl.org/index.php/Libcrypto_API) which means the application is using OpenSSL (the other OpenSSL library is ``libssl``).
 
 ## 2.2.1.2 nm
-``nm`` “[lists symbols from object files.](http://unixhelp.ed.ac.uk/CGI/man-cgi?nm)” It’s a good idea to look at its output and look for familiar symbols. We can clearly see OPENSSL and function names in the truncated output.
+``nm`` “[lists symbols from object files.](http://unixhelp.ed.ac.uk/CGI/man-cgi?nm)” It's a good idea to look at its output and look for familiar symbols. We can clearly see OPENSSL and function names in the truncated output.
 
 {{< codecaption lang="bash" title="running nm" >}}
 $ nm sampleaes
@@ -329,7 +329,7 @@ Decrypted text is:
 {{< /codecaption >}}
 
 ## 2.3  Using ltrace to Find the Key
-Finally let’s run ltrace on the binary. The ``i`` switch prints the value of instruction pointer at the time of library call (we will need it later). You can also trace syscalls using the ``S`` (capital S) switch.
+Finally let's run ltrace on the binary. The ``i`` switch prints the value of instruction pointer at the time of library call (we will need it later). You can also trace syscalls using the ``S`` (capital S) switch.
 
 {{< codecaption lang="nasm" title="running ltrace" >}}
 $ ltrace -i ./sampleaes
@@ -374,7 +374,7 @@ But what are these values:
 These are pointers and are 4 bytes each (remember we are in a 32-bit OS). “*But where are these pointers pointing to? Do I have to use GDB?*” Yes, we had to use GDB before I knew that we can configure ltrace to dereference pointers. But we will use GDB too.
 
 ### 2.3.1 Configuring ltrace
-If we know the type of pointers, we can dereference them by modifying [~/.ltrace.conf](http://man7.org/linux/man-pages/man5/ltrace.conf.5.html). We can also do more elaborate stuff like defining structs as explained [here](https://github.com/zenovich/ltrace/blob/master/etc/ltrace.conf). In short we can add lines to ltrace.conf for certain functions. In our case we know the 4th and 5th arguments for EVP_DecryptInit_ex are strings (char*). We do not care about the first three arguments so can ignore them by defining them as ``addr`` (for address). Let’s add the following line to ltrace.conf:  
+If we know the type of pointers, we can dereference them by modifying [~/.ltrace.conf](http://man7.org/linux/man-pages/man5/ltrace.conf.5.html). We can also do more elaborate stuff like defining structs as explained [here](https://github.com/zenovich/ltrace/blob/master/etc/ltrace.conf). In short we can add lines to ltrace.conf for certain functions. In our case we know the 4th and 5th arguments for EVP_DecryptInit_ex are strings (char*). We do not care about the first three arguments so can ignore them by defining them as ``addr`` (for address). Let's add the following line to ltrace.conf:  
 ``int EVP_DecryptInit_ex(addr, addr, addr, string, string)``
 
 run ltrace again and annnnnnnd voila (look at lines 4 for key and IV):
@@ -388,10 +388,10 @@ EVP_DecryptFinal_ex(0x9ff5ce0, 0xbfdecd8c, 0xbfdecd24, 0xbfdecdec, 48) = 1
 EVP_CIPHER_CTX_free(0x9ff5ce0, 0xbfdecd8c, 0xbfdecd24, 0xbfdecdec, 48) = 0
 {{< /codecaption >}}
 
-{{< imgcap src="/images/2015/tales1/Queen-Amused.jpg" title="Her Majesty is amused – If you are offended please don’t send James Bond after me" >}}
+{{< imgcap src="/images/2015/tales1/Queen-Amused.jpg" title="Her Majesty is amused – If you are offended please don't send James Bond after me" >}}
 
 ## 2.4  Finding the Key (Using GDB) II: Electric Boogaloo
-That was too easy but we pleased a powerful friend. Let’s try and find it using GDB (gasp). Good thing that we compiled out binary using the ggdb switch. If not go ahead and do that. We know we are looking for ``EVP_DecryptInit_ex`` and we have already seen how to use GDB. We will ``set verbose on`` (in case stuff happens).
+That was too easy but we pleased a powerful friend. Let's try and find it using GDB (gasp). Good thing that we compiled out binary using the ggdb switch. If not go ahead and do that. We know we are looking for ``EVP_DecryptInit_ex`` and we have already seen how to use GDB. We will ``set verbose on`` (in case stuff happens).
 
 {{< codecaption lang="nasm" title="running in GDB with debug info 1" >}}
 $ gdb ./sampleaes -q
@@ -443,7 +443,7 @@ Dump of assembler code for function EVP_DecryptInit_ex:
 End of assembler dump.
 {{< /codecaption >}}
 
-We can see ``EVP_CipherInit_ex`` called at ``0xb7ed3a5e``. Let’s put a breakpoint there (right before function call) and look at its arguments.
+We can see ``EVP_CipherInit_ex`` called at ``0xb7ed3a5e``. Let's put a breakpoint there (right before function call) and look at its arguments.
 
 {{< codecaption lang="nasm" title="running in gdb with debug info 2" >}}
 (gdb) b*0xb7ed3a5e
@@ -574,8 +574,8 @@ We put a breakpoint at ``0x08048b06`` and re-run the binary. Then we can read ke
 0x8048d50:	 "ee12c03ceacdfb5d4c0e67c8f5ab3362"
 {{< /codecaption >}}
 
-However, notice the difference in the function name. It is not just called ``(0xb7ed3a21) EVP_DecryptInit_ex`` but ``(0x08048b06) EVP_DecryptInit_ex@plt``. Addresses are different. Here’s a tip which is not scientific or anything but works for me. If you see an address starting with 0×08 you are in process-land and addresses starting with 0xb are in shared library land. But what is this @plt?
-In short, it’s the ``Procedure Linkage Table``. The compiler does not know where ``EVP_DecryptInit_ex`` points to at runtime so it just puts the function call there (relocation) because it does not know the address of our shared library at runtime. Linker will get this function call and replace it with the correct address for the function (actually this is a lot more complex but PLT and Global Offset Table or GOT need their own article). You can read about GOT/PLT in The [ELF Object File Format by Dissection on Linux Journal](http://www.linuxjournal.com/article/1060) (search for “plt” and read 3 paragraphs including the one with lazy binding).
+However, notice the difference in the function name. It is not just called ``(0xb7ed3a21) EVP_DecryptInit_ex`` but ``(0x08048b06) EVP_DecryptInit_ex@plt``. Addresses are different. Here's a tip which is not scientific or anything but works for me. If you see an address starting with 0×08 you are in process-land and addresses starting with 0xb are in shared library land. But what is this @plt?
+In short, it's the ``Procedure Linkage Table``. The compiler does not know where ``EVP_DecryptInit_ex`` points to at runtime so it just puts the function call there (relocation) because it does not know the address of our shared library at runtime. Linker will get this function call and replace it with the correct address for the function (actually this is a lot more complex but PLT and Global Offset Table or GOT need their own article). You can read about GOT/PLT in The [ELF Object File Format by Dissection on Linux Journal](http://www.linuxjournal.com/article/1060) (search for “plt” and read 3 paragraphs including the one with lazy binding).
 
 ## 2.6 iOS and Android
 I am not going to go into detail about how we can monitor crypto function calls in iOS and Android as we already have two excellent tools that accomplish this. ``[redacted internal tool]`` is for iOS and ``[[redacted internal tool]]`` is for Android. You can make them hook into crypto function calls and find keys. This is left as an exercise to the reader (meaning I am too lazy). There are also two excellent tutorials by two of my co-workers on how to create custom hooks in iOS and Android [Substrate - hooking C on Android and iOS part1/2](https://hexplo.it/substrate-hooking-native-code-iosandroid/) and [Substrate - hooking C on Android and iOS part 2/2](https://hexplo.it/substrate-android/).
@@ -584,16 +584,16 @@ I am not going to go into detail about how we can monitor crypto function calls 
 We saw that function calls (library calls) leak information. One defense against this side-channel is to link the binaries statically. This will replicate the library code inside the binary and will hopefully make the binary independent of any shared libraries (better for installation). On the other hand, it will increase code size (and thus binary size).
 
 # 3.0 Looking for Key in Memory
-But there are ways to defeat that too. This is our small incursion into the lands of Digital Forensics. The keys are going to be on memory. So that’s where we are going to look for them. But how do we find keys in memory. One step is to look for data with high entropy because keys usually look random. But there are many 128-bit (or 256) parts of memory that look random so what do we do?
+But there are ways to defeat that too. This is our small incursion into the lands of Digital Forensics. The keys are going to be on memory. So that's where we are going to look for them. But how do we find keys in memory. One step is to look for data with high entropy because keys usually look random. But there are many 128-bit (or 256) parts of memory that look random so what do we do?
 
-Remember the ``Key Schedule``? It’s the original key, followed by a number of round keys. If we see a 176 byte structure on memory that looks random, that’s probably a key schedule. After finding memories with these characteristics, we can use the relation between the round keys and the original encryption key to determine if the structure is a key schedule.
+Remember the ``Key Schedule``? It's the original key, followed by a number of round keys. If we see a 176 byte structure on memory that looks random, that's probably a key schedule. After finding memories with these characteristics, we can use the relation between the round keys and the original encryption key to determine if the structure is a key schedule.
 
 There are tools that do this for us and they were mostly created for use in Cold Boot Attacks and digital forensics. Imagine if you have a computer running disk encryption software. These keys may be stored in memory in plaintext. Open it up while running until you have access to the RAM. Get a can of air spray, turn it upside down and spray the RAM with it. It will freeze. Frozen RAM degrade much slower so we will have more time to read it. Read it and then run tools on it to find keys. Because memory may have been degraded, these tools use the relationship between round keys and original key to recover degraded bits. For more information you can read this paper [Lest We Remember: Cold Boot Attacks on Encryption Keys](https://citp.princeton.edu/research/memory/).
 
 ## 3.1 Dumping Memory
 First we need to dump process memory. I know of a couple of different tools. One is [memfetch](http://lcamtuf.coredump.cx/soft/memfetch.tgz) by ``lcamtuf`` (creator of [American fuzzy lop fuzzer](http://lcamtuf.coredump.cx/afl/)). In order to build it in Kali you need some [modifications](http://parsiya.net/blog/2014-11-18-building-memfetch-on-kali/). Another is [shortstop](https://code.google.com/p/shortstop/) but has not been update for a long time. By using a ``Loadable Kernel Module (LKM)`` named [LiME](https://github.com/504ensicsLabs/LiME) we can make a memory snapshot of the entire machine. And last but not least [Volatility](https://github.com/volatilityfoundation/volatility) (a memory forensics framework). If you are interested the creators of Volatility recently released a book [The Art of Memory Forensics](http://www.amazon.com/The-Art-Memory-Forensics-Detecting/dp/1118825098). I have not had time to read it but it looks very useful.
 
-Let’s use LiME in our VM.
+Let's use LiME in our VM.
 
 {{< codecaption lang="bash" title="building and using LiME" >}}
 /LiME/src$ make
@@ -614,7 +614,7 @@ mv lime.ko lime-3.7-trunk-686-pae.ko
 /LiME/src$
 {{< /codecaption >}}
 
-This dumps Virtual Machine’s memory to ``memorydump.raw``. Now we need to find keys.
+This dumps Virtual Machine's memory to ``memorydump.raw``. Now we need to find keys.
 
 ## 3.2 Finding Keys
 There are different tools that we can use here again. One is from the “Lest We Remember” paper called ``aeskeyfind``. Another is [Bulk extractor](http://www.forensicswiki.org/wiki/Bulk_extractor) which finds other memory artifacts such as URLs, emails and Credit Card numbers. We will use ``aeskeyfind``. The ``v`` switch is for verbose mode that prints the key schedule among other information. This is really not recommended in memory forensics because we are running the dump program inside the VM memory and it will alter memory but it is enough for our purposes. Another thing to note is that I was not running our example program while making the memory snapshot but I found encryption keys.

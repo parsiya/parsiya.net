@@ -68,7 +68,7 @@ Procmon filters are:
 Now we need to find out more about these endpoints (e.g. their actual address/URL etc). Based on their temporal sequence in Procmon and Netmon we have some insights.
 
 ## 2.1 – 10.10.10.10 – hipchatserver.com
-This is easy. It’s the Hipchat server at `hipchatserver.com`.
+This is easy. It's the Hipchat server at `hipchatserver.com`.
 
     PS C:\> nslookup 10.10.10.10
     Server:  zzzz.com
@@ -82,7 +82,7 @@ This is easy. It’s the Hipchat server at `hipchatserver.com`.
     ...
 
 ## 2.2 – 54.231.81.2 – s3-website-us-east-1.amazonaws.com
-This is where things start to become interesting. Let’s re-use our old tricks.
+This is where things start to become interesting. Let's re-use our old tricks.
 
     PS C:\> nslookup 54.231.81.2
     Server:  zzzz.com
@@ -101,7 +101,7 @@ Let's look at the conversation in Netmon. This is similar to `Follow TCP/UDP Str
 
 {{< imgcap src="/images/2015/hipchat1/04-bloginfo-fetch.png" title="Fetching blog_info.html" >}}
 
-We are in luck, we can see a `GET` request over HTTP. Let’s look at it’s payload:
+We are in luck, we can see a `GET` request over HTTP. Let's look at it's payload:
 
     GET /blog_info.html HTTP/1.1
     Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
@@ -116,9 +116,9 @@ Note the User-Agent. Hipchat is fetching [http://downloads.hipchat.com/blog_info
 {{< imgcap src="/images/2015/hipchat1/05-Latest-news-in-hipchat.png" title="Latest News fetched over HTTP ;)" >}}
 
 ### 2.2.1 But what if this request was over TLS?
-Then we would have seen the TLS handshake and then encrypted data. Even by looking at the Common Name (CN) field in server’s certificate in 2nd part of the TLS handshake (`Server Hello`) we wouldn't have been able to discover the endpoint.
+Then we would have seen the TLS handshake and then encrypted data. Even by looking at the Common Name (CN) field in server's certificate in 2nd part of the TLS handshake (`Server Hello`) we wouldn't have been able to discover the endpoint.
 Traffic in Netmon, click to view full-size image.
-We are going to have to look at DNS requests. We know the endpoint’s IP address so we will try to find the DNS request that had this IP in its answer. The endpoint’s IP address is `54.231.81.2` which is `36E75102` in Hex. In Netmon, select `All Traffic` (In Netmon DNS traffic is not included in process traffic) and enter the following filter:
+We are going to have to look at DNS requests. We know the endpoint's IP address so we will try to find the DNS request that had this IP in its answer. The endpoint's IP address is `54.231.81.2` which is `36E75102` in Hex. In Netmon, select `All Traffic` (In Netmon DNS traffic is not included in process traffic) and enter the following filter:
 
 	  DNS && ContainsBin(FrameData, HEX, "36E75102")
 

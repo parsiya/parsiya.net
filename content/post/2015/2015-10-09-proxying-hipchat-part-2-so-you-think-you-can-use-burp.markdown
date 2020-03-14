@@ -12,7 +12,7 @@ date: 2015-10-09T22:34:37Z
 title: 'Proxying Hipchat Part 2: So You Think You Can Use Burp?'
 ---
 
-In [**part1**]({{< ref "2015-10-08-hipchat-part-1-where-did-the-traffic-go.markdown" >}} "Proxying Hipchat Part 1: Where did the Traffic Go?") I talked about identifying Hipchat endpoints and promised to discuss proxying the application. In this post I will show how to proxy *some* of Hipchat’s traffic using Burp.
+In [**part1**]({{< ref "2015-10-08-hipchat-part-1-where-did-the-traffic-go.markdown" >}} "Proxying Hipchat Part 1: Where did the Traffic Go?") I talked about identifying Hipchat endpoints and promised to discuss proxying the application. In this post I will show how to proxy *some* of Hipchat's traffic using Burp.
 
 This is specific to Hipchat client for Windows. The current version at the time of writing was is **2.2.1361**. Atlassian is skipping version 3 and version 4 still in beta.
 
@@ -23,7 +23,7 @@ To see the proxy settings, log off and select Configure Connection. Note that in
 
 {{< imgcap src="/images/2015/hipchat2/01-Hipchat-login-screen.png" title="Hipchat login screen" >}}
 
-Yay for proxy settings. So you think you can use Burp? It’s not going to be that easy, otherwise why would I been writing this?
+Yay for proxy settings. So you think you can use Burp? It's not going to be that easy, otherwise why would I been writing this?
 
 My Burp proxy is listening on `127.0.0.1:8080` so I will add it as proxy.
 
@@ -59,7 +59,7 @@ The third request looks like the start of an XMPP handshake which has been cut o
 
 # 2. Why did Burp, Burp?
 
-To diagnose the problem, we must look at the traffic capture. Run Netmon and login to Hipchat again. Remember that you cannot capture Hipchat’s traffic to Burp with Netmon or Wireshark as it is local (from `127.0.0.1:49xxx` to `127.0.0.1:8080`) so you need to sniff local traffic with something like [RawCap][rawcap-download]. But we can look at Burp’s outbound traffic in Netmon. Look for traffic belonging to the `javaw.exe` process (for Burp).
+To diagnose the problem, we must look at the traffic capture. Run Netmon and login to Hipchat again. Remember that you cannot capture Hipchat's traffic to Burp with Netmon or Wireshark as it is local (from `127.0.0.1:49xxx` to `127.0.0.1:8080`) so you need to sniff local traffic with something like [RawCap][rawcap-download]. But we can look at Burp's outbound traffic in Netmon. Look for traffic belonging to the `javaw.exe` process (for Burp).
 
 {{< imgcap src="/images/2015/hipchat2/04-Traffic-to-hipchat.png" title="Burp <–> hipchatserver.com traffic in Netmon" >}}
 
@@ -69,8 +69,8 @@ Or using sequence diagram created on [https://www.websequencediagrams.com](https
 
 As we see the XMPP handshake is incomplete. In short, Burp somehow messes up the first part of the XMPP handshake and drops the packet just after it sees `to='chat.hipchat.com'` and sends an incomplete payload which causes the server to reject it and reset the connection.
 
-# 3. Burp’s SSL Pass Through
-It’s time to talk about another one of Burp’s capabilities. This one is named `SSL Pass Through` and is very useful for exactly the situation we are in. We can specify endpoints (domain/IP and port) and tell Burp not to mess with the to/from those points and just pass it through as it is. This means that Burp will not Man-in-the-Middle (MitM) the connection and just ignore the traffic. It is located at `Proxy > Option > SSL Pass Through` (scroll all the way to the bottom). Let’s tell Burp not to proxy anything to/from the `hipchatserver.com` at `10.11.1.25:5222`.
+# 3. Burp's SSL Pass Through
+It's time to talk about another one of Burp's capabilities. This one is named `SSL Pass Through` and is very useful for exactly the situation we are in. We can specify endpoints (domain/IP and port) and tell Burp not to mess with the to/from those points and just pass it through as it is. This means that Burp will not Man-in-the-Middle (MitM) the connection and just ignore the traffic. It is located at `Proxy > Option > SSL Pass Through` (scroll all the way to the bottom). Let's tell Burp not to proxy anything to/from the `hipchatserver.com` at `10.11.1.25:5222`.
 
 {{< imgcap src="/images/2015/hipchat2/06-SSL-Pass-Through.png" title="SSL Pass Through settings" >}}
 
@@ -78,7 +78,7 @@ And yay!
 
 {{< imgcap src="/images/2015/hipchat2/07-Hipchat-logged-in-with-Burp-as-proxy.png" title="Logged in with Burp " >}}
 
-Now let’s take a look at these requests. We have already seen the first two before.
+Now let's take a look at these requests. We have already seen the first two before.
 
     1. GET: http://downloads.hipchat.com/blog_info.html
     2. GET: https://s3.amazonaws.com/uploads.hipchat.com/10804/368466/FM3tGM05hUCySVj/freddie.png
@@ -97,7 +97,7 @@ Now let’s take a look at these requests. We have already seen the first two be
 
 {{< imgcap src="/images/2015/hipchat2/08-Profile-pic-placeholder.png" title="Do not track me bro " >}}
 
-Why are we retrieving this image from hipchat.com every time when it can be stored in the application and conserve bandwidth? I don’t know but Paranoid Parsia tells me that it is an Atlassian tracking request. This way they will know where and when an instance has been executed. There is no identifying data sent with the request.
+Why are we retrieving this image from hipchat.com every time when it can be stored in the application and conserve bandwidth? I don't know but Paranoid Parsia tells me that it is an Atlassian tracking request. This way they will know where and when an instance has been executed. There is no identifying data sent with the request.
 
 {{< imgcap src="/images/2015/hipchat2/09-I-am-not-saying-it-was-Atlassian-but-it-was-Atlassian.jpg" title="I am not saying it was Atlassian, but it was Atlassian " >}}
 
@@ -191,11 +191,11 @@ Response to request 5 is an RSS feed containing release versions of the Hipchat 
 I think this RSS feed is used to check for updates.
 
 # 5. GET request over HTTP
-Now let’s take a look at request one. It is loading an HTML page and displays it in the app. directly We can intercept the response in Burp and modify it. The request is to [http://downloads.hipchat.com/blog_info.html](http://downloads.hipchat.com/blog_info.html) and that page is not available over TLS.
+Now let's take a look at request one. It is loading an HTML page and displays it in the app. directly We can intercept the response in Burp and modify it. The request is to [http://downloads.hipchat.com/blog_info.html](http://downloads.hipchat.com/blog_info.html) and that page is not available over TLS.
 
 {{< imgcap src="/images/2015/hipchat2/10-Changing-latest-news.png" title="It has crashed again!" >}}
 
-That was easy. Now let’s see if we can modify it to display something else.
+That was easy. Now let's see if we can modify it to display something else.
 
 Seems like it does not have JavaScript enabled so we cannot do a fancy looking alert box. We can inject buttons and forms but the submit action does not work. We can also inject images.
 
@@ -208,7 +208,7 @@ In my opinion the best strategy for an attacker is to inject links to phishing s
 ## 5.1 The Container
 The container looks like to be QtWebKit (remember the User-Agent?). It does not have JavaScript enabled so injected JS will not be executed. We can inject forms, but the actions will not work (e.g. I injected a simple form with one input field to pass its contents to do a Google search but nothing happens when the button is clicked). This part needs more investigation and I will probably get back to it. If you know about this container (whatever that is) please let me know.
 
-In part three, we will talk about proxying Hipchat client’s traffic with the Hipchat server that we skipped using Burp's SSL Pass Through and do more exciting stuff.
+In part three, we will talk about proxying Hipchat client's traffic with the Hipchat server that we skipped using Burp's SSL Pass Through and do more exciting stuff.
 
 As usual if you have any questions/feedback/complaints or just want life advice from ancient Persian spirits, you know where to find me.
 
