@@ -241,7 +241,7 @@ How distributed ledgers work (simplified):
 
 <a name="26-blocks"></a>
 ## 2.6 Blocks
-A block contains a list of validated transactions. "‘Validity' is ensured by checking that the providers of funds in each transaction (listed in the transaction's ‘input' values) have each cryptographically signed the transaction."
+A block contains a list of validated transactions. "'Validity' is ensured by checking that the providers of funds in each transaction (listed in the transaction's 'input' values) have each cryptographically signed the transaction."
 
 **Parsia's note: I think there's a step missing here, nodes should also check if sender has enough assets for the transfer**.
 

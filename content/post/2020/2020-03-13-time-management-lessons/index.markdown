@@ -13,15 +13,19 @@ categories:
 A while ago I read [Time Management for System Administrators][tmsa-link] by
 [Tom Limoncelli][tom-twitter]. This blog is my reviewed notes.
 
+You can find my raw notes in my clone at:
+
+* http://parsiya.io/automation/time-management-sysadmins-notes/
+
 Tom is also the author of one of my favorite articles
 [Manual Work is a Bug][manual-work-link].
 
 I have written about it:
 
-* [Reflections on 'Manual Work is a Bug']({{< relref "/post/2018/2018-10-03-manual-work-bug/index.markdown" >}} "Reflections on 'Manual Work is a Bug'") 
-* [The Dark Side of 'Manual Work is a Bug']({{< relref "/post/2019/2019-04-17-manual-work-bug-2/index.markdown" >}} "The Dark Side of 'Manual Work is a Bug'") 
+* [Reflections on 'Manual Work is a Bug']({{< relref "/post/2018/2018-10-03-manual-work-bug/index.markdown" >}} "Reflections on 'Manual Work is a Bug'")
+* [The Dark Side of 'Manual Work is a Bug']({{< relref "/post/2019/2019-04-17-manual-work-bug-2/index.markdown" >}} "The Dark Side of 'Manual Work is a Bug'")
 
-[tmsa-link]: http://shop.oreilly.com/product/9780596007836.do
+[tmsa-link]: https://everythingsysadmin.com/books.html
 [tom-twitter]: https://twitter.com/yesthattom
 [manual-work-link]: https://queue.acm.org/detail.cfm?id=3197520
 

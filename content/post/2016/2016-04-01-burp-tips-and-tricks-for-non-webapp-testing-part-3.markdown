@@ -158,10 +158,10 @@ Practice is important. We don't want to turn into what the famous Persian poet a
 > A good humoured and pleasant military officer  
 Is superior to a theologian who injures men.
 
-> One being asked what a learned man without practice resembled, replied: ‘A bee without honey.'
+> One being asked what a learned man without practice resembled, replied: 'A bee without honey.'
 
 > Say to the rude and unkind bee,  
-‘At least forbear to sting, if thou givest no honey.'
+'At least forbear to sting, if thou givest no honey.'
 
 It's a good book, there are English translations of it in the public domain. [Translation from the University of Adelaide website][Golestan-adelaide] or [Archive.org][Golestan-archive].
 
