@@ -134,7 +134,7 @@ The plan is to run one instance of Burp and listen on `127.0.0.1:8080` and run
 a second instance of Burp to proxy the update requests.
 
 This is not about using Burp in proxy chains. If you want to set that up, please
-see [Thick Client Proxying - Part 4: Burp in Proxy Chains]({{< relref "post/2016/2016-04-07-burp-part-4.markdown" >}} "Thick Client Proxying - Part 4: Burp in Proxy Chains").
+see [Thick Client Proxying - Part 4: Burp in Proxy Chains]({{< relref "/post/2016/2016-04-07-thickclient-proxying-4.markdown" >}} "Thick Client Proxying - Part 4: Burp in Proxy Chains").
 
 ### Jar Proxy Settings
 Chances are Burp is not going to honor the system and JRE proxy settings but
