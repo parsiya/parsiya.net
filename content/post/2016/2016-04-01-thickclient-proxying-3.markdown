@@ -17,8 +17,8 @@ aliases:
 
 Previous parts:
 
-* [Burp Tips and Tricks for Non-Webapp Testing - Part 1: Interception and Proxy Listeners]({{< ref "2016-03-27-burp-tips-and-tricks-for-non-webapp-testing-part-1.markdown" >}} "Burp Tips and Tricks for Non-Webapp Testing - Part 1: Interception and Proxy Listeners")
-* [Burp Tips and Tricks for Non-Webapp Testing - Part 2: History, Intruder, Scanner and More]({{< ref "2016-03-29-burp-tips-and-tricks-for-non-webapp-testing-part-2.markdown" >}} "Burp Tips and Tricks for Non-Webapp Testing - Part 2: History, Intruder, Scanner and More")
+* [Burp Tips and Tricks for Non-Webapp Testing - Part 1: Interception and Proxy Listeners]({{< ref "2016-03-27-thickclient-proxying-1.markdown" >}} "Burp Tips and Tricks for Non-Webapp Testing - Part 1: Interception and Proxy Listeners")
+* [Burp Tips and Tricks for Non-Webapp Testing - Part 2: History, Intruder, Scanner and More]({{< ref "2016-03-29-thickclient-proxying-2.markdown" >}} "Burp Tips and Tricks for Non-Webapp Testing - Part 2: History, Intruder, Scanner and More")
 
 Almost there, I will get through `Options` and `Extender` in this part and we will actually start doing stuff moving forward.
 
@@ -51,7 +51,7 @@ Use it for slow servers. We usually test on UAT, QA or whatever-environment-the-
 {{< imgcap title="Timeout settings" src="/images/2016/burp-tips-3/03.PNG" >}}
 
 ### 1.1.4 Hostname Resolution
-I have talked about it briefly in [Part 2: Request Handling]({{< ref "2016-03-27-burp-tips-and-tricks-for-non-webapp-testing-part-1.markdown#2-2-request-handling" >}} "Request Handling"). The application talks to multiple endpoints but doesn't support proxy settings. We redirect application's traffic to Burp using other means (e.g. Windows hosts file or other OS level mechanisms). Now Burp needs to know where to forward the traffic otherwise it will go into a infinite loop and send the traffic back to itself again.
+I have talked about it briefly in [Part 1: Request Handling]({{< ref "2016-03-27-thickclient-proxying-1.markdown#2-2-request-handling" >}} "Request Handling"). The application talks to multiple endpoints but doesn't support proxy settings. We redirect application's traffic to Burp using other means (e.g. Windows hosts file or other OS level mechanisms). Now Burp needs to know where to forward the traffic otherwise it will go into a infinite loop and send the traffic back to itself again.
 
 We cannot use the `Request Handling` functionality because it only supports one endpoint. Instead we will leave it empty and add the endpoints and their associated IP address here in `Hostname Resolution`. For example `server.com` and `10.11.12.13`. If the endpoint is behind load balancers, CDNs or is on shared hosting like an Amazon S3 bucket then things get a bit more complicated. In this case, run `Wireshark` or `Netmon` and capture application's traffic without a proxy. Discover the IP address that the HTTP requests are sent to. Use the discovered IP with the hostname in this section and the `host` header will do its magic (OK, there are more technical ways to do this but this is the easiest in my opinion).
 
@@ -95,7 +95,7 @@ It's a good idea to install the [Java Cryptography Extension (JCE) Unlimited Str
 
 **Enable all options** except the `Disable Java SNI extension`, chances are that you need SNI. The `Allow unsafe renegotiation` looks a bit scary but helps a lot when using client side certificates.
 
-During proxying if you are not confident that the current TLS settings work, keep a close eye on the `Alerts` tab. If the TLS handshake fails or if Burp and server cannot complete the TLS handshake, there will be errors there. Again, for troubleshooting use [SSL Pass Through]({{< ref "2016-03-27-burp-tips-and-tricks-for-non-webapp-testing-part-1.markdown#1-4-ssl-pass-through" >}} "SSL Pass Through").
+During proxying if you are not confident that the current TLS settings work, keep a close eye on the `Alerts` tab. If the TLS handshake fails or if Burp and server cannot complete the TLS handshake, there will be errors there. Again, for troubleshooting use [SSL Pass Through]({{< ref "2016-03-27-thickclient-proxying-1.markdown#1-4-ssl-pass-through" >}} "SSL Pass Through").
 
 ### 1.3.2 Client SSL Certificates
 If the application needs a client-side certificate, we can add it here. Easy peasy. We can select a destination host and Burp will use the certificate for that host.

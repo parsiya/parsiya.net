@@ -21,7 +21,7 @@ Dropping it into CyberChef and applying `From Hex` filter shows us an interestin
 
 SNI stands for Server Name Indication. It's a way for the client to tell a virtual host what certificate to use for communication. Read about it:
 
-* [How HTTP Proxies Work - CloudFront and Server Name Indication]({{< relref "post/2016/2016-07-24-thick-client-6-how-proxies-work.markdown#4-cloudfront-and-server-name-indication" >}} "How HTTP Proxies Work - CloudFront and Server Name Indication")
+* [How HTTP Proxies Work - CloudFront and Server Name Indication]({{< relref "post/2016/2016-07-24-thickclient-proxying-6-how-proxies-work.markdown#4-cloudfront-and-server-name-indication" >}} "How HTTP Proxies Work - CloudFront and Server Name Indication")
 
 On the Cloudflare blog we can read about encrypting the SNI to prevent privacy leaks:
 

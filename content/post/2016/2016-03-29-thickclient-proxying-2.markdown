@@ -12,7 +12,7 @@ tags:
 aliases:
 - "/blog/2016-03-29-burp-tips-and-tricks-for-non-webapp-testing---part-2-history-intruder-scanner-and-more/"
 ---
-In [part1]({{< ref "2016-03-27-burp-tips-and-tricks-for-non-webapp-testing-part-1.markdown" >}} "Burp Tips and Tricks for Non-Webapp Testing - Part 1: Interception and Proxy Listeners") I talked about some of Burp's functionalities with regards to testing non-webapps. I did not expect it to be that long, originally I had intended to just shared some quick tips that I use. Now you are forced to read my drivel.
+In [part1]({{< ref "2016-03-27-thickclient-proxying-1.markdown" >}} "Burp Tips and Tricks for Non-Webapp Testing - Part 1: Interception and Proxy Listeners") I talked about some of Burp's functionalities with regards to testing non-webapps. I did not expect it to be that long, originally I had intended to just shared some quick tips that I use. Now you are forced to read my drivel.
 
 In this part I will talk about `Target > Scope`, `Proxy > HTTP History` and `Intruder/Scanner`. I will discuss a bit of `Scanner`, `Repeater` and `Comparer` too, but there is not much to discuss for the last three. They are pretty straightforward.
 

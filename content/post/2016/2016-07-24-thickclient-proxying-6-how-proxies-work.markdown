@@ -11,11 +11,13 @@ tags:
 - Tutorial
 title: "Thick Client Proxying - Part 6: How HTTP(s) Proxies Work"
 toc: true
+aliases:
+- "/blog/2016-07-28-thick-client-proxying---part-6-how-https-proxies-work/"
 ---
 
 In order to create our own custom proxies, first we need to know how proxies work. When I wanted to write a custom proxy tool (it's a simple Python script) in [Hipchat part3]({{< ref "2015-10-19-proxying-hipchat-part-3-ssl-added-and-removed-here.markdown" >}} "Proxying Hipchat Part 3: SSL Added and Removed Here"), I had to go back and learn how they work. I did not find such a resource online that looked at proxies from an infosec perspective. Most talked about how to configure caching or forwarding proxies and not much about MitM ones. I have briefly talked about it in the section 2 of the same post named `How does a Proxy Work?`. In this post I am going to take a deep(er) dive. I actually read some RFCs and they were surprisingly well written.
 
-If you want to skip the intro, go to [section 3]({{< relref "post/2016/2016-07-24-thick-client-6-how-proxies-work.markdown#section-3" >}} "How HTTP Proxies Work").
+If you want to skip the intro, go to [section 3]({{< relref "#section-3" >}} "How HTTP Proxies Work").
 
 <!--more-->
 
@@ -50,7 +52,7 @@ Burp is the prime example of this type. If you know what Burp does (and you prob
 
 They could be applications like Burp or Fiddler which are usually used for (security) testing. Or could be appliances like Bluecoat or the [SSL decryption module][ssl-decyprtion-paloalto] of Palo Alto Networks' "thing" (whatever it is named). Usually these appliances are used for deep packet inspection.
 
-You could make Burp work like a forwarding proxy by adding all endpoints to Burp's [SSL Pass Through]({{< ref "2016-03-27-burp-tips-and-tricks-for-non-webapp-testing-part-1.markdown#1-4-ssl-pass-through" >}} "SSL Pass Through"). This is useful for troubleshooting connections.
+You could make Burp work like a forwarding proxy by adding all endpoints to Burp's [SSL Pass Through]({{< ref "2016-03-27-thickclient-proxying-1.markdown#1-4-ssl-pass-through" >}} "SSL Pass Through"). This is useful for troubleshooting connections.
 
 ### 2.2.1. It's not Always TLS
 True. Sometimes our proxy decrypts (or decodes) layers of non-TLS encryption (or encoding). I am classifying all of these proxies under this category because TLS has become the most common way of protecting data in transit.

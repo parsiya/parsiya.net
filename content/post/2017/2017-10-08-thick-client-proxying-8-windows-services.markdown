@@ -11,6 +11,8 @@ tags:
 - wininet
 - winhttp
 - netsh
+aliases:
+- "/blog/2017-10-08-thick-client-proxying---part-8---notes-on-proxying-windows-services/"
 ---
 
 These are my notes about proxying Windows services. Being run from a different account (usually LocalSystem).
@@ -42,7 +44,7 @@ There are also some issues when using `netsh` to set WinHTTP proxies for 32-bit 
 # Some Background Knowledge
 
 * [Understanding Web Proxy Configuration - MSDN][proxy-msdn]. This is a pretty useful read for Windows proxying. If you have to choose between this blog and that article, choose the MSDN article.
-* [Part 6 - How HTTP(s) Proxies Work]({{< ref "2016-07-24-thick-client-6-how-proxies-work.markdown" >}} "Thick Client Proxying - Part 6: How HTTPs Proxies Work")
+* [Part 6 - How HTTP(s) Proxies Work]({{< ref "2016-07-24-thickclient-proxying-6-how-proxies-work.markdown" >}} "Thick Client Proxying - Part 6: How HTTPs Proxies Work")
 
 <a name="traditional-techniques-or-try-these-anyways"></a>
 # Traditional Techniques or "Try These Anyways"
@@ -50,7 +52,7 @@ These are things that usually work for most Windows applications.
 
 <a name="wininet-or-internet-explorer-proxy-settings"></a>
 ## WinINET or Internet Explorer Proxy Settings
-Usually called the Internet Explorer proxy settings. These usually work for most [proxy-aware]({{<ref "2016-07-24-thick-client-6-how-proxies-work.markdown#5-proxy-aware-clients">}} "What are Proxy-Aware Clients") applications.
+Usually called the Internet Explorer proxy settings. These usually work for most [proxy-aware]({{<ref "2016-07-24-thickclient-proxying-6-how-proxies-work.markdown#5-proxy-aware-clients">}} "What are Proxy-Aware Clients") applications.
 
 Shortcut `control inetcpl.cpl,,4`.
 

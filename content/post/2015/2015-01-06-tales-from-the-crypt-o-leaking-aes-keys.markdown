@@ -9,6 +9,8 @@ comments: true
 date: 2015-01-06T23:36:48Z
 title: Tales from the Crypt(o) - Leaking AES Keys
 toc: true
+aliases:
+- "/blog/2015-01-06-tales-from-the-crypto---leaking-aes-keys/"
 ---
 
 This post is part one of a two part internal blog entry on creating a Pintool for an assessment. Unfortunately I cannot talk about it, so I decided to put the first part out. If I find an opensource program similar to the assessment I will try and recreate the tool (but I am not holding my breath). As this part is essentially a build up, it may not be coherent at times. Alteratively, if you really want to read it, you can join us. We are almost always hiring (let me do the referral though ;).

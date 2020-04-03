@@ -20,7 +20,7 @@ below or `ctrl+f` and search for keywords.
     - [Compress a Directory Using tar](#compress-a-directory-using-tar)
     - [Decompress a tar.gz file](#decompress-a-targz-file)
 - [OpenSSL](#openssl)
-    - [Dump a Domain's TLS Certificate with OpenSSL](#dump-a-domains-tls-certificate-with-openssl)
+    - [Dump The TLS Certificate of a Domain with OpenSSL](#dump-the-tls-certificate-of-a-domain-with-openssl)
     - [TLS Connection with a Specific Ciphersuite with OpenSSL](#tls-connection-with-a-specific-ciphersuite-with-openssl)
 - [AWS](#aws)
     - [How to Use s3deploy](#how-to-use-s3deploy)
@@ -116,7 +116,7 @@ Insert [XKCD 1168](https://xkcd.com/1168/), hur dur!
 
 ## OpenSSL
 
-### Dump a Domain's TLS Certificate with OpenSSL
+### Dump The TLS Certificate of a Domain with OpenSSL
 `echo | openssl s_client -connect HOST:PORT 2>/dev/null | openssl x509 -text -noout`
 
 ### TLS Connection with a Specific Ciphersuite with OpenSSL
