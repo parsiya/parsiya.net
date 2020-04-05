@@ -8,8 +8,7 @@ type: about
 ---
 
 I am Parsia, a Security Engineer, part of the Game and Platform Security
-Engineering group at [Electronic Arts](https://www.ea.com/security) based out of
-Vancouver in Canada.
+Engineering group at [Electronic Arts](https://www.ea.com/security).
 [Realistic video of me hacking videogames at work](https://www.youtube.com/watch?v=BRWvfMLl4ho).
 
 From 2013 to 2019, I was a Senior Security Consultant at
@@ -19,6 +18,11 @@ United States. I tested enterprise blockchains, online multiplayer games, stock
 exchange platforms, mobile device management suites, network appliances,
 embedded and IoT devices on top of a long list of thickclient/mobile/web
 applications we all use on a daily basis.
+
+I have had **one** single talk. That was at DEF CON 26. I guess I should add
+`DEF CON Speaker` to my LinkedIn title (lol):
+
+* https://www.youtube.com/watch?v=xKYIde5jh_8
 
 **Who is Hackerman?**\\
 *Hackerman* is a character from the movie
@@ -59,4 +63,4 @@ blog, don't be afraid to promote yourself. It's worth it.
     - **DEF CON 26 video** is out: https://www.youtube.com/watch?v=xKYIde5jh_8
     - My post on Synopsys' corporate blog: [Tineola: Taking a Bite out of Enterprise Blockchain](https://www.synopsys.com/blogs/software-security/tineola-enterprise-blockchain/ "Tineola: Taking a Bite out of Enterprise Blockchain")
     - Tineola: https://github.com/tineola/tineola
-    - Random posts as I learned: [https://parsiya.net/categories/blockchain/]({{< relref "categories/blockchain" >}} "https://parsiya.net/categories/blockchain/") 
+    - Random posts as I learned: [https://parsiya.net/categories/blockchain/]({{< relref "categories/blockchain" >}} "https://parsiya.net/categories/blockchain/")
