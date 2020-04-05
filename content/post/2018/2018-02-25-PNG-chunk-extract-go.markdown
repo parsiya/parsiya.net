@@ -56,7 +56,7 @@ After the signature, there are a number of chunks.
 # PNG Chunks
 Each chunk has [four fields][chunk-layout]:
 
-- `unint32` length in big-endian. This is the length of the data field.
+- `uint32` length in big-endian. This is the length of the data field.
 - Four-byte chunk type. Chunk type can be anything [^1].
 - Chunk data is a bunch of bytes with a fixed length read before.
 - Four-byte CRC-32 of Chunk 2nd and 3rd field (chunk type and chunk data).
@@ -76,7 +76,7 @@ First chunk or `IHDR` looks like this:
 
 {{< imgcap title="IHDR chunk" src="/images/2018/png1/03-ihdr.png" >}}
 
-Converting big-endian `uint32`s to int is straightforward:
+Converting big-endian `uint32`s to `int` is straightforward:
 
 {{< codecaption title="uInt32ToInt" lang="go" >}}
 // uInt32ToInt converts a 4 byte big-endian buffer to int.
@@ -87,6 +87,8 @@ func uInt32ToInt(buf []byte) (int, error) {
     return int(binary.BigEndian.Uint32(buf)), nil
 }
 {{< /codecaption >}}
+
+**Note (05-Apr-2020):** `int` is dangerous. On 32-bit systems it's `int32` and on 64-bit systems it's `int64`. So on my machine I am converting `int64` to `uint32` because I am running a 64-bit OS. On a 32-bit machine (e.g., Go playground) `int` is `int32`. In retrospect, I should have probably used `int32` in the struct or come to think of it `uint32` could have been a better choice. For more information please see [int vs. int]({{< relref "/post/2020/2020-04-05-int-golang-spotthebug/index.markdown#int-vs-int" >}} "int vs. int").
 
 **Trick #1**: When reading chunks, I did something I had not done before. I passed in an `io.Reader`. This let me pass anything that implements that interface to the method. As each chunk is populated, reader pointer moves forward and gets to the start of next chunk. Note this assumes chunks are formatted correctly and does not check the CRC32 hash.
 
