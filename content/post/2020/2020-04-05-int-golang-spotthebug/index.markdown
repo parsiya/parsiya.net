@@ -52,9 +52,9 @@ The answer is not that obvious unless you have been bitten by it.
 > int is a signed integer type that is at least 32 bits in size. It is a
 > distinct type, however, and not an alias for, say, int32.
 
-This does not give us much information. I think the docs could be a lot more
-clearer than `at least 32 bits in size` and `not an alias`. We can get our
-answer in [A Tour of Go - Basic Types][tour-of-go-11].
+This does not give us much information. I think the docs could be clearer than
+`at least 32 bits in size` and `not an alias`. We can get our answer in [A Tour
+of Go - Basic Types][tour-of-go-11].
 
 > The int, uint, and uintptr types are usually 32 bits wide on 32-bit systems
 > and 64 bits wide on 64-bit systems.
@@ -162,7 +162,7 @@ than 19 on 64-bit systems.
 # But Why Are You Disagreeing?
 Let's say we have a 32-bit system. `s` could contain a number that does not fit
 in `int32` (`int` for this system). Note that `s` is a string and could have any
-large value. You can run it on the Go playground (remember it's a 32-bit
+large value. You can see it on the Go playground (remember it's a 32-bit
 machine) at https://play.golang.org/p/QEKtDWB7SFd.
 
 {{< codecaption title="strconv.Atoi on 32-bit machines" lang="go" >}}
@@ -175,7 +175,7 @@ import (
 
 func main() {
 	s := "2147483648"
-	_num_, err := strconv.Atoi(s)
+	_, err := strconv.Atoi(s)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -188,7 +188,7 @@ func main() {
 
 {{< imgcap title="strconv.Atoi error on the Go playground" src="05-atoi-error.png" >}}
 
-Going back to our original code.
+Going back to our original code on a 32-bit system:
 
 {{< codecaption title="Original code" lang="go" >}}
 // s := "2147483648"
@@ -213,14 +213,14 @@ s = strconv.Itoa(int(target))
 {{< /codecaption >}}
 
 `strconv.Atoi` returns the `value out of range` error and we land in the error
-block. Because the code assumes `s` is not a number and the name of the target
+block. Because the code assumes `s` is not a number and the name of the target,
 it tries to call `LookupNumberByName` with `2147483648`.
 
 I do not know how `LookupNumberByName` works and that is *why I might be wrong*.
 However, if I were creating such a function that tries to look up a name from a
-registry and I could not find the name I would return an error. That means there
-is a good chance that we land in the error block on line 9 and we never reach
-where the "official" answer is.
+registry I would return an error if I could not find it (remember errors are
+values in Go). That means there is a good chance that we land in the error block
+on line 9 and we never reach where the "official" answer is.
 
 # What Did We Learn Here Today?
 
@@ -228,7 +228,10 @@ where the "official" answer is.
   64 bits on 64-bit machines.
 * The Go playground is running on a 32-bit machine.
 * Don't use `int`.
-* I finished this blog at 3 AM.
+
+I finished this blog at 3 AM and I feel like the below XKCD does the trick.
+Notice the `WRONG` with underscores, the person on the internet might not be
+really wrong here but the writer feels like they are.
 
 {{< imgcap title="Source: https://xkcd.com/386/" src="06-duty_calls.png" >}}
 
