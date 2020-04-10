@@ -40,6 +40,10 @@ below or `ctrl+f` and search for keywords.
     - [Convert a plist File to XML on Windows](#convert-a-plist-file-to-xml-on-windows)
     - [Oneliner to Find Unquoted Service Paths](#oneliner-to-find-unquoted-service-paths)
     - [Run Edge(Chromium) with a Proxy](#run-edgechromium-with-a-proxy)
+    - [Microphone does not Work in Discord](#microphone-does-not-work-in-discord)
+    - [Extract MSI Files](#extract-msi-files)
+    - [Disable Autofocus for Microsoft Lifecam Cinema](#disable-autofocus-for-microsoft-lifecam-cinema)
+    - [Install Windbg as the Post-Mortem Debugger](#install-windbg-as-the-post-mortem-debugger)
 - [Powershell](#powershell)
     - [List All Files (Including Hidden Files)](#list-all-files-including-hidden-files)
     - [Diff in Powershell](#diff-in-powershell)
@@ -98,7 +102,6 @@ below or `ctrl+f` and search for keywords.
 - [Misc](#misc)
     - [Download Youtube Videos with Substitles](#download-youtube-videos-with-substitles)
     - [Print Envelopes with the Brother DW2280 printer and LibreOffice](#print-envelopes-with-the-brother-dw2280-printer-and-libreoffice)
-    - [Microphone does not Work in Discord?](#microphone-does-not-work-in-discord)
     - [Tab Size 4 in the Github Web Interface](#tab-size-4-in-the-github-web-interface)
 
 ------
@@ -391,6 +394,63 @@ The following does the same but falls back to direct connect if the proxy is not
 available. Don't use this because you will not know if the fall back happens:
 
 * `"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --proxy-server="http://localhost:8080,direct://"`
+
+### Microphone does not Work in Discord
+You might have enabled the privacy settings in Windows 10.
+
+1. Settings.
+2. Search for Privacy.
+3. `Microphone privacy settings`.
+4. Allow apps to access your Microphone.
+5. Enable for `Win32WebViewHost`.
+6. ???
+7. Yell at ~~your raid group~~ DPS for standing in fire.
+
+### Extract MSI Files
+They can be extracted using the built-in `msiexec` tool.
+
+* `msiexec /a c:\path\to\file.msi /qb TARGETDIR=C:\absolute\path\to\extract\directory`
+* Path to the msi file (the first path) can be relative. The second one must be
+  absolute and does not accept `/` as path separator.
+* The extract directory must exist.
+* If the path to the extract directory (the second path) is not absolute, we
+  will get this error: `Could not access network location 'xxx'`.
+
+### Disable Autofocus for Microsoft Lifecam Cinema
+If the "Microsoft Lifecam Cinema" webcam constantly autofocuses on Windows 10.
+
+1. Open the Windows camera app.
+    1. If the camera is already in-use (e.g., videoconferencing tool) turn it
+       off in the other app.
+2. Click the middle icon from the three icons to the left.
+3. Drag the slider to make it manual focus.
+
+You can also try in Skype which is where the old utility is accessible.
+
+1. Open Skype.
+2. Click on settings (gear to the right).
+3. Select "Video Device" in the left side bar.
+4. Select the "Microsoft LifeCam Cinema."
+5. Click on "Camera Settings" (this will open the old utility that went away).
+6. Click on the "Camera Control" tab and remove the "Auto" checkbox in front of
+   focus.
+
+* These are connected so if you have the camera app open and change the focus in
+  Skype you can see the change immediately.
+* Sometimes the setting is lost and you have to do it again.
+
+### Install Windbg as the Post-Mortem Debugger
+
+1. Install Windbg as part of the Windows 10 SDK.
+    * https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/debugger-download-tools
+    1. NYou do not need most of the stuff that the SDK installs. You will only
+       need to install `Debugging Tools for Windows`.
+2. Open an admin cmd and navigate to the following dir:
+    * `C:\Program Files (x86)\Windows Kits\10\Debuggers\`
+3. Go into each of the x64 and x86 directories and run the following command:
+    * `windbg -I`
+4. You should get a prompt that says Windbg has been installed as the default
+   post-mortem debugger.
 
 ------
 
@@ -987,17 +1047,6 @@ Now open LibreOffice and use these instructions:
     * Media Type: `Envelopes`.
     * Paper Source > First Page: `Manual`.
 9. Print
-
-### Microphone does not Work in Discord?
-You might have enabled the privacy settings in Windows 10.
-
-1. Settings.
-2. Search for Privacy.
-3. `Microphone privacy settings`.
-4. Allow apps to access your Microphone.
-5. Enable for `Win32WebViewHost`.
-6. ???
-7. Yell at ~~your raid group~~ DPS for standing in fire.
 
 ### Tab Size 4 in the Github Web Interface
 Add `?ts=4` to end of the file URL.
