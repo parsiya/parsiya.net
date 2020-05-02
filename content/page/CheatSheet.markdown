@@ -39,7 +39,7 @@ below or `ctrl+f` and search for keywords.
     - [Prevent Monitors from Going to Sleep after Locking the Computer](#prevent-monitors-from-going-to-sleep-after-locking-the-computer)
     - [Convert a plist File to XML on Windows](#convert-a-plist-file-to-xml-on-windows)
     - [Oneliner to Find Unquoted Service Paths](#oneliner-to-find-unquoted-service-paths)
-    - [Run Edge(Chromium) with a Proxy](#run-edgechromium-with-a-proxy)
+    - [Run Chromium Browsers with a Proxy](#run-chromium-browsers-with-a-proxy)
     - [Microphone does not Work in Discord](#microphone-does-not-work-in-discord)
     - [Extract MSI Files](#extract-msi-files)
     - [Disable Autofocus for Microsoft Lifecam Cinema](#disable-autofocus-for-microsoft-lifecam-cinema)
@@ -383,10 +383,10 @@ Source: https://superuser.com/a/1264369
 ### Oneliner to Find Unquoted Service Paths
 `wmic service get displayname,pathname|findstr /IV "C:\Windows"|findstr /IV """`
 
-### Run Edge(Chromium) with a Proxy
+### Run Chromium Browsers with a Proxy
 The new Edge uses Chromium. Chromium uses the WinINET proxy settings. Instead of
 redirecting everything to the browser, we can set the proxy using the command
-line:
+line (all of these also work for Chrome):
 
 * `"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --proxy-server="http://localhost:8080"`
 

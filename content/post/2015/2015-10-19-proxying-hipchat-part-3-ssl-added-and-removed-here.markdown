@@ -114,7 +114,7 @@ We did not see it last time. This is Hipchat's way of telling the proxy (Burp) a
 
 Remember that while Burp is a Man-in-the-Middle (MitM) proxy and can decrypt TLS connections, most proxies (especially in corporate environments) are just forwarding proxies so they need this `CONNECT` to work properly. For example if we did not have this `CONNECT` request, our SSL pass through in part two would have not worked as Burp was not decrypting traffic for that endpoint. Burp is just forwarding whatever it receives to the destination and does not see the content of requests.
 
-Burp is sending this request because it is proxy-aware as we used its option to designate burp as proxy. For non-proxy-aware clients we have to use another one of Burp's capabilities.
+Hipchat is sending this request because it is proxy-aware as we used its option to designate burp as proxy. For non-proxy-aware clients we have to use another one of Burp's capabilities.
 
 ### 2.2.2 Burp's Invisible Proxying
 In each blog post we are learning a new Burp thing. It seems like we're becoming quite the Burp expert neh? ;)
