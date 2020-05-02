@@ -117,8 +117,8 @@ The extension's technical details:
    normal login.
 3. Identify which requests to which domains contain them.
 4. Start the main project in Burp.
-5. Add those domains to [Burp's SSL pass through][burp-ssl-pass-through] at
-   `Proxy > Options > SSL Pass Through`.
+5. Add those domains to [Burp's ~~SSL~~ TLS pass through][burp-tls-pass-through]
+   at `Proxy > Options > TLS Pass Through`.
 6. Do the same for every request that is not related to the test but contains
    sensitive info (e.g., Okta).
 
@@ -206,9 +206,22 @@ you are presenting.
 1. Open Burp, make any changes and set settings.
     1. The changes depend on your preferences.
 2. Save the project config and the user config separately. They are JSON files.
-3. Combine these two config files. Simply add the keys from one to the other.
+3. Combine these two config files. Add the keys from one to the other.
 4. When starting a new project, use that config.
 5. Update this config regularly and store it somewhere (e.g, git repo).
+
+The final config file will look like this:
+
+```json
+{
+    "project_options":{
+        // removed
+    },
+    "user_options":{
+        // removed
+    }
+}
+```
 
 ### Why?
 It saves time and I do not have to make the same changes for every project.
@@ -229,7 +242,7 @@ Some suggestions:
 [apex-113]: https://www.ea.com/games/apex-legends/news/performance-update-may-2019
 [quieter-firefox]: https://www.blackhillsinfosec.com/towards-quieter-firefox/
 [liamosaur]: https://github.com/liamosaur
-[burp-ssl-pass-through]: https://portswigger.net/burp/documentation/desktop/tools/proxy/options#ssl-pass-through
+[burp-tls-pass-through]: https://portswigger.net/burp/documentation/desktop/tools/proxy/options#tls-pass-through
 [ff-dev-edition]: https://www.mozilla.org/en-US/firefox/developer/
 [palemoon]: https://www.palemoon.org/
 [multiple-ff-profiles]: https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Multiple_profiles
