@@ -456,7 +456,7 @@ This version is much faster. *mild shock*
 
 Next time you do not have to write your extension in Java. You're welcome.
 
-# What did We Learn Here Today?
+# What Did We Learn Here Today?
 
 * You can use external programs/utilities/services in your Burp extension but you will sacrifice some speed.
 * Burp extensions allow you to test encrypted/encoded traffic like a "normal" web service.
