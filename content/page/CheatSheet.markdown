@@ -44,6 +44,8 @@ below or `ctrl+f` and search for keywords.
     - [Extract MSI Files](#extract-msi-files)
     - [Disable Autofocus for Microsoft Lifecam Cinema](#disable-autofocus-for-microsoft-lifecam-cinema)
     - [Install Windbg as the Post-Mortem Debugger](#install-windbg-as-the-post-mortem-debugger)
+    - [Remove Windbg as the Post-Mortem Debugger](#remove-windbg-as-the-post-mortem-debugger)
+    - [Open a Network Monitor cap File in Wireshark and Save is Disabled](#open-a-network-monitor-cap-file-in-wireshark-and-save-is-disabled)
 - [Powershell](#powershell)
     - [List All Files (Including Hidden Files)](#list-all-files-including-hidden-files)
     - [Diff in Powershell](#diff-in-powershell)
@@ -59,6 +61,8 @@ below or `ctrl+f` and search for keywords.
     - [Cannot Create Virtual Switch](#cannot-create-virtual-switch)
     - [Cloning VMs in Hyper-V](#cloning-vms-in-hyper-v)
     - [The Guest Has No Internet](#the-guest-has-no-internet)
+    - [Higher Resolution For Debian/Ubuntu Guest in Hyper-V](#higher-resolution-for-debianubuntu-guest-in-hyper-v)
+    - [Creating an Ubuntu VM in Hyper-V](#creating-an-ubuntu-vm-in-hyper-v)
 - [VirtualBox](#virtualbox)
     - [Restart Clipboard Functionality in VirtualBox After Guest Resume](#restart-clipboard-functionality-in-virtualbox-after-guest-resume)
     - [Change the Hardware UUID of Cloned Windows VMs to Avoid Windows Reactivation](#change-the-hardware-uuid-of-cloned-windows-vms-to-avoid-windows-reactivation)
@@ -98,7 +102,9 @@ below or `ctrl+f` and search for keywords.
     - [Format String with {}](#format-string-with-)
     - [bytearray](#bytearray)
     - [Cyclic XOR on bytearrays](#cyclic-xor-on-bytearrays)
-- [Cyclic XOR on Strings](#cyclic-xor-on-strings)
+    - [Cyclic XOR on Strings](#cyclic-xor-on-strings)
+- [Java](#java)
+    - [Enable Log4j for a Java App](#enable-log4j-for-a-java-app)
 - [Misc](#misc)
     - [Download Youtube Videos with Substitles](#download-youtube-videos-with-substitles)
     - [Print Envelopes with the Brother DW2280 printer and LibreOffice](#print-envelopes-with-the-brother-dw2280-printer-and-libreoffice)
@@ -452,6 +458,26 @@ You can also try in Skype which is where the old utility is accessible.
 4. You should get a prompt that says Windbg has been installed as the default
    post-mortem debugger.
 
+### Remove Windbg as the Post-Mortem Debugger
+You need to delete some registry keys.
+
+* 64-bit version
+    1. Go to `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AeDebug`.
+    2. Remove the `Debugger` key.
+* 32-bit version
+    1. Go to `HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\AeDebug`.
+    2. Remove the `Debugger` key.
+
+### Open a Network Monitor cap File in Wireshark and Save is Disabled
+There is probably an error in the capture.
+
+1. Use the `netmon_filter` in Wireshark. You will most likely see one packet. It's the first packet and its ID is 1.
+2. Close it and use `editcap` to remove it.
+    * `C:\Program Files\Wireshark>editcap -F netmon2 C:\path\to\netmon.cap c:\path\to\modified.cap 1`
+3. Open `modified.cap` in Wireshark and save it as pcap.
+
+* Source: https://ask.wireshark.org/question/7163/my-save-and-save-as-are-grayed-out/
+
 ------
 
 ## Powershell
@@ -548,6 +574,26 @@ hard disk and use it in a new VM. Yes, it's as manual as it sounds.
 The internet recommends creating an external virtual switch but it did not work
 for me. I deleted the external switch and used the default switch and it somehow
 worked so try doing that.
+
+This might also happen if you are using an active VPN connection by
+`Cisco AnyConnect` on the host.
+
+### Higher Resolution For Debian/Ubuntu Guest in Hyper-V
+Seems like the highest resolution is 1080p.
+
+1. `sudo nano /etc/default/grub`.
+2. Change the line with `GRUB_CMDLINE_LINUX_DEFAULT` to
+    * `GRUB_CMDLINE_LINUX_DEFAULT="quiet splash video=hyperv_fb:1920x1080"`
+3. `sudo update-grub`.
+4. Restart the VM.
+
+* Source: https://askubuntu.com/a/745142
+
+### Creating an Ubuntu VM in Hyper-V
+Most important item, do not select `log in automatically` during setup.
+Otherwise, xRDP will fail silently.
+
+* https://www.hanselman.com/blog/UsingEnhancedModeUbuntu1804ForHyperVOnWindows10.aspx
 
 ------
 
@@ -979,7 +1025,7 @@ def xor_byte(payload, key):
                      itertools.izip(payload, itertools.cycle(key)))
 ```
 
-## Cyclic XOR on Strings
+### Cyclic XOR on Strings
 Same as above but string
 
 ```python
@@ -993,6 +1039,43 @@ def xor_str(payload, key):
     return "".join(chr(ord(mybyte) ^ ord(keybyte)) for (mybyte, keybyte) in
                    itertools.izip(payload, itertools.cycle(key)))
 ```
+
+------
+
+## Java
+
+### Enable Log4j for a Java App
+This usually happens when I am testing a Java app and it uses `log4j` but
+logging is not enabled.
+
+Create a file named `log4j.properties` by the main jar file and put the
+following in it. Add `-Dlog4j.debug` to the app's command line parameters.
+
+The app might already have the command to log but is just missing the file. Use
+`procmon` to see which paths are searched to find this gile. `Result is NAME NOT FOUND`
+is your friend.
+
+```
+log4j.rootLogger=debug, stdout, R
+
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+
+# Pattern to output the caller's file name and line number.
+log4j.appender.stdout.layout.ConversionPattern=%5p [%t] (%F:%L) - %m%n
+
+log4j.appender.R=org.apache.log4j.RollingFileAppender
+log4j.appender.R.File=example.log
+
+log4j.appender.R.MaxFileSize=100KB
+# Keep one backup file
+log4j.appender.R.MaxBackupIndex=1
+
+log4j.appender.R.layout=org.apache.log4j.PatternLayout
+log4j.appender.R.layout.ConversionPattern=%p %t %c - %m%n
+```
+
+* Source: http://logging.apache.org/log4j/1.2/manual.html
 
 ------
 
