@@ -16,15 +16,24 @@ requests that appear in Windows and then ignore them in Burp.
 
 <!--more-->
 
+# TL;DR
 
+1. Proxy the applications directly.
+    1. Application and tech stack specific proxy settings.
+    2. Browsers: Use Firefox or pass `--proxy-server="http://localhost:8080"` to Chrome and Edge.
+2. Use a Virtual Machine.
+3. Use Burp's scope and filter to hide requests in `HTTP History`.
+4. Add domains to Burp's `TLS Pass Through`.
+5. Hide `OPTIONS` requests in Burp's history with extensions.
+6. Use this Burp config file as base and add your domains.
+    1. https://github.com/parsiya/Parsia-Clone/blob/master/configs/burp-default-config.json
 
 # Motivation
-Why you should do this.
+Noisy history == missing important requests.
 
 ## Noise in Burp's History
 Often times when proxying thick clients I have to use the WinINET proxy settings
-(also known as IE proxy settings). This means Burp's history will be full of
-noise.
+(also known as IE proxy settings). Burp's history will be full of noise.
 
 ## Other Applications Stop Working
 A lot of miscellaneous applications are also proxied when you enable the Windows
@@ -32,8 +41,8 @@ proxy settings. They might stop working due to certificate pinning.
 
 ## Secrets/Credentials in Saved in the Burp Project
 Other proxied applications might contain secrets and other sensitive
-information. Because I keep my Burp projects forever this means the secrets are
-now stored on the machine and I do not want that to happen.
+information. I keep my Burp projects forever so the secrets are now stored on
+the machine and I do not want that to happen.
 
 # Previous Work
 Brian King talks about disabling some options in Firefox to reduce noise in Burp in
@@ -54,14 +63,15 @@ section are not proxied and do not appear in history.
 # Reduce Incoming Requests
 If we can prevent some requests from reaching Burp we have won.
 
-## Only Proxy The Application Directly
-Proxy the application directly if you can. Sometimes the app has proxy settings.
-If we proxy the application we ignore traffic for the rest of the system.
-These proxy settings are not always visible in the application. They might be in
-a config file.
+## Proxy The Application Directly
+Proxy the application directly. If we proxy the application we ignore traffic
+for the rest of the system. Sometimes the app has proxy settings. These proxy
+settings are not always visible in the application. They might be in a config
+file. Search the internet and read the documentation/manual to see how it can be
+done.
 
 ### Techstack Proxy Settings
-The tech stack helps with proxying.
+The tech stack helps with proxying. Here are some quick tips:
 
 * .NET: You can proxy these by using a config file. See
   [Thick Client Proxying - Part 7 - Proxying .NET Applications via Config File]
@@ -83,33 +93,44 @@ Browsers are special thick clients. We can directly proxy them.
     * Create a shortcut that runs the browser with a specific proxy, this way
       you can run different instances of the browser for normal web browsing or
       proxying.
+* [Electron][electron.js]: Usually honor Windows proxy settings. Chromium based
+  but ignore `--proxy-server`.
+    * Try these tips by [Paolo Stagno][paolo-stagno] on [blog.doyensec.com][blog-doyensec].
+      [Instrumenting Electron Apps for Security Testing - Intercepting HTTP(s) traffic][doyensec-electron-proxy].
 
 [firefox-proxy]: https://support.mozilla.org/en-US/kb/connection-settings-firefox
 [foxyproxy]: https://addons.mozilla.org/en-US/firefox/addon/foxyproxy-standard/
+[electron.js]: https://www.electronjs.org/
+[doyensec-electron-proxy]: https://blog.doyensec.com/2018/07/19/instrumenting-electron-app.html#intercepting-https-traffic
+[blog-doyensec]: https://blog.doyensec.com/
+[paolo-stagno]: https://twitter.com/Void_Sec
 
 ## Use a Virtual Machine
 For obvious reasons, VMs are a must for testing thick clients. They are
-controlled environments. It prevents breaking your other applications, the noise
-from their traffic, or have to change the proxy settings because you need to
-attend a videoconference meeting.
+controlled environments. Your other applications do not break, the noise from
+their traffic does not show up in Burp, and you do not have to change the proxy
+settings because you need to attend a videoconference meeting.
 
 ## Use Burp's Scope
-It's possible to reduce this noise by adding endpoints used by the application to
-[scope]({{< relref "/post/2016/2016-03-29-thickclient-proxying-2.markdown#1-scope" >}} "scope")
+It's possible add endpoints used by the application to
+[Burp's scope]({{< relref "/post/2016/2016-03-29-thickclient-proxying-2.markdown#1-scope" >}} "Burp's scope")
 and hide everything not in scope. But this is not feasible in the early stages
 of recon because we do not know all the endpoints and we do not want to
-miss anything when the app contacts a new one. I usually do not use this setting.
+miss anything when the app contacts a new one. I usually do not use this setting
+at all.
 
 # Use Burp's TLS Pass Through
 If it's not possible to reduce the incoming requests we can also tell Burp not
 to MitM some requests.
 
 ## Harvesting Noisy Domains
-First, we must make a list of any domains that should not be proxied. Things
-like Windows specific traffic (e.g., telemetry), browsers calling home, and
-other application updates.
+First, we must make a list of any traffic that should not be proxied. Some
+examples are Windows specific traffic (e.g., telemetry), browsers calling
+home, and other application updates.
 
-1. Started Burp in a typical Windows 10 VM.
+To create this list I did the following:
+
+1. Started Burp in a typical Windows 10 VM and set it in Windows proxy settings.
 2. Added the [Burp's CA to the Windows certificate store]
    ({{< relref "/post/2016/2016-02-23-installing-burp-ca-in-windows-cert-store.markdown" >}}
    "Installing Burp Certificate Authority in Windows Certificate Store").
@@ -133,33 +154,33 @@ trick:
    copy them with `ctrl+c`.
 7. Paste the results in a text file and save it.
 
-Now I hade a list of regular expressions for the domains.
+Now I had a list of regular expressions for the domains.
 
 {{< imgcap title="Domain regexes" src="02-domain-regex.png" >}}
 
 ## Adding Domains to Burp's TLS Pass Through
-`TLS Pass Through` has an option to paste URLs or load the items from files. It
-does not support the format we just created. The files should be one normal URL
-per line (not regex). For example, instead of `^accounts\.google\.com$` we
+`TLS Pass Through` has an option to paste URLs or load a list from a file. It
+does not support the format we just created. The file should have one normal URL
+per line (not regex). E.g., instead of `^accounts\.google\.com$` we
 should have `accounts.google.com`. `*.google.com` does not work either.
 
 {{< imgcap title="Error importing URLs" src="03-unrecognized-hosts.png" >}}
 
-A series of searches and replaces converts that domain list to the correct
-format. Go to `Proxy > Options` and scroll down to `TLS Pass Through` at the
-bottom of the tab. Click `Load ...` and select the file. 
+A series of searches and replaces converted the previous domain list to the
+correct format. I went to `Proxy > Options` and scrolled down to `TLS Pass Through`
+at the bottom of the tab. Clicked `Load ...` and selected the file my domains. 
 
 {{< imgcap title="Domains added" src="04-domains-added.png" >}}
 
-`Paste URL` only works if there is one URL in the clipboard.
+`Paste URL` only works if there is one URL in the clipboard or you have copied a
+URL from another location in Burp.
 
 ### Adding More Domains
-We need to update the list. We can add new domains manually in
-`TLS Pass Through`.
+To update the list we must add new domains manually in `TLS Pass Through`.
 
 Inside Burp:
 
-1. Right-click on the request in history and select `Copy URL`.
+1. Right-click on the request and select `Copy URL`.
 2. Go to `TLS Pass Through` and click the `Paste URL` button.
 
 Edit the config file:
