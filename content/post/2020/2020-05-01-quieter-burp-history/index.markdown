@@ -24,6 +24,8 @@ requests that appear in Windows and then ignore them in Burp.
 2. Use a Virtual Machine.
 3. Use Burp's scope and filter to hide requests in `HTTP History`.
 4. Add domains to Burp's `TLS Pass Through`.
+    1. Noisy domains. E.g., Windows update.
+    2. Authentication/MFA domains. You do not want your credentials in Burp.
 5. Hide `OPTIONS` requests in Burp's history with extensions.
 6. Use this Burp config file as base and add your domains.
     1. https://github.com/parsiya/Parsia-Clone/blob/master/configs/burp-default-config.json
@@ -183,14 +185,15 @@ Inside Burp:
 1. Right-click on the request and select `Copy URL`.
 2. Go to `TLS Pass Through` and click the `Paste URL` button.
 
-Edit the config file:
+Edit the config file directly:
 
 1. Export the config file (or edit the one from below).
 2. Add new items to `project_options > ssl_pass_through > rules`.
     1. Don't forget to escape backslashes in the JSON string
 3. Reload the config file.
 
-There were some domains that did not appear in this list, things such as:
+There were some domains that did not appear in the previous list. I added them
+manually:
 
 * `.*mozilla\\.(com|net|org)`
 * `.*\.windows\.com`
@@ -209,8 +212,8 @@ Discover these endpoints for your organization and then add them to the pass
 through section. For example, `auth.example.net` or Okta `example.okta.com`.
 
 ## What About HTTP?
-It should have been obvious to me but I did not realize that HTTP URLs to the
-above domains still get proxied. For example, `http://ocsp.digicert.com`.
+It should have been obvious to me but I did not realize that HTTP requests still
+get proxied. For example, `http://ocsp.digicert.com`.
 
 There's not much we can do here. Fortunately, there are only a few of them
 these days. A few suggestions:
@@ -224,19 +227,20 @@ If you figure out a way to tell Burp not to capture HTTP requests (other than
 the nuclear option) please let me know.
 
 # Burp's HTTP History Filter
-The filter for HTTP History is another good ally in our war against noise.
-I usually remove CSS and some file extensions like woff/woff2 (fonts). You can
-add these to the `Filter by file extension > Hide` section and then turn it
-on/off as needed. The possibilities here are endless.
+The filter for HTTP History is another good ally in our war against noise. I
+usually remove CSS and some file extensions like woff/woff2 (fonts). You can add
+these to the `Filter by file extension > Hide` section and then turn it on/off
+as needed. Bonus points for adding them to your default Burp config file. The
+possibilities here are endless.
 
 ## OPTIONS
-Burp's history filter does not have a way to hide HTTP verbs like OPTIONS. All
-those noisy preflight requests will pollute your history. I described how I
-wrote an extension to hide them in
-[Hiding OPTIONS - An Adventure in Dealing with Burp Proxy in an Extension]
-({{< relref "post/2019/2019-04-06-hiding-options/index.markdown" >}}
-"Hiding OPTIONS - An Adventure in Dealing with Burp Proxy in an Extension").
-You can use this methodology to hide any HTTP verb from history.
+Burp's history filter does not have a way to hide HTTP verbs like OPTIONS. The
+preflight requests will pollute your history. I described how I wrote an
+extension to hide them in [Hiding OPTIONS - An Adventure in Dealing with Burp
+Proxy in an Extension] ({{< relref
+"post/2019/2019-04-06-hiding-options/index.markdown" >}} "Hiding OPTIONS - An
+Adventure in Dealing with Burp Proxy in an Extension"). You can use this
+methodology to hide any HTTP verb from history.
 
 Note: [Capt. Meelo][capt-meelo] wrote an extension based on my blog post (seems
 like mine has stopped working), you can see their blog post at
