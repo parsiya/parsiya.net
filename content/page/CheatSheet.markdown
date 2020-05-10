@@ -46,6 +46,7 @@ below or `ctrl+f` and search for keywords.
     - [Install Windbg as the Post-Mortem Debugger](#install-windbg-as-the-post-mortem-debugger)
     - [Remove Windbg as the Post-Mortem Debugger](#remove-windbg-as-the-post-mortem-debugger)
     - [Open a Network Monitor cap File in Wireshark and Save is Disabled](#open-a-network-monitor-cap-file-in-wireshark-and-save-is-disabled)
+    - [Shortcut to Run the Highlighted App in Start Menu Elevated](#shortcut-to-run-the-highlighted-app-in-start-menu-elevated)
 - [Powershell](#powershell)
     - [List All Files (Including Hidden Files)](#list-all-files-including-hidden-files)
     - [Diff in Powershell](#diff-in-powershell)
@@ -63,6 +64,7 @@ below or `ctrl+f` and search for keywords.
     - [The Guest Has No Internet](#the-guest-has-no-internet)
     - [Higher Resolution For Debian/Ubuntu Guest in Hyper-V](#higher-resolution-for-debianubuntu-guest-in-hyper-v)
     - [Creating an Ubuntu VM in Hyper-V](#creating-an-ubuntu-vm-in-hyper-v)
+    - [Windows DNS Cache is not Getting Populated in Hyper-V Guest](#windows-dns-cache-is-not-getting-populated-in-hyper-v-guest)
 - [VirtualBox](#virtualbox)
     - [Restart Clipboard Functionality in VirtualBox After Guest Resume](#restart-clipboard-functionality-in-virtualbox-after-guest-resume)
     - [Change the Hardware UUID of Cloned Windows VMs to Avoid Windows Reactivation](#change-the-hardware-uuid-of-cloned-windows-vms-to-avoid-windows-reactivation)
@@ -478,6 +480,14 @@ There is probably an error in the capture.
 
 * Source: https://ask.wireshark.org/question/7163/my-save-and-save-as-are-grayed-out/
 
+### Shortcut to Run the Highlighted App in Start Menu Elevated
+You want to run `notepad` as admin.
+
+1. Open the start menu. E.g., Windows key.
+2. Type `notepad`, now notepad is selected.
+3. Press `ctrl+shift+enter`.
+4. UAC pops up.
+
 ------
 
 ## Powershell
@@ -594,6 +604,14 @@ Most important item, do not select `log in automatically` during setup.
 Otherwise, xRDP will fail silently.
 
 * https://www.hanselman.com/blog/UsingEnhancedModeUbuntu1804ForHyperVOnWindows10.aspx
+
+### Windows DNS Cache is not Getting Populated in Hyper-V Guest
+In a default Hyper-V guest networking setup the local DNS resolver cache is
+empty.
+
+* Symptom: `ipconfig /displaydns` prints nothing.
+* Solution: Modify the DNS server for the network adapter and manually add a DNS
+  server like `8.8.8.8`.
 
 ------
 
