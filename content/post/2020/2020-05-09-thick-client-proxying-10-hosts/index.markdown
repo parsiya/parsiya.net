@@ -7,6 +7,7 @@ comments: true
 twitterImage: 04-example-in-burp.png
 categories:
 - Thick client proxying
+- Burp
 ---
 
 Welcome to the 10th installment of
