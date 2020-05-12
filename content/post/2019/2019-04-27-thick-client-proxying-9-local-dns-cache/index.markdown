@@ -30,6 +30,14 @@ Code is at:
 
 <!--more-->
 
+**Update May 2020**: If you are doing this in a Hyper-V guest virtual machine,
+it will not work. The default DNS server for a Hyper-V guest is the server. And
+it does not populate the local DNS cache (I do not know the reason). The fix is
+to manually configure a DNS server (e.g., `8.8.8.8`) in the guest's network
+adapter.
+
+{{< imgcap title="Results in a Hyper-V guest with the default DNS server" src="08-hyperv-issue.png" >}}
+
 # Discovering Endpoints
 Discovering application endpoints is one of the starting steps in thick client
 proxying. I have written about it so many times that I will just make a list
