@@ -471,9 +471,15 @@ You need to delete some registry keys.
     2. Remove the `Debugger` key.
 
 ### Open a Network Monitor cap File in Wireshark and Save is Disabled
-There is probably an error in the capture.
+Seems like this actually happens if you save the display filter in the capture
+file. The filter will be first packet in the resulting cap file and that's what
+causes this issue.
 
-1. Use the `netmon_filter` in Wireshark. You will most likely see one packet. It's the first packet and its ID is 1.
+This can be avoided by not checking the `Record display filter in capture file`
+when saving the file in Netmon.
+
+1. Use the `netmon_filter` in Wireshark. You will most likely see one packet.
+   It's the first packet and its ID is 1.
 2. Close it and use `editcap` to remove it.
     * `C:\Program Files\Wireshark>editcap -F netmon2 C:\path\to\netmon.cap c:\path\to\modified.cap 1`
 3. Open `modified.cap` in Wireshark and save it as pcap.

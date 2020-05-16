@@ -1,5 +1,5 @@
 ---
-title: "Thick Client Proxing - Part 10 - The hosts File"
+title: "Thick Client Proxying - Part 10 - The hosts File"
 date: 2020-05-09T13:01:59-07:00
 draft: false
 toc: true
@@ -8,6 +8,8 @@ twitterImage: 04-example-in-burp.png
 categories:
 - Thick client proxying
 - Burp
+aliases:
+- "/blog/2020-05-09-thick-client-proxing-part-10-the-hosts-file/"
 ---
 
 Welcome to the 10th installment of
