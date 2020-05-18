@@ -2,7 +2,7 @@
 title: "Go Slices and Their Oddities"
 date: 2020-05-17T22:37:21-07:00
 draft: false
-toc: false
+toc: true
 comments: true
 categories:
 - Go
@@ -17,6 +17,8 @@ might have security implications.
 [serge-github]: https://github.com/gotzmann
 
 <!--more-->
+
+**TL;DR**: If you want to modify a slice in the function, return it.
 
 # Slices
 The Golang blog has two great posts about slices:
@@ -378,4 +380,6 @@ willing to bet that if we look at the memory for the array, we will see the
 extra member there. 
 
 # What Did We Learn Here Today?
-If you want to change a slice in a function, return the modified value.
+If you want to change a slice in a function, return the modified slice. Do not
+pass it as a parameter in order to reuse the original copy. The original copy
+might contain the changes.
