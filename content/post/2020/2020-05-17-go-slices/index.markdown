@@ -18,7 +18,8 @@ might have security implications.
 
 <!--more-->
 
-**TL;DR**: If you want to modify a slice in the function, return it.
+**TL;DR**: If you want to modify a slice in the function, return it. Do not
+expect any changes to be reflected in the original variable.
 
 # Slices
 The Golang blog has two great posts about slices:
@@ -72,11 +73,15 @@ func printSlice(s string, a []int) {
 Now we get to the [questions][go-quiz]. It had links to the Go playground to run
 them. I modified them and added my own function to see what happens.
 
+If you want to run the code locally please use:
+
+* [https://github.com/parsiya/Go-Security/tree/master/slice-oddities][blog-code]
+
+[blog-code]: https://github.com/parsiya/Go-Security/tree/master/slice-oddities
+
 ## Quiz 1
 `surprise` gets a slice and then assigns `5` to all of its members. My modified
 code is:
-
-* https://play.golang.org/p/oXjDcyrxnRw
 
 ```go
 package main
@@ -102,6 +107,8 @@ func main() {
     printSlice("Inside main, after surprise", a)
 }
 ```
+
+* https://play.golang.org/p/oXjDcyrxnRw
 
 Because in Go everything is passed by value, you would expect the slice in
 `main` to remain untouched by the modifications inside the function. But it does
@@ -148,8 +155,6 @@ In quiz 2 there is an `append(a, 5)` inside `surprise`. A new value is added to
 the slice. We also expect that slice after `surprise` to be the same because we
 can change slices inside functions.
 
-* https://play.golang.org/p/ixiIKZ6_pWx
-
 ```go
 package main
 
@@ -178,6 +183,8 @@ func main() {
 	printSlice("Inside main, after surprise", a)
 }
 ```
+
+* https://play.golang.org/p/ixiIKZ6_pWx
 
 But it does not happen. The slice outside is not modified.
 
@@ -289,8 +296,6 @@ after `append`.
 Quiz 4 does the `append` in `main` before calling `surprise`. This is tricky and
 I was baffled even after using my helper function to print the slice fields.
 
-* https://play.golang.org/p/gnfZ7W1pDG3
-
 ```go
 package main
 
@@ -322,6 +327,8 @@ func main() {
 	printSlice("Inside main, after surprise", a)
 }
 ```
+
+* https://play.golang.org/p/gnfZ7W1pDG3
 
 We expect the modified slice to have six members. We know:
 
