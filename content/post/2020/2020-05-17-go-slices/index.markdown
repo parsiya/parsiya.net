@@ -124,7 +124,7 @@ not:
 We can see the address to the array does not change before, inside, and after
 the function. This means we are operating on the same array.
 
-### Slices Can Be Modified in functions
+### Slices Can Be Modified in Functions
 [There is no pass-by-reference in Go][pass-reference] by Dave Cheney explains
 that in Go every parameter is passed by value. We can pass pointers and modify
 what the pointer points to but the pointers are also passed by their value
