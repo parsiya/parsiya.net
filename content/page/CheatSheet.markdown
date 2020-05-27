@@ -805,6 +805,7 @@ Do this first and then `gitignore` will work (not using `--cached` will remove
 the file completely from the filesystem):
 
 * `git rm --cached blah/whatever.cpp`
+* Use `-r` for recursive change. Needed for directories.
 
 Source: https://stackoverflow.com/a/30227922
 
