@@ -47,6 +47,7 @@ below or `ctrl+f` and search for keywords.
     - [Remove Windbg as the Post-Mortem Debugger](#remove-windbg-as-the-post-mortem-debugger)
     - [Open a Network Monitor cap File in Wireshark and Save is Disabled](#open-a-network-monitor-cap-file-in-wireshark-and-save-is-disabled)
     - [Shortcut to Run the Highlighted App in Start Menu Elevated](#shortcut-to-run-the-highlighted-app-in-start-menu-elevated)
+    - [Firewall Rules in the Registry](#firewall-rules-in-the-registry)
 - [Powershell](#powershell)
     - [List All Files (Including Hidden Files)](#list-all-files-including-hidden-files)
     - [Diff in Powershell](#diff-in-powershell)
@@ -481,7 +482,7 @@ when saving the file in Netmon.
 1. Use the `netmon_filter` in Wireshark. You will most likely see one packet.
    It's the first packet and its ID is 1.
 2. Close it and use `editcap` to remove it.
-    * `C:\Program Files\Wireshark>editcap -F netmon2 C:\path\to\netmon.cap c:\path\to\modified.cap 1`
+    * `C:\Program Files\Wireshark>editcap -F netmon2 C:\path\to\netmon.cap C:\path\to\modified.cap 1`
 3. Open `modified.cap` in Wireshark and save it as pcap.
 
 * Source: https://ask.wireshark.org/question/7163/my-save-and-save-as-are-grayed-out/
@@ -493,6 +494,19 @@ You want to run `notepad` as admin.
 2. Type `notepad`, now notepad is selected.
 3. Press `ctrl+shift+enter`.
 4. UAC pops up.
+
+### Firewall Rules in the Registry
+If you cannot delete firewall rules you can delete their corresponding rule
+(user added ones are represented by a GUID) in the registry. This also helps if
+the Rule text does not say which executable is targetted:
+
+Location:
+
+* `Computer\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\FirewallRules`
+
+Format:
+
+* https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-gpfas/2efe0b76-7b4a-41ff-9050-1023f8196d16
 
 ------
 

@@ -14,7 +14,7 @@ tags:
 
 Credit goes to my friend [Stark Riedesel](https://www.linkedin.com/in/stark-riedesel-4162b846). Check out his [github profile](https://github.com/starkriedesel/). One of these days I will bully him into reviving his blog.
 
-TL;DR: Instead of [path.join](https://golang.org/pkg/path/#Join) use [filpath.Join](https://golang.org/pkg/path/filepath/).
+TL;DR: Instead of [path.join](https://golang.org/pkg/path/#Join) use [filepath.Join](https://golang.org/pkg/path/filepath/).
 
 <!--more-->
 
@@ -56,7 +56,7 @@ You would expect it to create the correct path. Instead, you get:
 * `c:\windows\system32/drivers\etc\hosts`
 
 # What Should We Use Instead?
-Use [filpath.Join][filepath.join] instead. It uses OS specific separators.
+Use [filepath.Join][filepath.join] instead. It uses OS specific separators.
 
 Note 1: If you modify the example on the playground to `filepath.Join` you still get the same result. Obviously, Go playground is not running on Windows.
 
