@@ -326,6 +326,11 @@ somewhere (e.g., git repo) and update it regularly.
 ({{< relref "/post/2019/2019-10-13-quality-of-life-burp/index.markdown#use-a-default-burp-config">}}
 "Use a Default Burp Config").
 
+**Update June 2020**: I reviewed the rules and decided that using wildcards to
+ban entire domains is better. For example, to ban pretty much every request to
+`mozilla` we can use this regex `^.*mozilla\\.(com|net|org)$`. I updated the
+burp config. It should be cleaner now.
+
 See mine at:
 
 * https://github.com/parsiya/Parsia-Clone/blob/master/configs/burp-default-config.json
