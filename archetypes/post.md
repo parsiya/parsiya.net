@@ -8,11 +8,15 @@ twitterImage: .png
 categories:
 - category1
 - category2
-tags:
-- tag1
-- tag2
 ---
 
+# TODO before publishing:
+
+* [ ] Set twitter image
+* If publishing date != creation date:
+    * [ ] Change the timestamp in the front matter
+    * [ ] Change the timestamp in the directory name
+* [ ] more
 
 <!--more-->
 
