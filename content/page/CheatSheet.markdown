@@ -46,7 +46,7 @@ below or `ctrl+f` and search for keywords.
     - [Install Windbg as the Post-Mortem Debugger](#install-windbg-as-the-post-mortem-debugger)
     - [Remove Windbg as the Post-Mortem Debugger](#remove-windbg-as-the-post-mortem-debugger)
     - [Open a Network Monitor cap File in Wireshark and Save is Disabled](#open-a-network-monitor-cap-file-in-wireshark-and-save-is-disabled)
-    - [Shortcut to Run the Highlighted App in Start Menu Elevated](#shortcut-to-run-the-highlighted-app-in-start-menu-elevated)
+    - [Shortcut to Run Applications Elevated](#shortcut-to-run-applications-elevated)
     - [Firewall Rules in the Registry](#firewall-rules-in-the-registry)
 - [Powershell](#powershell)
     - [List All Files (Including Hidden Files)](#list-all-files-including-hidden-files)
@@ -472,12 +472,18 @@ You need to delete some registry keys.
     2. Remove the `Debugger` key.
 
 ### Open a Network Monitor cap File in Wireshark and Save is Disabled
-Seems like this actually happens if you save the display filter in the capture
-file. The filter will be first packet in the resulting cap file and that's what
-causes this issue.
+This happens in two instances:
 
-This can be avoided by not checking the `Record display filter in capture file`
-when saving the file in Netmon.
+1. **Not fixable**: If the NetMon capture file contains IEEE 802.11 plus Network Monitor radio
+   header encapsulated packets instead of Per packet encapsulated packets.
+    * Seems like this happens outside of VMs when we are capturing traffic for a wireless network interface.
+2. **Fix below**: If you save the display filter in the capture file. The filter
+   will be first packet in the resulting cap file and that's what causes this
+   issue.
+   * Do not check the `Record display filter in capture file` when saving the
+     file in Netmon.
+
+If you already have a file with the display filter you can remove it.
 
 1. Use the `netmon_filter` in Wireshark. You will most likely see one packet.
    It's the first packet and its ID is 1.
@@ -487,13 +493,14 @@ when saving the file in Netmon.
 
 * Source: https://ask.wireshark.org/question/7163/my-save-and-save-as-are-grayed-out/
 
-### Shortcut to Run the Highlighted App in Start Menu Elevated
-You want to run `notepad` as admin.
+### Shortcut to Run Applications Elevated
+For example, running `notepad` as admin.
 
 1. Open the start menu. E.g., Windows key.
 2. Type `notepad`, now notepad is selected.
-3. Press `ctrl+shift+enter`.
-4. UAC pops up.
+3. Alternatively, open the Run dialog with `Windows+R` and enter `notepad`.
+4. Press `ctrl+shift+enter`.
+5. UAC pops up.
 
 ### Firewall Rules in the Registry
 If you cannot delete firewall rules you can delete their corresponding rule
