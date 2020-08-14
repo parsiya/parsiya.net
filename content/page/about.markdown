@@ -7,7 +7,7 @@ comments: false
 type: about
 ---
 
-I am Parsia, a Security Engineer, part of the Game and Platform Security
+I am Parsia, a Senior Security Engineer, part of the Game and Platform Security
 Engineering group at [Electronic Arts](https://www.ea.com/security).
 [Realistic video of me hacking videogames at work](https://www.youtube.com/watch?v=BRWvfMLl4ho).
 
@@ -19,10 +19,13 @@ exchange platforms, mobile device management suites, network appliances,
 embedded and IoT devices on top of a long list of thickclient/mobile/web
 applications we all use on a daily basis.
 
-I have had **one** single talk. That was at DEF CON 26. I guess I should add
-`DEF CON Speaker` to my LinkedIn title (lol):
+I have had two major presentations:
 
-* https://www.youtube.com/watch?v=xKYIde5jh_8
+* DEF CON 26 Main Track: Tineola Taking a Bite Out of Enterprise Blockchain
+    * https://www.youtube.com/watch?v=xKYIde5jh_8
+    * I guess I should add `DEF CON Speaker` to my LinkedIn title (lol).
+* DEF CON 28 Appsec Village: localghost: Escaping Browser Sandbox Without 0-Days
+    * https://www.youtube.com/watch?v=Cgl51ZcACLg&t=90
 
 **Who is Hackerman?**\\
 *Hackerman* is a character from the movie
@@ -40,7 +43,7 @@ brand. You don't wanna be the other guy from Wham!
 [Wham!](https://en.wikipedia.org/wiki/Wham!) was a popular UK music duo. Most
 people remember one of its members, George Michael. No one remembers the other
 guy, [Andrew Ridgeley](https://www.google.com/search?q=andrew+ridgeley). Write a
-blog, don't be afraid to promote yourself. It's worth it.
+blog, don't be afraid to promote yourself (if you have the time). It's worth it.
 
 **Goals in progress:**
 
@@ -49,18 +52,22 @@ blog, don't be afraid to promote yourself. It's worth it.
     - https://github.com/parsiya/Go-Security
     - https://github.com/parsiya/Parsia-Code
     - [https://parsiya.net/categories/go/]({{< relref "categories/go" >}} "https://parsiya.net/categories/go/") 
-- In-memory fuzzing via binary instrumentation (aka traversing arbitrary
-  assembly blobs over and over and over).
-    - [https://parsiya.net/categories/winappdbg/]({{< relref "categories/winappdbg" >}} "https://parsiya.net/categories/winappdbg/") 
 - Automation:
     - [https://parsiya.net/categories/automation/]({{< relref "categories/automation" >}} "https://parsiya.net/categories/automation/") 
     - Borrowed Time: My project and note management app
         - https://github.com/parsiya/borrowedtime/
+    - ESLinter: Burp extension to automatically extract and ESLint JavaScript
+        - https://github.com/parsiya/eslinter
 
 **Done and dusted:**
 
 - Enterprise blockchain and [Hyperledger Fabric](https://www.hyperledger.org/projects/fabric) security:
     - **DEF CON 26 video** is out: https://www.youtube.com/watch?v=xKYIde5jh_8
     - My post on Synopsys' corporate blog: [Tineola: Taking a Bite out of Enterprise Blockchain](https://www.synopsys.com/blogs/software-security/tineola-enterprise-blockchain/ "Tineola: Taking a Bite out of Enterprise Blockchain")
-    - Tineola: https://github.com/tineola/tineola
+    - Tineola the tool: https://github.com/tineola/tineola
     - Random posts as I learned: [https://parsiya.net/categories/blockchain/]({{< relref "categories/blockchain" >}} "https://parsiya.net/categories/blockchain/")
+
+**On the back burner:**
+- In-memory fuzzing via binary instrumentation (aka traversing arbitrary
+  assembly blobs over and over and over).
+    - [https://parsiya.net/categories/winappdbg/]({{< relref "categories/winappdbg" >}} "https://parsiya.net/categories/winappdbg/") 

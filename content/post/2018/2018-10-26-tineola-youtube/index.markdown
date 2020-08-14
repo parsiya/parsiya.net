@@ -7,6 +7,7 @@ comments: true
 categories:
 - Blockchain
 - Tineola
+- DEF CON
 tags:
 - Hyperledger Fabric
 - Chaincode
