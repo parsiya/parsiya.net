@@ -167,7 +167,7 @@ This was covered briefly in the DLL hijacking section. If you can modify a
 binary that is executed or loaded as SYSTEM then you can be SYSTEM. But if only
 admins can modify it then you have accomplished nothing.
 
-Here's a blog by Raymond where he talks about a reported a issue. Planting DLLs
+Here's a blog by Raymond where he talks about a reported issue. Planting DLLs
 in `System32` to get DLL hijacking can only be done by admins. So, no CVE.
 
 * https://devblogs.microsoft.com/oldnewthing/20131023-00/?p=2853
@@ -209,8 +209,8 @@ you do with it?
 
 I blame bugbounty influencers for this. There are entire guides on how to hype
 up your bug to get better payouts. I am all for people making money. Hell, **I
-encourage you to milk the companies as much as you while the fad continues.**
-But, please do not try to trick me as a security engineer.
+encourage you to milk the companies as much as you can while the fad
+continues.** But, please do not try to trick me or other security engineers.
 
 # What Did We Learn Here Today?
 
