@@ -84,6 +84,7 @@ below or `ctrl+f` and search for keywords.
 - [Visual Studio Code](#visual-studio-code)
     - [Associate an Extension with a Specific Language](#associate-an-extension-with-a-specific-language)
     - [Install a Specific Version of an Extension](#install-a-specific-version-of-an-extension)
+    - [couldn't start client gopls unsupported URI scheme](#couldnt-start-client-gopls-unsupported-uri-scheme)
 - [Sublime Text 3](#sublime-text-3)
     - [Fix "MarGo build failed" for GoSublime on Windows](#fix-margo-build-failed-for-gosublime-on-windows)
     - [Open the same file in a new tab](#open-the-same-file-in-a-new-tab)
@@ -846,6 +847,11 @@ because it disables auto-update for that extension.
 5. The extension will not auto-update from that version.
 
 * Source: https://github.com/microsoft/vscode/issues/30579#issuecomment-456028574
+
+### couldn't start client gopls unsupported URI scheme
+VS Code needs to open a workspace. Open the parent directory to the project.
+
+Source: https://www.reddit.com/r/golang/comments/g6l6y9/couldnt_start_client_gopls_unsupported_uri_scheme/
 
 ------
 
