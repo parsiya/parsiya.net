@@ -1,6 +1,6 @@
 ---
 categories:
-- Memory Forensics
+- Forensics
 tags:
 - Memfetch
 - Kali
@@ -9,11 +9,20 @@ date: 2014-11-18T23:21:01Z
 title: Building memfetch on Kali + Comments
 ---
 
-I've used Disqus to add comments. At the moment, guests can comment and comments do not need to be approved (unless they have links). Hopefully there won't be much spam to sink the ocassional comment that I think will be posted.
+I've used Disqus to add comments. At the moment, guests can comment and comments
+do not need to be approved (unless they have links). Hopefully there won't be
+much spam to sink the occasional comment that I think will be posted.
 
-Note: I just wanted to make it work in a hurry. There are probably better ways of doing this.
+Update from 2020: Comments without approval were a mistake. I got so much spam
+and harassment.
 
-I stumbled upon the very useful tool [memfetch](http://lcamtuf.coredump.cx/soft/memfetch.tgz) by the talented *lcamtuf*. The utility is quite old (from 2003 if I recall correctly) and I could not build it using the provided makefile.
+Note: I just wanted to make it work in a hurry. There are probably better ways
+of doing this.
+
+I stumbled upon the very useful tool
+[memfetch](http://lcamtuf.coredump.cx/soft/memfetch.tgz) by the talented
+*lcamtuf*. The utility is quite old (from 2003 if I recall correctly) and I
+could not build it using the provided makefile.
 
 <!--more-->
 
@@ -25,7 +34,9 @@ compilation terminated.
 make: *** [memfetch] Error 1
 {{< /codecaption >}}
 
-Seems like the location of header files have moved since then. [This stackoverflow answer](http://stackoverflow.com/a/19310710) mentions removing ``asm/page.h`` and adding ``linux/types.h``. Let's see what happens now:
+Seems like the location of header files have moved since then.
+[This stackoverflow answer](http://stackoverflow.com/a/19310710) mentions
+removing ``asm/page.h`` and adding ``linux/types.h``. Let's see what happens:
 
 {{< codecaption lang="bash" title="more errors" >}}
 $ make
@@ -36,7 +47,11 @@ memfetch.c:284:25: note: each undeclared identifier is reported only once for ea
 make: *** [memfetch] Error 1
 {{< /codecaption >}}
 
-The ``page.h`` file is located at ``/usr/src/linux-headers-3.12-kali1-common/include/asm-generic/page.h`` on Kali linux. This is where ``PAGE_SIZE`` is defined. Just adding it to ``memfetch.c`` along with changing ``#include <asm/page.h>`` to ``#include <linux/types.h>`` will do the trick.
+The `page.h` file is located at
+`/usr/src/linux-headers-3.12-kali1-common/include/asm-generic/page.h` on Kali
+linux. This is where `PAGE_SIZE` is defined. Just adding it to `memfetch.c`
+along with changing `#include <asm/page.h>` to `#include <linux/types.h>`
+will do the trick.
 
 {{< codecaption lang="bash" title="additions to memfetch.c" >}}
 // #include <asm/page.h>
