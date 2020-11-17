@@ -27,7 +27,5 @@ jobs:
       - name: Install s3deploy
         run: sudo dpkg -i s3deploy*.deb
       - name: Run s3deploy
-        run: s3deploy -source=public/ -region=us-east-1 -bucket=parsiya.net -distribution-id E3S0DM3VADRBW7
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.KEY }}
+        run: s3deploy -source=public/ -region=us-east-1 -bucket=parsiya.net -distribution-id E3S0DM3VADRBW7 -key ${{ secrets.ID }} -secret ${{ secrets.KEY }}
+
