@@ -22,6 +22,11 @@ I finally managed to automate deployment of [parsiya.io](http://parsiya.io) with
 [parsia-clone-github]: https://github.com/parsiya/Parsia-Clone
 [parsiya-io-github]: https://github.com/parsiya/Parsiya.io
 
+**Note:** As of late November 2020, I have switched to Github actions for both
+`parsiya.net` and `parsiya.io`. You can see it in [deploy.yml][deploy].
+
+[deploy]: https://github.com/parsiya/Parsia-Clone/blob/master/.github/workflows/deploy.yml
+
 <!--more-->
 
 # TL;DR
