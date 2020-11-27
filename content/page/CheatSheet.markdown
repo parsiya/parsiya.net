@@ -48,6 +48,8 @@ below or `ctrl+f` and search for keywords.
     - [Open a Network Monitor cap File in Wireshark and Save is Disabled](#open-a-network-monitor-cap-file-in-wireshark-and-save-is-disabled)
     - [Shortcut to Run Applications Elevated](#shortcut-to-run-applications-elevated)
     - [Firewall Rules in the Registry](#firewall-rules-in-the-registry)
+    - [Install Packages on Windows from the Command Line (needs Admin)](#install-packages-on-windows-from-the-command-line-needs-admin)
+    - [Uninstall IE 11 from Windows 7 (and install an older version)](#uninstall-ie-11-from-windows-7-and-install-an-older-version)
 - [Powershell](#powershell)
     - [List All Files (Including Hidden Files)](#list-all-files-including-hidden-files)
     - [Diff in Powershell](#diff-in-powershell)
@@ -80,6 +82,7 @@ below or `ctrl+f` and search for keywords.
     - [List All Authors in a Git Repository](#list-all-authors-in-a-git-repository)
     - [Rewrite Author for Older Commits](#rewrite-author-for-older-commits)
     - [Remove Uncommitted Files from Staging](#remove-uncommitted-files-from-staging)
+    - [Make git case sensitive (with a catch)](#make-git-case-sensitive-with-a-catch)
     - [Exclude a Committed File with gitignore](#exclude-a-committed-file-with-gitignore)
 - [Visual Studio Code](#visual-studio-code)
     - [Associate an Extension with a Specific Language](#associate-an-extension-with-a-specific-language)
@@ -107,6 +110,7 @@ below or `ctrl+f` and search for keywords.
     - [bytearray](#bytearray)
     - [Cyclic XOR on bytearrays](#cyclic-xor-on-bytearrays)
     - [Cyclic XOR on Strings](#cyclic-xor-on-strings)
+    - [Python One-Liners in Command Line](#python-one-liners-in-command-line)
 - [Java](#java)
     - [Enable Log4j for a Java App](#enable-log4j-for-a-java-app)
 - [Misc](#misc)
@@ -516,6 +520,21 @@ Format:
 
 * https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-gpfas/2efe0b76-7b4a-41ff-9050-1023f8196d16
 
+### Install Packages on Windows from the Command Line (needs Admin)
+To install `telnet client`:
+
+```
+pkgmgr /iu:"TelnetClient"
+```
+
+### Uninstall IE 11 from Windows 7 (and install an older version)
+
+1. Go to `Control Panel > Programs > Programs and features`.
+2. Select `Installed Updated`.
+3. Look for `Internet Explorer 11`.
+4. Right click and uninstall.
+5. Download older version of IE (e.g. IE 9) for Windows 7 and install iot.
+
 ------
 
 ## Powershell
@@ -801,6 +820,26 @@ remove some (not all) instead of `git reset`.
 ```
 git reset HEAD -- file/directory
 ```
+
+### Make git case sensitive (with a catch)
+In a case-insensitive file system (Windows, Mac), git is case-insensitive by
+default. So if you rename `Bob.jpg` to `bob.jpg` after it has already been
+pushed, git doesn't change it because from a file-system perspective it's the
+same file (although Windows shows the filename in lowercase).
+
+To make git sensitive on a case-insensitive file system (Windows, OSX) we can do:
+
+```
+git config core.ignorecase false
+```
+
+However, this introduces its own problems. Let's assume you have already
+committed `Bob.jpg` and make git be case-sensitive. Now you rename it to
+`bob.jpg` and commit and push it. In the remote repo you will have two files
+`Bob.jpg` and `bob.jpg`.
+
+The answer is to rename `Bob.jpg` to something else like `Bob-1.jpg`, push and
+then rename it back to `bob.jpg`.
 
 ------
 
@@ -1090,6 +1129,24 @@ def xor_str(payload, key):
     """
     return "".join(chr(ord(mybyte) ^ ord(keybyte)) for (mybyte, keybyte) in
                    itertools.izip(payload, itertools.cycle(key)))
+```
+
+### Python One-Liners in Command Line
+You can run Python one-liners from command line using `python-c "command"`.
+Commands inside needs to be separated using `;` and use `'` inside. Remember
+that you need to `import` things too.
+
+For example a one-liner to encode something in base64:
+
+``` python
+python -c "from base64 import b64encode; print b64encode('HelloHello');"
+```
+
+More:
+
+``` python
+# Decrypt from AES (you need pyCrypto)
+python -c "from Crypto.Cipher import AES; aes = AES.new(KEY, AES.MODE_ECB); print aes.decrypt(CIPHERTEXT));"
 ```
 
 ------
