@@ -36,9 +36,9 @@ and finally the `Why?` section has the justification/usecase.
     - [Why?](#why-4)
 - [Less Noise from Firefox in Burp](#less-noise-from-firefox-in-burp)
     - [Why?](#why-5)
-- [Reduce the Size of Burp Projects Size for Long Term Storage](#reduce-the-size-of-burp-projects-size-for-long-term-storage)
+- [Reduce the Size of Burp Projects for Long Term Storage](#reduce-the-size-of-burp-projects-for-long-term-storage)
     - [Why?](#why-6)
-- [Rearrange Burp Repeater Request and Response Tabs](#rearrange-burp-repeater-request-and-response-tabs)
+- [Rearrange Burp Repeater Request and Response Tabs for](#rearrange-burp-repeater-request-and-response-tabs-for)
     - [Why?](#why-7)
 - [Use a Default Burp Config](#use-a-default-burp-config)
     - [Why?](#why-8)
@@ -126,7 +126,7 @@ The extension's technical details:
 If I am testing an application that uses SSO, I have to enter corporate
 credentials to login. Usually I am not testing the login portal but the app
 behind it. Burp will store these credentials which not something I like. I keep
-Burp projects forever (see [Reduce the Size of Burp Projects Size for Long Term
+Burp projects forever (see [Reduce the Size of Burp Projects for Long Term
 Storage](#reduce-the-size-of-burp-projects-size-for-long-term-storage)), I do
 not want my corporate credentials stored in Burp. By adding these domains to SSL
 pass through, Burp does not capture them.
@@ -167,10 +167,10 @@ If installing Firefox dev edition:
 ### Why?
 Fewer requests in Burp's HTTP history == good.
 
-## Reduce the Size of Burp Projects Size for Long Term Storage
+## Reduce the Size of Burp Projects for Long Term Storage
 
 1. I Keep my Burp projects along with my notes.
-2. Compress Burp projects (zip, 7z, etc.) (best bang for time):
+2. **Compress Burp projects (zip, 7z, etc.) (best bang for time)**:
     1. Old Burp save states were compressed, projects are not.
 3. Remove out-of-scope from Burp project (risky because data is removed):
     1. Add all in-scope domains to Burp (most likely already done during the test).
@@ -185,9 +185,10 @@ Fewer requests in Burp's HTTP history == good.
 
 ### Why?
 Keeping Burp projects have saved my hide more than I can count. Before storing
-Burp projects for long-term or cloud storage, I want to reduce their size.
+Burp projects for long-term, I want to reduce their size. At a minimum, just zip
+them.
 
-## Rearrange Burp Repeater Request and Response Tabs
+## Rearrange Burp Repeater Request and Response Tabs for
 1. `Repeater (menu, not the tab) > View`.
 2. Choose Top/bottom or left/right split.
 
@@ -226,6 +227,11 @@ The final config file will look like this:
 ### Why?
 It saves time and I do not have to make the same changes for every project.
 Some options will step be project-specific but most are not.
+
+Also see [Towards a Quieter Burp History] ({{< relref
+"/post/2020/2020-05-01-quieter-burp-history/index.markdown#anchor" >}}
+"Towards a Quieter Burp History") if you use Burp to proxy thickclients on
+Windows.
 
 Some suggestions:
 
