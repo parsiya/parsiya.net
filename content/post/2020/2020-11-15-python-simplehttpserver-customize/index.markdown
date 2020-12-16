@@ -92,8 +92,8 @@ subclass of [email.message.Message][message].
 [headers]: https://docs.python.org/3.8/library/http.server.html#http.server.BaseHTTPRequestHandler.headers
 [message]: https://docs.python.org/3/library/email.compat32-message.html#email.message.Message
 
-We can get the value of any header by name with `headers.get("header name")`. To
-get all values for a specific header (because headers can be repeated) use
+We can get the first value of a header by name with `headers.get("header name")`
+. To get all values for a specific header (because headers can be repeated) use
 `headers.get_all("header name")`.
 
 ```python
@@ -109,18 +109,18 @@ def do_GET(self):
     self.wfile.write(bytes(authz, "utf-8"))
 ```
 
-Note: Header names are not case-sensitive in HTTP (or here).
+Note: Header names are not case-sensitive in HTTP (or in this module).
 
 {{< imgcap title="03.py" src="03.png" >}}
 
 # Reading The Body of POST Requests
-To handle POST requests we need to implement `do_POST` (d'oh). To read the body
-of the POST request we:
+To handle POST requests we need to implement `do_POST` (surprise). To read the
+body of the POST request we:
 
 1. Read the `Content-Length` header in the incoming request.
 2. Read that many bytes from `self.rfile`.
     1. I could not find a way to read "all bytes" in `rfile`. I had to rely on
-       the header.
+       the `Content-Length` header.
 
 ```python
 def do_POST(self):
@@ -139,13 +139,13 @@ def do_POST(self):
 
 # Server Over TLS
 First, you need to create a private key and certificate in `pem` format. To
-create a self-signed certificate/key in one go:
+create a self-signed certificate/key in one line with OpenSSL:
 
 ```
 openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out certificate.pem
 ```
 
-Then modify the last lines of the script to:
+Then modify the last lines of the original script to:
 
 ```python
 httpd = HTTPServer(('localhost', 443), MyHandler)
