@@ -63,6 +63,9 @@ it so I don't know if it works, but it's a good idea:
 
 * https://blog.secarma.com/labs/using-netbeans-gui-designer-to-make-pretty-burp-extenders
 
+As of December 2020, this URL is not accessible anymore. I cannot find an
+archived version of the blog on the Internet Archive, either :(.
+
 # Converting to a JFrame
 This is a simple process in this context. Because of our knowledge from part 1,
 we understand some of these words. This is good, because if something goes
