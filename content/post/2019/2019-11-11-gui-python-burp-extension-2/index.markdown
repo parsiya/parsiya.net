@@ -61,10 +61,10 @@ on the Secarma Labs blog from October 2017 discusses designing Burp extension
 GUIs in NetBeans and then hooking them up in Burp. I have not tried
 it so I don't know if it works, but it's a good idea:
 
-* https://blog.secarma.com/labs/using-netbeans-gui-designer-to-make-pretty-burp-extenders
+* https://web.archive.org/web/20190314144852/https://blog.secarma.co.uk/labs/using-netbeans-gui-designer-to-make-pretty-burp-extenders
 
-As of December 2020, this URL is not accessible anymore. I cannot find an
-archived version of the blog on the Internet Archive, either :(.
+As of December 2020, the original URL was dead. Paul was kind enough to point me
+to an archive.
 
 # Converting to a JFrame
 This is a simple process in this context. Because of our knowledge from part 1,
