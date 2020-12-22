@@ -4,7 +4,6 @@ date: 2019-10-13T20:48:26-07:00
 draft: false
 toc: false
 comments: true
-twitterImage: .png # populate this
 categories:
 - burp
 - quality of life
@@ -109,6 +108,12 @@ The extension's technical details:
 
 * [Filter OPTIONS Burp Extension]({{< relref "post/2019/2019-04-06-hiding-options/index.markdown" >}} "Filter OPTIONS Burp Extension")
 
+The above extension might not work. See the [Filter Options Method][filter]
+extension by [Capt. Meelo][meelo] on the Burp App Store which fixes some issues
+in my blog post.
+
+[filter]: https://portswigger.net/bappstore/fa14ac579cff4682b32f39af8d3651e7
+[meelo]: https://captmeelo.com/
 
 ## Burp Should Not Capture Corporate Credentials
 
@@ -176,12 +181,6 @@ Fewer requests in Burp's HTTP history == good.
     1. Add all in-scope domains to Burp (most likely already done during the test).
     2. `Project > Save Copy` and check `Save in-scope items only`.
     3. This will remove all out-of-scope items from the new copy.
-4. Remove large items from history and target (if I have time):
-    1. Remove all Burp history filters.
-    2. Sort by size.
-    3. Remove all but one copy of large static resources like images and js
-       files.
-    4. There will be extra copies in the `Target` tab too.
 
 ### Why?
 Keeping Burp projects have saved my hide more than I can count. Before storing
@@ -189,6 +188,12 @@ Burp projects for long-term, I want to reduce their size. At a minimum, just zip
 them.
 
 ## Rearrange Burp Repeater Request and Response Tabs for
+As of Burp `2020.12` (possibly sooner) the following option has been removed.
+Each Repeater tab has three layout button on top-right just under the target
+address. Choose `Vertical Layout` to get the top/bottom split.
+
+For older versions of Burp:
+
 1. `Repeater (menu, not the tab) > View`.
 2. Choose Top/bottom or left/right split.
 
@@ -243,6 +248,8 @@ Some suggestions:
 4. Add placeholders for match/replace rules
    (see [Match and Replace for Test Username/Passwords](#match-and-replace-for-test-usernamepasswords)).
 5. Fonts, sizes and themes.
+
+You can see my default Burp config at https://github.com/parsiya/Parsia-Clone/blob/master/configs/burp-default-config.json.
 
 <!-- Links -->
 [apex-113]: https://www.ea.com/games/apex-legends/news/performance-update-may-2019
