@@ -47,7 +47,7 @@ I had a lot of problems enabling the right-click functionality on Burp's
 [IMesageEditors][imsgeditor-doc].Long story short, I decided to rewrite the
 extension in Java instead.
 
-This is how my development VM is arranged.
+This is how my development VM looks like.
 
 # Install Visual Studio Code
 
@@ -58,6 +58,13 @@ There is also a VS Code installer for Java developers at
 https://aka.ms/vscode-java-installer-win. I did not use it.
 
 # Install OpenJDK
+You need to install a JDK version that is compatible with the version Burp was
+built with. To figure it out, you can check the bundled JRE that comes with the
+installer.
+
+The rest of the instructions are for December 2019 and probably need to be
+changed for later use.
+
 I use OpenJDK because of the shitty licensing requirements of Oracle.
 
 1. Download OpenJDK 11 (see below why). I used the installer from
@@ -272,7 +279,7 @@ Run it once to download the Burp Extender interface and build the library. The
 output jar will be in `build\libs\burp-sample-extension-java-all.jar`.
 
 # Setting Up IntelliCode
-Our build works but You might have noticed that VS Code does not recognize
+Our build works but you might have noticed that VS Code does not recognize
 imported interfaces from the `burp` package.
 
 {{< imgcap title="VS Code errors" src="02-vscode-error.png" >}}
@@ -398,6 +405,11 @@ adding the following line to the file:
 Now we can run the `exe` and debug our extensions. I have included a sample 
 `.vmoptions` file in the git repository.
 
+**Note:** If you are using your main Burp instance, make sure to comment the
+code in the `.vmoptions` file after you are done. It might slow down your Burp
+instance.
+
+## Connecting to the Debug Port
 Next we have to launch the Java debugger in VS Code and connect to the debug
 port. Put a breakpoint on the `callbacks.printOutput(fileName);` line. Then
 select `Debug (menu) > Start Debugging` or press `F5`.
@@ -428,7 +440,7 @@ are not debugging a remote machine, press cancel. If the debugger times out
 while the firewall dialog is active, debug again (`F5`).
 
 After the debugger is attached, reload the extension with `Ctrl+Right-Click`
-on the checkbox and see the debugger break.
+on the checkbox in the Extender tab and see the debugger break.
 
 {{< imgcap title="Achievement unlocked: Debugging in VS Code" src="08-debugging.png" >}}
 
