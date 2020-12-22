@@ -35,12 +35,14 @@ and finally the `Why?` section has the justification/usecase.
     - [Why?](#why-4)
 - [Less Noise from Firefox in Burp](#less-noise-from-firefox-in-burp)
     - [Why?](#why-5)
-- [Reduce the Size of Burp Projects for Long Term Storage](#reduce-the-size-of-burp-projects-for-long-term-storage)
+- [If You have to Use Chromium Browsers Pass the Proxy to the Command Line](#if-you-have-to-use-chromium-browsers-pass-the-proxy-to-the-command-line)
     - [Why?](#why-6)
-- [Rearrange Burp Repeater Request and Response Tabs for](#rearrange-burp-repeater-request-and-response-tabs-for)
+- [Reduce the Size of Burp Projects for Long Term Storage](#reduce-the-size-of-burp-projects-for-long-term-storage)
     - [Why?](#why-7)
-- [Use a Default Burp Config](#use-a-default-burp-config)
+- [Rearrange Burp Repeater Request and Response Tabs for](#rearrange-burp-repeater-request-and-response-tabs-for)
     - [Why?](#why-8)
+- [Use a Default Burp Config](#use-a-default-burp-config)
+    - [Why?](#why-9)
 
 ## Match and Replace for Test Username/Passwords
 
@@ -159,7 +161,7 @@ If installing Firefox dev edition:
 
 1. Do not install any addons in the testing browser.
     1. I am not using this browser for normal browsing.
-    2. I do not want anything to be blocked by addons such as uBlock or Ghostery.
+    2. I do not want anything to be blocked by addons like adblockers.
     3. Reduces the noise in Burp.
 2. [Create a new Firefox profile][multiple-ff-profiles] and use `user.js` from the link below:
     1. https://bitbucket.org/mrbbking/quieter-firefox/src/master/
@@ -171,6 +173,21 @@ If installing Firefox dev edition:
 
 ### Why?
 Fewer requests in Burp's HTTP history == good.
+
+## If You have to Use Chromium Browsers Pass the Proxy to the Command Line
+If you cannot use Firefox and have to use a Chromium based browser (e.g., Edge,
+Chrome), you can pass the proxy listener to the browser using a command line
+switch instead of using the OS proxy settings.
+
+E.g., for Edge:
+
+* `"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --proxy-server="http://localhost:8080"`
+
+Create a shortcut with the desired switch and use it.
+
+### Why?
+Instead of changing the OS proxy settings, we are just proxying the browser.
+This reduces the noise in Burp.
 
 ## Reduce the Size of Burp Projects for Long Term Storage
 
