@@ -117,6 +117,7 @@ below or `ctrl+f` and search for keywords.
     - [Download Youtube Videos with Substitles](#download-youtube-videos-with-substitles)
     - [Print Envelopes with the Brother DW2280 printer and LibreOffice](#print-envelopes-with-the-brother-dw2280-printer-and-libreoffice)
     - [Tab Size 4 in the Github Web Interface](#tab-size-4-in-the-github-web-interface)
+    - [ffmpeg](#ffmpeg)
 
 ------
 
@@ -1242,3 +1243,11 @@ Now open LibreOffice and use these instructions:
 
 ### Tab Size 4 in the Github Web Interface
 Add `?ts=4` to end of the file URL.
+
+### ffmpeg
+To split a file with `ffmpeg`. Let's say we want to grab the first 200 seconds
+of a file starting from second 100.
+
+`ffmpeg -i input.mp4 -strict -2 -ss 100 -t 200 output.mp4`
+
+* Source: https://unix.stackexchange.com/a/1675
