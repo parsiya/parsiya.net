@@ -84,6 +84,26 @@ To override a header we cannot use `send_header` because it will just add it as
 a new header to the response. Based on the documentation it seems like the
 `Date` and `Server` response headers cannot be changed :(.
 
+# Read Request Path and Query Strings
+The complete path and query strings are in the `self.path` object inside
+`do_GET` and similar methods. First we need to parse it with
+[urllib.parse.urlparse][urlparse]. Then we can get the query string and path
+from the parsed object's fields `query` and `path`, respectively.
+
+```py
+from urllib.parse import urlparse
+
+def do_GET(self):
+    # first we need to parse it
+    parsed = urlparse(self.path)
+    # get the query string
+    query_string = parsed.query
+    # get the request path, this new path does not have the query string
+    path = parsed.path
+```
+
+[urlparse]: https://docs.python.org/3/library/urllib.parse.html#urllib.parse.urlparse
+
 # Read Request Headers
 I needed to read the incoming request headers. These are stored in the
 [headers][headers] object. It is of type `http.client.HTTPMessage` which is a
