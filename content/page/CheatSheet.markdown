@@ -50,6 +50,7 @@ below or `ctrl+f` and search for keywords.
     - [Firewall Rules in the Registry](#firewall-rules-in-the-registry)
     - [Install Packages on Windows from the Command Line (needs Admin)](#install-packages-on-windows-from-the-command-line-needs-admin)
     - [Uninstall IE 11 from Windows 7 (and install an older version)](#uninstall-ie-11-from-windows-7-and-install-an-older-version)
+    - [Read Scheduled Task's DACL](#read-scheduled-tasks-dacl)
 - [Powershell](#powershell)
     - [List All Files (Including Hidden Files)](#list-all-files-including-hidden-files)
     - [Diff in Powershell](#diff-in-powershell)
@@ -535,6 +536,17 @@ pkgmgr /iu:"TelnetClient"
 3. Look for `Internet Explorer 11`.
 4. Right click and uninstall.
 5. Download older version of IE (e.g. IE 9) for Windows 7 and install iot.
+
+### Read Scheduled Task's DACL
+
+```powershell
+$PathToTask = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree\[replace with task]"
+$SDBin =  ( (get-itemProperty $PathToTask).sd )
+
+ConvertFrom-SddlString ([wmiclass]"Win32_SecurityDescriptorHelper").BinarySDToSDDL($SDBin).SDDL
+```
+
+* Source: https://serverfault.com/a/997929
 
 ------
 
