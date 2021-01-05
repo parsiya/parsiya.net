@@ -51,6 +51,7 @@ below or `ctrl+f` and search for keywords.
     - [Install Packages on Windows from the Command Line (needs Admin)](#install-packages-on-windows-from-the-command-line-needs-admin)
     - [Uninstall IE 11 from Windows 7 (and install an older version)](#uninstall-ie-11-from-windows-7-and-install-an-older-version)
     - [Read Scheduled Task's DACL](#read-scheduled-tasks-dacl)
+    - [Find Users Under the HKEY_USERS Registry Hive](#find-users-under-the-hkey_users-registry-hive)
 - [Powershell](#powershell)
     - [List All Files (Including Hidden Files)](#list-all-files-including-hidden-files)
     - [Diff in Powershell](#diff-in-powershell)
@@ -547,6 +548,20 @@ ConvertFrom-SddlString ([wmiclass]"Win32_SecurityDescriptorHelper").BinarySDToSD
 ```
 
 * Source: https://serverfault.com/a/997929
+
+### Find Users Under the HKEY_USERS Registry Hive
+`HKEY_LOCAL_USER` is a subset of `HKEY_USERS` for the current user. Under
+`HKEY_USERS` we see a bunch of directories. To figure out the users for these
+directories we need to see them in the following location:
+
+* `Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\`
+
+For example, I have `HKEY_USERS\S-1-5-21-2868049494-289672223-1164028246-1001`
+in a VM. So I go to
+`Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\S-1-5-21-2868049494-289672223-1164028246-1001`
+and look under the `ProfileImagePath` key to see which user it is.
+
+* Source: https://stackoverflow.com/a/2919369
 
 ------
 
