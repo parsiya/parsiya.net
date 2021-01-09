@@ -120,6 +120,7 @@ below or `ctrl+f` and search for keywords.
     - [Print Envelopes with the Brother DW2280 printer and LibreOffice](#print-envelopes-with-the-brother-dw2280-printer-and-libreoffice)
     - [Tab Size 4 in the Github Web Interface](#tab-size-4-in-the-github-web-interface)
     - [ffmpeg](#ffmpeg)
+    - [Wrap Long Lines in Page Source in Firefox](#wrap-long-lines-in-page-source-in-firefox)
 
 ------
 
@@ -1278,3 +1279,11 @@ of a file starting from second 100.
 `ffmpeg -i input.mp4 -strict -2 -ss 100 -t 200 output.mp4`
 
 * Source: https://unix.stackexchange.com/a/1675
+
+### Wrap Long Lines in Page Source in Firefox
+Easier method: In the `View Source` page, right-click and select `Wrap Long Lines`.
+
+1. `about:config`
+2. Set `view_source.wrap_long_lines` to `true`.
+
+* Source: https://support.mozilla.org/en-US/questions/1208440
