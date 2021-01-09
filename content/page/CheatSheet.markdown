@@ -766,8 +766,6 @@ committed `Bob.jpg` and make git be case-sensitive. Now you rename it to
 The answer is to rename `Bob.jpg` to something else like `Bob-1.jpg`, push and
 then rename it back to `bob.jpg`.
 
-------
-
 ### Exclude a Committed File with gitignore
 `.gitignore` only works on new `git add`s. If we have already added
 `blah/whatever.cpp` to the repo, adding `whatever.cpp` to `.gitignore` does
@@ -782,6 +780,23 @@ the file completely from the filesystem):
 Source: https://stackoverflow.com/a/30227922
 
 Note: Also overwrite history if the file had secrets/sensitive info.
+
+### Syncing a Fork with the Original Repository
+Let's say you have forked a repository. Now, you want to sync the changes.
+
+1. Add the original repository as `upstream`.
+    1. `git remote add upstream git@github.com:original-user/original-repo.gitignore`
+    2. Check with `git remote -v1`
+2. `git fetch upstream`
+3. Now, to merge the `upstream/main` branch into the local `main` branch:
+    1. `git merge upstream/main`
+
+* Source: Github documentation.
+    * [Configuring a remote for a fork][config-remote]
+    * [Syncing a fork][sync-fork]
+
+[config-remote]: https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/configuring-a-remote-for-a-fork
+[sync-fork]: https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/syncing-a-fork
 
 ------
 
