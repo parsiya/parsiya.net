@@ -7,6 +7,8 @@ comments: true
 twitterImage: 01.png
 categories:
 - Bug Bounty
+- Electron
+- writeup
 ---
 
 Earlier in December 2020, my `PlayStation Now` report was disclosed. You can see

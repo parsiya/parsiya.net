@@ -7,8 +7,7 @@ comments: true
 twitterImage: 11-localhost.gif
 categories:
 - writeup
-tags:
-- rce
+- electron
 ---
 
 This is a blog post about how I found three vulns and chained them to get RCE in
