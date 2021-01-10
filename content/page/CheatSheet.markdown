@@ -798,6 +798,11 @@ Let's say you have forked a repository. Now, you want to sync the changes.
 [config-remote]: https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/configuring-a-remote-for-a-fork
 [sync-fork]: https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/syncing-a-fork
 
+### Sign git Commits
+Follow this guide:
+
+* https://withblue.ink/2020/05/17/how-and-why-to-sign-git-commits.html
+
 ------
 
 ## Visual Studio Code
