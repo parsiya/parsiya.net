@@ -7,7 +7,7 @@ categories:
 - cheatsheet
 ---
 
-Often I need to do something that I have done many times in the past but I have
+Often, I need to do something that I have done many times in the past but I have
 forgotten how to do it. This is a page to complement
 [my clone at parsiya.io](http://parsiya.io) and give me a simple repository of
 how-tos I can access online.
@@ -92,6 +92,8 @@ aws_secret_access_key=
 ```
 
 ### Sync a Directory with an Amazon S3 bucket with s3cmd
+These might be updated because I do not use s3cmd anymore.
+
 `python s3cmd sync --acl-public --delete-removed --rr directory-to-sync/ s3://bucket-name`
 
 E.g., uploading the Hugo public directory to my website:\\
@@ -117,15 +119,16 @@ rd /q /s public
 
 ### Set the Website Index to a Non-Root file in a Static Website on S3
 When setting up a static website in an S3 bucket, you need to specify an index
-and an error page. The index cannot be in a sub-directory but the error page can
-be. Set the index to a non-existent file (e.g. `whatever.crap`) and set the
-error page to the actual index page.
+and an error page. The index cannot be in a sub-directory but the error page
+can. Set the index to a non-existent file (e.g. `whatever.crap`) and set the
+error page to the actual index page. The browser will be redirected to the error
+page:
 
 * Source: https://stackoverflow.com/a/20273548
 
 If you are relying on error pages, this will mess with your site because every
 error will be redirected to the index. Another way is to set a meta redirect in
-the index file in the root directory and redirecting that page.
+the index file in the root directory and redirect to that page.
 
 ### Use AWS CLI Without Credentials
 Use `--no-sign-request`. E.g., to list all items in a world-readable bucket:
@@ -214,12 +217,13 @@ Main instructions:
 7. Profit
 
 ### Exit Status 3221225781
-**TL;DR:** `exit status 3221225781` means a DLL is missing on Windows. In this
+**TL;DR:** `exit status 3221225781` on Windows means a DLL is missing. In this
 case, `diff.exe` was missing `libintl3.dll` and it made `gorename` stop working.
 Get and install it from:
 
 * http://gnuwin32.sourceforge.net/packages/libintl.htm
 
+**The Actual Problem**:\\
 `gorename` stopped working and I got the following error in the VS Code console:
 
 ```
@@ -243,7 +247,7 @@ two DLLs: `libintl3.dll` and `libiconv2.dll`. Copy all of them to where the
 original `diff.exe` was and it should work.
 
 ### Map a Drive to a Specific Directory
-This is useful when you want to refer to a specific directory as a driver.
+This is useful when you want to refer to a specific directory as a drive.
 
 * `subst X: C:\path\to\source\code`
 
@@ -253,10 +257,10 @@ There are two issues:
 [here](https://superuser.com/questions/29072/how-to-make-subst-mapping-persistent-across-reboots/926426).
 2. It cannot be shared with docker. For example, when trying to share a
    directory with source code with docker for
-   [VS Code docker development](https://code.visualstudio.com/docs/remote/containers#_installation).
-   The drive is not shared.
+   [VS Code docker development](https://code.visualstudio.com/docs/remote/containers#_installation),
+   the drive is not shared.
 
-We could use `net use` as follows but it does not show up in Docker
+We could use `net use` as follows but it does not show up in Docker's
 `settings > Shared Drives` either.
 
 * `net use W: \\localhost\$c\path\to\source\code`
@@ -292,15 +296,18 @@ After locking the computer the monitor might go to sleep. To disable:
 * `plutil` is installed with iTunes.
 * `plutil` is in `C:\Program Files\Common Files\Apple\Apple Application Support`.
 
-Source: https://superuser.com/a/1264369
+* Source: https://superuser.com/a/1264369
 
 ### Oneliner to Find Unquoted Service Paths
 `wmic service get displayname,pathname|findstr /IV "C:\Windows"|findstr /IV """`
 
+Unquoted service paths are usually not exploitable. See [No, You Are Not Getting a CVE for That]({{< relref "/post/2020/2020-07-25-airtight-hatchway/index.markdown#unquoted-service-paths" >}} "No, You Are Not Getting a CVE for That").
+
 ### Run Chromium Browsers with a Proxy
 The new Edge uses Chromium. Chromium uses the WinINET proxy settings. Instead of
 redirecting everything to the browser, we can set the proxy using the command
-line (all of these also work for Chrome):
+line (all of these also work for Chrome and every other browser built on
+Chromium):
 
 * `"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --proxy-server="http://localhost:8080"`
 
@@ -351,11 +358,11 @@ You can also try in Skype which is where the old utility is accessible.
 
 * These are connected so if you have the camera app open and change the focus in
   Skype you can see the change immediately.
-* Sometimes the setting is lost and you have to do it again.
+* The setting is lost after restart and you have to do it again.
 
-### Install Windbg as the Post-Mortem Debugger
+### Install WinDbg as the Post-Mortem Debugger
 
-1. Install Windbg as part of the Windows 10 SDK.
+1. Install WinDbg as part of the Windows 10 SDK.
     * https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/debugger-download-tools
     1. NYou do not need most of the stuff that the SDK installs. You will only
        need to install `Debugging Tools for Windows`.
@@ -363,11 +370,11 @@ You can also try in Skype which is where the old utility is accessible.
     * `C:\Program Files (x86)\Windows Kits\10\Debuggers\`
 3. Go into each of the x64 and x86 directories and run the following command:
     * `windbg -I`
-4. You should get a prompt that says Windbg has been installed as the default
+4. You should get a prompt that says WinDbg has been installed as the default
    post-mortem debugger.
 
-### Remove Windbg as the Post-Mortem Debugger
-You need to delete some registry keys.
+### Remove WinDbg as the Post-Mortem Debugger
+Delete some registry keys.
 
 * 64-bit version
     1. Go to `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AeDebug`.
@@ -410,7 +417,7 @@ For example, running `notepad` as admin.
 ### Firewall Rules in the Registry
 If you cannot delete firewall rules you can delete their corresponding rule
 (user added ones are represented by a GUID) in the registry. This also helps if
-the Rule text does not say which executable is targetted:
+the rule text does not say which executable is targeted:
 
 Location:
 
@@ -420,14 +427,14 @@ Format:
 
 * https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-gpfas/2efe0b76-7b4a-41ff-9050-1023f8196d16
 
-### Install Packages on Windows from the Command Line (needs Admin)
-To install `telnet client`:
+### Install Packages on Windows from the Command Line (Needs Admin)
+To install `telnet client` in an admin command prompt:
 
 ```
 pkgmgr /iu:"TelnetClient"
 ```
 
-### Uninstall IE 11 from Windows 7 (and install an older version)
+### Uninstall IE 11 from Windows 7 (and Install an Older Version)
 
 1. Go to `Control Panel > Programs > Programs and features`.
 2. Select `Installed Updated`.
@@ -436,6 +443,7 @@ pkgmgr /iu:"TelnetClient"
 5. Download older version of IE (e.g. IE 9) for Windows 7 and install iot.
 
 ### Read Scheduled Task's DACL
+Find the task name in the `PathToTask` registry key and use it in the command:
 
 ```powershell
 $PathToTask = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree\[replace with task]"
@@ -481,9 +489,12 @@ Output will be in format of
 * `SideIndicator`: `=>` -- exists in new2.txt (second file, file to the right)
 
 ### Pseudo-grep in Powershell
-`findstr "something" *.txt`
+Or just use [ripgrep][ripgre-link] like `rg -i 'whatever'`.
 
-will include filename and line (no number AFAIK)
+[ripgrep-link]: https://github.com/BurntSushi/ripgrep
+
+
+`findstr "something" *.txt`  will include filename and line (no number AFAIK).
 
 `findstr /spin /c:"keyword" *.*`
 
@@ -499,7 +510,7 @@ If you want to search for different keywords (with OR) remove the `/c:`
 
 will search for keyword1 OR keyword2 in files
 
-https://technet.microsoft.com/en-us/library/Cc732459.aspx
+* Source: https://technet.microsoft.com/en-us/library/Cc732459.aspx
 
 ### grep in Command Results
 `whatever.exe | Select-String -pattern "admin"`
@@ -513,8 +524,8 @@ https://technet.microsoft.com/en-us/library/Cc732459.aspx
 `Measure-Command {python whatever.py}`
 
 ### VHD File is Open in System (and Cannot be Deleted)
-You clicked on a VHD file and now cannot delete it. Use this PowerShell command
-but the path to VHD should be full.
+You clicked on a VHD file and now cannot delete it. Use this PowerShell command.
+The path to VHD should be absolute.
 
 `Dismount-DiskImage -ImagePath 'C:\full\path\to\whatever.vhd'`
 
@@ -525,7 +536,8 @@ Use `certutil` for bootleg base64 encoding/decoding:
 - `certutil -decode whetever.base64 whatever.exe`
 
 ### Load a Managed DLL from PowerShell
-Source: https://www.leeholmes.com/blog/2006/10/27/load-a-custom-dll-from-powershell/
+
+* Source: https://www.leeholmes.com/blog/2006/10/27/load-a-custom-dll-from-powershell/
 
 ### Zip a Directory with PowerShell
 
@@ -534,7 +546,7 @@ Source: https://www.leeholmes.com/blog/2006/10/27/load-a-custom-dll-from-powersh
 Note the destination file will be `archive.zip` but we do not need to
 provide the extension in the command.
 
-* https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.archive/compress-archive
+* Source: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.archive/compress-archive
 
 ------
 
@@ -583,7 +595,7 @@ empty.
 
 * Symptom: `ipconfig /displaydns` prints nothing.
 * Solution: Modify the DNS server for the network adapter and manually add a DNS
-  server like `8.8.8.8`.
+  server like `8.8.8.8` or `1.1.1.1`.
 
 ------
 
@@ -597,7 +609,7 @@ Assuming you have a Windows guest. Inside the Windows guest do:
 1. Kill `VBoxTray.exe` in task manager.
 2. Start `VBoxTray.exe` again.
 
-Source: https://superuser.com/a/691337
+* Source: https://superuser.com/a/691337
 
 ### Change the Hardware UUID of Cloned Windows VMs to Avoid Windows Reactivation
 You cloned a Windows VirtualBox VM and now you have to activate it again.
@@ -615,8 +627,8 @@ $uid=$($($(.\VBoxManage.exe showvminfo $ORIGVirtualMachineName|select-string "Ha
 
 ### Increase VM Disk Size
 The default modern.ie VMs come with a 40GB vmdk hard drive and I want to resize
-them to 100GB. VirtualBox cannot resize it. We can clone it to vdi, resize it
-and convert it back to vdmk.
+them to 100GB (because videogames are big). VirtualBox cannot resize it. We can
+clone it to vdi, resize it and convert it back to vdmk.
 
 `VBoxManage` is at `c:\Program Files\Oracle\VirtualBox` (default installation).
 
@@ -632,9 +644,9 @@ and convert it back to vdmk.
     3. Use the wizard and add the new empty space to the origin partition.
 5. Delete unused vdi or vmdk files.
 6. ???
-7. Enjoy 100 GBs of space. Well, 83GB on the default Win10 x64.
+7. Enjoy 100 GBs of space. Well, 83GB on a default Win10 x64 install.
 
-Source: https://stackoverflow.com/a/12456219
+* Source: https://stackoverflow.com/a/12456219
 
 ------
 
@@ -666,7 +678,7 @@ We don't need it anymore. If it was pushed to remote, then we need to delete it 
 ### Only Clone a Certain Branch
 `git clone -b <branch> <remote_repo>`
 
-### Undo Remote git History after push
+### Undo Remote git History after Push
 Because this keeps happening to me.
 
 1. Reset the head in local repo N commits back. - `git reset HEAD~N`\\
@@ -679,22 +691,23 @@ Where N is the number of commits that you want to revert.
 4. Force push the local repo to remote - `git push -f`\\
 Note this will force the update and erase the commit history online. If not one else is using the repo in between it's ok.
 
-### Update Local Fork from the Original Repo
+### Sync a Fork with the Original Repository
+Let's say you have forked a repository. Now, you want to sync the changes.
 
-1. See current remotes - `git remote -v`
+1. Add the original repository as `upstream`.
+    1. `git remote add upstream git@github.com:original-user/original-repo.git`
+    2. `git remote add upstream https://github.com/original-user/original-repo/`
+    3. Check with `git remote -v1`
+2. `git fetch upstream`
+3. Now, to merge the `upstream/main` branch into the local `main` branch:
+    1. `git merge upstream/main`
 
-2. Make original repo the new remote upstream -\\
-`git remote add upstream https://github.com/whatever/original-repo/`
+* Source: Github documentation.
+    * [Configuring a remote for a fork][config-remote]
+    * [Syncing a fork][sync-fork]
 
-3. Now we should see the new upstream with - `git remote -v`
-
-4. Fetch upstream - `git fetch upstream`
-
-5. Switch to your local master branch - `git checkout master`
-
-6. Merge upstream/master into local master - `git merge upstream/master`
-
-7. Push changes - `git push`
+[config-remote]: https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/configuring-a-remote-for-a-fork
+[sync-fork]: https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/syncing-a-fork
 
 ### Use Notepad++ as git Editor on Windows via Cygwin
 Create a file called `npp` with the following content and copy it to
@@ -746,7 +759,7 @@ remove some (not all) instead of `git reset`.
 git reset HEAD -- file/directory
 ```
 
-### Make git case sensitive (with a catch)
+### Make git Case Sensitive (with a Catch)
 In a case-insensitive file system (Windows, Mac), git is case-insensitive by
 default. So if you rename `Bob.jpg` to `bob.jpg` after it has already been
 pushed, git doesn't change it because from a file-system perspective it's the
@@ -777,26 +790,9 @@ the file completely from the filesystem):
 * `git rm --cached blah/whatever.cpp`
 * Use `-r` for recursive change. Needed for directories.
 
-Source: https://stackoverflow.com/a/30227922
+* Source: https://stackoverflow.com/a/30227922
 
 Note: Also overwrite history if the file had secrets/sensitive info.
-
-### Syncing a Fork with the Original Repository
-Let's say you have forked a repository. Now, you want to sync the changes.
-
-1. Add the original repository as `upstream`.
-    1. `git remote add upstream git@github.com:original-user/original-repo.gitignore`
-    2. Check with `git remote -v1`
-2. `git fetch upstream`
-3. Now, to merge the `upstream/main` branch into the local `main` branch:
-    1. `git merge upstream/main`
-
-* Source: Github documentation.
-    * [Configuring a remote for a fork][config-remote]
-    * [Syncing a fork][sync-fork]
-
-[config-remote]: https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/configuring-a-remote-for-a-fork
-[sync-fork]: https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/syncing-a-fork
 
 ### Sign git Commits
 Follow this guide:
@@ -840,8 +836,8 @@ Source: https://www.reddit.com/r/golang/comments/g6l6y9/couldnt_start_client_gop
 ------
 
 ## Sublime Text 3
-Tips for using the Sublime Text 3 editor. I don't use Sublime Text anymore so
-this section is probably outdated.
+Tips for using the Sublime Text 3 editor. I don't use Sublime Text anymore
+although I bought it so this section is probably outdated.
 
 ### Fix "MarGo build failed" for GoSublime on Windows
 GoSublime's executable has Go version in it. In most cases, it cannot grab the
@@ -874,7 +870,7 @@ build.
 
 **This must to be done for every new GoSublime version.**
 
-### Open the same file in a new tab
+### Open the Same File in a New Tab
 `File > New view into File`. Then drag the pane to a second screen/location.
 
 ------
@@ -885,7 +881,7 @@ build.
 
 * See my blog post: [Quality of Life Tips and Tricks - Burp Suite]({{< relref "post/2019/2019-10-13-quality-of-life-burp/index.markdown" >}} "Quality of Life Tips and Tricks - Burp Suite") 
 
-### Selected text in Burp is black
+### Selected Text in Burp is Black
 This might happen inside Virtual Box.
 
 ![Burp 3D rendering issue](/images/cheatsheet/burp-3d-issue.png)
@@ -908,10 +904,10 @@ Source - credit to `floyd`:
 
 * https://support.portswigger.net/customer/portal/questions/16802069-text-highlighted-in-black
 
-### Using iptables to Proxy Android App with Burp
-Technically this works with any proxy.
+### Using iptables to Proxy Android Apps with Burp
+Technically this works with any proxy but I use Burp.
 
-1. Add Burp's certificate to the device.
+1. Add Burp's CA certificate to the device.
 2. If there's certificate pinning, bypass it.
 3. Enable [invisible proxying][invisible-proxy] for the target listener.
 4. Root the device, iptables commands need root.
@@ -928,7 +924,7 @@ iptables -t nat -A POSTROUTING -p tcp --dport 80 -j MASQUERADE
 iptables -t nat -A POSTROUTING -p tcp --dport 443 -j MASQUERADE
 ```
 
-Source: http://blog.dornea.nu/2014/12/02/howto-proxy-non-proxy-aware-android-applications-through-burp/
+* Source: http://blog.dornea.nu/2014/12/02/howto-proxy-non-proxy-aware-android-applications-through-burp/
 
 [invisible-proxy]: https://portswigger.net/burp/documentation/desktop/tools/proxy/options/invisible
 
@@ -937,7 +933,7 @@ Not the best regex but does the job:
 
 * `http([^"])*\.([^"])+`
 
-Better but more expensive one:
+Better but more expensive regex:
 
 ```
 /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)
@@ -1138,9 +1134,9 @@ log4j.appender.R.layout.ConversionPattern=%p %t %c - %m%n
 
 ### Download Youtube Videos with Substitles
 I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The
-following [youtube-dl](https://github.com/rg3/youtube-dl/) command will download
-the 56 episode HQ quality Chinese TV series called `Xiao Ao Jiang Hu` or
-`Laughing in the Wind` (also called `The Smiling Proud Wanderer` or
+following [youtube-dl](https://github.com/ytdl-org/youtube-dl) command will
+download the 56 episode HQ quality Chinese TV series called `Xiao Ao Jiang Hu`
+or `Laughing in the Wind` (also called `The Smiling Proud Wanderer` or
 `Swordsman`).
 
 `youtube-dl --ignore-errors --write-srt --sub-lang en --yes-playlist 'https://www.youtube.com/playlist?list=PLuGy72vdo4_ScwTYb1bAynhBs3KgowvvQ'`
@@ -1154,6 +1150,11 @@ the 56 episode HQ quality Chinese TV series called `Xiao Ao Jiang Hu` or
 
 `Youtube-dl` can be downloaded using `pip`. For example on Windows:\\
 `python -m pip install youtube-dl`.
+
+It's also possible to download binaries from https://github.com/ytdl-org/youtube-dl/releases.
+
+Sometimes, you need to pass `--no-check-certificate` to bypass certificate
+errors.
 
 ### Print Envelopes with the Brother DW2280 printer and LibreOffice
 I gave away the printer when I moved to Canada but I am keeping the instructions
@@ -1195,7 +1196,19 @@ of a file starting from second 100.
 
 `ffmpeg -i input.mp4 -strict -2 -ss 100 -t 200 output.mp4`
 
+I also use it to reduce the file size of my video proof-of-concepts:
+
+1. Record the video with OBS Studio. The output file is `video.mkv`.
+2. Use OBS Studio to remux the video `File (menu) > Remux Recordings` to get
+   `video.mp4`.
+3. Use `ffmpeg` to reduce the file size:
+    1. `ffmpeg -strict -2 -ss 0 video-processed.mp4 -i video.mp4`.
+
 * Source: https://unix.stackexchange.com/a/1675
+
+I still need to experiment with different codecs to figure out which one is
+better but this method reduces the file size dramatically without a noticeable
+change in quality.
 
 ### Wrap Long Lines in Page Source in Firefox
 Easier method: In the `View Source` page, right-click and select `Wrap Long Lines`.
