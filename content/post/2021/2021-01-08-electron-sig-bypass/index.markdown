@@ -368,6 +368,12 @@ what we want to do.
 
 {{< imgcap title="cmd as SYSTEM" src="13-cmd.png" >}}
 
+I got 200 USD for the bug. Financially, not worth the time spent but, I learned
+a new trick. Although, it would have been completely different if I were living
+in a cheap country with low taxes.
+
+{{< imgcap title="Bounty" src="14-bounty.png" >}}
+
 # What Did We Learn Here Today?
 
 1. Attack surface analysis of application update mechanisms on Windows.
