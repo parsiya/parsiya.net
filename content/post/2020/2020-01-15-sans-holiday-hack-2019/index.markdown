@@ -7,6 +7,7 @@ comments: true
 categories:
 - CTF
 - Crypto
+- writeup
 ---
 
 I did some of the solutions for the SANS Holiday Hack Challenge of 2019. Last
