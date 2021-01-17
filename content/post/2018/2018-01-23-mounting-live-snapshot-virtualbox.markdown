@@ -6,7 +6,7 @@ toc: false
 comments: true
 categories:
 - Forensics
-- CTF
+- Writeup
 tags:
 - VirtualBox
 ---

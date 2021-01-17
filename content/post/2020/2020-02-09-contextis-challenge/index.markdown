@@ -6,7 +6,7 @@ toc: true
 comments: true
 twitterImage: forensics102-clipboard.png
 categories:
-- CTF
+- Writeup
 - Reverse Engineering
 - Crypto
 ---

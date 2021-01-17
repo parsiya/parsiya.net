@@ -1,7 +1,7 @@
 ---
 categories:
 - Reverse Engineering
-- CTF
+- Writeup
 tags:
 - FlareOn
 - FireEye

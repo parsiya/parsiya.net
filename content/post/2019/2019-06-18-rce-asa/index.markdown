@@ -6,7 +6,7 @@ toc: true
 comments: true
 twitterImage: 11-localhost.gif
 categories:
-- writeup
+- Writeup
 - electron
 ---
 

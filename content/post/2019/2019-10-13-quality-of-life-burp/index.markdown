@@ -5,8 +5,8 @@ draft: false
 toc: false
 comments: true
 categories:
-- burp
-- quality of life
+- Burp
+- Quality of Life
 ---
 
 Quality of life patch/update in the context of videogames is a patch that

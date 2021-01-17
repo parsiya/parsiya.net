@@ -6,7 +6,7 @@ toc: true
 comments: true
 twitterImage: .png
 categories:
-- CTF
+- Writeup
 - Reverse Engineering
 - Crypto
 ---

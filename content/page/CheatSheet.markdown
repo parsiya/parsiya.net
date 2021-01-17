@@ -4,7 +4,7 @@ draft: false
 title: "Cheat Sheet"
 url: "/cheatsheet/"
 categories:
-- cheatsheet
+- Cheatsheet
 ---
 
 Often, I need to do something that I have done many times in the past but I have

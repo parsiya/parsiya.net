@@ -7,7 +7,7 @@ comments: true
 categories:
 - winappdbg
 - reverse engineering
-- CTF
+- Writeup
 tags:
 - python
 - FlareOn

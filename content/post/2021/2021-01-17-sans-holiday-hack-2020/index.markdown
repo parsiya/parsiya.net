@@ -6,7 +6,7 @@ toc: false
 comments: true
 twitterImage: .png
 categories:
-- writeup
+- Writeup
 ---
 
 This year like last year and unlike 2018, I only did a few of the SANS Holiday

@@ -6,9 +6,9 @@ toc: true
 comments: true
 twitterImage: 13-cmd.png
 categories:
-- electron
-- attack surface analysis
-- bug bounty
+- Electron
+- Attack Surface Analysis
+- Bug Bounty
 ---
 
 A few months ago I found a way to subvert the update process of an Electron

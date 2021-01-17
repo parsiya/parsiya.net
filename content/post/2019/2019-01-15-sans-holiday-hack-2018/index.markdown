@@ -6,7 +6,7 @@ toc: true
 comments: true
 twitterImage: 01-bloodhound.png
 categories:
-- CTF
+- Writeup
 - Crypto
 - Reverse Engineering
 ---

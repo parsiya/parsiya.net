@@ -7,7 +7,7 @@ comments: true
 twitterImage: 04-rpki.png
 categories:
 - Crypto
-- CTF
+- Writeup
 ---
 
 Cloudflare had a [Christmas crypto(graphy) challenge](https://blog.cloudflare.com/christmas-cryptography-challenges-2019/). Here are my solutions. The first two questions were pretty easy but the 3rd sent me down on a rabbit hole. Apparently, only 15 people solved it which places me in the world top 15 cryptographers (that's how it works right?).
