@@ -7,10 +7,6 @@ assignees: parsiya
 
 ---
 
-## What is wrong?
-
-
-## Where is it?
-
-
-## What is the correction?
+* Location
+* Problem:
+* Solution:
