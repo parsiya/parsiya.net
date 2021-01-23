@@ -12,14 +12,18 @@ categories:
 This year like last year and unlike 2018, I only did a few of the SANS Holiday
 Hack challenges. I got invited into this private bug bounty program with a
 desktop application in scope (those are quite rare) so I had to poke at it. To
-be fair, I hit the motherload and submitted $10K of bounties.
+be fair, I hit the motherlode and submitted $10K of bounties.
 
 Previous writeups:
 
 * [SANS Holiday Hack 2018 Solutions]({{< relref "post/2019/2019-01-15-sans-holiday-hack-2018/index.markdown" >}} "SANS Holiday Hack 2018 Solutions")
-* [Some SANS Holiday Hack 2019 Solutions]({{< relref "/post/2020/2020-01-15-sans-holiday-hack-2019/index.markdown" >}} "Some SANS Holiday Hack 2019 Solutions") 
+* [Some SANS Holiday Hack 2019 Solutions]({{< relref "post/2020/2020-01-15-sans-holiday-hack-2019/index.markdown" >}} "Some SANS Holiday Hack 2019 Solutions") 
 
 <!--more-->
+
+**Table of Contents:**
+
+{{< toc >}}
 
 # Objective 1 - Uncover Santa's Gift List
 Talk to Jingle Ringford at the bottom of the mountain for advice.
@@ -516,7 +520,6 @@ Do whatever works best for you!
 
 Pick up elevator 1.5 button from the speaker room.
 
-# Objective 5 - Open HID Lock
 Open the HID lock in the Workshop. Talk to Bushy Evergreen near the talk tracks
 for hints on this challenge. You may also visit Fitzy Shortstack in the kitchen
 for tips.
@@ -553,13 +556,6 @@ Anytime you feel like changing the color scheme up, just pick up the phone!
 You know, Santa really seems to trust Shinny Upatree...
 ```
 
-----------
-
-# Objective 5 - Open HID Lock
-Open the HID lock in the Workshop. Talk to Bushy Evergreen near the talk tracks
-for hints on this challenge. You may also visit Fitzy Shortstack in the kitchen
-for tips.
-
 Go to Santa's workshop and pick up the marble. Go inside the room and pick up
 the rubber ball and the proxmark.
 
@@ -580,6 +576,7 @@ In the proxmark cli we see a hid after the `auto` command
 #db# TAG ID: 2006e22ee1 (6000) - Format Len: 26 bit - FC: 113 - Card: 6000
 ```
 
+## Sort-O-Matic Regex Challenege
 Let's do the JavaScript regex sorting machine
 
 1. Matches at least one digit

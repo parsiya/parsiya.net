@@ -57,8 +57,7 @@ headers to the response. The most important header is
 sender's origin then the browser allows the sender to see the response or in
 some cases actually send a request to the other side.
 
-[^1]: There are more CORS headers but they are not important for this
-discussion.
+[^1]: There are more CORS headers but they are not important for this discussion.
 
 If this header is missing then CORS is not enabled. The value of this header can
 be:
@@ -134,8 +133,7 @@ Trusted Zones`. In most corporate environments the internal domains are added to
 this zone.
 
 ## If The Port Is Missing From the Origin Then the Default Port Is Implied
-`https://example.net:443` and `https://example.net` are effectively the same. I
-thought I had found a gotcha moment but I was wrong.
+`https://example.net:443` and `https://example.net` are the same.
 
 ## WebSockets Are Not Bound By The SOP
 This is a common issue and the most important item in this blog. Websockets
@@ -146,7 +144,7 @@ If the request is cross-origin and no CORS policy is defined, the sender cannot
 see the response of the handshake. But it really does not matter. The browser
 does it for us.
 
-For more information please read a section from this URL by Independent Security
+For more information please read the following article by Independent Security
 Evaluators:
 
 * https://blog.securityevaluators.com/websockets-not-bound-by-cors-does-this-mean-2e7819374acc#e8bc
@@ -169,11 +167,11 @@ header is only set for cross-origin requests. This is not completely correct but
 going into the details will just complicate things.
 
 ## Cross-Origin Simple Requests Are Sent Without Checks
-We all already know this. However, because the browser does not allow access to
-the response we think the request is not valid. GET requests and some POST
-requests are sent anyways. We might not be able to see the response but the
-action is probably already executed. Hence, why CSRF exists even if there is no
-CORS because the POST request performs some action.
+We usually do not think the request is sent because the browser does not allow
+access to the response. GET requests and some POST requests are sent anyways. We
+might not be able to see the response but the action is probably already
+executed. Hence, why CSRF exists even if there is no CORS because the POST
+request performs some action.
 
 Look at this bug from [TavisO][taviso-twitter] at
 https://bugs.chromium.org/p/project-zero/issues/detail?id=693.

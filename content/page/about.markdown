@@ -68,6 +68,7 @@ blog, don't be afraid to promote yourself (if you have the time). It's worth it.
     - Random posts as I learned: [https://parsiya.net/categories/blockchain/]({{< relref "categories/blockchain" >}} "https://parsiya.net/categories/blockchain/")
 
 **On the back burner:**
+
 - In-memory fuzzing via binary instrumentation (aka traversing arbitrary
   assembly blobs over and over and over).
     - [https://parsiya.net/categories/winappdbg/]({{< relref "categories/winappdbg" >}} "https://parsiya.net/categories/winappdbg/") 

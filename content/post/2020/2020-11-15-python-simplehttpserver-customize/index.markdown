@@ -52,7 +52,7 @@ def do_GET(self):
     # send response headers
     self.end_headers()
     # send the body of the response
-    self.wfile.write(bytes("01.py", "utf-8"))
+    self.wfile.write(bytes("It Works!", "utf-8"))
 ```
 
 {{< imgcap title="01.py" src="01.png" >}}
@@ -142,7 +142,7 @@ body of the POST request we:
     1. I could not find a way to read "all bytes" in `rfile`. I had to rely on
        the `Content-Length` header.
 
-```python
+{{< codecaption title="Reading the body" lang="python" >}}
 def do_POST(self):
     # read the content-length header
     content_length = int(self.headers.get("Content-Length"))
@@ -153,7 +153,7 @@ def do_POST(self):
     self.end_headers()
     # echo the body in the response
     self.wfile.write(body)
-```
+{{< /codecaption >}}
 
 {{< imgcap title="04.py" src="04.png" >}}
 
