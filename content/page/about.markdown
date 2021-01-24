@@ -7,19 +7,20 @@ comments: false
 type: about
 ---
 
-I am Parsia, a Senior Security Engineer, part of the Game and Platform Security
-Engineering group at [Electronic Arts](https://www.ea.com/security).
-[Realistic video of me hacking videogames at work](https://www.youtube.com/watch?v=BRWvfMLl4ho).
+I am Parsia, a Senior Security Engineer at [Electronic Arts][ea-security]. I
+work on every product (mostly videogames) and services that we release. 
+[Realistic video of me hacking videogames at work][game-testers-youtube].
 
-From 2013 to 2019, I was a Senior Security Consultant at
-[Synopsys Software Integrity Group](https://www.synopsys.com/software-integrity.html)
-through the 2016 Cigital acquisition based out of the Washington DC area in the
-United States. I tested enterprise blockchains, online multiplayer games, stock
-exchange platforms, mobile device management suites, network appliances,
-embedded and IoT devices on top of a long list of thickclient/mobile/web
-applications we all use on a daily basis.
+[ea-security]: https://www.ea.com/security
+[game-testers-youtube]: https://www.youtube.com/watch?v=BRWvfMLl4ho
 
-I have had two major presentations:
+**2013-2019**: Senior Security Consultant at
+[Synopsys Software Integrity Group][sig-website] via the 2016 Cigital
+acquisition.
+
+[sig-website]: https://www.synopsys.com/software-integrity.html
+
+**Major Presentations**
 
 * DEF CON 26 Main Track: Tineola Taking a Bite Out of Enterprise Blockchain
     * https://www.youtube.com/watch?v=xKYIde5jh_8
@@ -27,47 +28,64 @@ I have had two major presentations:
 * DEF CON 28 Appsec Village: localghost: Escaping Browser Sandbox Without 0-Days
     * https://www.youtube.com/watch?v=Cgl51ZcACLg&t=90
 
-**Who is Hackerman?**\\
-*Hackerman* is a character from the movie
-[Kung Fury](https://www.youtube.com/watch?v=bS5P_LAqiVg). He is the greatest
-hacker of all time and can hack people through time. He also has a
-[hacking tutorial](https://www.youtube.com/watch?v=KEkrWRHCDQU).
+**Who is Hackerman?**
 
-**What is this website?**\\
+*Hackerman* is a character from the movie [Kung Fury][kungfury-youtube]. He is
+the greatest hacker of all time and can hack people through time.
+[His cheesy hacking tutorial][hackerman-hacking-tutorial].
+
+[kungfury-youtube]: https://www.youtube.com/watch?v=bS5P_LAqiVg
+[hackerman-hacking-tutorial]: https://www.youtube.com/watch?v=KEkrWRHCDQU
+
+**What is This Website?**
+
 This website is my security research and notes. It doubles as my cheat sheet and
 knowledge base along with [parsiya.io](http://parsiya.io). I look up pages or
 send links to this website at least a few times every day. It's part of my
 brand. You don't wanna be the other guy from Wham!
 
-**What does "don't be the other guy from Wham!" mean?**\\
-[Wham!](https://en.wikipedia.org/wiki/Wham!) was a popular UK music duo. Most
-people remember one of its members, George Michael. No one remembers the other
-guy, [Andrew Ridgeley](https://www.google.com/search?q=andrew+ridgeley). Write a
-blog, don't be afraid to promote yourself (if you have the time). It's worth it.
+**What does "Don't be The Other Guy from Wham!" Mean?**
 
-**Goals in progress:**
+[Wham!][wham-link] was a popular UK music duo. Most people remember one of its
+members, George Michael. No one remembers the other guy,
+[Andrew Ridgeley][andrew-link]. Write a blog, don't be afraid to promote
+yourself (if you have the time). It's worth it.
 
-- Using Go in security tooling. I have replaced Python with Go in my workflow.
+[wham-link]: https://en.wikipedia.org/wiki/Wham!
+[andrew-link]: https://www.google.com/search?q=andrew+ridgeley
+
+**Goals in Progress:**
+
+- **Bug bounties**: I started the bug bounty game really late and mostly only
+  work the ocassional Windows desktop application.
+    - My first and highest bounty to date: [$15,000 from PlayStation][psnow]
+    - Hacker One profile: https://hackerone.com/parsiya
+    - Bugcrowd profile (I have one bug there lol): https://bugcrowd.com/Parsiya
+    - If you have Windows desktop applications in your program, invite me.
+      Unless they are videogames, I cannot touch videogames :)
+- **Go in security**: I have replaced Python with Go in my workflow.
     - https://github.com/parsiya/Hacking-with-Go
     - https://github.com/parsiya/Go-Security
     - https://github.com/parsiya/Parsia-Code
     - [https://parsiya.net/categories/go/]({{< relref "categories/go" >}} "https://parsiya.net/categories/go/") 
-- Automation:
+- **Automation**:
     - [https://parsiya.net/categories/automation/]({{< relref "categories/automation" >}} "https://parsiya.net/categories/automation/") 
     - Borrowed Time: My project and note management app
         - https://github.com/parsiya/borrowedtime/
     - ESLinter: Burp extension to automatically extract and ESLint JavaScript
         - https://github.com/parsiya/eslinter
 
-**Done and dusted:**
+[psnow]: https://hackerone.com/reports/873614
+
+**Done and Dusted:**
 
 - Enterprise blockchain and [Hyperledger Fabric](https://www.hyperledger.org/projects/fabric) security:
-    - **DEF CON 26 video** is out: https://www.youtube.com/watch?v=xKYIde5jh_8
+    - **DEF CON 26 video**: https://www.youtube.com/watch?v=xKYIde5jh_8
     - My post on Synopsys' corporate blog: [Tineola: Taking a Bite out of Enterprise Blockchain](https://www.synopsys.com/blogs/software-security/tineola-enterprise-blockchain/ "Tineola: Taking a Bite out of Enterprise Blockchain")
     - Tineola the tool: https://github.com/tineola/tineola
     - Random posts as I learned: [https://parsiya.net/categories/blockchain/]({{< relref "categories/blockchain" >}} "https://parsiya.net/categories/blockchain/")
 
-**On the back burner:**
+**Gone to The Dogs:**
 
 - In-memory fuzzing via binary instrumentation (aka traversing arbitrary
   assembly blobs over and over and over).
