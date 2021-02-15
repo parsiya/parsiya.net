@@ -13,12 +13,6 @@ theme: Hugo-Octopress
 # Frontmatter will be in yaml.
 metadataformat: yaml
 
-# Highlight shortcode and codefences (```) perform the same way.
-pygmentscodefences: true
-
-# Highlight style.
-pygmentsStyle: solarized-dark
-
 # Disqus configuration.
 disqusShortname: parsiya
 
@@ -111,10 +105,10 @@ params:
   # Appears directly under the sidebar header.
   sidebarText: |-
     I am Parsia, a senior security engineer at [Electronic Arts](https://www.ea.com/security).
-    </br></br>
+    
     I write about application security, reverse engineering,
       Go, cryptography, and (obviously) videogames.
-    </br></br>
+
     Click on [About Me!](/about/) to know more.
 
   # Enable links in the side bar. They are under menu.sidebar.
@@ -123,7 +117,7 @@ params:
   sidebarMenuHeader: Collections
 
   # Sidebar links
-  bitbucket: "https://bitbucket.org/parsiya/"
+  # bitbucket: "https://bitbucket.org/parsiya/" # I am not really active on bitbucket.
   twitter: "https://twitter.com/cryptogangsta/"
   keybase: "https://keybase.io/parsiya/"
   github: "https://github.com/parsiya/"
@@ -148,9 +142,9 @@ params:
   searchEngineURL: "https://www.google.com/search"
 
   # "Continue Reading" text that appears under truncated posts.
-  continueReadingText: Would you like to know more? 
+  # continueReadingText: Would you like to know more? # I don't need this, I am using the compact index.
 
-  # Enable the RSS icon in navigation.
+  # # Enable the RSS icon in navigation.
   rss: true
 
   description: ""
@@ -180,11 +174,31 @@ params:
   # Use the compact index.
   compactIndex: true
 
-# Blackfriday (Hugo's markdown engine) options.
-# See: https://gohugo.io/getting-started/configuration-markup#blackfriday
-blackfriday:
-  # Open the external links in a new window
-  hrefTargetBlank: true
-  fractions: false
-  # Disable smart quotes, etc.
-  smartypants: false
+# markup for Hugo v.60+
+markup:
+  # Note to future me: The reason is because new links in Goldmark are not
+  # opened in a new tab by default. We can use the render hook to make it happen
+  # for just markdown links but not image links or linkify links (i.e., URLs in
+  # the markdown documents as-is). So before you come and waste a lot of time to
+  # switch to Goldmark, don't. Of course, unless this problem has been solved in
+  # Goldmark.
+  defaultMarkdownHandler: blackfriday # use Blackfriday
+  blackFriday:
+    fractions: false
+    hrefTargetBlank: true
+    latexDashes: false
+    nofollowLinks: true
+    smartDashes: false
+    smartypants: false
+  
+  # Change the defaults for the toc because I want to render every heading in
+  # the document.
+  tableOfContents:
+    endLevel: 7
+    startLevel: 1
+    # Note to future me: Consider changing the start level to 2 but then you
+    # have to go and change it for every blog post that started with a level 1
+    # heading.
+  highlight:
+    # use solarized-dark to highlight code.
+    style: "solarized-dark"
