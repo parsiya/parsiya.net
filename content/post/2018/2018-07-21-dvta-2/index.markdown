@@ -201,4 +201,4 @@ In this part we learned how to use the very very useful `Analyze` feature of dnS
 
 While waiting, you can my other blog posts on thick client proxying at:
 
-* [https://parsiya.net/categories/thick-client-proxying/]({{< relref "categories/thick-client-proxying" >}} "https://parsiya.net/categories/thick-client-proxying/") 
+* [https://parsiya.net/categories/thick-client-proxying/](/categories/thick-client-proxying/ "https://parsiya.net/categories/thick-client-proxying/") 

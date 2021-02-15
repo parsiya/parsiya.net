@@ -16,7 +16,7 @@ patches are not ground-breaking but rather making the game easier to play[^1].
 I have been using these things to make my life easier. I am publishing them
 gradually and will refine them into one final page similar to the
 [cheatsheet]({{< relref "page/cheatsheet.markdown" >}} "cheatsheet"). This page
-also pairs really well with [automation]({{< relref "categories/automation" >}} "automation").
+also pairs really well with [automation](/categories/automation/ "automation").
 
 Each section starts with step by step instructions. Some items have extra notes
 and finally the `Why?` section has the justification/usecase.

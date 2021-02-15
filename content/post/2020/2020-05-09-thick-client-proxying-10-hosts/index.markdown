@@ -13,7 +13,7 @@ aliases:
 ---
 
 Welcome to the 10th installment of
-[Thick Client Proxying]({{< relref "categories/thick-client-proxying" >}} "Thick Client Proxying").
+[Thick Client Proxying](/categories/thick-client-proxying/ "Thick Client Proxying").
 A series running since 2016. Woot! Today I will talk about traffic redirection
 using the `hosts` file.
 
