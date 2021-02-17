@@ -33,7 +33,7 @@ Code and fuzzing artifacts are at:
 # Go-Fuzz Quickstart
 I have written a small quick-start guide for myself in my clone at:
 
-- [http://parsiya.io/categories/research/go-fuzz-quick-start/][parsiya-io-go-fuzz]
+- [https://parsiya.io/categories/research/go-fuzz-quick-start/][parsiya-io-go-fuzz]
 
 These examples helped me immensely:
 
@@ -353,7 +353,7 @@ A better solution is to check the input for validity and good format before proc
 Well that was it folks! We learned how to use `go-fuzz` and investigated a simple panic. I think this is a good first tutorial.
 
 <!-- Links -->
-[parsiya-io-go-fuzz]: http://parsiya.io/categories/research/go-fuzz-quick-start/
+[parsiya-io-go-fuzz]: https://parsiya.io/categories/research/go-fuzz-quick-start/
 [iprange-supported]: https://github.com/malfunkt/iprange#supported-formats
 [bigendian-uint32]: https://github.com/golang/go/blob/master/src/encoding/binary/binary.go#L110
 [issue-14808]: https://github.com/golang/go/issues/14808

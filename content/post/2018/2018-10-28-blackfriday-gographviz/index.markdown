@@ -62,7 +62,7 @@ More lines in heading 1-2.
 * https://google.com
     * email: blahblah
 * https://parsiya.net
-* http://parsiya.io
+* https://parsiya.io
 
 # Heading 2
 
@@ -228,7 +228,7 @@ More lines in heading 1-2.
 * https://google.com
     * email: blahblah
 * https://parsiya.net
-* http://parsiya.io
+* https://parsiya.io
 --------------------
 Heading 2
 ## Heading 2-1
@@ -543,7 +543,7 @@ Run `viz-list.go` to generate `graph-list.dot` of the following list:
 * https://google.com
     * email: blahblah
 * https://parsiya.net
-* http://parsiya.io
+* https://parsiya.io
 ```
 
 {{< imgcap title="List in AST (open in new tab for full size image" src="05.png" >}}

@@ -40,7 +40,7 @@ the greatest hacker of all time and can hack people through time.
 **What is This Website?**
 
 This website is my security research and notes. It doubles as my cheat sheet and
-knowledge base along with [parsiya.io](http://parsiya.io). I look up pages or
+knowledge base along with [parsiya.io](https://parsiya.io). I look up pages or
 send links to this website at least a few times every day. It's part of my
 brand. You don't wanna be the other guy from Wham!
 

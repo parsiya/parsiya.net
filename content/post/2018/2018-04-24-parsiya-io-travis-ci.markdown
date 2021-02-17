@@ -14,7 +14,7 @@ tags:
 - Hugo
 ---
 
-I finally managed to automate deployment of [parsiya.io](http://parsiya.io) with Travis CI. Not having dones this before, I encountered some pitfalls. Additionally I had two extra problems:
+I finally managed to automate deployment of [parsiya.io](https://parsiya.io) with Travis CI. Not having dones this before, I encountered some pitfalls. Additionally I had two extra problems:
 
 - The structure of the blog is different from most Hugo deployments. [Parsia-Clone][parsia-clone-github] only contains the `content` directory. Parents and everything else are in the [parsiya.io][parsiya-io-github] repo. So while we push to `Parsia-Clone`, we need to clone `parsiya.io` and build the repository there.
 - I am hosting it out of an S3 bucket. All other examples were using github pages.
@@ -22,10 +22,17 @@ I finally managed to automate deployment of [parsiya.io](http://parsiya.io) with
 [parsia-clone-github]: https://github.com/parsiya/Parsia-Clone
 [parsiya-io-github]: https://github.com/parsiya/Parsiya.io
 
-**Note:** As of late November 2020, I have switched to Github actions for both
-`parsiya.net` and `parsiya.io`. You can see it in [deploy.yml][deploy].
+**Update November 2020:** As of late November 2020, I have switched to Github
+actions for both `parsiya.net` and `parsiya.io`. Please see
+[deploy.ymlOLD][deploy].
 
-[deploy]: https://github.com/parsiya/Parsia-Clone/blob/master/.github/workflows/deploy.yml
+[deploy]: https://github.com/parsiya/Parsia-Clone/blob/main/.github/workflows/deploy.ymlOLD
+
+**Update February 2021:** parsiya.io is now hosted on github pages with a custom
+domain instead of an S3 bucket. Please see the workflow file at
+[gh-pages.yml][gh-pages.yml].
+
+[gh-pages.yml]: https://github.com/parsiya/Parsia-Clone/blob/main/.github/workflows/gh-pages.yml
 
 <!--more-->
 

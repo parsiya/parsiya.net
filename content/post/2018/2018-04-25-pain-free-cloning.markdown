@@ -14,7 +14,7 @@ tags:
 ---
 
 # TL;DR:
-Instead of creating an index manually for Github, I am using a Hugo blog for my knowledge base (a.k.a. `Parsia-Clone`). This blog is about my flow and how I have semi-automated the process. Demo site is at [http://parsiya.io][parsiya-io] (it's served in plaintext because I am making rapid changes and do not want to invalidate CloudFront's cache after every push).
+Instead of creating an index manually for Github, I am using a Hugo blog for my knowledge base (a.k.a. `Parsia-Clone`). This blog is about my flow and how I have semi-automated the process. Demo site is at [https://parsiya.io][parsiya-io] (it's served in plaintext because I am making rapid changes and do not want to invalidate CloudFront's cache after every push).
 
 # Flow
 Flow is pretty simple:
@@ -203,7 +203,7 @@ I have automated my knowledge base creation a bit. I will hopefully make it bett
 [markdown-link]: https://daringfireball.net/projects/markdown/
 [hugo]: https://gohugo.io/
 [travis-ci]: https://travis-ci.org/
-[parsiya-io]: http://parsiya.io
+[parsiya-io]: https://parsiya.io
 [hugo-page-bundle]: https://gohugo.io/content-management/page-bundles/
 [hugo-ignore-files]: https://gohugo.io/getting-started/configuration/#ignore-files-when-rendering
 [hugo-taxonomies]: https://gohugo.io/content-management/taxonomies/

@@ -15,7 +15,7 @@ A while ago I read [Time Management for System Administrators][tmsa-link] by
 
 You can find my raw notes in my clone at:
 
-* http://parsiya.io/automation/time-management-sysadmins-notes/
+* https://parsiya.io/automation/time-management-sysadmins-notes/
 
 Tom is also the author of one of my favorite articles
 [Manual Work is a Bug][manual-work-link].

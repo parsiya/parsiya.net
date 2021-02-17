@@ -13,7 +13,7 @@ categories:
 
 I recently read [Manual Work is a Bug](https://queue.acm.org/detail.cfm?id=3197520) by Thomas A. Limoncelli. It's a great article in my opinion. I realized I had been doing some of what it mentions.
 
-If you know me, you know I am a great fan of knowledge bases or `clones` as I call them. I have my own external clone at [parsiya.io](http://parsiya.io). It's also somewhat [automated]({{< relref "post/2018/2018-04-25-pain-free-cloning.markdown" >}} "Semi-Automated Cloning: Pain-Free Knowledge Base Creation"). I have had an internal one for more than two years.
+If you know me, you know I am a great fan of knowledge bases or `clones` as I call them. I have my own external clone at [parsiya.io](https://parsiya.io). It's also somewhat [automated]({{< relref "post/2018/2018-04-25-pain-free-cloning.markdown" >}} "Semi-Automated Cloning: Pain-Free Knowledge Base Creation"). I have had an internal one for more than two years.
 
 But the automation was not what rhymed with me. It was the documentation.
 
@@ -37,7 +37,7 @@ Every time one of the following happened, I added them to the clone:
 I am not going to hide that part of the incentive was being selfish. I get a somewhat distracting amount of questions. Now I just send people to my clone. Sometimes it takes care of the problem and if not, it buys me some time to finish what I am doing at that time.
 
 ## Clone Maintenance
-The most boring part of the clone was maintaining the index. This was fixed when I moved it to an internal CMS. The CMS takes care of the index. I did a similar thing with my external clone at [parsiya.io](http://parsiya.io). Instead of using Github and having to manually update the index in the main `README.md`, I use a modified Hugo theme to generate the index.
+The most boring part of the clone was maintaining the index. This was fixed when I moved it to an internal CMS. The CMS takes care of the index. I did a similar thing with my external clone at [parsiya.io](https://parsiya.io). Instead of using Github and having to manually update the index in the main `README.md`, I use a modified Hugo theme to generate the index.
 
 I have given myself 3 hours a week (mainly on Fridays or over the weekend) for clone maintenance. The basic automation that I have done saves me more than that per week. During this time, I add anything I have learned, add new topics, or just do general clean-up. A clone is not a one-time thing, it needs to be kept updated. Maintain it, but do not fuss over it.
 

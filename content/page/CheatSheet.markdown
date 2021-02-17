@@ -9,7 +9,7 @@ categories:
 
 Often, I need to do something that I have done many times in the past but I have
 forgotten how to do it. This is a page to complement
-[my clone at parsiya.io](http://parsiya.io) and give me a simple repository of
+[my clone at parsiya.io](https://parsiya.io) and give me a simple repository of
 how-tos I can access online.
 
 In this page you may find those commands and tips that I need from time to time
@@ -803,7 +803,7 @@ Follow this guide:
 
 ## Visual Studio Code
 My current (as of June 2019) editor of choice. Settings are at
-http://parsiya.io/categories/configs/vscode/.
+https://parsiya.io/categories/configs/vscode/.
 
 ### Associate an Extension with a Specific Language
 This allows us to have specific language highlighting for custom extensions. Add
