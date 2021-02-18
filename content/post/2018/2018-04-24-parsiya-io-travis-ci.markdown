@@ -14,7 +14,7 @@ tags:
 - Hugo
 ---
 
-I finally managed to automate deployment of [parsiya.io](https://parsiya.io) with Travis CI. Not having dones this before, I encountered some pitfalls. Additionally I had two extra problems:
+I finally managed to automate deployment of [parsiya.io](https://parsiya.io) with Travis CI. Not having done this before, I encountered some pitfalls. Additionally I had two extra problems:
 
 - The structure of the blog is different from most Hugo deployments. [Parsia-Clone][parsia-clone-github] only contains the `content` directory. Parents and everything else are in the [parsiya.io][parsiya-io-github] repo. So while we push to `Parsia-Clone`, we need to clone `parsiya.io` and build the repository there.
 - I am hosting it out of an S3 bucket. All other examples were using github pages.
