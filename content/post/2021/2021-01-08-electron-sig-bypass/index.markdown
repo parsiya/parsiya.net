@@ -182,12 +182,14 @@ about them later but for now you can read these great series of posts by
 1. [Part I: The Fundamentals of Windows Named Pipes][pipe-1]
 2. [Part II: Analysis of a Vulnerable Microsoft Windows Named Pipe Application][pipe-2]
 3. [Part 3: Reversing & Exploiting Custom Windows Named Pipe Servers][pipe-3]
+4. [Part 4: Windows Named Pipes Part 4: Taking a Trip Down Static Analysis Lane][pipe-4]
 
 [namedpipe]: https://docs.microsoft.com/en-us/windows/win32/ipc/named-pipes
 [robert-twitter]: https://twitter.com/HawesRT
 [pipe-1]: https://versprite.com/blog/security-research/microsoft-windows-pipes-intro/
 [pipe-2]: https://versprite.com/blog/security-research/vulnerable-named-pipe-application/
 [pipe-3]: https://versprite.com/blog/security-research/reverse-exploit-custom-windows-named-pipe-servers/
+[pipe-4]: https://versprite.com/blog/security-research/windows-named-pipes-static-analysis-exploitation/
 
 The named pipe has a (fortunately) json-based protocol. The pipe is named
 `george` (lol).
@@ -211,8 +213,9 @@ procmon. It's probably my favorite tool. You can run the updater process and see
 where the file is downloaded and executed.
 
 I did not need to use OpLocks because I could initiate the download and
-execution events individually. In other words, I could just tell the installer
-to download the update. This gave me ample time to swap the binary.
+execution events individually. In other words, I could tell the installer to
+just download the update and nothing else. This gave me ample time to swap the
+binary.
 
 {{< imgcap title="Downloaded file" src="05-downloaded-file.png" >}}
 
