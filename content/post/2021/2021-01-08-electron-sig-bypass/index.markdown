@@ -1,5 +1,5 @@
 ---
-title: "A 'Novel' Way to Bypass Executable Signature Checks with Electron"
+title: "Attack Surface Analysis - Part 1 - Application Update:\n'A Novel Way to Bypass Executable Signature Checks with Electron'"
 date: 2021-01-08T22:33:32-08:00
 draft: false
 toc: true
@@ -9,6 +9,8 @@ categories:
 - Electron
 - Attack Surface Analysis
 - Bug Bounty
+aliases:
+- "/blog/2021-01-08-a-novel-way-to-bypass-executable-signature-checks-with-electron/"
 ---
 
 A few months ago I found a way to subvert the update process of an Electron
@@ -33,6 +35,12 @@ In short, you want to go from one of these levels to the next:
 
 Note: This is intentionally ignoring domain-connected machines and their attack
 surfaces.
+
+Moving from one level to the next is a privilege escalation.
+
+{{< blockquote author="Raymond Chen" link="https://devblogs.microsoft.com/oldnewthing/20060508-22/?p=31283" >}}
+Code injection doesn't become a security hole until you have elevation of privilege.
+{{< /blockquote >}}
 
 ## From Update to Privilege Escalation
 The update process is usually a good way to gain local privilege. Application
