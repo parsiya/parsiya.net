@@ -663,7 +663,7 @@ under the `Command-Line` column. Here's the entry for the Nord VPN URI scheme we
 saw before. This shows if there are any extra command-line switches. You can
 also see it in action with procmon.
 
-{{< imgcap title="NordVPN.Notification" src="01-nordvpn-uri.png" >}}
+{{< imgcap title="NordVPN.Notification" src="04-nordvpn-uri.png" >}}
 
 Unfortunately, there is no set-piece strategy after that. I usually look for
 these things.
