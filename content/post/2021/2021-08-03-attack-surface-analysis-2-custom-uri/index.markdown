@@ -196,9 +196,8 @@ by my good friend and solid 5/7 JavaScript guy, [Lewis Ardern][lewis-twitter].
 [lewis-twitter]: https://twitter.com/LewisArdern
 
 Now, we have client-side template injection and can inject JavaScript. This is
-not Electron where you can just run `require('child_process').exec('calc')` like
-get RCE like what I did with [PlayStation Now][playstation-now-rce-h1]
-(shameless brag).
+not Electron where you can just run `require('child_process').exec('calc')` and
+get RCE on [PlayStation Now][playstation-now-rce-h1] (shameless brag).
 
 [playstation-now-rce-h1]: https://hackerone.com/reports/873614
 
@@ -277,6 +276,13 @@ value of it is `space, tab, newline`. [Internal Field Separator or IFS][ifs-docs
 tells bash how to separate words.
 
 [ifs-docs]: https://bash.cyberciti.biz/guide/$IFS
+
+You can also smuggle `@` into the URI strings because the parsers are looking
+for `protocol://user:pass@server.tld/`. [Tweet][jonaslyj-tweet] by
+[@jonasLyk][jonaslyk-twitter]
+
+[jonaslyk-twitter]: https://twitter.com/jonasLyk
+[jonaslyj-tweet]: https://twitter.com/jonasLyk/status/1372952003719143428
 
 # Loading Remote Files
 We can also pass remote files to the target app via these URI handlers. It's an
@@ -365,7 +371,7 @@ credentials send by the OS.
 [jeff-twitter]: https://twitter.com/jeffssh
 [teamviewer-unquoted]: https://jeffs.sh/CVEs/CVE-2020-13699.txt
 
-# command-line Switch Injection
+# Command-Line Switch Injection
 Depending on how the app processes these passed parameters, it might be possible
 to sneak a command via a command-line switch.
 
@@ -384,10 +390,10 @@ explores these bugs in detail.
 
 [rgod-electon-zdi]: https://www.thezdi.com/blog/2018/12/18/top-5-day-two-electron-boogaloo-a-case-for-technodiversity
 
-The ZDI advisory pages do not contain any details so I am not linking to them.
-It's very disappointing that we can only learn about these disclosed and fixed
-bugs from the end-of-the-year blog post. That said, it's their bugs and they can
-do whatever they want with them. 
+The ZDI advisory pages don't contain any details so I am not linking to them.
+It's very disappointing. We can only learn about these disclosed and fixed bugs
+from the end-of-the-year blog post. That said, it's their bugs and they can do
+whatever they want with them. 
 
 ### Microsoft Teams Command Injection
 In the Microsoft Teams exploit rgod passed a parameter named `gpu-launcher` to
