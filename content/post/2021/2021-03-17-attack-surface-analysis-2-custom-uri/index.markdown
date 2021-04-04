@@ -724,6 +724,8 @@ later.
 * [Electron's bug, ShellExecute to blame?][shellexecute-codecolorist] by
   [@CodeColorist][codecolorist-twitter].
   * Mostly discusses the quirks of ShellExecute.
+* [Electron, scheme handlers, and stealthy security patches][juho-paper] by
+  [Juho Nurminen][juho-twitter].
 
 [understanding-protocols]: https://docs.microsoft.com/en-us/archive/blogs/ieinternals/understanding-protocols
 [exploiting-uri]: https://www.vdoo.com/blog/exploiting-custom-protocol-handlers-in-windows
@@ -732,6 +734,8 @@ later.
 [uri-use-abuse-wp]: https://www.blackhat.com/presentations/bh-europe-08/McFeters-Rios-Carter/Whitepaper/bh-eu-08-mcfeters-rios-carter-WP.pdf
 [codecolorist-twitter]: https://twitter.com/CodeColorist
 [shellexecute-codecolorist]: https://blog.chichou.me/2018/01/28/electron-s-bug-shellexecute-to-blame/
+[juho-paper]: https://2019.zeronights.ru/wp-content/themes/zeronights-2019/public/materials/1_ZN2019_Juho_Nurminen.pdf
+[juho-twitter]: https://twitter.com/jupenur
 
 # Acknowledgements
 Special thanks to everyone who publishes their bugs so we can learn and
