@@ -1217,3 +1217,10 @@ Easier method: In the `View Source` page, right-click and select `Wrap Long Line
 2. Set `view_source.wrap_long_lines` to `true`.
 
 * Source: https://support.mozilla.org/en-US/questions/1208440
+
+### Wireshark Not Equal Filter
+
+* Correct: `!tcp.port == 8080`
+* Wrong: `tcp.port != 8080`
+
+Source: https://thetechl33t.com/2015/06/01/wireshark-not-equal-to-filter/
