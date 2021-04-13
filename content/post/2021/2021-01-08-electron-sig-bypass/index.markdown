@@ -159,6 +159,11 @@ usually pretty easy with the [SetOpLock][setoplock] utility in the great
 This second bug was reported on April 23rd, 2020 (around 9 months ago) and is
 still open with no bounty, again (see a pattern?).
 
+**Update April 13th, 2021**: This bug has finally been closed. The application
+was retired and I got some money.
+
+![](15-bounty-bad-dacl.png)
+
 It's a bug in the same application as undisclosed bug #1. The installer changed
 the DACL of the entire application directory under `C:\Program Files\app\`. The
 new DACL gave write access to standard users.
@@ -199,7 +204,7 @@ about them later but for now you can read these great series of posts by
 [pipe-3]: https://versprite.com/blog/security-research/reverse-exploit-custom-windows-named-pipe-servers/
 [pipe-4]: https://versprite.com/blog/security-research/windows-named-pipes-static-analysis-exploitation/
 
-The named pipe has a (fortunately) json-based protocol. The pipe is named
+This named pipe has a (fortunately) json-based protocol. The pipe is named
 `george` (lol).
 
 {{< imgcap title="George" src="03-george.png" >}}
