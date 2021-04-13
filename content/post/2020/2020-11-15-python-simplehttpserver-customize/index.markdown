@@ -22,7 +22,7 @@ Code is at
 https://github.com/parsiya/Parsia-Code/tree/master/python-simplehttpserver.
 
 # How to Serve Files
-`python -m http.server 8080 --bind 127.0.0.1`.
+`python -m http.server 1234 --bind 127.0.0.1`.
 
 # Custom GET Responses
 But I needed to customize the path. Let's start with a simple implementation. We
