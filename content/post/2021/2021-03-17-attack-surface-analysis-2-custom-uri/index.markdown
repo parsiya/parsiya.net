@@ -18,7 +18,7 @@ Similar to the first part of this series
 I will analyze this attack surface and discuss a few interesting public bugs.
 I wanted to discuss two of my undisclosed bugs but the post is already too long.
 
-A couple of updates on 2021-04-21:
+**A couple of updates on 2021-04-21**:
 
 1. Startup path limitations and possible workarounds.
 2. Positive security's excellent blog released a month after this with a near
