@@ -18,6 +18,19 @@ Similar to the first part of this series
 I will analyze this attack surface and discuss a few interesting public bugs.
 I wanted to discuss two of my undisclosed bugs but the post is already too long.
 
+A couple of updates on 2021-04-21:
+
+1. Startup path limitations and possible workarounds.
+2. Positive security's excellent blog released a month after this with a near
+   jar trick.
+  1. [Allow arbitrary URLs, expect arbitrary code execution][positive].
+
+The article has a great trick for passing parameters when we cannot. Use `jar`
+files in UNC paths: `\\ip\path\whatever.jar`. Search for `windows-10-19042` in
+the page.
+
+[positive]: https://positive.security/blog/url-open-rce
+
 <!--more-->
 
 **TL;DR:** Custom protocol handlers are a great attack surface and allow us to
@@ -103,6 +116,13 @@ Looking at the call stack in the report, the input is passed to
 [Process.Start(String)][process-start-string]. This is an overload of
 `Process.Start` that just executes the file passed to it. An unfortunate
 limitation of this overload is not being able to pass parameters.
+
+**Update 2021-04-29:** It seems like we can pass remote `jar` files as a UNC
+path to get around this limitation. See section
+[Windows 10 19042][positive-jar-trick] in Positive Security's article linked
+above.
+
+[positive-jar-trick]: https://positive.security/blog/url-open-rce#windows-10-19042
 
 [cyku-twitter]: https://twitter.com/cyku_tw
 [cyku-nord-bug]: https://hackerone.com/reports/1001255
@@ -210,6 +230,11 @@ For example, you could pop calc with
 a limitation of these functions. You cannot pass parameters to them. The same
 limitation was in the Nord VPN bug with the `Process.Start(string)` overload. I
 have spent quite some time trying to break out to no avail (future blog post?).
+
+**Update 2021-04-29:** It seems like we can pass remote `jar` files as a UNC
+path to get around this limitation. See section
+[Windows 10 19042][positive-jar-trick] in Positive Security's article linked
+above.
 
 However, the payload is running in a JavaScript context and you have access to
 things like user tokens. The authors found a clever way of exfiltrating user
@@ -597,6 +622,65 @@ file (think arrows) but now, I think they are there to get out of anything in
 the log that might be interpreted as an HTML tag by the parser.
 
 Brilliant bug! Don't forget to remove the HTA file from your VM.
+
+#### Startup Path Limitations And Possible Workarounds
+Update 29 April 2021. I have used this technique in a couple of real-world bugs.
+Let's look at the path:
+
+* `C:/Users/[username]/AppData/Roaming/Microsoft/Windows/STARTM~1/Programs/Startup/suntzu.hta`
+
+We need to predict the `[username]`. rgod's proof of concept gets around this by
+using `Administrator`. This is a user that exists on most Windows machines but
+to inject into that location the app needs to be running elevated.
+
+I have thought of some workarounds:
+
+1. Environment variables.
+2. Multi-stage payloads.
+3. Startup in ProgramData.
+4. Guessing the username.
+
+##### Environment Variables
+If the path supports environment variables we can substitute the path with
+either (and possibly more):
+
+* `%appdata%/Microsoft/Windows/STARTM~1/Programs/Startup/`
+* `C:/Users/%username%/AppData/Roaming/Microsoft/Windows/STARTM~1/Programs/Startup/`
+
+It does not always work. I had this vuln in a C# app. Passing a path with an
+environment variable in it to C# file utilities is not enough and they must be
+resolved with [Environment.ExpandEnvironmentVariables(String)][expand-env-var].
+
+[expand-env-var]: https://docs.microsoft.com/en-us/dotnet/api/system.environment.expandenvironmentvariables
+
+##### Multi-stage Payloads
+You might be able to be successful if you can inject in a different path. Maybe,
+a different application executes or uses the file or you can execute single
+files.
+
+In the application mentioned above, I could also execute single files without
+parameters. This is a limitation that we have seen a few times in this article
+and the wild.
+
+I injected the HTA into `C:/ProgramData/[app]` and then executed it using the
+original vulnerability.
+
+##### Startup in ProgramData
+If you are running elevated you can inject into
+`C:/ProgramData/Microsoft/Windows/STARTM~1/Programs/Startup/` and it will be
+executed at startup for all users.
+
+The big limitation here is running elevated. Writing to that directory needs
+local admin.
+
+##### Guessing The Username
+If all else fails, just guess.
+
+In most businesses, the person's username and their email is the same and
+predictable (e.g., `jsmith` for John Smith).
+
+We can send targeted phishing emails to users with a customized payload in the
+protocol handler and have a good success rate.
 
 ### Skype Command Injection via browser-subprocess-command
 This payload combines two of the techniques we have seen. command-line switch
