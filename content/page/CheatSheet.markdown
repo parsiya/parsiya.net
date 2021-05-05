@@ -1156,6 +1156,27 @@ It's also possible to download binaries from https://github.com/ytdl-org/youtube
 Sometimes, you need to pass `--no-check-certificate` to bypass certificate
 errors.
 
+### Download Different Qualities with youtube-dl
+`youtube-dl -F https://www.youtube.com/watch?v=xKYIde5jh_8` will show use a list
+of resolutions. The first column will be the `format code` which is a number.
+
+```
+$ youtube-dl -F https://www.youtube.com/watch?v=xKYIde5jh_8
+...
+format code  extension  resolution note
+249          webm       audio only tiny   48k # note removed for most lines
+...
+247          webm       1280x720   720p  361k
+136          mp4        1280x720   720p  482k
+18           mp4        640x360    360p  282k
+22           mp4        1280x720   720p  611k , avc1.64001F, 30fps, mp4a.40.2 (44100Hz) (best)
+```
+
+Then, we can download that format code (or best):
+
+* 247: `youtube-dl -f 247 https://www.youtube.com/watch?v=xKYIde5jh_8`
+* 22 or best: `youtube-dl -f best https://www.youtube.com/watch?v=xKYIde5jh_8`
+
 ### Print Envelopes with the Brother DW2280 printer and LibreOffice
 I gave away the printer when I moved to Canada but I am keeping the instructions
 just in case. Before printing, get to printer physically and use the following
