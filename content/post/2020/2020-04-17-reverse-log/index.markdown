@@ -83,8 +83,7 @@ To detect the MSVC version we must discover the linker info.
 [Detect It Easy](https://github.com/horsicq/Detect-It-Easy) does the job and
 tells us it's linker version 14 or MSVC 2015 [^1].
 
-[^1]: PEID also detects the linker version but its signatures are out of date to
-figure out the name of the compiler.
+[^1]: PEID also detects the linker version but its signatures are out of date to figure out the name of the compiler.
 
 {{< imgcap title="'Detect It Easy' results" src="07-detect-it-ez.png" >}}
 
