@@ -87,7 +87,9 @@ Offset `631` is `0x277`. Open the file with a hex editor such as [HxD][hxd-websi
 
 {{< imgcap title="Global file in hex editor" src="/images/2017/car-mechanic-2015/02-inside-global.png" >}}
 
-This seems to be a serialized Unity file according to [DisUnity][disunity-github]. But we do not care about the format, we want to edit XP and money to unlock auctions.
+~~This seems to be a serialized Unity file according to [DisUnity][disunity-github].~~ But we do not care about the format, we want to edit XP and money to unlock auctions.
+
+**Update 2021-05-18**: After looking in the decompiled source of the game I realized it is using [Easy Save 2][easy-save-2] to manage save files.
 
 We can see our XP and money as an int32 (aka 4 bytes) in little-endian (first byte is the LSB). Replace them with whatever you want (remember they are in hex). For example I am going to max out everything with `FF FF FF FF`.
 
@@ -145,3 +147,4 @@ Just do `7F 00 00 00` to unlock everything.
 [savegame-thread]: https://steamcommunity.com/app/270850/discussions/0/558746089536162358/
 [hxd-website]: https://mh-nexus.de/en/hxd/
 [disunity-github]: https://github.com/ata4/disunity/wiki/Serialized-file-format
+[easy-save-2]: https://docs.moodkie.com/product/easy-save-2/
