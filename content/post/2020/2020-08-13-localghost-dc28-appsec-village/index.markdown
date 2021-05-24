@@ -9,8 +9,8 @@ categories:
 ---
 
 I had the hono(u)r of presenting in the [DEF CON 28 Appsec village][localghost-url].
-Unfortunately, my super-duper awesome [PlayStation bug][ps-bug] was not
-disclosed yet so I did not talk about it.
+Unfortunately, my super-duper awesome [$15K PlayStation bug][ps-bug] was not
+disclosed yet so I did not talk about it. Be sure to read it, it's great.
 
 [ps-bug]: https://hackerone.com/reports/873614
 
