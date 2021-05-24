@@ -16,8 +16,8 @@ be fair, I hit the motherlode and submitted $10K of bounties.
 
 Previous writeups:
 
-* [SANS Holiday Hack 2018 Solutions]({{< relref "post/2019/2019-01-15-sans-holiday-hack-2018/index.markdown" >}} "SANS Holiday Hack 2018 Solutions")
-* [Some SANS Holiday Hack 2019 Solutions]({{< relref "post/2020/2020-01-15-sans-holiday-hack-2019/index.markdown" >}} "Some SANS Holiday Hack 2019 Solutions") 
+* {{< xref path="/post/2019/2019-01-15-sans-holiday-hack-2018/" title="SANS Holiday Hack 2018 Solutions" >}}
+* {{< xref path="/post/2020/2020-01-15-sans-holiday-hack-2019/" title="Some SANS Holiday Hack 2019 Solutions" >}}
 
 <!--more-->
 

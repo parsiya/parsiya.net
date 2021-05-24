@@ -11,11 +11,9 @@ categories:
 ---
 
 In this post we will use our knowledge from
-[Thick Client Proxying - Part 10 - The hosts File]
-({{< relref "/post/2020/2020-05-09-thick-client-proxying-10-hosts/index.markdown" >}}
-"Thick Client Proxying - Part 10 - The hosts File") to proxy GOG Galaxy 2. I
-will also introduce [some automation](https://github.com/parsiya/extract-sni)
-to make our lives easier.
+{{< xref path="/post/2020/2020-05-09-thick-client-proxying-10-hosts/" title="Thick Client Proxying - Part 10 - The hosts File" >}}
+to proxy GOG Galaxy 2. I will also introduce
+[some automation](https://github.com/parsiya/extract-sni) to make our lives easier.
 
 <!--more-->
 

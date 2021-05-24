@@ -189,10 +189,8 @@ Optional reading assignments:
 
 * Read the so-called [PlayStation Now RCE][playstation-now-h1] report. The root
   cause was a similar local WebSocket server.
-* Read [The Same-Origin Policy Gone Wild]({{< relref "/post/2020/2020-11-01-same-origin-gone-wild/index.markdown" >}}
-  "The Same-Origin Policy Gone Wild") by yours truly for some curious SOP edge cases.
-* (optional) Watch my presentation [localghost: Escaping the Browser Sandbox Without 0-Days]({{< relref "/post/2020/2020-08-13-localghost-dc28-appsec-village/index.markdown" >}} "localghost: Escaping the Browser Sandbox Without 0-Days")
-  for some "thought leadership."
+* Read {{< xref path="/post/2020/2020-11-01-same-origin-gone-wild/" title="The Same-Origin Policy Gone Wild" >}} by yours truly for some curious SOP edge cases.
+* (optional) Watch my presentation {{< xref path="/post/2020/2020-08-13-localghost-dc28-appsec-village/" title="localghost: Escaping the Browser Sandbox Without 0-Days" >}} for some "thought leadership."
 
 [playstation-now-h1]: https://hackerone.com/reports/873614
 

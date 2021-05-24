@@ -185,6 +185,6 @@ You will not be able to see the response but the code is already executed and
 you got remote code execution.
 
 A similar issue happened in my
-[Attack Surface Analyzer RCE]({{< relref "/post/2019/2019-06-18-rce-asa#xss-root-cause-analysis" >}} "Attack Surface Analyzer RCE").
+{{< xref path="/post/2019/2019-06-18-rce-asa" title="Attack Surface Analyzer RCE" anchor="xss-root-cause-analysis" >}}
 A "simple" GET request was used to inject the XSS to RCE payload in an Electron
 app.
