@@ -10,10 +10,13 @@ categories:
 ---
 
 Custom protocol handlers are an obscure attack surface. They allow us to convert
-local attacks into remote ones and are an alternative way to {{< xref path="/post/2020/2020-08-13-localghost-dc28-appsec-village/" title="jump the browser sandbox without 0days" >}}).
+local attacks into remote ones and are an alternative way to
+{{< xref path="/post/2020/2020-08-13-localghost-dc28-appsec-village/"
+  text="jump the browser sandbox without 0days" >}}).
 
 Similar to the first part of this series
-{{< xref path="/post/2021/2021-01-08-electron-sig-bypass/" title="A Novel Way to Bypass Executable Signature Checks with Electron" >}}
+{{< xref path="/post/2021/2021-01-08-electron-sig-bypass/"
+  text="A Novel Way to Bypass Executable Signature Checks with Electron" >}}
 I will analyze this attack surface and discuss a few interesting public bugs. I
 wanted to discuss two of my undisclosed bugs but the post is already too long.
 

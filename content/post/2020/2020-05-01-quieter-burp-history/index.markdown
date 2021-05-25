@@ -56,9 +56,9 @@ requests and does not work for other browsers.
 
 I have also written about adding certain domains to Burp's
 [TLS Pass through][burp-tls-pass-through] in another blog post named
-[Quality of Life Tips and Tricks - Burp Suite]({{< relref "/post/2019/2019-10-13-quality-of-life-burp/index.markdown" >}}
-"Quality of Life Tips and Tricks - Burp Suite"). Domains in the pass through
-section are not proxied and do not appear in history.
+{{< xref path="/post/2019/2019-10-13-quality-of-life-burp/"
+    text="Quality of Life Tips and Tricks - Burp Suite" >}}
+Domains in the pass through section are not proxied and do not appear in history.
 
 [burp-tls-pass-through]: https://portswigger.net/burp/documentation/desktop/tools/proxy/options#tls-pass-through
 
@@ -76,9 +76,8 @@ done.
 The tech stack helps with proxying. Here are some quick tips:
 
 * .NET: You can proxy these by using a config file. See
-  [Thick Client Proxying - Part 7 - Proxying .NET Applications via Config File]
-  ({{< relref "/post/2017/2017-10-07-thick-client-proxying-7-proxying-dotNet-applications.markdown" >}}
-  "Thick Client Proxying - Part 7 - Proxying .NET Applications via Config File").
+  {{< xref path="/post/2017/2017-10-07-thick-client-proxying-7-proxying-dotNet-applications.markdown"
+    text="Thick Client Proxying - Part 7 - Proxying .NET Applications via Config File" >}}
 * Java: You can [pass parameters][java-proxy-docs] that set a proxy. E.g.,
   `-Dhttps.proxyHost=127.0.0.1` and `-Dhttps.proxyPort=8080`.
 
@@ -115,7 +114,8 @@ settings because you need to attend a videoconference meeting.
 
 ## Use Burp's Scope
 It's possible add endpoints used by the application to
-[Burp's scope]({{< relref "/post/2016/2016-03-29-thickclient-proxying-2.markdown#1-scope" >}} "Burp's scope")
+{{< xref path="/post/2016/2016-03-29-thickclient-proxying-2.markdown"
+    text="the Burp's scope" anchor="1-scope" >}}
 and hide everything not in scope. But this is not feasible in the early stages
 of recon because we do not know all the endpoints and we do not want to
 miss anything when the app contacts a new one. I usually do not use this setting
@@ -133,9 +133,11 @@ home, and other application updates.
 To create this list I did the following:
 
 1. Started Burp in a typical Windows 10 VM and set it in Windows proxy settings.
-2. Added the [Burp's CA to the Windows certificate store]
-   ({{< relref "/post/2016/2016-02-23-installing-burp-ca-in-windows-cert-store.markdown" >}}
-   "Installing Burp Certificate Authority in Windows Certificate Store").
+2. Added the
+   {{< xref
+     path="/post/2016/2016-02-23-installing-burp-ca-in-windows-cert-store.markdown"
+     text="Burp's CA to the Windows certificate store"
+     title="Installing Burp Certificate Authority in Windows Certificate Store" >}}
 3. Opened every application and browser that I normally use and interacted with
    them a bit (e.g., checked for updates).
 4. Left the VM idle for a few hours.
@@ -203,10 +205,12 @@ manually:
 * `.*visualstudio\\.com`
 
 ## Adding Authentication Domains
-As I have explained in [Burp Should Not Capture Corporate Credentials]
-({{< relref "/post/2019/2019-10-13-quality-of-life-burp/index.markdown#burp-should-not-capture-corporate-credentials" >}}
-"Burp Should Not Capture Corporate Credentials"), you do not want to capture
-login credentials or other sensitive info in your Burp projects.
+As I have explained in
+{{< xref path="/post/2019/2019-10-13-quality-of-life-burp/"
+    text="Burp Should Not Capture Corporate Credentials"
+    anchor="burp-should-not-capture-corporate-credentials" >}},
+you do not want to capture login credentials or other sensitive info in your
+Burp projects.
 
 Discover these endpoints for your organization and then add them to the pass
 through section. For example, `auth.example.net` or Okta `example.okta.com`.
@@ -236,11 +240,10 @@ possibilities here are endless.
 ## OPTIONS
 Burp's history filter does not have a way to hide HTTP verbs like OPTIONS. The
 preflight requests will pollute your history. I described how I wrote an
-extension to hide them in [Hiding OPTIONS - An Adventure in Dealing with Burp
-Proxy in an Extension] ({{< relref
-"post/2019/2019-04-06-hiding-options/index.markdown" >}} "Hiding OPTIONS - An
-Adventure in Dealing with Burp Proxy in an Extension"). You can use this
-methodology to hide any HTTP verb from history.
+extension to hide them in
+{{< xref path="post/2019/2019-04-06-hiding-options/"
+    text="Hiding OPTIONS - An Adventure in Dealing with Burp Proxy in an Extension" >}}.
+You can use this methodology to hide any HTTP verb from history.
 
 Note: [Capt. Meelo][capt-meelo] wrote an extension based on my blog post (seems
 like mine has stopped working), you can see their blog post at
@@ -277,9 +280,10 @@ Add them to your default config file with the rest of the things you like:
     1. `Project options > Misc > Burp Collaborator Server > Don't use Burp Collaborator`
 4. Remove `If-Modified-Since` and `If-None-Match` headers to always avoid 304s.
     1. `Proxy > Options > Match and Replace > Enable built-in rules`.
-    2. Why? [Disable Cached Responses]
-       ({{< relref "/post/2019/2019-10-13-quality-of-life-burp/index.markdown#disable-cached-responses">}}
-       "Disable Cached Responses").
+    2. Why?
+       {{< xref path="/post/2019/2019-10-13-quality-of-life-burp/"
+           text="Disable Cached Responses"
+           anchor="disable-cached-responses" >}}
 
 Some of these are `User options` and do not appear in the JSON file that we
 created above. User options can be exported at `Burp (menu) > User options >
@@ -321,10 +325,11 @@ top-level keys. The final config file will look like:
 ```
 
 Now we can use this project file every time we create a new project. Save it
-somewhere (e.g., git repo) and update it regularly. 
-[It will save you a lot of time]
-({{< relref "/post/2019/2019-10-13-quality-of-life-burp/index.markdown#use-a-default-burp-config">}}
-"Use a Default Burp Config").
+somewhere (e.g., git repo) and update it regularly.
+{{< xref path="/post/2019/2019-10-13-quality-of-life-burp/"
+    text="It will save you a lot of time"
+    title="Use a Default Burp Config"
+    anchor="use-a-default-burp-config" >}}
 
 **Update June 2020**: I reviewed the rules and decided that using wildcards to
 ban entire domains is better. For example, to ban pretty much every request to

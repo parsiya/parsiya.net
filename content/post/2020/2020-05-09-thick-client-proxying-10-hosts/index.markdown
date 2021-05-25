@@ -105,19 +105,18 @@ experiments:
 {{< imgcap title="example.net entry from the hosts file" src="03-example-local-cache.png" >}}
 
 # How is This Useful?
-I have two proxy usecases for the Windows DNS cache.
+I have two proxy use cases for the Windows DNS cache.
 
 1. We can use it to discover endpoints. Read
-   [Thick Client Proxying - Part 9 - The Windows DNS Cache]
-   ({{< relref "/post/2019/2019-04-27-thick-client-proxying-9-local-dns-cache/index.markdown#anchor" >}}
-   "Thick Client Proxying - Part 9 - The Windows DNS Cache").
+   {{< xref path="/post/2019/2019-04-27-thick-client-proxying-9-local-dns-cache/"
+    text="Thick Client Proxying - Part 9 - The Windows DNS Cache" >}}
 2. We can redirect domains to our proxy.
 
 ## How Do We Proxy With This?
-If your application is using HTTP but is not [proxy-aware]
-({{< relref "/post/2016/2016-07-24-thickclient-proxying-6-how-proxies-work.markdown" >}}
-"Proxy-Aware Clients") then you can redirect its endpoints to your
-proxy listener.
+If your application is using HTTP but is not
+{{< xref path="/post/2016/2016-07-24-thickclient-proxying-6-how-proxies-work.markdown"
+    text="proxy-aware" title="Proxy-Aware Clients" >}}
+then you can redirect its endpoints to your proxy listener.
 
 PortSwigger has a great page on invisible proxying. Be sure to read it:
 

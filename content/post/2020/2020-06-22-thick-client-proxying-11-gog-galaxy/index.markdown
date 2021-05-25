@@ -11,7 +11,8 @@ categories:
 ---
 
 In this post we will use our knowledge from
-{{< xref path="/post/2020/2020-05-09-thick-client-proxying-10-hosts/" title="Thick Client Proxying - Part 10 - The hosts File" >}}
+{{< xref path="/post/2020/2020-05-09-thick-client-proxying-10-hosts/"
+    text="Thick Client Proxying - Part 10 - The hosts File" >}}
 to proxy GOG Galaxy 2. I will also introduce
 [some automation](https://github.com/parsiya/extract-sni) to make our lives easier.
 
@@ -51,8 +52,8 @@ So the first thing we try is changing the Windows proxy settings and see it
 works. GOG Galaxy ignores it.
 
 Some CEF apps honor this. Like the retired `Razer Comms`. I found some nice
-issues in it, you can read about them in [Razer Comms]({{< relref
-"/post/2017/2017-09-21-razercomms.markdown" >}} "Razer Comms").
+issues in it, you can read about them in
+{{< xref path="/post/2017/2017-09-21-razercomms.markdown" text="Razer Comms" >}}
 
 ## Config Files
 Some frameworks and applications have configuration files that allow you to
@@ -141,9 +142,8 @@ There must be an easier way.
 # The Good Old hosts File
 I decided to go back to using the hosts file. It does not need patching and the
 application can work the way it was before. The process as described in
-[Part 10 - The hosts File]
-({{< relref "/post/2020/2020-05-09-thick-client-proxying-10-hosts/index.markdown" >}}
-"Thick Client Proxying - Part 10 - The hosts File") was:
+{{< xref path="/post/2020/2020-05-09-thick-client-proxying-10-hosts/" text="Part 10 - The hosts File" >}}
+was:
 
 1. Run the app.
 2. Identify endpoints.
@@ -167,12 +167,11 @@ functionality.
 {{< imgcap title="Galaxy error in Hyper-V" src="03-gog-error.png" >}}
 
 ## Identifying Endpoints
-I have talked about this a lot. I have explained the fundamentals at [Network
-Traffic Attribution on Windows] ({{< relref
-"/post/2015/2015-08-01-network-traffic-attribution-on-windows.markdown" >}}
-"Network Traffic Attribution on Windows"). I reviewed it and realized my
-techniques have only gotten more efficient. I am not sure if this is a good
-thing or not.
+I have talked about this a lot. I have explained the fundamentals at
+{{< xref path="/post/2015/2015-08-01-network-traffic-attribution-on-windows.markdown"
+    text="Network Traffic Attribution on Windows" >}}.
+I reviewed it and realized my techniques have only gotten more efficient but
+have not changed. I am not sure if this is a good thing or not.
 
 In short, I am going to use Netmon to identify the endpoints. I will do this by
 running Netmon and then the app. Because the app most likely talks to all
@@ -193,9 +192,9 @@ rest of the steps manually. Unfortunately, we have a lot of endpoints.
 
 {{< imgcap title="GOG Galaxy endpoints in Netmon" src="04-galaxy-netmon.png" >}}
 
-So what do we do? Automation. Remember [Manual Work is a Bug]
-({{< relref "/post/2018/2018-10-03-manual-work-bug/index.markdown" >}}
-"Manual Work is a Bug").
+So what do we do? Automation. Remember
+{{< xref path="/post/2018/2018-10-03-manual-work-bug/" text="Manual Work is a Bug"
+    title="Reflections on 'Manual Work is a Bug'" >}}
 
 ## Introducing Extract-SNI
 [Extract-SNI][extract-sni] is a small Go application that parses pcap files and
@@ -225,9 +224,9 @@ Follow these steps:
     1. Under `Frame selection` check `Displayed frames`.
     2. **Un-check `Record display filter in capture file`**. If you keep this,
        the first packet in the file will be the filter and Wireshark will be
-       [unable to convert it to pcap format]
-       ({{< relref "page/CheatSheet.markdown#open-a-network-monitor-cap-file-in-wireshark-and-save-is-disabled" >}}
-       "Open a Network Monitor cap File in Wireshark and Save is Disabled").
+       {{< xref path="/page/CheatSheet.markdown" text="unable to convert it to pcap format"
+        anchor="open-a-network-monitor-cap-file-in-wireshark-and-save-is-disabled"
+        title="Open a Network Monitor cap File in Wireshark and Save is Disabled" >}}
 4. Convert the `cap` file to `pcap` format. Wireshark can do this.
 5. Run `Extract-sni` on the pcap file.
     1. `go run extract-sni.go C:\path\to\file.pcap -o goggalaxy`
