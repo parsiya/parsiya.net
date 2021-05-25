@@ -38,7 +38,7 @@ decide if you want to spent time reading or not.
     1. Console.
     2. Snippets.
 7. Export extension's functions for manual fuzzing.
-    1. Call function's in the extension without debugging.
+    1. Call functions in the extension without debugging.
 
 # Requirements
 

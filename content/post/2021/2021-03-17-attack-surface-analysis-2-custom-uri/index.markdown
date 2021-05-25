@@ -20,7 +20,7 @@ Similar to the first part of this series
 I will analyze this attack surface and discuss a few interesting public bugs. I
 wanted to discuss two of my undisclosed bugs but the post is already too long.
 
-**A couple of updates on 2021-04-21**:
+**2021-04-21 updates**:
 
 1. Startup path limitations and possible workarounds.
 2. Positive security's excellent blog released a month after this with a near
@@ -47,6 +47,14 @@ want to run your app (Firefox allows saving this selection). If the app is set
 up to handle the URI like `"C:/whatever/app.exe" "%1"` (the most common way),
 the OS will execute `app.exe "bleh://whatever"`. The browser also does some
 parameter encoding but that is out of scope for this post.
+
+For a great introduction please read
+[Web-to-App Communication: App Protocols][eric-app-protocols] by
+[Eric Lawrence][eric-lawrence-twitter].
+
+
+[eric-app-protocols]: https://textslashplain.com/2019/08/29/web-to-app-communication-app-protocols/
+[eric-lawrence-twitter]: https://twitter.com/ericlaw
 
 Protocols are registered by adding a registry key under `HKEY_CLASSES_ROOT`.
 Open regedit and go to
