@@ -52,7 +52,6 @@ For a great introduction please read
 [Web-to-App Communication: App Protocols][eric-app-protocols] by
 [Eric Lawrence][eric-lawrence-twitter].
 
-
 [eric-app-protocols]: https://textslashplain.com/2019/08/29/web-to-app-communication-app-protocols/
 [eric-lawrence-twitter]: https://twitter.com/ericlaw
 

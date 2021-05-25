@@ -468,6 +468,16 @@ and look under the `ProfileImagePath` key to see which user it is.
 
 * Source: https://stackoverflow.com/a/2919369
 
+### Find The Open Handle to a File or Resource
+
+1. Open `Resource Monitor`.
+2. `CPU` tab.
+3. `Associated Handles` section > enter the name of the file/resource in the
+   search field. Look at the source for a screenshot.
+4. Kill the process using t he handle.
+
+* Source: https://superuser.com/a/643312
+
 ------
 
 ## Powershell
