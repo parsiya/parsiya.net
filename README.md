@@ -12,12 +12,14 @@ I ported the [Octopress][octopress] classic theme to Hugo.
 
 1. Create a new post with `hugo new post/2018-11-23-post-name/index.markdown`
    (or `index.md`).
-2. Edit the post and proofread with `hugo serve -vw`. Pictures are in the same
+2. Edit the post and proofread. Pictures are in the same
    directory to take advantage of [page bundles][page-bundles].
+  1. `ctrl+shift+b` in VS Code starts a task that runs the Hugo watch server and
+     opens it in a browser. See [.vscode/tasks.json](.vscode/tasks.json).
 3. Push to Github.
-4. Github action takes over and does the rest.
+4. Github action takes over and builds the site.
     * See the "Deploying" section below for more information.
-5. [s3deploy][s3deploy] uploads the file to AWS.
+5. [s3deploy][s3deploy] uploads the results to AWS.
 6. ???
 7. Profit. The website is now updated. Add CI/CD to your resume.
 
@@ -26,10 +28,13 @@ I ported the [Octopress][octopress] classic theme to Hugo.
 
 ## Hosting
 The website is hosted in an AWS S3 bucket. CloudFront provides CDN and TLS (and
-certificate).
+certificate). GitHub pages are also popular (and free). See my blog post
+[Automagically Deploying Websites with Custom Domains to Github Pages][gh-pages].
+
+[gh-pages]: https://parsiya.net/blog/2021-02-17-automagically-deploying-websites-with-custom-domains-to-github-pages/
 
 ## Deploying
-I use a custom github action. See [deploy.yml](.github/workflows/deploy.yml).
+I use a custom GitHub action. See [deploy.yml](.github/workflows/deploy.yml).
 
 ### s3deploy
 I use [s3deploy][s3deploy] to deploy the blog to AWS. The configuration is

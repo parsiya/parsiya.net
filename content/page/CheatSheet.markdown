@@ -301,7 +301,13 @@ After locking the computer the monitor might go to sleep. To disable:
 ### Oneliner to Find Unquoted Service Paths
 `wmic service get displayname,pathname|findstr /IV "C:\Windows"|findstr /IV """`
 
-Unquoted service paths are usually not exploitable. See [No, You Are Not Getting a CVE for That]({{< relref "/post/2020/2020-07-25-airtight-hatchway/index.markdown#unquoted-service-paths" >}} "No, You Are Not Getting a CVE for That").
+Unquoted service paths are usually not exploitable. See
+{{< xref path="/post/2020/2020-07-25-airtight-hatchway/"
+    text="No, You Are Not Getting a CVE for That" >}}
+
+
+
+[No, You Are Not Getting a CVE for That]({{< relref "/post/2020/2020-07-25-airtight-hatchway/index.markdown#unquoted-service-paths" >}} "No, You Are Not Getting a CVE for That").
 
 ### Run Chromium Browsers with a Proxy
 The new Edge uses Chromium. Chromium uses the WinINET proxy settings. Instead of
