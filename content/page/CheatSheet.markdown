@@ -305,10 +305,6 @@ Unquoted service paths are usually not exploitable. See
 {{< xref path="/post/2020/2020-07-25-airtight-hatchway/"
     text="No, You Are Not Getting a CVE for That" >}}
 
-
-
-[No, You Are Not Getting a CVE for That]({{< relref "/post/2020/2020-07-25-airtight-hatchway/index.markdown#unquoted-service-paths" >}} "No, You Are Not Getting a CVE for That").
-
 ### Run Chromium Browsers with a Proxy
 The new Edge uses Chromium. Chromium uses the WinINET proxy settings. Instead of
 redirecting everything to the browser, we can set the proxy using the command

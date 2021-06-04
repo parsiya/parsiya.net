@@ -117,6 +117,17 @@ ACLs. It's a minor issue and you are not getting a CVE for that.
 
 Yes, I just quoted myself, lol.
 
+**Update 2021-06-03:** I was proven wrong. Someone actually [got a CVE for
+that][CVE-2020-15261]. Not dissing the finder, but this is not a vulnerability.
+
+[CVE-2020-15261]: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-15261
+
+> On Windows the Veyon Service contains an unquoted service path vulnerability,
+> allowing locally authenticated users with administrative privileges to run
+> malicious executables with LocalSystem privileges.
+
+Local admin to SYSTEM is intended. 
+
 ## DLL Hijacking
 Reading assignment:
 
