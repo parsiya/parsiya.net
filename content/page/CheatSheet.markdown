@@ -306,10 +306,9 @@ Unquoted service paths are usually not exploitable. See
     text="No, You Are Not Getting a CVE for That" >}}
 
 ### Run Chromium Browsers with a Proxy
-The new Edge uses Chromium. Chromium uses the WinINET proxy settings. Instead of
-redirecting everything to the browser, we can set the proxy using the command
-line (all of these also work for Chrome and every other browser built on
-Chromium):
+Chromium uses the WinINET proxy settings. Instead of redirecting everything to
+the browser, we can set the proxy using the command line (all of these also work
+for Chrome/Edge and other browsers built on Chromium):
 
 * `"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --proxy-server="http://localhost:8080"`
 
@@ -335,8 +334,8 @@ They can be extracted using the built-in `msiexec` tool.
 * `msiexec /a c:\path\to\file.msi /qb TARGETDIR=C:\absolute\path\to\extract\directory`
 * Path to the msi file (the first path) can be relative. The second one must be
   absolute and does not accept `/` as path separator.
-* The extract directory must exist.
-* If the path to the extract directory (the second path) is not absolute, we
+* The target directory must exist.
+* If the path to the target directory (the second path) is not absolute, we
   will get this error: `Could not access network location 'xxx'`.
 
 ### Disable Autofocus for Microsoft Lifecam Cinema
@@ -360,7 +359,7 @@ You can also try in Skype which is where the old utility is accessible.
 
 * These are connected so if you have the camera app open and change the focus in
   Skype you can see the change immediately.
-* The setting is lost after restart and you have to do it again.
+* **The setting is lost after restart** and you have to do it again.
 
 ### Install WinDbg as the Post-Mortem Debugger
 
@@ -407,7 +406,7 @@ If you already have a file with the display filter you can remove it.
 
 * Source: https://ask.wireshark.org/question/7163/my-save-and-save-as-are-grayed-out/
 
-### Shortcut to Run Applications Elevated
+### Keyboard Shortcut to Run Applications Elevated
 For example, running `notepad` as admin.
 
 1. Open the start menu. E.g., Windows key.
@@ -417,9 +416,9 @@ For example, running `notepad` as admin.
 5. UAC pops up.
 
 ### Firewall Rules in the Registry
-If you cannot delete firewall rules you can delete their corresponding rule
-(user added ones are represented by a GUID) in the registry. This also helps if
-the rule text does not say which executable is targeted:
+If you cannot delete firewall rules in the GUI, delete their corresponding rule
+in the registry (user rules are represented by a GUID). This also helps with
+reading the rules because rule text mmight not say which executable is targeted:
 
 Location:
 
@@ -482,7 +481,7 @@ and look under the `ProfileImagePath` key to see which user it is.
 
 ------
 
-## Powershell
+## PowerShell
 
 ### List All Files (Including Hidden Files)
 `Get-ChildItem "searchterm" -recurse -force -path c:\ | select-object FullName`
@@ -492,7 +491,7 @@ and look under the `ProfileImagePath` key to see which user it is.
 * `select-object`: Selects each file from last point
 * `FullName`: Only display file name
 
-### Diff in Powershell
+### Diff in PowerShell
 `Compare-Object (Get-Content new1.txt) (Get-Content new2.txt) | Format-List >> Diff-Output`
 
 Output will be in format of
@@ -500,7 +499,7 @@ Output will be in format of
 * `InputObject`: `c:\users\username\somefile` -- line content
 * `SideIndicator`: `=>` -- exists in new2.txt (second file, file to the right)
 
-### Pseudo-grep in Powershell
+### Pseudo-grep in PowerShell
 Or just use [ripgrep][ripgre-link] like `rg -i 'whatever'`.
 
 [ripgrep-link]: https://github.com/BurntSushi/ripgrep
@@ -511,10 +510,10 @@ Or just use [ripgrep][ripgre-link] like `rg -i 'whatever'`.
 `findstr /spin /c:"keyword" *.*`
 
 * /s: recursive - will search through the current directory and all
-  sub-directories
-* /p: skip binary files (or files with characters that cannot be printed)
-* /i: case-insensitive - remove if you want case sensitive search
-* /n: print line number
+  sub-directories.
+* /p: skip binary files (or files with characters that cannot be printed).
+* /i: case-insensitive - remove if you want case sensitive search.
+* /n: print line number.
 
 If you want to search for different keywords (with OR) remove the `/c:`
 
