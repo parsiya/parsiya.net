@@ -311,7 +311,8 @@ The project options file has a similar structure. Everything is under `project_o
 ## Combining User and Project Options
 You can combine these two files. Add `user_options` and everything under it to
 the other file. Note that `project_options` and `user_options` should be the two
-top-level keys. The final config file will look like:
+top-level keys along with `proxy` and a few move. The final config file will
+look like:
 
 ```json
 {
@@ -320,7 +321,11 @@ top-level keys. The final config file will look like:
     },
     "user_options":{
         // removed
-    }
+    },
+    "proxy": {
+        // removed
+    },
+    // removed
 }
 ```
 
@@ -335,6 +340,10 @@ somewhere (e.g., git repo) and update it regularly.
 ban entire domains is better. For example, to ban pretty much every request to
 `mozilla` we can use this regex `^.*mozilla\\.(com|net|org)$`. I updated the
 burp config. It should be cleaner now.
+
+**Update June 2021**: I have reduced the file size significantly. I compared the
+final config file with the default values and removed the JSON keys that were
+not modified. This does not have any performance effects.
 
 See mine at:
 

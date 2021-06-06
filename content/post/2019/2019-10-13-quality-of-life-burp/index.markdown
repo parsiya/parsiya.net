@@ -242,18 +242,28 @@ The final config file will look like this:
     },
     "user_options":{
         // removed
-    }
+    },
+    "proxy": {
+        // removed
+    },
+    // removed
 }
 ```
+
+**Note:** Export the default Burp project and user options (create a new empty
+project and export them). Then, compare your modified config file with them and
+remove the keys that are not modified. This reduces the config file size. For
+example, if you have not modified the shortcut keys, there's no need to include
+the default ones in the config file.
 
 ### Why?
 It saves time and I do not have to make the same changes for every project.
 Some options will step be project-specific but most are not.
 
-Also see [Towards a Quieter Burp History] ({{< relref
-"/post/2020/2020-05-01-quieter-burp-history/index.markdown#anchor" >}}
-"Towards a Quieter Burp History") if you use Burp to proxy thickclients on
-Windows.
+Also see
+{{< xref path="/post/2020/2020-05-01-quieter-burp-history/"
+    text="Towards a Quieter Burp History" >}}
+if you use Burp to proxy thickclients on Windows.
 
 Some suggestions:
 
