@@ -17,6 +17,14 @@ to write my own. So, here we are, "pushing the boundaries of science."
 
 <!--more-->
 
+**Update 2021-06-06:** [Tavis Ormandy][taviso-twitter] has published about how
+[the extension injects JavaScript into the page for auto-fill][taviso-passwordmanagers].
+He mentions he has "deliberately trying to avoid finding specific
+vulnerabilities." So, he did not look at the extension and the desktop app.
+
+[taviso-twitter]: https://twitter.com/taviso
+[taviso-passwordmanagers]: https://lock.cmpxchg8b.com/passmgrs.html#a-brief-illustration
+
 # What Are We Gonna Learn Here Today?
 List of things I think you will learn after reading this post. This helps you
 decide if you want to spent time reading or not.
