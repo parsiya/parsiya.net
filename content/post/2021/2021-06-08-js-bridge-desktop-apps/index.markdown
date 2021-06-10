@@ -4,7 +4,7 @@ date: 2021-06-08T00:53:25-07:00
 draft: false
 toc: true
 comments: true
-twitterImage: 05-XSS-5
+twitterImage: 05-XSS-5.png
 categories:
 - Attack Surface Analysis
 ---
