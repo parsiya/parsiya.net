@@ -92,7 +92,7 @@ In newer RFCs you can look it up using `absolute-URI`. This format is called `ab
 >
 > absolute-form  = absolute-URI  
 
-Note that the RFC instructs clients to send the `absolute-URI` no matter what (even if they are using a `CONNEC` request) as we will see shortly.
+Note that the RFC instructs clients to send the `absolute-URI` no matter what (even if they are using a `CONNECT` request) as we will see shortly.
 
 The proxy uses this `absolute-URI` to forward the request to the endpoint (in this case Yahoo!). Both forwarding and TLS terminating proxies work similarly in this case because they both can look inside HTTP payloads.
 

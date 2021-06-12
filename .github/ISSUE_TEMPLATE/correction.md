@@ -7,6 +7,6 @@ assignees: parsiya
 
 ---
 
-* Location
+* Location:
 * Problem:
 * Solution:
