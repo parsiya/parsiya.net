@@ -23,7 +23,7 @@ extensions using Swing. Code is at:
 In April 2019, I had just joined [Electronic Arts][ea.com/security] and I wanted
 to make a Burp extension. I saw only tutorials on creating a GUI in Jython.
 
-{{< tweet 1117555054838337536 >}}
+![](00-tweet.png)
 
 Looks like everyone is either using Java or handcrafted Jython Swing GUIs. I
 mostly learned it by reading the source of extensions and found this tutorial by
