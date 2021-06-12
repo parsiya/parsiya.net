@@ -7,14 +7,11 @@ categories:
 - Cheatsheet
 ---
 
-Often, I need to do something that I have done many times in the past but I have
-forgotten how to do it. This is a page to complement
-[my clone at parsiya.io](https://parsiya.io) and give me a simple repository of
-how-tos I can access online.
-
-In this page you may find those commands and tips that I need from time to time
-(and usually forget when I need them). Look at the table of contents
-below or `ctrl+f` and search for keywords.
+You will find those commands and tips that I need from time to time (and usually
+forget when I need them). This is a page to complement
+[my clone at parsiya.io](https://parsiya.io) and gives me a simple repository of
+how-tos I can access online. Look at the table of contents below or `ctrl+f` and
+search for keywords.
 
 {{< toc >}}
 
@@ -47,10 +44,10 @@ Insert [XKCD 1168](https://xkcd.com/1168/), hur dur!
 ## AWS
 
 ### How to Use s3deploy
-I have switched to s3deploy from s3cmd. https://github.com/bep/s3deploy. 
+I have switched to s3deploy from s3cmd: https://github.com/bep/s3deploy. 
 
-Create a file named `.s3deploy.yaml` (not the period) in the root of website. I
-use this:
+Create a file named `.s3deploy.yaml` (note the period) in the root of website. I
+have:
 
 ``` yaml
 routes:
@@ -67,21 +64,17 @@ routes:
       gzip: true
 ```
 
-The file should be self-explanatory. Don't set `gzip` for `txt` files,
+The file is self-explanatory. Don't set `gzip` for `txt` files,
 **it will break your keybase proof**.
 
 Then run (change the region if needed):
 
-```
-s3deploy.exe -source=public/ -region=us-east-1 -bucket=[bucketname]
-```
+`s3deploy -source=public/ -region=us-east-1 -bucket=[bucketname]`
 
 To pass your AWS key and secret, you can either set them in an environment
 variable or in this file:
 
-```
-c:\Users\[your user]\.aws\credentials
-```
+`c:/Users/[your user]/.aws/credentials`
 
 Like this:
 
@@ -96,7 +89,7 @@ These might be updated because I do not use s3cmd anymore.
 
 `python s3cmd sync --acl-public --delete-removed --rr directory-to-sync/ s3://bucket-name`
 
-E.g., uploading the Hugo public directory to my website:\\
+E.g., uploading the Hugo generated public directory to my website:\\
 `python s3cmd sync --acl-public --delete-removed --rr public/ s3://parsiya.net`
 
 * `--acl-public`: Anyone can only read.
@@ -119,7 +112,7 @@ rd /q /s public
 
 ### Set the Website Index to a Non-Root file in a Static Website on S3
 When setting up a static website in an S3 bucket, you need to specify an index
-and an error page. The index cannot be in a sub-directory but the error page
+and an error page. The index cannot be in a subdirectory but the error page
 can. Set the index to a non-existent file (e.g. `whatever.crap`) and set the
 error page to the actual index page. The browser will be redirected to the error
 page:
@@ -162,7 +155,7 @@ rmdir the_dir_to_delete
 
 * Source: http://superuser.com/a/467814
 
-### Install 'Bash on Windows'
+### Install 'Bash on Windows' - Outdated
 `lxrun /install` does not work anymore.
 
 1. Run the following command in an admin PowerShell and restart.
@@ -172,7 +165,7 @@ rmdir the_dir_to_delete
 4. Follow the prompts to choose a username and password.
 5. Type `bash` in a command prompt to start it.
 
-### Setup Github-Gitlab SSH Keys in 'Bash on Windows'
+### Setup GitHub-GitLab SSH Keys in 'Bash on Windows'
 Main instructions:
 
 * https://help.github.com/en/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
@@ -206,15 +199,13 @@ Main instructions:
 
     unset env
 
-    # adding the github key to ssh-agent
+    # adding the GitHub key to ssh-agent
     # change if the private key file changes
     ssh-add ~/.ssh/id_rsa
     ```
-4. Add the SSH key to github/gitlab.
+4. Add the SSH key to Github/GitLab.
 5. Navigate to your git folder in a normal command prompt and run `bash` and use
    git normally.
-6. ???
-7. Profit
 
 ### Exit Status 3221225781
 **TL;DR:** `exit status 3221225781` on Windows means a DLL is missing. In this
@@ -251,27 +242,28 @@ This is useful when you want to refer to a specific directory as a drive.
 
 * `subst X: C:\path\to\source\code`
 
-There are two issues:
+Two problems:
 
-1. This is not persistent. To make it persistent, use the solutions
-[here](https://superuser.com/questions/29072/how-to-make-subst-mapping-persistent-across-reboots/926426).
-2. It cannot be shared with docker. For example, when trying to share a
-   directory with source code with docker for
-   [VS Code docker development](https://code.visualstudio.com/docs/remote/containers#_installation),
-   the drive is not shared.
+1. This is not persistent. To make it persistent, use the solutions [here][subst-so].
+2. It cannot be shared with docker. E.g., The drive is not shared when trying to
+   share a directory with source code with docker for
+   [VS Code docker development][vscode-docker-dev].
+
+[subst-so]: https://superuser.com/questions/29072/how-to-make-subst-mapping-persistent-across-reboots/926426
+[vscode-docker-dev]: https://code.visualstudio.com/docs/remote/containers#_installation
 
 We could use `net use` as follows but it does not show up in Docker's
-`settings > Shared Drives` either.
+`settings > Shared Drives`, either.
 
 * `net use W: \\localhost\$c\path\to\source\code`
 
 To share a drive, create a VHD mount and share it instead.
 
-Use these instructions to create a VHD and mount it:
+Create a VHD and mount it:
 
 * https://gist.github.com/zaenk/97cb663738ca8e0225da25a28f2feb75#mount-a-vhd
 
-Use these instructions to automount it at startup:
+Automount it at startup:
 
 * http://woshub.com/auto-mount-vhd-at-startup/
 
@@ -301,14 +293,14 @@ After locking the computer the monitor might go to sleep. To disable:
 ### Oneliner to Find Unquoted Service Paths
 `wmic service get displayname,pathname|findstr /IV "C:\Windows"|findstr /IV """`
 
-Unquoted service paths are usually not exploitable. See
+Unquoted service paths are usually not exploitable. See my
 {{< xref path="/post/2020/2020-07-25-airtight-hatchway/"
-    text="No, You Are Not Getting a CVE for That" >}}
+    text="No, You Are Not Getting a CVE for That" >}}.
 
 ### Run Chromium Browsers with a Proxy
 Chromium uses the WinINET proxy settings. Instead of redirecting everything to
-the browser, we can set the proxy using the command line (all of these also work
-for Chrome/Edge and other browsers built on Chromium):
+the browser, we can set the proxy using the command line (also works for
+Chrome/Edge and other browsers built on Chromium but not Electron):
 
 * `"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --proxy-server="http://localhost:8080"`
 
@@ -329,7 +321,7 @@ You might have enabled the privacy settings in Windows 10.
 7. Yell at ~~your raid group~~ DPS for standing in fire.
 
 ### Extract MSI Files
-They can be extracted using the built-in `msiexec` tool.
+Use the built-in `msiexec` tool.
 
 * `msiexec /a c:\path\to\file.msi /qb TARGETDIR=C:\absolute\path\to\extract\directory`
 * Path to the msi file (the first path) can be relative. The second one must be
@@ -359,7 +351,7 @@ You can also try in Skype which is where the old utility is accessible.
 
 * These are connected so if you have the camera app open and change the focus in
   Skype you can see the change immediately.
-* **The setting is lost after restart** and you have to do it again.
+* **The setting is lost after restart**. Just opening the Camera app does the job.
 
 ### Install WinDbg as the Post-Mortem Debugger
 
@@ -387,8 +379,9 @@ Delete some registry keys.
 ### Open a Network Monitor cap File in Wireshark and Save is Disabled
 This happens in two instances:
 
-1. **Not fixable**: If the NetMon capture file contains IEEE 802.11 plus Network Monitor radio
-   header encapsulated packets instead of Per packet encapsulated packets.
+1. **Not fixable**: If the NetMon capture file contains IEEE 802.11 plus Network
+   Monitor radio header encapsulated packets instead of Per packet encapsulated
+   packets.
     * Seems like this happens outside of VMs when we are capturing traffic for a wireless network interface.
 2. **Fix below**: If you save the display filter in the capture file. The filter
    will be first packet in the resulting cap file and that's what causes this
@@ -415,10 +408,12 @@ For example, running `notepad` as admin.
 4. Press `ctrl+shift+enter`.
 5. UAC pops up.
 
+This also works if you select a shortcut and press `ctrl+shift+enter`.
+
 ### Firewall Rules in the Registry
 If you cannot delete firewall rules in the GUI, delete their corresponding rule
-in the registry (user rules are represented by a GUID). This also helps with
-reading the rules because rule text mmight not say which executable is targeted:
+in the registry (user rules are represented by a GUID). Also helps with reading
+the rules because the rule text might not say which executable is targeted:
 
 Location:
 
@@ -441,7 +436,7 @@ pkgmgr /iu:"TelnetClient"
 2. Select `Installed Updated`.
 3. Look for `Internet Explorer 11`.
 4. Right click and uninstall.
-5. Download older version of IE (e.g. IE 9) for Windows 7 and install iot.
+5. Download older version of IE (e.g. IE 9) for Windows 7 and install it.
 
 ### Read Scheduled Task's DACL
 Find the task name in the `PathToTask` registry key and use it in the command:
@@ -500,10 +495,11 @@ Output will be in format of
 * `SideIndicator`: `=>` -- exists in new2.txt (second file, file to the right)
 
 ### Pseudo-grep in PowerShell
-Or just use [ripgrep][ripgre-link] like `rg -i 'whatever'`.
+Alternatively, use [ripgrep][ripgrep-link] like `rg -i 'whatever'`.
 
 [ripgrep-link]: https://github.com/BurntSushi/ripgrep
 
+In PowerShell:
 
 `findstr "something" *.txt`  will include filename and line (no number AFAIK).
 
@@ -519,7 +515,7 @@ If you want to search for different keywords (with OR) remove the `/c:`
 
 `findstr /spin "keyword1 keyword2" *.*`
 
-will search for keyword1 OR keyword2 in files
+will search for `keyword1 OR keyword2` in files
 
 * Source: https://technet.microsoft.com/en-us/library/Cc732459.aspx
 
@@ -535,8 +531,8 @@ will search for keyword1 OR keyword2 in files
 `Measure-Command {python whatever.py}`
 
 ### VHD File is Open in System (and Cannot be Deleted)
-You clicked on a VHD file and now cannot delete it. Use this PowerShell command.
-The path to VHD should be absolute.
+You clicked on a VHD file and now cannot delete it. Use this PowerShell command
+to dismount it. The path to the VHD should be absolute.
 
 `Dismount-DiskImage -ImagePath 'C:\full\path\to\whatever.vhd'`
 
@@ -554,8 +550,8 @@ Use `certutil` for bootleg base64 encoding/decoding:
 
 * `Compress-Archive -Path C:\path\to\folder\ -DestinationPath c:\path\to\destination\archive`
 
-Note the destination file will be `archive.zip` but we do not need to
-provide the extension in the command.
+Note the destination file will be `archive.zip` but we don't need to provide the
+extension in the command.
 
 * Source: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.archive/compress-archive
 
@@ -580,8 +576,7 @@ The internet recommends creating an external virtual switch but it did not work
 for me. I deleted the external switch and used the default switch and it somehow
 worked so try doing that.
 
-This might also happen if you are using an active VPN connection by
-`Cisco AnyConnect` on the host.
+This also happens if you are using an active VPN connection on the host.
 
 ### Higher Resolution For Debian/Ubuntu Guest in Hyper-V
 Seems like the highest resolution is 1080p.
@@ -613,9 +608,9 @@ empty.
 ## VirtualBox
 
 ### Restart Clipboard Functionality in VirtualBox After Guest Resume
-Sometimes disabling and enables clipboard in VirtualBox menu works.
+Sometimes disabling and enabling the clipboard in VirtualBox menu works.
 
-Assuming you have a Windows guest. Inside the Windows guest do:
+Or in the Windows guest:
 
 1. Kill `VBoxTray.exe` in task manager.
 2. Start `VBoxTray.exe` again.
@@ -623,9 +618,9 @@ Assuming you have a Windows guest. Inside the Windows guest do:
 * Source: https://superuser.com/a/691337
 
 ### Change the Hardware UUID of Cloned Windows VMs to Avoid Windows Reactivation
-You cloned a Windows VirtualBox VM and now you have to activate it again.
-This script changes the hardware UUID of the cloned machine to the old one.
-No reactivation needed.
+You cloned a Windows VirtualBox VM and now you have to activate it again. This
+script changes the hardware UUID of the cloned machine to the old one. No
+reactivation needed.
 
 ``` powershell
 $ORIGVirtualMachineName="Windows 10 - Base"   # Old VM name as it appears in VirtualBox
@@ -638,7 +633,7 @@ $uid=$($($(.\VBoxManage.exe showvminfo $ORIGVirtualMachineName|select-string "Ha
 
 ### Increase VM Disk Size
 The default modern.ie VMs come with a 40GB vmdk hard drive and I want to resize
-them to 100GB (because videogames are big). VirtualBox cannot resize it. We can
+them to 100GB (because videogames are huge). VirtualBox cannot resize it. We can
 clone it to vdi, resize it and convert it back to vdmk.
 
 `VBoxManage` is at `c:\Program Files\Oracle\VirtualBox` (default installation).
@@ -662,29 +657,35 @@ clone it to vdi, resize it and convert it back to vdmk.
 ------
 
 ## Git
-I know a total of 5-6 git commands and that is fine.
+I know a total of 5-6 git commands.
 
 ### Create New Branch and Merge
 This works with small branches (e.g. one fix or so). Adapted from a
-[Bitbucket tutorial](https://confluence.atlassian.com/bitbucket/use-a-git-branch-to-merge-a-file-681902555.html).
+[Bitbucket tutorial][bt-tut].
 
-1. Create new branch and checkout - `git checkout -b fix-whatever`\\
-This will create a branch of whatever branch you are currently on so make sure you are creating a branch from the branch you want. This is the same as `git branch whatever` and `git checkout whatever`.
+[bt-tut]: https://confluence.atlassian.com/bitbucket/use-a-git-branch-to-merge-a-file-681902555.html
+
+1. Create a new branch and checkout - `git checkout -b fix-whatever`\\
+   This will create a branch of your current one so make sure you are creating a
+   branch from the branch you want. This is the same as `git branch whatever`
+   and `git checkout whatever`.
 
 2. Make changes and commit - `git add - git commit`\\
-Make any changes you want to do, then stage and commit.
+   Make any changes you want to do, then stage and commit.
 
-3. Push the branch to remote repo [optional] - `git push`\\
-This can be safely done because it's an obscure branch and no one else cares about it.
+3. Push the branch to the remote repo [optional] - `git push`\\
+   This can be safely done because it's an obscure branch and no one else cares about it.
 
-4. Go back to the original branch to merge - `git checkout master`\\
-Master or whatever branch you were at step one.
+4. Switch to the original branch to merge - `git checkout master`\\
+   The branch from step one.
 
 5. Merge the branches - `git merge fix-whatever`.\\
-Alternatively squash all commits into one `git merge --squash fix-whatever` and then `git commit -m "One message for all commits in merge"`.
+   Alternatively, squash all commits into one `git merge --squash fix-whatever`
+   and then `git commit -m "One message for all commits in merge"`.
 
-6. Delete branch - `git branch -d fix-whatever`\\
-We don't need it anymore. If it was pushed to remote, then we need to delete it there too.
+6. Delete the branch - `git branch -d fix-whatever`\\
+   We don't need it anymore. If it was pushed to remote, then we need to delete
+   it there too.
 
 ### Only Clone a Certain Branch
 `git clone -b <branch> <remote_repo>`
@@ -693,27 +694,28 @@ We don't need it anymore. If it was pushed to remote, then we need to delete it 
 Because this keeps happening to me.
 
 1. Reset the head in local repo N commits back. - `git reset HEAD~N`\\
-Where N is the number of commits that you want to revert.
+   Where N is the number of commits that you want to revert.
 
 2. Make changes and stage them - `git add`
 
 3. Commit the changes - `git commit`
 
 4. Force push the local repo to remote - `git push -f`\\
-Note this will force the update and erase the commit history online. If not one else is using the repo in between it's ok.
+   Note: This will force the update and erase the commit history online. I only
+   do it for my solo repositories.
 
 ### Sync a Fork with the Original Repository
-Let's say you have forked a repository. Now, you want to sync the changes.
+You have forked a repository a while ago. You want to sync the new changes.
 
 1. Add the original repository as `upstream`.
     1. `git remote add upstream git@github.com:original-user/original-repo.git`
     2. `git remote add upstream https://github.com/original-user/original-repo/`
     3. Check with `git remote -v1`
 2. `git fetch upstream`
-3. Now, to merge the `upstream/main` branch into the local `main` branch:
+3. Merge the `upstream/main` branch into the local `main` branch:
     1. `git merge upstream/main`
 
-* Source: Github documentation.
+* Source: GitHub documentation.
     * [Configuring a remote for a fork][config-remote]
     * [Syncing a fork][sync-fork]
 
@@ -728,21 +730,21 @@ Create a file called `npp` with the following content and copy it to
 'C:/Program Files (x86)/Notepad++/notepad++.exe' -multiInst -notabbar -nosession -noPlugin "$(cygpath -w "$*")"
 ```
 
-Run the following command in Cygwin to set it as global git editor:
+Run the following command in Cygwin to set it as the global git editor:
 
 ```
 git config --global core.editor npp
 ```
 
 ### Change Remote for an Existing Git Repository
-A.K.A. when moving `repository` from bitbucket to github or vice versa.
+For example, moving `repository` from Bitbucket to GitHub or back.
 
 ```
 git remote set-url origin git@github.com:parsiya/repository.git
 ```
 
 ### List All Authors in a Git Repository
-I wanted to see if I was still showing up as `root`.
+I wanted to see if I was still showing up as `root` in old commits.
 
 ```
 git shortlog -s | cut -c8-
@@ -750,7 +752,7 @@ git shortlog -s | cut -c8-
 
 ### Rewrite Author for Older Commits
 `parsiya.net` had commits as `root` from when I was using it offline. I wanted
-to change everything to myself.
+to change everything to my own username.
 
 1. If you want to start at root - `git rebase -i --root`
 2. If you want to start from commit AAAA - `git rebase -i AAAA`
@@ -776,22 +778,21 @@ default. So if you rename `Bob.jpg` to `bob.jpg` after it has already been
 pushed, git doesn't change it because from a file-system perspective it's the
 same file (although Windows shows the filename in lowercase).
 
-To make git sensitive on a case-insensitive file system (Windows, OSX) we can do:
+To make git case sensitive on such an OS (Windows, OSX):
 
 ```
 git config core.ignorecase false
 ```
 
-However, this introduces its own problems. Let's assume you have already
-committed `Bob.jpg` and make git be case-sensitive. Now you rename it to
-`bob.jpg` and commit and push it. In the remote repo you will have two files
-`Bob.jpg` and `bob.jpg`.
+**NOTE:** This introduces its own problems. Let's assume you have already
+committed `Bob.jpg` and make git be case-sensitive. You rename it to `bob.jpg`
+and push it. In the remote repo you will have two files `Bob.jpg` and `bob.jpg`.
 
 The answer is to rename `Bob.jpg` to something else like `Bob-1.jpg`, push and
 then rename it back to `bob.jpg`.
 
 ### Exclude a Committed File with gitignore
-`.gitignore` only works on new `git add`s. If we have already added
+`.gitignore` only works on new `git add`s. If we have already pushed
 `blah/whatever.cpp` to the repo, adding `whatever.cpp` to `.gitignore` does
 nothing.
 
@@ -823,19 +824,19 @@ the following to `settings.json`:
 ``` json
     "files.associations": {
         "*.whatever": "cpp",
-        "*.generics": "go"
+        "*.generics": "go"  // lol
     }
 ```
 
 ### Install a Specific Version of an Extension
-This is specially useful if you want to keep an older version of an extension
-because it disables auto-update for that extension.
+This also disables auto-update for that extension so you can keep an older
+version of an extension.
 
 1. Open the extensions tab.
 2. Right-click on the extension.
 3. Select `Install Another Version...`.
 4. Select the version.
-5. The extension will not auto-update from that version.
+5. The extension will not auto-update.
 
 * Source: https://github.com/microsoft/vscode/issues/30579#issuecomment-456028574
 
@@ -848,7 +849,7 @@ Source: https://www.reddit.com/r/golang/comments/g6l6y9/couldnt_start_client_gop
 
 ## Sublime Text 3
 Tips for using the Sublime Text 3 editor. I don't use Sublime Text anymore
-although I bought it so this section is probably outdated.
+although I bought it. This section is probably outdated.
 
 ### Fix "MarGo build failed" for GoSublime on Windows
 GoSublime's executable has Go version in it. In most cases, it cannot grab the
@@ -876,7 +877,7 @@ raw_ver = ''
 ver = ''     # Change this to '1'
 ```
 
-Edit `ver` to whatever, I usually do `1`. Restart Sublime Text and Margo will
+Edit `ver` to whatever, I usually do `1`. Restart Sublime Text and MarGo will
 build.
 
 **This must to be done for every new GoSublime version.**
@@ -890,14 +891,16 @@ build.
 
 ### Quality of Life Tips and Tricks for Burp
 
-* See my blog post: [Quality of Life Tips and Tricks - Burp Suite]({{< relref "post/2019/2019-10-13-quality-of-life-burp/index.markdown" >}} "Quality of Life Tips and Tricks - Burp Suite") 
+* See my blog post:
+  {{< xref path="/post/2019/2019-10-13-quality-of-life-burp/"
+    text="Quality of Life Tips and Tricks - Burp Suite" >}}
 
 ### Selected Text in Burp is Black
-This might happen inside Virtual Box.
+Usually happens in Virtual Box.
 
 ![Burp 3D rendering issue](/images/cheatsheet/burp-3d-issue.png)
 
-You have two options:
+Two options:
 
 1. Disable 3D rendering in Virtual Box. Not recommended.
 2. Run Burp with 3D disabled (make a shortcut): \\
@@ -916,16 +919,16 @@ Source - credit to `floyd`:
 * https://support.portswigger.net/customer/portal/questions/16802069-text-highlighted-in-black
 
 ### Using iptables to Proxy Android Apps with Burp
-Technically this works with any proxy but I use Burp.
+Technically this should work with any proxy.
 
 1. Add Burp's CA certificate to the device.
 2. If there's certificate pinning, bypass it.
 3. Enable [invisible proxying][invisible-proxy] for the target listener.
-4. Root the device, iptables commands need root.
+4. Root the device, iptables needs root.
 
-Let's assume we want to redirect all traffic to `443` and `80` to Burp's
+For example, we want to redirect all traffic to `443` and `80` to Burp's
 listener at `192.168.137.1:8080`. This is the default IP address of a Windows
-machine if the mobile hotsport network is enabled:
+machine if the mobile hotspot network is enabled:
 
 ```
 iptables -t nat -A OUTPUT -p tcp --dport 443 -j DNAT --to-destination 192.168.137.1:8080
@@ -1086,8 +1089,8 @@ def xor_str(payload, key):
 
 ### Python One-Liners in Command Line
 You can run Python one-liners from command line using `python-c "command"`.
-Commands inside needs to be separated using `;` and use `'` inside. Remember
-that you need to `import` things too.
+Separate command with `;` and use `'` for strings. Remember that you need to
+`import` things too.
 
 For example a one-liner to encode something in base64:
 
@@ -1114,8 +1117,8 @@ Create a file named `log4j.properties` by the main jar file and put the
 following in it. Add `-Dlog4j.debug` to the app's command line parameters.
 
 The app might already have the command to log but is just missing the file. Use
-`procmon` to see which paths are searched to find this gile. `Result is NAME NOT FOUND`
-is your friend.
+`procmon` to see which paths are searched to find this file.
+The `Result is NAME NOT FOUND` filter is your friend.
 
 ```
 log4j.rootLogger=debug, stdout, R
@@ -1143,7 +1146,7 @@ log4j.appender.R.layout.ConversionPattern=%p %t %c - %m%n
 
 ## Misc
 
-### Download Youtube Videos with Substitles
+### Download Youtube Videos with Substitles with youtube-dl
 I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The
 following [youtube-dl](https://github.com/ytdl-org/youtube-dl) command will
 download the 56 episode HQ quality Chinese TV series called `Xiao Ao Jiang Hu`
@@ -1238,12 +1241,13 @@ I also use it to reduce the file size of my video proof-of-concepts:
 
 * Source: https://unix.stackexchange.com/a/1675
 
-I still need to experiment with different codecs to figure out which one is
-better but this method reduces the file size dramatically without a noticeable
-change in quality.
+I still need to experiment with different codecs to figure out which one is best
+but this method reduces the file size dramatically without a noticeable change
+in quality.
 
 ### Wrap Long Lines in Page Source in Firefox
-Easier method: In the `View Source` page, right-click and select `Wrap Long Lines`.
+Easier method: In the `View Source` page, right-click and select
+`Wrap Long Lines`, or:
 
 1. `about:config`
 2. Set `view_source.wrap_long_lines` to `true`.
@@ -1252,7 +1256,7 @@ Easier method: In the `View Source` page, right-click and select `Wrap Long Line
 
 ### Wireshark Not Equal Filter
 
-* Correct: `!tcp.port == 8080`
+* Right: `!tcp.port == 8080`
 * Wrong: `tcp.port != 8080`
 
 Source: https://thetechl33t.com/2015/06/01/wireshark-not-equal-to-filter/
