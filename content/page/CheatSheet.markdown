@@ -474,6 +474,17 @@ and look under the `ProfileImagePath` key to see which user it is.
 
 * Source: https://superuser.com/a/643312
 
+### powercfg
+
+* `powercfg /requests`
+    * See which programs have requested to keep the device display active.
+    * Source: https://textslashplain.com/2020/10/05/images-keeping-you-awake/
+* `powercfg /sleepstudy`
+    * Generates a fancy HTML page.
+    * Source: [Matt Thomlinson][mattt-twitter].
+
+[mattt-twitter]: https://twitter.com/mattt_cyber
+
 ------
 
 ## PowerShell
