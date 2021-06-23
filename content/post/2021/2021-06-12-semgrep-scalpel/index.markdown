@@ -10,9 +10,6 @@ categories:
 - Soapbox
 ---
 
-
-<!--more-->
-
 # Why are We Here?
 What this blog is about:
 
@@ -24,6 +21,8 @@ What this blog is not about:
 
 1. What static analysis is.
 2. Semgrep tutorial.
+
+<!--more-->
 
 # Static Analysis In The Real World
 I look at many different things at my day job. Every game we release (on seven
@@ -235,4 +234,4 @@ automagically [comments on merge requests][semgrep-gitlab-mr].
 [semgrep-gitlab-mr]: https://semgrep.dev/docs/notifications/#gitlab-merge-request-comments
 
 # What Did We Learn Here Today?
-Semgrep rock! You should use it.
+Semgrep rocks! You should use it.
