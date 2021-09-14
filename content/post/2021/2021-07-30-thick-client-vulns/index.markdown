@@ -74,8 +74,8 @@ vulnerable or they result in something the user can already do.
 
 # 5. Finding API Endpoints - Not a Vuln
 This is not a vulnerability. It's a great step in thick client analysis. The thick
-client application talks to the server and we need to [proxy the thick
-client](/categories/thick-client-proxying/).
+client application talks to the server and we need to
+[proxy the thick client](/categories/thick-client-proxying/).
 
 This is something we should do. We can find unauthenticated calls,
 privilege escalation (e.g., [create admin as a normal user][create-admin]), or
