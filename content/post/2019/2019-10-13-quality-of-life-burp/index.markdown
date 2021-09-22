@@ -42,6 +42,7 @@ and finally the `Why?` section has the justification/usecase.
 - [Rearrange Burp Repeater Request and Response Tabs for](#rearrange-burp-repeater-request-and-response-tabs-for)
     - [Why?](#why-8)
 - [Use a Default Burp Config](#use-a-default-burp-config)
+    - [User Options](#user-options)
     - [Why?](#why-9)
 
 ## Match and Replace for Test Username/Passwords
@@ -225,22 +226,20 @@ not needed, only take a screenshot of the part that is important for the issue
 you are presenting.
 
 ## Use a Default Burp Config
+**Update 2021-09-21:** The old config structure does not work anymore. User
+options must be loaded separately and are saved per machine.
 
 1. Open Burp, make any changes and set settings.
     1. The changes depend on your preferences.
 2. Save the project config and the user config separately. They are JSON files.
-3. Combine these two config files. Add the keys from one to the other.
-4. When starting a new project, use that config.
-5. Update this config regularly and store it somewhere (e.g, git repo).
+3. When starting a new project, use the project config.
+4. Update this config regularly and store it somewhere (e.g, git repo).
 
 The final config file will look like this:
 
 ```json
 {
     "project_options":{
-        // removed
-    },
-    "user_options":{
         // removed
     },
     "proxy": {
@@ -250,11 +249,25 @@ The final config file will look like this:
 }
 ```
 
-**Note:** Export the default Burp project and user options (create a new empty
-project and export them). Then, compare your modified config file with them and
-remove the keys that are not modified. This reduces the config file size. For
-example, if you have not modified the shortcut keys, there's no need to include
-the default ones in the config file.
+### User Options
+These are saved on your machine and persist between projects. Still, having a
+user options file is useful when you migrate to new virtual machines like I do.
+
+1. Start a new Burp instance and create a temporary project.
+2. `Burp (menu) > User options > Load user options` and load yours.
+
+The most important part of user options is disabling interception at startup.
+Set `enable_proxy_interception_at_startup` to `never`.
+
+```json
+{
+    "user_options":{
+        "misc":{
+            "enable_proxy_interception_at_startup":"never"
+        }
+    },
+}
+```
 
 ### Why?
 It saves time and I do not have to make the same changes for every project.
@@ -276,7 +289,8 @@ Some suggestions:
    (see [Match and Replace for Test Username/Passwords](#match-and-replace-for-test-usernamepasswords)).
 5. Fonts, sizes and themes.
 
-You can see my default Burp config at https://github.com/parsiya/Parsia-Clone/blob/master/configs/burp-default-config.json.
+You can see my default Burp project config at
+https://github.com/parsiya/Parsia-Clone/blob/master/configs/burp-default-config.json.
 
 <!-- Links -->
 [apex-113]: https://www.ea.com/games/apex-legends/news/performance-update-may-2019
