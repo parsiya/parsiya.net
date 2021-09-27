@@ -4,7 +4,7 @@ date: 2021-09-26T20:50:38-07:00
 draft: false
 toc: true
 comments: true
-twitterImage: 01-hta-with-calc.png
+twitterImage: 03-powerglove-rce.jpg
 categories:
 - Attack Surface Analysis
 ---
@@ -643,6 +643,8 @@ The user needs to click `Allow` to run the app twice but chances are the user
 will think the app did not launch properly. We can show an alert box after the
 execution to claim the execution was not successful and we will try again to
 trick the user into doing it again.
+
+{{< imgcap title="Source: My Nintendo Power Glove manual" src="03-powerglove-rce.jpg" >}}
 
 ## User Gesture Required
 This also has the advantage of bypassing Chromium "user gesture required"
