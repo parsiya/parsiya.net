@@ -202,7 +202,8 @@ After the login, both switches are the same so I will use `-script` for the rest
 of the post.
 
 ## Output File
-This output file is really useful. It contains the result of the script's execution. E.g., if I passed an empty file like
+This output file is really useful. It contains the result of the script's
+execution. E.g., if I passed an empty file like
 `app.exe -script empty.xml output.txt`, I would get this helpful error in
 `output.txt`:
 
@@ -513,7 +514,7 @@ rgod could inject text into a log file at a chosen local path. They injected
 JScript into an HTA in the administrator's startup directory and got remote
 code execution.
 
-My spidey senses started tingling. I could do the same. Let's review the
+My Spidey senses started tingling. I could do the same. Let's review the
 vulnerable command-line switches:
 
 * `-script scriptSource.xml output.xml`
