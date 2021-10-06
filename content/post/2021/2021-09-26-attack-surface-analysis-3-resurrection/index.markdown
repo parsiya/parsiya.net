@@ -69,17 +69,17 @@ Thus, the RCE was resurrected.
 In December 2020 and January 2021, I spent around 100 hours on a program with a
 .NET thickclient. Programs usually do not have desktop applications in scope so
 it was a welcome surprise. I ended up submitting five bugs for a total of $8500
-(not my greatest payday but a good for roughly 100 hours of hunting). Some
+(not my greatest payday but good for roughly 100 hours of hunting). Some
 limited info:
 
-* [Bug #1 - 2K][bug1]: This was out of scope but I explained how this is an issue and
-  they gave me a bounty.
-* [Bug #2 - 2K][bug2]: I literally asked the security team what they cared about and
-  then went and found it. Open communication helps.
-* [Bug #3 - 1.5K][bug3]: I found the WSDL and it had an API call to create admin users.
-  Normal users could call it.
-* [Bug #4 - 1.5K][bug4]: Similar to the above, I proxied the thickclient and found I
-  could call APIs that I should not.
+* [Bug #1 - 2K][bug1]: This was out of scope but I explained how this is an
+  issue and they gave me a bounty.
+* [Bug #2 - 2K][bug2]: I literally asked the security team what they cared about
+  and then went and found it. Open communication helps.
+* [Bug #3 - 1.5K][bug3]: I found the WSDL and it had an API call to create admin
+  users. Normal users could call it.
+* [Bug #4 - 1.5K][bug4]: Similar to the above, I proxied the thickclient and
+  found I could call APIs that I should not.
 * Bug #5 - 1.5K : This one.
 
 [bug1]: https://twitter.com/CryptoGangsta/status/1367762486934446083
@@ -289,7 +289,8 @@ private void runCommands(XDocument nfc)
         // child tag with the command names.
 ```
 
-Turns out the format of the XML file is very simple. Each command is a separate child of the root tag. Something like this:
+Turns out the format of the XML file is very simple. Each command is a separate
+child of the root tag. Something like this:
 
 ```xml
 <MyRoot>
@@ -397,8 +398,8 @@ try. Depending on the payload, `explorer.exe` does something. E.g.,
 `explore.exe https://example.net` opens the website in the default browser.
 
 ### Popping Calc
-We can do command injection here without any parameters. I have created a REPL at
-[https://dotnetfiddle.net/o1mCnT][repl-url] if you want to see the
+We can do command injection here without any parameters. I have created a REPL
+at [https://dotnetfiddle.net/o1mCnT][repl-url] if you want to see the
 transformation.
 
 ```cs
@@ -668,5 +669,5 @@ on [Twitter (expand the whole thread)][gesture-twitter].
 3. [Implicit File Path Support][uri-file-path-support] which allows us not to
    include the `file:///` scheme and let the library transform it to the local
    path.
-4. `%username%` and `%appdata%` environment variables are useful if your app
+4. `%username%` and `%appdata%` environment variables are useful if the app
    resolves them.
