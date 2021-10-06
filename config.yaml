@@ -185,14 +185,24 @@ markup:
   # the markdown documents as-is). So before you come and waste a lot of time to
   # switch to Goldmark, don't. Of course, unless this problem has been solved in
   # Goldmark.
-  defaultMarkdownHandler: blackfriday # use Blackfriday
-  blackFriday:
-    fractions: false
-    hrefTargetBlank: true
-    latexDashes: false
-    nofollowLinks: true
-    smartDashes: false
-    smartypants: false
+  # defaultMarkdownHandler: blackfriday # use Blackfriday
+  # blackFriday:
+  #   fractions: false
+  #   hrefTargetBlank: true
+  #   latexDashes: false
+  #   nofollowLinks: true
+  #   smartDashes: false
+  #   smartypants: false
+
+  # Goodbye blackfriday, you have been deprecated.
+  # The render hook is not fired for linkify links in Goldmark so we have to
+  # replace all of them.
+  goldmark:
+    extensions:
+      typographer: false
+    renderer:
+      hardWraps: false
+      unsafe: true
   
   # Change the defaults for the toc because I want to render every heading in
   # the document.
