@@ -1,5 +1,5 @@
 ---
-title: "Automagically Deploying Websites with Custom Domains to Github Pages"
+title: "Automagically Deploying Websites with Custom Domains to GitHub Pages"
 date: 2021-02-17T09:56:33-08:00
 draft: false
 toc: false
@@ -10,7 +10,7 @@ categories:
 - Automation
 ---
 
-Recently, I have started moving my non-critical websites to Github pages. I am
+Recently, I have started moving my non-critical websites to GitHub pages. I am
 documenting the process in one place for future me.
 
 <!--more-->
@@ -19,7 +19,7 @@ documenting the process in one place for future me.
 
 1. I should be able to edit the website by committing to a git repository.
     1. We can also modify the blog using the web IDE if needed.
-2. The system must generate the website after every push and deploy it to Github
+2. The system must generate the website after every push and deploy it to GitHub
    pages.
 3. I want to use my own custom domain.
 
@@ -28,13 +28,13 @@ documenting the process in one place for future me.
 1. You have a custom domain. Mine are registered with Namecheap.
 2. You either have a generated website or you can use a static
    website generator like [Hugo][hugo].
-3. You have a Github account.
+3. You have a GitHub account.
 
 [hugo]: https://gohugo.io
 
-## Github Project Sites
-If you have a Github account (either user or organization) you can have a
-website using Github pages at `your-account.github.io`. These are called user or
+## GitHub Project Sites
+If you have a GitHub account (either user or organization) you can have a
+website using GitHub pages at `your-account.github.io`. These are called user or
 organization sites.
 
 Each project in an account can have its own website. These are called `Project`
@@ -69,21 +69,21 @@ shows how:
 
 [namecheap-basic-dns]: https://www.namecheap.com/support/knowledgebase/article.aspx/323/46/why-cant-i-modify-email-domain-redirect-and-host-records-in-my-namecheap-account/
 
-After switching, we need to create five records. Four A records and a CNAME:
+After switching, switch to the `Advanced DNS` tab and create five records.
 
-* A records with host `@` and the following values:
+* Four `A records` with host `@` and the following values:
     * `185.199.108.153`
     * `185.199.109.153`
     * `185.199.110.153`
     * `185.199.111.153`
-* CNAME record with host `www` and value `your-account.github.io.`.
+* `CNAME` record with host `www` and value `your-account.github.io.`.
     * **Note the extra dot in the end.** This is needed for project sites.
 
 Reference: [https://deanattali.com/blog/multiple-github-pages-domains/][gh-pages-namecheap]
 
 [gh-pages-namecheap]: https://deanattali.com/blog/multiple-github-pages-domains/
 
-Namecheap has a guide for using user or organization Github pages. The process
+Namecheap has a guide for using user or organization GitHub pages. The process
 is the same as above except the value of the CNAME record:
 
 * [How do I link my domain to GitHub Pages?][namecheap-github-pages]
@@ -129,8 +129,8 @@ the site looks like and fix any issues.
 ### Step 4: Repository Settings
 Now, we need to setup the repository.
 
-1. Go to the repository's `Settings` on Github.
-2. Search the web page for `GitHub Pages`.
+1. Go to the repository's `Settings` on GitHub.
+2. Select `Pages` from the sidebar.
 3. Under `Source` select the `gh-pages` branch.
 4. Under `Custom domain` enter your domain. E.g., `begbounty.com`.
     1. This will create a file in the root of the repository named `CNAME` with
@@ -142,7 +142,7 @@ Now, we need to setup the repository.
 5. Enable `Enforce HTTPS`. This will generate a certificate by `Let's Encrypt`.
    This is usually done in 15 minutes.
 
-For more information please see this page on Github docs:
+For more information please see this page on GitHub docs:
 
 * [Configuring a custom domain for your GitHub Pages site][github-custom-domain]
 
