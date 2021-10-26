@@ -4,10 +4,10 @@ date: 2021-06-22T18:42:06-07:00
 draft: false
 toc: true
 comments: true
-twitterImage: .png
 categories:
 - Automation
 - Soapbox
+- Semgrep
 ---
 
 # Why are We Here?
