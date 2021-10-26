@@ -11,7 +11,7 @@ categories:
 ---
 
 Semgrep's experimental [autofix][semgrep-autofix] feature can automagically
-modify the vulnerable code. A few things can be fixed like this but it's worth
+modify vulnerable code. A few things can be fixed like this but it's worth
 exploring. This post is an introduction to creating fixes for your Semgrep
 rules.
 
