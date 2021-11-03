@@ -33,7 +33,7 @@ familiar with:
 
 1. Semgrep and have done [https://semgrep.dev/learn][semgrep-learn].
 2. Java and Go code.
-3. some application security topics like HttpOnly and XSS.
+3. Some application security topics like HttpOnly and XSS.
 
 [semgrep-learn]: https://semgrep.dev/learn
 
@@ -59,8 +59,8 @@ as `python3 -m pip install semgrep` (I use it inside WSL). See more at
 
 [semgrep-getting-started]: https://semgrep.dev/docs/getting-started/
 
-After writing a rule verify it to catch any formatting/logical errors (`-c` can
-also, point to a directory of rules):
+After writing a rule, verify it to catch any formatting/logic errors (`-c` can
+also point to a directory of rules):
 
 ```
 semgrep -c rule1.yaml --validate
@@ -104,8 +104,7 @@ The example in the documentation is at
 
 {{< imgcap title="First fix applied" src="01-sys-exit.png" >}}
 
-As you can see metavariables in `fix` are replaced by their values. This is very
-useful.
+Metavariables in `fix` are replaced by their values. This is very useful.
 
 ### Java - CBC Padding Oracle
 `fix` shines when we are catching and replacing a string. Look at the
@@ -126,7 +125,7 @@ rules:
     fix: $CIPHER.getInstance("AES/GCM/NoPadding")
 ```
 
-It looks for anything that is similar to `object.getInstance("string")` where the
+It looks for anything that looks like `object.getInstance("string")` and the
 string contains `CBC/PKCS5Padding`.
 
 You can see Semgrep's [string matching][string-matching] in

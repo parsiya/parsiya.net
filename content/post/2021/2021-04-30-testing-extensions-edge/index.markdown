@@ -338,7 +338,8 @@ for the editor to parse the file) and press `F2`. Choose a new name and it will
 be renamed every where.
 
 ## Renaming Symbols With VS Code Rename
-To be fair JavaScript scope is a mess and doubly so for obfuscated code.
+To be fair JavaScript scope is a mess and doubly so for obfuscated code. The
+renamer:
 
 1. Does not check if there is an existing variable with the same name in scope.
 2. Has some issues with the scope of parameters for inline functions so be
@@ -378,10 +379,10 @@ I have found a few online tools that help with deobfuscating JavaScript.
 [de4js]: https://lelinhtinh.github.io/de4js/
 
 I have not gotten great results from them. E.g., `JS Nice` has trouble parsing
-big obfuscate blobs and its output is not valid JavaScript most of the time. I
+big obfuscated blobs and its output is not valid JavaScript most of the time. I
 have had a little success pasting individual functions or modules.
 
-There are two types of code in such files:
+There are two types of code in such projects:
 
 1. Open source modules.
 2. Application code.
