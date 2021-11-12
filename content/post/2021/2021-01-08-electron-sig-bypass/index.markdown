@@ -15,7 +15,7 @@ aliases:
 
 A few months ago I found a way to subvert the update process of an Electron
 application to get local privilege escalation. The application stores the
-updater under a path where standard users have write access. But, it also
+updater under a path where standard users have write access. But it also
 checked if the executable was signed by the vendor. I managed to bypass the
 signing using a backdoored Electron application.
 
@@ -55,7 +55,7 @@ can go from a remote attacker to local or even SYSTEM.
 
 Most often, this is not in scope for the few bounty programs with desktop
 applications in scope. Also, TLS certificates do a good job of preventing such
-attacks. But, if you can mess with the certificate checks then you might have a
+attacks. But if you can mess with the certificate checks then you might have a
 case.
 
 #### Nintendo
@@ -139,7 +139,7 @@ Here's another bug by Jason in Backblaze.
 
 The updater which was a Windows service, created a directory to store the update
 binary at `%ProgramData%\Backblaze\bzdata\bzupdates` if the path did not exist.
-The DACL of the directory did not give standard users write access. But, the
+The DACL of the directory did not give standard users write access. But the
 updater did not check if the directory was already created and would store the
 updater there without changing its permissions. Hence, a local attacker could
 create this directory and then replace the updater after download before
@@ -353,7 +353,7 @@ The title of the web page says `How To Backdoor Any Electron Application` which
 appears to have been the original title of the blog.
 
 Most of the blog talks about backdooring the `resources\electron.asar` file
-which is not present in many modern Electron applications anymore. But, the
+which is not present in many modern Electron applications anymore. But the
 concept is sound. We can modify asar files and backdoor them. This blog, while
 nice, is more of a red team persistence trick and not signature evasion like
 what we want to do.
@@ -384,7 +384,7 @@ what we want to do.
 
 {{< imgcap title="cmd as SYSTEM" src="13-cmd.png" >}}
 
-I got 200 USD for the bug. Financially, not worth the time spent but, I learned
+I got 200 USD for the bug. Financially, not worth the time spent, but I learned
 a new trick. Although, it would have been completely different if I were living
 in a cheap country with low taxes.
 

@@ -68,7 +68,7 @@ The following are not issues:
 1. A user can inject code into their own process.
 2. A user can inject code into a less-privileged process.
 
-But, this is an issue:
+But this is an issue:
 
 1. A less-privileged user can inject code into a more-privileged process.
 
@@ -221,7 +221,7 @@ you do with it?
 I blame bugbounty influencers for this. There are entire guides on how to hype
 up your bug to get better payouts. I am all for people making money. Hell, **I
 encourage you to milk the companies as much as you can while the fad
-continues.** But, please do not try to trick me or other security engineers.
+continues.** But please do not try to trick me or other security engineers.
 
 # What Did We Learn Here Today?
 

@@ -53,7 +53,7 @@ bad things to the underlying machine.
 XSS Happens (lol)
 {{< /blockquote >}}
 
-"But, I am not gonna have XSS, Parsia." You will, my friend. Even if you do
+"But I am not gonna have XSS, Parsia." You will, my friend. Even if you do
 everything right, you might get hit by a
 [framework bypass][angularjs-sandbox-escape].
 
@@ -94,11 +94,11 @@ situations when you can do everything correctly but get hit. We see a typical
 
 [origin-xss-1]: https://zero.lol/posts/2019-05-13-xss-to-rce/
 
-But, the last section named [The Third Bug (RCE)][origin-xss-js-bridge] explores
+But the last section named [The Third Bug (RCE)][origin-xss-js-bridge] explores
 the JavaScript bridge. Origin is using the QtWebEngine to display web pages and
 the `Origin.client.desktopServices` API is available. The weapon of choice is
 `asyncOpenUrl` which allows us to pass a scheme (including `file:///` to execute
-files) but, no parameters.
+files), but no parameters.
 
 [origin-xss-js-bridge]: https://zero.lol/posts/2019-05-13-xss-to-rce/#the-third-bug--rce
 
@@ -112,7 +112,7 @@ This is a new one by [Joel Noguera][joel-twitter] of
 [swbytes-twitter]: https://twitter.com/SwordBytesSec
 [overwolf-xss-rce]: https://swordbytes.com/blog/security-advisory-overwolf-1-click-remote-code-execution-cve-2021-33501/
 
-I am not gonna go through the blog post but, here's a summary (quoting myself
+I am not gonna go through the blog post, but here's a summary (quoting myself
 again lol):
 
 {{< blockquote author="Parsia" link="https://twitter.com/CryptoGangsta/status/1399421900565090307" >}}
@@ -127,7 +127,7 @@ without parameters.
 
 [openurl-overwolf]: https://overwolf.github.io/docs/api/overwolf-utils#openurlindefaultbrowserurl
 
-But, there's also [writeFileContents][writefile-overwolf] which allows writing a
+But there's also [writeFileContents][writefile-overwolf] which allows writing a
 file to disk. The rest of the path is clear, write a bat file (or an HTA file if
 you feel fancy) and then execute it with the previous API.
 

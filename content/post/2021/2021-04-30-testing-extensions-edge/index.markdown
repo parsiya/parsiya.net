@@ -188,7 +188,7 @@ Sec-WebSocket-Accept: SfGJJieKb0arlzTiMRAhTszBanA=
 The `Origin` header shows this is coming from the extension. This is a
 cross-origin request (`chrome-extesion://...` to `http://localhost:9213`).
 
-But, Parsia, we do not see the `Access-Control-Allow-Origin` response header,
+But Parsia, we do not see the `Access-Control-Allow-Origin` response header,
 CORS is not enabled. The extension cannot see this response!!1!
 
 {{< imgcap title="Well, didja know?" src="34-websocket-sop-mirrors-edge.png" >}}
@@ -485,7 +485,7 @@ Rename `function i()` to `function uuid4()`:
 
 {{< imgcap title="Renaming function i" src="12-rename-uuid4.gif" >}}
 
-We can do more, `var e = r(),` is `const global = getGlobalObject()`. But, this
+We can do more, `var e = r(),` is `const global = getGlobalObject()`. But this
 is not as important as renaming functions.
 
 Unfortunately, we did not find the exact source we saw how to do this. As an
@@ -1049,7 +1049,7 @@ subtle.crypto.deriveKey(
 );
 ```
 
-At this point we have already guessed what happens. But, let's trace it in the
+At this point we have already guessed what happens. But let's trace it in the
 code anyways. Searching for `generateEncryptionKey` we get to this function
 (already renamed). It does the handshake and returns the message encryption AES
 key:
@@ -1363,7 +1363,7 @@ Add reverse engineering obfuscated JavaScript to your resume.
 {{< imgcap title="Image credit: an anime named Dagashi Kashi" src="27-this-is-javascript.jpg" >}}
 
 # Instrumenting The Extension
-At this point we can create our own extension. But, why reinvent the wheel when
+At this point we can create our own extension. But why reinvent the wheel when
 we can modify the current extension to do what we want?
 
 We can debug the extension and put watches on specific variables to see all

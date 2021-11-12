@@ -97,7 +97,7 @@ The workflow is pretty straightforward and based on this Hugo docs page:
 
 [hugo-host-github]: https://gohugo.io/hosting-and-deployment/hosting-on-github/
 
-[begbounty.com][begbounty] is a simple single page Hugo website. But, it works
+[begbounty.com][begbounty] is a simple single page Hugo website. But it works
 for more complex deployments.
 
 You can see the workflow here:

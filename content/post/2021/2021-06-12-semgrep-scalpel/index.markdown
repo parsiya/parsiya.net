@@ -54,7 +54,7 @@ differentiate between `exec` as a function, variable, string, or comment. A
 workaround is to grep for `exec(` (or a regex that takes into account the
 allowed whitespace between `c` and `(`).
 
-But, what if this function has multiple overloads and I am only looking for one
+But what if this function has multiple overloads and I am only looking for one
 that uses two parameters (or specific types of parameters). `grep` doesn't
 understand context. If you have ever tried to parse structured text (e.g., code)
 you probably know what a dumpster fire it is. Once I tried to parse markdown
@@ -150,7 +150,7 @@ run `npm install`.
 > Shit's hard, yo!
 
 Semgrep works on one file at a time. It loses some capabilities. For example, it
-cannot detect if a constant string is defined in another file. But, it also
+cannot detect if a constant string is defined in another file. But it also
 gains a lot of speed (files can be processed in parallel), and more importantly,
 we do not need to build the code.
 
@@ -169,10 +169,10 @@ nifty features there). We can run it everywhere we can run a command-line tool
 or via a docker container. We don't have to pay for it or buy a specific
 platform (e.g., CodeQL and GitHub enterprise).
 
-But, Parsia, don't you use GitHub? Git in the videogame industry? Good joke!
+But Parsia, don't you use GitHub? Git in the videogame industry? Good joke!
 
 ## Great Team and Community
-Look, I like these folks. I am a fan. But, seriously, every time I have had a
+Look, I like these folks. I am a fan. But seriously, every time I have had a
 question, the Slack channel has been super helpful. Join their Slack and see
 what's up.
 
@@ -221,7 +221,7 @@ Your devs will hate you!
 **Remember: Don't break the build except as a last resort.**
 
 ## Where Should I Use Semgrep?
-Everywhere you have code but, as I mentioned above, I like to run Semgrep on
+Everywhere you have code, but as I mentioned above, I like to run Semgrep on
 merge requests and add the results as a comment to the request. I have written
 my own custom code to do this. Here's a public example:
 

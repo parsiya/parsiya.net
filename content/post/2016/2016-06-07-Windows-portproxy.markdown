@@ -35,7 +35,7 @@ netsh interface portproxy add v4tov4 listenport=9090 listenaddress=192.168.0.100
 ```
 
 I thought I could change `listenaddress:listenport` and redirect all outgoing
-traffic to that `IP:port` to wherever I wanted (e.g. localhost). But, I was
+traffic to that `IP:port` to wherever I wanted (e.g. localhost). But I was
 wrong, the command creates a listener on the interface with the
 `listeneraddress` IP and redirects all TCP traffic. In other words, the
 `listeneraddress` needs to be the IP of an interface of your machine and **the
@@ -97,8 +97,8 @@ Apart from doing failed tricks we can do other things with this. We can redirect
 local resources to remote ones.
 
 We can also switch ports. Using the `hosts` file, we can redirect traffic to
-domains but, not the port. E.g., we can redirect `google.com` to `localhost` but
-we cannot change the port. With Portproxy, we can add a new listener on
+domains, but not the port. E.g., we can redirect `google.com` to `localhost`,
+but we cannot change the port. With Portproxy, we can add a new listener on
 `localhost:443` and redirect all traffic to a different IP:port (e.g. a VM
 running our proxy). This might replace the [Traffic
 Redirector][traffic-redirector-link] Burp extension.

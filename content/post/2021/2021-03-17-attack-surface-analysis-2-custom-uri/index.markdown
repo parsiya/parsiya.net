@@ -139,7 +139,7 @@ above.
 
 ### Find Bugs Like This with dnSpy
 The previous bug was not easy to find and I probably would not have found it.
-dnSpy can help you but, you still need to do the flow analysis and read
+dnSpy can help you, but you still need to do the flow analysis and read
 decompiled source code.
 
 If you have a .NET app, try this workflow:
@@ -805,7 +805,7 @@ these in the wild. If you do (and you can), please publish your write-ups and
 let me know.
 
 ## Do You Wanna Know More?
-Now, we know enough to get started. But, be sure to read these references,
+Now, we know enough to get started. But be sure to read these references,
 later.
 
 * [Understanding Protocols on docs.microsoft.com][understanding-protocols] is an

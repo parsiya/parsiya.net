@@ -16,11 +16,11 @@ I talked about how passing a remote file with a UNC path can lead to unexpected
 results.
 
 I am documenting how I created a share using an EC2 instance. This guide is for
-AWS but, it's a Linux machine running in the cloud. You can easily replicate it.
+AWS, but it's a Linux machine running in the cloud. You can easily replicate it.
 
 <!--more-->
 
-Note about automation: I like automation but, we should "automate as long as it
+Note about automation: I like automation, but we should "automate as long as it
 makes sense." In my opinion, I don't need more automation.
 
 # Problem Statement
@@ -35,7 +35,7 @@ We need:
 
 # Research
 The obvious solution for me is `the cloud`. Some people have their own
-infrastructure but, I do not even have a home lab (lol)[^1].
+infrastructure, but I do not even have a home lab (lol)[^1].
 
 [^1]: Infosec is not special, you do not have to study in your free time.
 
@@ -60,8 +60,8 @@ A Linux EC2 instance checks all the boxes:
    month for other accounts.
 
 ## EC2 Wizard
-I used the Ubuntu 18.04 LTS image. Originally, I wanted a `t4g.nano` instance
-but, the `t4g.micro` ARM instances are free until July 2021 (this was written in
+I used the Ubuntu 18.04 LTS image. Originally, I wanted a `t4g.nano` instance,
+but the `t4g.micro` ARM instances are free until July 2021 (this was written in
 April 2021 and published a month later). Free is better.
 
 In the EC2 instance wizard you need to choose some specific options:
@@ -182,7 +182,7 @@ some theorycrafting:
 ## Pricing
 AWS pricing is a mystery but I crunched some numbers. In `calculator.aws` there
 is an EC2 monthly cost and a storage cost. We do not need persistence storage
-instances so I do not know if we need to pay for it, too. But, assuming we do,
+instances so I do not know if we need to pay for it, too. But assuming we do,
 10GB is more than enough (an Ubuntu 18 LTS image needs 8GB) and costs `1 USD/mo`
 on `us-east-1`.
 
@@ -194,7 +194,7 @@ instances will be enough for everyone. Their prices are:
 * `t4g.micro`: `3.87 USD/mo`
 
 So, worst case we will be paying less than **5 dollars a month**. This would
-have been a significant sum when I was growing up but, if you are doing the kind
+have been a significant sum when I was growing up, but if you are doing the kind
 of bounties that need this kind of shares you should be able to make it.
 
 # Issues
@@ -217,7 +217,7 @@ have this issue. Maybe, it's a Windows config thing? I cannot reliably replicate
 it. I thought it was "Network Discovery."
 
 The prompt accepted any user/pass (e.g., user `a` and no password). For a while,
-I thought this is because guest SMB 2.0 is disabled in Windows 10 but, no. I did
+I thought this is because guest SMB 2.0 is disabled in Windows 10, but no. I did
 not get a prompt on a fresh Win10 install from modern.ie.
 
 If such a prompt pops up in your VM then chances are the app is not going to

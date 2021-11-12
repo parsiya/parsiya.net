@@ -292,7 +292,7 @@ The fix works but it's not aligned properly.
 This is not an issue in Java but we can fix this with `fix-regex`.
 
 ## fix-regex
-`fix` is great for simple replacements (e.g., `badFunc` to `goodFunc`). But,
+`fix` is great for simple replacements (e.g., `badFunc` to `goodFunc`). But
 `fix-regex` has the power of regular expressions. See the docs at
 [https://semgrep.dev/docs/experiments/overview/#autofix-with-regular-expression-replacement][fix-regex-doc].
 
@@ -367,7 +367,7 @@ so we set it to `1`.
 
 {{< imgcap title="Running the rule with count: 1" src="05-httponly-fix-regex-2.png" >}}
 
-This is much better. But, I have not fixed the alignment. We can capture the
+This is much better. But I have not fixed the alignment. We can capture the
 whitespace with another capture group.
 
 ```yaml
@@ -445,7 +445,7 @@ Playground link
 ### Go - text/template
 In Go you can use `text/template` and `html/template`. The latter does some
 output encoding and is safer for web use. It's possible to use `text/template`
-correctly or in a non-web use case but, it's not usually the case.
+correctly or in a non-web use case, but it's not usually the case.
 
 At first glance you would think we can use `fix` and replace `text/template`
 with `html/template`. To test this theory, add a `fix` section to the Semgrep's
@@ -589,7 +589,7 @@ one and finish.
 
 We want to add a comment before the vuln location. Things like remediation
 messages or annotations are good candidates. I am gonna use the previous example
-(Go) but, most programming languages that do not rely on whitespace and use `//`
+(Go), but most programming languages that do not rely on whitespace and use `//`
 should be similar.
 
 ```yaml

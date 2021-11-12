@@ -90,7 +90,7 @@ limited info:
 ## Some History
 I found two remote code execution bugs in the program. Both were rejected (we
 will see later why). Initially, I started the previous installment of this
-series to explain [these useless RCEs][useless-rce-twitter] but, the blog turned
+series to explain [these useless RCEs][useless-rce-twitter], but the blog turned
 into a long review.
 
 [useless-rce-twitter]: https://twitter.com/CryptoGangsta/status/1369844949651361794
@@ -427,7 +427,7 @@ second parameter is `dontEscape`, deprecated and set to `false` by default.
 We do not need to use the `file:///` scheme for local files. We can use the
 [Implicit File Path Support][uri-file-path-support] and skip it. This is not
 part of the URI specification and it does not matter here (we can pass any
-scheme) but, it's a good point to remember in case you see something in the
+scheme), but it's a good point to remember in case you see something in the
 future. This means all of the following are converted to
 `file:///C:/Windows/System32/calc.exe`.
 
@@ -582,7 +582,7 @@ not work here but might work in another app so it's good to know.
 
 {{< imgcap title="Environment variable error" src="02-env-var-error.png" >}}
 
-I felt like I had a good proof-of-concept but, I wanted to do more. I can
+I felt like I had a good proof-of-concept, but I wanted to do more. I can
 execute single binaries on the file system, why not inject the HTA in one
 command then execute it with another? Something like:
 

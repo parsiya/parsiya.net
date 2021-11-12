@@ -173,7 +173,7 @@ This is intended behavior for project access tokens according to the
 > If you are asked for a username when authenticating over HTTPS, you can use
 > any non-empty value because only the token is needed.
 
-Currently, personal access tokens do not need the username either but,
+Currently, personal access tokens do not need the username either, but
 [it's a bug][gitlab-personal-token]:
 
 > Though required, GitLab usernames are ignored when authenticating with a
