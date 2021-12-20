@@ -4,7 +4,7 @@ date: 2021-12-20T03:22:10-08:00
 draft: false
 toc: true
 comments: true
-twitterImage: 09-poc1.gif
+twitterImage: 10-thumbnail.png
 categories:
 - Writeup
 - Bug Bounty
