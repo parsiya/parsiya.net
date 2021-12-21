@@ -27,7 +27,7 @@ vulnerabilities." So, he did not look at the extension and the desktop app.
 
 # What Are We Gonna Learn Here Today?
 List of things I think you will learn after reading this post. This helps you
-decide if you want to spent time reading or not.
+decide if you want to spend time reading or not.
 
 1. Quick recon on a browser extension and desktop app combo.
     1. Local servers.

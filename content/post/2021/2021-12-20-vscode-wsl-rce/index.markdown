@@ -13,18 +13,28 @@ categories:
 The Visual Studio Code server in Windows Subsystem for Linux uses a local
 WebSocket WebSocket connection to communicate with the `Remote WSL` extension.
 JavaScript in websites can connect to this server and execute arbitrary commands
-on the target system. Assigned [CVE-2021-43907][cve] and -5 USD bounty (the cost
-of the EC2 machine to host the proof-of-concept).
+on the target system. Assigned [CVE-2021-43907][cve] and zero bounty. I paid 5
+USD for the EC2 machine hosting the proof-of-concept.
 
 [cve]: https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2021-43907
 
-It's really funny that PlayStation paid 15K USD for [almost the same
-bug][psnow-rce-2] with 2.2 million subscribers (it was out of scope in their
-program, too), but MSFT doesn't pay for an official extension with more than 10
-million installs (obviously, not every install is unique) for one of their most
-popular products. But you are not here to listen to my rants. So, read on.
+It's really funny that PlayStation paid 15K USD for [almost the same bug][psnow-rce-2]
+with 2.2 million subscribers (it was out of scope in their program, too), but
+MSFT doesn't pay for an official extension with more than 10 million installs
+(obviously, not every install is unique) for one of their most popular products.
+But you are not here to listen to my rants. So, read on.
 
 [psnow-rce-2]: https://hackerone.com/reports/873614
+
+This post's target audience was `Desktop Application Security People` niche. I
+want to clarify some issues because more people have read it:
+
+1. I didn't get 5 dollars. I paid 5 dollars out of pocket, so it's -5.
+2. "I am not angry, I am just disappointed." I knew it was out-of-scope. This
+   wasn't some bait-and-switch by Microsoft. I am not angry
+3. The vuln is **not** in VS Code. MSFT says it's in the `Remote WSL` extension
+   but I think it's in the way `VS Code Server` works with the remote
+   development extensions.
 
 <!--more-->
 
@@ -1014,10 +1024,10 @@ I created a simple proof-of-concept:
 
 [rem-int]: https://github.com/cyrus-and/chrome-remote-interface
 
-You can see the source code at:
+The source code is at:
 
-[https://github.com/parsiya/code-wsl-rce][wsl-rce-gh]
-[https://github.com/parsiya/Parsia-Code/tree/master/code-wsl-rce][wsl-rce-parsia-code]
+* [https://github.com/parsiya/code-wsl-rce][wsl-rce-gh]
+* [https://github.com/parsiya/Parsia-Code/tree/master/code-wsl-rce][wsl-rce-parsia-code]
 
 [wsl-rce-parsia-code]: https://github.com/parsiya/Parsia-Code/tree/master/code-wsl-rce
 [wsl-rce-gh]: https://github.com/parsiya/code-wsl-rce
@@ -1145,23 +1155,25 @@ read local resources.
 
 ## Remediation Timeline
 I sat on this bug for a month because I wanted to reverse engineer the protocol
-completely. Now I am glad I did not.
+completely. I am glad I did not.
 
-| 2021-11-22 | Reported to MSRC                      |
+| Date       | What Happened                         |
 |------------|---------------------------------------|
+| 2021-11-22 | Reported to MSRC                      |
 | 2021-12-1  | Case created                          |
 | 2021-12-10 | Triaged                               |
-| 2021-12-13 | Out-of-scope for bounty notification  |
+| 2021-12-13 | Notification: Out-of-scope for bounty |
 | 2021-12-15 | Fix released. CVE-2021-43907 assigned |
+| 2021-12-20 | Blog published                        |
 
 # What I Tried and Didn't Work
-I think this is a good section to have. We learn by failing and these methods
-might work in other situations. I can also add any extra information that did
-not make it to the main sections.
+I think this is a useful section. Failed experiments might work in other
+situations. I can also add include extra information that did not make it to the
+main sections.
 
 ## Injecting Environment Variables
-I could inject environment variables (abbreviated to `env var` in the rest of this
-section) in the Node Inspector process. I tried to get RCE that way.
+I could inject environment variables (abbreviated to `env var` in the rest of
+this section) in the Node Inspector process. I tried to get RCE that way.
 
 I found [this awesome writeup][kibana-cve] by Michał Bentkowski or
 [@SecurityMB][michal-twitter] about CVE-2019-7609. He could inject env vars into
@@ -1234,7 +1246,7 @@ You might have a better chance.
 
 ## Command Injection
 I tried injecting commands in the `execArgv` variable. I control
-`startParams.break` and startParams.port`.
+`startParams.break` and `startParams.port`.
 
 ```ts
 let execArgv: string[] = [];
