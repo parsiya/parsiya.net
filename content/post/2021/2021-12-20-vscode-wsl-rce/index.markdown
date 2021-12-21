@@ -1256,10 +1256,19 @@ if (startParams.port && !(<any>process).pkg) {
 }
 ```
 
-Unfortunately, type checking in TypeScript did not let me do it. `startParams0`
-is of type `IRemoteExtensionHostStartParams` and the conversion would not
-convert strings in those values because they are boolean and number
-respectively.
+Unfortunately, ~~type checking in TypeScript did not let me do it~~ it did not
+work. `startParams0` is of type `IRemoteExtensionHostStartParams` and the
+conversion would not convert strings in those values because they are boolean
+and number respectively.
+
+Edit 2021-12-21: As [birdman9k][birdman-reddit] mentioned, TypeScript does type
+checking in compile time and not runtime. When I tried to inject commands into
+`break` and `port` in the last message, it did not work. The message was
+discarded. I handwaved it by thinking "Oh well, TypeScript type checking." Now,
+I think the protocol parser is doing it. I did not investigate further.
+
+[birdman-reddit]: https://www.reddit.com/r/netsec/comments/rl6zu4/rce_in_visual_studio_codes_remote_wsl_for_fun_and/hpfzxx3/
+
 
 ```ts
 export interface IRemoteExtensionHostStartParams {
