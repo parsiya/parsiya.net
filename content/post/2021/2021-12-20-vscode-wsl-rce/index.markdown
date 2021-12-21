@@ -27,7 +27,7 @@ But you are not here to listen to my rants. So, read on.
 [psnow-rce-2]: https://hackerone.com/reports/873614
 
 This post's target audience was `Desktop Application Security People` niche. I
-want to clarify some issues because more people have read it:
+want to clarify some issues because more people have read it (edit on 2021-12-21):
 
 1. I didn't get 5 dollars. I paid 5 dollars out of pocket, so it's -5.
 2. "I am not angry, I am just disappointed." I knew it was out-of-scope. This
