@@ -24,7 +24,7 @@ Insert [XKCD 1168](https://xkcd.com/1168/), hur dur!
 `tar -zcvf target_tar.tar.gz directory_to_be_compressed`
 
 ### Decompress a tar.gz file
-`tar -zxvf target_tar.tar.gz path/to/decompress/`
+`tar -zxvf target_tar.tar.gz -C path/to/decompress/`
 
 ------
 

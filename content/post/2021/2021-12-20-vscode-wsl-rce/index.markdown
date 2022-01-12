@@ -36,6 +36,10 @@ want to clarify some issues because more people have read it (edit on 2021-12-21
    but I think it's in the way `VS Code Server` works with the remote
    development extensions.
 
+HackerNews link: [https://news.ycombinator.com/item?id=29635300][hn-link].
+
+[hn-link]: https://news.ycombinator.com/item?id=29635300
+
 <!--more-->
 
 # Summary

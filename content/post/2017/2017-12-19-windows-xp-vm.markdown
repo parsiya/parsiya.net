@@ -15,6 +15,8 @@ There used to be Windows XP virtual machines on [modern.ie](https://developer.mi
 
 There's still a way to get Windows XP 32-bit VMs from Microsoft (no 64-bit) through Windows XP mode. It contains a VHD (virtual hard disk) with a 32-bit Windows XP SP3.
 
+**EDIT 2022-01-12**: The link below is dead. Looks like Windows XP Mode was tied to Windows 7 and removed when it went EOL.
+
 1. Download Microsoft XP Mode from https://www.microsoft.com/en-us/download/details.aspx?id=8002.
 2. Using 7-zip or any other utility decompress the exe.
 3. Inside sources, there's another file called `xpm`. Decompress it too. With 7-zip, right click on it and select "Extract to ... ."
