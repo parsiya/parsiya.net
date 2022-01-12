@@ -485,6 +485,20 @@ and look under the `ProfileImagePath` key to see which user it is.
 
 [mattt-twitter]: https://twitter.com/mattt_cyber
 
+### WSL
+See current distributions and their version: `wsl --list --verbose` or `wsl -l
+-v`.
+
+Set the default version to 2 for all new distributions: `wsl --set-default-version 2`
+
+Convert a distro (e.g., `Ubuntu-18.04`) to version 2: `wsl --set-version
+Ubuntu-18.04 2`
+
+Moving to WSL2 will prevent your machine from talking to the internet with some
+VPN software and if you are connected to the VPN. I think it's because WSL2 uses
+Hyper-V and Hyper-V VMs have the same problem (on VPN they do not have network
+connectivity).
+
 ------
 
 ## PowerShell
@@ -985,6 +999,11 @@ They are installed in `~/.local/bin`. Add it to your `$PATH`.
       [source](https://www.linuxquestions.org/questions/linux-newbie-8/command-usermod-not-found-385901/#post1967095)
 2. `usermod -aG sudo user-name`
 3. Restart (or logoff and login?).
+
+### grep
+Only search in files with specific extensions. E.g., only `md/markdown`.
+
+`grep -ir "whatever" --include\*.md --include \*.markdown`
 
 ------
 
