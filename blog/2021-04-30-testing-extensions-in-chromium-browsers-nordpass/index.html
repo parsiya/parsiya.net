@@ -1,0 +1,1558 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
+<link href=/css/fonts.css rel=stylesheet type=text/css>
+<title>Testing Extensions in Chromium Browsers - Nordpass</title>
+<link rel=stylesheet href=/css/hugo-octopress.css>
+<link rel=stylesheet href=/css/fork-awesome.min.css>
+<link href=https://parsiya.net/favicon.png rel=icon>
+<meta name=description content>
+<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
+<meta name=author content="Parsia">
+<meta name=generator content="Hugo 0.92.0">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image:src content="https://parsiya.net/blog/2021-04-30-testing-extensions-in-chromium-browsers-nordpass/26-logs.png">
+<meta name=twitter:title content="Testing Extensions in Chromium Browsers - Nordpass">
+<meta name=twitter:description content="Recently, I looked at the NordPass Password Manager browser extension.
+I could not find any guides on manual testing of browser extensions. I decided
+to write my own. So, here we are, &#34;pushing the boundaries of science.&#34;">
+<meta name=twitter:domain content="parsiya.net">
+<meta name=twitter:creator content="@CryptoGangsta">
+</head>
+<body>
+<header role=banner>
+<hgroup>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
+<h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2>
+</hgroup></header>
+<nav role=navigation>
+<fieldset class=mobile-nav>
+<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
+</fieldset>
+<ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
+<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
+<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
+<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
+<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
+<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
+</ul>
+<ul class=subscription>
+<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
+</ul>
+<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+<fieldset role=search>
+<input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/>
+</fieldset>
+</form>
+</nav>
+<div id=main>
+<div id=content>
+<div>
+<article class=hentry role=article>
+<header>
+<p class=meta>Apr 30, 2021
+- 32 minute read
+- <a href=https://parsiya.net/blog/2021-04-30-testing-extensions-in-chromium-browsers-nordpass/#disqus_thread>Comments</a>
+- <a class=label href=https://parsiya.net/categories/bug-bounty/>bug-bounty </a>
+</p>
+<h1 class=entry-title>
+Testing Extensions in Chromium Browsers - Nordpass
+</h1>
+</header>
+<div class=entry-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#what-are-we-gonna-learn-here-today>What Are We Gonna Learn Here Today?</a></li>
+<li><a href=#requirements>Requirements</a></li>
+<li><a href=#brief-recon>Brief Recon</a>
+<ul>
+<li><a href=#the-local-server>The Local Server</a></li>
+<li><a href=#the-desktop-application>The Desktop Application</a></li>
+<li><a href=#the-background-application>The Background Application</a></li>
+</ul>
+</li>
+<li><a href=#the-browser-extension>The Browser Extension</a>
+<ul>
+<li><a href=#setting-up-the-extension>Setting Up The Extension</a></li>
+<li><a href=#the-old-new-thing---yet-another-local-websocket-server>The Old New Thing - Yet Another Local WebSocket Server</a></li>
+<li><a href=#the-messaging-protocol>The Messaging Protocol</a></li>
+<li><a href=#debugging-the-extension>Debugging The Extension</a>
+<ul>
+<li><a href=#loading-unpacked-extensions>Loading Unpacked Extensions</a></li>
+<li><a href=#beautifying-javascript>Beautifying JavaScript</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href=#reverse-engineering-obfuscated-javascript>Reverse Engineering Obfuscated JavaScript</a>
+<ul>
+<li><a href=#renaming-symbols-with-vs-code-rename>Renaming Symbols With VS Code Rename</a></li>
+<li><a href=#reversing-workflow>Reversing Workflow</a></li>
+<li><a href=#online-tools>Online Tools</a></li>
+<li><a href=#reversing-open-source-code>Reversing Open Source Code</a></li>
+<li><a href=#the-pairing-code>The Pairing Code</a>
+<ul>
+<li><a href=#quick-intro-to-javascript-dynamic-analysis-with-browser-devtools>Quick Intro to JavaScript Dynamic Analysis with Browser DevTools</a></li>
+</ul>
+</li>
+<li><a href=#enter-cryptography>Enter Cryptography</a>
+<ul>
+<li><a href=#the-importance-of-knowing-cryptography>The Importance of Knowing Cryptography</a></li>
+</ul>
+</li>
+<li><a href=#reversing-the-handshake>Reversing The Handshake</a>
+<ul>
+<li><a href=#the-handshake-demystified>The Handshake Demystified</a></li>
+</ul>
+</li>
+<li><a href=#message-encryption-and-decryption>Message Encryption and Decryption</a>
+<ul>
+<li><a href=#decryption>Decryption</a>
+<ul>
+<li><a href=#side-quest-aes-gcm-iv-size>Side Quest: AES-GCM IV Size</a></li>
+</ul>
+</li>
+<li><a href=#encryption>Encryption</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href=#instrumenting-the-extension>Instrumenting The Extension</a>
+<ul>
+<li><a href=#the-shared-key>The Shared Key</a></li>
+<li><a href=#the-approve-code>The Approve Code</a></li>
+<li><a href=#incoming-messages-after-decryption>Incoming Messages After Decryption</a></li>
+<li><a href=#outgoing-messages-before-encryption>Outgoing Messages Before Encryption</a></li>
+<li><a href=#send-arbitrary-messages>Send Arbitrary Messages</a></li>
+</ul>
+</li>
+<li><a href=#what-did-we-learn-here-today>What Did We Learn Here Today?</a></li>
+</ul>
+</nav>
+<p>Recently, I looked at the <a href=https://chrome.google.com/webstore/detail/nordpass%C2%AE-password-manage/fooolghllnmhmmndgjiamiiodkpenpbb target=_blank rel="noreferrer noopener">NordPass Password Manager browser extension</a>.
+I could not find any guides on manual testing of browser extensions. I decided
+to write my own. So, here we are, "pushing the boundaries of science."</p>
+<p><strong>Update 2021-06-06:</strong> <a href=https://twitter.com/taviso target=_blank rel="noreferrer noopener">Tavis Ormandy</a> has published about how
+<a href=https://lock.cmpxchg8b.com/passmgrs.html#a-brief-illustration target=_blank rel="noreferrer noopener">the extension injects JavaScript into the page for auto-fill</a>.
+He mentions he has "deliberately trying to avoid finding specific
+vulnerabilities." So, he did not look at the extension and the desktop app.</p>
+<h1 id=what-are-we-gonna-learn-here-today>What Are We Gonna Learn Here Today?
+<a class=header-link href=#what-are-we-gonna-learn-here-today><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>List of things I think you will learn after reading this post. This helps you
+decide if you want to spend time reading or not.</p>
+<ol>
+<li>Quick recon on a browser extension and desktop app combo.
+<ol>
+<li>Local servers.</li>
+<li>Analyze traffic between the extension and the app.</li>
+<li>Discover the tech stack of the applications.</li>
+</ol>
+</li>
+<li>Test browser extensions.
+<ol>
+<li>Load unpacked extension in Edge.</li>
+<li>Modify the extension source to make it easier to read/debug.</li>
+</ol>
+</li>
+<li>Reverse engineer obfuscated JavaScript with VS Code.
+<ol>
+<li>Find open source sections of code.</li>
+<li>Identify and reverse engineer custom application code.</li>
+</ol>
+</li>
+<li>Log and instrument extensions.</li>
+<li>JavaScript cryptography with SubtleCrypto.
+<ol>
+<li>Bonus: Why 96 bits is the ideal IV size for AES-GCM.</li>
+</ol>
+</li>
+<li>Dynamic analysis of JavaScript code with DevTools.
+<ol>
+<li>Console.</li>
+<li>Snippets.</li>
+</ol>
+</li>
+<li>Export extension's functions for manual fuzzing.
+<ol>
+<li>Call functions in the extension without debugging.</li>
+</ol>
+</li>
+</ol>
+<h1 id=requirements>Requirements
+<a class=header-link href=#requirements><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><ul>
+<li><a href=https://developer.microsoft.com/en-us/microsoft-edge/tools/vms/ target=_blank rel="noreferrer noopener">Windows 10 VM</a>.</li>
+<li>Microsoft Edge (should work on Chrome, too).
+<ul>
+<li>Comes with the VM.</li>
+</ul>
+</li>
+<li><a href=https://my.nordaccount.com/login/ target=_blank rel="noreferrer noopener">Free Nord account</a>.</li>
+<li><a href=https://nordpass.com/password-manager/ target=_blank rel="noreferrer noopener">Nordpass Password Manager desktop application</a>.
+<ul>
+<li>I am using version <code>2.33.14</code> but this should work on any recent version.</li>
+</ul>
+</li>
+<li><a href=https://www.wireshark.org/download.html target=_blank rel="noreferrer noopener">Wireshark and npcap</a>.</li>
+<li>Visual Studio Code.</li>
+</ul>
+<h1 id=brief-recon>Brief Recon
+<a class=header-link href=#brief-recon><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Install the Nordpass desktop application and start it. The Windows firewall
+dialog might appear because the current version of the Nordpass desktop is
+listening on all interfaces. This might be fixed by the time you read this.</p>
+<h2 id=the-local-server>The Local Server
+<a class=header-link href=#the-local-server><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Open an admin command prompt and run <code>netstat -anb > c:/path/to/some/file</code>. Open
+the file and search for <code>nord</code>.</p>
+<pre tabindex=0><code>TCP    0.0.0.0:9213           0.0.0.0:0              LISTENING
+[NordPass.exe]
+
+TCP    [::]:9213              [::]:0                 LISTENING
+[NordPass.exe]
+</code></pre><p>The <code>b</code> switch puts the process name on a separate line so,
+<code>netstat -anb | findstr /spin "nordpass"</code> is useless for this output.</p>
+<pre tabindex=0><code>$ netstat -anb | findstr /spin &quot;nordpass&quot;
+16: [NordPass.exe]
+51: [nordpass-background-app.exe]
+53: [nordpass-background-app.exe]
+62: [NordPass.exe]
+</code></pre><p><strong>First Issue:</strong> <code>Thse server is listening on all interfaces</code>. It should not.
+People from outside might be able to connect to the server. In the real world,
+this is less scarier than it sounds because in most personal networks the
+router/modem only allows connections from other machines on the local network
+and not from the outside.</p>
+<h2 id=the-desktop-application>The Desktop Application
+<a class=header-link href=#the-desktop-application><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>The desktop app is installed in <code>%LocalAppData%\Programs\nordpass</code>. A brief look
+at the installation directory tells us it's an Electron app (there's a file
+named <code>LICENSE.electron.txt</code> lol).</p>
+<p>The source for an Electron app is in <code>resources\app.asar</code>. We can extract it by
+running the <code>asar</code> command (install with npm):</p>
+<ul>
+<li><code>asar e app.asar c:/projects/nordpass/app.asar.original</code>.</li>
+</ul>
+<p>Note the <code>resources\app.asar.unpacked</code> directory. If you copy the <code>app.asar</code>
+file to a different path and try to extract it you will get an error. The
+<code>app.asar</code> file references this directory and the extraction does not work if it
+is not present.</p>
+<p><strong>Note</strong>: Closing the Nordpass app just minimizes it to tray. Right-click on the
+tray icon and select quit to properly close it.</p>
+<h2 id=the-background-application>The Background Application
+<a class=header-link href=#the-background-application><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>The background app is at <code>resources\nordpass-background-app.exe</code>. It's a
+compiled binary. Analyze it with <a href=https://github.com/horsicq/Detect-It-Easy target=_blank rel="noreferrer noopener">Detect-It-Easy</a> to see it's packed
+with UPX.</p>
+<span class=caption-wrapper>
+<img class=caption src=01-background-die.png title="Detect-It-Easy results for the background app" alt="Detect-It-Easy results for the background app">
+<span class=caption-text>Detect-It-Easy results for the background app</span>
+</span>
+<p>We can also open it with 7-Zip to see the UPX sections.</p>
+<span class=caption-wrapper>
+<img class=caption src=02-background-7zip.png title="Background app opened in 7-zip" alt="Background app opened in 7-zip">
+<span class=caption-text>Background app opened in 7-zip</span>
+</span>
+<p>It's <del>actually</del> a Go app.</p>
+<pre tabindex=0><code>$ strings -n 10 nordpass-background-app.exe | findstr &quot;Go&quot;
+ Go build ID:
+</code></pre>
+<h1 id=the-browser-extension>The Browser Extension
+<a class=header-link href=#the-browser-extension><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>There are a few analysis tools like <a href=https://github.com/ElevenPaths/neto target=_blank rel="noreferrer noopener">ElevenPaths' Neto</a> or
+<a href=https://crxcavator.io target=_blank rel="noreferrer noopener">Duo's crxcavator</a> for browser extensions. I could not find
+anything about manual testing so, I wrote my own.</p>
+<h2 id=setting-up-the-extension>Setting Up The Extension
+<a class=header-link href=#setting-up-the-extension><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Start Wireshark and listen on the loopback interfaces. It's
+<code>Adapter for loopback traffic capture</code> (installed by npcap). Use filter
+<code>tcp.port == 9213</code>.</p>
+<p>Go to the <a href=https://chrome.google.com/webstore/detail/nordpass%C2%AE-password-manage/fooolghllnmhmmndgjiamiiodkpenpbb target=_blank rel="noreferrer noopener">extension web page</a> in Edge. You will see a
+prompt about allowing other stores. This lets Edge install extensions from the
+Chrome web store.</p>
+<p>After installing the extension (if the desktop app is running), it will show a
+four-digit code. The desktop app will display a window where you can enter it.
+This pairs the extension with the app. Let's call this the <code>pairing code</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=03-extension-pairing.png title="Pairing the extension" alt="Pairing the extension">
+<span class=caption-text>Pairing the extension</span>
+</span>
+<h2 id=the-old-new-thing---yet-another-local-websocket-server>The Old New Thing - Yet Another Local WebSocket Server
+<a class=header-link href=#the-old-new-thing---yet-another-local-websocket-server><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Switch to Wireshark and see the <code>Switching Protocols</code> text. It's the handshake
+request of a WebSocket connection.</p>
+<span class=caption-wrapper>
+<img class=caption src=04-wireshark-handshake.png title="Pairing traffic in Wireshark" alt="Pairing traffic in Wireshark">
+<span class=caption-text>Pairing traffic in Wireshark</span>
+</span>
+<p><code>Right-click the handshake in Wireshark > Follow > HTTP Stream</code> (some misc
+headers removed):</p>
+<pre tabindex=0><code>GET / HTTP/1.1
+Host: localhost:9213
+Connection: Upgrade
+Upgrade: websocket
+Origin: chrome-extension://fooolghllnmhmmndgjiamiiodkpenpbb
+Sec-WebSocket-Version: 13
+Sec-WebSocket-Key: AR0a/AoK76S/znNsjVC8KQ==
+Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits
+
+
+HTTP/1.1 101 Switching Protocols
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Accept: SfGJJieKb0arlzTiMRAhTszBanA=
+</code></pre><p>The <code>Origin</code> header shows this is coming from the extension. This is a
+cross-origin request (<code>chrome-extesion://...</code> to <code>http://localhost:9213</code>).</p>
+<p>But Parsia, we do not see the <code>Access-Control-Allow-Origin</code> response header,
+CORS is not enabled. The extension cannot see this response!!1!</p>
+<span class=caption-wrapper>
+<img class=caption src=34-websocket-sop-mirrors-edge.png title="Well, didja know?" alt="Well, didja know?">
+<span class=caption-text>Well, didja know?</span>
+</span>
+<p>Optional reading assignments:</p>
+<ul>
+<li>Read the so-called <a href=https://hackerone.com/reports/873614 target=_blank rel="noreferrer noopener">PlayStation Now RCE</a> report. The root
+cause was a similar local WebSocket server.</li>
+<li>Read
+<a href=/blog/2020-11-01-the-same-origin-policy-gone-wild/ title="The Same-Origin Policy Gone Wild" rel=nofollow target=_blank>The Same-Origin Policy Gone Wild</a> by yours truly for some curious SOP edge cases.</li>
+<li>(optional) Watch my presentation
+<a href=/blog/2020-08-13-localghost-escaping-the-browser-sandbox-without-0-days/ title="localghost: Escaping the Browser Sandbox Without 0-Days" rel=nofollow target=_blank>localghost: Escaping the Browser Sandbox Without 0-Days</a> for some "thought leadership."</li>
+</ul>
+<p>The traffic is over HTTP which is not really that bad. Before you scream <code>HTTPs</code>
+let's enumerate their options for deploying a TLS server with a valid
+certificate.</p>
+<ol>
+<li>Generate a self-signed certificate and add it to the OS key store.
+<ol>
+<li>No one like this, see <a href=https://support.lenovo.com/ca/en/product_security/ps500035-superfish-vulnerability target=_blank rel="noreferrer noopener">Superfish</a>.</li>
+</ol>
+</li>
+<li>Use a valid certificate for <code>localhost</code>. Assuming you can convince someone to sign it.
+<ol>
+<li>Boo! You just gave everyone a valid cert for localhost.</li>
+</ol>
+</li>
+</ol>
+<h2 id=the-messaging-protocol>The Messaging Protocol
+<a class=header-link href=#the-messaging-protocol><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Each message is a JSON object.</p>
+<p>The first message after installation from the extension to the server:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
+    <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>1</span>,
+    <span style=color:#268bd2>&#34;type&#34;</span>: <span style=color:#2aa198>&#34;EXTENSION/LOGIN&#34;</span>,
+    <span style=color:#268bd2>&#34;key&#34;</span>: <span style=color:#2aa198>&#34;ea3b758623d2cfc13b1957...&#34;</span>, <span style=color:#586e75>// long hex value
+</span><span style=color:#586e75></span>    <span style=color:#268bd2>&#34;isFullScreen&#34;</span>: <span style=color:#cb4b16>false</span>,
+    <span style=color:#268bd2>&#34;extensionId&#34;</span>: <span style=color:#2aa198>&#34;fdrk45blr&#34;</span>,
+    <span style=color:#268bd2>&#34;browser&#34;</span>: <span style=color:#2aa198>&#34;edge&#34;</span>
+}
+</code></pre></div><p>The server replies with a similar message:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
+    <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>1</span>,
+    <span style=color:#268bd2>&#34;type&#34;</span>: <span style=color:#2aa198>&#34;EXTENSION/LOGIN&#34;</span>,
+    <span style=color:#268bd2>&#34;key&#34;</span>: <span style=color:#2aa198>&#34;006e36c4dda85cce40711f49&#34;</span>, <span style=color:#586e75>// long hex value
+</span><span style=color:#586e75></span>    <span style=color:#268bd2>&#34;isDesktopLaunchedOnSameUser&#34;</span>: <span style=color:#cb4b16>true</span>
+}
+</code></pre></div><p>We have no idea what these are. Converting the hex values to ASCII does not give
+us anything.</p>
+<p>Next, the extension displays the four-digit code. After entering it in the
+desktop app we see encrypted messages.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>ext -&gt; srv
+{
+    <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>2</span>,
+    <span style=color:#268bd2>&#34;data&#34;</span>: <span style=color:#2aa198>&#34;7919c0de7a34f60936145940dea3b758623d2cfc13b195739b1171adaa13...&#34;</span>
+}
+
+srv -&gt; ext
+{
+    <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>2</span>,
+    <span style=color:#268bd2>&#34;data&#34;</span>: <span style=color:#2aa198>&#34;64b5b7b9006e36c4dda85cce40711f49d6e830e2e50b1c483421cabdbc4b...&#34;</span>
+}
+</code></pre></div><p>After the first installation, we will not see the handshake again. We just see
+encrypted messages.</p>
+<h2 id=debugging-the-extension>Debugging The Extension
+<a class=header-link href=#debugging-the-extension><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>In Edge, go to <code>edge://extensions</code>. Enable <code>Developer mode</code> with the slider in
+the bottom left of the page.</p>
+<span class=caption-wrapper>
+<img class=caption src=07-before-developer-mode.png title="Edge extension developer mode" alt="Edge extension developer mode">
+<span class=caption-text>Edge extension developer mode</span>
+</span>
+<p>Now, we can click on the different active extension pages and debug them with
+DevTools.</p>
+<span class=caption-wrapper>
+<img class=caption src=08-after-developer-mode.png title="After developer mode is enabled" alt="After developer mode is enabled">
+<span class=caption-text>After developer mode is enabled</span>
+</span>
+<p>We are interested in the <code>background</code> page.</p>
+<span class=caption-wrapper>
+<img class=caption src=09-extension-dev-tools.png title="Background page in DevTools" alt="Background page in DevTools">
+<span class=caption-text>Background page in DevTools</span>
+</span>
+<p>The extension's JavaScript is minified and painful to debug. We can click on the
+<code>{}</code> button to beautify the code here. Let's do better.</p>
+<h3 id=loading-unpacked-extensions>Loading Unpacked Extensions
+<a class=header-link href=#loading-unpacked-extensions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>On Windows, Edge extensions are stored at
+<code>%userprofile%\AppData\Local\Microsoft\Edge\User Data\Default\Extensions\</code>.
+Our extension is in
+<code>fooolghllnmhmmndgjiamiiodkpenpbb</code> (this is the extension's ID in the Chrome web
+store). Copy this directory to another path. We will modify this.</p>
+<p>In <code>edge://extensions</code> remove the original extension. Next, click on the
+<code>Load unpacked</code> button. Select the <code>fooolghllnmhmmndgjiamiiodkpenpbb\3.26.0_0</code>
+directory. When loading an unpacked extension you should select the path with
+the <code>manifest.json</code> file. Parent directories do not work.</p>
+<span class=caption-wrapper>
+<img class=caption src=10-extension-dir.png title="Extension directory" alt="Extension directory">
+<span class=caption-text>Extension directory</span>
+</span>
+<p>Using our copy as an unpacked extension means we can directly modify the source
+and reload the extension to see the changes.</p>
+<h3 id=beautifying-javascript>Beautifying JavaScript
+<a class=header-link href=#beautifying-javascript><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>There are multiple online services like <a href=https://gchq.github.io/CyberChef/ target=_blank rel="noreferrer noopener">CyberChef</a> to beautify
+JavaScript. I use a local Python (also node) module named
+<a href=https://github.com/beautify-web/js-beautify target=_blank rel="noreferrer noopener">js-beautify</a>.</p>
+<pre tabindex=0><code>$ cd fooolghllnmhmmndgjiamiiodkpenpbb\3.26.0_0
+$ js-beautify -r *.js
+beautified redirectContent.js
+beautified app.js
+beautified background.js
+beautified content.js
+beautified autofill.js
+beautified analytics.js
+</code></pre><p>Reload the extension (click the <code>reload</code> link in <code>edge://extensions</code>) and we
+should see beautified JavaScript in DevTools.</p>
+<span class=caption-wrapper>
+<img class=caption src=11-beautified-extension.png title="Beautified Extension" alt="Beautified Extension">
+<span class=caption-text>Beautified Extension</span>
+</span>
+<p>We can set breakpoints and debug the extension but we are still dealing with
+obfuscated JavaScript.</p>
+<h1 id=reverse-engineering-obfuscated-javascript>Reverse Engineering Obfuscated JavaScript
+<a class=header-link href=#reverse-engineering-obfuscated-javascript><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>By now, you are wondering why we manually beautified the extension instead of
+letting the browser do it for us. I want to use VS Code's
+<a href=https://code.visualstudio.com/docs/editor/refactoring#_rename-symbol target=_blank rel="noreferrer noopener">rename symbol</a> ability to reverse engineer the extension's code.</p>
+<p>Right-click on the extension directory and open it in VS Code. Open
+<code>background.js</code>. Click on any variable (some times you have wait 10-20 seconds
+for the editor to parse the file) and press <code>F2</code>. Choose a new name and it will
+be renamed every where.</p>
+<h2 id=renaming-symbols-with-vs-code-rename>Renaming Symbols With VS Code Rename
+<a class=header-link href=#renaming-symbols-with-vs-code-rename><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>To be fair JavaScript scope is a mess and doubly so for obfuscated code. The
+renamer:</p>
+<ol>
+<li>Does not check if there is an existing variable with the same name in scope.</li>
+<li>Has some issues with the scope of parameters for inline functions so be
+careful when renaming <code>e</code> function parameters.</li>
+<li>The editor reparses the whole file after every save. Do multiple changes
+before saving to speed things up. This has been hit-and-miss, sometimes it's
+super quick and sometimes not.</li>
+<li>If VS Code is taking too long to parse the file, close it and open it again.</li>
+</ol>
+<p><strong>Most important tip:</strong> Create a backup every time you reload the extension and
+it still works. Sometimes, the refactor messes up the JavaScript and you want a
+working copy with most of your progress. I use git and create a commit after
+every few renames. If things go bad, revert.</p>
+<h2 id=reversing-workflow>Reversing Workflow
+<a class=header-link href=#reversing-workflow><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><ol>
+<li>Debug the extension, add some breakpoints, etc..</li>
+<li>Rename some variables (or add comments).</li>
+<li>In <code>edge://extensions</code> click <code>Reload</code> in front of the extension.</li>
+<li>The extension will be reloaded but your DevTools page is not closed and the
+breakpoints are not cleared. The breakpoints even persist after you close Edge.</li>
+<li>If the extension is still working and there are no errors, create a backup
+(<code>git commit</code>).</li>
+<li>If something is broken, spend a few minutes to fix it but I usually
+<code>git reset</code> to a good state instead.</li>
+<li>Go to 1.</li>
+</ol>
+<h2 id=online-tools>Online Tools
+<a class=header-link href=#online-tools><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>I have found a few online tools that help with deobfuscating JavaScript.</p>
+<ul>
+<li>JS Nice: <a href=http://jsnice.org/ target=_blank rel="noreferrer noopener">http://jsnice.org/</a></li>
+<li>JStillery: <a href=https://mindedsecurity.github.io/jstillery/ target=_blank rel="noreferrer noopener">https://mindedsecurity.github.io/jstillery/</a></li>
+<li>de4js: <a href=https://lelinhtinh.github.io/de4js/ target=_blank rel="noreferrer noopener">https://lelinhtinh.github.io/de4js/</a></li>
+</ul>
+<p>I have not gotten great results from them. E.g., <code>JS Nice</code> has trouble parsing
+big obfuscated blobs and its output is not valid JavaScript most of the time. I
+have had a little success pasting individual functions or modules.</p>
+<p>There are two types of code in such projects:</p>
+<ol>
+<li>Open source modules.</li>
+<li>Application code.</li>
+</ol>
+<h2 id=reversing-open-source-code>Reversing Open Source Code
+<a class=header-link href=#reversing-open-source-code><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>I have learned some things about these kinds of files by trial and error. E.g.,
+<code>number:</code> is the start of a module. This is the first module in <code>background.js</code>:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js>(() =&gt; {
+    <span style=color:#268bd2>var</span> e <span style=color:#719e07>=</span> {
+            <span style=color:#2aa198>2844</span><span style=color:#719e07>:</span> (e, a, t) =&gt; {
+                <span style=color:#2aa198>&#34;use strict&#34;</span>;
+                t.d(a, {
+                    Rf<span style=color:#719e07>:</span> () =&gt; r,
+                    DM<span style=color:#719e07>:</span> () =&gt; i,
+                    Cf<span style=color:#719e07>:</span> () =&gt; s
+                });
+                <span style=color:#268bd2>var</span> o <span style=color:#719e07>=</span> t(<span style=color:#2aa198>1422</span>),
+                    n <span style=color:#719e07>=</span> {};
+
+                <span style=color:#268bd2>function</span> r() {
+                    <span style=color:#719e07>return</span> (<span style=color:#2aa198>0</span>, o.K)() <span style=color:#719e07>?</span> t.g <span style=color:#719e07>:</span> <span style=color:#2aa198>&#34;undefined&#34;</span> <span style=color:#719e07>!==</span> <span style=color:#719e07>typeof</span> <span style=color:#b58900>window</span> <span style=color:#719e07>?</span> <span style=color:#b58900>window</span> <span style=color:#719e07>:</span> <span style=color:#2aa198>&#34;undefined&#34;</span> <span style=color:#719e07>!==</span> <span style=color:#719e07>typeof</span> self <span style=color:#719e07>?</span> self <span style=color:#719e07>:</span> n
+                }
+
+                <span style=color:#268bd2>function</span> i() {
+                    <span style=color:#268bd2>var</span> e <span style=color:#719e07>=</span> r(),
+                        a <span style=color:#719e07>=</span> e.crypto <span style=color:#719e07>||</span> e.msCrypto;
+                    <span style=color:#719e07>if</span> (<span style=color:#719e07>void</span> <span style=color:#2aa198>0</span> <span style=color:#719e07>!==</span> a <span style=color:#719e07>&amp;&amp;</span> a.getRandomValues) {
+                        <span style=color:#268bd2>var</span> t <span style=color:#719e07>=</span> <span style=color:#719e07>new</span> Uint16Array(<span style=color:#2aa198>8</span>);
+                        a.getRandomValues(t), t[<span style=color:#2aa198>3</span>] <span style=color:#719e07>=</span> <span style=color:#2aa198>4095</span> <span style=color:#719e07>&amp;</span> t[<span style=color:#2aa198>3</span>] <span style=color:#719e07>|</span> <span style=color:#2aa198>16384</span>, t[<span style=color:#2aa198>4</span>] <span style=color:#719e07>=</span> <span style=color:#2aa198>16383</span> <span style=color:#719e07>&amp;</span> t[<span style=color:#2aa198>4</span>] <span style=color:#719e07>|</span> <span style=color:#2aa198>32768</span>;
+                        <span style=color:#268bd2>var</span> o <span style=color:#719e07>=</span> <span style=color:#268bd2>function</span>(e) {
+                            <span style=color:#719e07>for</span> (<span style=color:#268bd2>var</span> a <span style=color:#719e07>=</span> e.toString(<span style=color:#2aa198>16</span>); a.length <span style=color:#719e07>&lt;</span> <span style=color:#2aa198>4</span>;) a <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;0&#34;</span> <span style=color:#719e07>+</span> a;
+                            <span style=color:#719e07>return</span> a
+                        };
+                        <span style=color:#719e07>return</span> o(t[<span style=color:#2aa198>0</span>]) <span style=color:#719e07>+</span> o(t[<span style=color:#2aa198>1</span>]) <span style=color:#719e07>+</span> o(t[<span style=color:#2aa198>2</span>]) <span style=color:#719e07>+</span> o(t[<span style=color:#2aa198>3</span>]) <span style=color:#719e07>+</span> o(t[<span style=color:#2aa198>4</span>]) <span style=color:#719e07>+</span> o(t[<span style=color:#2aa198>5</span>]) <span style=color:#719e07>+</span> o(t[<span style=color:#2aa198>6</span>]) <span style=color:#719e07>+</span> o(t[<span style=color:#2aa198>7</span>])
+                    }
+                    <span style=color:#719e07>return</span> <span style=color:#2aa198>&#34;xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx&#34;</span>.replace(<span style=color:#dc322f>/[xy]/g</span>, (<span style=color:#268bd2>function</span>(e) {
+                        <span style=color:#268bd2>var</span> a <span style=color:#719e07>=</span> <span style=color:#2aa198>16</span> <span style=color:#719e07>*</span> <span style=color:#b58900>Math</span>.random() <span style=color:#719e07>|</span> <span style=color:#2aa198>0</span>;
+                        <span style=color:#719e07>return</span> (<span style=color:#2aa198>&#34;x&#34;</span> <span style=color:#719e07>===</span> e <span style=color:#719e07>?</span> a <span style=color:#719e07>:</span> <span style=color:#2aa198>3</span> <span style=color:#719e07>&amp;</span> a <span style=color:#719e07>|</span> <span style=color:#2aa198>8</span>).toString(<span style=color:#2aa198>16</span>)
+                    }))
+                }
+
+                <span style=color:#268bd2>function</span> s(e) {
+                    <span style=color:#268bd2>var</span> a <span style=color:#719e07>=</span> r();
+                    <span style=color:#719e07>if</span> (<span style=color:#719e07>!</span>(<span style=color:#2aa198>&#34;console&#34;</span> <span style=color:#719e07>in</span> a)) <span style=color:#719e07>return</span> e();
+                    <span style=color:#268bd2>var</span> t <span style=color:#719e07>=</span> a.console,
+                        o <span style=color:#719e07>=</span> {};
+                    [<span style=color:#2aa198>&#34;debug&#34;</span>, <span style=color:#2aa198>&#34;info&#34;</span>, <span style=color:#2aa198>&#34;warn&#34;</span>, <span style=color:#2aa198>&#34;error&#34;</span>, <span style=color:#2aa198>&#34;log&#34;</span>, <span style=color:#2aa198>&#34;assert&#34;</span>].forEach((<span style=color:#268bd2>function</span>(e) {
+                        e <span style=color:#719e07>in</span> a.console <span style=color:#719e07>&amp;&amp;</span> t[e].__sentry_original__ <span style=color:#719e07>&amp;&amp;</span> (o[e] <span style=color:#719e07>=</span> t[e], t[e] <span style=color:#719e07>=</span> t[e].__sentry_original__)
+                    }));
+                    <span style=color:#268bd2>var</span> n <span style=color:#719e07>=</span> e();
+                    <span style=color:#719e07>return</span> <span style=color:#b58900>Object</span>.keys(o).forEach((<span style=color:#268bd2>function</span>(e) {
+                        t[e] <span style=color:#719e07>=</span> o[e]
+                    })), n
+                }
+            },
+</code></pre></div><p>Usually modules are imported by others. Search for <code>2844</code> to see where it's
+imported:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#2aa198>1170</span><span style=color:#719e07>:</span> (e, a, t) =&gt; {
+    <span style=color:#2aa198>&#34;use strict&#34;</span>;
+    t.d(a, {
+        yW<span style=color:#719e07>:</span> () =&gt; c
+    });
+    <span style=color:#268bd2>var</span> o <span style=color:#719e07>=</span> t(<span style=color:#2aa198>2844</span>), <span style=color:#586e75>// t is `require`.
+</span></code></pre></div><p>Most of the code is usually open source modules. We can find them with a bit of
+searching. This module has a unique string
+(<code>xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx</code>). We can use <a href="https://grep.app/search?q=xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx" target=_blank rel="noreferrer noopener">grep.app</a> to
+search it on GitHub.</p>
+<p>It's a JavaScript UUID generator. I could not easily find the actual module for
+it. Usually, it's easier than that. Wait, there's the <code>sentry_original</code> word in
+the original code. It might be the <a href=https://www.npmjs.com/package/@sentry/node target=_blank rel="noreferrer noopener">sentry SDK</a> (3rd result).</p>
+<p>We find the string in <a href=https://github.com/getsentry/sentry-javascript/blob/master/packages/utils/src/misc.ts target=_blank rel="noreferrer noopener">misc.ts</a>. It's a TypeScript file. Often, we find
+the exact module and it's a matter of looking at the actual module and
+effortlessly renaming.</p>
+<span class=caption-wrapper>
+<img class=caption src=13-side-by-side.png title="Functions side by side (open the image in a new tab to see it in full-size)" alt="Functions side by side (open the image in a new tab to see it in full-size)">
+<span class=caption-text>Functions side by side (open the image in a new tab to see it in full-size)</span>
+</span>
+<p>Rename <code>function i()</code> to <code>function uuid4()</code>:</p>
+<ol>
+<li>Click on <code>i</code> or put you cursor besides it.</li>
+<li>Press <code>F2</code>.</li>
+<li>Enter <code>uuid4</code> and press Enter.</li>
+<li>The function will be renamed.</li>
+<li>Save changes.</li>
+</ol>
+<span class=caption-wrapper>
+<img class=caption src=12-rename-uuid4.gif title="Renaming function i" alt="Renaming function i">
+<span class=caption-text>Renaming function i</span>
+</span>
+<p>We can do more, <code>var e = r(),</code> is <code>const global = getGlobalObject()</code>. But this
+is not as important as renaming functions.</p>
+<p>Unfortunately, we did not find the exact source we saw how to do this. As an
+exercise, try reversing the <code>s(e)</code> function (after <code>uuid4</code>). The final result is
+easier to read:</p>
+<span class=caption-wrapper>
+<img class=caption src=14-2844-reversed.png title="2844 reversed" alt="2844 reversed">
+<span class=caption-text>2844 reversed</span>
+</span>
+<h2 id=the-pairing-code>The Pairing Code
+<a class=header-link href=#the-pairing-code><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>It's very tempting to go through all the modules and rename as much as we can
+but we can spend our time better.</p>
+<p><strong>Note:</strong> There are multiple ways to get to the application's logic code. Some
+examples:</p>
+<ul>
+<li>Search for the <code>EXTENSION/LOGIN</code> string (we saw it in the handshake). Strings
+are usually not obfuscated.</li>
+<li>Search for the <a href=https://github.com/websockets/ws target=_blank rel="noreferrer noopener">WebSocket (ws) module</a> strings and fields.
+<ul>
+<li>E.g., <code>ws://</code>.</li>
+</ul>
+</li>
+</ul>
+<p>I knew the WebSocket used port <code>9213</code> so I searched for that. I landed in a very
+interesting part of code with a bunch of crypto(graphy) function calls.</p>
+<span class=caption-wrapper>
+<img class=caption src=15-9213-in-code.png title="9213 in code" alt="9213 in code">
+<span class=caption-text>9213 in code</span>
+</span>
+<p>The <code>K</code> array contains the server's ports. It goes through them one by one and
+tries to connect. The desktop app probably does the same when setting up the
+server.</p>
+<p>We do not need to know how each function exactly works. For example, the <code>ee</code>
+function tries one port, waits for a bit and tries another.</p>
+<span class=caption-wrapper>
+<img class=caption src=16-port-section-renamed.png title="Port section renamed" alt="Port section renamed">
+<span class=caption-text>Port section renamed</span>
+</span>
+<p>Searching for <code>getPort</code> gets to the WebSocket section. See <code>we(e)</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=17-websocket-func.png title="The WebSocket function" alt="The WebSocket function">
+<span class=caption-text>The WebSocket function</span>
+</span>
+<p><code>se</code> is the WebSocket object. The event handlers for <code>onmessage</code> (it's <code>fe</code>) and
+others are assigned here. We can rename them now.</p>
+<p>The <code>U</code> function is an interesting case:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>const</span> a <span style=color:#719e07>=</span> <span style=color:#268bd2>await</span> U.get({
+    [appInstalled_str]<span style=color:#719e07>:</span> <span style=color:#719e07>!</span><span style=color:#2aa198>1</span> <span style=color:#586e75>// [&#34;appInstalled&#34;]: false
+</span><span style=color:#586e75></span>});
+</code></pre></div><p><code>ctrl+click</code> on it to go to its definition.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js>G <span style=color:#719e07>=</span> t(<span style=color:#2aa198>3150</span>);
+<span style=color:#268bd2>const</span> U <span style=color:#719e07>=</span> {
+    get<span style=color:#719e07>:</span> <span style=color:#268bd2>async</span> <span style=color:#268bd2>function</span>(e) {
+        <span style=color:#719e07>return</span> G.storage.local.get(e)
+    },
+    set<span style=color:#719e07>:</span> <span style=color:#268bd2>async</span> <span style=color:#268bd2>function</span>(e) {
+        <span style=color:#719e07>return</span> G.storage.local.set(e)
+    },
+    remove<span style=color:#719e07>:</span> <span style=color:#268bd2>function</span>(e) {
+        <span style=color:#719e07>return</span> G.storage.local.remove(e)
+    }
+};
+</code></pre></div><p>It deals with local storage. We can just call it <code>LocalStorage</code>. The API is at
+<a href=https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage/local target=_blank rel="noreferrer noopener">https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage/local</a>.
+Think of it as an extension specific key-value store.</p>
+<p><code>G</code> is either the <code>browser</code> object or <code>chrome</code> (we are in a Chrome web store
+extension after all). But does it matter? We know enough to rename <code>U</code> to
+<code>LocalStorage</code>.</p>
+<p>If you click on <code>_</code> in the original code (now it's <code>appInstalled_str</code>) we get to
+a bunch of constants that we can rename. I like to add <code>_str</code> to the end of
+their variables to remember they are constants. You can also replace the
+variable with the actual string manually (<code>["appInstalled"]: false</code>):</p>
+<span class=caption-wrapper>
+<img class=caption src=19-some-constants.png title="Some renamed constants" alt="Some renamed constants">
+<span class=caption-text>Some renamed constants</span>
+</span>
+<p>The function's final form:</p>
+<span class=caption-wrapper>
+<img class=caption src=18-createWebSocket.png title=createWebSocket alt=createWebSocket>
+<span class=caption-text>createWebSocket</span>
+</span>
+<p>Logically, our next targets are the WebSocket event handlers. They have custom
+application code. The handshake starts in <code>websocketOnOpen</code>. <code>ctrl+click</code> to get
+here:</p>
+<span class=caption-wrapper>
+<img class=caption src=20-websocketonopen-raw.png title="websocketOnOpen before renames" alt="websocketOnOpen before renames">
+<span class=caption-text>websocketOnOpen before renames</span>
+</span>
+<p><code>ctrl+click</code> on the <code>ae(LOADING_str)</code> function (called as <code>ae("LOADING")</code>).
+Turns out we have seen it before. It's near the <code>getPort</code> function.</p>
+<span class=caption-wrapper>
+<img class=caption src=21-ae-raw.png title="ae function" alt="ae function">
+<span class=caption-text>ae function</span>
+</span>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js>ae <span style=color:#719e07>=</span> <span style=color:#268bd2>async</span> applicationState =&gt; {
+    localStorage.set({
+        <span style=color:#586e75>// Set application state to local storage
+</span><span style=color:#586e75></span>        [appState_str]<span style=color:#719e07>:</span> applicationState <span style=color:#586e75>// [&#34;appState&#34;]: applicationState
+</span><span style=color:#586e75></span>    }), applicationState <span style=color:#719e07>!==</span> <span style=color:#2aa198>&#34;READY&#34;</span> <span style=color:#719e07>&amp;&amp;</span> Re.browserActionSetIcon({
+        path<span style=color:#719e07>:</span> <span style=color:#2aa198>&#34;icons/icon-locked-48.png&#34;</span>
+    }) 
+};
+</code></pre></div><p>See how renaming helps as we dive deeper into the application code?</p>
+<ol>
+<li><code>ae</code> sets the value <code>appState</code> key in the extension's local storage to the
+function's parameter (<code>LOADING</code> here).</li>
+<li>If the function parameter is not <code>READY</code> it calls <code>Re.browserActionSetIcon</code>
+with an object with a field named <code>path</code>. <code>path</code> points to an icon in the
+extension.</li>
+</ol>
+<p>I renamed <code>ae</code> to <code>setAppState</code>. We can easily guess <code>Re.browserActionSetIcon</code>
+is setting the extension's icon to <code>icons/icon-locked-48.png</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=22-icon-locked.png title="Extension's `locked` icon" alt="Extension's `locked` icon">
+<span class=caption-text>Extension's `locked` icon</span>
+</span>
+<p>Next, <code>websocketOnOpen</code> is trying to retrieve the value of <code>key</code> from local
+storage.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>async</span> <span style=color:#268bd2>function</span> websocketOnOpen() {
+    <span style=color:#719e07>try</span> {
+        setAppState(LOADING_str);
+        <span style=color:#268bd2>const</span> e <span style=color:#719e07>=</span> (<span style=color:#268bd2>await</span> localStorage.get({ <span style=color:#586e75>// get the value of &#34;key&#34; from local storage
+</span><span style=color:#586e75></span>            [key_str]<span style=color:#719e07>:</span> <span style=color:#cb4b16>null</span> <span style=color:#586e75>// [&#34;key&#34;]: null
+</span><span style=color:#586e75></span>        }))[key_str];       <span style=color:#586e75>// [&#34;key&#34;]
+</span><span style=color:#586e75></span>        <span style=color:#719e07>if</span> (e) {
+            ue <span style=color:#719e07>=</span> <span style=color:#268bd2>await</span>
+            <span style=color:#268bd2>function</span>(e) {
+</code></pre></div><p>A few more symbol renames:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>async</span> <span style=color:#268bd2>function</span> websocketOnOpen() {
+    <span style=color:#719e07>try</span> {
+        setAppState(<span style=color:#2aa198>&#34;LOADING&#34;</span>); <span style=color:#586e75>// set application state to &#34;LOADING&#34;
+</span><span style=color:#586e75></span>        <span style=color:#268bd2>const</span> key <span style=color:#719e07>=</span> (<span style=color:#268bd2>await</span> localStorage.get({ <span style=color:#586e75>// get the value of &#34;key&#34; in local storage
+</span><span style=color:#586e75></span>            [<span style=color:#2aa198>&#34;key&#34;</span>]<span style=color:#719e07>:</span> <span style=color:#cb4b16>null</span> <span style=color:#586e75>// [&#34;key&#34;]: null
+</span><span style=color:#586e75></span>        }))[<span style=color:#2aa198>&#34;key&#34;</span>];       <span style=color:#586e75>// [&#34;key&#34;]
+</span><span style=color:#586e75></span>        <span style=color:#719e07>if</span> (key) { <span style=color:#586e75>// if &#34;key exists&#34; do these
+</span><span style=color:#586e75></span>            ue <span style=color:#719e07>=</span> <span style=color:#268bd2>await</span>
+            <span style=color:#268bd2>function</span>(e) {
+</code></pre></div><p>If the <code>key</code> exists we step into the <code>if(key)</code> block. It starts with this
+in-line function call.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>async</span> <span style=color:#268bd2>function</span> websocketOnOpen() {
+    <span style=color:#719e07>try</span> {
+        setAppState(<span style=color:#2aa198>&#34;LOADING&#34;</span>); <span style=color:#586e75>// set application state to &#34;LOADING&#34;
+</span><span style=color:#586e75></span>        <span style=color:#268bd2>const</span> key <span style=color:#719e07>=</span> (<span style=color:#268bd2>await</span> localStorage.get({ <span style=color:#586e75>// get the value of &#34;key&#34; in local storage
+</span><span style=color:#586e75></span>            [<span style=color:#2aa198>&#34;key&#34;</span>]<span style=color:#719e07>:</span> <span style=color:#cb4b16>null</span>
+        }))[<span style=color:#2aa198>&#34;key&#34;</span>];
+        <span style=color:#719e07>if</span> (key) { <span style=color:#586e75>// if &#34;key exists&#34; do these
+</span><span style=color:#586e75></span>            a <span style=color:#719e07>=</span> <span style=color:#268bd2>await</span>
+            <span style=color:#268bd2>function</span>(e) { <span style=color:#586e75>// What is this?
+</span><span style=color:#586e75></span>                <span style=color:#719e07>return</span> M(<span style=color:#719e07>this</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, (<span style=color:#268bd2>function</span><span style=color:#719e07>*</span>() {
+                    <span style=color:#719e07>return</span> $(V(e))
+                }))
+            }(key);
+</code></pre></div><p>What is <code>function(e)</code>? It's creating a <a href=https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function* target=_blank rel="noreferrer noopener">generator function</a>.
+I have no clue what it is but when I see it I only care about what <code>M</code> returns
+and not the wrapper. It is retuning <code>$(V(e))</code> here. What does <code>V(e)</code> do?</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>function</span> V(e) {
+    <span style=color:#268bd2>const</span> a <span style=color:#719e07>=</span> <span style=color:#719e07>new</span> Uint8Array(e.length <span style=color:#719e07>/</span> <span style=color:#2aa198>2</span>);
+    <span style=color:#719e07>for</span> (<span style=color:#268bd2>let</span> t <span style=color:#719e07>=</span> <span style=color:#2aa198>0</span>; t <span style=color:#719e07>&lt;</span> e.length; t <span style=color:#719e07>+=</span> <span style=color:#2aa198>2</span>) a[t <span style=color:#719e07>/</span> <span style=color:#2aa198>2</span>] <span style=color:#719e07>=</span> <span style=color:#b58900>parseInt</span>(e.substring(t, t <span style=color:#719e07>+</span> <span style=color:#2aa198>2</span>), <span style=color:#2aa198>16</span>);
+    <span style=color:#719e07>return</span> a
+}
+</code></pre></div><p>This is the equivalent of Python's <code>unhexlify</code>. It converts a hex string into
+bytes. I did not even try and figure out the math. I saw it's creating a byte
+array with half the length of input and then it iterates through it
+two-char-at-a-time and calls <a href=https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt target=_blank rel="noreferrer noopener">parseInt(n, 16)</a>.</p>
+<blockquote>
+<p>This kind of guessing is (in my opinion) the best skill you can hone as a
+reverse engineer and it comes with practice.</p>
+</blockquote>
+<h3 id=quick-intro-to-javascript-dynamic-analysis-with-browser-devtools>Quick Intro to JavaScript Dynamic Analysis with Browser DevTools
+<a class=header-link href=#quick-intro-to-javascript-dynamic-analysis-with-browser-devtools><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>We already know how to debug JavaScript that is running in an extension or a web
+page. But what about small snippets of code like an individual function? We can
+analyze them in two places in the browser:</p>
+<ol>
+<li>Console</li>
+<li>Snippets</li>
+</ol>
+<p>Look at the function above <code>unhexlify</code>. Can you guess what it does without
+thinking? It's <code>hexlify</code>, it comes before <code>unhexlify</code> (lol).</p>
+<span class=caption-wrapper>
+<img class=caption src=23-hexlify-in-code.png title="hexlify in code" alt="hexlify in code">
+<span class=caption-text>hexlify in code</span>
+</span>
+<p>Copy/paste the function into a REPL and the pass some input, analyze the output,
+and/or debug the execution. You can either use an online JavaScript REPL or
+paste it in the browser's console.</p>
+<span class=caption-wrapper>
+<img class=caption src=24-unhexlify-hexlify-console.png title="unhexlify and hexlify in action" alt="unhexlify and hexlify in action">
+<span class=caption-text>unhexlify and hexlify in action</span>
+</span>
+<p>If you want to debug, you can add the statement <code>debugger;</code> in your code. I
+pasted the <code>unhexlify</code> function in the console (see the extra <code>debugger;</code>
+statement) and then called it with an input. In the following picture I have not
+pressed enter on the last line yet.</p>
+<span class=caption-wrapper>
+<img class=caption src=28-debugger-console.png title="unhexlify in the console" alt="unhexlify in the console">
+<span class=caption-text>unhexlify in the console</span>
+</span>
+<p>After pressing enter, <code>unhexlify</code> is called and we switch to the <code>Sources</code> tab.</p>
+<span class=caption-wrapper>
+<img class=caption src=29-debugger-triggered.png title="Debugger triggered" alt="Debugger triggered">
+<span class=caption-text>Debugger triggered</span>
+</span>
+<p><strong>Tip:</strong> It's easier for me if I convert lines that do several things into
+multiple lines and add intermediate variables. Change the code as you see fit
+(make sure the functionality is not altered) but do whatever you can to make it
+easier. This is not supposed to be hard (and if anyone tells you so, kick them
+in the butt). <code>unhexlify</code> above is now the following code (note the intermediate
+variable).</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>function</span> unhexlify(hexString) {
+    <span style=color:#268bd2>debugger</span>;
+    <span style=color:#268bd2>const</span> hexBytes <span style=color:#719e07>=</span> <span style=color:#719e07>new</span> Uint8Array(hexString.length <span style=color:#719e07>/</span> <span style=color:#2aa198>2</span>);
+    <span style=color:#719e07>for</span> (<span style=color:#268bd2>let</span> i <span style=color:#719e07>=</span> <span style=color:#2aa198>0</span>; i <span style=color:#719e07>&lt;</span> hexString.length; i <span style=color:#719e07>+=</span> <span style=color:#2aa198>2</span>)
+    {
+        <span style=color:#268bd2>let</span> twoChars <span style=color:#719e07>=</span> hexString.substring(i, i <span style=color:#719e07>+</span> <span style=color:#2aa198>2</span>); <span style=color:#586e75>// added intermediate variable
+</span><span style=color:#586e75></span>        hexBytes[i <span style=color:#719e07>/</span> <span style=color:#2aa198>2</span>] <span style=color:#719e07>=</span> <span style=color:#b58900>parseInt</span>(twoChars, <span style=color:#2aa198>16</span>);
+    }
+    <span style=color:#719e07>return</span> hexBytes
+}
+</code></pre></div><p>We can also use DevTools' <a href=https://developer.chrome.com/docs/devtools/javascript/snippets/ target=_blank rel="noreferrer noopener">snippets</a>.</p>
+<ol>
+<li>Open a new browser window and press <code>F12</code> to open the DevTools.</li>
+<li>Switch to the <code>Sources</code> tab and then <code>Snippets</code>.
+<ol>
+<li><code>Snippets</code> might be hidden so you might need to click on <code>>></code>.
+<span class=caption-wrapper>
+<img class=caption src=30-snippets.png title="Snippets in DevTools" alt="Snippets in DevTools">
+<span class=caption-text>Snippets in DevTools</span>
+</span>
+</li>
+</ol>
+</li>
+<li>Click on <code>New snippet</code> and give it a name.</li>
+<li>Paste the function in it.
+<ol>
+<li>Having the <code>debugger</code> here is optional because we can set breakpoints
+before execution.</li>
+</ol>
+</li>
+<li>Press <code>ctrl+enter</code> or right-click the snippet in the left sidebar and select <code>Run</code>.</li>
+<li>The snippet should run once but will do nothing because it just adds the
+function to the scope. Now, we can call the function in the console.
+<span class=caption-wrapper>
+<img class=caption src=31-run-snippet.png title="Running the snippet" alt="Running the snippet">
+<span class=caption-text>Running the snippet</span>
+</span>
+</li>
+<li>Type <code>unhexlify("10203040");</code> in the console.</li>
+<li>The snippet should stop at <code>debugger</code> or any breakpoint.
+<span class=caption-wrapper>
+<img class=caption src=32-snippet-breakpoint.png title="Debugging the snippet" alt="Debugging the snippet">
+<span class=caption-text>Debugging the snippet</span>
+</span>
+</li>
+</ol>
+<h2 id=enter-cryptography>Enter Cryptography
+<a class=header-link href=#enter-cryptography><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Back to the task at hand. The <code>$</code> function is also there. We are reaching the
+crypto region.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>function</span> $(e) {
+    <span style=color:#719e07>return</span> M(<span style=color:#719e07>this</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, (<span style=color:#268bd2>function</span><span style=color:#719e07>*</span>() {
+        <span style=color:#719e07>return</span> crypto.subtle.importKey(<span style=color:#2aa198>&#34;raw&#34;</span>, e, F, <span style=color:#719e07>!</span><span style=color:#2aa198>0</span>, [<span style=color:#2aa198>&#34;encrypt&#34;</span>, <span style=color:#2aa198>&#34;decrypt&#34;</span>])
+    }))
+}
+</code></pre></div><p><a href=https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto target=_blank rel="noreferrer noopener">SubtleCrypto</a> are a set of browser cryptography APIs. The
+documentation warns:</p>
+<blockquote>
+<p>If you're not sure you know what you are doing, you probably shouldn't be
+using this API.</p>
+</blockquote>
+<p>Luckily for me, I am the <a href=https://twitter.com/CryptoGangsta target=_blank rel="noreferrer noopener">CryptoGangsta</a> so I can do what
+I want. All <code>importKey</code> parameters except <code>F</code> are unknown. With a <code>ctrl+click</code>
+we get to it:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>const</span> F <span style=color:#719e07>=</span> {
+        name<span style=color:#719e07>:</span> <span style=color:#2aa198>&#34;AES-GCM&#34;</span>,
+        length<span style=color:#719e07>:</span> <span style=color:#2aa198>256</span>
+    },
+    H <span style=color:#719e07>=</span> {
+        name<span style=color:#719e07>:</span> <span style=color:#2aa198>&#34;ECDH&#34;</span>,
+        namedCurve<span style=color:#719e07>:</span> <span style=color:#2aa198>&#34;P-384&#34;</span>
+    };
+</code></pre></div><p>Looking at the parameters for <a href=https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey target=_blank rel="noreferrer noopener">importKey</a> we see the 3rd
+parameter is named <code>algorithm</code>. MDN says:</p>
+<blockquote>
+<p>For AES-CTR, AES-CBC, AES-GCM, or AES-KW: Pass the string identifying the
+algorithm or an object of the form { "name": ALGORITHM }, where ALGORITHM is
+the name of the algorithm.</p>
+</blockquote>
+<p>So <code>F</code> is the algorithm object that tells the function we are importing an
+<code>AES-GCM</code> key of length <code>256</code>. Remember it was coming from the item named <code>key</code>
+in local storage?</p>
+<p>We can also figure out what <code>H</code> is, too. It's the ECDH algorithm object.</p>
+<blockquote>
+<p>For ECDSA or ECDH: Pass an EcKeyImportParams object.</p>
+</blockquote>
+<p><a href=https://developer.mozilla.org/en-US/docs/Web/API/EcKeyImportParams target=_blank rel="noreferrer noopener">EcKeyImportParams</a> should have two fields:</p>
+<ul>
+<li><code>name</code>: Either <code>ECDSA</code> or <code>ECDH</code>.</li>
+<li><code>namedCurve</code>: <code>P-256</code>, <code>P-384</code>, or <code>P-521</code> which are NIST approved curves
+(backdoors added and removed here :^)).</li>
+</ul>
+<p>Let's rename:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>const</span> AESGCMAlgo <span style=color:#719e07>=</span> {
+        name<span style=color:#719e07>:</span> <span style=color:#2aa198>&#34;AES-GCM&#34;</span>,
+        length<span style=color:#719e07>:</span> <span style=color:#2aa198>256</span>
+    },
+    ECDHAlgo <span style=color:#719e07>=</span> {
+        name<span style=color:#719e07>:</span> <span style=color:#2aa198>&#34;ECDH&#34;</span>,
+        namedCurve<span style=color:#719e07>:</span> <span style=color:#2aa198>&#34;P-384&#34;</span>
+    };
+</code></pre></div><p><code>$</code> becomes:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>function</span> $(e) {
+    <span style=color:#719e07>return</span> M(<span style=color:#719e07>this</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, (<span style=color:#268bd2>function</span><span style=color:#719e07>*</span>() {
+        <span style=color:#719e07>return</span> crypto.subtle.importKey(<span style=color:#2aa198>&#34;raw&#34;</span>, e, AESGCMAlgo, <span style=color:#cb4b16>true</span>, [<span style=color:#2aa198>&#34;encrypt&#34;</span>, <span style=color:#2aa198>&#34;decrypt&#34;</span>])
+    }))
+}
+</code></pre></div><p><code>importKey</code> is called like this:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>const</span> result <span style=color:#719e07>=</span> crypto.subtle.importKey(
+    format,         <span style=color:#586e75>// &#34;raw&#34;
+</span><span style=color:#586e75></span>    keyData,        <span style=color:#586e75>// e or the function parameter
+</span><span style=color:#586e75></span>    algorithm,      <span style=color:#586e75>// { name: &#34;AES-GCM&#34;, length: 256 }
+</span><span style=color:#586e75></span>    extractable,    <span style=color:#586e75>// true
+</span><span style=color:#586e75></span>    keyUsages       <span style=color:#586e75>// [&#34;encrypt&#34;, &#34;decrypt&#34;]
+</span><span style=color:#586e75></span>);
+</code></pre></div><p>It imports a array with the AES key bytes and returns (a promise with) a
+<a href=https://developer.mozilla.org/en-US/docs/Web/API/CryptoKey target=_blank rel="noreferrer noopener">CryptoKey</a> which can be used to encrypt and decrypt stuff
+(<code>keyUsages</code>).</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>function</span> importAESKey(keyBytes) {
+    <span style=color:#719e07>return</span> M(<span style=color:#719e07>this</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, (<span style=color:#268bd2>function</span><span style=color:#719e07>*</span>() {
+        <span style=color:#719e07>return</span> crypto.subtle.importKey(<span style=color:#2aa198>&#34;raw&#34;</span>, keyBytes, AESGCMAlgo, <span style=color:#cb4b16>true</span>, [<span style=color:#2aa198>&#34;encrypt&#34;</span>, <span style=color:#2aa198>&#34;decrypt&#34;</span>])
+    }))
+}
+</code></pre></div>
+<h3 id=the-importance-of-knowing-cryptography>The Importance of Knowing Cryptography
+<a class=header-link href=#the-importance-of-knowing-cryptography><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>Look at these two algorithms and take a couple of minutes to guess the
+handshake's cryptographic algorithm. We have a symmetric encryption algorithm
+(<code>AES-GCM</code>) and a key agreement algorithm (<code>ECDH</code>). How are these usually used
+in conjunction? What other very popular cryptographic thingamajig does this
+(hint: SSL/TLS)?</p>
+<p>Each side sent an <code>EXTENSION/LOGIN</code> message which was a JSON object. It had a
+key named <code>key</code> which was a long hex string. Knowing this, we can just skip a
+few steps and look for <code>crypto.subtle</code> in the code to figure out what the
+handshake does.</p>
+<h2 id=reversing-the-handshake>Reversing The Handshake
+<a class=header-link href=#reversing-the-handshake><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Immediately after the import function we have:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>function</span> Y(e) {
+    <span style=color:#719e07>return</span> M(<span style=color:#719e07>this</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, (<span style=color:#268bd2>function</span><span style=color:#719e07>*</span>() {
+        <span style=color:#719e07>return</span> hexlify(<span style=color:#719e07>yield</span> crypto.subtle.exportKey(<span style=color:#2aa198>&#34;raw&#34;</span>, e))
+    }))
+}
+</code></pre></div><p>What do you think it does? What comes with <code>import</code>? It exports a key as raw hex
+bytes using <a href=https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/exportKey target=_blank rel="noreferrer noopener">exportKey</a>. Name it <code>exportKey</code>.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>function</span> exportKey(key) {
+    <span style=color:#719e07>return</span> M(<span style=color:#719e07>this</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, (<span style=color:#268bd2>function</span><span style=color:#719e07>*</span>() {
+        <span style=color:#719e07>return</span> hexlify(<span style=color:#719e07>yield</span> crypto.subtle.exportKey(<span style=color:#2aa198>&#34;raw&#34;</span>, key))
+    }))
+}
+</code></pre></div><p>And we get to the main function.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>function</span> B(e, a) {
+    <span style=color:#719e07>return</span> M(<span style=color:#719e07>this</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, (<span style=color:#268bd2>function</span><span style=color:#719e07>*</span>() {
+        <span style=color:#268bd2>const</span> t <span style=color:#719e07>=</span> <span style=color:#719e07>yield</span> <span style=color:#268bd2>function</span>(e) {
+            <span style=color:#719e07>return</span> M(<span style=color:#719e07>this</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, (<span style=color:#268bd2>function</span><span style=color:#719e07>*</span>() {
+                <span style=color:#719e07>return</span> crypto.subtle.importKey(<span style=color:#2aa198>&#34;raw&#34;</span>, unhexlify(e), ECDHAlgo, <span style=color:#cb4b16>true</span>, [])
+            }))
+        }(e), o <span style=color:#719e07>=</span> <span style=color:#719e07>yield</span> crypto.subtle.deriveBits(<span style=color:#b58900>Object</span>.assign(<span style=color:#b58900>Object</span>.assign({}, ECDHAlgo), {
+            <span style=color:#268bd2>public</span><span style=color:#719e07>:</span> t
+        }), a, <span style=color:#2aa198>384</span>);
+        <span style=color:#719e07>return</span> <span style=color:#268bd2>function</span>(e) {
+            <span style=color:#719e07>return</span> M(<span style=color:#719e07>this</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, (<span style=color:#268bd2>function</span><span style=color:#719e07>*</span>() {
+                <span style=color:#719e07>return</span> importAESKey(<span style=color:#719e07>new</span> Uint8Array(e))
+            }))
+        }(<span style=color:#719e07>yield</span> crypto.subtle.digest(<span style=color:#2aa198>&#34;SHA-256&#34;</span>, o))
+    }))
+}
+</code></pre></div><p>Start by adding comments and rename some of the variables/parameters. There's no
+need to figure out what this blob does in one look.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>function</span> B(appECDHKeyHexBytes, a) {
+    <span style=color:#719e07>return</span> M(<span style=color:#719e07>this</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, (<span style=color:#268bd2>function</span><span style=color:#719e07>*</span>() {
+        <span style=color:#268bd2>const</span> ecdhCryptoKey <span style=color:#719e07>=</span> <span style=color:#719e07>yield</span> <span style=color:#268bd2>function</span>(ecdhKey) {
+            <span style=color:#719e07>return</span> M(<span style=color:#719e07>this</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, (<span style=color:#268bd2>function</span><span style=color:#719e07>*</span>() {
+                <span style=color:#719e07>return</span> crypto.subtle.importKey(<span style=color:#2aa198>&#34;raw&#34;</span>, unhexlify(ecdhKey), ECDHAlgo, <span style=color:#cb4b16>true</span>, []) <span style=color:#586e75>// import ECDH P-384 key
+</span><span style=color:#586e75></span>            }))
+        }(appECDHKeyHexBytes), o <span style=color:#719e07>=</span> <span style=color:#719e07>yield</span> crypto.subtle.deriveBits(<span style=color:#b58900>Object</span>.assign(<span style=color:#b58900>Object</span>.assign({}, ECDHAlgo), {
+            <span style=color:#268bd2>public</span><span style=color:#719e07>:</span> ecdhCryptoKey
+        }), a, <span style=color:#2aa198>384</span>);
+        <span style=color:#719e07>return</span> <span style=color:#268bd2>function</span>(aesKey) {
+            <span style=color:#719e07>return</span> M(<span style=color:#719e07>this</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, (<span style=color:#268bd2>function</span><span style=color:#719e07>*</span>() {
+                <span style=color:#719e07>return</span> importAESKey(<span style=color:#719e07>new</span> Uint8Array(aesKey)) <span style=color:#586e75>// import AES-GCM 256 key
+</span><span style=color:#586e75></span>            }))
+        }(<span style=color:#719e07>yield</span> crypto.subtle.digest(<span style=color:#2aa198>&#34;SHA-256&#34;</span>, o)) <span style=color:#586e75>// SHA-256(o)
+</span><span style=color:#586e75></span>    }))
+}
+</code></pre></div><p>First parameter is an ECDH key in hex bytes. We know this because we can see
+it's unhexlified first and then passed to <code>importKey</code> with <code>ECDHAlgo</code>. This
+returns an ECDH CryptoKey (<code>ecdhCryptoKey</code>). This <code>ecdhCryptoKey</code> is used in
+<a href=https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/deriveBits target=_blank rel="noreferrer noopener">crypto.subtle.deriveBits</a>.</p>
+<p>Those <code>Object.assign</code> calls are just style points. They create the first
+parameter for <code>deriveBits</code>. The documentation says the first parameter is
+<code>algorithm</code>.</p>
+<blockquote>
+<p>algorithm is an object defining the derivation algorithm to use.\
+To use ECDH, pass an EcdhKeyDeriveParams object.</p>
+</blockquote>
+<p><a href=https://developer.mozilla.org/en-US/docs/Web/API/EcdhKeyDeriveParams target=_blank rel="noreferrer noopener">EcdhKeyDeriveParams</a> looks like:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js>{
+    name<span style=color:#719e07>:</span> <span style=color:#2aa198>&#34;ECDH&#34;</span>,
+    <span style=color:#268bd2>public</span><span style=color:#719e07>:</span> <span style=color:#586e75>// CryptoKey representing the public key of the other entity.
+</span><span style=color:#586e75></span>}
+</code></pre></div><p>These assigns get the old <code>ECDHAlgo</code> object:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js>{
+    name<span style=color:#719e07>:</span> <span style=color:#2aa198>&#34;ECDH&#34;</span>,
+    namedCurve<span style=color:#719e07>:</span> <span style=color:#2aa198>&#34;P-384&#34;</span>
+}
+</code></pre></div><p>and add a new field named <code>public</code> with value of <code>ecdhCryptoKey</code>:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js>{
+    name<span style=color:#719e07>:</span> <span style=color:#2aa198>&#34;ECDH&#34;</span>,
+    namedCurve<span style=color:#719e07>:</span> <span style=color:#2aa198>&#34;P-384&#34;</span>,    <span style=color:#586e75>// This will be ignored
+</span><span style=color:#586e75></span>    <span style=color:#268bd2>public</span><span style=color:#719e07>:</span> ecdhCryptoKey
+}
+</code></pre></div><p>So we are calling <code>deriveBits</code> like this:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js>crypto.subtle.deriveBits(
+    { name<span style=color:#719e07>:</span> <span style=color:#2aa198>&#34;ECDH&#34;</span>, <span style=color:#268bd2>public</span><span style=color:#719e07>:</span> ecdhCryptoKey }, <span style=color:#586e75>// algorithm
+</span><span style=color:#586e75></span>    a,                                       <span style=color:#586e75>// baseKey
+</span><span style=color:#586e75></span>    <span style=color:#2aa198>384</span>                                      <span style=color:#586e75>// number of bits to derive
+</span><span style=color:#586e75></span>}
+</code></pre></div><p><code>deriveBits</code> with an ECDH algorithm object performs the ECDH key agreement.</p>
+<ol>
+<li>Each side generates a pair of ECDH keys. These should be on the same curve.</li>
+<li>Each side sends their public key to the other side.</li>
+<li>Each side calculates a shared secret using their own private key and the
+other side's public key.</li>
+</ol>
+<p>Through Elliptic Curve cryptomagic these two shared secrets are the same. Now,
+we know <code>a</code> or the second parameter for this function and <code>deriveBits</code> is the
+extension's ECDH private key as a <code>CryptoKey</code>.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>function</span> generateEncryptionKey(appECDHKeyHexBytes, extensionECDHCryptoKey) {
+    <span style=color:#719e07>return</span> M(<span style=color:#719e07>this</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, (<span style=color:#268bd2>function</span><span style=color:#719e07>*</span>() {
+        <span style=color:#268bd2>const</span> ecdhCryptoKey <span style=color:#719e07>=</span> <span style=color:#719e07>yield</span> <span style=color:#268bd2>function</span>(ecdhKey) {
+            <span style=color:#719e07>return</span> M(<span style=color:#719e07>this</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, (<span style=color:#268bd2>function</span><span style=color:#719e07>*</span>() {
+                <span style=color:#719e07>return</span> crypto.subtle.importKey(<span style=color:#2aa198>&#34;raw&#34;</span>, unhexlify(ecdhKey), ECDHAlgo, <span style=color:#cb4b16>false</span>, []) <span style=color:#586e75>// import ECDH P-384 key
+</span><span style=color:#586e75></span>            }))
+        }(appECDHKeyHexBytes), sharedSecret <span style=color:#719e07>=</span> <span style=color:#719e07>yield</span> crypto.subtle.deriveBits(<span style=color:#b58900>Object</span>.assign(<span style=color:#b58900>Object</span>.assign({}, ECDHAlgo), {
+            <span style=color:#268bd2>public</span><span style=color:#719e07>:</span> ecdhCryptoKey
+        }), extensionECDHCryptoKey, <span style=color:#2aa198>384</span>);
+        <span style=color:#719e07>return</span> <span style=color:#268bd2>function</span>(aesKey) {
+            <span style=color:#719e07>return</span> M(<span style=color:#719e07>this</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, (<span style=color:#268bd2>function</span><span style=color:#719e07>*</span>() {
+                <span style=color:#719e07>return</span> importAESKey(<span style=color:#719e07>new</span> Uint8Array(aesKey)) <span style=color:#586e75>// import AES-GCM 256 key
+</span><span style=color:#586e75></span>            }))
+        }(<span style=color:#719e07>yield</span> crypto.subtle.digest(<span style=color:#2aa198>&#34;SHA-256&#34;</span>, sharedSecret)) <span style=color:#586e75>// SHA-256(sharedSecret)
+</span><span style=color:#586e75></span>    }))
+}
+</code></pre></div><p>The last piece of the puzzle is the hash. The 384-bit shared secret is passed to
+SHA-256 and returned. You are probably wondering why the hash? If we want 256
+bits why not just pass <code>256</code> instead of <code>384</code> to <code>deriveBits</code> and use those?</p>
+<p>There is another SubtleCrypto function named <a href=https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/deriveKey target=_blank rel="noreferrer noopener">deriveKey</a> which
+does this and return a ready-to-use <code>CryptoKey</code>.</p>
+<p>I looked at how these two were implemented in various browser libraries and it
+seems like <code>deriveKey</code> is a <code>deriveBits</code> and an <code>importKey</code>. The code could have
+been this:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js>subtle.crypto.deriveKey(
+    { name<span style=color:#719e07>:</span> <span style=color:#2aa198>&#34;ECDH&#34;</span>, <span style=color:#268bd2>public</span><span style=color:#719e07>:</span> ecdhCryptoKey },
+    extensionECDHCryptoKey,
+    AESGCMAlgo, <span style=color:#586e75>// { name: &#34;AES-GCM&#34;, length: 256 }
+</span><span style=color:#586e75></span>    <span style=color:#cb4b16>true</span>,
+    [<span style=color:#2aa198>&#34;encrypt&#34;</span>, <span style=color:#2aa198>&#34;decrypt&#34;</span>]
+);
+</code></pre></div><p>At this point we have already guessed what happens. But let's trace it in the
+code anyways. Searching for <code>generateEncryptionKey</code> we get to this function
+(already renamed). It does the handshake and returns the message encryption AES
+key:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>async</span> <span style=color:#268bd2>function</span> doHandshake() {
+     <span style=color:#586e75>// generate an ECDH keypair
+</span><span style=color:#586e75></span>    <span style=color:#268bd2>const</span> extensionKeyPair <span style=color:#719e07>=</span> <span style=color:#268bd2>await</span> crypto.subtle.generateKey(ECDHAlgo, <span style=color:#cb4b16>true</span>, [<span style=color:#2aa198>&#34;deriveBits&#34;</span>]),
+        extensionPubKey <span style=color:#719e07>=</span> <span style=color:#268bd2>await</span> exportKey(extensionKeyPair.publicKey),  <span style=color:#586e75>// export the extension&#39;s public key
+</span><span style=color:#586e75></span>        generatedExtensionId <span style=color:#719e07>=</span> <span style=color:#268bd2>await</span> getOrGenerateExtensionId(), <span style=color:#586e75>// generates and return a 9 digit base36 string
+</span><span style=color:#586e75></span>
+        <span style=color:#586e75>// outgoing extension message example:
+</span><span style=color:#586e75></span>        <span style=color:#586e75>// {
+</span><span style=color:#586e75></span>        <span style=color:#586e75>//     &#34;id&#34;: 1,
+</span><span style=color:#586e75></span>        <span style=color:#586e75>//     &#34;type&#34;: &#34;EXTENSION/LOGIN&#34;,
+</span><span style=color:#586e75></span>        <span style=color:#586e75>//     &#34;key&#34;: &#34;long-hex-value&#34;,     // extension&#39;s public key
+</span><span style=color:#586e75></span>        <span style=color:#586e75>//     &#34;isFullScreen&#34;: false,
+</span><span style=color:#586e75></span>        <span style=color:#586e75>//     &#34;extensionId&#34;: &#34;fdrk45blr&#34;,
+</span><span style=color:#586e75></span>        <span style=color:#586e75>//     &#34;browser&#34;: &#34;edge&#34;
+</span><span style=color:#586e75></span>        <span style=color:#586e75>// }
+</span><span style=color:#586e75></span>
+        <span style=color:#586e75>// send EXTENSION/LOGIN message and return the response from server
+</span><span style=color:#586e75></span>        serverExtensionLoginMessage <span style=color:#719e07>=</span> <span style=color:#268bd2>await</span> sendMessage({
+            type<span style=color:#719e07>:</span> <span style=color:#2aa198>&#34;EXTENSION/LOGIN&#34;</span>,
+            key<span style=color:#719e07>:</span> extensionPubKey,
+            isFullScreen<span style=color:#719e07>:</span> isExtensionFullScreen(),
+            extensionId<span style=color:#719e07>:</span> generatedExtensionId
+        }),
+
+        <span style=color:#586e75>// incoming server message example:
+</span><span style=color:#586e75></span>        <span style=color:#586e75>// {
+</span><span style=color:#586e75></span>        <span style=color:#586e75>//     &#34;id&#34;: 1,
+</span><span style=color:#586e75></span>        <span style=color:#586e75>//     &#34;type&#34;: &#34;EXTENSION/LOGIN&#34;,
+</span><span style=color:#586e75></span>        <span style=color:#586e75>//     &#34;key&#34;: &#34;long-hex-value&#34;,     // server&#39;s public key
+</span><span style=color:#586e75></span>        <span style=color:#586e75>//     &#34;isDesktopLaunchedOnSameUser&#34;: true
+</span><span style=color:#586e75></span>        <span style=color:#586e75>// }
+</span><span style=color:#586e75></span>
+        <span style=color:#586e75>// generate an AES-GCM 256 CryptoKey
+</span><span style=color:#586e75></span>        messageEncryptionKey <span style=color:#719e07>=</span> <span style=color:#268bd2>await</span> generateEncryptionKey(serverExtensionLoginMessage.key, extensionKeyPair.privateKey),
+        <span style=color:#586e75>// export the AES key as bytes
+</span><span style=color:#586e75></span>        messageEncryptionKeyBytes <span style=color:#719e07>=</span> <span style=color:#268bd2>await</span> crypto.subtle.exportKey(<span style=color:#2aa198>&#34;raw&#34;</span>, messageEncryptionKey),
+        <span style=color:#586e75>// generate the 4-digit pairing code (called approve code in source) from the key
+</span><span style=color:#586e75></span>        approveCode <span style=color:#719e07>=</span> <span style=color:#719e07>new</span> Uint8Array(messageEncryptionKeyBytes, <span style=color:#2aa198>0</span>, <span style=color:#2aa198>2</span>).join(<span style=color:#2aa198>&#34;&#34;</span>).padStart(<span style=color:#2aa198>4</span>, <span style=color:#2aa198>&#34;0&#34;</span>).substr(<span style=color:#2aa198>0</span>, <span style=color:#2aa198>4</span>);
+
+    <span style=color:#719e07>return</span> <span style=color:#268bd2>await</span> localStorage.set({
+        [<span style=color:#2aa198>&#34;appInstalled&#34;</span>]<span style=color:#719e07>:</span> <span style=color:#cb4b16>true</span>,
+        [<span style=color:#2aa198>&#34;approveCode&#34;</span>]<span style=color:#719e07>:</span> approveCode <span style=color:#586e75>// store the approve code in local storage
+</span><span style=color:#586e75></span>    }), messageEncryptionKey         <span style=color:#586e75>// return the AES encryption key
+</span><span style=color:#586e75></span>}
+</code></pre></div><p>We see how the four-digit extension pairing code is generated.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>function</span> approveCode(messageEncryptionKeyBytes) {
+    <span style=color:#719e07>return</span> <span style=color:#719e07>new</span> Uint8Array(messageEncryptionKeyBytes, <span style=color:#2aa198>0</span>, <span style=color:#2aa198>2</span>).join(<span style=color:#2aa198>&#34;&#34;</span>).padStart(<span style=color:#2aa198>4</span>, <span style=color:#2aa198>&#34;0&#34;</span>).substr(<span style=color:#2aa198>0</span>, <span style=color:#2aa198>4</span>);
+}
+</code></pre></div><p>It converts the key to Uint8 and returns the first four <strong>digits</strong>. Let's see
+what it means:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#586e75>// Paste these two functions in the browser console
+</span><span style=color:#586e75></span><span style=color:#268bd2>function</span> unhexlify(e) {
+    <span style=color:#268bd2>const</span> a <span style=color:#719e07>=</span> <span style=color:#719e07>new</span> Uint8Array(e.length <span style=color:#719e07>/</span> <span style=color:#2aa198>2</span>);
+    <span style=color:#719e07>for</span> (<span style=color:#268bd2>let</span> t <span style=color:#719e07>=</span> <span style=color:#2aa198>0</span>; t <span style=color:#719e07>&lt;</span> e.length; t <span style=color:#719e07>+=</span> <span style=color:#2aa198>2</span>) a[t <span style=color:#719e07>/</span> <span style=color:#2aa198>2</span>] <span style=color:#719e07>=</span> <span style=color:#b58900>parseInt</span>(e.substring(t, t <span style=color:#719e07>+</span> <span style=color:#2aa198>2</span>), <span style=color:#2aa198>16</span>);
+    <span style=color:#719e07>return</span> a
+}
+
+<span style=color:#268bd2>function</span> approveCode(messageEncryptionKeyBytes) {
+    <span style=color:#719e07>return</span> <span style=color:#719e07>new</span> Uint8Array(messageEncryptionKeyBytes, <span style=color:#2aa198>0</span>, <span style=color:#2aa198>2</span>).join(<span style=color:#2aa198>&#34;&#34;</span>).padStart(<span style=color:#2aa198>4</span>, <span style=color:#2aa198>&#34;0&#34;</span>).substr(<span style=color:#2aa198>0</span>, <span style=color:#2aa198>4</span>);
+}
+
+<span style=color:#586e75>// now we can call the function and see the result
+</span><span style=color:#586e75></span>hexBytes1 <span style=color:#719e07>=</span> unhexlify(<span style=color:#2aa198>&#34;1020304050&#34;</span>);
+Uint8Array(<span style=color:#2aa198>5</span>) [<span style=color:#2aa198>16</span>, <span style=color:#2aa198>32</span>, <span style=color:#2aa198>48</span>, <span style=color:#2aa198>64</span>, <span style=color:#2aa198>80</span>]  <span style=color:#586e75>// result
+</span><span style=color:#586e75></span>
+approveCode(hexBytes1); <span style=color:#586e75>// command
+</span><span style=color:#586e75></span><span style=color:#2aa198>&#34;1632&#34;</span>  <span style=color:#586e75>// result
+</span><span style=color:#586e75></span>
+hexBytes2 <span style=color:#719e07>=</span> unhexlify(<span style=color:#2aa198>&#34;AABBCCDD&#34;</span>); <span style=color:#586e75>// command
+</span><span style=color:#586e75></span>Uint8Array(<span style=color:#2aa198>4</span>) [<span style=color:#2aa198>170</span>, <span style=color:#2aa198>187</span>, <span style=color:#2aa198>204</span>, <span style=color:#2aa198>221</span>]  <span style=color:#586e75>// result
+</span><span style=color:#586e75></span>
+approveCode(hexBytes2); <span style=color:#586e75>// command
+</span><span style=color:#586e75></span><span style=color:#2aa198>&#34;1701&#34;</span>  <span style=color:#586e75>// result
+</span><span style=color:#586e75></span>
+hexBytes3 <span style=color:#719e07>=</span> unhexlify(<span style=color:#2aa198>&#34;01020304&#34;</span>); <span style=color:#586e75>// command
+</span><span style=color:#586e75></span>Uint8Array(<span style=color:#2aa198>4</span>) [<span style=color:#2aa198>1</span>, <span style=color:#2aa198>2</span>, <span style=color:#2aa198>3</span>, <span style=color:#2aa198>4</span>]  <span style=color:#586e75>// result
+</span><span style=color:#586e75></span>
+approveCode(hexBytes3); <span style=color:#586e75>// command
+</span><span style=color:#586e75></span><span style=color:#2aa198>&#34;1234&#34;</span>  <span style=color:#586e75>// result
+</span></code></pre></div><p><strong>Bug:</strong> In the current version (<code>2.33.14</code>) if an approve code starts with <code>0</code>
+the desktop app will not accept it. If this happens refresh the extension page
+to get a new one.</p>
+<p>We also see how the extension ID (this is different from the extension ID in the
+Chrome web store) is generated. If it exists, it's retrieved from local storage,
+otherwise, a 9 digit base36 string is created:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>async</span> <span style=color:#268bd2>function</span> getOrGenerateExtensionId() {
+    <span style=color:#268bd2>const</span> storedExtensionId <span style=color:#719e07>=</span> (<span style=color:#268bd2>await</span> localStorage.get({
+        [<span style=color:#2aa198>&#34;extensionId&#34;</span>]<span style=color:#719e07>:</span> <span style=color:#2aa198>&#34;&#34;</span>
+    }))[<span style=color:#2aa198>&#34;extensionId&#34;</span>];
+    <span style=color:#719e07>if</span> (storedExtensionId) <span style=color:#719e07>return</span> storedExtensionId;
+    <span style=color:#268bd2>const</span> generatedExtensionId <span style=color:#719e07>=</span> <span style=color:#b58900>Math</span>.random().toString(<span style=color:#2aa198>36</span>).substr(<span style=color:#2aa198>2</span>, <span style=color:#2aa198>9</span>);
+    <span style=color:#719e07>return</span> <span style=color:#268bd2>await</span> localStorage.set({
+        [<span style=color:#2aa198>&#34;extensionId&#34;</span>]<span style=color:#719e07>:</span> generatedExtensionId
+    }), generatedExtensionId
+}
+</code></pre></div>
+<h3 id=the-handshake-demystified>The Handshake Demystified
+<a class=header-link href=#the-handshake-demystified><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>We have cracked the handshake.</p>
+<ol>
+<li>Extension and the app generate a pair of ECDH P-384 keys.</li>
+<li>Send their public keys in an <code>EXTENSION/LOGIN</code> message.</li>
+<li>Generate a 384-bit shared secret using ECDH.</li>
+<li>Use SHA-256 of this secret to encrypt messages using AES-GCM 256.</li>
+<li>The extension uses this key to generate the four-digit "approve code" and displays it.</li>
+<li>The user must enter this code in the desktop app.</li>
+<li>If the code is accepted, the extension and server use the encryption key to
+encrypt their messages and communicate.</li>
+</ol>
+<h2 id=message-encryption-and-decryption>Message Encryption and Decryption
+<a class=header-link href=#message-encryption-and-decryption><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>At this point, we know the algorithm and the key but AES-GCM also needs an IV
+for encryption/decryption and a tag for decryption. A good place to look for
+these is the <code>websocketOnMessage</code> function.</p>
+<p>Let's remember what an incoming message looks like:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
+    <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>2</span>,
+    <span style=color:#268bd2>&#34;data&#34;</span>: <span style=color:#2aa198>&#34;7919c0de7a34f60936145940dea3b758623d2cfc13b195739b1171adaa13db9d807dcb361...&#34;</span>
+}
+</code></pre></div><p>Fortunately, the event handler is short.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>async</span> <span style=color:#268bd2>function</span> websocketOnMessage(e) {
+    <span style=color:#719e07>try</span> {
+        <span style=color:#268bd2>const</span> t <span style=color:#719e07>=</span> JSON.parse(e.data);
+        <span style=color:#719e07>if</span> (<span style=color:#2aa198>0</span> <span style=color:#719e07>===</span> t.id) <span style=color:#268bd2>await</span> he(t);
+        <span style=color:#719e07>else</span> {
+            <span style=color:#268bd2>const</span> e <span style=color:#719e07>=</span> <span style=color:#268bd2>await</span> ge(t);
+            e.type <span style=color:#719e07>===</span> a.EXTENSION_LOGIN <span style=color:#719e07>&amp;&amp;</span> (<span style=color:#268bd2>await</span> localStorage.set({
+                [isUSerlessModeOn_str]<span style=color:#719e07>:</span> e.isUserless
+            }), <span style=color:#268bd2>await</span> localStorage.set({
+                [T]<span style=color:#719e07>:</span> e.desktopVersion
+            })), le[t.id].handler(e), <span style=color:#719e07>delete</span> le[t.id]
+        }
+    } <span style=color:#719e07>catch</span> (e) {
+        Gt(<span style=color:#2aa198>&#34;socketMessenger:handleMessage:&#34;</span>, e)
+    }
+}
+</code></pre></div><p>In an websocket onMessage event handler, the actual message is in <code>e.data</code>.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>async</span> <span style=color:#268bd2>function</span> websocketOnMessage(event) {
+    <span style=color:#719e07>try</span> {
+        <span style=color:#586e75>// incoming message is in event.data
+</span><span style=color:#586e75></span>        <span style=color:#586e75>// parse the incoming message
+</span><span style=color:#586e75></span>        <span style=color:#268bd2>const</span> parsedMessage <span style=color:#719e07>=</span> JSON.parse(event.data);
+        <span style=color:#586e75>// if messageID === 0 pass it to another function
+</span><span style=color:#586e75></span>        <span style=color:#719e07>if</span> (<span style=color:#2aa198>0</span> <span style=color:#719e07>===</span> parsedMessage.id) <span style=color:#268bd2>await</span> handleZeroIDMessage(parsedMessage);
+        <span style=color:#719e07>else</span> {
+            <span style=color:#586e75>// if id != 0, decrypt the message
+</span><span style=color:#586e75></span>            <span style=color:#268bd2>const</span> decryptedMessage <span style=color:#719e07>=</span> <span style=color:#268bd2>await</span> decryptMessage(parsedMessage);
+            <span style=color:#586e75>// if message type is &#34;EXTENSION/LOGIN&#34;
+</span><span style=color:#586e75></span>            decryptedMessage.type <span style=color:#719e07>===</span> a.EXTENSION_LOGIN <span style=color:#719e07>&amp;&amp;</span> (<span style=color:#268bd2>await</span> localStorage.set({
+                [<span style=color:#2aa198>&#34;isUSerlessModeOn&#34;</span>]<span style=color:#719e07>:</span> decryptedMessage.isUserless
+            }),
+            <span style=color:#268bd2>await</span> localStorage.set({ 
+                [<span style=color:#2aa198>&#34;desktopVersion&#34;</span>]<span style=color:#719e07>:</span> decryptedMessage.desktopVersion
+            })),
+            <span style=color:#586e75>// add the message to the queue and call the message handler based
+</span><span style=color:#586e75></span>            <span style=color:#586e75>// on the encrypted message
+</span><span style=color:#586e75></span>            messageQueue[parsedMessage.id].handler(decryptedMessage),
+            <span style=color:#586e75>// delete it from the queue
+</span><span style=color:#586e75></span>            <span style=color:#719e07>delete</span> messageQueue[parsedMessage.id]
+        }
+    } <span style=color:#719e07>catch</span> (e) {
+        Gt(<span style=color:#2aa198>&#34;socketMessenger:handleMessage:&#34;</span>, e)
+    }
+}
+</code></pre></div>
+<h3 id=decryption>Decryption
+<a class=header-link href=#decryption><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>If the message ID equals zero then a different function handles it. I have named
+it <code>handleZeroIDMessage</code>. We don't need to look at it, what we need is the
+function originally named <code>ge</code> (now <code>decryptMessage</code>) that does the decryption.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#586e75>// const unencryptedMessageTypes = [&#34;EXTENSION/LOGIN&#34;, &#34;APP/CRASHED&#34;];
+</span><span style=color:#586e75></span><span style=color:#268bd2>const</span> unencryptedMessageTypes <span style=color:#719e07>=</span> [a.EXTENSION_LOGIN, o.APP_CRASHED];
+<span style=color:#586e75>// ...
+</span><span style=color:#586e75></span><span style=color:#268bd2>async</span> <span style=color:#268bd2>function</span> decryptMessage(message) {
+    <span style=color:#586e75>// if type of message is one of the above, return the message. These messages are not encrypted
+</span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> (message.type <span style=color:#719e07>&amp;&amp;</span> unencryptedMessageTypes.includes(message.type)) <span style=color:#719e07>return</span> message; <span style=color:#586e75>// step 1
+</span><span style=color:#586e75></span>
+    <span style=color:#586e75>// if the message has a type but no data, return an empty object
+</span><span style=color:#586e75></span>    <span style=color:#586e75>// no data === nothing to decrypt
+</span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> (message.type <span style=color:#719e07>&amp;&amp;</span> <span style=color:#719e07>!</span>message.data) <span style=color:#719e07>return</span> {};   <span style=color:#586e75>// step 2
+</span><span style=color:#586e75></span>
+    <span style=color:#719e07>try</span> {
+        <span style=color:#586e75>// step 3: decrypt the message
+</span><span style=color:#586e75></span>        <span style=color:#268bd2>const</span> decryptedMessageText <span style=color:#719e07>=</span> <span style=color:#268bd2>await</span>
+        <span style=color:#268bd2>function</span>(ciphertext, key) {
+            <span style=color:#719e07>return</span> M(<span style=color:#719e07>this</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, (<span style=color:#268bd2>function</span><span style=color:#719e07>*</span>() {
+                <span style=color:#268bd2>const</span> cipherTextBytes <span style=color:#719e07>=</span> unhexlify(ciphertext),  <span style=color:#586e75>// convert the ciphertext from hex string to bytes
+</span><span style=color:#586e75></span>                    iv <span style=color:#719e07>=</span> cipherTextBytes.slice(<span style=color:#2aa198>0</span>, <span style=color:#2aa198>12</span>),          <span style=color:#586e75>// iv = first 12 bytes
+</span><span style=color:#586e75></span>                    cipher <span style=color:#719e07>=</span> cipherTextBytes.slice(<span style=color:#2aa198>12</span>),         <span style=color:#586e75>// the rest is ciphertxt+tag
+</span><span style=color:#586e75></span>                    decryptedMessage <span style=color:#719e07>=</span> <span style=color:#719e07>yield</span> crypto.subtle.decrypt(<span style=color:#b58900>Object</span>.assign(<span style=color:#b58900>Object</span>.assign({}, AESGCMAlgo), {
+                        iv<span style=color:#719e07>:</span> iv
+                    }), key, cipher);
+                    <span style=color:#586e75>// return the decrypted message as text.
+</span><span style=color:#586e75></span>                <span style=color:#719e07>return</span> (<span style=color:#719e07>new</span> TextDecoder).decode(<span style=color:#719e07>new</span> Uint8Array(decryptedMessage))
+            }))
+        }(message.data, messageEncryptionKey);
+        <span style=color:#586e75>// parse the decrypted message as JSON and return the result
+</span><span style=color:#586e75></span>        <span style=color:#719e07>return</span> JSON.parse(decryptedMessageText) <span style=color:#586e75>// step 4
+</span><span style=color:#586e75></span>    } <span style=color:#719e07>catch</span> (e) {
+        <span style=color:#719e07>return</span> {
+            error<span style=color:#719e07>:</span> <span style=color:#2aa198>&#34;Invalid message&#34;</span>
+        }
+    }
+}
+</code></pre></div><ol>
+<li>If the message has a type and it's one of the two unencrypted types, return
+the message. No need to decrypt.</li>
+<li>If the message has a type but no data, return an empty object.</li>
+<li>Decrypt message and return the result as text:
+<ol>
+<li>IV: First 12 bytes.</li>
+<li>The rest is ciphertext + AES-GCM tag.</li>
+</ol>
+</li>
+<li>Parse the decrypted message and JSON and return the result.</li>
+</ol>
+<h4 id=side-quest-aes-gcm-iv-size>Side Quest: AES-GCM IV Size
+<a class=header-link href=#side-quest-aes-gcm-iv-size><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h4><p>AES-GCM's initialization vector is the first 12 bytes of the ciphertext. This is
+the recommended size (96 bits). Reading <a href=https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf target=_blank rel="noreferrer noopener">NIST publication 800-38D</a>
+I saw references like this (bottom of page 8):</p>
+<blockquote>
+<p>For IVs, it is recommended that implementations restrict support to the length
+of 96 bits, to promote interoperability, efficiency, and simplicity of design.</p>
+</blockquote>
+<p>So a 96-bit IV is efficient, but why? Looking at the algorithms for encryption
+(page 15) and decryption (page 17) I can see that we need to calculate a GHASH
+when the IV is not 96 bits. Extra computation === bad!</p>
+<span class=caption-wrapper>
+<img class=caption src=25-aes-gcm-algo.png title="AES-GCM encryption algorithm steps" alt="AES-GCM encryption algorithm steps">
+<span class=caption-text>AES-GCM encryption algorithm steps</span>
+</span>
+<h3 id=encryption>Encryption
+<a class=header-link href=#encryption><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>We don't need to find the encryption routine but it's good practice. Search for
+<code>crypto.subtle.encrypt</code> in code.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>function</span> W(e, a) {
+    <span style=color:#719e07>return</span> M(<span style=color:#719e07>this</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, (<span style=color:#268bd2>function</span><span style=color:#719e07>*</span>() {
+        <span style=color:#268bd2>const</span> t <span style=color:#719e07>=</span> crypto.getRandomValues(<span style=color:#719e07>new</span> Uint8Array(<span style=color:#2aa198>12</span>)),
+            o <span style=color:#719e07>=</span> (<span style=color:#719e07>new</span> TextEncoder).encode(e),
+            n <span style=color:#719e07>=</span> <span style=color:#719e07>yield</span> crypto.subtle.encrypt(<span style=color:#b58900>Object</span>.assign(<span style=color:#b58900>Object</span>.assign({}, AESGCMAlgo), {
+                iv<span style=color:#719e07>:</span> t
+            }), a, o);
+        <span style=color:#719e07>return</span> hexlify(<span style=color:#268bd2>function</span>(e, a) {
+            <span style=color:#268bd2>const</span> t <span style=color:#719e07>=</span> <span style=color:#719e07>new</span> Uint8Array(e.length <span style=color:#719e07>+</span> a.length);
+            <span style=color:#719e07>return</span> t.set(e), t.set(a, e.length), t
+        }(t, <span style=color:#719e07>new</span> Uint8Array(n)))
+    }))
+}
+</code></pre></div><p>We have become pros at renaming variables.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>function</span> encryptMessage(message, key) {
+    <span style=color:#719e07>return</span> M(<span style=color:#719e07>this</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, (<span style=color:#268bd2>function</span><span style=color:#719e07>*</span>() {
+        <span style=color:#586e75>// step 1: IV = generate 12 random bytes
+</span><span style=color:#586e75></span>        <span style=color:#268bd2>const</span> iv <span style=color:#719e07>=</span> crypto.getRandomValues(<span style=color:#719e07>new</span> Uint8Array(<span style=color:#2aa198>12</span>)),
+            <span style=color:#586e75>// step 2: convert the message to bytes
+</span><span style=color:#586e75></span>            messageBytes <span style=color:#719e07>=</span> (<span style=color:#719e07>new</span> TextEncoder).encode(message),
+            <span style=color:#586e75>// step 3: encrypt
+</span><span style=color:#586e75></span>            ciphertext <span style=color:#719e07>=</span> <span style=color:#719e07>yield</span> crypto.subtle.encrypt(<span style=color:#b58900>Object</span>.assign(<span style=color:#b58900>Object</span>.assign({}, AESGCMAlgo), {
+                iv<span style=color:#719e07>:</span> iv
+            }), key, messageBytes);
+        <span style=color:#586e75>// step 5 : return hexlify(iv + ciphertext)
+</span><span style=color:#586e75></span>        <span style=color:#719e07>return</span> hexlify(<span style=color:#268bd2>function</span>(e, a) { <span style=color:#586e75>// step 4: concat(e, a)
+</span><span style=color:#586e75></span>            <span style=color:#268bd2>const</span> t <span style=color:#719e07>=</span> <span style=color:#719e07>new</span> Uint8Array(e.length <span style=color:#719e07>+</span> a.length);
+            <span style=color:#719e07>return</span> t.set(e), t.set(a, e.length), t
+        }(iv, <span style=color:#719e07>new</span> Uint8Array(ciphertext)))
+    }))
+}
+</code></pre></div><ol>
+<li>Generate 12 bytes, this will be the initialization vector.</li>
+<li>Convert the message from text to bytes.</li>
+<li>ciphertext = AES-GCM(message, IV, key).</li>
+<li>Concatenate IV + ciphertext.</li>
+<li>Return hexlify(IV + ciphertext).</li>
+</ol>
+<p>Add reverse engineering obfuscated JavaScript to your resume.</p>
+<span class=caption-wrapper>
+<img class=caption src=27-this-is-javascript.jpg title="Image credit: an anime named Dagashi Kashi" alt="Image credit: an anime named Dagashi Kashi">
+<span class=caption-text>Image credit: an anime named Dagashi Kashi</span>
+</span>
+<h1 id=instrumenting-the-extension>Instrumenting The Extension
+<a class=header-link href=#instrumenting-the-extension><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>At this point we can create our own extension. But why reinvent the wheel when
+we can modify the current extension to do what we want?</p>
+<p>We can debug the extension and put watches on specific variables to see all
+incoming and outgoing messages but it's slow and painful. Instead, we can log a
+bunch of things to the console like:</p>
+<ol>
+<li>The shared key.</li>
+<li>The (four-digit) approve code.</li>
+<li>Incoming messages after decryption.</li>
+<li>Outgoing messages before encryption.</li>
+<li>Send arbitrary messages.</li>
+</ol>
+<p>We will just add <code>console.log</code> messages to the extension's code at various places.</p>
+<h2 id=the-shared-key>The Shared Key
+<a class=header-link href=#the-shared-key><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>We know the shared key is either generated or read from local storage and then
+passed to <code>importAESKey</code>. So, we modify that function like this:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>function</span> importAESKey(keyBytes) {
+    <span style=color:#719e07>return</span> M(<span style=color:#719e07>this</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, <span style=color:#719e07>void</span> <span style=color:#2aa198>0</span>, (<span style=color:#268bd2>function</span><span style=color:#719e07>*</span>() {
+        console.log(<span style=color:#2aa198>&#34;Shared AES key: &#34;</span>, hexlify(keyBytes));
+        <span style=color:#719e07>return</span> crypto.subtle.importKey(<span style=color:#2aa198>&#34;raw&#34;</span>, keyBytes, AESGCMAlgo, <span style=color:#cb4b16>true</span>, [<span style=color:#2aa198>&#34;encrypt&#34;</span>, <span style=color:#2aa198>&#34;decrypt&#34;</span>]);
+    }))
+}
+</code></pre></div>
+<h2 id=the-approve-code>The Approve Code
+<a class=header-link href=#the-approve-code><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>The code is generated inside the <code>doHandshake</code> function. Log it there.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>async</span> <span style=color:#268bd2>function</span> doHandshake() {
+    <span style=color:#586e75>// ...
+</span><span style=color:#586e75></span>        approveCode <span style=color:#719e07>=</span> <span style=color:#719e07>new</span> Uint8Array(messageEncryptionKeyBytes, <span style=color:#2aa198>0</span>, <span style=color:#2aa198>2</span>).join(<span style=color:#2aa198>&#34;&#34;</span>).padStart(<span style=color:#2aa198>4</span>, <span style=color:#2aa198>&#34;0&#34;</span>).substr(<span style=color:#2aa198>0</span>, <span style=color:#2aa198>4</span>);
+        console.log(<span style=color:#2aa198>&#34;Approve code: &#34;</span>, approveCode);
+    <span style=color:#719e07>return</span> <span style=color:#268bd2>await</span> localStorage.set({
+        [<span style=color:#2aa198>&#34;appInstalled&#34;</span>]<span style=color:#719e07>:</span> <span style=color:#cb4b16>true</span>,
+        [<span style=color:#2aa198>&#34;approveCode&#34;</span>]<span style=color:#719e07>:</span> approveCode
+    }), messageEncryptionKey
+}
+</code></pre></div>
+<h2 id=incoming-messages-after-decryption>Incoming Messages After Decryption
+<a class=header-link href=#incoming-messages-after-decryption><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>We need to log the messages in the <code>decryptMessag</code> function in two places. Not
+every message is decrypted (e.g., <code>EXTENSION/LOGIN</code>).</p>
+<ol>
+<li>Create a block for the first <code>if</code> and print the message. This will print the
+unencrypted types.</li>
+<li>Add a new line just before the second return of <code>decryptMessage</code> to print
+decrypted messages.</li>
+</ol>
+<p>The modified code is:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>async</span> <span style=color:#268bd2>function</span> decryptMessage(message) {
+    <span style=color:#719e07>if</span> (message.type <span style=color:#719e07>&amp;&amp;</span> unencryptedMessageTypes.includes(message.type)) 
+    {
+        <span style=color:#586e75>// log unecrypted message.
+</span><span style=color:#586e75></span>        console.log(<span style=color:#2aa198>&#34;Incoming:&#34;</span>, JSON.stringify(message));
+        <span style=color:#719e07>return</span> message;
+    }
+
+    <span style=color:#719e07>try</span> {
+        <span style=color:#586e75>// ...
+</span><span style=color:#586e75></span>        <span style=color:#268bd2>const</span> decryptedMessageText <span style=color:#719e07>=</span> <span style=color:#268bd2>await</span>
+        <span style=color:#268bd2>function</span>(ciphertext, key) {
+            <span style=color:#586e75>// ...
+</span><span style=color:#586e75></span>        }(message.data, messageEncryptionKey);
+        <span style=color:#586e75>// log the decrypted message
+</span><span style=color:#586e75></span>        console.log(<span style=color:#2aa198>&#34;Incoming:&#34;</span>, decryptedMessageText);
+        <span style=color:#586e75>// parse the decrypted message as JSON and return the result
+</span><span style=color:#586e75></span>        <span style=color:#719e07>return</span> JSON.parse(decryptedMessageText)
+    } <span style=color:#719e07>catch</span> (e) {
+        <span style=color:#586e75>// ...
+</span><span style=color:#586e75></span>    }
+}
+</code></pre></div>
+<h2 id=outgoing-messages-before-encryption>Outgoing Messages Before Encryption
+<a class=header-link href=#outgoing-messages-before-encryption><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>The best location is the <code>sendMesage</code> function.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>function</span> sendMessage(e) {
+    console.log(<span style=color:#2aa198>&#34;Outgoing:&#34;</span>, JSON.stringify(e));
+    <span style=color:#586e75>// ...
+</span><span style=color:#586e75></span>}
+</code></pre></div><p>Console is lit!</p>
+<span class=caption-wrapper>
+<img class=caption src=26-logs.png title="Console logs" alt="Console logs">
+<span class=caption-text>Console logs</span>
+</span>
+<h2 id=send-arbitrary-messages>Send Arbitrary Messages
+<a class=header-link href=#send-arbitrary-messages><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>This was a fun one. I could see message but I also wanted to send my own
+messages without creating a client. A slow way to do this is putting a
+breakpoint in <code>sendMessage</code> just before the encryption routine. Then we can
+modify outgoing messages.</p>
+<p>A much better way is to send messages from the console by calling <code>sendMessage</code>
+(which did not work).</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js>sendMessage(JSON.parse(<span style=color:#586e75>`{&#34;type&#34;:&#34;DESKTOP/OPEN&#34;}`</span>));
+VM114<span style=color:#719e07>:</span><span style=color:#2aa198>1</span> Uncaught ReferenceError<span style=color:#719e07>:</span> sendMessage is not defined
+    at <span style=color:#719e07>&lt;</span>anonymous<span style=color:#719e07>&gt;:</span><span style=color:#2aa198>1</span><span style=color:#719e07>:</span><span style=color:#2aa198>1</span>
+</code></pre></div><p>After an hour of troubleshooting I realized it's because I need to call it like
+<code>foo.bar.whatever.sendMessage</code>. I realized I can create my own function in the
+code and add it to the <code>window</code> object (e.g., make it global) and then call it
+in the console and send arbitrary messages.</p>
+<p>I added it to the extension code right after <code>sendMessage</code>.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#586e75>// my own function
+</span><span style=color:#586e75></span><span style=color:#268bd2>async</span> <span style=color:#268bd2>function</span> sendME(rawMessage) {
+    <span style=color:#719e07>return</span> sendMessage(JSON.parse(rawMessage));
+}
+<span style=color:#586e75>// make it global
+</span><span style=color:#586e75></span><span style=color:#b58900>window</span>.sendME <span style=color:#719e07>=</span> sendME;
+</code></pre></div><p>Then I could do this in the console inside the extension's DevTools:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>await</span> sendME(<span style=color:#586e75>`{&#34;type&#34;:&#34;USER/IS_AUTH&#34;}`</span>);
+Outgoing<span style=color:#719e07>:</span> {<span style=color:#2aa198>&#34;type&#34;</span><span style=color:#719e07>:</span><span style=color:#2aa198>&#34;USER/IS_AUTH&#34;</span>}
+Incoming<span style=color:#719e07>:</span> {<span style=color:#2aa198>&#34;type&#34;</span><span style=color:#719e07>:</span><span style=color:#2aa198>&#34;USER/IS_AUTH&#34;</span>,<span style=color:#2aa198>&#34;state&#34;</span><span style=color:#719e07>:</span><span style=color:#2aa198>&#34;authenticated&#34;</span>}
+</code></pre></div>
+<span class=caption-wrapper>
+<img class=caption src=33-send-any-msg.png title="Send any message from the console" alt="Send any message from the console">
+<span class=caption-text>Send any message from the console</span>
+</span>
+<p><strong>This is pretty fun.</strong> We can use this technique to call any extension function
+manually in the console. We can start hacking at the extension and the desktop
+app.</p>
+<h1 id=what-did-we-learn-here-today>What Did We Learn Here Today?
+<a class=header-link href=#what-did-we-learn-here-today><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Well, a shit ton. See the <code>What Are We Gonna Learn Here Today?</code> section up top.</p>
+<p>Some lessons learned while reversing JavaScript:</p>
+<ol>
+<li>Search for strings and field/property names to find open source modules.
+<ol>
+<li>They are not usually obfuscated. Error message are good candidates.</li>
+</ol>
+</li>
+<li>Search in the obfuscated code for field/property names of the kind of objects
+you are looking for. E.g., <code>onmessage</code> because we are looking for a WebSocket
+object.</li>
+<li>You don't need to rename everything. Give priority to function names
+especially in open source sections. Use the extra time to figure out what the
+custom application code is doing.
+<ol>
+<li>In this example, we don't care how the <code>ws</code> module works internally. We
+just rename and chase the event handlers because they contain app code.</li>
+</ol>
+</li>
+<li>Save early and often. As I said, I use git and commit every few changes.
+<ol>
+<li>With this kind of high-speed reversing, it's very easy to mess up.</li>
+</ol>
+</li>
+</ol>
+</div>
+<footer>
+<p class=meta>
+<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Apr 30, 2021</time>
+</span>
+</p>
+<p class=meta>
+<a class="basic-alignment left" href=https://parsiya.net/blog/2021-03-17-attack-surface-analysis-part-2-custom-protocol-handlers/ title="Attack Surface Analysis - Part 2 - Custom Protocol Handlers">Attack Surface Analysis - Part 2 - Custom Protocol Handlers</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2021-05-31-public-remote-file-share-in-the-cloud/ title="Public Remote File Share in The Cloud">Public Remote File Share in The Cloud</a>
+</p>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</div>
+<aside class="sidebar thirds">
+<section class="first odd">
+<h1>Who am I?</h1>
+<p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
+<p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p>
+<p>Click on <a href=/about/>About Me!</a> to know more.</p>
+</p>
+</section>
+<ul class=sidebar-nav>
+<li class=sidebar-nav-item>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
+</li>
+</ul>
+<section class=odd>
+<h1>Collections</h1>
+<li>
+<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
+</li>
+<li>
+<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
+</li>
+</section>
+</aside>
+</div>
+</div>
+<footer role=contentinfo>
+<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
+</p>
+</footer>
+</body>
+</html>

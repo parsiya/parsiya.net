@@ -1,0 +1,190 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
+<link href=/css/fonts.css rel=stylesheet type=text/css>
+<title>path.Join Considered Harmful</title>
+<link rel=stylesheet href=/css/hugo-octopress.css>
+<link rel=stylesheet href=/css/fork-awesome.min.css>
+<link href=https://parsiya.net/favicon.png rel=icon>
+<meta name=description content>
+<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
+<meta name=author content="Parsia">
+<meta name=generator content="Hugo 0.92.0">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image:src content="https://parsiya.net/blog/2019-03-09-path.join-considered-harmful/.png">
+<meta name=twitter:title content="path.Join Considered Harmful">
+<meta name=twitter:description content="Credit goes to my friend Stark Riedesel. Check out his github profile. One of these days I will bully him into reviving his blog.
+TL;DR: Instead of path.join use filepath.Join.">
+<meta name=twitter:domain content="parsiya.net">
+<meta name=twitter:creator content="@CryptoGangsta">
+</head>
+<body>
+<header role=banner>
+<hgroup>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
+<h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2>
+</hgroup></header>
+<nav role=navigation>
+<fieldset class=mobile-nav>
+<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
+</fieldset>
+<ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
+<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
+<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
+<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
+<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
+<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
+</ul>
+<ul class=subscription>
+<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
+</ul>
+<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+<fieldset role=search>
+<input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/>
+</fieldset>
+</form>
+</nav>
+<div id=main>
+<div id=content>
+<div>
+<article class=hentry role=article>
+<header>
+<p class=meta>Mar 9, 2019
+- 2 minute read
+- <a href=https://parsiya.net/blog/2019-03-09-path.join-considered-harmful/#disqus_thread>Comments</a>
+- <a class=label href=https://parsiya.net/categories/go/>Go </a>
+</p>
+<h1 class=entry-title>
+path.Join Considered Harmful
+</h1>
+</header>
+<div class=entry-content>
+<p>Credit goes to my friend <a href=https://www.linkedin.com/in/stark-riedesel-4162b846 target=_blank rel="noreferrer noopener">Stark Riedesel</a>. Check out his <a href=https://github.com/starkriedesel/ target=_blank rel="noreferrer noopener">github profile</a>. One of these days I will bully him into reviving his blog.</p>
+<p>TL;DR: Instead of <a href=https://golang.org/pkg/path/#Join target=_blank rel="noreferrer noopener">path.join</a> use <a href=https://golang.org/pkg/path/filepath/ target=_blank rel="noreferrer noopener">filepath.Join</a>.</p>
+<h1 id=whats-wrong-with-pathjoin>What's Wrong with path.Join?
+<a class=header-link href=#whats-wrong-with-pathjoin><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p><a href=https://golang.org/pkg/path/#Join target=_blank rel="noreferrer noopener">path.Join</a> joins a bunch of paths together. Problem is, it uses <code>/</code> as separator regardless of operating system. We can see it in its source at <a href="https://golang.org/src/path/path.go?s=4034:4066#L145" target=_blank rel="noreferrer noopener">https://golang.org/src/path/path.go?s=4034:4066#L145</a>:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#268bd2>func</span> <span style=color:#268bd2>Join</span>(elem <span style=color:#719e07>...</span><span style=color:#dc322f>string</span>) <span style=color:#dc322f>string</span> {
+	<span style=color:#719e07>for</span> i, e <span style=color:#719e07>:=</span> <span style=color:#719e07>range</span> elem {
+		<span style=color:#719e07>if</span> e <span style=color:#719e07>!=</span> <span style=color:#2aa198>&#34;&#34;</span> {
+			<span style=color:#719e07>return</span> <span style=color:#268bd2>Clean</span>(strings.<span style=color:#268bd2>Join</span>(elem[i:], <span style=color:#2aa198>&#34;/&#34;</span>)) <span style=color:#586e75>// &lt;---
+</span><span style=color:#586e75></span>		}
+	}
+	<span style=color:#719e07>return</span> <span style=color:#2aa198>&#34;&#34;</span>
+}
+</code></pre></div><p>This is problematic on Windows where your paths (or some of them) use <code>\</code> as separators. Consider this minimal example <a href=https://play.golang.org/p/TcVY--mt8L9 target=_blank rel="noreferrer noopener">Go playground link</a>:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#719e07>package</span> main
+
+<span style=color:#719e07>import</span> (
+	<span style=color:#2aa198>&#34;fmt&#34;</span>
+	<span style=color:#2aa198>&#34;path&#34;</span>
+)
+
+<span style=color:#268bd2>func</span> <span style=color:#268bd2>main</span>() {
+	<span style=color:#586e75>// Create the path to the hosts file.
+</span><span style=color:#586e75></span>	path1 <span style=color:#719e07>:=</span> <span style=color:#2aa198>&#34;c:\\windows\\system32&#34;</span>
+	path2 <span style=color:#719e07>:=</span> <span style=color:#2aa198>&#34;drivers\\etc\\hosts&#34;</span>
+
+	fmt.<span style=color:#268bd2>Println</span>(path.<span style=color:#268bd2>Join</span>(path1, path2))
+}
+</code></pre></div><p>You would expect it to create the correct path. Instead, you get:</p>
+<ul>
+<li><code>c:\windows\system32/drivers\etc\hosts</code></li>
+</ul>
+<h1 id=what-should-we-use-instead>What Should We Use Instead?
+<a class=header-link href=#what-should-we-use-instead><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Use <a href=https://golang.org/pkg/path/filepath/#Join target=_blank rel="noreferrer noopener">filepath.Join</a> instead. It uses OS specific separators.</p>
+<p>Note 1: If you modify the example on the playground to <code>filepath.Join</code> you still get the same result. Obviously, Go playground is not running on Windows.</p>
+<p>Note 2: Alternatively, you could convert all paths to use <code>/</code> as the separator. <code>c:/windows/system32/drivers/etc/hosts</code> is an acceptable Windows path. This is what I did in <a href=https://github.com/parsiya/borrowedtime/commit/e35b32d891bb160e8b03903de5ebdfd3f2db083b target=_blank rel="noreferrer noopener">borrowed time</a> after Stark told me about this issue.</p>
+</div>
+<footer>
+<p class=meta>
+<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Mar 9, 2019</time>
+<span class=categories>
+Tags:
+<a class=category href=https://parsiya.net/tags/filepath>filepath</a> <a class=category href=https://parsiya.net/tags/path>path</a>
+</span>
+</p>
+<p class=meta>
+<a class="basic-alignment left" href=https://parsiya.net/blog/2019-01-31-cheating-at-moonlighter-part-4-defense/ title="Cheating at Moonlighter - Part 4 - Defense">Cheating at Moonlighter - Part 4 - Defense</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2019-04-06-hiding-options-an-adventure-in-dealing-with-burp-proxy-in-an-extension/ title="Hiding OPTIONS - An Adventure in Dealing with Burp Proxy in an Extension">Hiding OPTIONS - An Adventure in Dealing with Burp Proxy in an Extension</a>
+</p>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</div>
+<aside class="sidebar thirds">
+<section class="first odd">
+<h1>Who am I?</h1>
+<p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
+<p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p>
+<p>Click on <a href=/about/>About Me!</a> to know more.</p>
+</p>
+</section>
+<ul class=sidebar-nav>
+<li class=sidebar-nav-item>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
+</li>
+</ul>
+<section class=odd>
+<h1>Collections</h1>
+<li>
+<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
+</li>
+<li>
+<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
+</li>
+</section>
+</aside>
+</div>
+</div>
+<footer role=contentinfo>
+<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
+</p>
+</footer>
+</body>
+</html>

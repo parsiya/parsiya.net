@@ -1,0 +1,276 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
+<link href=/css/fonts.css rel=stylesheet type=text/css>
+<title>Python Utility Modules for Burp Extensions</title>
+<link rel=stylesheet href=/css/hugo-octopress.css>
+<link rel=stylesheet href=/css/fork-awesome.min.css>
+<link href=https://parsiya.net/favicon.png rel=icon>
+<meta name=description content>
+<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
+<meta name=author content="Parsia">
+<meta name=generator content="Hugo 0.92.0">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image:src content="https://parsiya.net/blog/2018-12-19-python-utility-modules-for-burp-extensions/01-extender-options.png">
+<meta name=twitter:title content="Python Utility Modules for Burp Extensions">
+<meta name=twitter:description content="We can create and load Python/Java utility modules in Burp and then use them in extensions. It's a somewhat unknown/unused capability in Burp's Python/Java extensions.
+Note: Alternatively, the modules can be placed in the same path as the extension and loaded/used the same way. For example, instead of putting the Burp Exceptions file in the modules folder, store it in the extension directory.">
+<meta name=twitter:domain content="parsiya.net">
+<meta name=twitter:creator content="@CryptoGangsta">
+</head>
+<body>
+<header role=banner>
+<hgroup>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
+<h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2>
+</hgroup></header>
+<nav role=navigation>
+<fieldset class=mobile-nav>
+<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
+</fieldset>
+<ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
+<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
+<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
+<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
+<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
+<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
+</ul>
+<ul class=subscription>
+<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
+</ul>
+<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+<fieldset role=search>
+<input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/>
+</fieldset>
+</form>
+</nav>
+<div id=main>
+<div id=content>
+<div>
+<article class=hentry role=article>
+<header>
+<p class=meta>Dec 19, 2018
+- 5 minute read
+- <a href=https://parsiya.net/blog/2018-12-19-python-utility-modules-for-burp-extensions/#disqus_thread>Comments</a>
+- <a class=label href=https://parsiya.net/categories/burp/>Burp </a><a class=label href=https://parsiya.net/categories/burp-extension/>Burp extension </a>
+</p>
+<h1 class=entry-title>
+Python Utility Modules for Burp Extensions
+</h1>
+</header>
+<div class=entry-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#loading-modules>Loading Modules</a></li>
+<li><a href=#burp-exceptions-extension>Burp Exceptions Extension</a></li>
+<li><a href=#using-modules>Using Modules</a>
+<ul>
+<li><a href=#drawback>Drawback</a></li>
+<li><a href=#whats-inside-the-module>What's Inside the Module?</a></li>
+<li><a href=#using-iextensionhelpers-in-modules>Using IExtensionHelpers in Modules</a></li>
+</ul>
+</li>
+<li><a href=#conclusion>Conclusion</a></li>
+</ul>
+</nav>
+<p>We can create and load Python/Java utility modules in Burp and then use them in extensions. It's a somewhat unknown/unused capability in Burp's Python/Java extensions.</p>
+<p><strong>Note:</strong> Alternatively, the modules can be placed in the same path as the extension and loaded/used the same way. For example, instead of putting the Burp Exceptions file in the modules folder, store it in the extension directory.</p>
+<h1 id=loading-modules>Loading Modules
+<a class=header-link href=#loading-modules><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>If you use Burp, you have seen this screen. This is where we set the Jython jar file. Everyone ignores that second input field here (under <code>Python Environment</code>). Any Python module in this path will be loaded with Burp. Then the extension can use any function/object inside them.</p>
+<p>The same capability exists for Java but not for Ruby. In this blog post I will discuss how I use these modules in my Python extensions.</p>
+<span class=caption-wrapper>
+<img class=caption src=01-extender-options.png title="Extender options" alt="Extender options">
+<span class=caption-text>Extender options</span>
+</span>
+<h1 id=burp-exceptions-extension>Burp Exceptions Extension
+<a class=header-link href=#burp-exceptions-extension><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Before starting to develop any Python extension, please make sure to use:</p>
+<ul>
+<li><a href=https://github.com/securityMB/burp-exceptions target=_blank rel="noreferrer noopener">https://github.com/securityMB/burp-exceptions</a></li>
+</ul>
+<p>The instructions to set it up are easy and straightforward. You need to load a module and then add a few lines to your extension. Be sure to remove them before you release your code.</p>
+<p>Let's say we have referenced a non-existent field or variable in the extension (<code>self.nothing</code>). This is the meaningless error message in we will see Burp:</p>
+<span class=caption-wrapper>
+<img class=caption src=02-burp-error.png title="Burp's error message" alt="Burp's error message">
+<span class=caption-text>Burp's error message</span>
+</span>
+<p>This is the error message from the extension (appears in the <code>Output</code> tab):</p>
+<span class=caption-wrapper>
+<img class=caption src=03-python-error.png title="Meaningful error message" alt="Meaningful error message">
+<span class=caption-text>Meaningful error message</span>
+</span>
+<p>It actually tells us where the problem is. <strong>SO YEAH, USE THE DAMN EXTENSION.</strong></p>
+<h1 id=using-modules>Using Modules
+<a class=header-link href=#using-modules><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>I couldn't find any usage documentation or tutorials about modules. Burp documentation mentions the field but that's about it. If you have setup <a href=https://github.com/securityMB/burp-exceptions target=_blank rel="noreferrer noopener">Burp Exceptions</a>, you have probably figured out how they are imported. Modules are imported by their file name. If our file is named <code>mylibrary.py</code>, it's can be imported in the extension like this:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>from</span> mylibrary <span style=color:#719e07>import</span> <span style=color:#719e07>*</span>
+<span style=color:#586e75># or a single function</span>
+<span style=color:#719e07>from</span> mylibrary <span style=color:#719e07>import</span> myFunction
+</code></pre></div><p>Now we can use any function inside <code>mylibrary.py</code> (or just <code>myFunction</code> in the second case) in our extension.</p>
+<h2 id=drawback>Drawback
+<a class=header-link href=#drawback><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>The end user needs to setup the modules path and copy extra files there. I am also not sure how modules work when extensions are installed from Burp App store.</p>
+<p>My solution (yours could be different) is using modules for development/personal/work extensions and then copying the needed functions (or all of them) from the modules to the actual extension for release.</p>
+<h2 id=whats-inside-the-module>What's Inside the Module?
+<a class=header-link href=#whats-inside-the-module><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Anything and everything. Anything you want and think is useful. I have turned it into a utility library. Things like base64 encoding/decoding, encryption (more on that in the next blog post) and functions that use the Burp's <a href=https://portswigger.net/burp/extender/api/burp/IExtensionHelpers.html target=_blank rel="noreferrer noopener">IExtensionHelpers</a> methods. It has very helpful methods.</p>
+<h2 id=using-iextensionhelpers-in-modules>Using IExtensionHelpers in Modules
+<a class=header-link href=#using-iextensionhelpers-in-modules><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>The only way to get an object to use these methods is through the <a href=https://portswigger.net/burp/extender/api/burp/IBurpExtenderCallbacks.html#getHelpers%28%29 target=_blank rel="noreferrer noopener">IBurpExtenderCallbacks.getHelpers()</a> method. As a result, I pass an instance of it manually as a function parameter to each helper function that uses it.</p>
+<p>Let's look at a minimal example based on the <code>custom editor tab</code> example at <a href=https://github.com/PortSwigger/example-custom-editor-tab/blob/master/python/CustomEditorTab.py target=_blank rel="noreferrer noopener">https://github.com/PortSwigger/example-custom-editor-tab/blob/master/python/CustomEditorTab.py</a>.</p>
+<p>We will see a complete example in the next blog post. The <code>callbacks</code> object is available inside the <a href=https://portswigger.net/burp/extender/api/burp/IBurpExtender.html#registerExtenderCallbacks target=_blank rel="noreferrer noopener">registerExtenderCallbacks</a></p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>class</span> <span style=color:#268bd2>BurpExtender</span>(IBurpExtender, IMessageEditorTabFactory):
+    
+    <span style=color:#586e75>#</span>
+    <span style=color:#586e75># implement IBurpExtender</span>
+    <span style=color:#586e75>#</span>
+    
+    <span style=color:#719e07>def</span>	<span style=color:#268bd2>registerExtenderCallbacks</span>(<span style=color:#268bd2>self</span>, callbacks):
+        <span style=color:#586e75># keep a reference to our callbacks object</span>
+        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_callbacks <span style=color:#719e07>=</span> callbacks
+        
+        <span style=color:#586e75># obtain an extension helpers object</span>
+        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_helpers <span style=color:#719e07>=</span> callbacks<span style=color:#719e07>.</span>getHelpers()
+</code></pre></div><p>Here we are saving the <code>helper</code> object as field. This saves it to the <code>extender</code> object that is passed to <code>__init__</code> of the tab object. Here we are assigning <code>extender</code> to the <code>_extender</code>. What I usually do is, add <code>helpers</code> directly to a field.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>class</span> <span style=color:#268bd2>Base64InputTab</span>(IMessageEditorTab):
+    <span style=color:#719e07>def</span> __init__(<span style=color:#268bd2>self</span>, extender, controller, editable):
+        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_extender <span style=color:#719e07>=</span> extender
+        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_editable <span style=color:#719e07>=</span> editable
+
+        <span style=color:#586e75># adding helpers as a direct field.</span>
+        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>helpers <span style=color:#719e07>=</span> extender<span style=color:#719e07>.</span>_helpers
+        
+        <span style=color:#586e75># create an instance of Burp&#39;s text editor, to display our deserialized data</span>
+        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput <span style=color:#719e07>=</span> extender<span style=color:#719e07>.</span>_callbacks<span style=color:#719e07>.</span>createTextEditor()
+        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>setEditable(editable)
+</code></pre></div><p>Now we can use <code>self.helpers</code> inside the extension and use its methods like this:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#268bd2>self</span><span style=color:#719e07>.</span>helpers<span style=color:#719e07>.</span>analyzeRequest(content)
+<span style=color:#268bd2>self</span><span style=color:#719e07>.</span>helpers<span style=color:#719e07>.</span>base64Encode(someBytes)
+</code></pre></div><p>Base64 is an exception because Jython already has a base64 module, so it can be written without the need for <code>helpers</code>. You could also write your own implementation of <code>IExtensionHelpers</code> methods but why re-implement when it's already been done.</p>
+<p>Note: You cannot use anything that is not in the Jython standard library. For example, <code>pycrypto</code> for encryption/decryption is not available inside Burp extensions. We will discuss a couple of workarounds in the next blog post.</p>
+<p>I also pass it directly as a parameter to helper functions inside my Python module:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#586e75># inside mylibrary.py</span>
+
+<span style=color:#586e75># getInfo processes the request/response and returns info</span>
+<span style=color:#719e07>def</span> <span style=color:#268bd2>getInfo</span>(content, isRequest, helpers):
+    <span style=color:#719e07>if</span> isRequest:
+        <span style=color:#719e07>return</span> helpers<span style=color:#719e07>.</span>analyzeRequest(content)
+    <span style=color:#719e07>else</span>:
+        <span style=color:#719e07>return</span> helpers<span style=color:#719e07>.</span>analyzeResponse(content)
+
+<span style=color:#586e75># getBody returns the body of a request/response</span>
+<span style=color:#719e07>def</span> <span style=color:#268bd2>getBody</span>(content, isRequest, helpers):
+    info <span style=color:#719e07>=</span> getInfo(content, isRequest, helpers)
+    <span style=color:#719e07>return</span> content[info<span style=color:#719e07>.</span>getBodyOffset():]
+</code></pre></div><p>Now instead of manually doing it, we can just call a function and get the body of what we have.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#586e75># inside the extension</span>
+<span style=color:#586e75># import the module</span>
+<span style=color:#719e07>from</span> mylibrary <span style=color:#719e07>import</span> getInfo, getBody
+
+<span style=color:#586e75># later inside one of the tab functions</span>
+<span style=color:#719e07>def</span> <span style=color:#268bd2>setMessage</span>(<span style=color:#268bd2>self</span>, content, isRequest):
+    <span style=color:#719e07>if</span> content <span style=color:#719e07>is</span> <span style=color:#cb4b16>None</span>:
+        <span style=color:#586e75># clear our display</span>
+        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>setText(<span style=color:#cb4b16>None</span>)
+        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>setEditable(<span style=color:#cb4b16>False</span>)
+    
+    <span style=color:#719e07>else</span>:
+        <span style=color:#586e75># get the body of the message</span>
+        body <span style=color:#719e07>=</span> getBody(content, isRequest, <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>helpers)
+</code></pre></div>
+<h1 id=conclusion>Conclusion
+<a class=header-link href=#conclusion><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>We learned about Burp modules in Python and Java. In the next blog post, I will use this as a building block to show what I learned from creating a Burp extension to decrypt some custom protocol.</p>
+</div>
+<footer>
+<p class=meta>
+<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Dec 19, 2018</time>
+<span class=categories>
+Tags:
+<a class=category href=https://parsiya.net/tags/python>Python</a>
+</span>
+</p>
+<p class=meta>
+<a class="basic-alignment left" href=https://parsiya.net/blog/2018-12-17-tiredful-api-part-2-comparing-site-maps-with-burp/ title="Tiredful API - Part 2 - Comparing Site Maps with Burp">Tiredful API - Part 2 - Comparing Site Maps with Burp</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2018-12-22-aes-cfb128-pycrypto-vs.-go/ title="AES-CFB128: PyCrypto vs. Go">AES-CFB128: PyCrypto vs. Go</a>
+</p>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</div>
+<aside class="sidebar thirds">
+<section class="first odd">
+<h1>Who am I?</h1>
+<p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
+<p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p>
+<p>Click on <a href=/about/>About Me!</a> to know more.</p>
+</p>
+</section>
+<ul class=sidebar-nav>
+<li class=sidebar-nav-item>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
+</li>
+</ul>
+<section class=odd>
+<h1>Collections</h1>
+<li>
+<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
+</li>
+<li>
+<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
+</li>
+</section>
+</aside>
+</div>
+</div>
+<footer role=contentinfo>
+<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
+</p>
+</footer>
+</body>
+</html>

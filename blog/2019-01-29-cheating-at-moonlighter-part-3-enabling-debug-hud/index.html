@@ -1,0 +1,327 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
+<link href=/css/fonts.css rel=stylesheet type=text/css>
+<title>Cheating at Moonlighter - Part 3 - Enabling Debug HUD</title>
+<link rel=stylesheet href=/css/hugo-octopress.css>
+<link rel=stylesheet href=/css/fork-awesome.min.css>
+<link href=https://parsiya.net/favicon.png rel=icon>
+<meta name=description content>
+<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
+<meta name=author content="Parsia">
+<meta name=generator content="Hugo 0.92.0">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image:src content="https://parsiya.net/blog/2019-01-29-cheating-at-moonlighter-part-3-enabling-debug-hud/15-debughud.jpg">
+<meta name=twitter:title content="Cheating at Moonlighter - Part 3 - Enabling Debug HUD">
+<meta name=twitter:description content="In this part, I am going to use dnSpy to enable the Debug HUD. We will analyze how it's enabled and how it can be accessed.
+
+Cheating at Moonlighter - Part 1 - Save File
+Cheating at Moonlighter - Part 2 - Changing Game Logic with dnSpy
+">
+<meta name=twitter:domain content="parsiya.net">
+<meta name=twitter:creator content="@CryptoGangsta">
+</head>
+<body>
+<header role=banner>
+<hgroup>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
+<h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2>
+</hgroup></header>
+<nav role=navigation>
+<fieldset class=mobile-nav>
+<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
+</fieldset>
+<ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
+<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
+<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
+<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
+<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
+<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
+</ul>
+<ul class=subscription>
+<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
+</ul>
+<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+<fieldset role=search>
+<input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/>
+</fieldset>
+</form>
+</nav>
+<div id=main>
+<div id=content>
+<div>
+<article class=hentry role=article>
+<header>
+<p class=meta>Jan 29, 2019
+- 4 minute read
+- <a href=https://parsiya.net/blog/2019-01-29-cheating-at-moonlighter-part-3-enabling-debug-hud/#disqus_thread>Comments</a>
+- <a class=label href=https://parsiya.net/categories/game-hacking/>Game Hacking </a>
+</p>
+<h1 class=entry-title>
+Cheating at Moonlighter - Part 3 - Enabling Debug HUD
+</h1>
+</header>
+<div class=entry-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#enabling-debug-mode>Enabling Debug Mode</a>
+<ul>
+<li><a href=#debug-shortcuts>Debug Shortcuts</a>
+<ul>
+<li><a href=#keycodes>KeyCodes</a></li>
+<li><a href=#controller-shortcuts>Controller Shortcuts</a></li>
+<li><a href=#savereset-shortcuts>Save/Reset Shortcuts</a></li>
+</ul>
+</li>
+<li><a href=#enabling-debug-hud>Enabling Debug HUD</a></li>
+</ul>
+</li>
+<li><a href=#lessons-learned>Lessons Learned</a></li>
+</ul>
+</nav>
+<p>In this part, I am going to use dnSpy to enable the Debug HUD. We will analyze how it's enabled and how it can be accessed.</p>
+<ul>
+<li><a href=/blog/2019-01-23-cheating-at-moonlighter-part-1-save-file/ title="Cheating at Moonlighter - Part 1 - Save File">Cheating at Moonlighter - Part 1 - Save File</a></li>
+<li><a href=/blog/2019-01-27-cheating-at-moonlighter-part-2-changing-game-logic-with-dnspy/ title="Cheating at Moonlighter - Part 2 - Changing Game Logic with dnSpy">Cheating at Moonlighter - Part 2 - Changing Game Logic with dnSpy</a></li>
+</ul>
+<p>Looking at <code>StatsModificator.intelligence</code>, I went down this rabbit hole to see how items are created.</p>
+<span class=caption-wrapper>
+<img class=caption src=00-item-create.png title="Item creation call analysis" alt="Item creation call analysis">
+<span class=caption-text>Item creation call analysis</span>
+</span>
+<p>And I saw these two methods in a class named <code>HUDDebug</code>. They have curious names <code>GiveItemToWill</code> and <code>GiveWeaponToWill</code>. If my guess is correct, there's a debug UI somewhere in the game that allows spawning items.</p>
+<span class=caption-wrapper>
+<img class=caption src=01-huddebug.png title="HUDDebug Class" alt="HUDDebug Class">
+<span class=caption-text>HUDDebug Class</span>
+</span>
+<p>It has a <code>Start()</code> method, we can analyze it to see what calls it.</p>
+<p>Seems like nothing calls it, same with <code>Awake()</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=02-analyze-huddebug.png title="HUDDebug analysis" alt="HUDDebug analysis">
+<span class=caption-text>HUDDebug analysis</span>
+</span>
+<p>These are unity methods. According to this video <a href=https://unity3d.com/learn/tutorials/topics/scripting/awake-and-start target=_blank rel="noreferrer noopener">https://unity3d.com/learn/tutorials/topics/scripting/awake-and-start</a>:</p>
+<ol>
+<li><code>Awake()</code>: Called first even if the script is not enabled. Used for initialization.</li>
+<li><code>Start()</code>: Called only once after awake and before update if the script is enabled.</li>
+<li><code>Update()</code>: Called after the script is enabled and can be called multiple times.</li>
+</ol>
+<p>These are called by the engine, so the <code>Analyze</code> tab will not have the chain.</p>
+<h1 id=enabling-debug-mode>Enabling Debug Mode
+<a class=header-link href=#enabling-debug-mode><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Inside <code>Update()</code> we can see:</p>
+<span class=caption-wrapper>
+<img class=caption src=03-update.png title=HUDDebug.Update() alt=HUDDebug.Update()>
+<span class=caption-text>HUDDebug.Update()</span>
+</span>
+<p>Pay attention to line 76. There's an <code>if</code> condition that enables everything. We can analyze <code>IsDebugEnabled</code>:</p>
+<span class=caption-wrapper>
+<img class=caption src=04-debug-enabled.png title="IsDebugEnabled analysis" alt="IsDebugEnabled analysis">
+<span class=caption-text>IsDebugEnabled analysis</span>
+</span>
+<p>Woot. It seems like we found it. Now we need to modify this to only return <code>true</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=05-debug-il.png title="IL instructions for get_IsDebugEnabled" alt="IL instructions for get_IsDebugEnabled">
+<span class=caption-text>IL instructions for get_IsDebugEnabled</span>
+</span>
+<p>To return true, we need to return 1. We can delete lines 0 to 6 and only keep lines 7 and 8:</p>
+<pre tabindex=0><code> 7: ldc.i4.1    // push 1 to the stack
+ 8: ret         // return
+</code></pre><p>Highlight lines 0 to 6 and press delete (or use the context menu) to remove them. Press <code>Ok</code> to get the modified C# code.</p>
+<span class=caption-wrapper>
+<img class=caption src=06-true.png title="Modified get_IsDebugEnabled" alt="Modified get_IsDebugEnabled">
+<span class=caption-text>Modified get_IsDebugEnabled</span>
+</span>
+<p>This enables debug mode for every run. But what else is out there?</p>
+<h2 id=debug-shortcuts>Debug Shortcuts
+<a class=header-link href=#debug-shortcuts><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Let's go back to the analysis results for <code>GameManager.IsDebugEnabled</code></p>
+<span class=caption-wrapper>
+<img class=caption src=07-debug-analyze.png title="IsDebugEnabled analysis" alt="IsDebugEnabled analysis">
+<span class=caption-text>IsDebugEnabled analysis</span>
+</span>
+<p>We have already looked at <code>HUDDebug.Update</code>, now we look at the other two.</p>
+<p><code>HeroMerchant.Update()</code> has some shortcuts.</p>
+<span class=caption-wrapper>
+<img class=caption src=08-heromerchant-update.png title=HeroMerchant.Update() alt=HeroMerchant.Update()>
+<span class=caption-text>HeroMerchant.Update()</span>
+</span>
+<h3 id=keycodes>KeyCodes
+<a class=header-link href=#keycodes><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p><a href=https://docs.unity3d.com/ScriptReference/Input.GetKeyDown.html target=_blank rel="noreferrer noopener">Input.GetKeyDown</a> detects when a key is pressed and released. The parameter to the method is an enum of type <a href=https://docs.unity3d.com/ScriptReference/KeyCode.html target=_blank rel="noreferrer noopener">KeyCode</a> or a string. It took me a while to find out the associated numbers.</p>
+<p>I found it in the decompiled code at:</p>
+<ul>
+<li><a href=https://github.com/jamesjlinden/unity-decompiled/blob/master/UnityEngine/UnityEngine/KeyCode.cs target=_blank rel="noreferrer noopener">https://github.com/jamesjlinden/unity-decompiled/blob/master/UnityEngine/UnityEngine/KeyCode.cs</a></li>
+</ul>
+<p><a href=KeyCode.cs>Here's a local copy</a>, in case the repository is taken down.</p>
+<p>It's based on ASCII-Hex decimal values with extra keys (e.g. gamepad) in the end.</p>
+<p>Now we can decipher some debug shortcuts:</p>
+<span class=caption-wrapper>
+<img class=caption src=09-potion-shortcut.png title="Potion Shortcut" alt="Potion Shortcut">
+<span class=caption-text>Potion Shortcut</span>
+</span>
+<ul>
+<li><code>104</code>: <code>H</code></li>
+<li><code>304</code>: <code>LeftShift</code></li>
+</ul>
+<p>Note we can also change the item granted with anything we want.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=color:#719e07>if</span> (Input.GetKeyDown(<span style=color:#2aa198>98</span>) &amp;&amp; Input.GetKey(<span style=color:#2aa198>304</span>))
+{
+    <span style=color:#719e07>this</span>.TeleportToFloorEnd();
+}
+</code></pre></div><p>We can teleport to the last room of any dungeon floor:</p>
+<ul>
+<li><code>98</code>: <code>B</code></li>
+<li><code>304</code>: <code>LeftShift</code></li>
+</ul>
+<p>And so on.</p>
+<h3 id=controller-shortcuts>Controller Shortcuts
+<a class=header-link href=#controller-shortcuts><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p><code>HeroMerchantController.Update()</code> defines controller shortcuts.</p>
+<span class=caption-wrapper>
+<img class=caption src=10-controller-shortcut.png title="Controller shortcuts" alt="Controller shortcuts">
+<span class=caption-text>Controller shortcuts</span>
+</span>
+<h3 id=savereset-shortcuts>Save/Reset Shortcuts
+<a class=header-link href=#savereset-shortcuts><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>There are a couple of more shortcuts inside <code>HUDDebug.Update()</code>:</p>
+<span class=caption-wrapper>
+<img class=caption src=11-save-shortcut.png title="Save/reset shortcuts" alt="Save/reset shortcuts">
+<span class=caption-text>Save/reset shortcuts</span>
+</span>
+<ul>
+<li>Save: <code>LeftShift</code> + <code>S</code></li>
+<li>Reset: <code>LeftShift</code>+ <code>R</code></li>
+</ul>
+<h2 id=enabling-debug-hud>Enabling Debug HUD
+<a class=header-link href=#enabling-debug-hud><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>We still need to enable the HUD. It must have a shortcut key. Searching the internet tells us it's <code>Tab</code>.</p>
+<p>See this page about a CheatEngine trainer:</p>
+<ul>
+<li><a href="http://fearlessrevolution.com/viewtopic.php?p=47682#p47682" target=_blank rel="noreferrer noopener">http://fearlessrevolution.com/viewtopic.php?p=47682#p47682</a></li>
+</ul>
+<p>How can we find it ourselves? Back inside <code>HUDDebug.Update()</code> we can see a block that enables and disables <code>consoleDebugPanel</code>:</p>
+<span class=caption-wrapper>
+<img class=caption src=12-enable-panel.png title="Enabling and disable consoleDebugPanel" alt="Enabling and disable consoleDebugPanel">
+<span class=caption-text>Enabling and disable consoleDebugPanel</span>
+</span>
+<p>Inside the <code>if</code> we can see that <code>GameManager.Instance.consoleDebug</code> is referenced. Let's analyze that.</p>
+<span class=caption-wrapper>
+<img class=caption src=13-analyze-consoledebug.png title="consoleDebug  analysis" alt="consoleDebug  analysis">
+<span class=caption-text>consoleDebug analysis</span>
+</span>
+<p>Double-click on <code>GameManager.Update()</code>:</p>
+<span class=caption-wrapper>
+<img class=caption src=14-gamemanager-update.png title=GameManager.Update() alt=GameManager.Update()>
+<span class=caption-text>GameManager.Update()</span>
+</span>
+<p>We can see it's triggered by holding the <code>ButtonRightStick</code> for a second (I think). A bit further up we can see the equivalent keyboard shortcut.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=color:#719e07>if</span> (Input.GetKeyDown(<span style=color:#2aa198>9</span>))
+</code></pre></div><p>It's the <code>Tab</code> key which confirms what we found online. We can press <code>Tab</code> in the game to enable debug HUD.</p>
+<span class=caption-wrapper>
+<img class=caption src=15-debughud.jpg title="Debug HUD" alt="Debug HUD">
+<span class=caption-text>Debug HUD</span>
+</span>
+<p>And it's quite extensive.</p>
+<h1 id=lessons-learned>Lessons Learned
+<a class=header-link href=#lessons-learned><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>We learned:</p>
+<ul>
+<li>How to use dnSpy's Analyze feature to track variables/methods/etc.</li>
+<li>How to enable debug mode.</li>
+<li>Shortcut keys for various things such as potions.</li>
+<li>Shortcut key to enable the debug HUD.</li>
+</ul>
+<p>My next plan was to use Cheat Engine to make cheats and enable debug HUD. But it's already done. In the next part, I will write my thoughts about some questions that I was asked about such cheating. Maybe after that, I will return and do the Cheat Engine part but I will need to re-learn the tool again.</p>
+</div>
+<footer>
+<p class=meta>
+<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Jan 29, 2019</time>
+<span class=categories>
+Tags:
+<a class=category href=https://parsiya.net/tags/moonlighter>Moonlighter</a> <a class=category href=https://parsiya.net/tags/dnspy>dnSpy</a>
+</span>
+</p>
+<p class=meta>
+<a class="basic-alignment left" href=https://parsiya.net/blog/2019-01-27-cheating-at-moonlighter-part-2-changing-game-logic-with-dnspy/ title="Cheating at Moonlighter - Part 2 - Changing Game Logic with dnSpy">Cheating at Moonlighter - Part 2 - Changing Game Logic with dnSpy</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2019-01-31-cheating-at-moonlighter-part-4-defense/ title="Cheating at Moonlighter - Part 4 - Defense">Cheating at Moonlighter - Part 4 - Defense</a>
+</p>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</div>
+<aside class="sidebar thirds">
+<section class="first odd">
+<h1>Who am I?</h1>
+<p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
+<p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p>
+<p>Click on <a href=/about/>About Me!</a> to know more.</p>
+</p>
+</section>
+<ul class=sidebar-nav>
+<li class=sidebar-nav-item>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
+</li>
+</ul>
+<section class=odd>
+<h1>Collections</h1>
+<li>
+<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
+</li>
+<li>
+<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
+</li>
+</section>
+</aside>
+</div>
+</div>
+<footer role=contentinfo>
+<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
+</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,665 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
+<link href=/css/fonts.css rel=stylesheet type=text/css>
+<title>Swing in Python Burp Extensions - Part 3 - Tips and Tricks</title>
+<link rel=stylesheet href=/css/hugo-octopress.css>
+<link rel=stylesheet href=/css/fork-awesome.min.css>
+<link href=https://parsiya.net/favicon.png rel=icon>
+<meta name=description content>
+<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
+<meta name=author content="Parsia">
+<meta name=generator content="Hugo 0.92.0">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Swing in Python Burp Extensions - Part 3 - Tips and Tricks">
+<meta name=twitter:description content="In the two previous parts, we learned about Jython Swing. Those blogs take a lot
+of time to write. I think each of them took around 10 hours. I do not want to
+spend that kind of time but I still want to document what I have learned.
+In this blog I will write tips and tricks with a small code snippet instead of
+creating a complete extension.
+Did I tell you I release Bug Diaries,
+it's a Python Burp extension that aims to bring Burp issues to the community
+version. It's pretty neat.
+
+Swing in Python Burp Extensions - Part 1
+Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels
+">
+<meta name=twitter:domain content="parsiya.net">
+<meta name=twitter:creator content="@CryptoGangsta">
+</head>
+<body>
+<header role=banner>
+<hgroup>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
+<h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2>
+</hgroup></header>
+<nav role=navigation>
+<fieldset class=mobile-nav>
+<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
+</fieldset>
+<ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
+<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
+<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
+<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
+<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
+<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
+</ul>
+<ul class=subscription>
+<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
+</ul>
+<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+<fieldset role=search>
+<input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/>
+</fieldset>
+</form>
+</nav>
+<div id=main>
+<div id=content>
+<div>
+<article class=hentry role=article>
+<header>
+<p class=meta>Nov 26, 2019
+- 10 minute read
+- <a href=https://parsiya.net/blog/2019-11-26-swing-in-python-burp-extensions-part-3-tips-and-tricks/#disqus_thread>Comments</a>
+- <a class=label href=https://parsiya.net/categories/burp/>Burp </a><a class=label href=https://parsiya.net/categories/burp-extension/>Burp extension </a>
+</p>
+<h1 class=entry-title>
+Swing in Python Burp Extensions - Part 3 - Tips and Tricks
+</h1>
+</header>
+<div class=entry-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#see-error-messages-in-spawned-framesdialogs>See Error Messages in Spawned Frames/Dialogs</a></li>
+<li><a href=#save-and-load-extension-configuration>Save and Load Extension Configuration</a></li>
+<li><a href=#create-a-context-menu>Create a Context Menu</a>
+<ul>
+<li><a href=#step-1-burpextener-should-inherit-icontextmenufactory>Step 1: BurpExtener should inherit IContextMenuFactory</a></li>
+<li><a href=#step-2-register-the-context-menu>Step 2: Register the Context Menu</a></li>
+<li><a href=#step-3-implement-the-icontextmenufactory-interface>Step 3: Implement the IContextMenuFactory Interface</a></li>
+<li><a href=#step-4-create-the-menu-items>Step 4: Create The Menu Items</a></li>
+<li><a href=#step-5-configure-item-click-actionlisteners>Step 5: Configure Item Click ActionListeners</a></li>
+<li><a href=#step-6-invocation>Step 6: Invocation</a></li>
+</ul>
+</li>
+<li><a href=#jtextarea-sizing>JTextArea Sizing</a></li>
+<li><a href=#grouplayout-can-only-be-used-with-one-container-at-a-time-error>"GroupLayout can only be used with one container at a time" Error</a></li>
+<li><a href=#imessageeditor>IMessageEditor</a>
+<ul>
+<li><a href=#context-menu-in-imessageeditor>Context Menu in IMessageEditor</a></li>
+</ul>
+</li>
+<li><a href=#select-the-current-text-when-control-is-selected>Select the Current Text When Control is Selected</a></li>
+<li><a href=#print-to-console>Print to Console</a></li>
+<li><a href=#equivalent-of-jython-tostring-is-__repr__-in-python>Equivalent of Jython toString() is __repr()__ in Python</a></li>
+<li><a href=#adding-objects-to-a-jcombobox>Adding Objects to a JComboBox</a></li>
+<li><a href=#assign-fields-to-a-python-object>Assign Fields to a Python Object</a></li>
+<li><a href=#converting-an-object-with-object-fields-to-json>Converting an Object with Object Fields to JSON</a></li>
+</ul>
+</nav>
+<p>In the two previous parts, we learned about Jython Swing. Those blogs take a lot
+of time to write. I think each of them took around 10 hours. I do not want to
+spend that kind of time but I still want to document what I have learned.</p>
+<p>In this blog I will write tips and tricks with a small code snippet instead of
+creating a complete extension.</p>
+<p>Did I tell you I release <a href=https://github.com/parsiya/bug-diaries target=_blank rel="noreferrer noopener">Bug Diaries</a>,
+it's a Python Burp extension that aims to bring Burp issues to the community
+version. It's pretty neat.</p>
+<ul>
+<li><a href=/blog/2019-11-04-swing-in-python-burp-extensions-part-1/ title="Swing in Python Burp Extensions - Part 1">Swing in Python Burp Extensions - Part 1</a></li>
+<li><a href=/blog/2019-11-11-swing-in-python-burp-extensions-part-2-netbeans-and-tablemodels/ title="Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels">Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels</a></li>
+</ul>
+<h1 id=see-error-messages-in-spawned-framesdialogs>See Error Messages in Spawned Frames/Dialogs
+<a class=header-link href=#see-error-messages-in-spawned-framesdialogs><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>When creating new JFrames or JDialogs, you might not get the crash or error
+message in Burp. I am not sure why (probably has something to do with either
+Swing threads [swing is not thread safe] or because stdout/stderr is not
+defined).</p>
+<p>For example, I would create a new dialog/frame and spawning it would not do
+anything or print any error messages to console. It was pretty hard to figure
+out what had gone wrong.</p>
+<p>For example, in Java:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#268bd2>public</span> <span style=color:#dc322f>void</span> <span style=color:#268bd2>display</span><span style=color:#719e07>()</span> <span style=color:#719e07>{</span>
+    <span style=color:#719e07>try</span> <span style=color:#719e07>{</span>
+        <span style=color:#719e07>this</span><span style=color:#719e07>.</span>frm<span style=color:#719e07>.</span>setVisible<span style=color:#719e07>(</span><span style=color:#cb4b16>true</span><span style=color:#719e07>);</span>
+    <span style=color:#719e07>}</span> <span style=color:#719e07>catch</span> <span style=color:#719e07>(</span>Exception e<span style=color:#719e07>)</span> <span style=color:#719e07>{</span>
+        MainDiary<span style=color:#719e07>.</span>printOutput<span style=color:#719e07>(</span>e<span style=color:#719e07>.</span>toString<span style=color:#719e07>());</span>
+    <span style=color:#719e07>}</span>
+<span style=color:#719e07>}</span>
+</code></pre></div><p>Solution: Put the <code>.setVisible(True)</code> statement (or other statements) in
+<code>try/except</code> (Python) and <code>try/catch</code> blocks.</p>
+<h1 id=save-and-load-extension-configuration>Save and Load Extension Configuration
+<a class=header-link href=#save-and-load-extension-configuration><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>You can save extension specific configuration items in Burp and later load them
+for reuse. You can use it to persist extension options between Burp sessions. We
+can use two <code>IBurpExtenderCallbacks</code> methods:</p>
+<ul>
+<li><a href=https://portswigger.net/burp/extender/api/burp/IBurpExtenderCallbacks.html#loadExtensionSetting%28java.lang.String%29 target=_blank rel="noreferrer noopener">loadExtensionSetting</a></li>
+<li><a href=https://portswigger.net/burp/extender/api/burp/IBurpExtenderCallbacks.html#saveExtensionSetting%28java.lang.String,%20java.lang.String%29 target=_blank rel="noreferrer noopener">saveExtensionSetting</a></li>
+</ul>
+<p>For example, to save the last used directory:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>
+<span style=color:#719e07>try</span>:
+    <span style=color:#586e75># get the last used directory from extension settings.</span>
+    <span style=color:#586e75># it might not exist so we are doing it in a try block.</span>
+    lastDir <span style=color:#719e07>=</span> callbacks<span style=color:#719e07>.</span>loadExtensionSetting(<span style=color:#2aa198>&#34;lastuseddir&#34;</span>)
+catch:
+    <span style=color:#719e07>pass</span>
+
+<span style=color:#586e75># open a dialog at &#34;lastDir&#34;.</span>
+openFileDialog(lastDir)
+
+<span style=color:#586e75># assume newDir is the directory the last opened file.</span>
+
+<span style=color:#586e75># save the last used directory</span>
+callbacks<span style=color:#719e07>.</span>saveExtensionSetting(<span style=color:#2aa198>&#34;lastuseddir&#34;</span>, newDir)
+</code></pre></div>
+<h1 id=create-a-context-menu>Create a Context Menu
+<a class=header-link href=#create-a-context-menu><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1>
+<h2 id=step-1-burpextener-should-inherit-icontextmenufactory>Step 1: BurpExtener should inherit IContextMenuFactory
+<a class=header-link href=#step-1-burpextener-should-inherit-icontextmenufactory><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p><a href=https://portswigger.net/burp/extender/api/burp/IContextMenuFactory.html target=_blank rel="noreferrer noopener">IContextMenuFactory</a> is the interface to create a
+context menu.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>class</span> <span style=color:#268bd2>BurpExtender</span>(IBurpExtender, IContextMenuFactory):
+</code></pre></div>
+<h2 id=step-2-register-the-context-menu>Step 2: Register the Context Menu
+<a class=header-link href=#step-2-register-the-context-menu><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Use <a href=https://portswigger.net/burp/extender/api/burp/IBurpExtenderCallbacks.html#registerContextMenuFactory%28burp.IContextMenuFactory%29 target=_blank rel="noreferrer noopener">registerContextMenuFactory</a> inside
+<code>registerExtenderCallbacks</code>.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>class</span> <span style=color:#268bd2>BurpExtender</span>(IBurpExtender, ITab, IContextMenuFactory):
+
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>registerExtenderCallbacks</span>(<span style=color:#268bd2>self</span>, callbacks):
+        <span style=color:#586e75># ...</span>
+
+        callbacks<span style=color:#719e07>.</span>registerContextMenuFactory(<span style=color:#268bd2>self</span>)
+</code></pre></div>
+<h2 id=step-3-implement-the-icontextmenufactory-interface>Step 3: Implement the IContextMenuFactory Interface
+<a class=header-link href=#step-3-implement-the-icontextmenufactory-interface><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Create the <code>createMenuItems</code> method inside the <code>BurpExtender</code> class. It is
+called when the context menu is selected in Burp.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>class</span> <span style=color:#268bd2>BurpExtender</span>(IBurpExtender, IContextMenuFactory):
+
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>registerExtenderCallbacks</span>(<span style=color:#268bd2>self</span>, callbacks):
+        <span style=color:#586e75># ...</span>
+
+        callbacks<span style=color:#719e07>.</span>registerContextMenuFactory(<span style=color:#268bd2>self</span>)
+    
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>createMenuItems</span>(<span style=color:#268bd2>self</span>, invocation):
+        <span style=color:#586e75># do something</span>
+</code></pre></div>
+<h2 id=step-4-create-the-menu-items>Step 4: Create The Menu Items
+<a class=header-link href=#step-4-create-the-menu-items><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Inside <code>createMenuItems</code>, make one or more menu items of type
+<a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JMenuItem.html target=_blank rel="noreferrer noopener">JMenuItem</a>. Add them to a <a href=https://docs.oracle.com/javase/8/docs/api/java/util/ArrayList.html target=_blank rel="noreferrer noopener">java.util.ArrayList</a>.
+Return the ArrayList.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>def</span> <span style=color:#268bd2>createMenuItems</span>(<span style=color:#268bd2>self</span>, invocation):
+    <span style=color:#719e07>from</span> javax.swing <span style=color:#719e07>import</span> JMenuItem
+    menuItem1 <span style=color:#719e07>=</span> JMenuItem(<span style=color:#2aa198>&#34;Label for menu item 1&#34;</span>)
+    menuItem2 <span style=color:#719e07>=</span> JMenuItem(<span style=color:#2aa198>&#34;Label for menu item 2&#34;</span>)
+    <span style=color:#586e75># add action listeners to menuitems (see below)</span>
+    
+    <span style=color:#719e07>from</span> java.util <span style=color:#719e07>import</span> ArrayList
+    menuArray <span style=color:#719e07>=</span> ArrayList()
+    menuArray<span style=color:#719e07>.</span>add(menuItem1)
+    menuArray<span style=color:#719e07>.</span>add(menuItem2)
+
+    <span style=color:#719e07>return</span> menuArray
+</code></pre></div>
+<h2 id=step-5-configure-item-click-actionlisteners>Step 5: Configure Item Click ActionListeners
+<a class=header-link href=#step-5-configure-item-click-actionlisteners><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>These are the actions that are executed after clicking each menu item. It can be
+done in two ways:</p>
+<p><strong>Method 1</strong>: Directly assign a method to the <code>actionPerformed</code> field of
+JMenuItem. The method takes one parameter which is an <code>event</code> of type
+<a href=https://docs.oracle.com/javase/8/docs/api/java/awt/event/ActionEvent.html target=_blank rel="noreferrer noopener">ActionEvent</a>.</p>
+<p>This has the disadvantage of not having direct access to the <code>invocation</code> (more
+on it later), but it's simple and quick.</p>
+<ul>
+<li>Note 1: Directly assigning to <code>actionPerformed</code> is not possible in Java.</li>
+<li>Note 2: This can be done with other Swing elements in Jython. For example, a
+button's action can be assigned:
+<ul>
+<li>
+<p><code>btn1 = JButton("Button Label", actionPerformed=buttonAction)</code></p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>class</span> <span style=color:#268bd2>BurpExtender</span>(IBurpExtender, IContextMenuFactory):
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>registerExtenderCallbacks</span>(<span style=color:#268bd2>self</span>, callbacks):
+        <span style=color:#586e75># ...</span>
+
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>actionMenu1</span>(<span style=color:#268bd2>self</span>, event):
+        <span style=color:#586e75># do something when menu item 1 is clicked</span>
+        jitem <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>getSource()
+
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>createMenuItems</span>(<span style=color:#268bd2>self</span>, invocation):
+        <span style=color:#719e07>from</span> javax.swing <span style=color:#719e07>import</span> JMenuItem
+        menuItem1 <span style=color:#719e07>=</span> JMenuItem(<span style=color:#2aa198>&#34;Label for menu item 1&#34;</span>,
+            actionPerformed<span style=color:#719e07>=</span>actionMenu1)
+        menuItem2 <span style=color:#719e07>=</span> JMenuItem(<span style=color:#2aa198>&#34;Label for menu item 2&#34;</span>)
+        <span style=color:#586e75># add action listeners to menuitems (see below)</span>
+
+        <span style=color:#719e07>from</span> java.util <span style=color:#719e07>import</span> ArrayList
+        menuArray <span style=color:#719e07>=</span> ArrayList()
+        menuArray<span style=color:#719e07>.</span>add(menuItem1)
+        menuArray<span style=color:#719e07>.</span>add(menuItem2)
+
+        <span style=color:#719e07>return</span> menuArray
+</code></pre></div></li>
+</ul>
+</li>
+</ul>
+<p>The most useful method inside the function is <code>event.getSource()</code>.
+<a href=https://docs.oracle.com/javase/8/docs/api/java/util/EventObject.html#getSource-- target=_blank rel="noreferrer noopener">getSource</a> returns the Swing element that was the source of the
+event. In this case, we get the menu item that was clicked.</p>
+<p><strong>Method 2</strong>: Create a class that inherits
+<a href=https://docs.oracle.com/javase/8/docs/api/java/awt/event/ActionListener.html target=_blank rel="noreferrer noopener">java.awt.event.ActionListener</a>. Inside the class we put the
+action inside an <code>actionPerformed</code> method similar to the above.</p>
+<p>Then we add this class with <code>addActionListener</code> to the menu item.</p>
+<p>This method has the advantage of being able to get the <code>invocation</code> through a
+constructor. See this example:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>class</span> <span style=color:#268bd2>BurpExtender</span>(IBurpExtender, ITab, IContextMenuFactory):
+    <span style=color:#586e75># ...</span>
+
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>createMenuItems</span>(<span style=color:#268bd2>self</span>, invocation):
+        <span style=color:#2aa198>&#34;&#34;&#34;Called when a context menu is invoked in Burp.&#34;&#34;&#34;</span>
+        <span style=color:#719e07>from</span> javax.swing <span style=color:#719e07>import</span> JMenuItem
+        menuItem1 <span style=color:#719e07>=</span> JMenuItem(<span style=color:#2aa198>&#34;Label for menu item 1&#34;</span>)
+        menuItem2 <span style=color:#719e07>=</span> JMenuItem(<span style=color:#2aa198>&#34;Label for menu item 2&#34;</span>)
+
+        <span style=color:#586e75># create an instance of the custom ActionListener and pass the</span>
+        <span style=color:#586e75># invocation as a parameter to the constructor</span>
+        contextMenuListener <span style=color:#719e07>=</span> ContextMenuListener(invocation)
+        <span style=color:#586e75># add the instance as an actionlistener</span>
+        customMenuItem<span style=color:#719e07>.</span>addActionListener(contextMenuListener)
+
+        <span style=color:#719e07>from</span> java.util <span style=color:#719e07>import</span> ArrayList
+        menuArray <span style=color:#719e07>=</span> ArrayList()
+        menuArray<span style=color:#719e07>.</span>add(menuItem1)
+        menuArray<span style=color:#719e07>.</span>add(menuItem2)
+        <span style=color:#719e07>return</span> menuArray
+
+    <span style=color:#586e75># this class is defined before BurpExtender but showing it before helps</span>
+
+<span style=color:#719e07>class</span> <span style=color:#268bd2>ContextMenuListener</span>(ActionListener):
+    <span style=color:#2aa198>&#34;&#34;&#34;ActionListener for the Burp context menu.&#34;&#34;&#34;</span>
+    <span style=color:#719e07>def</span> __init__(<span style=color:#268bd2>self</span>, invocation):
+        <span style=color:#586e75># storing the invocation</span>
+        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>invocation <span style=color:#719e07>=</span> invocation
+
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>actionPerformed</span>(<span style=color:#268bd2>self</span>, event):
+        <span style=color:#2aa198>&#34;&#34;&#34;Invoked when the context menu item is selected.&#34;&#34;&#34;</span>
+        <span style=color:#586e75># now we can use both the event and the invocation</span>
+</code></pre></div>
+<h2 id=step-6-invocation>Step 6: Invocation
+<a class=header-link href=#step-6-invocation><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>The invocation is of type <a href=https://portswigger.net/burp/extender/api/burp/IContextMenuInvocation.html target=_blank rel="noreferrer noopener">IContextMenuInvocation</a>
+and contains a lot of useful methods for figuring out what was clicked and
+getting information.</p>
+<ul>
+<li><code>getInvocationContext</code> returns a <code>byte</code> that can be used to figure out the
+menu item was clicked in which Burp context. For example,
+<code>CONTEXT_PROXY_HISTORY</code> is <code>6</code>. See all of them at
+<a href=https://portswigger.net/burp/extender/api/constant-values.html#burp.IContextMenuInvocation.CONTEXT_INTRUDER_ATTACK_RESULTS target=_blank rel="noreferrer noopener">burp.IContextMenuInvocation enums</a>.</li>
+<li><code>getSelectedMessages()</code> is useful for getting the message(s) that were
+selected when the item was clicked. This useful when the extension wants to do
+something with the message(s). For example, sending them to a different tab.
+<ul>
+<li>Note: This method returns an <em>array</em> of <a href=https://portswigger.net/burp/extender/api/burp/IHttpRequestResponse.html target=_blank rel="noreferrer noopener">IHttpRequestResponse</a>.
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>def</span> <span style=color:#268bd2>actionPerformed</span>(<span style=color:#268bd2>self</span>, event):
+    <span style=color:#2aa198>&#34;&#34;&#34;Invoked when the context menu item is selected.&#34;&#34;&#34;</span>
+    <span style=color:#586e75># now we can use both the event and the invocation</span>
+    requestResponses <span style=color:#719e07>=</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>invocation<span style=color:#719e07>.</span>getSelectedMessages()
+    <span style=color:#719e07>for</span> reqResp <span style=color:#719e07>in</span> requestResponses:
+        request <span style=color:#719e07>=</span> reqResp<span style=color:#719e07>.</span>getRequest()
+        <span style=color:#586e75># note: not every message has a response</span>
+        response <span style=color:#719e07>=</span> reqResp<span style=color:#719e07>.</span>getResponse()
+        <span style=color:#586e75># https://portswigger.net/burp/extender/api/burp/IHttpService.html#getHost()</span>
+        host <span style=color:#719e07>=</span> reqResp<span style=color:#719e07>.</span>getHttpService()<span style=color:#719e07>.</span>getHost()
+        <span style=color:#586e75># do somethings with these</span>
+</code></pre></div></li>
+</ul>
+</li>
+<li><code>getToolFlag()</code> returns the tool flag. For example, <code>TOOL_PROXY</code> is <code>4</code>.
+<ul>
+<li>See all of them at <a href=https://portswigger.net/burp/extender/api/constant-values.html#burp.IBurpExtenderCallbacks.TOOL_COMPARER target=_blank rel="noreferrer noopener">burp.IBurpExtenderCallbacks enums</a>.</li>
+</ul>
+</li>
+</ul>
+<h1 id=jtextarea-sizing>JTextArea Sizing
+<a class=header-link href=#jtextarea-sizing><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p><a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JTextArea.html target=_blank rel="noreferrer noopener">JTextArea</a> by default does not have word wrap and can take over
+all of the GUI if it gets too big.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>textArea <span style=color:#719e07>=</span> JTextArea(<span style=color:#2aa198>&#34;some initial text&#34;</span>)
+<span style=color:#586e75># set to readonly</span>
+textArea<span style=color:#719e07>.</span>editable <span style=color:#719e07>=</span> <span style=color:#cb4b16>False</span>
+<span style=color:#586e75># textArea.setEditable(false) in Java</span>
+
+<span style=color:#586e75># enable linewrap</span>
+textArea<span style=color:#719e07>.</span>setLineWrap(<span style=color:#cb4b16>True</span>)
+<span style=color:#586e75># set linewrap to word</span>
+textArea<span style=color:#719e07>.</span>setWrapStyleWord(<span style=color:#cb4b16>True</span>)
+</code></pre></div><p>To enable scrollbars and have a fixed size textarea, put it in a
+<a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JScrollPane.html target=_blank rel="noreferrer noopener">JScrollPane</a>.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>js <span style=color:#719e07>=</span> JScrollPane(textArea)
+</code></pre></div>
+<h1 id=grouplayout-can-only-be-used-with-one-container-at-a-time-error>"GroupLayout can only be used with one container at a time" Error
+<a class=header-link href=#grouplayout-can-only-be-used-with-one-container-at-a-time-error><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>When spawning a new JFrame or JPanel, I would get an error. Before putting the
+error in a <code>try/catch</code> block, it would not spawn. After that I would get this
+error "GroupLayout can only be used with one container at a time."</p>
+<p>When using classes that had inherited JFrames or JPanels, it would work but when
+I would assign it to a field. And this would mostly happen in Java.</p>
+<p>Solution: <code>GroupLayout</code> should be assigned to the frame or panel's "content
+pane." Content pane is the layer that holds all the objects together.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#586e75>// Inside the class
+</span><span style=color:#586e75></span><span style=color:#268bd2>private</span> JFrame frm<span style=color:#719e07>;</span>
+
+<span style=color:#586e75>// Inside initializeComponent() [which is called by the constructor]
+</span><span style=color:#586e75></span>frm <span style=color:#719e07>=</span> <span style=color:#719e07>new</span> JFrame<span style=color:#719e07>();</span>
+
+<span style=color:#586e75>// Later when assigning the GroupLayout
+</span><span style=color:#586e75></span>GroupLayout layout <span style=color:#719e07>=</span> <span style=color:#719e07>new</span> GroupLayout<span style=color:#719e07>(</span><span style=color:#719e07>this</span><span style=color:#719e07>.</span>frm<span style=color:#719e07>.</span>getContentPane<span style=color:#719e07>());</span>
+<span style=color:#719e07>this</span><span style=color:#719e07>.</span>frm<span style=color:#719e07>.</span>getContentPane<span style=color:#719e07>().</span>setLayout<span style=color:#719e07>(</span>layout<span style=color:#719e07>);</span>
+</code></pre></div><p>The following code compiles but will result in the "GroupLayout can only be used ..." error.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>GroupLayout layout <span style=color:#719e07>=</span> <span style=color:#719e07>new</span> GroupLayout<span style=color:#719e07>(</span><span style=color:#719e07>this</span><span style=color:#719e07>.</span>frm<span style=color:#719e07>);</span>
+<span style=color:#719e07>this</span><span style=color:#719e07>.</span>frm<span style=color:#719e07>.</span>setLayout<span style=color:#719e07>(</span>layout<span style=color:#719e07>);</span>
+</code></pre></div>
+<h1 id=imessageeditor>IMessageEditor
+<a class=header-link href=#imessageeditor><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><ul>
+<li>Create it:
+<ul>
+<li><code>callbacks.createMessageEditor([controller], [editable True/False])</code></li>
+</ul>
+</li>
+<li>Add it to the form with <code>getComponent()</code>:
+<ul>
+<li><code>jTabbedPane1.addTab("Request", panelRequest.getComponent());</code></li>
+</ul>
+</li>
+<li>Set the message
+<ul>
+<li><code>self.panelRequest.setMessage([message in a byte array], [True if request, False if response])</code></li>
+</ul>
+</li>
+<li>docs:
+<ul>
+<li><a href=https://portswigger.net/burp/extender/api/burp/IMessageEditor.html target=_blank rel="noreferrer noopener">https://portswigger.net/burp/extender/api/burp/IMessageEditor.html</a></li>
+</ul>
+</li>
+</ul>
+<h2 id=context-menu-in-imessageeditor>Context Menu in IMessageEditor
+<a class=header-link href=#context-menu-in-imessageeditor><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>To make this happen, you need to create an
+<a href=https://portswigger.net/burp/extender/api/burp/IMessageEditorController.html target=_blank rel="noreferrer noopener">IMessageEditorController</a> and assign it to the
+<code>IMessageEditor</code> during creation.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>class</span> <span style=color:#268bd2>MyController</span>(IMessageEditorController):
+    <span style=color:#586e75># needs to implement three methods</span>
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>getHttpService</span>():
+        <span style=color:#586e75># ...</span>
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>getRequest</span>():
+        <span style=color:#586e75># ...</span>
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>getResponse</span>():
+        <span style=color:#586e75># ...</span>
+
+<span style=color:#586e75># ...</span>
+<span style=color:#586e75># creating the IMessageEditor in gui</span>
+callbacks<span style=color:#719e07>.</span>createMessageEditor(MyController, [editable <span style=color:#cb4b16>True</span><span style=color:#719e07>/</span><span style=color:#cb4b16>False</span>])
+</code></pre></div><p>Now you can the context menu in your IMessageEditors. E.g., <code>Send to Repeater</code>.</p>
+<p>Creating this interface is straightforward in simple extensions. For a good
+example, see the <code>Custom Logger</code> extension from Portswigger:</p>
+<ul>
+<li><a href=https://github.com/PortSwigger/custom-logger/blob/master/python/CustomLogger.py#L121 target=_blank rel="noreferrer noopener">https://github.com/PortSwigger/custom-logger/blob/master/python/CustomLogger.py#L121</a></li>
+</ul>
+<p>In this case, the extension implements this interface. The extension stores the
+selected <code>IHttpRequestResponse</code> in the log and returns its fields in these
+methods.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>class</span> <span style=color:#268bd2>BurpExtender</span>(IBurpExtender, ITab, IHttpListener, IMessageEditorController, AbstractTableModel):
+    <span style=color:#586e75># ...</span>
+
+    <span style=color:#586e75>#</span>
+    <span style=color:#586e75># implement IMessageEditorController</span>
+    <span style=color:#586e75># this allows our request/response viewers to obtain details about the messages being displayed</span>
+    <span style=color:#586e75>#</span>
+    
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>getHttpService</span>(<span style=color:#268bd2>self</span>):
+        <span style=color:#719e07>return</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_currentlyDisplayedItem<span style=color:#719e07>.</span>getHttpService()
+
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>getRequest</span>(<span style=color:#268bd2>self</span>):
+        <span style=color:#719e07>return</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_currentlyDisplayedItem<span style=color:#719e07>.</span>getRequest()
+
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>getResponse</span>(<span style=color:#268bd2>self</span>):
+        <span style=color:#719e07>return</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_currentlyDisplayedItem<span style=color:#719e07>.</span>getResponse()
+
+    <span style=color:#586e75># inside registerExtenderCallbacks</span>
+    <span style=color:#719e07>def</span>	<span style=color:#268bd2>registerExtenderCallbacks</span>(<span style=color:#268bd2>self</span>, callbacks):
+        <span style=color:#586e75># ...</span>
+        <span style=color:#586e75># https://github.com/PortSwigger/custom-logger/blob/master/python/CustomLogger.py#L45</span>
+        <span style=color:#586e75># tabs with request/response viewers</span>
+        tabs <span style=color:#719e07>=</span> JTabbedPane()
+        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_requestViewer <span style=color:#719e07>=</span> callbacks<span style=color:#719e07>.</span>createMessageEditor(<span style=color:#268bd2>self</span>, <span style=color:#cb4b16>False</span>)
+        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_responseViewer <span style=color:#719e07>=</span> callbacks<span style=color:#719e07>.</span>createMessageEditor(<span style=color:#268bd2>self</span>, <span style=color:#cb4b16>False</span>)
+</code></pre></div>
+<h1 id=select-the-current-text-when-control-is-selected>Select the Current Text When Control is Selected
+<a class=header-link href=#select-the-current-text-when-control-is-selected><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>When tabbing between controls that have text (e.g., JTextField, JTextArea), we
+want the current selection. This allows us to replace the default text with new
+items without having to select it manually. This is done with setting the
+selection start index to <code>0</code>.</p>
+<ul>
+<li>In Python:
+<ul>
+<li><code>textField1.setSelectionStart(0)</code></li>
+<li><code>textField.selectionstart = 0</code></li>
+</ul>
+</li>
+<li>In Java:
+<ul>
+<li><code>textField1.setSelectionStart(0)</code></li>
+</ul>
+</li>
+</ul>
+<h1 id=print-to-console>Print to Console
+<a class=header-link href=#print-to-console><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Normal print statements do the job in the main thread. <code>print</code> in Python and
+<code>System.out.println</code> in Java. But when I was printing in other Swing components
+(e.g., a spawned JFrame), it did not work.
+<a href=https://portswigger.net/burp/extender/api/burp/IBurpExtenderCallbacks.html#getStdout%28%29 target=_blank rel="noreferrer noopener">callbacks.getStdout()</a> returns a
+<code>java.io.OutputStream</code> which is a pain to print too.</p>
+<p>Instead use <a href=https://portswigger.net/burp/extender/api/burp/IBurpExtenderCallbacks.html#printOutput%28java.lang.String%29 target=_blank rel="noreferrer noopener">callbacks.printOutput</a> and
+<a href=https://portswigger.net/burp/extender/api/burp/IBurpExtenderCallbacks.html#printError%28java.lang.String%29 target=_blank rel="noreferrer noopener">callbacks.printError</a>. Create functions like this and
+use them using <code>callbacks</code>.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#586e75>/**
+</span><span style=color:#586e75>* Prints the String s to standard output.
+</span><span style=color:#586e75>* @param s The String to be printed.
+</span><span style=color:#586e75>*/</span>
+<span style=color:#268bd2>public</span> <span style=color:#268bd2>static</span> <span style=color:#dc322f>void</span> <span style=color:#268bd2>printOutput</span><span style=color:#719e07>(</span>String s<span style=color:#719e07>)</span> <span style=color:#719e07>{</span>
+    callbacks<span style=color:#719e07>.</span>printOutput<span style=color:#719e07>(</span>s<span style=color:#719e07>);</span>
+<span style=color:#719e07>}</span>
+
+<span style=color:#586e75>/**
+</span><span style=color:#586e75>* Prints the String s to standard error.
+</span><span style=color:#586e75>* @param s The String to be printed.
+</span><span style=color:#586e75>*/</span>
+<span style=color:#268bd2>public</span> <span style=color:#268bd2>static</span> <span style=color:#dc322f>void</span> <span style=color:#268bd2>printError</span><span style=color:#719e07>(</span>String s<span style=color:#719e07>)</span> <span style=color:#719e07>{</span>
+    callbacks<span style=color:#719e07>.</span>printError<span style=color:#719e07>(</span>s<span style=color:#719e07>);</span>
+<span style=color:#719e07>}</span>
+</code></pre></div>
+<h1 id=equivalent-of-jython-tostring-is-__repr__-in-python>Equivalent of Jython toString() is __repr()__ in Python
+<a class=header-link href=#equivalent-of-jython-tostring-is-__repr__-in-python><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>When creating a class, you might want to create a <code>toString()</code> method. The
+equivalent of it in Python is not <code>__str()__</code> but instead <code>__repr()__</code>.</p>
+<p>Source: <a href=https://stackoverflow.com/a/6950800 target=_blank rel="noreferrer noopener">https://stackoverflow.com/a/6950800</a></p>
+<h1 id=adding-objects-to-a-jcombobox>Adding Objects to a JComboBox
+<a class=header-link href=#adding-objects-to-a-jcombobox><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>It's done with <a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JComboBox.html#addItem-E- target=_blank rel="noreferrer noopener">JComboBox.addItem()</a>. To decide what is
+displayed in the combobox for each item, the class needs to have <code>toString()</code>
+method in Java and <code>__repr()__</code> in Python</p>
+<p>For example, if we want to add objects from the <code>Issue</code> class to the combobox
+and display the issue name.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>class</span> <span style=color:#268bd2>Issue</span>():
+    <span style=color:#586e75># fields</span>
+    <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>name
+    <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>host
+
+    <span style=color:#719e07>def</span> __repr__(<span style=color:#268bd2>self</span>):
+        <span style=color:#719e07>return</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>name
+
+<span style=color:#586e75># later they are added to the combobox</span>
+cBox <span style=color:#719e07>=</span> JComboBox()
+<span style=color:#719e07>for</span> issue <span style=color:#719e07>in</span> issues:
+    cBox<span style=color:#719e07>.</span>addItem(issue)
+</code></pre></div>
+<h1 id=assign-fields-to-a-python-object>Assign Fields to a Python Object
+<a class=header-link href=#assign-fields-to-a-python-object><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Python stores an object field in a dictionary. Let's say you have a dictionary
+of items and you want to assign them as fields of an object:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>d <span style=color:#719e07>=</span> {<span style=color:#2aa198>&#34;name&#34;</span>: <span style=color:#2aa198>&#34;name1&#34;</span>, <span style=color:#2aa198>&#34;path&#34;</span>: <span style=color:#2aa198>&#34;example.net&#34;</span>}
+
+obj1 <span style=color:#719e07>=</span> SomeClass()
+obj1<span style=color:#719e07>.</span>__dict__<span style=color:#719e07>.</span>update(d)
+</code></pre></div><p><code>update</code> keeps any existing attributes that are not in the new dictionary. To
+overwrite those, assign it like this <code>obj1.__dict__ = d</code></p>
+<h1 id=converting-an-object-with-object-fields-to-json>Converting an Object with Object Fields to JSON
+<a class=header-link href=#converting-an-object-with-object-fields-to-json><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p><code>json.dump(s)</code> do not work on objects that have other objects as fields. It
+works if the object only has primitive types.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>class</span> <span style=color:#268bd2>Obj1</span>():
+    <span style=color:#586e75># field</span>
+    <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>name <span style=color:#586e75># string</span>
+    <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>host <span style=color:#586e75># string</span>
+
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>toJSON</span>():
+        <span style=color:#719e07>return</span> json<span style=color:#719e07>.</span>dumps(<span style=color:#268bd2>self</span><span style=color:#719e07>.</span>__dict, indent<span style=color:#719e07>=</span><span style=color:#2aa198>2</span>)
+</code></pre></div><p>But if <code>Obj1</code> has another class as a field. We get an error that the field is
+not serializable. We add a <code>customJSON</code> method to <code>Obj1</code> and other classes that
+are fields. This method returns the fields as a dictionary.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>class</span> <span style=color:#268bd2>Obj</span>():
+    <span style=color:#586e75># field</span>
+    <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>name <span style=color:#586e75># string</span>
+    <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>host <span style=color:#586e75># string</span>
+    <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>child <span style=color:#586e75># type Obj2</span>
+
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>customJSON</span>(<span style=color:#268bd2>self</span>):
+        <span style=color:#719e07>return</span> <span style=color:#b58900>dict</span>(
+            name <span style=color:#719e07>=</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>name,
+            host <span style=color:#719e07>=</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>host,
+            child <span style=color:#719e07>=</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>child
+        )
+
+<span style=color:#719e07>class</span> <span style=color:#268bd2>Obj2</span>():
+    <span style=color:#586e75># fields</span>
+    <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>name <span style=color:#586e75># string</span>
+    <span style=color:#586e75># ...</span>
+
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>customJSON</span>(<span style=color:#268bd2>self</span>):
+        <span style=color:#719e07>return</span> <span style=color:#b58900>dict</span>(
+            name <span style=color:#719e07>=</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>name
+            <span style=color:#586e75># ...</span>
+        )
+</code></pre></div><p>Next, we create an encoder of type <code>json.JSONEncoder</code>.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>class</span> <span style=color:#268bd2>ComplexEncoder</span>(json<span style=color:#719e07>.</span>JSONEncoder):
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>default</span>(<span style=color:#268bd2>self</span>, obj):
+        <span style=color:#719e07>if</span> <span style=color:#b58900>hasattr</span>(obj,<span style=color:#2aa198>&#39;customJSON&#39;</span>):
+            <span style=color:#719e07>return</span> obj<span style=color:#719e07>.</span>customJSON()
+        <span style=color:#719e07>else</span>:
+            <span style=color:#719e07>return</span> json<span style=color:#719e07>.</span>JSONEncoder<span style=color:#719e07>.</span>default(<span style=color:#268bd2>self</span>, obj)
+</code></pre></div><p>This encoder checks if the class has a method called <code>customJSON</code>, if so, it
+will use it to return a dictionary. Otherwise, it will use the normal encoder.</p>
+<p>We can convert an array of <code>Obj</code> to JSON:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>def</span> <span style=color:#268bd2>objsToJSON</span>(<span style=color:#268bd2>self</span>):
+    <span style=color:#719e07>from</span> ComplexEncoder <span style=color:#719e07>import</span> ComplexEncoder
+    <span style=color:#719e07>return</span> json<span style=color:#719e07>.</span>dumps([obj<span style=color:#719e07>.</span>customJSON() <span style=color:#719e07>for</span> obj <span style=color:#719e07>in</span> objects],
+                            <span style=color:#268bd2>cls</span><span style=color:#719e07>=</span>ComplexEncoder, indent<span style=color:#719e07>=</span><span style=color:#2aa198>2</span>)
+</code></pre></div>
+</div>
+<footer>
+<p class=meta>
+<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Nov 26, 2019</time>
+<span class=categories>
+Tags:
+<a class=category href=https://parsiya.net/tags/python>Python</a>
+</span>
+</p>
+<p class=meta>
+<a class="basic-alignment left" href=https://parsiya.net/blog/2019-11-11-swing-in-python-burp-extensions-part-2-netbeans-and-tablemodels/ title="Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels">Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2019-12-02-developing-and-debugging-java-burp-extensions-with-visual-studio-code/ title="Developing and Debugging Java Burp Extensions with Visual Studio Code">Developing and Debugging Java Burp Extensions with Visual Studio Code</a>
+</p>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</div>
+<aside class="sidebar thirds">
+<section class="first odd">
+<h1>Who am I?</h1>
+<p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
+<p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p>
+<p>Click on <a href=/about/>About Me!</a> to know more.</p>
+</p>
+</section>
+<ul class=sidebar-nav>
+<li class=sidebar-nav-item>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
+</li>
+</ul>
+<section class=odd>
+<h1>Collections</h1>
+<li>
+<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
+</li>
+<li>
+<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
+</li>
+</section>
+</aside>
+</div>
+</div>
+<footer role=contentinfo>
+<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
+</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,319 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
+<link href=/css/fonts.css rel=stylesheet type=text/css>
+<title>Thick Client Proxying - Part 4: Burp in Proxy Chains</title>
+<link rel=stylesheet href=/css/hugo-octopress.css>
+<link rel=stylesheet href=/css/fork-awesome.min.css>
+<link href=https://parsiya.net/favicon.png rel=icon>
+<meta name=description content>
+<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
+<meta name=author content="Parsia">
+<meta name=generator content="Hugo 0.92.0">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Thick Client Proxying - Part 4: Burp in Proxy Chains">
+<meta name=twitter:description content="In this post I will talk about using Burp as part of a proxy chain. The number of applications that can be proxied by Burp and used with Burp in proxy chains is infinite for documentation purposes. Instead I am going to demonstrate how to use some of more used tools with Burp in proxy chain. All of this is going to happen on a Windows 7 Virtual Machine (VM).
+These applications/utilities are:
+
+Cygwin: I will use cURL commands for demonstration purposes.
+IBM Appscan Standard: I will use the evaluation version.
+Charles Proxy: For when you have to use multiple proxies.
+Fiddler: Same as above.
+SoapUI
+
+You don't need Burp Pro to play along and apart from Appscan, all application are free to use. For Appscan we will use the evaluation version which is free for its demo test.">
+<meta name=twitter:domain content="parsiya.net">
+<meta name=twitter:creator content="@CryptoGangsta">
+</head>
+<body>
+<header role=banner>
+<hgroup>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
+<h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2>
+</hgroup></header>
+<nav role=navigation>
+<fieldset class=mobile-nav>
+<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
+</fieldset>
+<ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
+<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
+<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
+<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
+<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
+<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
+</ul>
+<ul class=subscription>
+<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
+</ul>
+<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+<fieldset role=search>
+<input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/>
+</fieldset>
+</form>
+</nav>
+<div id=main>
+<div id=content>
+<div>
+<article class=hentry role=article>
+<header>
+<p class=meta>Apr 7, 2016
+- 9 minute read
+- <a href=https://parsiya.net/blog/2016-04-07-thick-client-proxying-part-4-burp-in-proxy-chains/#disqus_thread>Comments</a>
+- <a class=label href=https://parsiya.net/categories/burp/>Burp </a><a class=label href=https://parsiya.net/categories/thick-client-proxying/>Thick Client Proxying </a>
+</p>
+<h1 class=entry-title>
+Thick Client Proxying - Part 4: Burp in Proxy Chains
+</h1>
+</header>
+<div class=entry-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#0-setup>0. Setup</a></li>
+<li><a href=#1-cygwin>1. Cygwin</a>
+<ul>
+<li><a href=#11-the--k-or-insecure-switch>1.1 The -k or insecure switch</a></li>
+<li><a href=#12-setting-burp-as-proxy-for-cygwin>1.2 Setting Burp as Proxy for Cygwin</a></li>
+</ul>
+</li>
+<li><a href=#2-ibm-appscan-standard>2. IBM Appscan Standard</a></li>
+<li><a href=#3-charles-proxy>3. Charles Proxy</a>
+<ul>
+<li><a href=#31-ie---burp---charles>3.1 IE -> Burp -> Charles</a></li>
+<li><a href=#32-ie---charles---burp>3.2 IE -> Charles -> Burp</a></li>
+</ul>
+</li>
+<li><a href=#4-fiddler>4. Fiddler</a>
+<ul>
+<li><a href=#41-ie---fiddler---burp>4.1 IE -> Fiddler -> Burp</a></li>
+<li><a href=#42-ie---burp---fiddler>4.2 IE -> Burp -> Fiddler</a></li>
+</ul>
+</li>
+<li><a href=#5-soapui>5. SoapUI</a></li>
+<li><a href=#6-plans-for-part-five>6. Plans for Part Five</a></li>
+</ul>
+</nav>
+<p>In this post I will talk about using Burp as part of a proxy chain. The number of applications that can be proxied by Burp and used with Burp in proxy chains is <em>infinite</em> for documentation purposes. Instead I am going to demonstrate how to use some of more used tools with Burp in proxy chain. All of this is going to happen on a Windows 7 Virtual Machine (VM).</p>
+<p>These applications/utilities are:</p>
+<ul>
+<li><a href=https://www.cygwin.com/ target=_blank rel="noreferrer noopener">Cygwin</a>: I will use cURL commands for demonstration purposes.</li>
+<li>IBM Appscan Standard: I will use the evaluation version.</li>
+<li><a href=https://www.charlesproxy.com/download/latest-release/ target=_blank rel="noreferrer noopener">Charles Proxy</a>: For when you have to use multiple proxies.</li>
+<li><a href=https://www.telerik.com/download/fiddler target=_blank rel="noreferrer noopener">Fiddler</a>: Same as above.</li>
+<li><a href=https://www.soapui.org/downloads/soapui.html target=_blank rel="noreferrer noopener">SoapUI</a></li>
+</ul>
+<p>You don't need Burp Pro to play along and apart from Appscan, all application are free to use. For Appscan we will use the evaluation version which is free for its demo test.</p>
+<h1 id=0-setup>0. Setup
+<a class=header-link href=#0-setup><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>As a general rule, if the application has its own proxy settings or uses Internet Explorer (IE) proxy settings we should be able to point it to Burp's proxy listener.</p>
+<p>Before starting, be sure to install Burp's root CA in your Operating System's certificate store. <a href=https://parsiya.net/blog/2016-02-21-installing-burp-certificate-authority-in-windows-certificate-store/ title="Installing Burp Certificate Authority in Windows Certificate Store">Here's how to do it on Windows</a>.</p>
+<p>Burp's proxy listener is set to the default settings <code>127.0.0.1:8080</code>.</p>
+<h1 id=1-cygwin>1. Cygwin
+<a class=header-link href=#1-cygwin><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Think of <a href=https://www.cygwin.com/ target=_blank rel="noreferrer noopener">Cygwin</a> as a *nix command line on Windows. Sometimes it's easier to run some utilities in Cygwin instead of Windows such as <code>git</code> or <code>cURL</code>. For an API test I was given a bunch of cURL commands. Being lazy, I just ran them via Cygwin, piped it to Burp and then did my testing in Burp using Repeater.</p>
+<p>To install cURL on Cygwin we need to run the Cygwin setup file again and choose it from the list of available packages. It is <em>similar</em> to a package manager and supports search so finding and installing cURL is easy. The setup file also downloads dependencies.</p>
+<p>I am going to use the GET request that retrieves the Google logo again. The easiest way to acquire some cURL commands that simulate this is through Burp. Pipe the browser to Burp and go to the Google homepage. Be sure to clear your browser's cache, otherwise you may not see the request. Select the request to <a href=https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png target=_blank rel="noreferrer noopener">https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png</a>. Now right click on the request in the <code>Request</code> tab and select <code>Copy as curl command</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2016/burp-tips-4/01.gif title="Copy as curl command" alt="Copy as curl command">
+<span class=caption-text>Copy as curl command</span>
+</span>
+<p>The result should be similar to this:</p>
+<pre tabindex=0><code>curl -i -s -k -X 'GET' \
+-H 'Referer: https://www.google.com/' -H 'User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko' -H 'DNT: 1' \
+-b 'NID=78=S4kjzm5kwP82gAN8xazSJCiG6UWZhRNEGEE_a3hHZ2OMcy5bPX1CjZisClbvBgPUodlcpywR6WyhVSRUykloTI3ay7jSy9fpgTG2tKV2s8eojpQmL_F5sYKyHP1exm8iwp0F_FEnnE_DaQ' \
+'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png'
+</code></pre><p>We do not need most of the items in the command to grab the picture. We can omit the <code>Referer</code>, <code>Cookie</code> and <code>User-Agent</code> and some other things.</p>
+<p><code>curl -i -s -k -X 'GET' 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png'</code></p>
+<h2 id=11-the--k-or-insecure-switch>1.1 The -k or insecure switch
+<a class=header-link href=#11-the--k-or-insecure-switch><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>The <code>-k</code> switch stands for <code>--insecure</code> which means cURL will not validate the certificate. This is usually a must when using Burp, because Burp's self-signed certificate may not be valid. If you got the cURL commands from another source, be sure to add the this switch to avoid any problems.</p>
+<h2 id=12-setting-burp-as-proxy-for-cygwin>1.2 Setting Burp as Proxy for Cygwin
+<a class=header-link href=#12-setting-burp-as-proxy-for-cygwin><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>This is easy. We can use the following commands:</p>
+<pre><code>export  http_proxy=http://127.0.0.1:8080
+export https_proxy=http://127.0.0.1:8080
+</code></pre>
+<span class=caption-wrapper>
+<img class=caption src=/images/2016/burp-tips-4/02.gif title="Piping cURL command via Cygwin through Burp" alt="Piping cURL command via Cygwin through Burp">
+<span class=caption-text>Piping cURL command via Cygwin through Burp</span>
+</span>
+<p><strong>This should work for most *nix command lines.</strong></p>
+<h1 id=2-ibm-appscan-standard>2. IBM Appscan Standard
+<a class=header-link href=#2-ibm-appscan-standard><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>IBM Appscan Standard or Dynamic (known as Appscan moving forward) is a web application scanner. <del>Redacted Appscan rant</del>. There are times when we have to pipe it through Burp. In order to practice, we are going to use the evaluation version which at the time of writing, is version <code>9.0.3</code>. To get the software we will need a free IBM ID, I am sure you can either register or acquire one.</p>
+<p>Having an evaluation version, we can only scan the IBM demo site at <a href=http://demo.testfire.net target=_blank rel="noreferrer noopener">http://demo.testfire.net</a>. That is enough for our demonstration.</p>
+<p>In Appscan we can setup a proxy in <code>Scan Configuration > Connection > Communication and Proxy</code>. This is similar to Firefox proxy settings, we can either use the IE proxy settings or designate a specific proxy for Appscan. As a result we have two ways of piping Appscan traffic to Burp, one by using IE proxy settings or directly settings them in Appscan.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2016/burp-tips-4/03.PNG title="Appscan proxy settings" alt="Appscan proxy settings">
+<span class=caption-text>Appscan proxy settings</span>
+</span>
+<p>Now we can pipe Appscan through Burp and do some manual explore. The trial software allows us to do it and save it but not add it to the scan. Now if we had a licensed version of Appscan and wanted to run a normal scan, we would see the traffic in Burp.</p>
+<p>Alternatively if you want to pipe something <strong>to Appscan</strong>. For example using an external browser or some other tool (like cURL commands from Cygwin to Appscan) you can use the port listed at <code>Tools (menu) > Options > Recording Proxy (tab) > Appscan proxy port</code>. You can also choose your own port by disabling the <code>Let Appscan choose the port automatically</code> checkbox. Note that Appscan is only listening during manual explore.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2016/burp-tips-4/04.PNG title="Appscan recording proxy settings" alt="Appscan recording proxy settings">
+<span class=caption-text>Appscan recording proxy settings</span>
+</span>
+<p>Notice that you can install and export Appscan's root CA here.</p>
+<h1 id=3-charles-proxy>3. Charles Proxy
+<a class=header-link href=#3-charles-proxy><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Sometimes you need to use two (or more) proxies in a chain. In this section and next I will talk about using two other popular HTTP proxies with Burp in a proxy chain.</p>
+<p>First we download and install a free trial of <a href=https://www.charlesproxy.com/download/latest-release/ target=_blank rel="noreferrer noopener">Charles Proxy</a>. Current version at the time of writing is <code>3.11.4</code>. For demonstration purposes I will use Internet Explorer and the usual Google home page. The source of traffic could be anything as far as we care. As long as we can proxy it, the rest is the same.</p>
+<p>Be sure to install Charles' root CA. You can get it from <code>Help (menu) > SSL Proxying</code>.</p>
+<h2 id=31-ie---burp---charles>3.1 IE -> Burp -> Charles
+<a class=header-link href=#31-ie---burp---charles><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>First we need to disable Charles' automatic Windows proxy settings by using <code>Proxy (menu) > Windows Proxy</code>. If Windows proxy is enabled then there is a small tick by this sub-menu item. Go to <code>Proxy (menu) > SSL Proxying Settings (sub-menu) > SSL Proxying (tab)</code> make sure <code>Enable SSL Proxying</code> is selected. Click <code>Add</code> and enter <code>*</code> in both host and port. This will enable SSL proxying for everything. Then open <code>Proxy (menu) > Proxy Setting (sub-menu) > Proxies (tab)</code> and see <code>HTTP Proxy</code> port (default is <code>8888</code>). Here we can designate another port.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2016/burp-tips-4/05.PNG title="Charles SSL proxying" alt="Charles SSL proxying">
+<span class=caption-text>Charles SSL proxying</span>
+</span>
+<p>The trial version of Charles needs to be restarted every 30 minutes and it will enable Windows proxy again. Be sure to disable it and point it to Burp in IE again after each restart. Alternatively you can use Firefox to bypass IE proxy settings.</p>
+<p>In Burp, go to <code>Options > Upstream Proxy Servers</code> and add Charles as an upstream proxy server at <code>127.0.0.1:8888</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2016/burp-tips-4/06.PNG title="Charles as upstream proxy in Burp" alt="Charles as upstream proxy in Burp">
+<span class=caption-text>Charles as upstream proxy in Burp</span>
+</span>
+<p>Now go to Google's homepage in IE and see the traffic in both Burp and Charles.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2016/burp-tips-4/07.PNG title="Traffic in both Burp and Charles" alt="Traffic in both Burp and Charles">
+<span class=caption-text>Traffic in both Burp and Charles</span>
+</span>
+<h2 id=32-ie---charles---burp>3.2 IE -> Charles -> Burp
+<a class=header-link href=#32-ie---charles---burp><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Restart Charles to reset the 30 minute trial clock. Now we can either let Charles change IE proxy settings automatically using the <code>Proxy (menu) > Windows Proxy</code> settings or disable this and manually set IE proxy settings to <code>127.0.0.1:8888</code>. Fortunately other Charles settings are not reset between restarts so we do not have to go through most of the options in the previous section.</p>
+<p>In Charles go to <code>Proxy (menu) > External Proxy Settings (sub-menu)</code> and enable the <code>Use external proxy servers</code> checkbox. Now enable <code>Web Proxy (HTTP)</code> and <code>Secure Web Proxy (HTTPS)</code> and enter Burp's proxy listener for both (<code>127.0.0.1:8080</code>).</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2016/burp-tips-4/08.PNG title="Charles external proxy settings" alt="Charles external proxy settings">
+<span class=caption-text>Charles external proxy settings</span>
+</span>
+<p>Now open up Google's homepage in IE and we will see traffic in both Charles and Burp.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2016/burp-tips-4/09.PNG title="Traffic from Charles to Burp" alt="Traffic from Charles to Burp">
+<span class=caption-text>Traffic from Charles to Burp</span>
+</span>
+<h1 id=4-fiddler>4. Fiddler
+<a class=header-link href=#4-fiddler><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Fiddler is another popular web proxy. It has the added capability of scripting. We will start by <a href=https://www.telerik.com/download/fiddler target=_blank rel="noreferrer noopener">downloading Fiddler</a> v4.6.2.2.</p>
+<h2 id=41-ie---fiddler---burp>4.1 IE -> Fiddler -> Burp
+<a class=header-link href=#41-ie---fiddler---burp><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>First we need to tell Fiddler to capture all HTTPS traffic at <code>Tools (menu) > Fiddler Options (sub-menu) > HTTPS (tab) > Decrypt HTTPS traffic</code>. This will install Fiddler's root CA in Windows certificate store (we will see the familiar pop-up). This will tell Fiddler to capture and decrypt all traffic going to a proxy (see the <code>Capture HTTPS CONNECTs</code> checkbox?). Finally enable <code>Ignore server certificate errors (unsafe)</code> in case Burp's certificate is not recognized.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2016/burp-tips-4/10.PNG title="Fiddler HTTPS Options" alt="Fiddler HTTPS Options">
+<span class=caption-text>Fiddler HTTPS Options</span>
+</span>
+<p>Then switch to the <code>Gateway</code> tab. Select the radio button <code>Manual Proxy Configuration</code> and enter <code>http=127.0.0.1:8080;https=127.0.0.1:8080</code> in the top textbox (the one with the <code>Proxy string</code> text). This will pipe Fiddler traffic to Burp.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2016/burp-tips-4/11.PNG title="Piping Fiddler to Burp" alt="Piping Fiddler to Burp">
+<span class=caption-text>Piping Fiddler to Burp</span>
+</span>
+<p>Now we can navigate to Google in IE see the traffic in both Fiddler and Burp.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2016/burp-tips-4/12.PNG title="Traffic sent from Fiddler to Burp" alt="Traffic sent from Fiddler to Burp">
+<span class=caption-text>Traffic sent from Fiddler to Burp</span>
+</span>
+<p>You can also manually set Fiddler's proxy listener in the <code>Tools > Fiddler Options > Connections (tab)</code>. To disable Fiddler's automatic proxying, uncheck <code>File (menu) > Capture Traffic (sub-men)</code> or press <code>F12</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2016/burp-tips-4/13.PNG title="Fiddler Options Connections tab" alt="Fiddler Options Connections tab">
+<span class=caption-text>Fiddler Options Connections tab</span>
+</span>
+<h2 id=42-ie---burp---fiddler>4.2 IE -> Burp -> Fiddler
+<a class=header-link href=#42-ie---burp---fiddler><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>First we have to disable Fiddler's automatic proxying and remove Burp in the <code>Gateway</code> tab. Otherwise we will have a pretty nice loop between Burp and Fiddler :D. Remember to choose <code>No Proxy</code> otherwise we will go back to Burp if we use IE proxy settings. Then we set Burp as Proxy in IE and finally set Fiddler as upstream proxy in Burp. Fiddler's default port is <code>8888</code> (like Charles) but as we saw that can be changed.</p>
+<h1 id=5-soapui>5. SoapUI
+<a class=header-link href=#5-soapui><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>I have already talked about this before in <a href=https://parsiya.net/blog/2014-06-25-piping-ssl/tls-traffic-from-soapui-to-burp/ title="Piping SSL-TLS Traffic from SoapUI to Burp">Piping SSL-TLS Traffic from SoapUI to Burp</a>.</p>
+<h1 id=6-plans-for-part-five>6. Plans for Part Five
+<a class=header-link href=#6-plans-for-part-five><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>We are going to actually start proxying. First we will start with easy application and then harder. One big problem is finding freely available applications that allow us to use the different functionalities that we have talked about. For example if I am able to find an application that needs a custom Burp extension to see its traffic, that would be great experience for me (and maybe even you). I can show how to do some basic traffic reverse engineering and then create a Burp plugin from scratch (I need the experience).</p>
+<p>So if you have any suggestions about interesting applications please let me know but keep in mind that the applications should be freely available. This is going to be pure proxying and seeing legitimate traffic without any testing (because we do not want to get in trouble).</p>
+<p>As usual, if you have any feedback you know where to find me.</p>
+</div>
+<footer>
+<p class=meta>
+<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Apr 7, 2016</time>
+<span class=categories>
+Tags:
+<a class=category href=https://parsiya.net/tags/burp>Burp</a> <a class=category href=https://parsiya.net/tags/tutorial>Tutorial</a> <a class=category href=https://parsiya.net/tags/fiddler>Fiddler</a> <a class=category href=https://parsiya.net/tags/charles-proxy>Charles Proxy</a> <a class=category href=https://parsiya.net/tags/soapui>SoapUI</a> <a class=category href=https://parsiya.net/tags/ibm-appscan>IBM Appscan</a>
+</span>
+</p>
+<p class=meta>
+<a class="basic-alignment left" href=https://parsiya.net/blog/2016-04-03-hugo-octopress-update/ title="Hugo Octopress Update">Hugo Octopress Update</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2016-04-14-cloudfront-and-tls/ title="Cloudfront and TLS">Cloudfront and TLS</a>
+</p>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</div>
+<aside class="sidebar thirds">
+<section class="first odd">
+<h1>Who am I?</h1>
+<p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
+<p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p>
+<p>Click on <a href=/about/>About Me!</a> to know more.</p>
+</p>
+</section>
+<ul class=sidebar-nav>
+<li class=sidebar-nav-item>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
+</li>
+</ul>
+<section class=odd>
+<h1>Collections</h1>
+<li>
+<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
+</li>
+<li>
+<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
+</li>
+</section>
+</aside>
+</div>
+</div>
+<footer role=contentinfo>
+<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
+</p>
+</footer>
+</body>
+</html>

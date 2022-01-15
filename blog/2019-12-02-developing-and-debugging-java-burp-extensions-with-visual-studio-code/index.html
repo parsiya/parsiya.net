@@ -1,0 +1,789 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
+<link href=/css/fonts.css rel=stylesheet type=text/css>
+<title>Developing and Debugging Java Burp Extensions with Visual Studio Code</title>
+<link rel=stylesheet href=/css/hugo-octopress.css>
+<link rel=stylesheet href=/css/fork-awesome.min.css>
+<link href=https://parsiya.net/favicon.png rel=icon>
+<meta name=description content>
+<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
+<meta name=author content="Parsia">
+<meta name=generator content="Hugo 0.92.0">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image:src content="https://parsiya.net/blog/2019-12-02-developing-and-debugging-java-burp-extensions-with-visual-studio-code/03-intellicode.png">
+<meta name=twitter:title content="Developing and Debugging Java Burp Extensions with Visual Studio Code">
+<meta name=twitter:description content="A few days ago, I released the Bug Diaries
+Burp extension. It's a Burp extension that aims to mimic Burp issues for the
+community (free) version. For reasons, I decided to rewrite it in Java. This is
+the first part of my series on what I learned switching to Java.
+This part discusses how my environment is set up for development with
+Visual Studio Code. Things like
+auto-completion, Gradle builds and most importantly debugging.
+Clone the repository to skip some of the steps in the blog. I still recommend
+doing them yourself if you are not familiar with Gradle and Burp development,
+clone the following repository:
+
+https://github.com/parsiya/burp-sample-extension-java
+">
+<meta name=twitter:domain content="parsiya.net">
+<meta name=twitter:creator content="@CryptoGangsta">
+</head>
+<body>
+<header role=banner>
+<hgroup>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
+<h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2>
+</hgroup></header>
+<nav role=navigation>
+<fieldset class=mobile-nav>
+<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
+</fieldset>
+<ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
+<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
+<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
+<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
+<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
+<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
+</ul>
+<ul class=subscription>
+<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
+</ul>
+<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+<fieldset role=search>
+<input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/>
+</fieldset>
+</form>
+</nav>
+<div id=main>
+<div id=content>
+<div>
+<article class=hentry role=article>
+<header>
+<p class=meta>Dec 2, 2019
+- 11 minute read
+- <a href=https://parsiya.net/blog/2019-12-02-developing-and-debugging-java-burp-extensions-with-visual-studio-code/#disqus_thread>Comments</a>
+- <a class=label href=https://parsiya.net/categories/burp/>Burp </a><a class=label href=https://parsiya.net/categories/burp-extension/>Burp extension </a>
+</p>
+<h1 class=entry-title>
+Developing and Debugging Java Burp Extensions with Visual Studio Code
+</h1>
+</header>
+<div class=entry-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#bug-diaries-in-python>Bug Diaries in Python</a></li>
+<li><a href=#install-visual-studio-code>Install Visual Studio Code</a></li>
+<li><a href=#install-openjdk>Install OpenJDK</a></li>
+<li><a href=#gradle>Gradle</a></li>
+<li><a href=#setting-up-gradle>Setting up Gradle</a>
+<ul>
+<li><a href=#buildgradle>build.gradle</a></li>
+<li><a href=#gradle-wrapper>Gradle Wrapper</a></li>
+</ul>
+</li>
+<li><a href=#creating-a-skeleton-extension>Creating a Skeleton Extension</a></li>
+<li><a href=#setting-up-vs-code-tasks>Setting up VS Code Tasks</a></li>
+<li><a href=#setting-up-intellicode>Setting Up IntelliCode</a></li>
+<li><a href=#burp-setup>Burp Setup</a></li>
+<li><a href=#debugging-the-extension-with-vs-code>Debugging the Extension with VS Code</a>
+<ul>
+<li><a href=#using-burps-bundled-jre>Using Burp's Bundled JRE</a></li>
+<li><a href=#connecting-to-the-debug-port>Connecting to the Debug Port</a></li>
+</ul>
+</li>
+<li><a href=#storing-the-extensions-jar-in-a-different-path>Storing the Extension's Jar in a Different Path</a></li>
+<li><a href=#what-did-we-learn-here-today>What Did We Learn Here Today?</a></li>
+</ul>
+</nav>
+<p>A few days ago, I released the <a href=https://github.com/parsiya/bug-diaries target=_blank rel="noreferrer noopener">Bug Diaries</a>
+Burp extension. It's a Burp extension that aims to mimic Burp issues for the
+community (free) version. For reasons, I decided to rewrite it in Java. This is
+the first part of my series on what I learned switching to Java.</p>
+<p>This part discusses how my environment is set up for development with
+<a href=https://code.visualstudio.com/ target=_blank rel="noreferrer noopener">Visual Studio Code</a>. Things like
+auto-completion, Gradle builds and most importantly debugging.</p>
+<p>Clone the repository to skip some of the steps in the blog. I still recommend
+doing them yourself if you are not familiar with Gradle and Burp development,
+clone the following repository:</p>
+<ul>
+<li><a href=https://github.com/parsiya/burp-sample-extension-java target=_blank rel="noreferrer noopener">https://github.com/parsiya/burp-sample-extension-java</a></li>
+</ul>
+<h1 id=bug-diaries-in-python>Bug Diaries in Python
+<a class=header-link href=#bug-diaries-in-python><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>The original extension was in Python. To that day, all of my Burp extensions had
+been in Python. I documented what I learned:</p>
+<ul>
+<li><a href=/blog/2019-11-04-swing-in-python-burp-extensions-part-1/ title="Swing in
+Python Burp Extensions - Part 1">Swing in Python Burp Extensions - Part 1</a></li>
+<li><a href=/blog/2019-11-11-swing-in-python-burp-extensions-part-2-netbeans-and-tablemodels/ title="Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels">Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels</a></li>
+<li><a href=/blog/2019-11-26-swing-in-python-burp-extensions-part-3-tips-and-tricks/ title="Swing in Python
+Burp Extensions - Part 3 - Tips and Tricks">Swing in Python Burp Extensions - Part 3 - Tips and Tricks</a></li>
+</ul>
+<p>I had a lot of problems enabling the right-click functionality on Burp's
+<a href=https://portswigger.net/burp/extender/api/burp/IMessageEditor.html target=_blank rel="noreferrer noopener">IMesageEditors</a>.Long story short, I decided to rewrite the
+extension in Java instead.</p>
+<p>This is how my development VM looks like.</p>
+<h1 id=install-visual-studio-code>Install Visual Studio Code
+<a class=header-link href=#install-visual-studio-code><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><ol>
+<li>Install <a href=https://code.visualstudio.com/ target=_blank rel="noreferrer noopener">VS Code</a>.</li>
+<li>Install the <a href="https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack" target=_blank rel="noreferrer noopener">Java Extension Pack</a>.</li>
+</ol>
+<p>There is also a VS Code installer for Java developers at
+<a href=https://aka.ms/vscode-java-installer-win target=_blank rel="noreferrer noopener">https://aka.ms/vscode-java-installer-win</a>. I did not use it.</p>
+<h1 id=install-openjdk>Install OpenJDK
+<a class=header-link href=#install-openjdk><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>You need to install a JDK version that is compatible with the version Burp was
+built with. To figure it out, you can check the bundled JRE that comes with the
+installer.</p>
+<p>The rest of the instructions are for December 2019 and probably need to be
+changed for later use.</p>
+<p>I use OpenJDK because of the shitty licensing requirements of Oracle.</p>
+<ol>
+<li>Download OpenJDK 11 (see below why). I used the installer from
+<a href=https://adoptopenjdk.net target=_blank rel="noreferrer noopener">AdoptOpenJDK.net</a>.
+<ul>
+<li>Red Hat has binaries at
+<a href=https://developers.redhat.com/products/openjdk/download target=_blank rel="noreferrer noopener">https://developers.redhat.com/products/openjdk/download</a>. You will need a
+free developer account.</li>
+</ul>
+</li>
+<li>If you are extracting the OpenJDK manually, modify the environment variables:
+<ul>
+<li>Set <code>JAVA_HOME</code> to <code>C:\Program Files\path\to\jdk\</code>. (Do not include the
+<code>bin</code> directory).
+<ul>
+<li>For my JDK it was <code>C:\Program Files\AdoptOpenJDK\jdk-11.0.5.10-hotspot</code>.</li>
+</ul>
+</li>
+<li>Add the <code>bin</code> directory for the JDK installation to <code>PATH</code>.</li>
+</ul>
+</li>
+</ol>
+<p>Now <code>java -version</code> should return something like (remember to open a new command
+line after setting the <code>PATH</code>):</p>
+<pre tabindex=0><code>openjdk version &quot;11.0.5&quot; 2019-10-15
+OpenJDK Runtime Environment AdoptOpenJDK (build 11.0.5+10)
+OpenJDK 64-Bit Server VM AdoptOpenJDK (build 11.0.5+10, mixed mode
+</code></pre><p><strong>Note</strong>: If you install the JDK 13 or newer, you cannot use the Burp's exe file
+to load your extension. As of December 2019, The Burp's <code>exe</code> file, uses a
+bundled JRE which is built with JDK 11 (version 55.0). If you try to load an
+extension that is built with a later Java version, you will get this error:</p>
+<pre tabindex=0><code>java.lang.UnsupportedClassVersionError: burp/BurpExtender has been compiled by
+a more recent version of the Java Runtime (class file version 57.0), this
+version of the Java Runtime only recognizes class file versions up to 55.0
+</code></pre><p>Solution:</p>
+<ol>
+<li>Use an earlier version to build your extension. Recommended.</li>
+<li>Run the Burp's jar file directly using your installed Java.
+<ul>
+<li>I actually don't know if this works. If you try and it works, please let
+me know.</li>
+</ul>
+</li>
+</ol>
+<h1 id=gradle>Gradle
+<a class=header-link href=#gradle><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p><a href=https://gradle.org target=_blank rel="noreferrer noopener">Gradle</a> does not have an installer either.</p>
+<ol>
+<li>Download the latest release from <a href=https://gradle.org/releases/ target=_blank rel="noreferrer noopener">https://gradle.org/releases/</a>.</li>
+<li>Extract it to <code>C:\Program Files</code> (the instructions say <code>C:\</code> but I prefer
+program files).
+<ul>
+<li>In my VM it ended up at <code>C:\Program Files\gradle-6.0.1</code>.</li>
+</ul>
+</li>
+<li>Add the <code>bin</code> directory to <code>PATH</code>.
+<ul>
+<li><code>C:\Program Files\gradle-6.0.1\bin</code></li>
+</ul>
+</li>
+</ol>
+<p>Now <code>gradle -version</code> should return something like:</p>
+<pre tabindex=0><code>gradle -version
+
+------------------------------------------------------------
+Gradle 6.0.1
+------------------------------------------------------------
+
+Build time:   2019-11-18 20:25:01 UTC
+Revision:     fad121066a68c4701acd362daf4287a7c309a0f5
+
+Kotlin:       1.3.50
+Groovy:       2.5.8
+Ant:          Apache Ant(TM) version 1.10.7 compiled on September 1 2019
+JVM:          11.0.5 (AdoptOpenJDK 11.0.5+10)
+OS:           Windows 10 10.0 amd64
+</code></pre>
+<h1 id=setting-up-gradle>Setting up Gradle
+<a class=header-link href=#setting-up-gradle><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Create a directory for extension development. In the root of this directory run
+the following command:</p>
+<ul>
+<li><code>gradle init --type basic</code></li>
+<li>Press <code>Enter</code> twice to select the default.</li>
+<li>If you are creating an extension with a specific name, customize the project
+name here. You can later change it in <code>settings.gradle</code>.</li>
+</ul>
+<p>This will create a bunch of directories and files.</p>
+<h2 id=buildgradle>build.gradle
+<a class=header-link href=#buildgradle><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Open <code>build.gradle</code> and paste the following.</p>
+<figure class=code>
+<figcaption>
+<span>build.gradle</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml>// Apply the Java plugin
+<span style=color:#268bd2>apply plugin</span>: <span style=color:#2aa198>&#39;java&#39;</span>
+
+// Use Maven (because Burp Extender is on Maven)
+repositories {
+     mavenCentral()
+}
+
+dependencies {
+    // Add the Burp Extender interface
+    compile &#39;net.portswigger.burp.extender:burp-extender-api:2.1&#39;
+}
+
+sourceSets {
+    main {
+        java {
+            // Set the source directory to &#34;src&#34;
+            srcDir &#39;src&#39;
+        }
+    }
+}
+
+// Create a task for bundling all dependencies into a jar file.
+<span style=color:#268bd2>task bigJar(type</span>: Jar) {
+    baseName = project.name + &#39;-all&#39;
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<p>Read the comments inside the file to see what each section does. The most
+important section is adding the <a href=https://mvnrepository.com/artifact/net.portswigger.burp.extender/burp-extender-api/2.1 target=_blank rel="noreferrer noopener">Burp Extender interface Maven repository</a>.
+This gives us build support and the equally important code completion with
+IntelliCode (iT's Ai BaSeD!!1!).</p>
+<p>Any extra dependencies are added similar to the Burp extender interface. For
+example, <a href=https://mvnrepository.com/artifact/com.google.code.gson/gson/2.8.6 target=_blank rel="noreferrer noopener">Google's Gson version 2.8.6</a> can be added like
+this:</p>
+<pre tabindex=0><code>dependencies {
+    // Add the Burp Extender interface
+    compile 'net.portswigger.burp.extender:burp-extender-api:2.1'
+    compile 'com.google.code.gson:gson:2.8.6'
+}
+</code></pre>
+<h2 id=gradle-wrapper>Gradle Wrapper
+<a class=header-link href=#gradle-wrapper><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>The Gradle Wrapper is a way to get reliable builds regardless of the local
+Gradle version. Note you need Gradle to install the Wrapper.</p>
+<p>If you just want to initiate the Wrapper, you need to have Gradle. Run
+<code>gradle wrapper</code> in the extension directory. To build the project with the
+Wrapper, replace <code>gradle</code> in your commands with <code>gradlew</code> (*nix) or
+<code>gradlew.bat</code> (Windows). For example, <code>gradlew.bat build</code>.</p>
+<h1 id=creating-a-skeleton-extension>Creating a Skeleton Extension
+<a class=header-link href=#creating-a-skeleton-extension><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><ol>
+<li>Create the <code>src\burp</code> directory. This directory will contain the <code>burp</code>
+package.
+<ul>
+<li>All packages will be under <code>src</code>.</li>
+</ul>
+</li>
+<li>In <code>src\burp</code> create a file named <code>BurpExtender.java</code>.
+<ul>
+<li>This file will be the extension's entry point.
+<span class=caption-wrapper>
+<img class=caption src=01-burpextender.png title="Extension directory at this step" alt="Extension directory at this step">
+<span class=caption-text>Extension directory at this step</span>
+</span>
+</li>
+</ul>
+</li>
+<li>Edit <code>BurpExtender.java</code> and add this code.</li>
+</ol>
+<figure class=code>
+<figcaption>
+<span>BurpExtender.java</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#719e07>package</span> burp<span style=color:#719e07>;</span>
+
+<span style=color:#268bd2>public</span> <span style=color:#268bd2>class</span> <span style=color:#268bd2>BurpExtender</span> <span style=color:#268bd2>implements</span> IBurpExtender
+<span style=color:#719e07>{</span>
+    <span style=color:#586e75>//
+</span><span style=color:#586e75></span>    <span style=color:#586e75>// implement IBurpExtender
+</span><span style=color:#586e75></span>    <span style=color:#586e75>//
+</span><span style=color:#586e75></span>    <span style=color:#268bd2>@Override</span>
+    <span style=color:#268bd2>public</span> <span style=color:#dc322f>void</span> <span style=color:#268bd2>registerExtenderCallbacks</span><span style=color:#719e07>(</span>IBurpExtenderCallbacks callbacks<span style=color:#719e07>)</span>
+    <span style=color:#719e07>{</span>
+        <span style=color:#586e75>// set our extension name
+</span><span style=color:#586e75></span>        callbacks<span style=color:#719e07>.</span>setExtensionName<span style=color:#719e07>(</span><span style=color:#2aa198>&#34;Burp Sample Extension Java&#34;</span><span style=color:#719e07>);</span>
+    <span style=color:#719e07>}</span>
+<span style=color:#719e07>}</span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<p>Note: If your extension only has one package (or a few files), you can put all
+your files inside <code>src</code> directly.</p>
+<h1 id=setting-up-vs-code-tasks>Setting up VS Code Tasks
+<a class=header-link href=#setting-up-vs-code-tasks><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>To make our life easier, we are going to assign the <code>bigJar</code> Gradle task to the
+default build task in VS Code. This is important if your extension uses non-Burp
+dependencies (like <code>gson</code> above). In this case you need to publish this
+jar file.</p>
+<ol>
+<li>Press <code>Ctrl+Shift+P</code> or <code>F1</code> to open the VS Code command palette.</li>
+<li>Type <code>task</code> and select <code>Configure Default Build Task</code>.</li>
+<li>Select <code>Create tasks.json file from template</code>.</li>
+<li>Select <code>Others</code>.
+<ol>
+<li>VS Code will create the <code>.vscode\tasks.json</code> file.</li>
+</ol>
+</li>
+<li>Open <code>.vscode\tasks.json</code> and paste the following in it:</li>
+</ol>
+<figure class=code>
+<figcaption>
+<span>tasks.json</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
+    <span style=color:#586e75>// See https://go.microsoft.com/fwlink/?LinkId=733558
+</span><span style=color:#586e75></span>    <span style=color:#586e75>// for the documentation about the tasks.json format
+</span><span style=color:#586e75></span>    <span style=color:#268bd2>&#34;version&#34;</span>: <span style=color:#2aa198>&#34;2.0.0&#34;</span>,
+    <span style=color:#268bd2>&#34;tasks&#34;</span>: [
+        {
+            <span style=color:#268bd2>&#34;label&#34;</span>: <span style=color:#2aa198>&#34;gradle&#34;</span>,
+            <span style=color:#268bd2>&#34;type&#34;</span>: <span style=color:#2aa198>&#34;shell&#34;</span>,
+            <span style=color:#268bd2>&#34;command&#34;</span>: <span style=color:#2aa198>&#34;gradle bigjar&#34;</span>,
+            <span style=color:#586e75>// &#34;command&#34;: &#34;gradlew.bat bigjar&#34;, // Wrapper on Windows
+</span><span style=color:#586e75></span>            <span style=color:#586e75>// &#34;command&#34;: &#34;gradlew bigjar&#34;,     // Wrapper on *nix
+</span><span style=color:#586e75></span>            <span style=color:#268bd2>&#34;group&#34;</span>: {
+                <span style=color:#268bd2>&#34;kind&#34;</span>: <span style=color:#2aa198>&#34;build&#34;</span>,
+                <span style=color:#268bd2>&#34;isDefault&#34;</span>: <span style=color:#cb4b16>true</span>
+            }
+        }
+    ]
+}</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<p>Now we can build our project with:</p>
+<ol>
+<li>Pressing <code>Ctrl+Shift+B</code>. <strong>Recommended</strong>, it's faster and looks 1337.</li>
+<li><code>Terminal (menu) > Run Task (sub menu) > gradle</code>.</li>
+<li>Opening the command palette, typing <code>tasks</code> then selecting <code>Run Build Task</code>.</li>
+</ol>
+<p>Run it once to download the Burp Extender interface and build the library. The
+output jar will be in <code>build\libs\burp-sample-extension-java-all.jar</code>.</p>
+<h1 id=setting-up-intellicode>Setting Up IntelliCode
+<a class=header-link href=#setting-up-intellicode><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Our build works but you might have noticed that VS Code does not recognize
+imported interfaces from the <code>burp</code> package.</p>
+<span class=caption-wrapper>
+<img class=caption src=02-vscode-error.png title="VS Code errors" alt="VS Code errors">
+<span class=caption-text>VS Code errors</span>
+</span>
+<p>Every time, a new dependency is added (or we get the same error again), we need
+to clean the Java language server.</p>
+<ol>
+<li>Open the VS Code command palette with <code>Ctrl+Shift+P</code> or <code>F1</code>.</li>
+<li>Type <code>java clean</code> and select <code>Java Clean the Java language server workspace</code>.</li>
+<li>Restart VS Code when asked.</li>
+<li>Now we have IntelliCode support.</li>
+</ol>
+<span class=caption-wrapper>
+<img class=caption src=03-intellicode.png title="IntelliCode support" alt="IntelliCode support">
+<span class=caption-text>IntelliCode support</span>
+</span>
+<p><strong>Note:</strong> This is the solution to most <code>vscode-java</code> extension problems.</p>
+<h1 id=burp-setup>Burp Setup
+<a class=header-link href=#burp-setup><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Let's add some code to the extension to show how I test the extension after
+each build.</p>
+<p>Modify <code>BurpExtender.java</code>. See how IntelliCode is making our life easier.</p>
+<span class=caption-wrapper>
+<img class=caption src=04-intellicode2.gif title="IntelliCode in action, woot!" alt="IntelliCode in action, woot!">
+<span class=caption-text>IntelliCode in action, woot!</span>
+</span>
+<figure class=code>
+<figcaption>
+<span>BurpExtender.java</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#719e07>package</span> burp<span style=color:#719e07>;</span>
+
+<span style=color:#268bd2>public</span> <span style=color:#268bd2>class</span> <span style=color:#268bd2>BurpExtender</span> <span style=color:#268bd2>implements</span> IBurpExtender
+<span style=color:#719e07>{</span>
+    <span style=color:#586e75>//
+</span><span style=color:#586e75></span>    <span style=color:#586e75>// implement IBurpExtender
+</span><span style=color:#586e75></span>    <span style=color:#586e75>//
+</span><span style=color:#586e75></span>    <span style=color:#268bd2>@Override</span>
+    <span style=color:#268bd2>public</span> <span style=color:#dc322f>void</span> <span style=color:#268bd2>registerExtenderCallbacks</span><span style=color:#719e07>(</span>IBurpExtenderCallbacks callbacks<span style=color:#719e07>)</span>
+    <span style=color:#719e07>{</span>
+        <span style=color:#586e75>// set our extension name
+</span><span style=color:#586e75></span>        callbacks<span style=color:#719e07>.</span>setExtensionName<span style=color:#719e07>(</span><span style=color:#2aa198>&#34;Burp Sample Extension Java&#34;</span><span style=color:#719e07>);</span>
+        String fileName <span style=color:#719e07>=</span> callbacks<span style=color:#719e07>.</span>getExtensionFilename<span style=color:#719e07>();</span>
+        callbacks<span style=color:#719e07>.</span>printOutput<span style=color:#719e07>(</span>fileName<span style=color:#719e07>);</span>
+    <span style=color:#719e07>}</span>
+<span style=color:#719e07>}</span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<p>This code prints the extension file name to the console. Build the extension
+with <code>Ctrl+Shift+B</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=05-build.png title="Extension built" alt="Extension built">
+<span class=caption-text>Extension built</span>
+</span>
+<p>The jar file will appear in <code>build\libs</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=06-built-jar.png title="Built jar" alt="Built jar">
+<span class=caption-text>Built jar</span>
+</span>
+<p>Visual setup:</p>
+<ol>
+<li>Start Burp in a second monitor.</li>
+<li>Detach the <code>Extender</code> window via <code>Window (menu) > Detach Extender</code>.</li>
+<li>Press <code>Windows+Left Arrow</code> to send it to the corner of the screen.</li>
+<li>Windows will show a list of other processes and ask me to select the other
+window in that screen.</li>
+<li>Choose Burp so the Extender and Burp appear side by side in the second
+screen.</li>
+<li>Grab the border between these two windows to adjust their sizes.</li>
+</ol>
+<p>My extension development cycle is:</p>
+<ol>
+<li>Edit code in monitor 1 in VS Code.</li>
+<li>Press <code>Ctrl+Shift+B</code> to build.</li>
+<li><code>Ctrl+Left-Click</code> on the checkbox in front of the extension in Extender to
+reload it (this is in monitor 2).</li>
+<li>Use the extension in Burp (monitor 2).</li>
+</ol>
+<span class=caption-wrapper>
+<img class=caption src=07-run.png title="Extension loaded" alt="Extension loaded">
+<span class=caption-text>Extension loaded</span>
+</span>
+<h1 id=debugging-the-extension-with-vs-code>Debugging the Extension with VS Code
+<a class=header-link href=#debugging-the-extension-with-vs-code><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>This is the most important part of this post. I will discuss how I debug
+extensions in VS Code. Looking around, I could only find a few references:</p>
+<ul>
+<li>Debugging Burp Extensions by Eric Gruber at <a href=https://blog.netspi.com/debugging-burp-extensions/ target=_blank rel="noreferrer noopener">https://blog.netspi.com/debugging-burp-extensions/</a>
+shows how to use IntelliJ to debug Burp. It gave me the idea of using jdwp.</li>
+<li>Derek (<a href=https://twitter.com/StackCrash target=_blank rel="noreferrer noopener">@StackCrash</a>) in his blog at
+<a href=https://www.itsecguy.com/my-first-burp-suite-extension/ target=_blank rel="noreferrer noopener">https://www.itsecguy.com/my-first-burp-suite-extension/</a> mentions that adding
+<code>burp.StartBurp</code> to the Run section of the project's properties does the trick.
+<ul>
+<li>This is consistent with what Dafydd Stuttard says in a
+<a href=https://support.portswigger.net/customer/portal/questions/16709362-debug-java-project target=_blank rel="noreferrer noopener">Burp support ticket</a>. "add the Burp JAR file to the
+project as a library, and start Burp by calling its main method in
+burp.StartBurp.main()"</li>
+</ul>
+</li>
+</ul>
+<p>The VS Code Java extension pack comes with a Java debugger. To use it we need to
+run Burp with this command-line option:</p>
+<ul>
+<li><code>-agentlib:jdwp=transport=dt_socket,address=localhost:8000,server=y,suspend=n</code></li>
+</ul>
+<p>This will run the debug server at <code>localhost:8000</code>. Note that most examples on
+the internet run the server with just the port so the server will listen on
+<code>0.0.0.0</code> which is obviously not good (unless you want to debug from a remote
+machine).</p>
+<p>Next, we have to run Burp's jar file with the following parameter. Burp's jar
+file is at this path in a default installation:</p>
+<ul>
+<li><code>C:\Program Files\BurpSuiteCommunity\burpsuite_community.jar</code></li>
+</ul>
+<p>The complete command:</p>
+<pre tabindex=0><code>java -agentlib:jdwp=transport=dt_socket,address=localhost:8000,server=y,suspend=n
+    -jar &quot;C:\Program Files\BurpSuiteCommunity\burpsuite_community.jar&quot;
+</code></pre><ul>
+<li><strong>Hint</strong>: Use this as a shortcut so you can always debug Burp in your
+development VM.</li>
+<li>You may get an error about our JDK not being tested with Burp. Ignore it.</li>
+</ul>
+<h2 id=using-burps-bundled-jre>Using Burp's Bundled JRE
+<a class=header-link href=#using-burps-bundled-jre><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>You might have seen the <code>BurpSuiteCommunity.vmoptions</code> file inside the Burp's
+directory. We can add run-time parameters to it. We can enable debugging by
+adding the following line to the file:</p>
+<pre tabindex=0><code>-agentlib:jdwp=transport=dt_socket,address=localhost:8000,server=y,suspend=n
+</code></pre><p>Now we can run the <code>exe</code> and debug our extensions. I have included a sample
+<code>.vmoptions</code> file in the git repository.</p>
+<p><strong>Note:</strong> If you are using your main Burp instance, make sure to comment the
+code in the <code>.vmoptions</code> file after you are done. It might slow down your Burp
+instance.</p>
+<h2 id=connecting-to-the-debug-port>Connecting to the Debug Port
+<a class=header-link href=#connecting-to-the-debug-port><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Next we have to launch the Java debugger in VS Code and connect to the debug
+port. Put a breakpoint on the <code>callbacks.printOutput(fileName);</code> line. Then
+select <code>Debug (menu) > Start Debugging</code> or press <code>F5</code>.</p>
+<p>This will create the <code>.vscode\launch.json</code> file and open it. Paste this code
+into it and save:</p>
+<figure class=code>
+<figcaption>
+<span>launch.json</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
+    <span style=color:#268bd2>&#34;version&#34;</span>: <span style=color:#2aa198>&#34;0.2.0&#34;</span>,
+    <span style=color:#268bd2>&#34;configurations&#34;</span>: [
+        {
+            <span style=color:#268bd2>&#34;type&#34;</span>: <span style=color:#2aa198>&#34;java&#34;</span>,
+            <span style=color:#268bd2>&#34;name&#34;</span>: <span style=color:#2aa198>&#34;BurpExtension&#34;</span>,
+            <span style=color:#268bd2>&#34;request&#34;</span>: <span style=color:#2aa198>&#34;attach&#34;</span>,
+            <span style=color:#268bd2>&#34;hostName&#34;</span>: <span style=color:#2aa198>&#34;localhost&#34;</span>,
+            <span style=color:#268bd2>&#34;port&#34;</span>: <span style=color:#2aa198>8000</span> <span style=color:#586e75>// Change this if you had set a different debug port.
+</span><span style=color:#586e75></span>        }
+    ]
+}</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<p>The file is very simple. The only important options are the <code>hostName</code> and
+<code>port</code> which should point to the debug port specified above (<code>localhost:8000</code>).</p>
+<p>Start debugging again. Windows Firewall dialog might pop-up. If it does and you
+are not debugging a remote machine, press cancel. If the debugger times out
+while the firewall dialog is active, debug again (<code>F5</code>).</p>
+<p>After the debugger is attached, reload the extension with <code>Ctrl+Right-Click</code>
+on the checkbox in the Extender tab and see the debugger break.</p>
+<span class=caption-wrapper>
+<img class=caption src=08-debugging.png title="Achievement unlocked: Debugging in VS Code" alt="Achievement unlocked: Debugging in VS Code">
+<span class=caption-text>Achievement unlocked: Debugging in VS Code</span>
+</span>
+<p>Pretty nifty and super useful.</p>
+<h1 id=storing-the-extensions-jar-in-a-different-path>Storing the Extension's Jar in a Different Path
+<a class=header-link href=#storing-the-extensions-jar-in-a-different-path><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>If you look inside the <code>build</code> directory, you will see a lot of class files. We
+do not want these in our source control. It's wise to add the <code>build</code> directory
+to the <code>.gitignore</code> file. But this means our final jar file is also ignored and
+we want our final jar file in the repository so people can just grab it and use
+it.</p>
+<p>We can change the location of the extension's jar file by modifying the
+<code>libsDirName</code> property in <code>build.gradle</code>.</p>
+<pre tabindex=0><code>libsDirName = &quot;../@jar&quot;
+</code></pre><p>This config copy the final jar file to
+<code>@jar\burp-sample-extension-java-all.jar</code>.</p>
+<h1 id=what-did-we-learn-here-today>What Did We Learn Here Today?
+<a class=header-link href=#what-did-we-learn-here-today><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><ol>
+<li>Create a simple Burp extension in Java.</li>
+<li>Setup Gradle and build the extension.</li>
+<li>Enable Java IntelliCode in VS Code.</li>
+<li>Debug Java Burp extensions in VS Code.</li>
+<li>Change the location of the final jar file.</li>
+</ol>
+</div>
+<footer>
+<p class=meta>
+<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Dec 2, 2019</time>
+<span class=categories>
+Tags:
+<a class=category href=https://parsiya.net/tags/java>Java</a>
+</span>
+</p>
+<p class=meta>
+<a class="basic-alignment left" href=https://parsiya.net/blog/2019-11-26-swing-in-python-burp-extensions-part-3-tips-and-tricks/ title="Swing in Python Burp Extensions - Part 3 - Tips and Tricks">Swing in Python Burp Extensions - Part 3 - Tips and Tricks</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2019-12-22-using-mozilla-rhino-to-run-javascript-in-java/ title="Using Mozilla Rhino to Run JavaScript in Java">Using Mozilla Rhino to Run JavaScript in Java</a>
+</p>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</div>
+<aside class="sidebar thirds">
+<section class="first odd">
+<h1>Who am I?</h1>
+<p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
+<p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p>
+<p>Click on <a href=/about/>About Me!</a> to know more.</p>
+</p>
+</section>
+<ul class=sidebar-nav>
+<li class=sidebar-nav-item>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
+</li>
+</ul>
+<section class=odd>
+<h1>Collections</h1>
+<li>
+<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
+</li>
+<li>
+<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
+</li>
+</section>
+</aside>
+</div>
+</div>
+<footer role=contentinfo>
+<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
+</p>
+</footer>
+</body>
+</html>

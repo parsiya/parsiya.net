@@ -1,0 +1,487 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
+<link href=/css/fonts.css rel=stylesheet type=text/css>
+<title>Hiding OPTIONS - An Adventure in Dealing with Burp Proxy in an Extension</title>
+<link rel=stylesheet href=/css/hugo-octopress.css>
+<link rel=stylesheet href=/css/fork-awesome.min.css>
+<link href=https://parsiya.net/favicon.png rel=icon>
+<meta name=description content>
+<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
+<meta name=author content="Parsia">
+<meta name=generator content="Hugo 0.92.0">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image:src content="https://parsiya.net/blog/2019-04-06-hiding-options-an-adventure-in-dealing-with-burp-proxy-in-an-extension/09.png">
+<meta name=twitter:title content="Hiding OPTIONS - An Adventure in Dealing with Burp Proxy in an Extension">
+<meta name=twitter:description content="TL;DR: No matter what you do, your Burp extension cannot modify requests before they hit the HTTP History panel. You can modify requests after that and before they are sent out. We will discuss two ways to modify them with extensions. While the Match/Replace functionality is special, it has the same limitation (note how it has a separate tab that says auto-modified?).
+Update October 2019: Latest version using burputils is at:
+
+https://github.com/parsiya/Parsia-Code/tree/master/burp-filter-options
+">
+<meta name=twitter:domain content="parsiya.net">
+<meta name=twitter:creator content="@CryptoGangsta">
+</head>
+<body>
+<header role=banner>
+<hgroup>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
+<h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2>
+</hgroup></header>
+<nav role=navigation>
+<fieldset class=mobile-nav>
+<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
+</fieldset>
+<ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
+<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
+<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
+<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
+<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
+<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
+</ul>
+<ul class=subscription>
+<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
+</ul>
+<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+<fieldset role=search>
+<input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/>
+</fieldset>
+</form>
+</nav>
+<div id=main>
+<div id=content>
+<div>
+<article class=hentry role=article>
+<header>
+<p class=meta>Apr 6, 2019
+- 9 minute read
+- <a href=https://parsiya.net/blog/2019-04-06-hiding-options-an-adventure-in-dealing-with-burp-proxy-in-an-extension/#disqus_thread>Comments</a>
+- <a class=label href=https://parsiya.net/categories/burp/>Burp </a><a class=label href=https://parsiya.net/categories/burp-extension/>Burp extension </a>
+</p>
+<h1 class=entry-title>
+Hiding OPTIONS - An Adventure in Dealing with Burp Proxy in an Extension
+</h1>
+</header>
+<div class=entry-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#adding-content-type-to-requests>Adding Content-Type to Requests</a>
+<ul>
+<li><a href=#ihttplistener>IHttpListener</a>
+<ul>
+<li><a href=#it-doesnt-work>It Doesn't Work!!!</a></li>
+</ul>
+</li>
+<li><a href=#isessionhandlingaction>ISessionHandlingAction</a>
+<ul>
+<li><a href=#activate-the-extension>Activate the Extension</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href=#adding-content-type-to-the-responses>Adding Content-Type to the Responses</a></li>
+<li><a href=#what-did-we-learn-here-today>What Did We Learn Here Today?</a></li>
+</ul>
+</nav>
+<p><strong>TL;DR</strong>: No matter what you do, your Burp extension cannot modify requests before they hit the HTTP History panel. You can modify requests after that and before they are sent out. We will discuss two ways to modify them with extensions. While the Match/Replace functionality is special, it has the same limitation (note how it has a separate tab that says <code>auto-modified</code>?).</p>
+<p>Update October 2019: Latest version using <a href=https://github.com/parsiya/burputils/ target=_blank rel="noreferrer noopener">burputils</a> is at:</p>
+<ul>
+<li><a href=https://github.com/parsiya/Parsia-Code/tree/master/burp-filter-options target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/burp-filter-options</a></li>
+</ul>
+<p>While testing this application, my HTTP history is full of CORS preflight requests. I wanted to filter all these <code>OPTIONS</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=01.png title="Options! Options everywhere!" alt="Options! Options everywhere!">
+<span class=caption-text>Options! Options everywhere!</span>
+</span>
+<p>It would be nice if we could filter these requests. Unfortunately, Burp's HTTP history filter does not allow filtering by HTTP verbs as of April 2019 (at least in 1.7.37, I have not looked at Burp 2.0).</p>
+<p>After a bit of searching, I found this thread at <a href=https://support.portswigger.net/customer/portal/questions/17295251-how-do-i-configure-burp-to-ignore-method-options-on-scope- target=_blank rel="noreferrer noopener">support.portswigger.net</a> and one of the suggestions was from the author of this extension:</p>
+<ul>
+<li><a href=https://github.com/pajswigger/filter-options target=_blank rel="noreferrer noopener">https://github.com/pajswigger/filter-options</a></li>
+</ul>
+<p>It adds <code>Content-Type: application/octet-stream</code> to the response of every <code>OPTIONS</code> request. HTTP History then classifies that request as <code>Other Binary</code> and we can filter by that.</p>
+<p>I decided to write the extension in Python but use a different MIME type for filtering. <code>CSS</code> is pretty benign and the chance of filtering something important is pretty small. Our extension needs to add <code>Content-Type: text/css; charset=UTF-8</code> to every response.</p>
+<p>But before that, I experimented a bit with modifying out-going requests. This is also an important functionality. I have seen applications where I needed to add a certain hash (e.g. HMAC of payload with a secret key) to each request or redirect the endpoint to another URL. This means an extension must modify requests coming into the proxy tool before sending them out.</p>
+<h1 id=adding-content-type-to-requests>Adding Content-Type to Requests
+<a class=header-link href=#adding-content-type-to-requests><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Let's write such an extension in Python. Our extension detects every request with <code>OPTIONS</code> verb and then adds <code>Content-Type: text/css</code> to the request. It doesn't really matter what we are adding, we just want to experiment. I will discuss two ways of accessing requests after they hit the proxy tool.</p>
+<h2 id=ihttplistener>IHttpListener
+<a class=header-link href=#ihttplistener><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>We will use Portswigger's <a href=https://github.com/PortSwigger/example-traffic-redirector target=_blank rel="noreferrer noopener">github.com/portswigger/example-traffic-redirector</a> as a framework. The python extension is at:</p>
+<ul>
+<li><a href=https://github.com/PortSwigger/example-traffic-redirector/blob/master/python/TrafficRedirector.py target=_blank rel="noreferrer noopener">https://github.com/PortSwigger/example-traffic-redirector/blob/master/python/TrafficRedirector.py</a></li>
+</ul>
+<p>It looks straightforward enough. The extension registers an HTTPListener.</p>
+<pre tabindex=0><code># register an HTTP listener
+callbacks.registerHttpListener(self)
+</code></pre><p>Then we have to implement <a href=https://portswigger.net/burp/extender/api/burp/IHttpListener.html target=_blank rel="noreferrer noopener">IHttpListener</a>. When implementing an interface, we need to implement all the methods. In this case, there's only one method <code>processHttpMessage</code>.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>def</span> <span style=color:#268bd2>processHttpMessage</span>(<span style=color:#268bd2>self</span>, toolFlag, messageIsRequest, messageInfo):
+    <span style=color:#586e75># removed</span>
+</code></pre></div><p>Let's do something similar. Remember to add support for <a href=https://github.com/securityMB/burp-exceptions target=_blank rel="noreferrer noopener">github.com/securityMB/burp-exceptions</a> as seen here:</p>
+<ul>
+<li><a href=/blog/2018-12-19-python-utility-modules-for-burp-extensions/#burp-exceptions-extension title="Burp Exceptions Extension">Burp Exceptions Extension</a></li>
+</ul>
+<p>You can remove it in your final extension but it's very useful for debugging. Code for this extension is at:</p>
+<ul>
+<li><a href=https://github.com/parsiya/Parsia-Code/blob/master/burp-filter-options/blog/burp1.py target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/blob/master/burp-filter-options/blog/burp1.py</a></li>
+</ul>
+<p>This part is easy, we register a listener.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#586e75># from exceptions_fix import FixBurpExceptions</span>
+<span style=color:#719e07>import</span> sys
+
+<span style=color:#719e07>from</span> burp <span style=color:#719e07>import</span> IBurpExtender
+<span style=color:#719e07>from</span> burp <span style=color:#719e07>import</span> IHttpListener
+
+<span style=color:#719e07>class</span> <span style=color:#268bd2>BurpExtender</span>(IBurpExtender, IHttpListener):
+
+    <span style=color:#586e75>#</span>
+    <span style=color:#586e75># implement IBurpExtender</span>
+    <span style=color:#586e75>#</span>
+    
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>registerExtenderCallbacks</span>(<span style=color:#268bd2>self</span>, callbacks):
+        <span style=color:#586e75># obtain an extension helpers object</span>
+        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_helpers <span style=color:#719e07>=</span> callbacks<span style=color:#719e07>.</span>getHelpers()
+        
+        <span style=color:#586e75># set our extension name</span>
+        callbacks<span style=color:#719e07>.</span>setExtensionName(<span style=color:#2aa198>&#34;Filter OPTIONS 1&#34;</span>)
+        
+        <span style=color:#586e75># register an HTTP listener</span>
+        callbacks<span style=color:#719e07>.</span>registerHttpListener(<span style=color:#268bd2>self</span>)
+</code></pre></div><p>We have to implement <a href=https://portswigger.net/burp/extender/api/burp/IHttpListener.html target=_blank rel="noreferrer noopener">processHttpMessage</a>.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>def</span> <span style=color:#268bd2>processHttpMessage</span>(<span style=color:#268bd2>self</span>, toolFlag, messageIsRequest, messageInfo):
+    <span style=color:#586e75># removed</span>
+</code></pre></div><p>Inside, we need to modify <code>messageInfo</code>. It contains the original request and/or response. At the end of the function this will be the modified request/response.</p>
+<p><code>messageInfo</code> is of type <a href=https://portswigger.net/burp/extender/api/burp/IHttpRequestResponse.html target=_blank rel="noreferrer noopener">IHttpRequestResponse</a> which contains both request and its response. This method is called twice for each request. Once <strong>after the request hits the history</strong> and the other when the response reaches Burp <strong>but before it hits the history</strong>.</p>
+<p><strong>1. Check if it's a request</strong>\
+Return if we are dealing with a response.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#586e75># only process requests</span>
+<span style=color:#719e07>if</span> <span style=color:#719e07>not</span> messageIsRequest:
+    <span style=color:#719e07>return</span>
+</code></pre></div><p><strong>2. Check if the request originated from the proxy</strong>\
+<code>toolFlag</code> is an enum that indicates where this request came from. All of the enums are at <a href=https://portswigger.net/burp/extender/api/constant-values.html target=_blank rel="noreferrer noopener">https://portswigger.net/burp/extender/api/constant-values.html</a>. We are looking for <a href=https://portswigger.net/burp/extender/api/burp/IBurpExtenderCallbacks.html#TOOL_PROXY target=_blank rel="noreferrer noopener">TOOL_PROXY</a> which is <code>4</code>.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#586e75># only work on requests coming from proxy</span>
+<span style=color:#719e07>if</span> toolFlag <span style=color:#719e07>!=</span> <span style=color:#2aa198>4</span>:
+    <span style=color:#719e07>return</span>
+</code></pre></div><p><strong>3. Check if it's an OPTIONS request</strong>\
+Process the request to extract its HTTP method/verb. First we need to get the request bytes from the <code>messageInfo</code> object with <a href=https://portswigger.net/burp/extender/api/burp/IHttpRequestResponse.html target=_blank rel="noreferrer noopener">IHttpRequestResponse.getRequest()</a>.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#586e75># get request bytes</span>
+requestBytes <span style=color:#719e07>=</span> messageInfo<span style=color:#719e07>.</span>getRequest()
+</code></pre></div><p>These bytes can be processed with <a href=https://portswigger.net/burp/extender/api/burp/IExtensionHelpers.html target=_blank rel="noreferrer noopener">IExtensionHelpers.analyzeRequest(byte[] request)</a> to get an <a href=https://portswigger.net/burp/extender/api/burp/IRequestInfo.html target=_blank rel="noreferrer noopener">IRequestInfo</a> object.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#586e75># get request info with https://portswigger.net/burp/extender/api/burp/IRequestInfo.html</span>
+requestInfo <span style=color:#719e07>=</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_helpers<span style=color:#719e07>.</span>analyzeRequest(requestBytes)
+</code></pre></div><p>We can extract the method/verb with <code>getMethod()</code>.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#586e75># use getMethod and filter OPTIONS</span>
+<span style=color:#719e07>if</span> requestInfo<span style=color:#719e07>.</span>getMethod() <span style=color:#719e07>!=</span> <span style=color:#2aa198>&#34;OPTIONS&#34;</span>:
+    <span style=color:#719e07>return</span>
+</code></pre></div><p><strong>4. Add the new header</strong>\
+Similarly, we have a helper method to extract the request headers.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>headers <span style=color:#719e07>=</span> requestInfo<span style=color:#719e07>.</span>getHeaders()
+</code></pre></div><p>This method returns a list (think string array) of headers. It's not a dictionary. Each line is in its own cell. We cannot search or do anything. We could write some helper methods that create a dictionary out of this list but that is for another time. Duplicate headers are a thing and we can hope that whatever is on the other side accepts them. In this case, we do not need to find and delete the previous <code>Accept</code> header, we will just add our own in the end.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#586e75># add header</span>
+headers<span style=color:#719e07>.</span>add(<span style=color:#2aa198>&#34;Accept: text/css,*/*&#34;</span>)
+</code></pre></div><p><strong>5. Re-create the message with the new headers</strong>\
+To re-create the message we need to use <a href=https://portswigger.net/burp/extender/api/burp/IExtensionHelpers.html target=_blank rel="noreferrer noopener">IExtensionHelpers.buildHttpMessage(java.util.List&lt;java.lang.String> headers, byte[] body)</a>.</p>
+<p>To do so, we will need the headers (we already have them) and the message body byte. The message body is extracted with <a href=https://portswigger.net/burp/extender/api/burp/IRequestInfo.html#getBodyOffset%28%29 target=_blank rel="noreferrer noopener">IRequestInfo.getBodyOffset()</a>:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#586e75># get body bytes</span>
+bodyBytes <span style=color:#719e07>=</span> requestBytes[requestInfo<span style=color:#719e07>.</span>getBodyOffset():]
+</code></pre></div><p>If we wanted to modify the body, we could do it here. Let's build the new message:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>modifiedMessage <span style=color:#719e07>=</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_helpers<span style=color:#719e07>.</span>buildHttpMessage(headers, bodyBytes)
+</code></pre></div><p>Finally, we need to set it as the request for <code>messageInfo</code>.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>messageInfo<span style=color:#719e07>.</span>setRequest(modifiedMessage)
+</code></pre></div>
+<h3 id=it-doesnt-work>It Doesn't Work!!!
+<a class=header-link href=#it-doesnt-work><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>The request in HTTP History does not change. Unfortunately, we cannot modify the request before it hits the history tab. However, this extension is modifying the requests before they go out. If you chain another Burp, you can see the modified request.</p>
+<p>Thinking that my extension was wrong, I searched and found another way to do the same thing.</p>
+<h2 id=isessionhandlingaction>ISessionHandlingAction
+<a class=header-link href=#isessionhandlingaction><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>This blog post <a href=https://www.optiv.com/blog/automatically-adding-new-header-with-burp target=_blank rel="noreferrer noopener">Automatically Adding New Header with Burp - optiv.com</a><sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup> talks about adding a header to each outgoing request like a hash. I had written similar extensions in the past.</p>
+<p>This second method allows us to perform an action on each request based on a session handling rule. To do so we must create a second version of our extension.</p>
+<ul>
+<li>Code: <a href=https://github.com/parsiya/Parsia-Code/blob/master/burp-filter-options/blog/burp2.py target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/blob/master/burp-filter-options/blog/burp2.py</a></li>
+</ul>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>from</span> burp <span style=color:#719e07>import</span> IBurpExtender
+<span style=color:#719e07>from</span> burp <span style=color:#719e07>import</span> ISessionHandlingAction 
+
+<span style=color:#719e07>class</span> <span style=color:#268bd2>BurpExtender</span>(IBurpExtender, ISessionHandlingAction):
+
+    <span style=color:#586e75>#</span>
+    <span style=color:#586e75># implement IBurpExtender</span>
+    <span style=color:#586e75>#</span>
+    
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>registerExtenderCallbacks</span>(<span style=color:#268bd2>self</span>, callbacks):
+        <span style=color:#586e75># obtain an extension helpers object</span>
+        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_helpers <span style=color:#719e07>=</span> callbacks<span style=color:#719e07>.</span>getHelpers()
+        
+        <span style=color:#586e75># set our extension name</span>
+        callbacks<span style=color:#719e07>.</span>setExtensionName(<span style=color:#2aa198>&#34;Filter OPTIONS 2&#34;</span>)
+        
+        <span style=color:#586e75># register the extension to perform a session handling action</span>
+        <span style=color:#586e75># w/o this, the extension does not pop-up in the &#34;perform action&#34; part in session handling rules</span>
+        callbacks<span style=color:#719e07>.</span>registerSessionHandlingAction(<span style=color:#268bd2>self</span>)
+</code></pre></div><p>To implement <a href=https://portswigger.net/burp/extender/api/burp/isessionhandlingaction.html target=_blank rel="noreferrer noopener">ISessionHandlingAction</a> we must create two methods:</p>
+<ul>
+<li><code>getActionName()</code></li>
+<li><code>performAction(IHttpRequestResponse currentRequest, IHttpRequestResponse[] macroItems)</code></li>
+</ul>
+<p>This is the name of the action that appears in the dialog when we want to run it on requests:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>def</span> <span style=color:#268bd2>getActionName</span>(<span style=color:#268bd2>self</span>):
+    <span style=color:#719e07>return</span> <span style=color:#2aa198>&#34;Add </span><span style=color:#cb4b16>\&#34;</span><span style=color:#2aa198>Accept: text/css,*/*</span><span style=color:#cb4b16>\&#34;</span><span style=color:#2aa198> header&#34;</span>
+</code></pre></div><p>We do the manipulation inside <code>performAction</code> this time (we do not need <code>macroItems</code> here<sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup>):</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>def</span> <span style=color:#268bd2>performAction</span>(<span style=color:#268bd2>self</span>, currentRequest, macroItems):
+    <span style=color:#586e75># get request bytes</span>
+    requestBytes <span style=color:#719e07>=</span> currentRequest<span style=color:#719e07>.</span>getRequest()
+    <span style=color:#586e75># get request body</span>
+    requestInfo <span style=color:#719e07>=</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_helpers<span style=color:#719e07>.</span>analyzeRequest(requestBytes)
+
+    <span style=color:#586e75># return if the verb is not OPTIONS</span>
+    <span style=color:#719e07>if</span> requestInfo<span style=color:#719e07>.</span>getMethod() <span style=color:#719e07>!=</span> <span style=color:#2aa198>&#34;OPTIONS&#34;</span>:
+        <span style=color:#719e07>return</span>
+
+    <span style=color:#586e75># add &#34;text/css&#34; to the &#34;Accept&#34; header</span>
+    headers <span style=color:#719e07>=</span> requestInfo<span style=color:#719e07>.</span>getHeaders()
+    headers<span style=color:#719e07>.</span>add(<span style=color:#2aa198>&#34;Accept: text/css,*/*&#34;</span>)
+
+    <span style=color:#586e75># re-create the message</span>
+    <span style=color:#586e75># to recreate it we need headers (we already have them) and then the body</span>
+
+    <span style=color:#586e75># get request bytes</span>
+    bodyBytes <span style=color:#719e07>=</span> requestBytes[requestInfo<span style=color:#719e07>.</span>getBodyOffset():]
+    <span style=color:#586e75># if we wanted to modify the body, this would be the place</span>
+
+    <span style=color:#586e75># build a new message with</span>
+    modifiedMessage <span style=color:#719e07>=</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_helpers<span style=color:#719e07>.</span>buildHttpMessage(headers, bodyBytes)
+
+    <span style=color:#586e75># set the request to the modifiedMessage</span>
+    currentRequest<span style=color:#719e07>.</span>setRequest(modifiedMessage)
+
+    <span style=color:#586e75># and we are done</span>
+    <span style=color:#719e07>return</span>
+</code></pre></div><p>With this extension, we need to add it as a session handling rule as mentioned in the blog post. Be sure to load the extension in extender first and check that it has loaded without errors<sup id=fnref:3><a href=#fn:3 class=footnote-ref role=doc-noteref>3</a></sup>.</p>
+<span class=caption-wrapper>
+<img class=caption src=02.png title="Extension loaded in Burp" alt="Extension loaded in Burp">
+<span class=caption-text>Extension loaded in Burp</span>
+</span>
+<h3 id=activate-the-extension>Activate the Extension
+<a class=header-link href=#activate-the-extension><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>Go to <code>Project Options > Sessions > Sessions Handling Rules</code> and click on <code>Add</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=03.png title="Add a new rule" alt="Add a new rule">
+<span class=caption-text>Add a new rule</span>
+</span>
+<p>Note: <code>sessions tracer</code> here is a godsend when testing rules/extensions. Be sure to make use of it.</p>
+<p>Give the rule a name and then click on <code>Add</code> under <code>Rule Actions</code> and select <code>Invoke a Burp Extension</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=04.png title="Add action" alt="Add action">
+<span class=caption-text>Add action</span>
+</span>
+<p>If the action does not show up here, check that:</p>
+<ol>
+<li>The extension is loaded without errors.</li>
+<li>The extension has implemented <code>getActionName()</code></li>
+</ol>
+<span class=caption-wrapper>
+<img class=caption src=05.png title="Select the action" alt="Select the action">
+<span class=caption-text>Select the action</span>
+</span>
+<p>Switch to the <code>Scope</code> tab and remove everything except proxy under <code>Tools Scope</code>. The rule should run on requests coming from the proxy.</p>
+<p>Under <code>URL Scope</code> select <code>Include all URLs</code>. There are other ways to set scope too.</p>
+<span class=caption-wrapper>
+<img class=caption src=06.png title="Set rule's scope" alt="Set rule's scope">
+<span class=caption-text>Set rule's scope</span>
+</span>
+<p>And we're done. To see the request in action, open the sessions tracer.</p>
+<span class=caption-wrapper>
+<img class=caption src=07.png title="Request before modification" alt="Request before modification">
+<span class=caption-text>Request before modification</span>
+</span>
+<p>We can see the rule being applied to <code>OPTIONS</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=08.png title="Rule applied to the request" alt="Rule applied to the request">
+<span class=caption-text>Rule applied to the request</span>
+</span>
+<p><strong>This is done after the request hits the HTTP History and before it's sent out.</strong></p>
+<p>So it's not what we are looking for. What is the solution then?</p>
+<h1 id=adding-content-type-to-the-responses>Adding Content-Type to the Responses
+<a class=header-link href=#adding-content-type-to-the-responses><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>The solution is adding <code>Content-Type: text/css</code> to the response of each <code>OPTIONS</code> request. I modified the first extension using a listener but the other one should work too.</p>
+<ul>
+<li>Code: <a href=https://github.com/parsiya/Parsia-Code/blob/master/burp-filter-options/blog/burp3.py target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/blob/master/burp-filter-options/blog/burp3.py</a></li>
+</ul>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>def</span> <span style=color:#268bd2>processHttpMessage</span>(<span style=color:#268bd2>self</span>, toolFlag, messageIsRequest, messageInfo):
+
+    <span style=color:#586e75># do not process outgoing requests, we only care about responses</span>
+    <span style=color:#719e07>if</span> messageIsRequest:
+        <span style=color:#719e07>return</span>
+
+    <span style=color:#586e75># only care about requests coming from the Proxy, ignore other tools (e.g. Repeater)</span>
+    <span style=color:#586e75># see valid values here: https://portswigger.net/burp/extender/api/constant-values.html</span>
+    <span style=color:#719e07>if</span> toolFlag <span style=color:#719e07>!=</span> <span style=color:#2aa198>4</span>:
+        <span style=color:#719e07>return</span>
+
+    <span style=color:#586e75># analyze the request for the response we are currently processing.</span>
+    <span style=color:#586e75># we need to identify if the HTTP verb is OPTIONS</span>
+
+    <span style=color:#586e75># get request bytes</span>
+    requestBytes <span style=color:#719e07>=</span> messageInfo<span style=color:#719e07>.</span>getRequest()
+    <span style=color:#586e75># process request with https://portswigger.net/burp/extender/api/burp/IRequestInfo.html</span>
+    requestInfo <span style=color:#719e07>=</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_helpers<span style=color:#719e07>.</span>analyzeRequest(requestBytes)
+    <span style=color:#586e75># use getMethod to filter non-OPTIONS</span>
+    <span style=color:#719e07>if</span> requestInfo<span style=color:#719e07>.</span>getMethod() <span style=color:#719e07>!=</span> <span style=color:#2aa198>&#34;OPTIONS&#34;</span>:
+        <span style=color:#719e07>return</span>
+
+    <span style=color:#586e75># process the response and Inject &#34;Content-Type: text/css; charset=UTF-8&#34;</span>
+
+    <span style=color:#586e75># get response bytes</span>
+    responseBytes <span style=color:#719e07>=</span> messageInfo<span style=color:#719e07>.</span>getResponse()
+    <span style=color:#586e75># process response</span>
+    responseInfo <span style=color:#719e07>=</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_helpers<span style=color:#719e07>.</span>analyzeResponse(responseBytes)
+
+    <span style=color:#586e75># get response headers</span>
+    responseHeaders <span style=color:#719e07>=</span> responseInfo<span style=color:#719e07>.</span>getHeaders()
+    
+    <span style=color:#586e75># just add the duplicate content-type header to response and hope it works, YOLO!</span>
+    responseHeaders<span style=color:#719e07>.</span>add(<span style=color:#2aa198>&#34;Content-Type: text/css; charset=UTF-8&#34;</span>)
+
+    <span style=color:#586e75># re-create the response with new headers</span>
+
+    <span style=color:#586e75># get response body bytes</span>
+    responseBodyBytes <span style=color:#719e07>=</span> responseBytes[responseInfo<span style=color:#719e07>.</span>getBodyOffset():]
+    <span style=color:#586e75># if we wanted to modify the body, this would be the place</span>
+
+    <span style=color:#586e75># build a new message</span>
+    modifiedMessage <span style=color:#719e07>=</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_helpers<span style=color:#719e07>.</span>buildHttpMessage(responseHeaders, responseBodyBytes)
+
+    <span style=color:#586e75># set the response to this request.</span>
+    <span style=color:#586e75># we are processing it before it hits the history, it will appear as modified there</span>
+    messageInfo<span style=color:#719e07>.</span>setResponse(modifiedMessage)
+
+    <span style=color:#586e75># and we are done</span>
+    <span style=color:#719e07>return</span>
+</code></pre></div><p>And it works. Any <strong>new</strong> <code>OPTIONS</code> request is classified as <code>CSS</code> in Burp's HTTP History.</p>
+<span class=caption-wrapper>
+<img class=caption src=09.png title="OPTIONS classified as CSS" alt="OPTIONS classified as CSS">
+<span class=caption-text>OPTIONS classified as CSS</span>
+</span>
+<p>And we can filter them by CSS MIME Type.</p>
+<span class=caption-wrapper>
+<img class=caption src=10.png title="CSS MIME Type filter" alt="CSS MIME Type filter">
+<span class=caption-text>CSS MIME Type filter</span>
+</span>
+<h1 id=what-did-we-learn-here-today>What Did We Learn Here Today?
+<a class=header-link href=#what-did-we-learn-here-today><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><ol>
+<li>We can interact with requests in two ways:
+<ol>
+<li>IHttpListener</li>
+<li>ISessionHandlingAction</li>
+</ol>
+</li>
+<li>There's no way (that I know of) to modify requests before they hit history. But it's easy to modify them before going out.</li>
+<li>We can modify responses before they hit HTTP History.</li>
+<li>If Burp's filter does not allow us to filter by something, we can filter in the extension and make them a certain MIME Type and filter by that.</li>
+</ol>
+<section class=footnotes role=doc-endnotes>
+<hr>
+<ol>
+<li id=fn:1 role=doc-endnote>
+<p>It looks like it was originally published on a different platform because the code formatting is messed up.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
+</li>
+<li id=fn:2 role=doc-endnote>
+<p>I do not know what they do or how to use them yet.&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
+</li>
+<li id=fn:3 role=doc-endnote>
+<p>You also need to setup Jython but I am not going to discuss that.&#160;<a href=#fnref:3 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+</div>
+<footer>
+<p class=meta>
+<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Apr 6, 2019</time>
+<span class=categories>
+Tags:
+<a class=category href=https://parsiya.net/tags/python>python</a>
+</span>
+</p>
+<p class=meta>
+<a class="basic-alignment left" href=https://parsiya.net/blog/2019-03-09-path.join-considered-harmful/ title="path.Join Considered Harmful">path.Join Considered Harmful</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2019-04-17-the-dark-side-of-manual-work-is-a-bug/ title='The Dark Side of "Manual Work is a Bug"'>The Dark Side of "Manual Work is a Bug"</a>
+</p>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</div>
+<aside class="sidebar thirds">
+<section class="first odd">
+<h1>Who am I?</h1>
+<p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
+<p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p>
+<p>Click on <a href=/about/>About Me!</a> to know more.</p>
+</p>
+</section>
+<ul class=sidebar-nav>
+<li class=sidebar-nav-item>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
+</li>
+</ul>
+<section class=odd>
+<h1>Collections</h1>
+<li>
+<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
+</li>
+<li>
+<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
+</li>
+</section>
+</aside>
+</div>
+</div>
+<footer role=contentinfo>
+<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
+</p>
+</footer>
+</body>
+</html>

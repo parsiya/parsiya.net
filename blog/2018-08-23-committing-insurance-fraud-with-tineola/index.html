@@ -1,0 +1,1110 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
+<link href=/css/fonts.css rel=stylesheet type=text/css>
+<title>Committing Insurance Fraud with Tineola</title>
+<link rel=stylesheet href=/css/hugo-octopress.css>
+<link rel=stylesheet href=/css/fork-awesome.min.css>
+<link href=https://parsiya.net/favicon.png rel=icon>
+<meta name=description content>
+<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
+<meta name=author content="Parsia">
+<meta name=generator content="Hugo 0.92.0">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image:src content="https://parsiya.net/blog/2018-08-23-committing-insurance-fraud-with-tineola/11.png">
+<meta name=twitter:title content="Committing Insurance Fraud with Tineola">
+<meta name=twitter:description content="We recently presented our tool at the DefCon 26 conference in Vegas. Amazing time was had. We had a friendly crowd at our talk Tineola: Taking a Bite Out of Enterprise Blockchain. You can see our slides and whitepaper in the repository. The tool is released under MIT and is at:
+
+https://github.com/tineola/tineola
+
+During the talk, Stark demoed our tool and showed how to completely break the Build Blockchain Insurance App. You can see the videos on the DefCon Media Server.
+This blog post will teach you how to use Tineola and commit insurance fraud.">
+<meta name=twitter:domain content="parsiya.net">
+<meta name=twitter:creator content="@CryptoGangsta">
+</head>
+<body>
+<header role=banner>
+<hgroup>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
+<h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2>
+</hgroup></header>
+<nav role=navigation>
+<fieldset class=mobile-nav>
+<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
+</fieldset>
+<ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
+<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
+<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
+<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
+<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
+<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
+</ul>
+<ul class=subscription>
+<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
+</ul>
+<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+<fieldset role=search>
+<input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/>
+</fieldset>
+</form>
+</nav>
+<div id=main>
+<div id=content>
+<div>
+<article class=hentry role=article>
+<header>
+<p class=meta>Aug 23, 2018
+- 21 minute read
+- <a href=https://parsiya.net/blog/2018-08-23-committing-insurance-fraud-with-tineola/#disqus_thread>Comments</a>
+- <a class=label href=https://parsiya.net/categories/blockchain/>Blockchain </a><a class=label href=https://parsiya.net/categories/tineola/>Tineola </a>
+</p>
+<h1 class=entry-title>
+Committing Insurance Fraud with Tineola
+</h1>
+</header>
+<div class=entry-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#setup>Setup</a>
+<ul>
+<li><a href=#pre-requisites>Pre-requisites</a>
+<ul>
+<li><a href=#install-nodejs-8x-and-npm>Install Node.js 8.x and npm</a></li>
+<li><a href=#install-build-blockchain-insurance-app>Install Build Blockchain Insurance App</a></li>
+</ul>
+</li>
+<li><a href=#install-and-run-tineola>Install and Run Tineola</a></li>
+</ul>
+</li>
+<li><a href=#hacking-the-insurance-app>Hacking the Insurance App</a>
+<ul>
+<li><a href=#characters>Characters</a></li>
+<li><a href=#setting-up-tineola-with-the-insurance-app>Setting up Tineola with the Insurance App</a>
+<ul>
+<li><a href=#repairshop-endpoints>Repairshop Endpoints</a></li>
+<li><a href=#enrollment-secret>Enrollment Secret</a></li>
+<li><a href=#msp-id>MSP ID</a></li>
+</ul>
+</li>
+<li><a href=#enrolling-in-the-repairshop>Enrolling in the Repairshop</a></li>
+<li><a href=#connecting-to-repairshop-peer>Connecting to Repairshop Peer</a>
+<ul>
+<li><a href=#troubleshooting-peer-set>Troubleshooting peer-set</a></li>
+</ul>
+</li>
+<li><a href=#tineola-automation>Tineola Automation</a></li>
+<li><a href=#exploring-repairshop-peer>Exploring repairshop-peer</a>
+<ul>
+<li><a href=#list-channels>List Channels</a></li>
+<li><a href=#join-channel>Join Channel</a></li>
+<li><a href=#read-blocks>Read Blocks</a></li>
+<li><a href=#read-multiple-blocks>Read Multiple Blocks</a></li>
+</ul>
+</li>
+<li><a href=#how-insurance-app-works>How Insurance App Works</a>
+<ul>
+<li><a href=#buying-insurance>Buying Insurance</a></li>
+<li><a href=#submitting-a-claim>Submitting a Claim</a></li>
+<li><a href=#processing-claims>Processing Claims</a></li>
+<li><a href=#complete-repairs>Complete Repairs</a></li>
+<li><a href=#theft-vs-not-theft>Theft vs. Not-Theft</a></li>
+<li><a href=#claim-rejection-by-insurance>Claim Rejection By Insurance</a></li>
+<li><a href=#claim-rejection-by-police>Claim Rejection By Police</a></li>
+<li><a href=#claim-reimbursement>Claim Reimbursement</a></li>
+</ul>
+</li>
+<li><a href=#committing-insurance-fraud>Committing Insurance Fraud</a>
+<ul>
+<li><a href=#impersonating-carol---method-1>Impersonating Carol - Method 1</a></li>
+<li><a href=#impersonating-carol---method-2>Impersonating Carol - Method 2</a></li>
+<li><a href=#invoking-chaincode-with-tineola>Invoking Chaincode with Tineola</a></li>
+<li><a href=#ordering-transactions-with-tineola>Ordering Transactions with Tineola</a></li>
+<li><a href=#using-proxyjs-to-bypass-grpcs-restrictions>Using Proxy.js to Bypass grpcs Restrictions</a></li>
+<li><a href=#impersonating-insurance-agents>Impersonating Insurance Agents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href=#troubleshooting>Troubleshooting</a>
+<ul>
+<li><a href=#insurance-app-doesnt-start>Insurance App Doesn't Start</a></li>
+<li><a href=#the-login-bug>The Login Bug</a></li>
+<li><a href=#peer-list-cc-error>peer-list-cc Error</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+<p>We recently presented our tool at the DefCon 26 conference in Vegas. Amazing time was had. We had a friendly crowd at our talk <a href=https://www.defcon.org/html/defcon-26/dc-26-speakers.html#Riedesel target=_blank rel="noreferrer noopener">Tineola: Taking a Bite Out of Enterprise Blockchain</a>. You can see our <a href=https://github.com/tineola/tineola/blob/master/docs/Tineola-Slides-Defcon26.pdf target=_blank rel="noreferrer noopener">slides</a> and <a href=https://github.com/tineola/tineola/blob/master/docs/TineolaWhitepaper.pdf target=_blank rel="noreferrer noopener">whitepaper</a> in the repository. The tool is released under MIT and is at:</p>
+<ul>
+<li><a href=https://github.com/tineola/tineola target=_blank rel="noreferrer noopener">https://github.com/tineola/tineola</a></li>
+</ul>
+<p>During the talk, Stark demoed our tool and showed how to completely break the <a href=https://github.com/IBM/build-blockchain-insurance-app target=_blank rel="noreferrer noopener">Build Blockchain Insurance App</a>. You can see the videos on the <a href=https://media.defcon.org/DEF%20CON%2026/DEF%20CON%2026%20presentations/Stark%20Riedesel%20and%20Parsia%20Hakimian/DEFCON-26-Stark-Riedesel-and-Parsia-Hakimian-Demo-Videos/ target=_blank rel="noreferrer noopener">DefCon Media Server</a>.</p>
+<p>This blog post will teach you how to use Tineola and commit insurance fraud.</p>
+<h1 id=setup>Setup
+<a class=header-link href=#setup><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>This guide assumes you start with a clean Ubuntu 16 Virtual Machine although it will most likely work on most distros.</p>
+<p>If you have Fabric images and containers in the VM, they can be deleted with <code>docker images -a</code>.</p>
+<h2 id=pre-requisites>Pre-requisites
+<a class=header-link href=#pre-requisites><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>In this section, we discuss installing the insurance app and dependencies for Tineola and Fabric.</p>
+<h3 id=install-nodejs-8x-and-npm>Install Node.js 8.x and npm
+<a class=header-link href=#install-nodejs-8x-and-npm><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>Using instructions at <a href=https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions target=_blank rel="noreferrer noopener">nodejs.org</a>:</p>
+<pre tabindex=0><code>curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt-get install -y nodejs
+</code></pre><p>This will install both Node and npm:</p>
+<pre tabindex=0><code>$ node -v
+v8.11.4
+$ npm -v
+5.6.0
+</code></pre>
+<h3 id=install-build-blockchain-insurance-app>Install Build Blockchain Insurance App
+<a class=header-link href=#install-build-blockchain-insurance-app><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>Follow the instructions at <a href=https://github.com/IBM/build-blockchain-insurance-app target=_blank rel="noreferrer noopener">https://github.com/IBM/build-blockchain-insurance-app</a>.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>git clone https://github.com/IBM/build-blockchain-insurance-app
+
+<span style=color:#b58900>cd</span> build-blockchain-insurance-app
+</code></pre></div><p>The application has a bug. The name of the docker network in the <code>peer-base.yaml</code> file is different from the network at run-time. For more information, see troubleshooting section.</p>
+<p>Open <code>build-blockchain-insurance-app/peer-base.yaml</code>. You should see:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>version</span>: <span style=color:#2aa198>&#39;2&#39;</span>
+
+<span style=color:#268bd2>services</span>:
+  <span style=color:#268bd2>peer-base</span>:
+    <span style=color:#268bd2>environment</span>:
+    - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+    - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=build-blockchain-insurance-app_default
+</code></pre></div><p>Change the name of the network to <code>buildblockchaininsuranceapp_default</code>:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>version</span>: <span style=color:#2aa198>&#39;2&#39;</span>
+
+<span style=color:#268bd2>services</span>:
+  <span style=color:#268bd2>peer-base</span>:
+    <span style=color:#268bd2>environment</span>:
+    - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+    - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=buildblockchaininsuranceapp_default
+</code></pre></div><p>Start the application with:</p>
+<pre tabindex=0><code>./build_ubuntu.sh
+</code></pre><p>Wait for everything to be downloaded and started. It will take a while especially if you are downloading Fabric images.</p>
+<p>To check the web interface, run <code>docker logs web</code>.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ docker logs web
+
+&gt; blockchain-for-insurance@2.1.0 serve /app
+&gt; cross-env <span style=color:#268bd2>NODE_ENV</span><span style=color:#719e07>=</span>production<span style=color:#719e07>&amp;&amp;</span>node ./bin/server
+
+/app/app/static/js
+Server running on port: <span style=color:#2aa198>3000</span>
+Default channel not found, attempting creation...
+Successfully created a new default channel.
+Joining peers to the default channel.
+</code></pre></div><p><strong>Important Note:</strong> When stopping the application, use <code>docker-compose stop</code>, <code>down</code> will remove the containers and all history will be destroyed. To resume the application run <code>docker-compose start</code>.</p>
+<h2 id=install-and-run-tineola>Install and Run Tineola
+<a class=header-link href=#install-and-run-tineola><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p><a href=https://github.com/tineola/tineola target=_blank rel="noreferrer noopener">Tineola</a> is a Node.js application.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>git clone https://github.com/tineola/tineola
+<span style=color:#b58900>cd</span> tineola; npm install
+<span style=color:#b58900>cd</span> bin; ./tineola.js
+</code></pre></div>
+<h1 id=hacking-the-insurance-app>Hacking the Insurance App
+<a class=header-link href=#hacking-the-insurance-app><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Insurance app and Tineola are up and running, it's time for action.</p>
+<h2 id=characters>Characters
+<a class=header-link href=#characters><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Moving forward, we are Tom. Tom is an employee of RepairShop Inc.. RepairShop Inc. has joined a fancy blockchain-based insurance system. Tom wants to commit insurance fraud and make some coin.</p>
+<p>Carol is the victim. She buys items from the shop and insures them.</p>
+<h2 id=setting-up-tineola-with-the-insurance-app>Setting up Tineola with the Insurance App
+<a class=header-link href=#setting-up-tineola-with-the-insurance-app><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>We need three pieces of information:</p>
+<ul>
+<li>Endpoints of repairshop CA, peer, and their GRPCs/HTTPs ports.</li>
+<li>Enrollment secret (also called admin password).</li>
+<li>Membership Service Provider (MSP) name.</li>
+</ul>
+<p>Note: In this setup, we are running everything locally and we have access to all peers. In the real world, Tom only has access to the repairshop peers.</p>
+<h3 id=repairshop-endpoints>Repairshop Endpoints
+<a class=header-link href=#repairshop-endpoints><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>In the real world, Tom already knows this (or could ask repairshop's IT). In our setup we can use docker:</p>
+<pre tabindex=0><code>$ docker ps --format &quot;table {{.ID}}\t{{.Image}}\t{{.Ports}}\t{{.Names}}&quot;
+CONTAINER ID        IMAGE              PORTS                                              NAMES
+b1e58f1323fc        dev-insurance-peer-bcins-v2-[[truncated]]                             dev-insurance-peer-bcins-v2
+578bdbd93591        police-peer        0.0.0.0:10051-&gt;7051/tcp, 0.0.0.0:10053-&gt;7053/tcp   police-peer
+663f5e708c5e        repairshop-peer    0.0.0.0:9051-&gt;7051/tcp, 0.0.0.0:9053-&gt;7053/tcp     repairshop-peer
+bef1e8f600e2        shop-peer          0.0.0.0:8051-&gt;7051/tcp, 0.0.0.0:8053-&gt;7053/tcp     shop-peer
+120966cd0b23        insurance-peer     0.0.0.0:7051-&gt;7051/tcp, 0.0.0.0:7053-&gt;7053/tcp     insurance-peer
+22cbea63f2d3        insurance-ca       0.0.0.0:7054-&gt;7054/tcp                             insurance-ca
+a61a732844ff        shop-ca            0.0.0.0:8054-&gt;7054/tcp                             shop-ca
+922f49463d19        orderer            0.0.0.0:7050-&gt;7050/tcp                             orderer0
+d06cc537331c        police-ca          0.0.0.0:10054-&gt;7054/tcp                            police-ca
+20308fb65c86        repairshop-ca      0.0.0.0:9054-&gt;7054/tcp                             repairshop-ca
+</code></pre><p>Side note: I did not know <code>docker</code> CLI supports format strings based on Go templates. See more here: <a href=https://docs.docker.com/engine/reference/commandline/ps/#formatting target=_blank rel="noreferrer noopener">https://docs.docker.com/engine/reference/commandline/ps/#formatting</a></p>
+<p>Repairshop servers are:</p>
+<ul>
+<li>CA: <code>repairshop-ca 0.0.0.0:9054->7054/tcp</code>.
+<ul>
+<li>Container is listening externally on port <code>9054</code> on all interfaces and it's mapped to internal port <code>7054</code>.</li>
+</ul>
+</li>
+<li>Peer: <code>repairshop-peer 0.0.0.0:9051->7051/tcp, 0.0.0.0:9053->7053/tcp</code>.
+<ul>
+<li><code>9051</code> is the GRPCs port and <code>9053</code> is the event service. In this tutorial, we only care about <code>9051</code>.</li>
+</ul>
+</li>
+</ul>
+<p>Note: Alternatively we could run <code>docker inspect image-name</code> to get the IP address of each container. In this example, <code>repairshop-ca</code> was <code>172.18.0.2</code>. This means can be contacted either at <code>localhost:9054</code> or <code>172.18.0.2:7054</code>.</p>
+<h3 id=enrollment-secret>Enrollment Secret
+<a class=header-link href=#enrollment-secret><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>The secret should only be known to the organization admin. Tom being an employee of repairshop could ask IT or get it from any number of places.</p>
+<p>In our setup, it is in:</p>
+<ul>
+<li><code>build-blockchain-insurance-app/repairShopCA/fabric-ca-server-config.yaml</code></li>
+</ul>
+<p>You can see a copy of it on Github at:</p>
+<ul>
+<li><a href=https://github.com/IBM/build-blockchain-insurance-app/blob/master/repairShopCA/fabric-ca-server-config.yaml target=_blank rel="noreferrer noopener">https://github.com/IBM/build-blockchain-insurance-app/blob/master/repairShopCA/fabric-ca-server-config.yaml</a></li>
+</ul>
+<p>If this is modified, the relevant part of the content is:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#268bd2>registry</span>:
+  <span style=color:#268bd2>maxenrollments</span>: -<span style=color:#2aa198>1</span>
+  <span style=color:#268bd2>identities</span>:
+  - <span style=color:#268bd2>name</span>: admin
+    <span style=color:#268bd2>pass</span>: adminpw
+    <span style=color:#268bd2>type</span>: client
+    <span style=color:#268bd2>affiliation</span>: <span style=color:#2aa198>&#34;&#34;</span>
+    <span style=color:#268bd2>maxenrollments</span>: -<span style=color:#2aa198>1</span>
+</code></pre></div><ul>
+<li>Administrator is named <code>admin</code> (this is case-sensitive).</li>
+<li>Password or enrollment secret is <code>adminpw</code>.</li>
+<li><code>maxenrollments</code> is <code>-1</code> meaning this password can be used to enroll an unlimited number of certificates (more on that later).</li>
+</ul>
+<p>Why is this bad?</p>
+<ul>
+<li>This is a simple and predictable password. In fact, all Fabric samples and all other applications based on Fabric use the same combination.</li>
+<li>The password is shared between all organizations. If Tom can access other organization CA (and there's a high chance they are internet accessible), he can enroll and join other organizations.</li>
+<li><code>maxenrollments</code> limit is tricky. On one hand, unlimited is risky but on the other hand, operators do not want to lose access to the network (or re-build it) when they run out of enrollments.</li>
+</ul>
+<h3 id=msp-id>MSP ID
+<a class=header-link href=#msp-id><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>To read more about MSP, please see Fabric docs:</p>
+<ul>
+<li><a href=https://hyperledger-fabric.readthedocs.io/en/latest/msp.html target=_blank rel="noreferrer noopener">https://hyperledger-fabric.readthedocs.io/en/latest/msp.html</a></li>
+</ul>
+<p>We can see repairshop's MSP ID in the following file:</p>
+<ul>
+<li><a href=https://github.com/IBM/build-blockchain-insurance-app/blob/master/web/www/blockchain/config.js target=_blank rel="noreferrer noopener">https://github.com/IBM/build-blockchain-insurance-app/blob/master/web/www/blockchain/config.js</a></li>
+</ul>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#268bd2>const</span> config <span style=color:#719e07>=</span> {
+  <span style=color:#586e75>// ...
+</span><span style=color:#586e75></span>  repairShopOrg<span style=color:#719e07>:</span> {
+    peer<span style=color:#719e07>:</span> {
+      hostname<span style=color:#719e07>:</span> <span style=color:#2aa198>&#39;repairshop-peer&#39;</span>,
+      url<span style=color:#719e07>:</span> <span style=color:#2aa198>&#39;grpcs://repairshop-peer:7051&#39;</span>,
+      pem<span style=color:#719e07>:</span> readCryptoFile(<span style=color:#2aa198>&#39;repairShopOrg.pem&#39;</span>),
+      eventHubUrl<span style=color:#719e07>:</span> <span style=color:#2aa198>&#39;grpcs://repairshop-peer:7053&#39;</span>,
+    },
+    ca<span style=color:#719e07>:</span> {
+      hostname<span style=color:#719e07>:</span> <span style=color:#2aa198>&#39;repairshop-ca&#39;</span>,
+      url<span style=color:#719e07>:</span> <span style=color:#2aa198>&#39;https://repairshop-ca:7054&#39;</span>,
+      mspId<span style=color:#719e07>:</span> <span style=color:#2aa198>&#39;RepairShopOrgMSP&#39;</span>
+    },
+    <span style=color:#586e75>// ...
+</span><span style=color:#586e75></span>  }
+};
+</code></pre></div><ul>
+<li>MSP ID is <code>RepairShopOrgMSP</code>.</li>
+</ul>
+<h2 id=enrolling-in-the-repairshop>Enrolling in the Repairshop
+<a class=header-link href=#enrolling-in-the-repairshop><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Now we have all the information to enroll in the repairshop organization by acquiring a certificate signed by <code>repairshop-ca</code>. Currently, Fabric's authentication/authorization is based on x509.</p>
+<p>Switch to the terminal with Tineola. Remember Tineola has auto-complete and help.</p>
+<p>First, select the repairshop CA server with <code>ca-set</code>.</p>
+<pre tabindex=0><code>tineola$ ca-set https://localhost:9054
+Set CA to https://localhost:9054
+Clearing all context
+</code></pre><p>Then set the username, we know it's <code>admin</code>.</p>
+<pre tabindex=0><code>tineola$ user-set admin
+Certificate for admin not found in local key store. Use ca-enroll command
+</code></pre><p>And finally, we can enroll and get a certificate (via the good ole' CSR).</p>
+<pre tabindex=0><code>tineola$ ca-enroll adminpw RepairShopOrgMSP
+Successfully signed new certificate with ca-server
+Set user context to admin
+</code></pre><p>Tineola stores keys/certificates in <code>bin/.hfc-key-store</code>:</p>
+<pre tabindex=0><code>~/Desktop/tineola/bin$ ll .hfc-key-store/
+total 16
+drwxrwxr-x 3 testuser testuser 4096 Aug 19 20:34 ./
+drwxrwxr-x 3 testuser testuser 4096 Aug 19 20:34 ../
+-rw-rw-r-- 1 testuser testuser  246 Aug 19 20:34 c3d013591bb50fc0a8a8bbfc0e680c07ffbce4804912968d00128cd4b5559660-priv
+drwxrwxr-x 2 testuser testuser 4096 Aug 19 20:34 httpslocalhost9054/
+</code></pre><p>Tineola stores cryptographic materials for each endpoint individually. This means we can switch between organizations without having to re-enroll. Inside <code>httpslocalhost9054</code>:</p>
+<pre tabindex=0><code>~/Desktop/tineola/bin$ ll .hfc-key-store/httpslocalhost9054/
+total 20
+drwxrwxr-x 2 testuser testuser 4096 Aug 19 20:34 ./
+drwxrwxr-x 3 testuser testuser 4096 Aug 19 20:34 ../
+-rw-rw-r-- 1 testuser testuser  987 Aug 19 20:34 admin
+-rw-rw-r-- 1 testuser testuser  246 Aug 19 20:34 c3d013591bb50fc0a8a8bbfc0e680c07ffbce4804912968d00128cd4b5559660-priv
+-rw-rw-r-- 1 testuser testuser  182 Aug 19 20:34 c3d013591bb50fc0a8a8bbfc0e680c07ffbce4804912968d00128cd4b5559660-pub
+</code></pre><p>The certificate is inside the <code>admin</code> file in PEM encoding:</p>
+<pre tabindex=0><code>{
+	&quot;name&quot;: &quot;admin&quot;,
+	&quot;mspid&quot;: &quot;RepairShopOrgMSP&quot;,
+	&quot;roles&quot;: null,
+	&quot;affiliation&quot;: &quot;&quot;,
+	&quot;enrollmentSecret&quot;: &quot;&quot;,
+	&quot;enrollment&quot;: {
+		&quot;signingIdentity&quot;: &quot;c3d013591bb50fc0a8a8bbfc0e680c07ffbce4804912968d00128cd4b5559660&quot;,
+		&quot;identity&quot;: {
+			&quot;certificate&quot;: &quot;-----BEGIN CERTIFICATE-----\n
+            MIIB/TCCAaSgAwIBAgIUdUf3I18qwPBoTYuvQr1SgB2a2HgwCgYIKoZIzj0EAwIw\n
+            bzELMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFjAUBgNVBAcTDVNh\n
+            biBGcmFuY2lzY28xFzAVBgNVBAoTDnJlcGFpcnNob3Atb3JnMRowGAYDVQQDExFj\n
+            YS5yZXBhaXJzaG9wLW9yZzAeFw0xODA4MjAwMDMwMDBaFw0xOTA4MjAwMDM1MDBa\n
+            MCExDzANBgNVBAsTBmNsaWVudDEOMAwGA1UEAxMFYWRtaW4wWTATBgcqhkjOPQIB\n
+            BggqhkjOPQMBBwNCAATcZK11lpDyKu2ESxBAlS7ltNL/zWHj6G82a2oKBRsjKdty\n
+            2ir/GPLSrLb/jhDrHAx9MMVaWZC/jByCHGcGSuSDo2wwajAOBgNVHQ8BAf8EBAMC\n
+            AgQwDAYDVR0TAQH/BAIwADAdBgNVHQ4EFgQURBiSCM+e1ArfOsSPZ5BPbY81Fp4w\n
+            KwYDVR0jBCQwIoAg6YDikby/wwJe1GfNSRgiNCSO3SCxaf7Vt0oqevkOEZswCgYI\n
+            KoZIzj0EAwIDRwAwRAIga0w35w9HXkao6ob1Q8J4uiHlrB36EMAfDh9KK5p/lccC\n
+            IFgkenhpcnReXXitIL9aewqht8/qA2pqYL3zbDM04925\n
+            -----END CERTIFICATE-----\n&quot;
+		}
+	}
+}
+</code></pre><p>we can store it in a file and read it with OpenSSL:</p>
+<pre tabindex=0><code>$ openssl x509 -in admin-cert.pem -text
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            75:47:f7:23:5f:2a:c0:f0:68:4d:8b:af:42:bd:52:80:1d:9a:d8:78
+    Signature Algorithm: ecdsa-with-SHA256
+        Issuer: C=US, ST=California, L=San Francisco, O=repairshop-org, CN=ca.repairshop-org
+        Validity
+            Not Before: Aug 20 00:30:00 2018 GMT
+            Not After : Aug 20 00:35:00 2019 GMT
+        Subject: OU=client, CN=admin
+        Subject Public Key Info:
+            Public Key Algorithm: id-ecPublicKey
+                Public-Key: (256 bit)
+                pub: 
+                    04:dc:64:ad:75:96:90:f2:2a:ed:84:4b:10:40:95:
+                    2e:e5:b4:d2:ff:cd:61:e3:e8:6f:36:6b:6a:0a:05:
+                    1b:23:29:db:72:da:2a:ff:18:f2:d2:ac:b6:ff:8e:
+                    10:eb:1c:0c:7d:30:c5:5a:59:90:bf:8c:1c:82:1c:
+                    67:06:4a:e4:83
+                ASN1 OID: prime256v1
+                NIST CURVE: P-256
+        X509v3 extensions:
+            X509v3 Key Usage: critical
+                Certificate Sign
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            X509v3 Subject Key Identifier: 
+                44:18:92:08:CF:9E:D4:0A:DF:3A:C4:8F:67:90:4F:6D:8F:35:16:9E
+            X509v3 Authority Key Identifier: 
+                keyid:E9:80:E2:91:BC:BF:C3:02:5E:D4:67:CD:49:18:22:34:24:8E:DD:20:B1:69:FE:D5:B7:4A:2A:7A:F9:0E:11:9B
+
+    Signature Algorithm: ecdsa-with-SHA256
+         30:44:02:20:6b:4c:37:e7:0f:47:5e:46:a8:ea:86:f5:43:c2:
+         78:ba:21:e5:ac:1d:fa:10:c0:1f:0e:1f:4a:2b:9a:7f:95:c7:
+         02:20:58:24:7a:78:69:72:74:5e:5d:78:ad:20:bf:5a:7b:0a:
+         a1:b7:cf:ea:03:6a:6a:60:bd:f3:6c:33:34:e3:dd:b9
+</code></pre>
+<h2 id=connecting-to-repairshop-peer>Connecting to Repairshop Peer
+<a class=header-link href=#connecting-to-repairshop-peer><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Our newly acquired certificate enables us to connect to peers in the repairshop organization. Target peer is at <code>grpcs://localhost:9051</code>.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>tineola$ peer-set grpcs://localhost:9051
+Connecting to peer grpcs://localhost:9051
+Retrieving server keys from peer and CA server.
+    If this fails please pass a chain file with the --pem option.
+Successfully connected to peer
+</code></pre></div>
+<h3 id=troubleshooting-peer-set>Troubleshooting peer-set
+<a class=header-link href=#troubleshooting-peer-set><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>This is the moment of truth. If anything has gone wrong, we will get an error here. This usually means, our certificate is not correct or we are not connecting to the correct peer or GRPCs port. If the certificate is bad, exit Tineola, delete <code>/bin/.hfc-key-store</code>, and try again.</p>
+<p>A common mistake is using the wrong MSP ID or connecting to the wrong peer:</p>
+<pre tabindex=0><code>tineola$ peer-set grpcs://localhost:9051
+Connecting to peer grpcs://localhost:9051
+Retrieving server keys from peer and CA server. If this fails please pass a chain file
+    with the --pem option.
+E0819 19:47:13.322950592   15468 ssl_transport_security.cc:989] Handshake failed
+    with fatal error SSL_ERROR_SSL: error:14090086:SSL routines:ssl3_get_server_certificate:certificate verify failed.
+error: [client-utils.js]: sendPeersProposal - Promise is rejected: Error: 14 UNAVAILABLE: Connect Failed
+    at new createStatusError (/home/testuser/Desktop/tineola/node_modules/grpc/src/client.js:64:15)
+    at /home/testuser/Desktop/tineola/node_modules/grpc/src/client.js:583:15
+error: [Client.js]: Failed Channels Query. Error: Error: 14 UNAVAILABLE: Connect Failed
+    at new createStatusError (/home/testuser/Desktop/tineola/node_modules/grpc/src/client.js:64:15)
+    at /home/testuser/Desktop/tineola/node_modules/grpc/src/client.js:583:15
+Error: 14 UNAVAILABLE: Connect Failed
+</code></pre>
+<h2 id=tineola-automation>Tineola Automation
+<a class=header-link href=#tineola-automation><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>After getting a certificate, we do not need to enroll anymore in the same CA and MSP. However, we need to <code>set-ca</code> and <code>user-set</code> every time Tineola is started. Commands can be automated. When Tineola is started, it loads a file named <code>.tineola-rc</code> (note the preceding <code>.</code>) and will execute the commands inside it.</p>
+<p>Exit Tineola and create <code>.tineola-rc</code> in the <code>bin</code> directory (file should be in the same path as <code>tineola.js</code>) with the following content:</p>
+<pre tabindex=0><code>ca-set https://localhost:9054
+user-set admin
+peer-set grpcs://localhost:9051
+</code></pre><p>Run Tineola:</p>
+<pre tabindex=0><code>~/Desktop/tineola/bin$ ./tineola.js 
+Loaded HLF client
+Loading tineola-rc
+tineola$ ca-set https://localhost:9054
+Set CA to https://localhost:9054
+
+tineola$ user-set admin
+Found user certificate for admin from local key store
+
+tineola$ peer-set grpcs://localhost:9051
+Connecting to peer grpcs://localhost:9051
+Retrieving server keys from peer and CA server. If this fails please pass a chain file
+    with the --pem option.
+Successfully connected to peer
+
+tineola$
+
+  Commands:
+
+// [removed]
+</code></pre>
+<h2 id=exploring-repairshop-peer>Exploring repairshop-peer
+<a class=header-link href=#exploring-repairshop-peer><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Successfully connecting to a peer enables a new set of commands.</p>
+<h3 id=list-channels>List Channels
+<a class=header-link href=#list-channels><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>Each peer can be a member of one or more channels. Each channel has its own ledger and one or more chaincodes.</p>
+<pre tabindex=0><code>tineola$ peer-list-channels
+┌────────────┐
+│ Channel ID │
+├────────────┤
+│ default    │
+└────────────┘
+</code></pre>
+<h3 id=join-channel>Join Channel
+<a class=header-link href=#join-channel><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>We can join the only channel in the Insurance app with <code>channel-set</code>. This command automatically runs <code>channel-info</code> to display information about the channel.</p>
+<pre tabindex=0><code>tineola$ channel-set default
+┌─────────────────────┬──────────────────────────────────────────────────────────────────┐
+│ Name                │ default                                                          │
+├─────────────────────┼──────────────────────────────────────────────────────────────────┤
+│ Height              │ 2                                                                │
+├─────────────────────┼──────────────────────────────────────────────────────────────────┤
+│ Current Block Hash  │ 62b601e92d5e04f16b6dae30cf56bf2e411db2c304ec72ae6925204f33946012 │
+├─────────────────────┼──────────────────────────────────────────────────────────────────┤
+│ Previous Block Hash │ a03b38ed66ee81fe23964fba523402550a70b14c2142fa260f8052e1757c5353 │
+└─────────────────────┴──────────────────────────────────────────────────────────────────┘
+Channel connected
+</code></pre><p><strong>Block Height</strong> is the number of blocks on the ledger. Remember it starts from 1, while actual blocks start from 0. We have not interacted with the application yet, so the channel only has two blocks.</p>
+<h3 id=read-blocks>Read Blocks
+<a class=header-link href=#read-blocks><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>We can read individual blocks by number.</p>
+<p><img src=00.png alt></p>
+<p>Block 0 is also called the <strong>Genesis Block</strong>.</p>
+<p>Let's look at the next block.</p>
+<p><img src=01.png alt></p>
+<p>See all the weird characters at the start of the block? You can pass <code>--base64</code> to encode non-printable bytes. This command encodes any payload that does not have printable bytes.</p>
+<p><img src=02.png alt></p>
+<p>Insurance contracts stored on the ledger.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
+    <span style=color:#268bd2>&#34;uuid&#34;</span>: <span style=color:#2aa198>&#34;63ef076a-33a1-41d2-a9bc-2777505b014f&#34;</span>,
+    <span style=color:#268bd2>&#34;shop_type&#34;</span>: <span style=color:#2aa198>&#34;B&#34;</span>,
+    <span style=color:#268bd2>&#34;formula_per_day&#34;</span>: <span style=color:#2aa198>&#34;price * 0.01 + 0.05&#34;</span>,
+    <span style=color:#268bd2>&#34;max_sum_insured&#34;</span>: <span style=color:#2aa198>4300</span>,
+    <span style=color:#268bd2>&#34;theft_insured&#34;</span>: <span style=color:#cb4b16>true</span>,
+    <span style=color:#268bd2>&#34;description&#34;</span>: <span style=color:#2aa198>&#34;Contract for Mountain Bikers&#34;</span>,
+    <span style=color:#268bd2>&#34;conditions&#34;</span>: <span style=color:#2aa198>&#34;Contract Terms here&#34;</span>,
+    <span style=color:#268bd2>&#34;min_duration_days&#34;</span>: <span style=color:#2aa198>1</span>,
+    <span style=color:#268bd2>&#34;max_duration_days&#34;</span>: <span style=color:#2aa198>7</span>,
+    <span style=color:#268bd2>&#34;active&#34;</span>: <span style=color:#cb4b16>true</span>
+},
+{
+    <span style=color:#268bd2>&#34;uuid&#34;</span>: <span style=color:#2aa198>&#34;1d640cf7-9808-4c78-b7f0-55aaad02e9e5&#34;</span>,
+    <span style=color:#268bd2>&#34;shop_type&#34;</span>: <span style=color:#2aa198>&#34;B&#34;</span>,
+    <span style=color:#268bd2>&#34;formula_per_day&#34;</span>: <span style=color:#2aa198>&#34;price * 0.02&#34;</span>,
+    <span style=color:#268bd2>&#34;max_sum_insured&#34;</span>: <span style=color:#2aa198>3500</span>,
+    <span style=color:#268bd2>&#34;theft_insured&#34;</span>: <span style=color:#cb4b16>false</span>,
+    <span style=color:#268bd2>&#34;description&#34;</span>: <span style=color:#2aa198>&#34;Insure Your Bike&#34;</span>,
+    <span style=color:#268bd2>&#34;conditions&#34;</span>: <span style=color:#2aa198>&#34;Simple contract terms.&#34;</span>,
+    <span style=color:#268bd2>&#34;min_duration_days&#34;</span>: <span style=color:#2aa198>3</span>,
+    <span style=color:#268bd2>&#34;max_duration_days&#34;</span>: <span style=color:#2aa198>10</span>,
+    <span style=color:#268bd2>&#34;active&#34;</span>: <span style=color:#cb4b16>true</span>
+},
+{
+    <span style=color:#268bd2>&#34;uuid&#34;</span>: <span style=color:#2aa198>&#34;17210a72-f505-42bf-a238-65c8898477e1&#34;</span>,
+    <span style=color:#268bd2>&#34;shop_type&#34;</span>: <span style=color:#2aa198>&#34;P&#34;</span>,
+    <span style=color:#268bd2>&#34;formula_per_day&#34;</span>: <span style=color:#2aa198>&#34;price * 0.001 + 5.00&#34;</span>,
+    <span style=color:#268bd2>&#34;max_sum_insured&#34;</span>: <span style=color:#2aa198>1500</span>,
+    <span style=color:#268bd2>&#34;theft_insured&#34;</span>: <span style=color:#cb4b16>true</span>,
+    <span style=color:#268bd2>&#34;description&#34;</span>: <span style=color:#2aa198>&#34;Phone Insurance Contract&#34;</span>,
+    <span style=color:#268bd2>&#34;conditions&#34;</span>: <span style=color:#2aa198>&#34;Exemplary contract terms here.&#34;</span>,
+    <span style=color:#268bd2>&#34;min_duration_days&#34;</span>: <span style=color:#2aa198>5</span>,
+    <span style=color:#268bd2>&#34;max_duration_days&#34;</span>: <span style=color:#2aa198>10</span>,
+    <span style=color:#268bd2>&#34;active&#34;</span>: <span style=color:#cb4b16>true</span>
+},
+{
+    <span style=color:#268bd2>&#34;uuid&#34;</span>: <span style=color:#2aa198>&#34;17d773dc-2624-4c22-a478-87544dd0a17f&#34;</span>,
+    <span style=color:#268bd2>&#34;shop_type&#34;</span>: <span style=color:#2aa198>&#34;P&#34;</span>,
+    <span style=color:#268bd2>&#34;formula_per_day&#34;</span>: <span style=color:#2aa198>&#34;price * 0.005 + 10.00&#34;</span>,
+    <span style=color:#268bd2>&#34;max_sum_insured&#34;</span>: <span style=color:#2aa198>2500</span>,
+    <span style=color:#268bd2>&#34;theft_insured&#34;</span>: <span style=color:#cb4b16>true</span>,
+    <span style=color:#268bd2>&#34;description&#34;</span>: <span style=color:#2aa198>&#34;Premium SmartPhone Insurance&#34;</span>,
+    <span style=color:#268bd2>&#34;conditions&#34;</span>: <span style=color:#2aa198>&#34;Only for premium phone owners.&#34;</span>,
+    <span style=color:#268bd2>&#34;min_duration_days&#34;</span>: <span style=color:#2aa198>10</span>,
+    <span style=color:#268bd2>&#34;max_duration_days&#34;</span>: <span style=color:#2aa198>20</span>,
+    <span style=color:#268bd2>&#34;active&#34;</span>: <span style=color:#cb4b16>true</span>
+},
+{
+    <span style=color:#268bd2>&#34;uuid&#34;</span>: <span style=color:#2aa198>&#34;d804f730-8c77-4583-9247-ec9e753643db&#34;</span>,
+    <span style=color:#268bd2>&#34;shop_type&#34;</span>: <span style=color:#2aa198>&#34;S&#34;</span>,
+    <span style=color:#268bd2>&#34;formula_per_day&#34;</span>: <span style=color:#2aa198>&#34;25.00&#34;</span>,
+    <span style=color:#268bd2>&#34;max_sum_insured&#34;</span>: <span style=color:#2aa198>5000</span>,
+    <span style=color:#268bd2>&#34;theft_insured&#34;</span>: <span style=color:#cb4b16>false</span>,
+    <span style=color:#268bd2>&#34;description&#34;</span>: <span style=color:#2aa198>&#34;Short-Term Ski Insurance&#34;</span>,
+    <span style=color:#268bd2>&#34;conditions&#34;</span>: <span style=color:#2aa198>&#34;Simple contract terms here.&#34;</span>,
+    <span style=color:#268bd2>&#34;min_duration_days&#34;</span>: <span style=color:#2aa198>3</span>,
+    <span style=color:#268bd2>&#34;max_duration_days&#34;</span>: <span style=color:#2aa198>25</span>,
+    <span style=color:#268bd2>&#34;active&#34;</span>: <span style=color:#cb4b16>true</span>
+},
+{
+    <span style=color:#268bd2>&#34;uuid&#34;</span>: <span style=color:#2aa198>&#34;dcee27d7-bf3c-4995-a272-8a306a35e51f&#34;</span>,
+    <span style=color:#268bd2>&#34;shop_type&#34;</span>: <span style=color:#2aa198>&#34;S&#34;</span>,
+    <span style=color:#268bd2>&#34;formula_per_day&#34;</span>: <span style=color:#2aa198>&#34;price * 0.001 + 10.00&#34;</span>,
+    <span style=color:#268bd2>&#34;max_sum_insured&#34;</span>: <span style=color:#2aa198>3000</span>,
+    <span style=color:#268bd2>&#34;theft_insured&#34;</span>: <span style=color:#cb4b16>true</span>,
+    <span style=color:#268bd2>&#34;description&#34;</span>: <span style=color:#2aa198>&#34;Insure Ur Ski&#34;</span>,
+    <span style=color:#268bd2>&#34;conditions&#34;</span>: <span style=color:#2aa198>&#34;Just do it.&#34;</span>,
+    <span style=color:#268bd2>&#34;min_duration_days&#34;</span>: <span style=color:#2aa198>1</span>,
+    <span style=color:#268bd2>&#34;max_duration_days&#34;</span>: <span style=color:#2aa198>15</span>,
+    <span style=color:#268bd2>&#34;active&#34;</span>: <span style=color:#cb4b16>true</span>
+},
+{
+    <span style=color:#268bd2>&#34;uuid&#34;</span>: <span style=color:#2aa198>&#34;c06f95d6-9b90-4d24-b8cb-f347d1b33ddf&#34;</span>,
+    <span style=color:#268bd2>&#34;shop_type&#34;</span>: <span style=color:#2aa198>&#34;BPS&#34;</span>,
+    <span style=color:#268bd2>&#34;formula_per_day&#34;</span>: <span style=color:#2aa198>&#34;50&#34;</span>,
+    <span style=color:#268bd2>&#34;max_sum_insured&#34;</span>: <span style=color:#2aa198>3000</span>,
+    <span style=color:#268bd2>&#34;theft_insured&#34;</span>: <span style=color:#cb4b16>false</span>,
+    <span style=color:#268bd2>&#34;description&#34;</span>: <span style=color:#2aa198>&#34;Universal Insurance Contract&#34;</span>,
+    <span style=color:#268bd2>&#34;conditions&#34;</span>: <span style=color:#2aa198>&#34;Universal Contract Terms here. For all types of goods.&#34;</span>,
+    <span style=color:#268bd2>&#34;min_duration_days&#34;</span>: <span style=color:#2aa198>1</span>,
+    <span style=color:#268bd2>&#34;max_duration_days&#34;</span>: <span style=color:#2aa198>10</span>,
+    <span style=color:#268bd2>&#34;active&#34;</span>: <span style=color:#cb4b16>true</span>
+}
+</code></pre></div>
+<h3 id=read-multiple-blocks>Read Multiple Blocks
+<a class=header-link href=#read-multiple-blocks><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p><code>channel-history</code> displays multiple blocks. There are three ways to use it:</p>
+<ul>
+<li>Supply start and end block numbers.</li>
+<li>Supply just a start block number to display that block and all subsequent ones until the end of the ledger.</li>
+<li>List last n blocks with <code>--last n</code>.</li>
+</ul>
+<h2 id=how-insurance-app-works>How Insurance App Works
+<a class=header-link href=#how-insurance-app-works><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Using this basic commands, we can understand how the insurance app works.</p>
+<h3 id=buying-insurance>Buying Insurance
+<a class=header-link href=#buying-insurance><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>Open a browser and go to http://localhost:3000. The workflow starts with the <code>Shop</code> peer at http://localhost:3000/shop. Buy any item and insure it.</p>
+<p><img src=03.png alt></p>
+<p>The system responds with credentials. Users can use these to sign into the claim self-service portal.</p>
+<p><img src=04.png alt></p>
+<p>Let's see what was stored on the ledger. Seems like we have one new block:</p>
+<p><img src=05.png alt></p>
+<p>The contract is created by storing this JSON object:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>contract_create({
+	<span style=color:#268bd2>&#34;contract_type_uuid&#34;</span>: <span style=color:#2aa198>&#34;1d640cf7-9808-4c78-b7f0-55aaad02e9e5&#34;</span>,
+	<span style=color:#268bd2>&#34;username&#34;</span>: <span style=color:#2aa198>&#34;carol@example.com&#34;</span>,
+	<span style=color:#268bd2>&#34;password&#34;</span>: <span style=color:#2aa198>&#34;pass69&#34;</span>,
+	<span style=color:#268bd2>&#34;first_name&#34;</span>: <span style=color:#2aa198>&#34;Carol&#34;</span>,
+	<span style=color:#268bd2>&#34;last_name&#34;</span>: <span style=color:#2aa198>&#34;Smith&#34;</span>,
+	<span style=color:#268bd2>&#34;item&#34;</span>: {
+		<span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>0</span>,
+		<span style=color:#268bd2>&#34;brand&#34;</span>: <span style=color:#2aa198>&#34;Canyon&#34;</span>,
+		<span style=color:#268bd2>&#34;model&#34;</span>: <span style=color:#2aa198>&#34;Spectral AL 6.0&#34;</span>,
+		<span style=color:#268bd2>&#34;price&#34;</span>: <span style=color:#2aa198>3420</span>,
+		<span style=color:#268bd2>&#34;serial_no&#34;</span>: <span style=color:#2aa198>&#34;7SZSO&#34;</span>
+	},
+	<span style=color:#268bd2>&#34;start_date&#34;</span>: <span style=color:#2aa198>&#34;2018-08-19T04:00:00.000Z&#34;</span>,
+	<span style=color:#268bd2>&#34;end_date&#34;</span>: <span style=color:#2aa198>&#34;2018-08-27T04:00:00.000Z&#34;</span>,
+	<span style=color:#268bd2>&#34;uuid&#34;</span>: <span style=color:#2aa198>&#34;cff9ac6c-abb9-4dff-91f7-7dc0ad5421c6&#34;</span>
+})
+</code></pre></div><p>User credentials are stored on the ledger. All organizations have read/write access to this channel.</p>
+<h3 id=submitting-a-claim>Submitting a Claim
+<a class=header-link href=#submitting-a-claim><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>Claims are submitted via the "Claim Self-Service" portal at http://localhost:3000/insurance/self-service.</p>
+<p><img src=07.png alt></p>
+<h3 id=processing-claims>Processing Claims
+<a class=header-link href=#processing-claims><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>The insurance company has to process the claim. Insurance agent logs into http://localhost:3000/insurance/claim-processing and can process claims.</p>
+<p><img src=08.png alt></p>
+<p>Click on <code>Repair</code> to send it to the repairshop. This will change the claim status in the self-service portal.</p>
+<p><img src=09.png alt></p>
+<p>A new block has been added to the ledger.</p>
+<p><img src=10.png alt></p>
+<p>The claim is now processed and its status has been modified to <code>R</code>.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>claim_process({
+	<span style=color:#268bd2>&#34;contract_uuid&#34;</span>: <span style=color:#2aa198>&#34;cff9ac6c-abb9-4dff-91f7-7dc0ad5421c6&#34;</span>,
+	<span style=color:#268bd2>&#34;uuid&#34;</span>: <span style=color:#2aa198>&#34;40c30b6b-ffe8-40a6-85e6-8c3556429f8a&#34;</span>,
+	<span style=color:#268bd2>&#34;status&#34;</span>: <span style=color:#2aa198>&#34;R&#34;</span>,
+	<span style=color:#268bd2>&#34;reimbursable&#34;</span>: <span style=color:#2aa198>0</span>
+})
+</code></pre></div><p>Note <code>contract_uuid</code> was created during <code>contract_create</code> and <code>uuid</code> was created by <code>claim_file</code>.</p>
+<h3 id=complete-repairs>Complete Repairs
+<a class=header-link href=#complete-repairs><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>After logging into the repairshop at http://localhost:3000/repair-shop we can see the claim and can mark it complete.</p>
+<p><img src=11.png alt></p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>repair_order_complete({
+    <span style=color:#268bd2>&#34;uuid&#34;</span>:<span style=color:#2aa198>&#34;40c30b6b-ffe8-40a6-85e6-8c3556429f8a&#34;</span>
+})
+</code></pre></div>
+<h3 id=theft-vs-not-theft>Theft vs. Not-Theft
+<a class=header-link href=#theft-vs-not-theft><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>If the checkbox for "Theft" is enabled when the claim is filed (<code>is_theft</code> is set to <code>true</code>), police peer must verify it.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>claim_file({
+	<span style=color:#268bd2>&#34;contract_uuid&#34;</span>: <span style=color:#2aa198>&#34;f5b4a85b-62d8-47f0-bdac-3f368d0ef465&#34;</span>,
+	<span style=color:#268bd2>&#34;date&#34;</span>: <span style=color:#2aa198>&#34;2018-08-21T00:16:29.336Z&#34;</span>,
+	<span style=color:#268bd2>&#34;description&#34;</span>: <span style=color:#2aa198>&#34;Got stolen&#34;</span>,
+	<span style=color:#268bd2>&#34;is_theft&#34;</span>: <span style=color:#cb4b16>true</span>,
+	<span style=color:#268bd2>&#34;uuid&#34;</span>: <span style=color:#2aa198>&#34;6d3aa67b-b01a-4025-ad63-f3e5b4728002&#34;</span>
+})
+</code></pre></div><p>After police processing:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>theft_claim_process({
+	<span style=color:#268bd2>&#34;uuid&#34;</span>: <span style=color:#2aa198>&#34;6d3aa67b-b01a-4025-ad63-f3e5b4728002&#34;</span>,
+	<span style=color:#268bd2>&#34;contract_uuid&#34;</span>: <span style=color:#2aa198>&#34;f5b4a85b-62d8-47f0-bdac-3f368d0ef465&#34;</span>,
+	<span style=color:#268bd2>&#34;is_theft&#34;</span>: <span style=color:#cb4b16>true</span>,
+	<span style=color:#268bd2>&#34;file_reference&#34;</span>: <span style=color:#2aa198>&#34;POLICE-REFERENCE-1&#34;</span>
+})
+</code></pre></div>
+<h3 id=claim-rejection-by-insurance>Claim Rejection By Insurance
+<a class=header-link href=#claim-rejection-by-insurance><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>Claims can be rejected by insurance or the police. If the claim is rejected by the insurance, status changes to <code>J</code>.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>claim_process({
+	<span style=color:#268bd2>&#34;contract_uuid&#34;</span>: <span style=color:#2aa198>&#34;f5b4a85b-62d8-47f0-bdac-3f368d0ef465&#34;</span>,
+	<span style=color:#268bd2>&#34;uuid&#34;</span>: <span style=color:#2aa198>&#34;6d3aa67b-b01a-4025-ad63-f3e5b4728002&#34;</span>,
+	<span style=color:#268bd2>&#34;status&#34;</span>: <span style=color:#2aa198>&#34;J&#34;</span>,
+	<span style=color:#268bd2>&#34;reimbursable&#34;</span>: <span style=color:#2aa198>0</span>
+})
+</code></pre></div><p>And it shows up as rejected in self-service:</p>
+<p><img src=13.png alt></p>
+<h3 id=claim-rejection-by-police>Claim Rejection By Police
+<a class=header-link href=#claim-rejection-by-police><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>The police can reject claims with theft. Rejection by police is different from insurance. It does not change the status.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>theft_claim_process({
+	<span style=color:#268bd2>&#34;uuid&#34;</span>: <span style=color:#2aa198>&#34;e7a40ebb-17d5-420e-9f98-1324419443a9&#34;</span>,
+	<span style=color:#268bd2>&#34;contract_uuid&#34;</span>: <span style=color:#2aa198>&#34;a0644dcf-bf85-41d4-aab3-e026419f46eb&#34;</span>,
+	<span style=color:#268bd2>&#34;is_theft&#34;</span>: <span style=color:#cb4b16>false</span>,
+	<span style=color:#268bd2>&#34;file_reference&#34;</span>: <span style=color:#2aa198>&#34;POLICE-REJECTION-REFERENCE-1&#34;</span>
+})
+</code></pre></div><p><img src=14.png alt></p>
+<p>Police rejection is the same as acceptance except <code>is_theft</code> is set to <code>false</code>. This tells the application claim was rejected. Note the web application does not show who rejected the claim explicitly (only reference is provided).</p>
+<h3 id=claim-reimbursement>Claim Reimbursement
+<a class=header-link href=#claim-reimbursement><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>Insurance can also reimburse claims instead of sending them to repairshop. If this happens, Carol can commit insurance fraud (if she can participate in Fabric network or if she and Tom are conspirators).</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>claim_process({
+	<span style=color:#268bd2>&#34;contract_uuid&#34;</span>: <span style=color:#2aa198>&#34;16ee32fb-6360-4f96-b897-b77883ce8496&#34;</span>,
+	<span style=color:#268bd2>&#34;uuid&#34;</span>: <span style=color:#2aa198>&#34;8f7ae47e-5a5c-4ccf-b668-a397fbe0f678&#34;</span>,
+	<span style=color:#268bd2>&#34;status&#34;</span>: <span style=color:#2aa198>&#34;F&#34;</span>,
+	<span style=color:#268bd2>&#34;reimbursable&#34;</span>: <span style=color:#2aa198>200</span>
+})
+</code></pre></div><p>The status has changed to <code>F</code> and <code>reimbursable</code> is set to the amount.</p>
+<p><img src=15.png alt></p>
+<h2 id=committing-insurance-fraud>Committing Insurance Fraud
+<a class=header-link href=#committing-insurance-fraud><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Now Tom knows how the application works and has gotten pretty good with Tineola. Tom waits until Carol buys another item with insurance.</p>
+<p><img src=16.png alt></p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>contract_create({
+	<span style=color:#268bd2>&#34;contract_type_uuid&#34;</span>: <span style=color:#2aa198>&#34;1d640cf7-9808-4c78-b7f0-55aaad02e9e5&#34;</span>,
+	<span style=color:#268bd2>&#34;username&#34;</span>: <span style=color:#2aa198>&#34;carol3@example.net&#34;</span>,
+	<span style=color:#268bd2>&#34;password&#34;</span>: <span style=color:#2aa198>&#34;pass65&#34;</span>,
+	<span style=color:#268bd2>&#34;first_name&#34;</span>: <span style=color:#2aa198>&#34;Carol3&#34;</span>,
+	<span style=color:#268bd2>&#34;last_name&#34;</span>: <span style=color:#2aa198>&#34;Smith&#34;</span>,
+	<span style=color:#268bd2>&#34;item&#34;</span>: {
+		<span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>2</span>,
+		<span style=color:#268bd2>&#34;brand&#34;</span>: <span style=color:#2aa198>&#34;Popal&#34;</span>,
+		<span style=color:#268bd2>&#34;model&#34;</span>: <span style=color:#2aa198>&#34;E-VO9.0&#34;</span>,
+		<span style=color:#268bd2>&#34;price&#34;</span>: <span style=color:#2aa198>4050</span>,
+		<span style=color:#268bd2>&#34;serial_no&#34;</span>: <span style=color:#2aa198>&#34;L12QO&#34;</span>
+	},
+	<span style=color:#268bd2>&#34;start_date&#34;</span>: <span style=color:#2aa198>&#34;2018-08-20T04:00:00.000Z&#34;</span>,
+	<span style=color:#268bd2>&#34;end_date&#34;</span>: <span style=color:#2aa198>&#34;2018-08-29T04:00:00.000Z&#34;</span>,
+	<span style=color:#268bd2>&#34;uuid&#34;</span>: <span style=color:#2aa198>&#34;0a07f4c6-fa49-4ba5-9c2a-b609eb4a3d37&#34;</span>
+})
+</code></pre></div>
+<h3 id=impersonating-carol---method-1>Impersonating Carol - Method 1
+<a class=header-link href=#impersonating-carol---method-1><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>Tom reads the ledger and discovers Carol's credentials. Tom logs into the claim self-service.</p>
+<p><img src=17.png alt></p>
+<p>Tom submits a claim.</p>
+<p><img src=18.png alt></p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>claim_file({
+	<span style=color:#268bd2>&#34;contract_uuid&#34;</span>: <span style=color:#2aa198>&#34;0a07f4c6-fa49-4ba5-9c2a-b609eb4a3d37&#34;</span>,
+	<span style=color:#268bd2>&#34;date&#34;</span>: <span style=color:#2aa198>&#34;2018-08-21T02:04:11.845Z&#34;</span>,
+	<span style=color:#268bd2>&#34;description&#34;</span>: <span style=color:#2aa198>&#34;Hello this is Carol. My item broke :(&#34;</span>,
+	<span style=color:#268bd2>&#34;is_theft&#34;</span>: <span style=color:#cb4b16>false</span>,
+	<span style=color:#268bd2>&#34;uuid&#34;</span>: <span style=color:#2aa198>&#34;4be9f83b-494c-48ec-8cc5-d8ddad219c0c&#34;</span>
+})
+</code></pre></div>
+<h3 id=impersonating-carol---method-2>Impersonating Carol - Method 2
+<a class=header-link href=#impersonating-carol---method-2><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>If Carol's credentials are not known, Tom can still impersonate her by calling the Chaincode directly and invoking <code>claim_file</code>. The insurance app Chaincode does not have any authorization checks. Any node can invoke any function.</p>
+<p>Let's buy another item as carol (this time <code>carol4</code>) and mess with that.</p>
+<p><img src=19.png alt></p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>contract_create(
+{
+	<span style=color:#268bd2>&#34;contract_type_uuid&#34;</span>: <span style=color:#2aa198>&#34;c06f95d6-9b90-4d24-b8cb-f347d1b33ddf&#34;</span>,
+	<span style=color:#268bd2>&#34;username&#34;</span>: <span style=color:#2aa198>&#34;carol4@example.net&#34;</span>,
+	<span style=color:#268bd2>&#34;password&#34;</span>: <span style=color:#2aa198>&#34;secret75&#34;</span>,
+	<span style=color:#268bd2>&#34;first_name&#34;</span>: <span style=color:#2aa198>&#34;Carol4&#34;</span>,
+	<span style=color:#268bd2>&#34;last_name&#34;</span>: <span style=color:#2aa198>&#34;Smith&#34;</span>,
+	<span style=color:#268bd2>&#34;item&#34;</span>: {
+		<span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>2</span>,
+		<span style=color:#268bd2>&#34;brand&#34;</span>: <span style=color:#2aa198>&#34;Sony&#34;</span>,
+		<span style=color:#268bd2>&#34;model&#34;</span>: <span style=color:#2aa198>&#34;Z&#34;</span>,
+		<span style=color:#268bd2>&#34;price&#34;</span>: <span style=color:#2aa198>410</span>,
+		<span style=color:#268bd2>&#34;serial_no&#34;</span>: <span style=color:#2aa198>&#34;OA3EG7&#34;</span>
+	},
+	<span style=color:#268bd2>&#34;start_date&#34;</span>: <span style=color:#2aa198>&#34;2018-08-20T04:00:00.000Z&#34;</span>,
+	<span style=color:#268bd2>&#34;end_date&#34;</span>: <span style=color:#2aa198>&#34;2018-08-26T04:00:00.000Z&#34;</span>,
+	<span style=color:#268bd2>&#34;uuid&#34;</span>: <span style=color:#2aa198>&#34;33ace588-ffd2-4757-a4d1-9fb6f13c74c3&#34;</span>
+})
+</code></pre></div>
+<h3 id=invoking-chaincode-with-tineola>Invoking Chaincode with Tineola
+<a class=header-link href=#invoking-chaincode-with-tineola><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>By reading the ledger, Tom knows the Chaincode ID (or name) is <code>bcins</code> (see the <code>CC ID</code> column in screenshots). He also knows how the single parameter for <code>claim_file</code> invocation is formatted. Tom creates a new payload as follows:</p>
+<ul>
+<li>Replaces <code>contract_uuid</code> from <code>contract_create</code> transaction</li>
+<li>Modifies the <code>date</code> (Tom chooses a date after purchase to cover his tracks)</li>
+<li>Sets <code>is_theft</code> to <code>false</code> because Tom does not want to involve the Police</li>
+<li>Generates a random <code>uuid</code> for the claim.</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>claim_file({
+	<span style=color:#268bd2>&#34;contract_uuid&#34;</span>: <span style=color:#2aa198>&#34;33ace588-ffd2-4757-a4d1-9fb6f13c74c3&#34;</span>,
+	<span style=color:#268bd2>&#34;date&#34;</span>: <span style=color:#2aa198>&#34;2018-08-21T02:14:11.259Z&#34;</span>,
+	<span style=color:#268bd2>&#34;description&#34;</span>: <span style=color:#2aa198>&#34;This is Carol4. My item broke.&#34;</span>,
+	<span style=color:#268bd2>&#34;is_theft&#34;</span>: <span style=color:#cb4b16>false</span>,
+	<span style=color:#268bd2>&#34;uuid&#34;</span>: <span style=color:#2aa198>&#34;c0a811e8-a4ea-11e8-98d0-529269fb1459&#34;</span>
+})
+</code></pre></div><p>Tom can use the <code>channel-query-cc</code> command to invoke Chaincode. But he does not know if his payload is correctly formatted. He can do a test run.</p>
+<p><strong>In Fabric clients can run transactions but not order them (add them to the blockchain).</strong> Tom can just call a Chaincode function but not write it to the ledger. If the transaction has errors, it will. <code>channel-query-cc</code> without the <code>--invoke</code> switch, does this. Tom also remembers to remove all the new lines from payloads.</p>
+<p>Tom calls the <code>claim_file</code> Chaincode with the following payload:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{<span style=color:#268bd2>&#34;contract_uuid&#34;</span>: <span style=color:#2aa198>&#34;33ace588-ffd2-4757-a4d1-9fb6f13c74c3&#34;</span>,<span style=color:#268bd2>&#34;date&#34;</span>: <span style=color:#2aa198>&#34;2018-08-21T02:14:11.259Z&#34;</span>,<span style=color:#268bd2>&#34;description&#34;</span>: <span style=color:#2aa198>&#34;This is Carol4. My item broke.&#34;</span>,<span style=color:#268bd2>&#34;is_theft&#34;</span>: <span style=color:#cb4b16>false</span>,<span style=color:#268bd2>&#34;uuid&#34;</span>: <span style=color:#2aa198>&#34;c0a811e8-a4ea-11e8-98d0-529269fb1459&#34;</span>}
+</code></pre></div><p>The commands look like this in Tineola:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>tineola$ channel-query-cc bcins claim_file
+How many arguments to pass to function? <span style=color:#2aa198>1</span>
+Value for argument <span style=color:#2aa198>1</span>: {<span style=color:#268bd2>&#34;contract_uuid&#34;</span>: <span style=color:#2aa198>&#34;33ace588-ffd2-4757-a4d1-9fb6f13c74c3&#34;</span>,
+    <span style=color:#268bd2>&#34;date&#34;</span>: <span style=color:#2aa198>&#34;2018-08-21T02:14:11.259Z&#34;</span>,<span style=color:#268bd2>&#34;description&#34;</span>: <span style=color:#2aa198>&#34;This is Carol4. My item broke.&#34;</span>,
+    <span style=color:#268bd2>&#34;is_theft&#34;</span>: <span style=color:#cb4b16>false</span>,<span style=color:#268bd2>&#34;uuid&#34;</span>: <span style=color:#2aa198>&#34;c0a811e8-a4ea-11e8-98d0-529269fb1459&#34;</span>}
+CC Response:
+
+tineola$
+</code></pre></div><p><code>CC Response</code> is empty (payload's last line and CC response are both on the last line):</p>
+<p><img src=20.png alt></p>
+<p>This Chaincode invocation does not return anything when it's successfully executed. We can see it in [fileClaim](<a href=https://github.com/IBM/build-blockchain-insurance-app/blob/4709539d146c510a933221c68e563f6867b3f09f/web/chaincode/src/bcins/invoke_insurance target=_blank rel="noreferrer noopener">https://github.com/IBM/build-blockchain-insurance-app/blob/4709539d146c510a933221c68e563f6867b3f09f/web/chaincode/src/bcins/invoke_insurance</a>.
+go#L351)</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#268bd2>func</span> <span style=color:#268bd2>fileClaim</span>(stub shim.ChaincodeStubInterface, args []<span style=color:#dc322f>string</span>) pb.Response {
+	<span style=color:#719e07>if</span> <span style=color:#b58900>len</span>(args) <span style=color:#719e07>!=</span> <span style=color:#2aa198>1</span> {
+		<span style=color:#719e07>return</span> shim.<span style=color:#268bd2>Error</span>(<span style=color:#2aa198>&#34;Invalid argument count.&#34;</span>)
+	}
+
+	dto <span style=color:#719e07>:=</span> <span style=color:#268bd2>struct</span> {
+		UUID         <span style=color:#dc322f>string</span>    <span style=color:#2aa198>`json:&#34;uuid&#34;`</span>
+		ContractUUID <span style=color:#dc322f>string</span>    <span style=color:#2aa198>`json:&#34;contract_uuid&#34;`</span>
+		Date         time.Time <span style=color:#2aa198>`json:&#34;date&#34;`</span>
+		Description  <span style=color:#dc322f>string</span>    <span style=color:#2aa198>`json:&#34;description&#34;`</span>
+		IsTheft      <span style=color:#dc322f>bool</span>      <span style=color:#2aa198>`json:&#34;is_theft&#34;`</span>
+	}{}
+	err <span style=color:#719e07>:=</span> json.<span style=color:#268bd2>Unmarshal</span>([]<span style=color:#b58900>byte</span>(args[<span style=color:#2aa198>0</span>]), <span style=color:#719e07>&amp;</span>dto)
+	<span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+		<span style=color:#719e07>return</span> shim.<span style=color:#268bd2>Error</span>(err.<span style=color:#268bd2>Error</span>())
+	}
+
+    <span style=color:#586e75>// Removed
+</span><span style=color:#586e75></span>
+    <span style=color:#586e75>// Returns nil if successful.
+</span><span style=color:#586e75></span>	<span style=color:#719e07>return</span> shim.<span style=color:#268bd2>Success</span>(<span style=color:#cb4b16>nil</span>)
+}
+</code></pre></div><p>When writing Chaincode return success messages. Bad payloads return errors. For example if <code>contract_uuid</code> was wrong (did not exist on the ledger):</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>tineola$ channel-query-cc bcins claim_file
+How many arguments to pass to function? <span style=color:#2aa198>1</span>
+Value for argument <span style=color:#2aa198>1</span>: {<span style=color:#268bd2>&#34;contract_uuid&#34;</span>: <span style=color:#2aa198>&#34;11111111-1111-1111-1111-111111111111&#34;</span>,
+    <span style=color:#268bd2>&#34;date&#34;</span>: <span style=color:#2aa198>&#34;2018-08-21T02:14:11.259Z&#34;</span>,<span style=color:#268bd2>&#34;description&#34;</span>: <span style=color:#2aa198>&#34;This is Carol4. My item broke.&#34;</span>,
+    <span style=color:#268bd2>&#34;is_theft&#34;</span>: <span style=color:#cb4b16>false</span>,<span style=color:#268bd2>&#34;uuid&#34;</span>: <span style=color:#2aa198>&#34;c0a811e8-a4ea-11e8-98d0-529269fb1459&#34;</span>}
+error: [client-utils.js]: sendPeersProposal - Promise is rejected: Error: <span style=color:#2aa198>2</span> 
+    UNKNOWN: chaincode error (status: <span style=color:#2aa198>500</span>, message: Contract could not be found.)
+    at new createStatusError (/home/testuser/Desktop/tineola/node_modules/grpc/src/client.js:<span style=color:#2aa198>64</span>:<span style=color:#2aa198>15</span>)
+    at /home/testuser/Desktop/tineola/node_modules/grpc/src/client.js:<span style=color:#2aa198>583</span>:<span style=color:#2aa198>15</span>
+Error: <span style=color:#2aa198>2</span> UNKNOWN: chaincode error (status: <span style=color:#2aa198>500</span>, message: Contract could not be found.)
+</code></pre></div>
+<h3 id=ordering-transactions-with-tineola>Ordering Transactions with Tineola
+<a class=header-link href=#ordering-transactions-with-tineola><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>Tom has the correct payload. He can use the <code>--invoke</code> switch to run a transaction and order it (send it to the orderer to be written to the blockchain).</p>
+<p>Before that, Tom needs to point out the orderer to Tineola with <code>orderer-set</code>. <code>docker ps</code> displays the orderer's address and port:</p>
+<pre tabindex=0><code>$ docker ps --format &quot;table {{.ID}}\t{{.Image}}\t{{.Ports}}\t{{.Names}}&quot; | grep -i &quot;orderer&quot;
+    2e488404c01c        orderer        0.0.0.0:7050-&gt;7050/tcp        orderer0
+</code></pre><p>Now Tom knows orderer is at <code>grpcs://localhost:7050</code>.</p>
+<pre tabindex=0><code>tineola$ orderer-set grpcs://localhost:7050
+Connecting to orderer grpcs://localhost:7050
+Successfully connected to orderer
+</code></pre><p>Tom runs the transaction with <code>--invoke</code> to order it:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>tineola$ channel-query-cc bcins claim_file --invoke
+How many arguments to pass to function? <span style=color:#2aa198>1</span>
+Value for argument <span style=color:#2aa198>1</span>: {<span style=color:#268bd2>&#34;contract_uuid&#34;</span>: <span style=color:#2aa198>&#34;33ace588-ffd2-4757-a4d1-9fb6f13c74c3&#34;</span>,
+<span style=color:#268bd2>&#34;date&#34;</span>: <span style=color:#2aa198>&#34;2018-08-21T02:14:11.259Z&#34;</span>,<span style=color:#268bd2>&#34;description&#34;</span>: <span style=color:#2aa198>&#34;This is Carol4. My item broke.&#34;</span>,
+<span style=color:#268bd2>&#34;is_theft&#34;</span>: <span style=color:#cb4b16>false</span>,<span style=color:#268bd2>&#34;uuid&#34;</span>: <span style=color:#2aa198>&#34;c0a811e8-a4ea-11e8-98d0-529269fb1459&#34;</span>}
+
+Error: <span style=color:#2aa198>14</span> UNAVAILABLE: Connect Failed\n at createStatusError
+(/home/testuser/Desktop/tineola/node_modules/grpc/src/client.js:<span style=color:#2aa198>64</span>:<span style=color:#2aa198>15</span>)\n
+at ClientDuplexStream._emitStatusIfDone
+(/home/testuser/Desktop/tineola/node_modules/grpc/src/client.js:<span style=color:#2aa198>270</span>:<span style=color:#2aa198>19</span>)\n
+at ClientDuplexStream._readsDone
+(/home/testuser/Desktop/tineola/node_modules/grpc/src/client.js:<span style=color:#2aa198>236</span>:<span style=color:#2aa198>8</span>)\n
+at readCallback (/home/testuser/Desktop/tineola/node_modules/grpc/src/client.js:<span style=color:#2aa198>296</span>:<span style=color:#2aa198>12</span>)&#34;
+Error: SERVICE_UNAVAILABLE
+tineola$ E<span style=color:#2aa198>0822</span> <span style=color:#2aa198>21</span>:<span style=color:#2aa198>24</span>:<span style=color:#2aa198>48.413574285</span>   <span style=color:#2aa198>14312</span> ssl_transport_security.cc:<span style=color:#2aa198>989</span>]
+    Handshake failed with fatal error SSL_ERROR_SSL: error:<span style=color:#2aa198>14090086</span>:SSL 
+    routines:ssl<span style=color:#2aa198>3</span>_get_server_certificate:certificate verify failed.
+    E<span style=color:#2aa198>0822</span> <span style=color:#2aa198>21</span>:<span style=color:#2aa198>24</span>:<span style=color:#2aa198>50.301026060</span>   <span style=color:#2aa198>14312</span> ssl_transport_security.cc:<span style=color:#2aa198>989</span>]
+    Handshake failed with fatal error SSL_ERROR_SSL: error:<span style=color:#2aa198>14090086</span>:SSL
+    routines:ssl<span style=color:#2aa198>3</span>_get_server_certificate:certificate verify failed.
+    E<span style=color:#2aa198>0822</span> <span style=color:#2aa198>21</span>:<span style=color:#2aa198>24</span>:<span style=color:#2aa198>52.771101632</span>   <span style=color:#2aa198>14312</span> ssl_transport_security.cc:<span style=color:#2aa198>989</span>]
+    Handshake failed with fatal error SSL_ERROR_SSL: error:<span style=color:#2aa198>14090086</span>:SSL
+    routines:ssl<span style=color:#2aa198>3</span>_get_server_certificate:certificate verify failed.
+ 
+(^C again to quit)
+tineola$ 
+</code></pre></div><p><code>certificate verify failed</code> because the orderer's certificate is not accepted. Node's grpc library does not allow programs to ignore certificate errors. In Tineola, Stark mitigated it for peer connections by passing the complete certificate chain from the CA (remember <code>ca-set</code>?). However, Tineola does not have access to the complete certificate chain for the Orderer.</p>
+<p>We can also see the other end of the connection in the orderer's logs:</p>
+<pre tabindex=0><code>$ docker logs orderer0
+// removed
+
+2018-08-23 01:23:26.687 UTC [fsblkstorage] waitForBlock -&gt;
+DEBU 27d Going to wait for newer blocks. maxAvailaBlockNumber=[2], waitForBlockNum=[3]
+
+2018-08-23 01:24:47.411 UTC [grpc] Printf -&gt;
+DEBU 27e grpc: Server.Serve failed to complete security handshake from &quot;172.18.0.1:53898&quot;: EOF
+
+2018-08-23 01:24:48.414 UTC [grpc] Printf -&gt;
+DEBU 27f grpc: Server.Serve failed to complete security handshake from &quot;172.18.0.1:53902&quot;: EOF
+
+2018-08-23 01:24:50.301 UTC [grpc] Printf -&gt;
+DEBU 280 grpc: Server.Serve failed to complete security handshake from &quot;172.18.0.1:53906&quot;: EOF
+
+2018-08-23 01:24:52.771 UTC [grpc] Printf -&gt;
+DEBU 281 grpc: Server.Serve failed to complete security handshake from &quot;172.18.0.1:53910&quot;: EOF
+</code></pre><p>Tom uses the <code>proxy</code> feature of Tineola to get around this "silly" restriction. Dammit, security people :)</p>
+<h3 id=using-proxyjs-to-bypass-grpcs-restrictions>Using Proxy.js to Bypass grpcs Restrictions
+<a class=header-link href=#using-proxyjs-to-bypass-grpcs-restrictions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p><code>proxy.js</code> emulates SSLStrip (not exactly). It connects to a TLS endpoint and then opens up a local TCP listener. Everything sent to the local port is wrapped in TLS and sent to the endpoint (remember <code>grpcs</code> is just <code>grpc</code> wrapped in TLS).</p>
+<p>Tom opens up a new terminal and executes the following command:</p>
+<pre tabindex=0><code>$ /tineola/bin/proxy.js https://127.0.0.1:7050 12345
+opened server on { address: '::', family: 'IPv6', port: 12345 }
+</code></pre><p>Now everything sent to <code>localhost:12345</code> is wrapped in TLS and sent to the orderer at <code>127.0.0.1:7050</code>.</p>
+<p>Back in Tineola, Tom sets the local port as orderer (note this time he is using <code>grpc</code> and not <code>grpcs</code>).</p>
+<pre tabindex=0><code>tineola$ orderer-set grpc://localhost:12345
+Connecting to orderer grpc://localhost:12345
+Successfully connected to orderer
+</code></pre><p>Using the proxy, Tom can invoke transactions and order them:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>tineola$ channel-query-cc bcins claim_file --invoke
+How many arguments to pass to function? <span style=color:#2aa198>1</span>
+Value for argument <span style=color:#2aa198>1</span>: {<span style=color:#268bd2>&#34;contract_uuid&#34;</span>: <span style=color:#2aa198>&#34;33ace588-ffd2-4757-a4d1-9fb6f13c74c3&#34;</span>,
+<span style=color:#268bd2>&#34;date&#34;</span>: <span style=color:#2aa198>&#34;2018-08-21T02:14:11.259Z&#34;</span>,<span style=color:#268bd2>&#34;description&#34;</span>: <span style=color:#2aa198>&#34;This is Carol4. My item broke.&#34;</span>,
+<span style=color:#268bd2>&#34;is_theft&#34;</span>: <span style=color:#cb4b16>false</span>,<span style=color:#268bd2>&#34;uuid&#34;</span>: <span style=color:#2aa198>&#34;c0a811e8-a4ea-11e8-98d0-529269fb1459&#34;</span>}
+CC Response: 
+</code></pre></div><p>Transaction is written to the ledger (note the creator is <code>RepairShopOrgMSP</code> instead of <code>InsuranceOrgMSP</code>:</p>
+<p><img src=21.png alt></p>
+<h3 id=impersonating-insurance-agents>Impersonating Insurance Agents
+<a class=header-link href=#impersonating-insurance-agents><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>Tom logs into the repairshop website but cannot see any claims. Insurance agents must verify all claims. But Tom can impersonate them and call <code>claim_process</code> directly. Tom copies one <code>claim_process</code> transaction from the ledger and replaces <code>contract_uuid</code> and <code>uuid</code>.</p>
+<pre tabindex=0><code>claim_process({
+	&quot;contract_uuid&quot;: &quot;33ace588-ffd2-4757-a4d1-9fb6f13c74c3&quot;,
+	&quot;uuid&quot;: &quot;c0a811e8-a4ea-11e8-98d0-529269fb1459&quot;,
+	&quot;status&quot;: &quot;R&quot;,
+	&quot;reimbursable&quot;: 0
+})
+</code></pre><p>Chaincode is invoked and ordered without errors:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>tineola$ channel-query-cc bcins claim_process --invoke
+How many arguments to pass to function? <span style=color:#2aa198>1</span>
+Value for argument <span style=color:#2aa198>1</span>: {<span style=color:#268bd2>&#34;contract_uuid&#34;</span>: <span style=color:#2aa198>&#34;33ace588-ffd2-4757-a4d1-9fb6f13c74c3&#34;</span>,
+    <span style=color:#268bd2>&#34;uuid&#34;</span>: <span style=color:#2aa198>&#34;c0a811e8-a4ea-11e8-98d0-529269fb1459&#34;</span>,<span style=color:#268bd2>&#34;status&#34;</span>: <span style=color:#2aa198>&#34;R&#34;</span>,<span style=color:#268bd2>&#34;reimbursable&#34;</span>: <span style=color:#2aa198>0</span>}
+CC Response:
+
+</code></pre></div><p>And the result is written to the ledger.</p>
+<p><img src=23.png alt></p>
+<p>Which means Tom can mark it as complete and pocket the monies.</p>
+<p><img src=24.png alt></p>
+<p>Fraud on the blockchain, yo!</p>
+<p><img src=25.png alt></p>
+<hr>
+<h1 id=troubleshooting>Troubleshooting
+<a class=header-link href=#troubleshooting><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Docker logs are your best friend. Use <code>docker logs [container name]</code>.</p>
+<h2 id=insurance-app-doesnt-start>Insurance App Doesn't Start
+<a class=header-link href=#insurance-app-doesnt-start><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>If you do not change the network name in the <code>peer-base.yaml</code> file, the web interface does not start:</p>
+<pre tabindex=0><code>$ docker logs web
+
+&gt; blockchain-for-insurance@2.1.0 serve /app
+&gt; cross-env NODE_ENV=production&amp;&amp;node ./bin/server
+
+/app/app/static/js
+Server running on port: 3000
+Default channel not found, attempting creation...
+Successfully created a new default channel.
+Joining peers to the default channel.
+Chaincode is not installed, attempting installation...
+Base container image present.
+info: [packager/Golang.js]: packaging GOLANG from bcins
+info: [packager/Golang.js]: packaging GOLANG from bcins
+info: [packager/Golang.js]: packaging GOLANG from bcins
+info: [packager/Golang.js]: packaging GOLANG from bcins
+Successfully installed chaincode on the default channel.
+error: [client-utils.js]: sendPeersProposal - Promise is rejected: Error: 2
+    UNKNOWN: error starting container: API error (404):
+    {&quot;message&quot;:&quot;network build-blockchain-insurance-app_default not found&quot;}
+
+    at new createStatusError (/app/node_modules/grpc/src/client.js:64:15)
+    at /app/node_modules/grpc/src/client.js:583:15
+Fatal error instantiating chaincode on some(all) peers!
+Error: Proposal rejected by some (all) of the peers: Error: 2
+    UNKNOWN: error starting container: API error (404):
+    {&quot;message&quot;:&quot;network build-blockchain-insurance-app_default not found&quot;}
+</code></pre><p>Take note of the error message:</p>
+<ul>
+<li><code>{"message":"network build-blockchain-insurance-app_default not found"}</code></li>
+</ul>
+<p>List all docker networks:</p>
+<pre tabindex=0><code>~/Desktop$ docker network ls
+NETWORK ID          NAME                                  DRIVER              SCOPE
+15859302bbc8        bridge                                bridge              local
+49fd05dbf1d5        buildblockchaininsuranceapp_default   bridge              local
+d6dec16ffcc6        host                                  host                local
+98534f449ba3        none                                  null                local
+
+</code></pre><p>Modify <code>peer-base.yaml</code> as mentioned in the "Install Build Blockchain Insurance App" section to the network from the command. In this case it's <code>buildblockchaininsuranceapp_default</code>.</p>
+<p>Use <code>docker-compose down</code> to stop all containers:</p>
+<pre tabindex=0><code>$ docker-compose down
+Stopping police-peer ... done
+Stopping repairshop-peer ... done
+...
+Removing network buildblockchaininsuranceapp_default
+</code></pre><p>Run <code>./clean.sh</code> to clean up and then run <code>./build_ubuntu</code> again.</p>
+<h2 id=the-login-bug>The Login Bug
+<a class=header-link href=#the-login-bug><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>If you are in the middle of a claim and you buy new insurance with the same email, you get a new password. The new password is stored on the ledger as part of <code>contract_create</code> BUT it does not work. You can only login with the old password.</p>
+<p><img src=12.png alt></p>
+<p>We can login with <code>pass73</code> but we will see both claims.</p>
+<h2 id=peer-list-cc-error>peer-list-cc Error
+<a class=header-link href=#peer-list-cc-error><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p><code>peer-list-cc</code> will fail because the certificate has not been uploaded to the peer.</p>
+<p>This is the error:</p>
+<pre tabindex=0><code>tineola$ peer-list-cc
+error: [client-utils.js]: sendPeersProposal - Promise is rejected: Error: 2
+    UNKNOWN: chaincode error (status: 500, message:
+    Authorization for GETINSTALLEDCHAINCODES on channel getinstalledchaincodes
+    has been denied with error Failed verifying that proposal's creator satisfies
+    local MSP principal during channelless check policy with policy
+    [Admins]: [This identity is not an admin])
+    
+    at new createStatusError (/home/testuser/Desktop/tineola/node_modules/grpc/src/client.js:64:15)
+    at /home/testuser/Desktop/tineola/node_modules/grpc/src/client.js:583:15
+error: [Client.js]: Failed Installed Chaincodes Query. Error: Error: 2
+    UNKNOWN: chaincode error (status: 500, message:
+    Authorization for GETINSTALLEDCHAINCODES on channel getinstalledchaincodes
+    has been denied with error Failed verifying that proposal's creator satisfies
+    local MSP principal during channelless check policy with policy
+    [Admins]: [This identity is not an admin])
+    
+    // ...
+</code></pre><p>Looking at <a href=https://github.com/IBM/monitoring_ui#troubleshooting target=_blank rel="noreferrer noopener">https://github.com/IBM/monitoring_ui#troubleshooting</a> the reason is:</p>
+<pre tabindex=0><code>sendPeersProposal - Promise is rejected: Error: 2 UNKNOWN: chaincode error
+(status: 500, message: Authorization for GETINSTALLEDCHAINCODES on channel
+getinstalledchaincodes has been denied with error Failed verifying that
+proposal's creator satisfies local MSP principal during channelless check policy
+with policy [Admins]: [This identity is not an admin]
+</code></pre><p>Peer authentication and channel authentication are done differently. Peer authentication relies on the admin certificate to be physically present on the peer. When we generate a new admin certificate, it signed by the correct CA and is accepted by the channel. But it is not physically present on the peer and thus we cannot authenticate directly to the peer.</p>
+</div>
+<footer>
+<p class=meta>
+<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Aug 23, 2018</time>
+<span class=categories>
+Tags:
+<a class=category href=https://parsiya.net/tags/hyperledger-fabric>Hyperledger Fabric</a> <a class=category href=https://parsiya.net/tags/chaincode>Chaincode</a>
+</span>
+</p>
+<p class=meta>
+<a class="basic-alignment left" href=https://parsiya.net/blog/2018-08-02-dvta-part-4-traffic-tampering-with-dnspy/ title="DVTA - Part 4 - Traffic Tampering with dnSpy">DVTA - Part 4 - Traffic Tampering with dnSpy</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2018-08-25-dvta-part-5-client-side-storage-and-dll-hijacking/ title="DVTA - Part 5 - Client-side Storage and DLL Hijacking">DVTA - Part 5 - Client-side Storage and DLL Hijacking</a>
+</p>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</div>
+<aside class="sidebar thirds">
+<section class="first odd">
+<h1>Who am I?</h1>
+<p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
+<p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p>
+<p>Click on <a href=/about/>About Me!</a> to know more.</p>
+</p>
+</section>
+<ul class=sidebar-nav>
+<li class=sidebar-nav-item>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
+</li>
+</ul>
+<section class=odd>
+<h1>Collections</h1>
+<li>
+<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
+</li>
+<li>
+<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
+</li>
+</section>
+</aside>
+</div>
+</div>
+<footer role=contentinfo>
+<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
+</p>
+</footer>
+</body>
+</html>

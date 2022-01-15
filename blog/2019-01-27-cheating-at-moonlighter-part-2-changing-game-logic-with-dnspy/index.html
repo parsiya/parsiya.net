@@ -1,0 +1,419 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
+<link href=/css/fonts.css rel=stylesheet type=text/css>
+<title>Cheating at Moonlighter - Part 2 - Changing Game Logic with dnSpy</title>
+<link rel=stylesheet href=/css/hugo-octopress.css>
+<link rel=stylesheet href=/css/fork-awesome.min.css>
+<link href=https://parsiya.net/favicon.png rel=icon>
+<meta name=description content>
+<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
+<meta name=author content="Parsia">
+<meta name=generator content="Hugo 0.92.0">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image:src content="https://parsiya.net/blog/2019-01-27-cheating-at-moonlighter-part-2-changing-game-logic-with-dnspy/21-very-strong.png">
+<meta name=twitter:title content="Cheating at Moonlighter - Part 2 - Changing Game Logic with dnSpy">
+<meta name=twitter:description content="In part 1 we messed a bit with Moonlighter but modifying the save file. In this part, we will modify game logic using dnSpy.
+We will modify our damage, player stats and discover a hidden stat.">
+<meta name=twitter:domain content="parsiya.net">
+<meta name=twitter:creator content="@CryptoGangsta">
+</head>
+<body>
+<header role=banner>
+<hgroup>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
+<h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2>
+</hgroup></header>
+<nav role=navigation>
+<fieldset class=mobile-nav>
+<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
+</fieldset>
+<ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
+<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
+<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
+<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
+<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
+<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
+</ul>
+<ul class=subscription>
+<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
+</ul>
+<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+<fieldset role=search>
+<input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/>
+</fieldset>
+</form>
+</nav>
+<div id=main>
+<div id=content>
+<div>
+<article class=hentry role=article>
+<header>
+<p class=meta>Jan 27, 2019
+- 7 minute read
+- <a href=https://parsiya.net/blog/2019-01-27-cheating-at-moonlighter-part-2-changing-game-logic-with-dnspy/#disqus_thread>Comments</a>
+- <a class=label href=https://parsiya.net/categories/game-hacking/>Game Hacking </a>
+</p>
+<h1 class=entry-title>
+Cheating at Moonlighter - Part 2 - Changing Game Logic with dnSpy
+</h1>
+</header>
+<div class=entry-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#why-dnspy>Why dnSpy?</a></li>
+<li><a href=#increasing-wills-damage>Increasing Will's Damage</a>
+<ul>
+<li><a href=#dealdamagetoenemy>DealDamageToEnemy</a></li>
+<li><a href=#calchitdamage><code>CalcHitDamage</code></a></li>
+<li><a href=#increasing-wills-damage-1>Increasing Will's Damage</a>
+<ul>
+<li><a href=#returning-floatpositiveinfinity>Returning float.PositiveInfinity</a></li>
+<li><a href=#return-hitstrength--num>Return hitStrength + num</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href=#modifying-wills-stats>Modifying Will's Stats</a>
+<ul>
+<li><a href=#heromerchantprojectiledealdamage>HeroMerchantProjectile.DealDamage</a>
+<ul>
+<li><a href=#the-case-of-the-missing-intelligence>The Case of the Missing Intelligence</a></li>
+</ul>
+</li>
+<li><a href=#adding-extra-stats>Adding Extra Stats</a></li>
+<li><a href=#a-closer-look-at-base-stats>A Closer Look at Base Stats</a></li>
+</ul>
+</li>
+<li><a href=#lesssons-learned>Lesssons Learned</a></li>
+</ul>
+</nav>
+<p>In part 1 we messed a bit with Moonlighter but modifying the save file. In this part, we will modify game logic using dnSpy.</p>
+<p>We will modify our damage, player stats and discover a hidden stat.</p>
+<h1 id=why-dnspy>Why dnSpy?
+<a class=header-link href=#why-dnspy><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Moonlighter is built with the Unity game engine (C#). Game logic is usually in <code>Assembly-CSharp.dll</code>. In my VM, it's at:</p>
+<ul>
+<li><code>C:\Program Files (x86)\Steam\steamapps\common\Moonlighter\Moonlighter_Data\Managed\Assembly-CSharp.dll</code></li>
+</ul>
+<p>I was not successful in debugging the game with dnSpy. But the instructions are here:</p>
+<ul>
+<li><a href=https://github.com/0xd4d/dnSpy/wiki/Debugging-Unity-Games target=_blank rel="noreferrer noopener">https://github.com/0xd4d/dnSpy/wiki/Debugging-Unity-Games</a></li>
+</ul>
+<p>This is my first unity game so I might be doing something wrong or it does not work with Steam versions.</p>
+<h1 id=increasing-wills-damage>Increasing Will's Damage
+<a class=header-link href=#increasing-wills-damage><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Game logic is inside <code>{}</code>:</p>
+<span class=caption-wrapper>
+<img class=caption src=00-classes-dll.png title="Moonlighter's classes" alt="Moonlighter's classes">
+<span class=caption-text>Moonlighter's classes</span>
+</span>
+<p>Going around the list, I saw the <code>Bow</code> class and clicked on it.</p>
+<span class=caption-wrapper>
+<img class=caption src=01-bow-class.png title="The Bow class" alt="The Bow class">
+<span class=caption-text>The Bow class</span>
+</span>
+<p>Inside, I searched for the string <code>damage</code> and I got lucky.</p>
+<span class=caption-wrapper>
+<img class=caption src=02-damage.png title='Searching for "Damage" in the class' alt='Searching for "Damage" in the class'>
+<span class=caption-text>Searching for "Damage" in the class</span>
+</span>
+<h2 id=dealdamagetoenemy>DealDamageToEnemy
+<a class=header-link href=#dealdamagetoenemy><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p><code>DealDamageToEnemy</code> sounds interesting. Let's double-click on it. We end up in the <code>Enemy</code> class.</p>
+<span class=caption-wrapper>
+<img class=caption src=03-deal-damage.png title=DealDamageToEnemy alt=DealDamageToEnemy>
+<span class=caption-text>DealDamageToEnemy</span>
+</span>
+<p>We can analyze this a bit. <code>attackStrength</code> and enemy defense are used to calculate the damage using <code>CalcHitDamage</code>:</p>
+<ul>
+<li><code>this.totalDamage = this.CalcHitDamage(this.hitStrength, this.otherDefense);</code></li>
+</ul>
+<p>Then the damage is applied:</p>
+<ul>
+<li><code>this.enemyStats.CurrentHealth -= this.totalDamage;</code></li>
+</ul>
+<p>Note: It doesn't matter if the enemy is invincible (<code>invencible</code> in the code) or not, the damage is still applied.</p>
+<h2 id=calchitdamage><code>CalcHitDamage</code>
+<a class=header-link href=#calchitdamage><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Double-click on <code>CalcHitDamage</code>:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=color:#586e75>// Token: 0x0600150F RID: 5391 RVA: 0x00082838 File Offset: 0x00080C38
+</span><span style=color:#586e75></span><span style=color:#719e07>public</span> <span style=color:#719e07>virtual</span> <span style=color:#dc322f>float</span> CalcHitDamage(<span style=color:#dc322f>float</span> hitStrength, <span style=color:#dc322f>float</span> targetDefense)
+{
+    <span style=color:#dc322f>float</span> num = (<span style=color:#dc322f>float</span>)Mathf.RoundToInt(hitStrength * (targetDefense / <span style=color:#2aa198>100f</span>));
+    <span style=color:#719e07>return</span> Mathf.Clamp(hitStrength - num, <span style=color:#2aa198>0f</span>, <span style=color:#dc322f>float</span>.PositiveInfinity);
+}
+</code></pre></div><p>This code calculates the target's resistance and deducts it from <code>hitStrength</code>.</p>
+<h2 id=increasing-wills-damage-1>Increasing Will's Damage
+<a class=header-link href=#increasing-wills-damage-1><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>We don't know the value of damage numbers and the hitpoints of enemies yet. Let's brainstorm a bit:</p>
+<ol>
+<li>Return <code>float.PositiveInfinity</code>. This might result in an integer underflow. I do not know to be honest but we will definitely try.</li>
+<li>Return <code>hitStrength + num</code> instead. This will definitely increase our damage but will it be enough to kill enemies in one hit?</li>
+<li>Multiply the output by a constant.</li>
+<li>Change the lower band of <a href=https://docs.unity3d.com/ScriptReference/Mathf.Clamp.html target=_blank rel="noreferrer noopener">Mathf.Clamp</a> to a large number (e.g. 10000f).</li>
+</ol>
+<h3 id=returning-floatpositiveinfinity>Returning float.PositiveInfinity
+<a class=header-link href=#returning-floatpositiveinfinity><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>Let's try this one and see what happens.</p>
+<p>Right-click on the <code>return</code> line and select <code>Edit IL Instructions...</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=04-calchitdamage-il.png title="CalcHitDamage's IL instructions" alt="CalcHitDamage's IL instructions">
+<span class=caption-text>CalcHitDamage's IL instructions</span>
+</span>
+<p>IL is a stack-based language. Values are pushed to the stack before functions or operators are called.</p>
+<p>Look at lines 13 and 14. Line 13 calls <code>Math.Clamp</code> and the next line returns it. In order to return infinity, we need to add another instruction before the <code>return</code> and copy line 12 to it (pushes infinity to the stack).</p>
+<ol>
+<li>Click on <code>12</code> to select that line.</li>
+<li><code>Ctrl+C</code> to copy</li>
+<li>Click on <code>13</code> and <code>Ctrl+V</code> to paste.</li>
+<li>Press <code>Ok</code>.</li>
+</ol>
+<span class=caption-wrapper>
+<img class=caption src=05-modified-calchit.png title="Modified CalcHitDamage" alt="Modified CalcHitDamage">
+<span class=caption-text>Modified CalcHitDamage</span>
+</span>
+<p>Save the module, overwrite the original DLL with the modified one and start the game.</p>
+<span class=caption-wrapper>
+<img class=caption src=06-no-damage.gif title="No damage" alt="No damage">
+<span class=caption-text>No damage</span>
+</span>
+<p>Our evil plan was foiled.</p>
+<h3 id=return-hitstrength--num>Return hitStrength + num
+<a class=header-link href=#return-hitstrength--num><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>Grab a fresh copy and edit IL instructions again. This time we need to change the <code>sub</code> instruction in line 10 to <code>add</code>. Click on <code>sub</code> and dnSpy shows a helpful drop-down menu of all valid instructions. Choose <code>add</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=07-sub-to-add.png title="Changing sub to add" alt="Changing sub to add">
+<span class=caption-text>Changing sub to add</span>
+</span>
+<span class=caption-wrapper>
+<img class=caption src=08-sub-to-add-result.png title="Sub changed to add" alt="Sub changed to add">
+<span class=caption-text>Sub changed to add</span>
+</span>
+<p>This is better. We are one-shotting enemies. Our damage is a constant <code>436</code> with <code>King Sword</code> from part 1 regardless of enemy type.</p>
+<span class=caption-wrapper>
+<img class=caption src=09-damage.gif title="Doing constant damage" alt="Doing constant damage">
+<span class=caption-text>Doing constant damage</span>
+</span>
+<p>We have accomplished our goal of increasing Will's damage. But you can try the other methods or fiddle with the method in any way you want. Experiment!</p>
+<h1 id=modifying-wills-stats>Modifying Will's Stats
+<a class=header-link href=#modifying-wills-stats><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Player stats are important. They are used to calculate damage. Remember <code>attackStrength</code> or <code>hitStrength</code> in the previous section? They should come from somewhere based on our weapon. Let's track them.</p>
+<p>Right-click on <code>CalcHitDamage</code> and select <code>Analyze</code>. A new window opens up. It shows who calls the target method (<code>Used By</code> which is similar to x-ref in IDA) and what the target method calls and other information.</p>
+<span class=caption-wrapper>
+<img class=caption src=10-analyze-calchit.png title="Analyzing CalcHitDamage" alt="Analyzing CalcHitDamage">
+<span class=caption-text>Analyzing CalcHitDamage</span>
+</span>
+<p>Two functions look promising:</p>
+<ul>
+<li><code>HeroMerchantProjectile.DealDamage(GameObject)</code></li>
+<li><code>Weapon.OnMainAttackHit(GameObject)</code></li>
+</ul>
+<h2 id=heromerchantprojectiledealdamage>HeroMerchantProjectile.DealDamage
+<a class=header-link href=#heromerchantprojectiledealdamage><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Let's start with <code>HeroMerchantProjectile.DealDamage</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=11-deal-damage1.png title=HeroMerchantProjectile.DeadlDamage alt=HeroMerchantProjectile.DeadlDamage>
+<span class=caption-text>HeroMerchantProjectile.DeadlDamage</span>
+</span>
+<p>We can see that the <code>intelligence</code> stat is used to calculate bow damage.</p>
+<p>On a side note, clicking on <code>Value</code> opens an object called <code>ObscuredFloat</code> in the <code>Stat</code> class. I vaguely remember reading about this obscured values in Unity on some Cheat Engine forum threads. It's something we might return and look at again when we are dealing with Cheat Engine. Apparently, they are hard to track in memory.</p>
+<span class=caption-wrapper>
+<img class=caption src=12-obscured.png title=ObscuredFloat alt=ObscuredFloat>
+<span class=caption-text>ObscuredFloat</span>
+</span>
+<h3 id=the-case-of-the-missing-intelligence>The Case of the Missing Intelligence
+<a class=header-link href=#the-case-of-the-missing-intelligence><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>There is no intelligence stat in the game. This is a picture from part 1 that show's Will's inventory. There's no intelligence stat. It shows <code>Vitality</code>, <code>Strength</code>, <code>Defence</code> and <code>Speed</code>. Is the empty green space supposed to be the intelligence?</p>
+<span class=caption-wrapper>
+<img class=caption src=13-inv-old.png title="Will's stats - no intelligence here" alt="Will's stats - no intelligence here">
+<span class=caption-text>Will's stats - no intelligence here</span>
+</span>
+<p>At first, I thought it's missing in the PC version. I looked at screenshots of the Nintendo Switch version and they looked the same.</p>
+<p>Items do not grant intelligence either. This picture shows an item's stats in the blacksmith's UI.</p>
+<span class=caption-wrapper>
+<img class=caption src=14-weapon-old.png title="Item stats - no intellience here either" alt="Item stats - no intellience here either">
+<span class=caption-text>Item stats - no intellience here either</span>
+</span>
+<p>In dnSpy, right-click on <code>intelligence</code> and select <code>Analyze</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=15-intelligence-analyze.png title="Intelligence analysis" alt="Intelligence analysis">
+<span class=caption-text>Intelligence analysis</span>
+</span>
+<p>We can see it's set in <code>HeroInventoryPanel.UpdateLabels()</code>:</p>
+<span class=caption-wrapper>
+<img class=caption src=16-update-labels.png title=HeroInventoryPanel.UpdateLabels alt=HeroInventoryPanel.UpdateLabels>
+<span class=caption-text>HeroInventoryPanel.UpdateLabels</span>
+</span>
+<p>It's updated along with other stats but does not appear in the UI. This is not good because it's an important stat.</p>
+<h2 id=adding-extra-stats>Adding Extra Stats
+<a class=header-link href=#adding-extra-stats><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Look inside <code>EquipmentStats.AddToHeroMerchant(HeroMerchantStats)</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=17-add-to-hero-merchant.png title=EquipmentStats.AddToHeroMerchant alt=EquipmentStats.AddToHeroMerchant>
+<span class=caption-text>EquipmentStats.AddToHeroMerchant</span>
+</span>
+<p>Stats are added to the base stats. We can modify each stat and add any amount. For example, to add <code>10000</code> to strength we need to modify line 57: <code>strength.Value += num2;</code>. Right-click line 57 and select <code>Edit IL Instructions ...</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=18-line-57-il.png title="Line 57 IL instructions" alt="Line 57 IL instructions">
+<span class=caption-text>Line 57 IL instructions</span>
+</span>
+<p>See those highlighted lines? Those are IL instructions for line 57 in the source code (coincidentally it also starts from line 57). dnSpy has helpfully highlighted them for us. We must add two instructions before the final <code>add</code> on line 61. One to load <code>10000f</code> and another to <code>add</code> it to the previous value.</p>
+<span class=caption-wrapper>
+<img class=caption src=19-line-57-modified.png title="Line 57 modified" alt="Line 57 modified">
+<span class=caption-text>Line 57 modified</span>
+</span>
+<p>And the result in decompiled C# is:</p>
+<span class=caption-wrapper>
+<img class=caption src=20-strength-modified.png title="Line 57 modified in C#" alt="Line 57 modified in C#">
+<span class=caption-text>Line 57 modified in C#</span>
+</span>
+<p>Now Will has <code>90436</code> strength:</p>
+<span class=caption-wrapper>
+<img class=caption src=21-very-strong.png title="Strong Will" alt="Strong Will">
+<span class=caption-text>Strong Will</span>
+</span>
+<p>Why did Will's strength increase by <code>90000</code>? My guess is that each equipped item calls <code>AddToHeroMerchant</code> individually. We have nine items (remember there were nine items in the <code>willEquippedItems</code> array in the save file in part 1?). Will does <code>90436</code> damage now.</p>
+<span class=caption-wrapper>
+<img class=caption src=22-strong-gif.gif title="Much strong, very damage, wow" alt="Much strong, very damage, wow">
+<span class=caption-text>Much strong, very damage, wow</span>
+</span>
+<p>We could easily do the same and modify any other stat.</p>
+<h2 id=a-closer-look-at-base-stats>A Closer Look at Base Stats
+<a class=header-link href=#a-closer-look-at-base-stats><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Back in the analysis result for <code>HeroMerchantStats.Intelligence</code> we can see it's modified inside <code>HeroMerchantStats.Init()</code>:</p>
+<span class=caption-wrapper>
+<img class=caption src=23-stats-init.png title=HeroMerchantStats.Init alt=HeroMerchantStats.Init>
+<span class=caption-text>HeroMerchantStats.Init</span>
+</span>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=color:#719e07>this</span>.intelligence = <span style=color:#719e07>new</span> Stat(
+    Constants.GetFloat(<span style=color:#2aa198>&#34;kMaxIntelligence&#34;</span>),
+    Constants.GetFloat(<span style=color:#2aa198>&#34;kMinIntelligence&#34;</span>),
+    Constants.GetFloat(<span style=color:#2aa198>&#34;kBaseIntelligence&#34;</span>)
+);
+</code></pre></div><p>This line creates a new character stat named <code>intelligence</code>. Then sets the maximum, minimum and base values. Let's see where these default values are set. Double-Click on <code>Constants.GetFloat</code> to go there:</p>
+<span class=caption-wrapper>
+<img class=caption src=24-get-float.png title=Constants.GetFloat alt=Constants.GetFloat>
+<span class=caption-text>Constants.GetFloat</span>
+</span>
+<p>A little bit further up in the same file, we can see how these constants are obtained.</p>
+<span class=caption-wrapper>
+<img class=caption src=25-read-file.png title=Constants.ReadFile alt=Constants.ReadFile>
+<span class=caption-text>Constants.ReadFile</span>
+</span>
+<p>They are read from a JSON file named <code>constants</code>. If we run a recursive grep for "constants" in the <code>Moonlighter_Data</code> directory, we find a few files. We need to open <code>resources.assets</code>. Either use a tool to extract it or open it with a hex editor (e.g. HxD) and search for the string <code>constants</code>.</p>
+<p>I used <a href=https://github.com/DerPopo/UABE/releases target=_blank rel="noreferrer noopener">Unity Assets Bundle Extractor</a>. I needed to install <a href="https://www.microsoft.com/en-us/download/details.aspx?id=14632" target=_blank rel="noreferrer noopener">Microsoft Visual C++ 2010 Redistributable Package (x64)</a> before running it.</p>
+<p>Sort by <code>Type</code> and look for files with the <code>TextAsset</code> type.</p>
+<span class=caption-wrapper>
+<img class=caption src=26-text-assets.png title=TextAssets alt=TextAssets>
+<span class=caption-text>TextAssets</span>
+</span>
+<p>We can dump each file. The base stats are inside the <code>constants</code> dump:</p>
+<span class=caption-wrapper>
+<img class=caption src=27-constants.png title="Base stats" alt="Base stats">
+<span class=caption-text>Base stats</span>
+</span>
+<p>There's more stuff here. For example, item drop probabilities.</p>
+<p>Other files here contain other things such as items (we can get a list of all items), recipes, and enemy stats. By editing these files, we can change enemy stats, items stats, recipes, and more.</p>
+<h1 id=lesssons-learned>Lesssons Learned
+<a class=header-link href=#lesssons-learned><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>We learned:</p>
+<ul>
+<li>How to edit game logic for Unity games.</li>
+<li>How to use dnSpy's analysis feature.</li>
+<li>Edit IL instructions to increase Will's damage and stats.</li>
+<li>Discovered a hidden stat called Intelligence that does not appear in the game's UI.</li>
+</ul>
+<p>I saw some hidden features in the decompiled DLL. In the next part, I will try to enable them.</p>
+</div>
+<footer>
+<p class=meta>
+<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Jan 27, 2019</time>
+<span class=categories>
+Tags:
+<a class=category href=https://parsiya.net/tags/moonlighter>Moonlighter</a> <a class=category href=https://parsiya.net/tags/dnspy>dnSpy</a>
+</span>
+</p>
+<p class=meta>
+<a class="basic-alignment left" href=https://parsiya.net/blog/2019-01-23-cheating-at-moonlighter-part-1-save-file/ title="Cheating at Moonlighter - Part 1 - Save File">Cheating at Moonlighter - Part 1 - Save File</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2019-01-29-cheating-at-moonlighter-part-3-enabling-debug-hud/ title="Cheating at Moonlighter - Part 3 - Enabling Debug HUD">Cheating at Moonlighter - Part 3 - Enabling Debug HUD</a>
+</p>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</div>
+<aside class="sidebar thirds">
+<section class="first odd">
+<h1>Who am I?</h1>
+<p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
+<p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p>
+<p>Click on <a href=/about/>About Me!</a> to know more.</p>
+</p>
+</section>
+<ul class=sidebar-nav>
+<li class=sidebar-nav-item>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
+</li>
+</ul>
+<section class=odd>
+<h1>Collections</h1>
+<li>
+<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
+</li>
+<li>
+<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
+</li>
+</section>
+</aside>
+</div>
+</div>
+<footer role=contentinfo>
+<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
+</p>
+</footer>
+</body>
+</html>

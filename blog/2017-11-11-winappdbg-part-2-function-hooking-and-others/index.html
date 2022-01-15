@@ -1,0 +1,1643 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
+<link href=/css/fonts.css rel=stylesheet type=text/css>
+<title>WinAppDbg - Part 2 - Function Hooking and Others</title>
+<link rel=stylesheet href=/css/hugo-octopress.css>
+<link rel=stylesheet href=/css/fork-awesome.min.css>
+<link href=https://parsiya.net/favicon.png rel=icon>
+<meta name=description content>
+<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
+<meta name=author content="Parsia">
+<meta name=generator content="Hugo 0.92.0">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="WinAppDbg - Part 2 - Function Hooking and Others">
+<meta name=twitter:description content="In part one we talked about the basics of WinAppDbg. In this part we are going to learn a few new things:
+
+I wrote a simple python module to simplify my use of WinAppDbg. It will most likely be modified later, but I have included a version that works with the tutorials at:
+
+https://github.com/parsiya/Parsia-Code/tree/master/winappdbg
+We do not need to type the full filename anymore if the executable is in PATH. Note Run Line (win+r) pulls stuff from more locations than PATH, so we cannot call chrome.exe. I have written about it here.
+
+
+DLL enumeration: We're going to implement one of procmon's features.
+Process/Thread tracing: Another procmon feature.
+Function Hooking: It's very easy in WinAppDbg and we will learn how to do it a couple of different ways.
+
+We will hook pre-TLS encryption data for Internet Explorer and Firefox to hack the Gibson.
+
+
+
+Copy this directory https://github.com/parsiya/Parsia-Code/tree/master/winappdbg to your VM and let's go.">
+<meta name=twitter:domain content="parsiya.net">
+<meta name=twitter:creator content="@CryptoGangsta">
+</head>
+<body>
+<header role=banner>
+<hgroup>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
+<h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2>
+</hgroup></header>
+<nav role=navigation>
+<fieldset class=mobile-nav>
+<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
+</fieldset>
+<ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
+<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
+<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
+<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
+<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
+<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
+</ul>
+<ul class=subscription>
+<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
+</ul>
+<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+<fieldset role=search>
+<input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/>
+</fieldset>
+</form>
+</nav>
+<div id=main>
+<div id=content>
+<div>
+<article class=hentry role=article>
+<header>
+<p class=meta>Nov 11, 2017
+- 23 minute read
+- <a href=https://parsiya.net/blog/2017-11-11-winappdbg-part-2-function-hooking-and-others/#disqus_thread>Comments</a>
+- <a class=label href=https://parsiya.net/categories/winappdbg/>winappdbg </a><a class=label href=https://parsiya.net/categories/reverse-engineering/>reverse engineering </a>
+</p>
+<h1 class=entry-title>
+WinAppDbg - Part 2 - Function Hooking and Others
+</h1>
+</header>
+<div class=entry-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#eventhandler-class>EventHandler Class</a></li>
+<li><a href=#08---not-procmon---enumerating-loaded-modules>08 - Not Procmon - Enumerating Loaded Modules</a>
+<ul>
+<li><a href=#dll_load>dll_load</a></li>
+<li><a href=#get_size-and-get_entry_point-invalid-handle-errors>get_size() and get_entry_point() Invalid Handle Errors</a></li>
+</ul>
+</li>
+<li><a href=#09---not-procmon---tracing-processes-and-threads>09 - Not Procmon - Tracing Processes and Threads</a></li>
+<li><a href=#10---basic-hooking-with-debughook_function>10 - Basic Hooking with debug.hook_function()</a>
+<ul>
+<li><a href=#function-signatures>Function Signatures</a></li>
+<li><a href=#eventdebughook_function>event.debug.hook_function()</a></li>
+<li><a href=#pre-callback-functions>Pre Callback Functions</a></li>
+<li><a href=#post-callback-functions>Post Callback Functions</a></li>
+<li><a href=#hooking-in-action>Hooking in Action</a></li>
+</ul>
+</li>
+<li><a href=#11---easier-hooking-via-apihooks>11 - Easier Hooking via apiHooks</a>
+<ul>
+<li><a href=#apihooks>apiHooks</a></li>
+<li><a href=#apihooks-in-action>apiHooks in Action</a></li>
+</ul>
+</li>
+<li><a href=#12---not-echo-mirage---hooking-ie---part-1>12 - Not Echo Mirage - Hooking IE - Part 1</a>
+<ul>
+<li><a href=#what-to-hook>What to Hook?</a></li>
+<li><a href=#httpsendrequest>HttpSendRequest</a></li>
+<li><a href=#hooking-ie>Hooking IE</a></li>
+</ul>
+</li>
+<li><a href=#13---not-echo-mirage---hooking-ie---part-2>13 - Not Echo Mirage - Hooking IE - Part 2</a>
+<ul>
+<li><a href=#httpopenrequest>HttpOpenRequest</a></li>
+<li><a href=#hooking-more-ie>Hooking more IE</a></li>
+</ul>
+</li>
+<li><a href=#14---not-echo-mirage---firefox>14 - Not Echo Mirage - Firefox</a>
+<ul>
+<li><a href=#pr_write-in-rust>PR_Write (in Rust)</a></li>
+<li><a href=#where-is-pr_write>Where is PR_Write?</a></li>
+<li><a href=#null-terminated-strings-vs-random-buffer>Null-Terminated Strings vs. Random Buffer</a></li>
+<li><a href=#firefox-in-action>Firefox in Action</a></li>
+</ul>
+</li>
+<li><a href=#conclusion>Conclusion</a></li>
+</ul>
+</nav>
+<p>In <a href=https://parsiya.net/blog/2017-11-09-winappdbg-part-1-basics/ title="WinAppDbg - Part 1 - Basics">part one</a> we talked about the basics of WinAppDbg. In this part we are going to learn a few new things:</p>
+<ul>
+<li>I wrote a <a href=https://github.com/parsiya/WinAppUtil title="WinAppDbg repository on Github" target=_blank rel="noreferrer noopener">simple python module</a> to simplify my use of WinAppDbg. It will most likely be modified later, but I have included a version that works with the tutorials at:
+<ul>
+<li><a href=https://github.com/parsiya/Parsia-Code/tree/master/winappdbg title="WinAppDbg code in Parsia-Code" target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/winappdbg</a></li>
+<li>We do not need to type the full filename anymore if the executable is in PATH. Note Run Line (<code>win+r</code>) pulls stuff from more locations than PATH, so we cannot call <code>chrome.exe</code>. I have written about it <a href=https://parsiya.net/blog/2017-10-23-run-line-vs.-cmd-vs.-powershell/ title="Run Line vs. cmd vs. PowerShell">here</a>.</li>
+</ul>
+</li>
+<li><strong>DLL enumeration</strong>: We're going to implement one of procmon's features.</li>
+<li><strong>Process/Thread tracing</strong>: Another procmon feature.</li>
+<li><strong>Function Hooking</strong>: It's very easy in WinAppDbg and we will learn how to do it a couple of different ways.
+<ul>
+<li>We will hook pre-TLS encryption data for Internet Explorer and Firefox to hack the Gibson.</li>
+</ul>
+</li>
+</ul>
+<p>Copy this directory <a href=https://github.com/parsiya/Parsia-Code/tree/master/winappdbg title="WinAppDbg code in Parsia-Code" target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/winappdbg</a> to your VM and let's go.</p>
+<p>Moving forward, the <code>main</code> function is not going to change. It is now re-written using <code>WinAppUtil</code> but the functionality has not changed.</p>
+<h1 id=eventhandler-class>EventHandler Class
+<a class=header-link href=#eventhandler-class><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>WinAppDbg uses callback methods for handling debugging events. In short, we can pass a class of type <code>winappdbg.EventHandler</code> to the <code>Debug</code> constructor at creation. When a certain event occurs during the execution, a method in the EventHandler class is called. Inside that method, we can write code that does something and "handle" that event.</p>
+<p>Here's how we create and use such a class:</p>
+<figure class=code>
+<figcaption>
+<span>Simple EventHandler Usage</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>import</span> winappdbg
+
+<span style=color:#719e07>class</span> <span style=color:#268bd2>DebugEvents</span>(winappdbg<span style=color:#719e07>.</span>EventHandler):
+    <span style=color:#2aa198>&#34;&#34;&#34;
+</span><span style=color:#2aa198>    This is the event handler class.
+</span><span style=color:#2aa198>    &#34;&#34;&#34;</span>
+
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>load_dll</span>(<span style=color:#268bd2>self</span>, event):
+        <span style=color:#2aa198>&#34;&#34;&#34;
+</span><span style=color:#2aa198>        This function is called when a new DLL is loaded.
+</span><span style=color:#2aa198>        &#34;&#34;&#34;</span>
+
+        <span style=color:#586e75># do something with the event object</span>
+
+<span style=color:#586e75># Inside main</span>
+debug <span style=color:#719e07>=</span> winappdbg<span style=color:#719e07>.</span>Debug(DebugEvents(), bKillOnExit<span style=color:#719e07>=</span><span style=color:#cb4b16>True</span>)
+debug<span style=color:#719e07>.</span>loop()</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<p>We can define quite a few events. Things like <code>create_process</code>, <code>create_thread</code> and <code>exception</code> (useful for catching crashes and other errors). Mario enumerates and explains them in <a href=https://winappdbg.readthedocs.io/en/latest/Debugging.html#the-eventhandler-class title="The EventHandler class - WinAppDbg documentation" target=_blank rel="noreferrer noopener">the docs</a> much better than I can do.</p>
+<p>We can also define custom breakpoints and handlers in this class (and outside). We will see how to use them later.</p>
+<p>Like always, we can learn much by reading the source. The source for EventHandler is at <a href=https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/event.py target=_blank rel="noreferrer noopener">event.py</a>.</p>
+<h1 id=08---not-procmon---enumerating-loaded-modules>08 - Not Procmon - Enumerating Loaded Modules
+<a class=header-link href=#08---not-procmon---enumerating-loaded-modules><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>You might have seen the procmon filter <code>load image</code> that lists DLLs loaded by the process. We can even grab a handle to the <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa813706%28v=vs.85%29.aspx" title="Process Environment Block structure - MSDN" target=_blank rel="noreferrer noopener">Process Environment Block</a> and read them from the linked-list in <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa813708%28v=vs.85%29.aspx" title="PEB_LDR_DATA structure - MSDN" target=_blank rel="noreferrer noopener">PEB_LDR_DATA</a>. We can do it with WinAppDbg using the <code>load_dll</code> callback.</p>
+<figure class=code>
+<figcaption>
+<span>08-NotProcmon-LoadedModules.py</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>import</span> winappdbg
+<span style=color:#719e07>import</span> argparse
+<span style=color:#719e07>import</span> winapputil
+
+
+<span style=color:#719e07>class</span> <span style=color:#268bd2>DebugEvents</span>(winappdbg<span style=color:#719e07>.</span>EventHandler):
+    <span style=color:#2aa198>&#34;&#34;&#34;
+</span><span style=color:#2aa198>    Event handler class.
+</span><span style=color:#2aa198>    event: https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/event.py
+</span><span style=color:#2aa198>    &#34;&#34;&#34;</span>
+
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>load_dll</span>(<span style=color:#268bd2>self</span>, event):
+        <span style=color:#2aa198>&#34;&#34;&#34;
+</span><span style=color:#2aa198>        Called when a new module is loaded.
+</span><span style=color:#2aa198>        &#34;&#34;&#34;</span>
+        module <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_module()
+
+        logstring <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;</span><span style=color:#cb4b16>\n</span><span style=color:#2aa198>Loaded DLL:</span><span style=color:#cb4b16>\n</span><span style=color:#2aa198>Name: </span><span style=color:#2aa198>%s</span><span style=color:#cb4b16>\n</span><span style=color:#2aa198>Filename: </span><span style=color:#2aa198>%s</span><span style=color:#cb4b16>\n</span><span style=color:#2aa198>Base Addr: </span><span style=color:#2aa198>%s</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> \
+            (module<span style=color:#719e07>.</span>get_name(), module<span style=color:#719e07>.</span>get_filename(), <span style=color:#b58900>hex</span>(module<span style=color:#719e07>.</span>get_base()))
+
+        mylogger<span style=color:#719e07>.</span>log_text(logstring)
+
+
+<span style=color:#586e75># ---------------</span>
+
+<span style=color:#719e07>def</span> <span style=color:#268bd2>main</span>():
+    <span style=color:#719e07>...</span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<h2 id=dll_load>dll_load
+<a class=header-link href=#dll_load><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>The <code>event</code> object is passed to the method when a DLL is loaded. First we get the <code>module</code> object. It contains information about the DLL that is being loaded. For all module methods see <a href=https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/module.py#L75 target=_blank rel="noreferrer noopener">module.py</a>.</p>
+<p>Let's look at the output for <code>calc.exe</code></p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>$ python <span style=color:#2aa198>08</span><span style=color:#719e07>-</span>NotProcmon<span style=color:#719e07>-</span>LoadedModules<span style=color:#719e07>.</span>py <span style=color:#719e07>-</span>r calc<span style=color:#719e07>.</span>exe
+[<span style=color:#2aa198>21</span>:<span style=color:#2aa198>25</span>:<span style=color:#2aa198>51.0894</span>] Starting calc
+[<span style=color:#2aa198>21</span>:<span style=color:#2aa198>25</span>:<span style=color:#2aa198>51.0904</span>]
+Loaded DLL:
+Name: ntdll
+Filename: ntdll<span style=color:#719e07>.</span>dll
+Base Addr: <span style=color:#2aa198>0x77ca0000</span>
+<span style=color:#719e07>&lt;</span>FileHandle: <span style=color:#2aa198>276</span><span style=color:#719e07>&gt;</span>
+[<span style=color:#2aa198>21</span>:<span style=color:#2aa198>25</span>:<span style=color:#2aa198>51.0914</span>]
+Loaded DLL:
+Name: kernel32
+Filename: C:\Windows\system32\kernel32<span style=color:#719e07>.</span>dll
+Base Addr: <span style=color:#2aa198>0x75ee0000</span>
+<span style=color:#719e07>&lt;</span>FileHandle: <span style=color:#2aa198>280</span><span style=color:#719e07>&gt;</span>
+[<span style=color:#2aa198>21</span>:<span style=color:#2aa198>25</span>:<span style=color:#2aa198>51.0914</span>]
+Loaded DLL:
+Name: kernelbase
+Filename: C:\Windows\system32\KERNELBASE<span style=color:#719e07>.</span>dll
+Base Addr: <span style=color:#2aa198>0x75bd0000</span>
+<span style=color:#719e07>&lt;</span>FileHandle: <span style=color:#2aa198>284</span><span style=color:#719e07>&gt;</span>
+[<span style=color:#2aa198>21</span>:<span style=color:#2aa198>25</span>:<span style=color:#2aa198>51.0914</span>]
+Loaded DLL:
+Name: shell32
+Filename: C:\Windows\system32\SHELL32<span style=color:#719e07>.</span>dll
+Base Addr: <span style=color:#2aa198>0x76970000</span>
+<span style=color:#719e07>&lt;</span>FileHandle: <span style=color:#2aa198>288</span><span style=color:#719e07>&gt;</span>
+[<span style=color:#2aa198>21</span>:<span style=color:#2aa198>25</span>:<span style=color:#2aa198>51.0914</span>]
+Loaded DLL:
+Name: msvcrt
+Filename: C:\Windows\system32\msvcrt<span style=color:#719e07>.</span>dll
+Base Addr: <span style=color:#2aa198>0x76130000</span>
+<span style=color:#719e07>&lt;</span>FileHandle: <span style=color:#2aa198>292</span><span style=color:#719e07>&gt;</span>
+[<span style=color:#2aa198>21</span>:<span style=color:#2aa198>25</span>:<span style=color:#2aa198>51.0914</span>]
+Loaded DLL:
+Name: shlwapi
+Filename: C:\Windows\system32\SHLWAPI<span style=color:#719e07>.</span>dll
+Base Addr: <span style=color:#2aa198>0x76910000</span>
+<span style=color:#719e07>&lt;</span>FileHandle: <span style=color:#2aa198>296</span><span style=color:#719e07>&gt;</span>
+[<span style=color:#2aa198>21</span>:<span style=color:#2aa198>25</span>:<span style=color:#2aa198>51.0914</span>]
+Loaded DLL:
+Name: gdi32
+Filename: C:\Windows\system32\GDI32<span style=color:#719e07>.</span>dll
+Base Addr: <span style=color:#2aa198>0x764e0000</span>
+<span style=color:#719e07>&lt;</span>FileHandle: <span style=color:#2aa198>300</span><span style=color:#719e07>&gt;</span>
+[<span style=color:#2aa198>21</span>:<span style=color:#2aa198>25</span>:<span style=color:#2aa198>51.0914</span>]
+Loaded DLL:
+Name: user32
+Filename: C:\Windows\system32\USER32<span style=color:#719e07>.</span>dll
+Base Addr: <span style=color:#2aa198>0x778f0000</span>
+<span style=color:#719e07>&lt;</span>FileHandle: <span style=color:#2aa198>304</span><span style=color:#719e07>&gt;</span>
+<span style=color:#719e07>...</span>
+</code></pre></div><p>Who knew calculator loads all these modules.</p>
+<p>Procmon with the following filters shows we got the right info:</p>
+<ul>
+<li><code>Process Name is calc.exe</code></li>
+<li><code>Operation is Load Image</code></li>
+</ul>
+<span class=caption-wrapper>
+<img class=caption src=/images/2017/winappdbg-2/01-procmon-loadimage.png title="Procmon Load Image filter" alt="Procmon Load Image filter">
+<span class=caption-text>Procmon Load Image filter</span>
+</span>
+<p>If the image looks small, right click and open in a new tab.</p>
+<h2 id=get_size-and-get_entry_point-invalid-handle-errors>get_size() and get_entry_point() Invalid Handle Errors
+<a class=header-link href=#get_size-and-get_entry_point-invalid-handle-errors><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Not all <code>module</code> methods work, for example <code>get_size</code> and <code>get_entry_point</code> do not. Uncomment the line for calling <code>get_size()</code> in our code to get this error:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>$ python <span style=color:#2aa198>08</span><span style=color:#719e07>-</span>NotProcmon<span style=color:#719e07>-</span>LoadedModules<span style=color:#719e07>.</span>py <span style=color:#719e07>-</span>r calc<span style=color:#719e07>.</span>exe
+[<span style=color:#2aa198>17</span>:<span style=color:#2aa198>39</span>:<span style=color:#2aa198>20.0900</span>] Starting calc<span style=color:#719e07>.</span>exe
+[<span style=color:#2aa198>17</span>:<span style=color:#2aa198>39</span>:<span style=color:#2aa198>20.0900</span>]
+Loaded DLL:
+Name: ntdll
+Filename: ntdll<span style=color:#719e07>.</span>dll
+Base Addr: <span style=color:#2aa198>0x77ca0000</span>
+C:\Python27\lib\site<span style=color:#719e07>-</span>packages\winappdbg\module<span style=color:#719e07>.</span>py:<span style=color:#2aa198>294</span>: <span style=color:#cb4b16>RuntimeWarning</span>: Cannot get 
+size <span style=color:#719e07>and</span> entry point of module ntdll, reason: The handle <span style=color:#719e07>is</span> invalid<span style=color:#719e07>.</span>
+  <span style=color:#719e07>%</span> (<span style=color:#268bd2>self</span><span style=color:#719e07>.</span>get_name(), e<span style=color:#719e07>.</span>strerror), <span style=color:#cb4b16>RuntimeWarning</span>)
+</code></pre></div><p>At this point I am not exactly sure why we get this error. I dug around and found some really interesting things about how module are loaded on Windows. In short, WinAppDbg uses <a href="https://msdn.microsoft.com/en-us/library/ms683201%28v=VS.85%29.aspx" title="GetModuleInformation - MSDN" target=_blank rel="noreferrer noopener">GetModuleInformation</a> and according to the MSDN article it cannot get info on files "that were loaded with the <code>LOAD_LIBRARY_AS_DATAFILE</code> flag." We can see it in <a href=https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/module.py#L260 target=_blank rel="noreferrer noopener">get_size()</a> source (scroll down to line 280 to see <code>GetModuleInformation</code> called) and <a href=https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/win32/psapi.py#L330 target=_blank rel="noreferrer noopener">winappdbg.win32.GetModuleInformation</a>.</p>
+<p>However I found <a href="https://blogs.msdn.microsoft.com/oldnewthing/20150716-00/?p=45131" title="Why do I get ERROR_INVALID_HANDLE from GetModuleFileNameEx when I know the process handle is valid? - The Old New Thing" target=_blank rel="noreferrer noopener">this MSDN blog entry</a> by Raymond Chen<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup> where he explains why we get an invalid handle error when calling <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms683198%28v=vs.85%29.aspx" title="GetModuleFileNameEx - MSDN" target=_blank rel="noreferrer noopener">GetModuleFileNameEx</a>. Because the module has not been executed(??) yet, there's almost nothing at the location that the handle is pointing to (that's my understanding but I could be wrong). I think we are facing the same issue here, because <code>load_dll</code> is called right before DLL is loaded. This is something I need to look at later.</p>
+<h1 id=09---not-procmon---tracing-processes-and-threads>09 - Not Procmon - Tracing Processes and Threads
+<a class=header-link href=#09---not-procmon---tracing-processes-and-threads><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>We can also trace processes and threads. This code implements this procmon functionality:</p>
+<figure class=code>
+<figcaption>
+<span>09-NotProcmon-CreateProcess.py</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">31
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">32
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">33
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">34
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">35
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">36
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">37
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">38
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">39
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">40
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">41
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">42
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">43
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">44
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">45
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>class</span> <span style=color:#268bd2>DebugEvents</span>(winappdbg<span style=color:#719e07>.</span>EventHandler):
+    <span style=color:#2aa198>&#34;&#34;&#34;
+</span><span style=color:#2aa198>    Event handler class.
+</span><span style=color:#2aa198>    event: https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/event.py
+</span><span style=color:#2aa198>    &#34;&#34;&#34;</span>
+
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>create_process</span>(<span style=color:#268bd2>self</span>, event):
+        process  <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_process()
+        pid      <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_pid()
+        <span style=color:#586e75># pid    = process.get_pid()</span>
+        filename <span style=color:#719e07>=</span> process<span style=color:#719e07>.</span>get_filename()
+
+        mylogger<span style=color:#719e07>.</span>log_text(<span style=color:#2aa198>&#34;CreateProcess </span><span style=color:#2aa198>%d</span><span style=color:#2aa198> - </span><span style=color:#2aa198>%s</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> (pid, filename))
+
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>exit_process</span>(<span style=color:#268bd2>self</span>, event):
+        process  <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_process()
+        pid      <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_pid()
+        <span style=color:#586e75># pid    = process.get_pid()</span>
+        filename <span style=color:#719e07>=</span> process<span style=color:#719e07>.</span>get_filename()
+
+        mylogger<span style=color:#719e07>.</span>log_text(<span style=color:#2aa198>&#34;ExitProcess </span><span style=color:#2aa198>%d</span><span style=color:#2aa198> - </span><span style=color:#2aa198>%s</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> (pid, filename))
+
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>create_thread</span>(<span style=color:#268bd2>self</span>, event):
+        process  <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_process()
+        thread   <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_thread()
+
+        tid  <span style=color:#719e07>=</span> thread<span style=color:#719e07>.</span>get_tid()
+        name <span style=color:#719e07>=</span> thread<span style=color:#719e07>.</span>get_name()
+
+        mylogger<span style=color:#719e07>.</span>log_text(<span style=color:#2aa198>&#34;CreateThread </span><span style=color:#2aa198>%d</span><span style=color:#2aa198> - </span><span style=color:#2aa198>%s</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> (tid, name))
+
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>exit_thread</span>(<span style=color:#268bd2>self</span>, event):
+        process  <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_process()
+        thread   <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_thread()
+
+        tid  <span style=color:#719e07>=</span> thread<span style=color:#719e07>.</span>get_tid()
+        name <span style=color:#719e07>=</span> thread<span style=color:#719e07>.</span>get_name()
+
+        mylogger<span style=color:#719e07>.</span>log_text(<span style=color:#2aa198>&#34;ExitThread </span><span style=color:#2aa198>%d</span><span style=color:#2aa198> - </span><span style=color:#2aa198>%s</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> (tid, name))
+
+
+<span style=color:#586e75># ---------------</span>
+
+<span style=color:#719e07>def</span> <span style=color:#268bd2>main</span>():
+    <span style=color:#719e07>...</span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<p>We have created four callback methods in the EventHandler class. They trace creation and termination of processes/threads.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>$ python <span style=color:#2aa198>09</span><span style=color:#719e07>-</span>NotProcmon<span style=color:#719e07>-</span>CreateProcess<span style=color:#719e07>.</span>py <span style=color:#719e07>-</span>r calc<span style=color:#719e07>.</span>exe
+[<span style=color:#2aa198>21</span>:<span style=color:#2aa198>35</span>:<span style=color:#2aa198>09.0727</span>] Starting calc<span style=color:#719e07>.</span>exe
+[<span style=color:#2aa198>21</span>:<span style=color:#2aa198>35</span>:<span style=color:#2aa198>09.0727</span>] CreateProcess <span style=color:#2aa198>3720</span> <span style=color:#719e07>-</span> C:\Windows\System32\calc<span style=color:#719e07>.</span>exe
+[<span style=color:#2aa198>21</span>:<span style=color:#2aa198>35</span>:<span style=color:#2aa198>09.0788</span>] CreateThread <span style=color:#2aa198>1688</span> <span style=color:#719e07>-</span> <span style=color:#cb4b16>None</span>
+[<span style=color:#2aa198>21</span>:<span style=color:#2aa198>35</span>:<span style=color:#2aa198>09.0798</span>] CreateThread <span style=color:#2aa198>2344</span> <span style=color:#719e07>-</span> <span style=color:#cb4b16>None</span>
+[<span style=color:#2aa198>21</span>:<span style=color:#2aa198>35</span>:<span style=color:#2aa198>12.0289</span>] ExitThread <span style=color:#2aa198>1688</span> <span style=color:#719e07>-</span> <span style=color:#cb4b16>None</span>
+[<span style=color:#2aa198>21</span>:<span style=color:#2aa198>35</span>:<span style=color:#2aa198>12.0289</span>] ExitThread <span style=color:#2aa198>2344</span> <span style=color:#719e07>-</span> <span style=color:#cb4b16>None</span>
+[<span style=color:#2aa198>21</span>:<span style=color:#2aa198>35</span>:<span style=color:#2aa198>12.0299</span>] ExitProcess <span style=color:#2aa198>3720</span> <span style=color:#719e07>-</span> C:\Windows\System32\calc<span style=color:#719e07>.</span>exe
+</code></pre></div><p>Procmon can display the same info using these five filters:</p>
+<ul>
+<li><code>Process Name is calc.exe</code></li>
+<li><code>Operation is Process Start</code></li>
+<li><code>Operation is Process Exit</code></li>
+<li><code>Operation is Thread Create</code></li>
+<li><code>Operation is Thread Exit</code></li>
+</ul>
+<span class=caption-wrapper>
+<img class=caption src=/images/2017/winappdbg-2/02-procmon-trace.png title="Tracing in procmon" alt="Tracing in procmon">
+<span class=caption-text>Tracing in procmon</span>
+</span>
+<h1 id=10---basic-hooking-with-debughook_function>10 - Basic Hooking with debug.hook_function()
+<a class=header-link href=#10---basic-hooking-with-debughook_function><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Enough with things we can already do with other tools. Let's hook functions. Hooking functions is pretty useful. For example they can <a href=https://parsiya.net/blog/2015-01-06-tales-from-the-crypto-leaking-aes-keys/#2-3-using-ltrace-to-find-the-key title="Tales from the Crypto - Leaking encryption Keys - Using ltrace to Find the Key">leak AES keys</a> and tons of other useful information.</p>
+<p>Unfortunately we do not have <code>ltrace</code> on Windows but we can hook functions pretty easily with WinAppDbg in a few ways.</p>
+<p>In this example we are going to hook the <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa363858%28v=vs.85%29.aspx" title="CreateFile - MSDN" target=_blank rel="noreferrer noopener">CreateFile</a> Windows API calls from <code>kernel32</code> for <code>calc</code> and <code>notepad</code>.</p>
+<figure class=code>
+<figcaption>
+<span>10-BasicHook.py</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">31
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">32
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">33
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">34
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">35
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">36
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">37
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">38
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">39
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">40
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">41
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">42
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">43
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">44
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">45
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">46
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">47
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">48
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">49
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">50
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">51
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>from</span> winappdbg.win32 <span style=color:#719e07>import</span> PVOID, DWORD, HANDLE
+
+
+<span style=color:#719e07>class</span> <span style=color:#268bd2>DebugEvents</span>(winappdbg<span style=color:#719e07>.</span>EventHandler):
+    <span style=color:#2aa198>&#34;&#34;&#34;
+</span><span style=color:#2aa198>    Event handler class.
+</span><span style=color:#2aa198>    event: https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/event.py
+</span><span style=color:#2aa198>    &#34;&#34;&#34;</span>
+
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>load_dll</span>(<span style=color:#268bd2>self</span>, event):
+        module <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_module()
+
+        <span style=color:#719e07>if</span> module<span style=color:#719e07>.</span>match_name(<span style=color:#2aa198>&#34;kernel32.dll&#34;</span>):
+
+            <span style=color:#586e75># Resolve function addresses</span>
+            address_CreateFileA <span style=color:#719e07>=</span> module<span style=color:#719e07>.</span>resolve(<span style=color:#2aa198>&#34;CreateFileA&#34;</span>)
+            address_CreateFileW <span style=color:#719e07>=</span> module<span style=color:#719e07>.</span>resolve(<span style=color:#2aa198>&#34;CreateFileW&#34;</span>)
+
+            <span style=color:#586e75># Types are here</span>
+            <span style=color:#586e75># https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/win32/defines.py#L380</span>
+            sig_CreateFileA <span style=color:#719e07>=</span> (PVOID, DWORD, DWORD, PVOID, DWORD, DWORD, HANDLE)
+            sig_CreateFileW <span style=color:#719e07>=</span> (PVOID, DWORD, DWORD, PVOID, DWORD, DWORD, HANDLE)
+
+            pid <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_pid()
+
+            <span style=color:#586e75># Hook function(pid, address, preCB, postCB, paramCount, signature)</span>
+            <span style=color:#586e75># https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/breakpoint.py#L3969</span>
+            event<span style=color:#719e07>.</span>debug<span style=color:#719e07>.</span>hook_function(pid, address_CreateFileA,
+                                      preCB<span style=color:#719e07>=</span>pre_CreateFileA,
+                                      signature<span style=color:#719e07>=</span>sig_CreateFileA)
+
+            event<span style=color:#719e07>.</span>debug<span style=color:#719e07>.</span>hook_function(pid, address_CreateFileW,
+                                      preCB<span style=color:#719e07>=</span>pre_CreateFileW,
+                                      signature<span style=color:#719e07>=</span>sig_CreateFileW)
+
+            <span style=color:#586e75># Another way of setting up hooks without signature</span>
+
+            <span style=color:#2aa198>&#34;&#34;&#34;
+</span><span style=color:#2aa198>            event.debug.hook_function(pid, address_CreateFileA,
+</span><span style=color:#2aa198>                                      preCB=pre_CreateFileA,
+</span><span style=color:#2aa198>                                      paramCount=7)
+</span><span style=color:#2aa198>
+</span><span style=color:#2aa198>            event.debug.hook_function(pid, address_CreateFileW,
+</span><span style=color:#2aa198>                                      preCB=pre_CreateFileW,
+</span><span style=color:#2aa198>                                      paramCount=7)
+</span><span style=color:#2aa198>            &#34;&#34;&#34;</span>
+
+<span style=color:#586e75># ---------------</span>
+
+<span style=color:#719e07>def</span> <span style=color:#268bd2>main</span>():
+    <span style=color:#719e07>...</span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<p>That's quite a lot of code but it's mostly boilerplate. Let's break it down.</p>
+<p>First we are importing some symbols from <code>winappdbg.win32</code>. We will use them in a bit. We can see all of these symbols in <a href=https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/win32/defines.py#L380 target=_blank rel="noreferrer noopener">defines.py</a>.</p>
+<p>Inside <code>dll_load</code>, we check if we are loading <code>kernel32.dll</code>. If so, we call <a href=https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/module.py#L696 target=_blank rel="noreferrer noopener">module.resolve()</a> for <code>CreateFileA</code> and <code>CreateFileW</code>. These return the address for exported functions in the target process<sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup>. A is the ANSI and W (Wide) is the UTF-16 version of the <code>CreateFile</code> function<sup id=fnref:3><a href=#fn:3 class=footnote-ref role=doc-noteref>3</a></sup>.</p>
+<h2 id=function-signatures>Function Signatures
+<a class=header-link href=#function-signatures><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Then we create a signature for each hooked function. The signature is like a function prototype from C/C++. It tells WinAppDbg the type and number of arguments for each function.</p>
+<p>This is <code>CreateFile</code><sup id=fnref:4><a href=#fn:4 class=footnote-ref role=doc-noteref>4</a></sup>:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm><span style=color:#268bd2>HANDLE</span> <span style=color:#cb4b16>WINAPI</span> <span style=color:#cb4b16>CreateFile</span>(
+  <span style=color:#268bd2>_In_</span>     <span style=color:#cb4b16>LPCTSTR</span>               <span style=color:#cb4b16>lpFileName</span>,
+  <span style=color:#268bd2>_In_</span>     <span style=color:#cb4b16>DWORD</span>                 <span style=color:#cb4b16>dwDesiredAccess</span>,
+  <span style=color:#268bd2>_In_</span>     <span style=color:#cb4b16>DWORD</span>                 <span style=color:#cb4b16>dwShareMode</span>,
+  <span style=color:#268bd2>_In_opt_</span> <span style=color:#cb4b16>LPSECURITY_ATTRIBUTES</span> <span style=color:#cb4b16>lpSecurityAttributes</span>,
+  <span style=color:#268bd2>_In_</span>     <span style=color:#cb4b16>DWORD</span>                 <span style=color:#cb4b16>dwCreationDisposition</span>,
+  <span style=color:#268bd2>_In_</span>     <span style=color:#cb4b16>DWORD</span>                 <span style=color:#cb4b16>dwFlagsAndAttributes</span>,
+  <span style=color:#268bd2>_In_opt_</span> <span style=color:#cb4b16>HANDLE</span>                <span style=color:#cb4b16>hTemplateFile</span>
+)<span style=color:#586e75>;
+</span></code></pre></div><p>So our signature for both <code>CreateFile</code> functions is <code>(PVOID, DWORD, DWORD, PVOID, DWORD, DWORD, HANDLE)</code>. Hungarian notation rocks!</p>
+<p>When creating signatures, <strong>use PVOID for all pointers</strong>. Otherwise according to the docs, ctypes become too helpful and ruin everything by trying "to access the memory pointed to by them... and crash[ing], since those pointers only work in the debugged process..)".</p>
+<h2 id=eventdebughook_function>event.debug.hook_function()
+<a class=header-link href=#eventdebughook_function><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Next we hook each function using <a href=https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/breakpoint.py#L3969 target=_blank rel="noreferrer noopener">event.debug.hook_function</a> like this<sup id=fnref:5><a href=#fn:5 class=footnote-ref role=doc-noteref>5</a></sup>:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm><span style=color:#268bd2>event.debug.hook_function</span>(<span style=color:#cb4b16>pid</span>, <span style=color:#cb4b16>address_CreateFileW</span>, 
+                          <span style=color:#cb4b16>preCB</span>=<span style=color:#cb4b16>pre_CreateFileW</span>,
+                          <span style=color:#268bd2>postCB</span>=<span style=color:#cb4b16>post_CreateFileW</span>,
+                          <span style=color:#268bd2>signature</span>=<span style=color:#cb4b16>sig_CreateFileW</span>)
+</code></pre></div><ul>
+<li><code>pid</code> is the current process ID. We are passing <code>event.get_pid()</code>.</li>
+<li><code>address_CreateFileW</code> is the <code>CreateFileW</code> function address in process memory.</li>
+<li><code>preCB</code> is name of the pre-execution callback function for this breakpoint. This function could be anywhere.</li>
+<li><code>postCB</code> is called when the hooked function returns.</li>
+<li><code>signature</code> is the signature we just created.</li>
+<li>Instead of <code>signature</code> we can pass <code>paramCount</code> which is just an int containing the number of parameters (starting from 1) which is <code>7</code> here.
+<ul>
+<li>According to <a href=https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/breakpoint.py#L1107-L1112 target=_blank rel="noreferrer noopener">source code</a>, using signature is better for cross-platform functionality. <code>paramCount</code> is used to retrieve items from stack and read dwords in 32-bit processes. This might pose some issues for 64-bit processes because first four parameters are stored in registers and pointers are qwords (64-bits) on Windows 64-bit<sup id=fnref:6><a href=#fn:6 class=footnote-ref role=doc-noteref>6</a></sup>.</li>
+</ul>
+</li>
+</ul>
+<h2 id=pre-callback-functions>Pre Callback Functions
+<a class=header-link href=#pre-callback-functions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Next is <code>pre_CreateFileW</code>. The first two arguments for each callback function are always <code>event</code> and <code>ra</code> (return address) and <code>self</code> if needed.</p>
+<figure class=code>
+<figcaption>
+<span>Pre Callback Functions</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">31
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">32
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">33
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">34
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">35
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">36
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">37
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">38
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">39
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">40
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">41
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">42
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">43
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">44
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">45
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">46
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">47
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">48
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">49
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">50
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">51
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">52
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">53
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">54
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">55
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">56
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">57
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">58
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#586e75># Callback functions</span>
+<span style=color:#586e75># -------------------</span>
+
+<span style=color:#586e75># Callback function parameters are always</span>
+<span style=color:#586e75># (event, ra (return address), then function parameters)</span>
+<span style=color:#586e75># self is first if part of the eventhandler class</span>
+
+
+<span style=color:#719e07>def</span> <span style=color:#268bd2>pre_CreateFileW</span>(event, ra, lpFileName, dwDesiredAccess, dwShareMode,
+                    lpSecurityAttributes, dwCreationDisposition,
+                    dwFlagsAndAttributes, hTemplateFile):
+
+    <span style=color:#2aa198>&#34;&#34;&#34;
+</span><span style=color:#2aa198>    This will be called as soon as we enter the function and before the
+</span><span style=color:#2aa198>    function stack frame is created.
+</span><span style=color:#2aa198>    &#34;&#34;&#34;</span>
+
+    process <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_process()
+
+    <span style=color:#586e75># Suspend the process because why not</span>
+    process<span style=color:#719e07>.</span>suspend()
+
+    mylogger<span style=color:#719e07>.</span>log_text(<span style=color:#2aa198>&#34;Hit kernel32!CreateFileW&#34;</span>)
+
+    <span style=color:#586e75># 32-bit so all parameters are on stack</span>
+
+    <span style=color:#586e75># In case you want a pointer to the top of the stack</span>
+    <span style=color:#586e75># thread = event.get_thread()</span>
+
+    <span style=color:#586e75># All memory read stuff are at</span>
+    <span style=color:#586e75># https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/process.py#L125</span>
+
+    <span style=color:#586e75># fUnicode=True because we are in the Wide or Unicode version of the API</span>
+    myFileName <span style=color:#719e07>=</span> process<span style=color:#719e07>.</span>peek_string(lpFileName, fUnicode<span style=color:#719e07>=</span><span style=color:#cb4b16>True</span>)
+
+    mylogger<span style=color:#719e07>.</span>log_text(<span style=color:#2aa198>&#34;lpFilename: </span><span style=color:#2aa198>%s</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> (myFileName))
+
+    <span style=color:#586e75># Resume the process</span>
+    process<span style=color:#719e07>.</span>resume()
+
+
+<span style=color:#719e07>def</span> <span style=color:#268bd2>pre_CreateFileA</span>(event, ra, lpFileName, dwDesiredAccess, dwShareMode,
+                    lpSecurityAttributes, dwCreationDisposition,
+                    dwFlagsAndAttributes, hTemplateFile):
+
+    process <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_process()
+
+    <span style=color:#586e75># Suspend the process because why not</span>
+    process<span style=color:#719e07>.</span>suspend()
+
+    mylogger<span style=color:#719e07>.</span>log_text(<span style=color:#2aa198>&#34;Hit kernel32!CreateFileA&#34;</span>)
+
+    <span style=color:#586e75># fUnicode=False because we are in the ANSI version</span>
+    myFileName <span style=color:#719e07>=</span> process<span style=color:#719e07>.</span>peek_string(lpFileName, fUnicode<span style=color:#719e07>=</span><span style=color:#cb4b16>False</span>)
+
+    mylogger<span style=color:#719e07>.</span>log_text(<span style=color:#2aa198>&#34;lpFilename: </span><span style=color:#2aa198>%s</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> (myFileName))
+
+    process<span style=color:#719e07>.</span>resume()</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<p>First we suspend the process and log some text to indicate we are inside the function.</p>
+<p>Now we can read each argument. We are interested in <code>lpFileName</code> which is a long pointer to a UTF-16 string (lpsz == long pointer to null-terminated [zeroed] string). WinAppDbg comes with a <a href=https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/process.py#L125 target=_blank rel="noreferrer noopener">lot of methods</a> for reading and writing process memory. In this case we want to read a UTF-16 string so we call <code>process.peek_string(lpFileName, fUnicode=True)</code>. In the ANSI version we do the same but with <code>fUnicode=False</code>.</p>
+<p>After printing <code>lpFileName</code>, we resume the process and the callback function returns.</p>
+<h2 id=post-callback-functions>Post Callback Functions
+<a class=header-link href=#post-callback-functions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Post callback functions are similar to pre ones. They only have two arguments <code>([self], event, retval)</code>. They are called just after the function returns and allow us to manipulate return values.</p>
+<figure class=code>
+<figcaption>
+<span>Post Callback Functions</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>def</span> <span style=color:#268bd2>post_CreateFileW</span>(event, retval):
+
+    mylogger<span style=color:#719e07>.</span>log_text(<span style=color:#2aa198>&#34;Leaving kernel32!CreateFileW&#34;</span>)
+    mylogger<span style=color:#719e07>.</span>log_text(<span style=color:#2aa198>&#34;Return value: </span><span style=color:#2aa198>%x</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> (retval))
+
+
+<span style=color:#719e07>def</span> <span style=color:#268bd2>post_CreateFileA</span>(event, retval):
+
+    mylogger<span style=color:#719e07>.</span>log_text(<span style=color:#2aa198>&#34;Leaving kernel32!CreateFileA&#34;</span>)
+    mylogger<span style=color:#719e07>.</span>log_text(<span style=color:#2aa198>&#34;Return value: </span><span style=color:#2aa198>%x</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> (retval))</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<h2 id=hooking-in-action>Hooking in Action
+<a class=header-link href=#hooking-in-action><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Now we can run it on <code>calc</code> and see the results:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>$ python <span style=color:#2aa198>10</span><span style=color:#719e07>-</span>BasicHook<span style=color:#719e07>.</span>py <span style=color:#719e07>-</span>r calc
+[<span style=color:#2aa198>00</span>:<span style=color:#2aa198>12</span>:<span style=color:#2aa198>15.0736</span>] Starting calc
+[<span style=color:#2aa198>00</span>:<span style=color:#2aa198>12</span>:<span style=color:#2aa198>15.0796</span>] Hit kernel32!CreateFileW
+[<span style=color:#2aa198>00</span>:<span style=color:#2aa198>12</span>:<span style=color:#2aa198>15.0796</span>] lpFilename: C:\Windows\Fonts\staticcache<span style=color:#719e07>.</span>dat
+[<span style=color:#2aa198>00</span>:<span style=color:#2aa198>12</span>:<span style=color:#2aa198>15.0796</span>] Leaving kernel32!CreateFileW
+[<span style=color:#2aa198>00</span>:<span style=color:#2aa198>12</span>:<span style=color:#2aa198>15.0796</span>] Return value: c4
+</code></pre></div><p>And in procmon with these filters:</p>
+<ul>
+<li><code>Process Name is calc.exe</code></li>
+<li><code>Operation is ReadFile</code>
+<ul>
+<li>If you have enabled <code>Filter (menu) > Enable Advanced Output</code>, use <code>IRP_MJ_READ</code> instead of <code>ReadFile</code>.</li>
+</ul>
+</li>
+</ul>
+<span class=caption-wrapper>
+<img class=caption src=/images/2017/winappdbg-2/03-procmon-readfile.png title="Procmon ReadFile filter" alt="Procmon ReadFile filter">
+<span class=caption-text>Procmon ReadFile filter</span>
+</span>
+<p>I am not going to post the <code>notepad</code> output here. Run the script with <code>-r notepad</code> and you will see a wall of text when you open a common file dialog to open a file or save.</p>
+<p>For a similar example in the docs, see <a href=https://winappdbg.readthedocs.io/en/latest/Debugging.html#example-12-hooking-a-function title="Example #12: hooking a function - WinAppDbg documentation" target=_blank rel="noreferrer noopener">example 12 - hooking a function</a>.</p>
+<h1 id=11---easier-hooking-via-apihooks>11 - Easier Hooking via apiHooks
+<a class=header-link href=#11---easier-hooking-via-apihooks><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>That was fun but we wrote a lot of boilerplate code. WinAppDbg offers a better way to hook functions through <code>apiHooks</code>.</p>
+<figure class=code>
+<figcaption>
+<span>11-BetterHook.py</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">31
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">32
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">33
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">34
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">35
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">36
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">37
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">38
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">39
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">40
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">41
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">42
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">43
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">44
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">45
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">46
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">47
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">48
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">49
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">50
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">51
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">52
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">53
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>from</span> winappdbg.win32 <span style=color:#719e07>import</span> PVOID, DWORD, HANDLE
+
+
+<span style=color:#719e07>class</span> <span style=color:#268bd2>DebugEvents</span>(winappdbg<span style=color:#719e07>.</span>EventHandler):
+    <span style=color:#2aa198>&#34;&#34;&#34;
+</span><span style=color:#2aa198>    Event handler class.
+</span><span style=color:#2aa198>    event: https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/event.py
+</span><span style=color:#2aa198>    &#34;&#34;&#34;</span>
+
+    <span style=color:#586e75># Better hooking</span>
+    <span style=color:#586e75># https://winappdbg.readthedocs.io/en/latest/Debugging.html#example-9-intercepting-api-calls</span>
+
+    apiHooks <span style=color:#719e07>=</span> {
+
+        <span style=color:#586e75># Hooks for the kernel32 library.</span>
+        <span style=color:#2aa198>&#34;kernel32.dll&#34;</span>: [
+
+            <span style=color:#586e75># We have seen these before</span>
+            <span style=color:#586e75># Function       Signature</span>
+            (<span style=color:#2aa198>&#34;CreateFileA&#34;</span>, (PVOID, DWORD, DWORD, PVOID, DWORD, DWORD, HANDLE)),
+            (<span style=color:#2aa198>&#34;CreateFileW&#34;</span>, (PVOID, DWORD, DWORD, PVOID, DWORD, DWORD, HANDLE)),
+
+            <span style=color:#586e75># Can also pass parameter count</span>
+            <span style=color:#586e75># (&#34;CreateFileA&#34;, 6),</span>
+            <span style=color:#586e75># (&#34;CreateFileW&#34;, 6),</span>
+        ],
+    }
+
+    <span style=color:#586e75># Now we can simply define a method for each hooked API.</span>
+    <span style=color:#586e75># &#34;pre_&#34;  methods are called when entering the hooked function.</span>
+    <span style=color:#586e75># &#34;post_&#34; methods are called when returning from the hooked function.</span>
+
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>pre_CreateFileW</span>(<span style=color:#268bd2>self</span>, event, ra, lpFileName, dwDesiredAccess,
+                        dwShareMode, lpSecurityAttributes, dwCreationDisposition,
+                        dwFlagsAndAttributes, hTemplateFile):
+
+        process <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_process()
+        myFileName <span style=color:#719e07>=</span> process<span style=color:#719e07>.</span>peek_string(lpFileName, fUnicode<span style=color:#719e07>=</span><span style=color:#cb4b16>True</span>)
+        mylogger<span style=color:#719e07>.</span>log_text(<span style=color:#2aa198>&#34;pre_CreateFileW opening file </span><span style=color:#2aa198>%s</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> (myFileName))
+
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>post_CreateFileW</span>(<span style=color:#268bd2>self</span>, event, retval):
+        mylogger<span style=color:#719e07>.</span>log_text(<span style=color:#2aa198>&#34;Return value: </span><span style=color:#2aa198>%x</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> retval)
+
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>pre_CreateFileA</span>(<span style=color:#268bd2>self</span>, event, ra, lpFileName, dwDesiredAccess,
+                        dwShareMode, lpSecurityAttributes, dwCreationDisposition,
+                        dwFlagsAndAttributes, hTemplateFile):
+
+        process <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_process()
+        myFileName <span style=color:#719e07>=</span> process<span style=color:#719e07>.</span>peek_string(lpFileName, fUnicode<span style=color:#719e07>=</span><span style=color:#cb4b16>False</span>)
+        mylogger<span style=color:#719e07>.</span>log_text(<span style=color:#2aa198>&#34;pre_CreateFileA opening file </span><span style=color:#2aa198>%s</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> (myFileName))
+
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>post_CreateFileA</span>(<span style=color:#268bd2>self</span>, event, retval):
+        mylogger<span style=color:#719e07>.</span>log_text(<span style=color:#2aa198>&#34;Return value: </span><span style=color:#2aa198>%x</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> retval)</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<p>This looks much easier and more straightforward (of course I am biased).</p>
+<h2 id=apihooks>apiHooks
+<a class=header-link href=#apihooks><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Inside our EventHandler class we create a dictionary named <code>apiHooks</code>. DLL name is key and hooked functions (and their signatures) are values. I am hooking functions from one DLL it's possible to add multiple DLLs/functions quickly.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm><span style=color:#268bd2>apiHooks</span> = {
+
+    <span style=color:#586e75># Hooks for the kernel32 library.
+</span><span style=color:#586e75></span>    &#39;<span style=color:#268bd2>kernel32.dll</span>&#39;: [
+
+        <span style=color:#586e75># We have seen these before
+</span><span style=color:#586e75></span>        <span style=color:#586e75># Function       Signature
+</span><span style=color:#586e75></span>        (&#39;<span style=color:#268bd2>CreateFileA</span>&#39;, (<span style=color:#cb4b16>PVOID</span>, <span style=color:#cb4b16>DWORD</span>, <span style=color:#cb4b16>DWORD</span>, <span style=color:#cb4b16>PVOID</span>, <span style=color:#cb4b16>DWORD</span>, <span style=color:#cb4b16>DWORD</span>, <span style=color:#cb4b16>HANDLE</span>)),
+        (&#39;<span style=color:#268bd2>CreateFileW</span>&#39;, (<span style=color:#cb4b16>PVOID</span>, <span style=color:#cb4b16>DWORD</span>, <span style=color:#cb4b16>DWORD</span>, <span style=color:#cb4b16>PVOID</span>, <span style=color:#cb4b16>DWORD</span>, <span style=color:#cb4b16>DWORD</span>, <span style=color:#cb4b16>HANDLE</span>)),
+
+        <span style=color:#586e75># Can also pass parameter count
+</span><span style=color:#586e75></span>        <span style=color:#586e75># (&#39;CreateFileA&#39;, 6),
+</span><span style=color:#586e75></span>        <span style=color:#586e75># (&#39;CreateFileW&#39;, 6),
+</span><span style=color:#586e75></span>    ],
+}
+</code></pre></div><p>We can also pass parameter count instead of signature. I personally prefer signature because it's easier to keep track of argument types.</p>
+<p>Then for each hooked functions we create two methods name <code>pre</code> and <code>post</code> like before (note method names are non-negotiable so don't go creative here).</p>
+<h2 id=apihooks-in-action>apiHooks in Action
+<a class=header-link href=#apihooks-in-action><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>And it works.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>$ python <span style=color:#2aa198>11</span><span style=color:#719e07>-</span>BetterHook<span style=color:#719e07>.</span>py <span style=color:#719e07>-</span>r calc
+[<span style=color:#2aa198>00</span>:<span style=color:#2aa198>54</span>:<span style=color:#2aa198>01.0164</span>] Starting calc
+[<span style=color:#2aa198>00</span>:<span style=color:#2aa198>54</span>:<span style=color:#2aa198>01.0213</span>] pre_CreateFileW opening file C:\Windows\Fonts\staticcache<span style=color:#719e07>.</span>dat
+[<span style=color:#2aa198>00</span>:<span style=color:#2aa198>54</span>:<span style=color:#2aa198>01.0213</span>] Return value: c4
+</code></pre></div><p>For a similar example in docs see <a href=https://winappdbg.readthedocs.io/en/latest/Debugging.html#example-9-intercepting-api-calls title="Example #9: intercepting API calls - WinAppDbg documentation" target=_blank rel="noreferrer noopener">example 9: intercepting-api-calls</a>.</p>
+<span class=caption-wrapper>
+<img class=caption src=https://i.giphy.com/media/zcCGBRQshGdt6/giphy.gif title="Eating your bandwith two megabytes at a time" alt="Eating your bandwith two megabytes at a time">
+<span class=caption-text>Eating your bandwith two megabytes at a time</span>
+</span>
+<p>Moving forward we will be using this method for hooking.</p>
+<h1 id=12---not-echo-mirage---hooking-ie---part-1>12 - Not Echo Mirage - Hooking IE - Part 1
+<a class=header-link href=#12---not-echo-mirage---hooking-ie---part-1><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Echo Mirage was an application that used function hooking to view and modify pre-encryption/pre-TLS traffic. Good luck finding a clean version of it :D. We are going to hook IE using WinAppDbg to just view payloads.</p>
+<h2 id=what-to-hook>What to Hook?
+<a class=header-link href=#what-to-hook><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>We learn from malware. They are the best. In this article titled <a href=https://thisissecurity.stormshield.com/2017/09/28/analyzing-form-grabber-malware-targeting-browsers/#t01 title="Analyzing a form-grabber malware - ThisIsSecurity" target=_blank rel="noreferrer noopener">Analyzing a form-grabber malware</a>, there's a table that contains what this malware hooks<sup id=fnref:7><a href=#fn:7 class=footnote-ref role=doc-noteref>7</a></sup>. This is the part we are interested in.</p>
+<table>
+<thead>
+<tr>
+<th>Browser</th>
+<th>DLL</th>
+<th>Function</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>iexplore.exe</td>
+<td>Wininet.dll</td>
+<td>HttpSendRequestW/A</td>
+</tr>
+<tr>
+<td>firefox.exe</td>
+<td>nspr4.dll</td>
+<td>PR_Write</td>
+</tr>
+</tbody>
+</table>
+<h2 id=httpsendrequest>HttpSendRequest
+<a class=header-link href=#httpsendrequest><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>For IE we need to hook <code>HttpSendRequestW</code> (not going to bother with the Ansi version on Win 7). According to <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa384247%28v=vs.85%29.aspx" title="HttpSendRequest - MSDN" target=_blank rel="noreferrer noopener">MSDN</a> it looks like this:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm><span style=color:#268bd2>BOOL</span> <span style=color:#cb4b16>HttpSendRequest</span>(
+  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>HINTERNET</span> <span style=color:#cb4b16>hRequest</span>,
+  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>LPCTSTR</span>   <span style=color:#cb4b16>lpszHeaders</span>,
+  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>DWORD</span>     <span style=color:#cb4b16>dwHeadersLength</span>,
+  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>LPVOID</span>    <span style=color:#cb4b16>lpOptional</span>,
+  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>DWORD</span>     <span style=color:#cb4b16>dwOptionalLength</span>
+)<span style=color:#586e75>;
+</span></code></pre></div><p>We want to log the <code>lpOptional</code> parameter because it contains the <code>POST</code> and <code>PUT</code> payloads and most likely passwords (which this malware is interested in) are submitted via <code>POST</code>.</p>
+<figure class=code>
+<figcaption>
+<span>12-NotEchoMirage-IE-1.py</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">31
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">32
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">33
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">34
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">35
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">36
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">37
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">38
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>from</span> winappdbg.win32 <span style=color:#719e07>import</span> PVOID, DWORD, HANDLE
+
+
+<span style=color:#719e07>class</span> <span style=color:#268bd2>DebugEvents</span>(winappdbg<span style=color:#719e07>.</span>EventHandler):
+    <span style=color:#2aa198>&#34;&#34;&#34;
+</span><span style=color:#2aa198>    Event handler class.
+</span><span style=color:#2aa198>    event: https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/event.py
+</span><span style=color:#2aa198>    &#34;&#34;&#34;</span>
+
+    apiHooks <span style=color:#719e07>=</span> {
+
+        <span style=color:#586e75># Hooks for the wininet.dll library - note this is case-sensitive</span>
+        <span style=color:#2aa198>&#39;wininet.dll&#39;</span>: [
+
+            <span style=color:#586e75># Function            Signature</span>
+            (<span style=color:#2aa198>&#39;HttpSendRequestW&#39;</span>, (HANDLE, PVOID, DWORD, PVOID, DWORD)),
+        ],
+    }
+
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>pre_HttpSendRequestW</span>(<span style=color:#268bd2>self</span>, event, ra, hRequest, lpszHeaders,
+                             dwHeadersLength, lpOptional, dwOptionalLength):
+
+        process <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_process()
+
+        <span style=color:#719e07>if</span> dwHeadersLength <span style=color:#719e07>!=</span> <span style=color:#2aa198>0</span>:
+            mylogger<span style=color:#719e07>.</span>log_text(winapputil<span style=color:#719e07>.</span>utils<span style=color:#719e07>.</span>get_line())
+            mylogger<span style=color:#719e07>.</span>log_text(<span style=color:#2aa198>&#34;HttpSendRequestW&#34;</span>)
+
+            headers <span style=color:#719e07>=</span> process<span style=color:#719e07>.</span>peek_string(lpszHeaders, fUnicode<span style=color:#719e07>=</span><span style=color:#cb4b16>True</span>)
+            mylogger<span style=color:#719e07>.</span>log_text(<span style=color:#2aa198>&#34;Headers </span><span style=color:#2aa198>%s</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> (headers))
+
+        <span style=color:#719e07>if</span> dwOptionalLength <span style=color:#719e07>!=</span> <span style=color:#2aa198>0</span>:
+            <span style=color:#586e75># This is not unicode - see the pointer name (lp vs. lpsz)</span>
+            <span style=color:#586e75># fUnicode is set to False (default) then</span>
+            optional <span style=color:#719e07>=</span> process<span style=color:#719e07>.</span>peek_string(lpOptional, fUnicode<span style=color:#719e07>=</span><span style=color:#cb4b16>False</span>)
+
+            mylogger<span style=color:#719e07>.</span>log_text(<span style=color:#2aa198>&#34;Optional </span><span style=color:#2aa198>%s</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> (optional))
+            mylogger<span style=color:#719e07>.</span>log_text(winapputil<span style=color:#719e07>.</span>utils<span style=color:#719e07>.</span>get_line())</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<p>Our code looks simple thanks to the <code>apiHooks</code> functionality.</p>
+<p>In <code>pre_HttpSendRequestW</code> we are reading <code>lpszHeaders</code> and <code>lpOptional</code> (both are not Unicode) and print them.</p>
+<h2 id=hooking-ie>Hooking IE
+<a class=header-link href=#hooking-ie><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Run IE (note it's not in PATH so you have to enter the full path) and go around the web, see headers (no cookies) and the occasional <code>POST</code> request (mostly ads). To see a <code>POST</code> request in action, head over to pastebin and submit a new paste:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm><span style=color:#268bd2>$</span> <span style=color:#cb4b16>python</span> <span style=color:#2aa198>12</span>-<span style=color:#cb4b16>NotEchoMirage-IE-1.py</span> -<span style=color:#cb4b16>r</span> &#34;<span style=color:#cb4b16>c</span>:\<span style=color:#cb4b16>Program</span> <span style=color:#cb4b16>Files</span>\<span style=color:#cb4b16>Internet</span> <span style=color:#cb4b16>Explorer</span>\<span style=color:#cb4b16>iexplore.exe</span>&#34;
+...
+[01:50:02<span style=color:#268bd2>.0115</span>] ---------------------------------------------------------------------------
+[01:50:02<span style=color:#268bd2>.0115</span>] <span style=color:#cb4b16>HttpSendRequestW</span>
+[01:50:02<span style=color:#268bd2>.0115</span>] <span style=color:#cb4b16>Headers</span> <span style=color:#cb4b16>Referer</span>: <span style=color:#cb4b16>https</span>://<span style=color:#cb4b16>pastebin.com</span>/
+Accept-Language: <span style=color:#268bd2>en-US</span>
+User-Agent: <span style=color:#268bd2>Mozilla</span>/<span style=color:#2aa198>5</span><span style=color:#cb4b16>.0</span> (<span style=color:#cb4b16>Windows</span> <span style=color:#cb4b16>NT</span> <span style=color:#2aa198>6</span><span style=color:#cb4b16>.1</span><span style=color:#586e75>; Trident/7.0; rv:11.0) like Gecko
+</span><span style=color:#586e75></span><span style=color:#cb4b16>Content-Type</span>: <span style=color:#cb4b16>multipart</span>/<span style=color:#cb4b16>form-data</span><span style=color:#586e75>; boundary=---------------------------7e16a21104fe
+</span><span style=color:#586e75></span><span style=color:#cb4b16>Accept-Encoding</span>: <span style=color:#cb4b16>gzip</span>, <span style=color:#cb4b16>deflate</span>
+[01:50:02<span style=color:#268bd2>.0115</span>] <span style=color:#cb4b16>Optional</span> -----------------------------<span style=color:#2aa198>7</span><span style=color:#cb4b16>e16a21104fe</span>
+Content-Disposition: <span style=color:#268bd2>form-data</span><span style=color:#586e75>; name=&#34;csrf_token_post&#34;
+</span><span style=color:#586e75></span>
+<span style=color:#268bd2>MTUxMDM4Mjk1N0g5d1d2TkJXZnNXUEk3UWdmTnlycXp2WHp3M0lJc1VG</span>
+-----------------------------7<span style=color:#268bd2>e16a21104fe</span>
+Content-Disposition: <span style=color:#268bd2>form-data</span><span style=color:#586e75>; name=&#34;submit_hidden&#34;
+</span><span style=color:#586e75></span>
+<span style=color:#268bd2>submit_hidden</span>
+-----------------------------7<span style=color:#268bd2>e16a21104fe</span>
+Content-Disposition: <span style=color:#268bd2>form-data</span><span style=color:#586e75>; name=&#34;paste_code&#34;
+</span><span style=color:#586e75></span>
+<span style=color:#268bd2>Random</span> <span style=color:#cb4b16>text</span> <span style=color:#cb4b16>in</span> <span style=color:#cb4b16>pastebin</span>
+-----------------------------7<span style=color:#268bd2>e16a21104fe</span>
+Content-Disposition: <span style=color:#268bd2>form-data</span><span style=color:#586e75>; name=&#34;paste_format&#34;
+</span><span style=color:#586e75></span>
+1
+-----------------------------7<span style=color:#268bd2>e16a21104fe</span>
+Content-Disposition: <span style=color:#268bd2>form-data</span><span style=color:#586e75>; name=&#34;paste_expire_date&#34;
+</span><span style=color:#586e75></span>
+<span style=color:#268bd2>N</span>
+-----------------------------7<span style=color:#268bd2>e16a21104fe</span>
+Content-Disposition: <span style=color:#268bd2>form-data</span><span style=color:#586e75>; name=&#34;paste_private&#34;
+</span><span style=color:#586e75></span>
+0
+-----------------------------7<span style=color:#268bd2>e16a21104fe</span>
+Content-Disposition: <span style=color:#268bd2>form-data</span><span style=color:#586e75>; name=&#34;paste_name&#34;
+</span><span style=color:#586e75></span>
+
+-----------------------------7<span style=color:#268bd2>e16a21104fe--</span>
+...
+</code></pre></div><p>This is nice but we do not see where the data is sent or any GET requests.</p>
+<h1 id=13---not-echo-mirage---hooking-ie---part-2>13 - Not Echo Mirage - Hooking IE - Part 2
+<a class=header-link href=#13---not-echo-mirage---hooking-ie---part-2><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>To gather more information we need to hook more functions.</p>
+<h2 id=httpopenrequest>HttpOpenRequest
+<a class=header-link href=#httpopenrequest><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>The first parameter for <code>HttpSendRequest</code> is a handle to a request. This request is returned by a call to <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa384233%28v=vs.85%29.aspx" title="HttpOpenRequest - MSDN" target=_blank rel="noreferrer noopener">HttpOpenRequest</a>:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm><span style=color:#268bd2>HINTERNET</span> <span style=color:#cb4b16>HttpOpenRequest</span>(
+  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>HINTERNET</span> <span style=color:#cb4b16>hConnect</span>,
+  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>LPCTSTR</span>   <span style=color:#cb4b16>lpszVerb</span>,
+  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>LPCTSTR</span>   <span style=color:#cb4b16>lpszObjectName</span>,
+  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>LPCTSTR</span>   <span style=color:#cb4b16>lpszVersion</span>,
+  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>LPCTSTR</span>   <span style=color:#cb4b16>lpszReferer</span>,
+  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>LPCTSTR</span>   *<span style=color:#cb4b16>lplpszAcceptTypes</span>,
+  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>DWORD</span>     <span style=color:#cb4b16>dwFlags</span>,
+  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>DWORD_PTR</span> <span style=color:#cb4b16>dwContext</span>
+)<span style=color:#586e75>;
+</span></code></pre></div><p>Interesting parameters are:</p>
+<ul>
+<li><code>lpszVerb</code>: *str to HTTP verb. If NULL, verb is <code>GET</code>.</li>
+<li><code>lpszObjectName</code>: *str to name of target obj. "This is generally a file name, an executable module, or a search specifier."</li>
+<li><code>lpszReferer</code>: *str to referer (we already seen it in <code>HttpSendRequest.lpszHeaders</code>).</li>
+</ul>
+<figure class=code>
+<figcaption>
+<span>12-NotEchoMirage-IE-2.py</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">31
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">32
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">33
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">34
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">35
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">36
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">37
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">38
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">39
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">40
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">41
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">42
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">43
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>from</span> winappdbg.win32 <span style=color:#719e07>import</span> PVOID, DWORD, HANDLE
+
+
+<span style=color:#719e07>class</span> <span style=color:#268bd2>DebugEvents</span>(winappdbg<span style=color:#719e07>.</span>EventHandler):
+    <span style=color:#2aa198>&#34;&#34;&#34;
+</span><span style=color:#2aa198>    Event handler class.
+</span><span style=color:#2aa198>    event: https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/event.py
+</span><span style=color:#2aa198>    &#34;&#34;&#34;</span>
+
+    apiHooks <span style=color:#719e07>=</span> {
+
+        <span style=color:#586e75># Hooks for the wininet.dll library - note this is case-sensitive</span>
+        <span style=color:#2aa198>&#34;wininet.dll&#34;</span>: [
+
+            <span style=color:#586e75># Function            Signature</span>
+            (<span style=color:#2aa198>&#34;HttpSendRequestW&#34;</span>, (HANDLE, PVOID, DWORD, PVOID, DWORD)),
+            (<span style=color:#2aa198>&#34;HttpOpenRequestW&#34;</span>, (HANDLE, PVOID, PVOID, PVOID, PVOID, PVOID,
+                                  DWORD, PVOID)),
+        ],
+    }
+
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>pre_HttpSendRequestW</span>(<span style=color:#268bd2>self</span>, event, ra, hRequest, lpszHeaders,
+                             dwHeadersLength, lpOptional, dwOptionalLength):
+
+        <span style=color:#719e07>...</span>
+
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>pre_HttpOpenRequestW</span>(<span style=color:#268bd2>self</span>, event, ra, hConnect, lpszVerb,
+                             lpszObjectName, lpszVersion, lpszReferer,
+                             lplpszAcceptTypes, dwFlags, dwContext):
+
+        process <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_process()
+
+        verb <span style=color:#719e07>=</span> process<span style=color:#719e07>.</span>peek_string(lpszVerb, fUnicode<span style=color:#719e07>=</span><span style=color:#cb4b16>True</span>)
+        <span style=color:#719e07>if</span> verb <span style=color:#719e07>is</span> <span style=color:#cb4b16>None</span>:
+            verb <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;GET&#34;</span>
+
+        obj <span style=color:#719e07>=</span> process<span style=color:#719e07>.</span>peek_string(lpszObjectName, fUnicode<span style=color:#719e07>=</span><span style=color:#cb4b16>True</span>)
+
+        mylogger<span style=color:#719e07>.</span>log_text(winapputil<span style=color:#719e07>.</span>utils<span style=color:#719e07>.</span>get_line())
+        mylogger<span style=color:#719e07>.</span>log_text(<span style=color:#2aa198>&#34;HttpOpenRequestW&#34;</span>)
+        mylogger<span style=color:#719e07>.</span>log_text(<span style=color:#2aa198>&#34;verb: </span><span style=color:#2aa198>%s</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> verb)
+        mylogger<span style=color:#719e07>.</span>log_text(<span style=color:#2aa198>&#34;obj : </span><span style=color:#2aa198>%s</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> obj)
+        mylogger<span style=color:#719e07>.</span>log_text(winapputil<span style=color:#719e07>.</span>utils<span style=color:#719e07>.</span>get_line())</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<h2 id=hooking-more-ie>Hooking more IE
+<a class=header-link href=#hooking-more-ie><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Let's see what we can get this time (and if we need to dig further). Note I have removed a lot of junk from the output.</p>
+<p>Here's what we <code>GET</code> for <code>example.com</code></p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm><span style=color:#268bd2>$</span> <span style=color:#cb4b16>python</span> <span style=color:#2aa198>13</span>-<span style=color:#cb4b16>NotEchoMirage-IE-2.py</span> -<span style=color:#cb4b16>r</span> &#34;<span style=color:#cb4b16>C</span>:\<span style=color:#cb4b16>Program</span> <span style=color:#cb4b16>Files</span>\<span style=color:#cb4b16>Internet</span> <span style=color:#cb4b16>Explorer</span>\<span style=color:#cb4b16>iexplore.exe</span>&#34;
+...
+[08:49:34<span style=color:#268bd2>.0502</span>] ---------------------------------------------------------------------------
+[08:49:36<span style=color:#268bd2>.0494</span>] ---------------------------------------------------------------------------
+[08:49:36<span style=color:#268bd2>.0494</span>] <span style=color:#cb4b16>HttpOpenRequestW</span>
+[08:49:36<span style=color:#268bd2>.0494</span>] <span style=color:#cb4b16>verb</span>: <span style=color:#cb4b16>GET</span>
+[08:49:36<span style=color:#268bd2>.0494</span>] <span style=color:#cb4b16>obj</span> : /
+[08:49:36<span style=color:#268bd2>.0494</span>] ---------------------------------------------------------------------------
+[08:49:36<span style=color:#268bd2>.0505</span>] ---------------------------------------------------------------------------
+[08:49:36<span style=color:#268bd2>.0505</span>] <span style=color:#cb4b16>HttpSendRequestW</span>
+[08:49:36<span style=color:#268bd2>.0505</span>] <span style=color:#cb4b16>Headers</span> <span style=color:#cb4b16>Accept-Language</span>: <span style=color:#cb4b16>en-US</span>
+User-Agent: <span style=color:#268bd2>Mozilla</span>/<span style=color:#2aa198>5</span><span style=color:#cb4b16>.0</span> (<span style=color:#cb4b16>Windows</span> <span style=color:#cb4b16>NT</span> <span style=color:#2aa198>6</span><span style=color:#cb4b16>.1</span><span style=color:#586e75>; Trident/7.0; rv:11.0) like Gecko
+</span><span style=color:#586e75></span><span style=color:#cb4b16>Accept-Encoding</span>: <span style=color:#cb4b16>gzip</span>, <span style=color:#cb4b16>deflate</span>
+...
+</code></pre></div><p>Similar for <code>google.com</code> (today is veterans' day hence the requests to get the logo):</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm>...
+[08:50:57<span style=color:#268bd2>.0878</span>] ---------------------------------------------------------------------------
+[08:50:58<span style=color:#268bd2>.0217</span>] ---------------------------------------------------------------------------
+[08:50:58<span style=color:#268bd2>.0217</span>] <span style=color:#cb4b16>HttpOpenRequestW</span>
+[08:50:58<span style=color:#268bd2>.0217</span>] <span style=color:#cb4b16>verb</span>: <span style=color:#cb4b16>GET</span>
+[08:50:58<span style=color:#268bd2>.0217</span>] <span style=color:#cb4b16>obj</span> : /
+[08:50:58<span style=color:#268bd2>.0217</span>] ---------------------------------------------------------------------------
+[08:50:58<span style=color:#268bd2>.0217</span>] ---------------------------------------------------------------------------
+[08:50:58<span style=color:#268bd2>.0217</span>] <span style=color:#cb4b16>HttpSendRequestW</span>
+[08:50:58<span style=color:#268bd2>.0217</span>] <span style=color:#cb4b16>Headers</span> <span style=color:#cb4b16>Accept-Language</span>: <span style=color:#cb4b16>en-US</span>
+User-Agent: <span style=color:#268bd2>Mozilla</span>/<span style=color:#2aa198>5</span><span style=color:#cb4b16>.0</span> (<span style=color:#cb4b16>Windows</span> <span style=color:#cb4b16>NT</span> <span style=color:#2aa198>6</span><span style=color:#cb4b16>.1</span><span style=color:#586e75>; Trident/7.0; rv:11.0) like Gecko
+</span><span style=color:#586e75></span><span style=color:#cb4b16>Accept-Encoding</span>: <span style=color:#cb4b16>gzip</span>, <span style=color:#cb4b16>deflate</span>
+[08:50:58<span style=color:#268bd2>.0479</span>] ---------------------------------------------------------------------------
+[08:50:58<span style=color:#268bd2>.0479</span>] <span style=color:#cb4b16>HttpOpenRequestW</span>
+[08:50:58<span style=color:#268bd2>.0479</span>] <span style=color:#cb4b16>verb</span>: <span style=color:#cb4b16>GET</span>
+[08:50:58<span style=color:#268bd2>.0479</span>] <span style=color:#cb4b16>obj</span> : /<span style=color:#cb4b16>logos</span>/<span style=color:#cb4b16>doodles</span>/<span style=color:#2aa198>2017</span>/<span style=color:#cb4b16>veterans-day-2017-5171750613549056-s.png</span>
+[08:50:58<span style=color:#268bd2>.0479</span>] ---------------------------------------------------------------------------
+[08:50:58<span style=color:#268bd2>.0489</span>] ---------------------------------------------------------------------------
+[08:50:58<span style=color:#268bd2>.0489</span>] <span style=color:#cb4b16>HttpSendRequestW</span>
+[08:50:58<span style=color:#268bd2>.0489</span>] <span style=color:#cb4b16>Headers</span> <span style=color:#cb4b16>Referer</span>: <span style=color:#cb4b16>https</span>://<span style=color:#cb4b16>www.google.com</span>/
+Accept-Language: <span style=color:#268bd2>en-US</span>
+User-Agent: <span style=color:#268bd2>Mozilla</span>/<span style=color:#2aa198>5</span><span style=color:#cb4b16>.0</span> (<span style=color:#cb4b16>Windows</span> <span style=color:#cb4b16>NT</span> <span style=color:#2aa198>6</span><span style=color:#cb4b16>.1</span><span style=color:#586e75>; Trident/7.0; rv:11.0) like Gecko
+</span><span style=color:#586e75></span><span style=color:#cb4b16>Accept-Encoding</span>: <span style=color:#cb4b16>gzip</span>, <span style=color:#cb4b16>deflate</span>
+[08:50:58<span style=color:#268bd2>.0489</span>] ---------------------------------------------------------------------------
+[08:50:58<span style=color:#268bd2>.0489</span>] <span style=color:#cb4b16>HttpOpenRequestW</span>
+[08:50:58<span style=color:#268bd2>.0489</span>] <span style=color:#cb4b16>verb</span>: <span style=color:#cb4b16>GET</span>
+[08:50:58<span style=color:#268bd2>.0489</span>] <span style=color:#cb4b16>obj</span> : /<span style=color:#cb4b16>logos</span>/<span style=color:#cb4b16>doodles</span>/<span style=color:#2aa198>2017</span>/<span style=color:#cb4b16>veterans-day-2017-5171750613549056-l.png</span>
+[08:50:58<span style=color:#268bd2>.0489</span>] ---------------------------------------------------------------------------
+[08:50:58<span style=color:#268bd2>.0489</span>] ---------------------------------------------------------------------------
+[08:50:58<span style=color:#268bd2>.0489</span>] <span style=color:#cb4b16>HttpSendRequestW</span>
+[08:50:58<span style=color:#268bd2>.0489</span>] <span style=color:#cb4b16>Headers</span> <span style=color:#cb4b16>Referer</span>: <span style=color:#cb4b16>https</span>://<span style=color:#cb4b16>www.google.com</span>/
+Accept-Language: <span style=color:#268bd2>en-US</span>
+User-Agent: <span style=color:#268bd2>Mozilla</span>/<span style=color:#2aa198>5</span><span style=color:#cb4b16>.0</span> (<span style=color:#cb4b16>Windows</span> <span style=color:#cb4b16>NT</span> <span style=color:#2aa198>6</span><span style=color:#cb4b16>.1</span><span style=color:#586e75>; Trident/7.0; rv:11.0) like Gecko
+</span><span style=color:#586e75></span><span style=color:#cb4b16>Accept-Encoding</span>: <span style=color:#cb4b16>gzip</span>, <span style=color:#cb4b16>deflate</span>
+[08:50:58<span style=color:#268bd2>.0499</span>] ---------------------------------------------------------------------------
+[08:50:58<span style=color:#268bd2>.0499</span>] <span style=color:#cb4b16>HttpOpenRequestW</span>
+[08:50:58<span style=color:#268bd2>.0499</span>] <span style=color:#cb4b16>verb</span>: <span style=color:#cb4b16>GET</span>
+[08:50:58<span style=color:#268bd2>.0499</span>] <span style=color:#cb4b16>obj</span> : /<span style=color:#cb4b16>images</span>/<span style=color:#cb4b16>icons</span>/<span style=color:#cb4b16>hpcg</span>/<span style=color:#cb4b16>usflag-transbg_42.png</span>
+[08:50:58<span style=color:#268bd2>.0499</span>] ---------------------------------------------------------------------------
+[08:50:58<span style=color:#268bd2>.0499</span>] ---------------------------------------------------------------------------
+[08:50:58<span style=color:#268bd2>.0499</span>] <span style=color:#cb4b16>HttpSendRequestW</span>
+[08:50:58<span style=color:#268bd2>.0499</span>] <span style=color:#cb4b16>Headers</span> <span style=color:#cb4b16>Referer</span>: <span style=color:#cb4b16>https</span>://<span style=color:#cb4b16>www.google.com</span>/
+Accept-Language: <span style=color:#268bd2>en-US</span>
+User-Agent: <span style=color:#268bd2>Mozilla</span>/<span style=color:#2aa198>5</span><span style=color:#cb4b16>.0</span> (<span style=color:#cb4b16>Windows</span> <span style=color:#cb4b16>NT</span> <span style=color:#2aa198>6</span><span style=color:#cb4b16>.1</span><span style=color:#586e75>; Trident/7.0; rv:11.0) like Gecko
+</span><span style=color:#586e75></span><span style=color:#cb4b16>Accept-Encoding</span>: <span style=color:#cb4b16>gzip</span>, <span style=color:#cb4b16>deflate</span>
+...
+</code></pre></div><p>We are not getting everything. That means we need to hook more functions.</p>
+<p>At this point I am moving on to a different program because the three people that will read this blog are already bored. <em>ahem</em> I will leave the rest of IE stuff <em>as an exercise for the readers</em>. Academia, amirite fellow intellectuals?</p>
+<blockquote>
+<p>Here in my university ivory tower, just published this new paper here. It's fun to look myself up on Google Scholar. But you know what I like more than being cited? KNOWLEDGE.</p>
+</blockquote>
+<h1 id=14---not-echo-mirage---firefox>14 - Not Echo Mirage - Firefox
+<a class=header-link href=#14---not-echo-mirage---firefox><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>The other item in that malware hooking table (well part of the table that I copied) is Firefox.</p>
+<h2 id=pr_write-in-rust>PR_Write (in Rust)
+<a class=header-link href=#pr_write-in-rust><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Hooking pre-TLS Firefox encryption is trickier because it does not use Windows APIs. In Firefox it's <a href=https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSPR/Reference/PR_Write title="PR_Write - Mozilla Developer Network" target=_blank rel="noreferrer noopener">PR_Write</a>:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c>PRInt32 <span style=color:#268bd2>PR_Write</span>(
+    PRFileDesc <span style=color:#719e07>*</span>fd,
+    <span style=color:#719e07>const</span> <span style=color:#dc322f>void</span> <span style=color:#719e07>*</span>buf,
+    PRInt32 amount);
+
+fd:     A pointer to the PRFileDesc object <span style=color:#719e07>for</span> a file or socket
+buf:    A pointer to the buffer holding the data to be written
+amount: The amount of data, in bytes, to be written from the buffer
+</code></pre></div><p>Could not talk about Firefox, <code>PR_Write</code> and not make a "Re-write in Rust"<sup id=fnref:8><a href=#fn:8 class=footnote-ref role=doc-noteref>8</a></sup> joke. Maybe we should hook Chrome and talk about generics.</p>
+<h2 id=where-is-pr_write>Where is PR_Write?
+<a class=header-link href=#where-is-pr_write><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Tl;dr it's exported in <code>nss3.dll</code>.</p>
+<p>The Mozilla docs are less helpful than MSDN. MSDN lists the DLL that exports the function but Mozilla does not. Searching in MDN (Mozilla Developer Network) got me nowhere.</p>
+<p>That malware table listed it under <code>nspr4.dll</code> and search engine results also mostly say the same thing. Grey Hat Python also lists it in the same DLL. In my Firefox (32-bit 56.0.2) there's no such DLL in <code>C:\Program Files\Mozilla Firefox</code><sup id=fnref:9><a href=#fn:9 class=footnote-ref role=doc-noteref>9</a></sup>.</p>
+<p>We finally get to <a href=https://wiremask.eu/articles/hooking-firefox-with-frida/ title="Hooking Firefox with Frida - Wiremask.eu" target=_blank rel="noreferrer noopener">Hooking Firefox with Frida</a> from Wiremask.eu which is doing exactly what we do but with Frida<sup id=fnref:10><a href=#fn:10 class=footnote-ref role=doc-noteref>10</a></sup>. Ew, JavaScript code embedded in Python (j/k). Our answer is there <code>nss3.dll</code>.</p>
+<h2 id=null-terminated-strings-vs-random-buffer>Null-Terminated Strings vs. Random Buffer
+<a class=header-link href=#null-terminated-strings-vs-random-buffer><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Pointers in <code>PR_Write</code> point to different kind of data than what we saw in IE. In IE we were mostly dealing with pointers to null-terminated strings. Meaning we could call <code>peek_string</code> and it would go and read until the null-terminator (which is <code>00 00</code> for UTF-16<sup id=fnref:11><a href=#fn:11 class=footnote-ref role=doc-noteref>11</a></sup>). Now we have a random buffer but we have the length so we have to go and read that many bytes from memory directly. It's good to see both types of string/data storage in action<sup id=fnref:12><a href=#fn:12 class=footnote-ref role=doc-noteref>12</a></sup>.</p>
+<figure class=code>
+<figcaption>
+<span>14-NotEchoMirage-FF.py</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">30
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>from</span> winappdbg.win32 <span style=color:#719e07>import</span> PVOID, DWORD, HANDLE
+
+
+<span style=color:#719e07>class</span> <span style=color:#268bd2>DebugEvents</span>(winappdbg<span style=color:#719e07>.</span>EventHandler):
+    <span style=color:#2aa198>&#34;&#34;&#34;
+</span><span style=color:#2aa198>    Event handler class.
+</span><span style=color:#2aa198>    event: https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/event.py
+</span><span style=color:#2aa198>    &#34;&#34;&#34;</span>
+    apiHooks <span style=color:#719e07>=</span> {
+
+        <span style=color:#586e75># Hooks for the nss3.dll library</span>
+        <span style=color:#2aa198>&#39;nss3.dll&#39;</span>: [
+
+            (<span style=color:#2aa198>&#39;PR_Write&#39;</span>, (PVOID, PVOID, PVOID)),
+        ],
+    }
+
+    <span style=color:#719e07>def</span> <span style=color:#268bd2>pre_PR_Write</span>(<span style=color:#268bd2>self</span>, event, ra, fd, buf, amount):
+
+        process <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_process()
+
+        <span style=color:#719e07>if</span> (amount <span style=color:#719e07>&gt;</span> <span style=color:#2aa198>100</span>) <span style=color:#719e07>and</span> (amount <span style=color:#719e07>&lt;</span> <span style=color:#2aa198>1000</span>):
+            mylogger<span style=color:#719e07>.</span>log_text(<span style=color:#2aa198>&#34;PR_Write&#34;</span>)
+
+            <span style=color:#586e75># https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/process.py#L1581</span>
+            contents <span style=color:#719e07>=</span> process<span style=color:#719e07>.</span>read(buf, amount)
+
+            mylogger<span style=color:#719e07>.</span>log_text(<span style=color:#2aa198>&#34;</span><span style=color:#2aa198>%s</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> <span style=color:#b58900>str</span>(contents))
+
+            mylogger<span style=color:#719e07>.</span>log_text(winapputil<span style=color:#719e07>.</span>utils<span style=color:#719e07>.</span>get_line())</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<p>Things are similar but as we saw above, the buffer might contain null-bytes (e.g. binary data vs. null-terminated strings). So we use <code>process.read</code> to read <code>amount</code> bytes from the place <code>buf</code> points to. Then we convert it to string and print it.</p>
+<h2 id=firefox-in-action>Firefox in Action
+<a class=header-link href=#firefox-in-action><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Before you run this, beware that <code>PR_Write</code> is used in a lot more than just TLS in Firefox. This will be slow and Firefox might be unresponsive for a minute after you go to a website. The logs will also gather a lot of garbage. As a result I am only printing buffers that are between 100 and 1000 bytes.</p>
+<p>I suggest piping the output to a file instead of command prompt with the <code>-o</code> switch like this:</p>
+<ul>
+<li><code>$ python 14-NotEchoMirage-FF.py -r "C:\Program Files\Mozilla Firefox\firefox.exe" -o firefox-1.txt</code></li>
+</ul>
+<p>After starting Firefox and entering <code>example.com</code>, Firefox will die for a minute or so. But loot is inside the log file. If you do webapps, you have seen the annoying captive portal detection requests <code>detectportal.firefox.com</code> in Burp. I hate those and Brian King agrees and has <a href=https://www.blackhillsinfosec.com/towards-quieter-firefox/ title="Towards a Quieter Firefox - Black Hills Information Security" target=_blank rel="noreferrer noopener">some tips</a> on how to make them go away.</p>
+<pre tabindex=0><code>[09:23:41.0933] Starting C:\Program Files\Mozilla Firefox\firefox.exe
+[09:23:42.0835] PR_Write
+[09:23:42.0835] GET /success.txt HTTP/1.1
+
+Host: detectportal.firefox.com
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:56.0) Gecko/20100101 Firefox/56.0
+Accept: */*
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Cache-Control: no-cache
+Pragma: no-cache
+Connection: keep-alive
+</code></pre><p>Oh shit, OCSP<sup id=fnref:13><a href=#fn:13 class=footnote-ref role=doc-noteref>13</a></sup>. Alert the authorities, certificates are expiring.</p>
+<pre tabindex=0><code>[09:23:43.0467] PR_Write
+[09:23:43.0467] POST /ocsp HTTP/1.1
+
+Host: clients1.google.com
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:56.0) Gecko/20100101 Firefox/56.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Length: 75
+Content-Type: application/ocsp-request
+Connection: keep-alive
+
+[payload removed]
+</code></pre><p>Mooooom, Firefox is tracking me.</p>
+<pre tabindex=0><code>[09:23:44.0049] PR_Write
+[09:23:44.0049] GET /v1/country?key=fff72d56-b040-4205-9a11-82feda9d83a3 HTTP/1.1
+
+Host: location.services.mozilla.com
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:56.0) Gecko/20100101 Firefox/56.0
+Accept: */*
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Origin: null
+Connection: keep-alive
+</code></pre><p>And finally our request to <code>example.com</code></p>
+<pre tabindex=0><code>[09:24:25.0388] PR_Write
+[09:24:25.0388] GET / HTTP/1.1
+
+Host: example.com
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:56.0) Gecko/20100101 Firefox/56.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+Upgrade-Insecure-Requests: 1
+If-Modified-Since: Fri, 09 Aug 2013 23:54:35 GMT
+If-None-Match: &quot;359670651&quot;
+</code></pre>
+<h1 id=conclusion>Conclusion
+<a class=header-link href=#conclusion><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>I wanted to continue but this blog is already long enough. The markdown file is at 45KBs and counting (mainly because I pasted a lot of code, crap and went full-academia with links and footnotes). But I am bored and you are most likely too.</p>
+<p>Go out there and hook stuff. Practice on eavesdropping and tune in for part 3 where we learn how to manipulate function arguments and return values.</p>
+<p>If you have feedback, you know where to find me. And check out the rest of the <a href=https://github.com/parsiya/Parsia-Clone/ title="Parsia Clone on Github" target=_blank rel="noreferrer noopener">clone</a>, there's some good stuff there.</p>
+<section class=footnotes role=doc-endnotes>
+<hr>
+<ol>
+<li id=fn:1 role=doc-endnote>
+<p>Raymond's blog, <a href=https://blogs.msdn.microsoft.com/oldnewthing/ title="The Old New Thing - Raymond Chen's MSDN blog" target=_blank rel="noreferrer noopener">The Old New Thing</a> has interesting articles.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
+</li>
+<li id=fn:2 role=doc-endnote>
+<p>On a 32-bit machine we will most likely get an address starting with <code>0x7F</code> which is in DLL-land.&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
+</li>
+<li id=fn:3 role=doc-endnote>
+<p>See <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dd374089%28v=vs.85%29.aspx" title="Unicode in the Windows API - MSDN" target=_blank rel="noreferrer noopener">MSDN</a> for their differences.&#160;<a href=#fnref:3 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
+</li>
+<li id=fn:4 role=doc-endnote>
+<p>Looks much better with <code>asm</code> highlighting.&#160;<a href=#fnref:4 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
+</li>
+<li id=fn:5 role=doc-endnote>
+<p>We are essentially putting a breakpoint for each function at the addresses we just resolved.&#160;<a href=#fnref:5 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
+</li>
+<li id=fn:6 role=doc-endnote>
+<p>In <a href=https://msdn.microsoft.com/en-us/library/ms235286.aspx title="Overview of x64 Calling Conventions - MSDN" target=_blank rel="noreferrer noopener">64-bit</a> processes, first four arguments are stored in <code>rcx</code>, <code>rdx</code>, <code>r8</code>, <code>r9</code> and the rest are pushed to the stack (in reverse order) like 32-bit functions.&#160;<a href=#fnref:6 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
+</li>
+<li id=fn:7 role=doc-endnote>
+<p>The heading does not have an anchor so I had to link to the first table row. Generate IDs for all your headings people.&#160;<a href=#fnref:7 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
+</li>
+<li id=fn:8 role=doc-endnote>
+<p><strong>F E A R L E S S - C O N C U R R E N C Y</strong>&#160;<a href=#fnref:8 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
+</li>
+<li id=fn:9 role=doc-endnote>
+<p>Remember we are in a 32-bit VM so we have only one <code>Program Files</code> not two like x64 Windows that also have <code>Program Files (x86)</code> for 32-bit emulation.&#160;<a href=#fnref:9 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
+</li>
+<li id=fn:10 role=doc-endnote>
+<p>Yet another TODO. Try Frida vs. WinAppDbg in terms of performance.&#160;<a href=#fnref:10 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
+</li>
+<li id=fn:11 role=doc-endnote>
+<p>That is another <em>fun</em> exercise. Read UTF-16 null-terminated strings from memory and see how they are stored.&#160;<a href=#fnref:11 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
+</li>
+<li id=fn:12 role=doc-endnote>
+<p>For more information, search for C-style vs. Pascal-style strings.&#160;<a href=#fnref:12 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
+</li>
+<li id=fn:13 role=doc-endnote>
+<p>Not to be confused with the current infosec meme-cert.&#160;<a href=#fnref:13 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+</div>
+<footer>
+<p class=meta>
+<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Nov 11, 2017</time>
+<span class=categories>
+Tags:
+<a class=category href=https://parsiya.net/tags/python>python</a> <a class=category href=https://parsiya.net/tags/function-hooking>function hooking</a>
+</span>
+</p>
+<p class=meta>
+<a class="basic-alignment left" href=https://parsiya.net/blog/2017-11-09-winappdbg-part-1-basics/ title="WinAppDbg - Part 1 - Basics">WinAppDbg - Part 1 - Basics</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2017-11-15-winappdbg-part-3-manipulating-function-calls/ title="WinAppDbg - Part 3 - Manipulating Function Calls">WinAppDbg - Part 3 - Manipulating Function Calls</a>
+</p>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</div>
+<aside class="sidebar thirds">
+<section class="first odd">
+<h1>Who am I?</h1>
+<p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
+<p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p>
+<p>Click on <a href=/about/>About Me!</a> to know more.</p>
+</p>
+</section>
+<ul class=sidebar-nav>
+<li class=sidebar-nav-item>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
+</li>
+</ul>
+<section class=odd>
+<h1>Collections</h1>
+<li>
+<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
+</li>
+<li>
+<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
+</li>
+</section>
+</aside>
+</div>
+</div>
+<footer role=contentinfo>
+<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
+</p>
+</footer>
+</body>
+</html>

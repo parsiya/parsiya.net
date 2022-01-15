@@ -1,0 +1,400 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
+<link href=/css/fonts.css rel=stylesheet type=text/css>
+<title>Semgrep: The Surgical Static Analysis Tool</title>
+<link rel=stylesheet href=/css/hugo-octopress.css>
+<link rel=stylesheet href=/css/fork-awesome.min.css>
+<link href=https://parsiya.net/favicon.png rel=icon>
+<meta name=description content>
+<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
+<meta name=author content="Parsia">
+<meta name=generator content="Hugo 0.92.0">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Semgrep: The Surgical Static Analysis Tool">
+<meta name=twitter:description content="Why are We Here?
+
+What this blog is about:
+
+Why I like Semgrep.
+Why I think you should use it.
+How I use Semgrep.
+
+What this blog is not about:
+
+What static analysis is.
+Semgrep tutorial.
+">
+<meta name=twitter:domain content="parsiya.net">
+<meta name=twitter:creator content="@CryptoGangsta">
+</head>
+<body>
+<header role=banner>
+<hgroup>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
+<h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2>
+</hgroup></header>
+<nav role=navigation>
+<fieldset class=mobile-nav>
+<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
+</fieldset>
+<ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
+<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
+<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
+<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
+<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
+<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
+</ul>
+<ul class=subscription>
+<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
+</ul>
+<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+<fieldset role=search>
+<input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/>
+</fieldset>
+</form>
+</nav>
+<div id=main>
+<div id=content>
+<div>
+<article class=hentry role=article>
+<header>
+<p class=meta>Jun 22, 2021
+- 8 minute read
+- <a href=https://parsiya.net/blog/2021-06-22-semgrep-the-surgical-static-analysis-tool/#disqus_thread>Comments</a>
+- <a class=label href=https://parsiya.net/categories/automation/>Automation </a><a class=label href=https://parsiya.net/categories/soapbox/>Soapbox </a><a class=label href=https://parsiya.net/categories/semgrep/>Semgrep </a>
+</p>
+<h1 class=entry-title>
+Semgrep: The Surgical Static Analysis Tool
+</h1>
+</header>
+<div class=entry-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#why-are-we-here>Why are We Here?</a></li>
+<li><a href=#static-analysis-in-the-real-world>Static Analysis In The Real World</a>
+<ul>
+<li><a href=#just-use-grep>Just Use grep</a></li>
+</ul>
+</li>
+<li><a href=#enter-semgrep>Enter Semgrep</a>
+<ul>
+<li><a href=#semgrep-is-bean-from-enders-game>Semgrep is Bean from Ender's Game</a></li>
+<li><a href=#the-good>The Good</a></li>
+<li><a href=#the-bad>The Bad</a></li>
+</ul>
+</li>
+<li><a href=#scaling-the-application-security-endgame>Scaling: The Application Security Endgame</a>
+<ul>
+<li><a href=#easy-to-write-rules>Easy-to-Write Rules</a></li>
+<li><a href=#doesnt-need-buildable-code>Doesn't Need Buildable Code</a></li>
+<li><a href=#not-tied-to-a-platform>Not Tied to a Platform</a></li>
+<li><a href=#great-team-and-community>Great Team and Community</a></li>
+</ul>
+</li>
+<li><a href=#important-semgrep-thought-leadership>Important Semgrep Thought Leadership!</a>
+<ul>
+<li><a href=#how-many-rules-should-i-have>How Many Rules Should I Have?</a></li>
+<li><a href=#where-should-i-use-semgrep>Where Should I Use Semgrep?</a></li>
+</ul>
+</li>
+<li><a href=#what-did-we-learn-here-today>What Did We Learn Here Today?</a></li>
+</ul>
+</nav>
+<h1 id=why-are-we-here>Why are We Here?
+<a class=header-link href=#why-are-we-here><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>What this blog is about:</p>
+<ol>
+<li>Why I like Semgrep.</li>
+<li>Why I think you should use it.</li>
+<li>How I use Semgrep.</li>
+</ol>
+<p>What this blog is not about:</p>
+<ol>
+<li>What static analysis is.</li>
+<li>Semgrep tutorial.</li>
+</ol>
+<h1 id=static-analysis-in-the-real-world>Static Analysis In The Real World
+<a class=header-link href=#static-analysis-in-the-real-world><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>I look at many different things at my day job. Every game we release (on seven
+distinct hardware platforms), game engines, desktop apps for multiple operating
+systems, <code>surprise mechanics</code>, and more. That's a lot of code!</p>
+<blockquote>
+<p>Space is big. You just won't believe how vastly, hugely, mind-bogglingly big it
+is. I mean, you may think it's a long way down the road to the chemist's, but
+that's just peanuts to space.</p>
+<footer>
+<strong>Douglas Adams</strong>
+<cite>The Hitchhiker's Guide to the Galaxy</cite>
+</footer>
+</blockquote>
+<p>This is a lot different from the advice of appsec thought leaders. Like, we
+cannot even go through all of our code, let alone "audit 3rd party libraries."</p>
+<p>How do I sift through all this code? With <del>static analysis tools</del> grep.</p>
+<h2 id=just-use-grep>Just Use grep
+<a class=header-link href=#just-use-grep><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Ironically, <code>grep</code> (or <a href=https://github.com/BurntSushi/ripgrep target=_blank rel="noreferrer noopener">ripgrep</a>) is the best static analysis tool in
+my arsenal. I have found 90% of my bugs in code with <code>grep</code> and IDE/editor code
+navigation (e.g., click on a function in VS Code to go to its definition or see
+its references) rather than a static analysis product.</p>
+<p><code>grep</code> has its limitations. It's a text analysis tool. Let's say I want to
+search in code for an imaginary bad function named <code>exec</code>. grep does not
+differentiate between <code>exec</code> as a function, variable, string, or comment. A
+workaround is to grep for <code>exec(</code> (or a regex that takes into account the
+allowed whitespace between <code>c</code> and <code>(</code>).</p>
+<p>But what if this function has multiple overloads and I am only looking for one
+that uses two parameters (or specific types of parameters). <code>grep</code> doesn't
+understand context. If you have ever tried to parse structured text (e.g., code)
+you probably know what a dumpster fire it is. Once I tried to parse markdown
+with regex and it did not end well.</p>
+<h1 id=enter-semgrep>Enter Semgrep
+<a class=header-link href=#enter-semgrep><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>With Semgrep I can specify which kind of <code>exec</code> should be found.
+<a href=https://semgrep.dev/ target=_blank rel="noreferrer noopener">Semgrep</a> is a fantastic piece of technology. I am not gonna write
+a tutorial. Start at <a href=https://semgrep.dev/learn target=_blank rel="noreferrer noopener">https://semgrep.dev/learn</a> and view any
+of <a href=https://twitter.com/clintgibler target=_blank rel="noreferrer noopener">Clint's</a> presentations about it.</p>
+<h2 id=semgrep-is-bean-from-enders-game>Semgrep is Bean from Ender's Game
+<a class=header-link href=#semgrep-is-bean-from-enders-game><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>If you have read <code>Ender's Game</code> you probably remember Bean. Turns out Bean is a
+mutant (and super smart) in <code>Ender's Shadow</code>. In the original book Ender
+describes him as:</p>
+<blockquote>
+<p>Bean, who couldn't control large groups of ships effectively but could use only
+a few like a scalpel, reacting beautifully to anything the computer threw at him</p>
+<footer>
+<strong>Orson Scott Card</strong>
+<cite>Ender's Game</cite>
+</footer>
+</blockquote>
+<p>That's Semgrep. Why? Glad you asked.</p>
+<blockquote>
+<p>Semgrep does a few things and does them pretty well.</p>
+</blockquote>
+<h2 id=the-good>The Good
+<a class=header-link href=#the-good><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><ol>
+<li>Easy-to-write rules.</li>
+<li>Doesn't need buildable code.</li>
+<li>Not tied to a platform.</li>
+<li>Great team and community.</li>
+</ol>
+<h2 id=the-bad>The Bad
+<a class=header-link href=#the-bad><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>I can live with both of these, these might be deal-breakers for you.</p>
+<ol>
+<li>Works per file so some issues cannot be detected without false positives.</li>
+<li>C++ is not supported. I don't blame them. C++ is a nightmare.</li>
+</ol>
+<h1 id=scaling-the-application-security-endgame>Scaling: The Application Security Endgame
+<a class=header-link href=#scaling-the-application-security-endgame><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Semgrep is a means to help with the endgame of appsec. <strong>Scaling</strong>. There are
+tons of thought leadership articles about scaling but in my opinion as a product
+security engineer, it boils down to:</p>
+<ol>
+<li>Create secure defaults.</li>
+<li>Involve dev teams in security via security champions.</li>
+<li>Deploy automated tooling.</li>
+</ol>
+<p>How does Semgrep help with this? Let's look at its positives from above.</p>
+<h2 id=easy-to-write-rules>Easy-to-Write Rules
+<a class=header-link href=#easy-to-write-rules><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>You should read <a href="https://queue.acm.org/detail.cfm?id=3197520" target=_blank rel="noreferrer noopener">Manual Work is a Bug</a> if you haven't already
+(it has changed my professional life). It describes the last phase of automation
+as <code>self-service and autonomous systems</code>. If we can have the dev teams write
+their own rules and experiment we have reached this phase.</p>
+<p>Semgrep is great for this purpose. The rules look similar to the code pattern
+you are looking for. This is intuitive for devs.</p>
+<p>Things like CodeQL on the other hand are not great for this purpose. Don't get
+me wrong. CodeQL is powerful but it's hard to learn. You have to invest a lot of
+time into it. Maybe it works for software giants like MSFT who have dedicated
+teams but not us. Asking devs to learn this new language to use our expensive
+and fancy tool is a recipe for disaster.</p>
+<p>This also allows us to create secure defaults. Clint explains it a lot better
+than me in <a href="https://www.youtube.com/watch?v=GoeONtFx0bA" target=_blank rel="noreferrer noopener">Embrace Secure Defaults, Block Anti-patterns, and Kill Bug
+Classes with Semgrep</a>.</p>
+<h2 id=doesnt-need-buildable-code>Doesn't Need Buildable Code
+<a class=header-link href=#doesnt-need-buildable-code><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Some static analysis products require you to build the code. They need to
+observe the build process to do all their fancy things (e.g., taint analysis).
+This is great but doesn't work for me.</p>
+<p>Building the code is a pain in the neck. If you have ever done a 3rd party
+security engagement you know what I am talking about. If by some very lucky
+accident you get code (even when it's a source code review engagement), it's
+just a snapshot of the code without build instructions or the dependencies.
+Chances are there are internal dependencies you cannot pull access.</p>
+<p>The hardest part of "videogame preservation" is not storing the source code.
+It's creating and maintaining a snapshot of the build environment. Look,
+video games are built with magic talismans and offerings to Gods. I cannot just
+run <code>npm install</code>.</p>
+<blockquote>
+<p>Shit's hard, yo!</p>
+</blockquote>
+<p>Semgrep works on one file at a time. It loses some capabilities. For example, it
+cannot detect if a constant string is defined in another file. But it also
+gains a lot of speed (files can be processed in parallel), and more importantly,
+we do not need to build the code.</p>
+<p>How can Semgrep help the dev teams? An excellent Semgrep injection point is
+running on the merge request review. We can run it on the modified/new code. If
+we do not need to build the code we can:</p>
+<ol>
+<li>Run Semgrep on the code quickly.</li>
+<li>Break the build if some really bad thing happens. <strong>Be very very frugal with this.</strong></li>
+<li>Add the results as a comment to the request. Now, the results can be reviewed
+as part of the code review process because it's just there.</li>
+</ol>
+<h2 id=not-tied-to-a-platform>Not Tied to a Platform
+<a class=header-link href=#not-tied-to-a-platform><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Semgrep is open source (but buy their cloud stuff if you can, they have pretty
+nifty features there). We can run it everywhere we can run a command-line tool
+or via a docker container. We don't have to pay for it or buy a specific
+platform (e.g., CodeQL and GitHub enterprise).</p>
+<p>But Parsia, don't you use GitHub? Git in the videogame industry? Good joke!</p>
+<h2 id=great-team-and-community>Great Team and Community
+<a class=header-link href=#great-team-and-community><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Look, I like these folks. I am a fan. But seriously, every time I have had a
+question, the Slack channel has been super helpful. Join their Slack and see
+what's up.</p>
+<p>The community contributes a lot of rules. See them at
+<a href=https://semgrep.dev/explore target=_blank rel="noreferrer noopener">https://semgrep.dev/explore</a> or <a href=https://github.com/returntocorp/semgrep-rules target=_blank rel="noreferrer noopener">https://github.com/returntocorp/semgrep-rules</a>.
+There are also some 3rd party rules from smart folks like <code>Trail of Bits</code> at
+<a href=https://semgrep.dev/p/trailofbits target=_blank rel="noreferrer noopener">https://semgrep.dev/p/trailofbits</a>. This is enabled by the team helping people
+along the way and the easy rule syntax.</p>
+<h1 id=important-semgrep-thought-leadership>Important Semgrep Thought Leadership!
+<a class=header-link href=#important-semgrep-thought-leadership><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>By now, I have hopefully hyped you up to start using Semgrep. Let's talk about
+how to use it.</p>
+<h2 id=how-many-rules-should-i-have>How Many Rules Should I Have?
+<a class=header-link href=#how-many-rules-should-i-have><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p><strong>TL;DR: Start small and keep it simple.</strong> You want to have and add a few rules
+at a time.</p>
+<ol>
+<li>Target one single vulnerability.</li>
+<li>Write a couple of high-impact rules with few false positives.
+<ol>
+<li>These are usually anti-patterns that result in vulnerabilities in custom
+frameworks/technologies.</li>
+</ol>
+</li>
+<li>Pass the results to the developers to get them fixed.</li>
+<li>Write guidance for these issues. E.g., <code>don't do X, do Y</code>.</li>
+<li>Rinse and repeat.</li>
+</ol>
+<p><a href=https://twitter.com/adrian_stonez target=_blank rel="noreferrer noopener">Adrian Stone</a> was the head of my organization at EA (currently,
+CISO at Peloton)." We were talking static analysis and he said (paraphrasing)
+"if your tools finds something then you are on the hook for triaging it,
+recommending a fix and then chasing down the fix." And he is right.</p>
+<p>The dominant mentality in the static analysis world is the complete opposite. I
+mean, they want to detect everything. What does happen if I throw the kitchen
+sink at a game's code (remember, it's a lot of code)?</p>
+<ol>
+<li>Find hundreds of issues.</li>
+<li>Triage each one.</li>
+<li>Prioritize and write up valid bugs.</li>
+<li>Find and write recommendations for each bug.</li>
+<li>Send it to the developers.</li>
+<li>Chase down the fixes (developers, understandably have different priorities).</li>
+</ol>
+<p>Your devs will hate you!</p>
+<p><strong>Remember: Don't break the build except as a last resort.</strong></p>
+<h2 id=where-should-i-use-semgrep>Where Should I Use Semgrep?
+<a class=header-link href=#where-should-i-use-semgrep><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Everywhere you have code, but as I mentioned above, I like to run Semgrep on
+merge requests and add the results as a comment to the request. I have written
+my own custom code to do this. Here's a public example:</p>
+<ul>
+<li><a href=https://www.abhaybhargav.com/building-a-diy-automatedpull-request-static-analysis-workflow-with-gitlab/ target=_blank rel="noreferrer noopener">https://www.abhaybhargav.com/building-a-diy-automatedpull-request-static-analysis-workflow-with-gitlab/</a></li>
+</ul>
+<p>The new <a href=https://r2c.dev/blog/2021/introducing-semgrep-for-gitlab/ target=_blank rel="noreferrer noopener">integration with GitLab</a> was just announced and it
+automagically <a href=https://semgrep.dev/docs/notifications/#gitlab-merge-request-comments target=_blank rel="noreferrer noopener">comments on merge requests</a>.</p>
+<h1 id=what-did-we-learn-here-today>What Did We Learn Here Today?
+<a class=header-link href=#what-did-we-learn-here-today><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Semgrep rocks! You should use it.</p>
+</div>
+<footer>
+<p class=meta>
+<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Jun 22, 2021</time>
+</span>
+</p>
+<p class=meta>
+<a class="basic-alignment left" href=https://parsiya.net/blog/2021-06-08-the-javascript-bridge-in-modern-desktop-applications/ title="The JavaScript Bridge in Modern Desktop Applications">The JavaScript Bridge in Modern Desktop Applications</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2021-07-30-the-thick-client-vulns-that-werent/ title="The Thick Client Vulns That Weren't">The Thick Client Vulns That Weren't</a>
+</p>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</div>
+<aside class="sidebar thirds">
+<section class="first odd">
+<h1>Who am I?</h1>
+<p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
+<p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p>
+<p>Click on <a href=/about/>About Me!</a> to know more.</p>
+</p>
+</section>
+<ul class=sidebar-nav>
+<li class=sidebar-nav-item>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
+</li>
+</ul>
+<section class=odd>
+<h1>Collections</h1>
+<li>
+<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
+</li>
+<li>
+<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
+</li>
+</section>
+</aside>
+</div>
+</div>
+<footer role=contentinfo>
+<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
+</p>
+</footer>
+</body>
+</html>

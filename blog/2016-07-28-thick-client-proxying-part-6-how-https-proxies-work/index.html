@@ -1,0 +1,399 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
+<link href=/css/fonts.css rel=stylesheet type=text/css>
+<title>Thick Client Proxying - Part 6: How HTTP(s) Proxies Work</title>
+<link rel=stylesheet href=/css/hugo-octopress.css>
+<link rel=stylesheet href=/css/fork-awesome.min.css>
+<link href=https://parsiya.net/favicon.png rel=icon>
+<meta name=description content>
+<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
+<meta name=author content="Parsia">
+<meta name=generator content="Hugo 0.92.0">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Thick Client Proxying - Part 6: How HTTP(s) Proxies Work">
+<meta name=twitter:description content="In order to create our own custom proxies, first we need to know how proxies work. When I wanted to write a custom proxy tool (it's a simple Python script) in Hipchat part3, I had to go back and learn how they work. I did not find such a resource online that looked at proxies from an infosec perspective. Most talked about how to configure caching or forwarding proxies and not much about MitM ones. I have briefly talked about it in the section 2 of the same post named How does a Proxy Work?. In this post I am going to take a deep(er) dive. I actually read some RFCs and they were surprisingly well written.
+If you want to skip the intro, go to section 3.">
+<meta name=twitter:domain content="parsiya.net">
+<meta name=twitter:creator content="@CryptoGangsta">
+</head>
+<body>
+<header role=banner>
+<hgroup>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
+<h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2>
+</hgroup></header>
+<nav role=navigation>
+<fieldset class=mobile-nav>
+<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
+</fieldset>
+<ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
+<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
+<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
+<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
+<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
+<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
+</ul>
+<ul class=subscription>
+<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
+</ul>
+<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+<fieldset role=search>
+<input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/>
+</fieldset>
+</form>
+</nav>
+<div id=main>
+<div id=content>
+<div>
+<article class=hentry role=article>
+<header>
+<p class=meta>Jul 28, 2016
+- 14 minute read
+- <a href=https://parsiya.net/blog/2016-07-28-thick-client-proxying-part-6-how-https-proxies-work/#disqus_thread>Comments</a>
+- <a class=label href=https://parsiya.net/categories/thick-client-proxying/>Thick Client Proxying </a><a class=label href=https://parsiya.net/categories/proxy/>Proxy </a>
+</p>
+<h1 class=entry-title>
+Thick Client Proxying - Part 6: How HTTP(s) Proxies Work
+</h1>
+</header>
+<div class=entry-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#0-why-do-i-need-to-know-how-proxies-work>0. Why do I Need to Know How Proxies Work?</a></li>
+<li><a href=#1-become-one-with-the-proxy>1. Become One with the Proxy</a>
+<ul>
+<li><a href=#11-what-does-it-mean>1.1. What does it Mean?</a></li>
+</ul>
+</li>
+<li><a href=#2-brief-intro-to-two-types-of-proxies>2. Brief Intro to Two Types of Proxies</a>
+<ul>
+<li><a href=#21-forwarding-proxies>2.1. Forwarding Proxies</a></li>
+<li><a href=#22-tls-terminating-proxies>2.2. TLS Terminating Proxies</a>
+<ul>
+<li><a href=#221-its-not-always-tls>2.2.1. It's not Always TLS</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href=#section-3>3. How HTTP(s) Proxies work</a>
+<ul>
+<li><a href=#31-http-proxy>3.1. HTTP Proxy</a>
+<ul>
+<li><a href=#311-why-not-use-the-host-header>3.1.1. Why not Use the Host Header?</a></li>
+</ul>
+</li>
+<li><a href=#32-forwarding-proxy-and-https>3.2. Forwarding Proxy and HTTPs</a>
+<ul>
+<li><a href=#321-the-connect-request>3.2.1. The CONNECT Request</a></li>
+</ul>
+</li>
+<li><a href=#33-burp-and-https>3.3. Burp and HTTPs</a>
+<ul>
+<li><a href=#331-correction---july-30th-2016>3.3.1. Correction - July 30th 2016</a></li>
+<li><a href=#331-burps-invisible-mode>3.3.1. Burp's Invisible Mode</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href=#4-cloudfront-and-server-name-indication>4. Cloudfront and Server Name Indication</a></li>
+<li><a href=#5-proxy-aware-clients>5. Proxy-Aware Clients</a></li>
+<li><a href=#6-conclusion-and-future-plans>6. Conclusion and Future Plans</a></li>
+</ul>
+</nav>
+<p>In order to create our own custom proxies, first we need to know how proxies work. When I wanted to write a custom proxy tool (it's a simple Python script) in <a href=https://parsiya.net/blog/2015-10-19-proxying-hipchat-part-3-ssl-added-and-removed-here/ title="Proxying Hipchat Part 3: SSL Added and Removed Here">Hipchat part3</a>, I had to go back and learn how they work. I did not find such a resource online that looked at proxies from an infosec perspective. Most talked about how to configure caching or forwarding proxies and not much about MitM ones. I have briefly talked about it in the section 2 of the same post named <code>How does a Proxy Work?</code>. In this post I am going to take a deep(er) dive. I actually read some RFCs and they were surprisingly well written.</p>
+<p>If you want to skip the intro, go to <a href=#section-3 title="How HTTP Proxies Work">section 3</a>.</p>
+<h1 id=0-why-do-i-need-to-know-how-proxies-work>0. Why do I Need to Know How Proxies Work?
+<a class=header-link href=#0-why-do-i-need-to-know-how-proxies-work><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>That is a fair question. Most of the time, we pipe the browser to Burp and it works out of the box. However, if something small changes we will go into panic mode. What if the webapp uses a Java or Silverlight component and it has some quirky things? Another reason is for proxying thick clients because Burp as you have seen here is not just for webapps. My opinion is "<strong>if the application uses HTTP, you can Burp it</strong>." Thick clients may not work out of the box when proxied (often just redirecting their traffic to the proxy is a pain). If we do not know how proxies work internally, we cannot troubleshoot the issues.</p>
+<p>You are now convinced that you need to read this right? <strong>riiiiiiiiiiiiight?</strong></p>
+<h1 id=1-become-one-with-the-proxy>1. Become One with the Proxy
+<a class=header-link href=#1-become-one-with-the-proxy><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>It really helps to put ourselves in place of the proxy when reading this. At least that is what worked for me. Proxy does not know whatever happens in the system like an observer. As an observer we can just make decisions about what the proxy <em>should</em> do. Things like "the user typed google.com in their browser so the proxy must send the request to google.com." Well, how does the proxy know that? The proxy cannot magically see the browser's address bar.</p>
+<h2 id=11-what-does-it-mean>1.1. What does it Mean?
+<a class=header-link href=#11-what-does-it-mean><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>We are the proxy. The only things we see are the requests/packets that the client (e.g. browser) and the endpoint send to us. We do not know anything else. And as a proxy we must decide what to do with the requests that we receive with only our knowledge.</p>
+<p>Now that we are hopefully in the zone, let's start.</p>
+<h1 id=2-brief-intro-to-two-types-of-proxies>2. Brief Intro to Two Types of Proxies
+<a class=header-link href=#2-brief-intro-to-two-types-of-proxies><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>I am going to talk about two types of proxies here.</p>
+<ul>
+<li>Forwarding proxies</li>
+<li>TLS terminating proxies</li>
+</ul>
+<p>The descriptions are not entirely accurate or detailed but are enough for our purpose. Of course this is not an exhaustive list. There are other proxies out there but these are the ones that we are interested in. To be honest we are only interested in TLS terminating proxies.</p>
+<h2 id=21-forwarding-proxies>2.1. Forwarding Proxies
+<a class=header-link href=#21-forwarding-proxies><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>We have all seen them before. These are corporate proxies that we see and use everyday. If you are in a corporate environment, check the proxy auto-config (pac) scripts. Essentially it's a text file that tells the application where to send the traffic and re-routes the traffic based on the endpoint. Usually if the endpoint is internal, things get routed normally through the internal network otherwise (requests sent over the internet) requests are sent to a forwarding proxy. You can see some examples at <a href=https://technet.microsoft.com/en-us/library/cc985335.aspx target=_blank rel="noreferrer noopener">Microsoft Technet</a>. From the point of view of the application, the forwarding proxy is sitting between the internal network and the internet.</p>
+<p>Based on the name, these proxies just forward packets and cannot look inside encrypted payloads (e.g. TLS). From the point of view of a typical forwarding proxy, an established TLS connection is just a bunch of packets with random looking TCP payloads.</p>
+<h2 id=22-tls-terminating-proxies>2.2. TLS Terminating Proxies
+<a class=header-link href=#22-tls-terminating-proxies><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Burp is the prime example of this type. If you know what Burp does (and you probably do because you are reading this), you know what a TLS terminating proxy does. These are proxies that usually MitM the connections and unwrap TLS to look inside the payloads.</p>
+<p>They could be applications like Burp or Fiddler which are usually used for (security) testing. Or could be appliances like Bluecoat or the <a href=https://live.paloaltonetworks.com/t5/Configuration-Articles/How-to-Implement-and-Test-SSL-Decryption/ta-p/59719 target=_blank rel="noreferrer noopener">SSL decryption module</a> of Palo Alto Networks' "thing" (whatever it is named). Usually these appliances are used for deep packet inspection.</p>
+<p>You could make Burp work like a forwarding proxy by adding all endpoints to Burp's <a href=https://parsiya.net/blog/2016-03-27-thick-client-proxying-part-1-burp-interception-and-proxy-listeners/#1-4-ssl-pass-through title="SSL Pass Through">SSL Pass Through</a>. This is useful for troubleshooting connections.</p>
+<h3 id=221-its-not-always-tls>2.2.1. It's not Always TLS
+<a class=header-link href=#221-its-not-always-tls><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>True. Sometimes our proxy decrypts (or decodes) layers of non-TLS encryption (or encoding). I am classifying all of these proxies under this category because TLS has become the most common way of protecting data in transit.</p>
+<h1 id=section-3>3. How HTTP(s) Proxies work
+<a class=header-link href=#section-3><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Now we get to the main part. In all examples we have a browser that uses a proxy (via some proxy settings) and the browser knows that it is connected to a proxy (I will talk about this later).</p>
+<h2 id=31-http-proxy>3.1. HTTP Proxy
+<a class=header-link href=#31-http-proxy><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>In this case the browser is using plain HTTP (meaning there's no TLS). Both forwarding and TLS terminating proxies work similarly in this case.</p>
+<p>Let's assume we have typed <a href=http://www.yahoo.com target=_blank rel="noreferrer noopener">http://www.yahoo.com</a> in the browser. Let's forget that we get a 302 redirect in the real world and assume yahoo.com is available over HTTP. I probably should have used example.com instead but I am lazy and don't want to create the diagrams again.</p>
+<p>The browser establishes a TCP connection to the proxy (the famous <code>SYN-SYNACK-ACK</code>) and then sends the GET request.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2016/thickclient-6/01.png title="What does the proxy see?" alt="What does the proxy see?">
+<span class=caption-text>What does the proxy see?</span>
+</span>
+<p>Here's how the GET request looks like in Wireshark (we can see it in plaintext because there's no TLS).</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2016/thickclient-6/02.png title="GET request sent to the proxy" alt="GET request sent to the proxy">
+<span class=caption-text>GET request sent to the proxy</span>
+</span>
+<p>Now, we (proxy) must decide where to send this GET request. Note that both the proxy (Burp) and the browser are on the same machine so the source and destination IP addresses in the previous picture are both <code>127.0.0.1</code>. So we cannot forward the request based on the destination IP address.</p>
+<p>How is this GET request different from a non-proxied GET request? I disabled my browser's proxy settings and recaptured the same GET request.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2016/thickclient-6/03.png title="GET request without using a proxy" alt="GET request without using a proxy">
+<span class=caption-text>GET request without using a proxy</span>
+</span>
+<p>Check the highlighted parts. The request sent to proxy has the <code>absoluteURI</code>. In simple words it has the complete URI (or URL) in the GET request. The proxy uses this to discover the endpoint. This was initially discussed in RFC2616 which discusses HTTP/1.1. In <a href=https://tools.ietf.org/html/rfc2616#section-5.1.2 target=_blank rel="noreferrer noopener">section 5.1.2. Request-URI</a>, we see:</p>
+<blockquote>
+<p>The absoluteURI form is REQUIRED when the request is being made to a proxy.<br>
+...<br>
+An example Request-Line would be:<br>
+GET <a href=http://www.w3.org/pub/WWW/TheProject.html target=_blank rel="noreferrer noopener">http://www.w3.org/pub/WWW/TheProject.html</a> HTTP/1.1</p>
+</blockquote>
+<p>In newer RFCs you can look it up using <code>absolute-URI</code>. This format is called <code>absolute-form</code>. In <a href=https://tools.ietf.org/html/rfc7230 target=_blank rel="noreferrer noopener">RFC7230 - HTTP/1.1: Message Syntax and Routing</a> we can check <a href=https://tools.ietf.org/html/rfc7230#section-5.3.2 target=_blank rel="noreferrer noopener">section 5.3.2. absolute-form</a> to see:</p>
+<blockquote>
+<p>When making a request to a proxy, other than a CONNECT or server-wide OPTIONS request (as detailed below), a client MUST send the target URI in absolute-form as the request-target.</p>
+<p>absolute-form = absolute-URI</p>
+</blockquote>
+<p>Note that the RFC instructs clients to send the <code>absolute-URI</code> no matter what (even if they are using a <code>CONNECT</code> request) as we will see shortly.</p>
+<p>The proxy uses this <code>absolute-URI</code> to forward the request to the endpoint (in this case Yahoo!). Both forwarding and TLS terminating proxies work similarly in this case because they both can look inside HTTP payloads.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2016/thickclient-6/04.png title="HTTP proxy in action" alt="HTTP proxy in action">
+<span class=caption-text>HTTP proxy in action</span>
+</span>
+<ol>
+<li>Browser establishes a TCP connection to proxy.</li>
+<li>Browser sends the HTTP request (with an absolute-URI) to proxy.</li>
+<li>Proxy establishes a TCP connection to yahoo.com (using the absolute-URI).</li>
+<li>Proxy forwards the HTTP request.</li>
+<li>Proxy receives the response.</li>
+<li>Proxy closes the connection to yahoo.com.</li>
+<li>Proxy forwards the response to browser.</li>
+<li>Proxy signals to close the connection (using FIN).</li>
+<li>Connection between browser and Proxy is closed.</li>
+</ol>
+<h3 id=311-why-not-use-the-host-header>3.1.1. Why not Use the Host Header?
+<a class=header-link href=#311-why-not-use-the-host-header><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>If you have done at least a bit of HTTP security testing (or have seen some HTTP requests), you are probably asking "why not just use the Host header?" That is a very good question and it was mine too. We are the proxy and we see the <code>Host</code> header, why do we need to use the absolute-URI instead?</p>
+<p>The answer is backward compatibility with HTTP/1.0 proxies. This is hinted in <a href=https://tools.ietf.org/html/rfc7230#section-5.4 target=_blank rel="noreferrer noopener">section 5.4. Host</a> of RFC7230:</p>
+<blockquote>
+<p>A client MUST send a Host header field in an HTTP/1.1 request even if the request-target is in the absolute-form, since this allows the Host information to be forwarded through ancient HTTP/1.0 proxies that might not have implemented Host.</p>
+</blockquote>
+<p>Later it instructs proxies to rely on the absolute-URI and ignore the <code>Host</code> header. If the <code>Host</code> header is different from the URI, then the proxy must generate the correct header and send it with the request.</p>
+<h2 id=32-forwarding-proxy-and-https>3.2. Forwarding Proxy and HTTPs
+<a class=header-link href=#32-forwarding-proxy-and-https><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>But what about HTTP(s) forwarding proxies? How do they work?</p>
+<p>Again let's put ourselves in place of the forwarding proxy. We do not do TLS handshakes and just forward things around. After the user types <a href=https://www.google.com target=_blank rel="noreferrer noopener">https://www.google.com</a> in their browser, it creates a TCP connection to us and then starts the TLS handshake. The first step of a TLS handshake is <code>ClientHello</code> discussed in <a href=https://tools.ietf.org/html/rfc5246#section-7.4.1.2 target=_blank rel="noreferrer noopener">RFC5246 section 7.4.1.2.</a> (<a href=https://tools.ietf.org/html/rfc5246 target=_blank rel="noreferrer noopener">RFC5246</a> is essentially TLS 1.2).</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2016/thickclient-6/05.png title="ClientHello sent from browser to proxy" alt="ClientHello sent from browser to proxy">
+<span class=caption-text>ClientHello sent from browser to proxy</span>
+</span>
+<p>Now I did not read the TLS 1.2 RFC completely and I doubt you need to either. As the proxy, we will see a <code>ClientHello</code> like this:</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2016/thickclient-6/06.png title="ClientHello as seen by proxy" alt="ClientHello as seen by proxy">
+<span class=caption-text>ClientHello as seen by proxy</span>
+</span>
+<p>But we are a proxy and we should know what it means. Tools should be able to do this for us. In this case I used Netmon and it decodes the <code>ClientHello</code> like this:</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2016/thickclient-6/07.png title="ClientHello deciphered" alt="ClientHello deciphered">
+<span class=caption-text>ClientHello deciphered</span>
+</span>
+<p>Now, we need to decide where to send this <code>ClientHello</code>. How can we discover the endpoint with this information?</p>
+<p>Well, the answer is <strong>we can't</strong>.</p>
+<h3 id=321-the-connect-request>3.2.1. The CONNECT Request
+<a class=header-link href=#321-the-connect-request><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>In simple words, the browser needs to tell the proxy where to forward the requests and this should happen before the TLS handshake (and obviously after the TCP connection is established). That's where the <code>CONNECT</code> method comes into play.</p>
+<p>The browser sends a request with the <code>CONNECT</code> method with the name of the domain to the proxy before the TLS handshake. This request contains the endpoint and the port in this format (<code>HOST:PORT</code>). Which called the <code>authority-form</code> format for request-target. We can see it in <a href=https://tools.ietf.org/html/rfc7230#section-5.3.3 target=_blank rel="noreferrer noopener">RFC7230 section 5.3.3 - authority-form</a>.</p>
+<blockquote>
+<p>The authority-form of request-target is only used for CONNECT requests<br>
+...<br>
+a client MUST send only the target URI's authority component (excluding any userinfo and its "@" delimiter) as the request-target. For example,</p>
+<p>CONNECT <a href=http://www.example.com target=_blank rel="noreferrer noopener">www.example.com</a>:80 HTTP/1.1</p>
+</blockquote>
+<p>The <code>CONNECT</code> method is discussed in <a href=https://tools.ietf.org/html/rfc7231 target=_blank rel="noreferrer noopener">RFC7231 - HTTP/1.1: Semantics and Content</a> in <a href=https://tools.ietf.org/html/rfc7231#section-4.3.6 target=_blank rel="noreferrer noopener">section 4.3.6 - CONNECT</a>.</p>
+<blockquote>
+<p>The CONNECT method requests that the recipient establish a tunnel to the destination origin server identified by the request-target and, if successful, thereafter restrict its behavior to blind forwarding of packets, in both directions, until the tunnel is closed.</p>
+</blockquote>
+<p>The client instructions are as follows:</p>
+<blockquote>
+<p>A client sending a CONNECT request MUST send the authority form of request-target.<br>
+...<br>
+For example,</p>
+<p>CONNECT server.example.com:80 HTTP/1.1<br>
+Host: server.example.com:80</p>
+</blockquote>
+<p>The proxy should establish a connection to the destination and if successful should respond with a <code>2xx (Successful) response</code>. Before reading the RFC, I thought that the proxy sends the 2xx response immediately and then creates a connection to the destination. But I was wrong. The proxy only replies if it could connect to the endpoint, otherwise how could we tell the application that we could not establish a tunnel. The application starts the TLS handshake when it receives the 2xx response.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2016/thickclient-6/08.png title="Forwarding proxy and HTTPs in action" alt="Forwarding proxy and HTTPs in action">
+<span class=caption-text>Forwarding proxy and HTTPs in action</span>
+</span>
+<ol>
+<li>Browser creates a TCP connection to the forwarding proxy.</li>
+<li>Browser sends the <code>CONNECT google.com:443</code> request to the proxy.</li>
+<li>Proxy attempts to connect to <code>google.com:443</code>.</li>
+<li>If successful, proxy responds with a <code>200 connection established</code>.</li>
+<li>Now the browser knows that the proxy can contact the endpoint and starts the TLS handshake.</li>
+<li>The forwarding proxy just passes requests until one side closes the connection, then it closes the other connection.</li>
+</ol>
+<h2 id=33-burp-and-https>3.3. Burp and HTTPs
+<a class=header-link href=#33-burp-and-https><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Things are similar with Burp (or any TLS terminating proxy). The only difference is that Burp MitMs the connection by doing a TLS handshake with the browser and thus will have the data in plaintext. By default Burp uses the endpoint name in the <code>CONNECT</code> request to auto-generate a certificate (signed by its root CA) and presents it to the client.</p>
+<h3 id=331-correction---july-30th-2016>3.3.1. Correction - July 30th 2016
+<a class=header-link href=#331-correction---july-30th-2016><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>The following picture is wrong. As our friends in the comments have noticed, there are two TCP connections from Burp to the server. My train of thought was that Burp first checks connectivity with the server before returning the 200 response and acts according to the RFC. And then opens a new connection to the server and does the sides of the connection.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2016/thickclient-6/09.png title="This is wrong - see below" alt="This is wrong - see below">
+<span class=caption-text>This is wrong - see below</span>
+</span>
+<p>What actually happens is that Burp does not do the initial TCP connection to the endpoint after the <code>CONNECT</code> request and just responds with the 200 response. I went ahead and captured the traffic using Microsoft Message Analyzer (MMA). It enabled me to capture both local traffic from browser to Burp and from Burp to Google.com. Here's a picture of MMA that shows both TLS handshakes.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2016/thickclient-6/12.png title="Both browser and Burp handshakes" alt="Both browser and Burp handshakes">
+<span class=caption-text>Both browser and Burp handshakes</span>
+</span>
+<p>The top part is the local traffic between browser and Burp and the bottom one is between Burp and Google.com. Packets are sorted chronologically. As you can see, Burp does not do a connectivity check when it gets the <code>CONNECT</code>. It proceeds with the TLS handshake and then only contacts Google.com after it receives the first request (in this case the GET request). So the actual diagram should be this:</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2016/thickclient-6/13.png title="Burp and HTTPs in action - the correct one" alt="Burp and HTTPs in action - the correct one">
+<span class=caption-text>Burp and HTTPs in action - the correct one</span>
+</span>
+<h3 id=331-burps-invisible-mode>3.3.1. Burp's Invisible Mode
+<a class=header-link href=#331-burps-invisible-mode><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>I have talked about this probably <a href=#2-2-1-burp-s-invisible-proxying title="Burp's Invisible Proxying">a hundred times</a>. We read that the RFC prevents proxies from using the <code>Host</code> header to re-route the traffic. Now if we have a client which uses HTTP but is not proxy-aware (or we have redirected its traffic to Burp without using proxy settings), we can enable Burp's invisible mode which uses the <code>Host</code> header to redirect traffic. This is one of the beauties of HTTP which makes is much easier to proxy than a custom protocol (e.g. a binary blob wrapped in TLS).</p>
+<h1 id=4-cloudfront-and-server-name-indication>4. Cloudfront and Server Name Indication
+<a class=header-link href=#4-cloudfront-and-server-name-indication><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>If you have captured <code>ClientHello</code> requests while playing around to see proxies in action (or just in general), you have noticed that your requests are not like the one I showed above. You can see the server's name in those <code>ClienHello</code>s. In fact, it is harder to catch a one without the server name. For my picture I had to navigate to a website by IP address.</p>
+<p>What is that server name? It's a TLS extension called <code>Server Name Indication</code> or SNI. We can read about it in <a href=https://tools.ietf.org/html/rfc6066#page-6 target=_blank rel="noreferrer noopener">RFC6066 section 3. Server Name Indication</a>:</p>
+<blockquote>
+<p>It may be desirable for clients to provide this information to facilitate secure connections to servers that host multiple 'virtual' servers at a single underlying network address.</p>
+</blockquote>
+<p>I am going to use my website as an example. <code>Parsiya.net</code> is a statically generated website using <a href=https://gohugo.io target=_blank rel="noreferrer noopener">Hugo</a>. It's hosted from an Amazon S3 bucket. S3 does not support TLS (or HTTPs if you want to call it) for statically hosted websites (it supports serving single files over TLS). In order to get TLS, I use Cloudfront in front of it. Cloudfront is Amazon's Content Distribution Network (CDN) and supports custom TLS certificates. If you use Cloudfront you can get a free TLS cert for your website. Cloudfront in this case is acting as the endpoint for many resources.</p>
+<p>There should be a way for the browser to tell Cloudfront which endpoint it wants to connect so that Cloudfront can grab the correct TLS certificate and present it to the browser. This is enabled by SNI. A typical <code>ClientHello</code> for <code>parsiya.net</code> looks like the following (with decoded SNI):</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2016/thickclient-6/10.png title="ClientHello with SNI" alt="ClientHello with SNI">
+<span class=caption-text>ClientHello with SNI</span>
+</span>
+<p>Now we can see how Cloudfront works (simplified):</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2016/thickclient-6/11.png title="SNI and Cloudfront" alt="SNI and Cloudfront">
+<span class=caption-text>SNI and Cloudfront</span>
+</span>
+<p>In this case Cloudfront is acting like a TLS terminating proxy. On one side it has HTTPs (browser &lt;-> Cloudfront) and on the other side it has HTTP (Cloudfront &lt;-> S3). But instead of using the <code>CONNECT</code> request we use SNI. This makes sense because Cloudfront is not set as a proxy for the browser.</p>
+<h1 id=5-proxy-aware-clients>5. Proxy-Aware Clients
+<a class=header-link href=#5-proxy-aware-clients><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Now I can talk about proxy-aware clients. We have already seen them and know what they do.</p>
+<p>Proxy-aware clients know when they are connected to a proxy and if so, do the following:</p>
+<ul>
+<li>Use the <code>absolute-URI</code> in the requests sent to the proxy.</li>
+<li>Send the <code>CONNECT</code> request to talk to the proxy about the endpoint before the TLS handshake.</li>
+</ul>
+<p>Usually proxy-aware clients have proxy settings or honor some OS specific ones (e.g. IE proxy settings). This signals that the browser is connected to a proxy and should act accordingly. Almost all browsers are proxy-aware.</p>
+<h1 id=6-conclusion-and-future-plans>6. Conclusion and Future Plans
+<a class=header-link href=#6-conclusion-and-future-plans><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Well that was all folks. Hopefully this is useful. Now we know how proxies work internally. Next time Burp messes up, capture the local traffic between the client and Burp and diagnose the problem. Pay attention to Burp's alert tab, usually TLS problems show up there too.</p>
+<p>My plans for next part is to talk about traffic redirection techniques.</p>
+<p>As usual if you have any questions/comments/feedback, you know where to find me.</p>
+</div>
+<footer>
+<p class=meta>
+<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Jul 28, 2016</time>
+<span class=categories>
+Tags:
+<a class=category href=https://parsiya.net/tags/proxying>Proxying</a> <a class=category href=https://parsiya.net/tags/burp>Burp</a> <a class=category href=https://parsiya.net/tags/tutorial>Tutorial</a>
+</span>
+</p>
+<p class=meta>
+<a class="basic-alignment left" href=https://parsiya.net/blog/2016-07-14-gynvael-coldwind-garage4hackers-notes-from-march-2014/ title="Gynvael Coldwind - Garage4Hackers - Notes from March 2014">Gynvael Coldwind - Garage4Hackers - Notes from March 2014</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2016-08-01-the-great-hiatus/ title="The Great Hiatus">The Great Hiatus</a>
+</p>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</div>
+<aside class="sidebar thirds">
+<section class="first odd">
+<h1>Who am I?</h1>
+<p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
+<p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p>
+<p>Click on <a href=/about/>About Me!</a> to know more.</p>
+</p>
+</section>
+<ul class=sidebar-nav>
+<li class=sidebar-nav-item>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
+</li>
+</ul>
+<section class=odd>
+<h1>Collections</h1>
+<li>
+<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
+</li>
+<li>
+<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
+</li>
+</section>
+</aside>
+</div>
+</div>
+<footer role=contentinfo>
+<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
+</p>
+</footer>
+</body>
+</html>

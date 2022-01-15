@@ -1,0 +1,560 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
+<link href=/css/fonts.css rel=stylesheet type=text/css>
+<title>Thick Client Proxying - Part 11 - GOG Galaxy and Extract-SNI</title>
+<link rel=stylesheet href=/css/hugo-octopress.css>
+<link rel=stylesheet href=/css/fork-awesome.min.css>
+<link href=https://parsiya.net/favicon.png rel=icon>
+<meta name=description content>
+<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
+<meta name=author content="Parsia">
+<meta name=generator content="Hugo 0.92.0">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image:src content="https://parsiya.net/blog/2020-06-22-thick-client-proxying-part-11-gog-galaxy-and-extract-sni/06-report.png">
+<meta name=twitter:title content="Thick Client Proxying - Part 11 - GOG Galaxy and Extract-SNI">
+<meta name=twitter:description content="In this post we will use our knowledge from
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+Thick Client Proxying - Part 10 - The hosts File
+to proxy GOG Galaxy 2. I will also introduce
+some automation to make our lives easier.">
+<meta name=twitter:domain content="parsiya.net">
+<meta name=twitter:creator content="@CryptoGangsta">
+</head>
+<body>
+<header role=banner>
+<hgroup>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
+<h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2>
+</hgroup></header>
+<nav role=navigation>
+<fieldset class=mobile-nav>
+<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
+</fieldset>
+<ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
+<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
+<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
+<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
+<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
+<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
+</ul>
+<ul class=subscription>
+<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
+</ul>
+<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+<fieldset role=search>
+<input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/>
+</fieldset>
+</form>
+</nav>
+<div id=main>
+<div id=content>
+<div>
+<article class=hentry role=article>
+<header>
+<p class=meta>Jun 22, 2020
+- 10 minute read
+- <a href=https://parsiya.net/blog/2020-06-22-thick-client-proxying-part-11-gog-galaxy-and-extract-sni/#disqus_thread>Comments</a>
+- <a class=label href=https://parsiya.net/categories/thick-client-proxying/>Thick client proxying </a><a class=label href=https://parsiya.net/categories/automation/>automation </a>
+</p>
+<h1 class=entry-title>
+Thick Client Proxying - Part 11 - GOG Galaxy and Extract-SNI
+</h1>
+</header>
+<div class=entry-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#setup>Setup</a></li>
+<li><a href=#proxy-attempts>Proxy Attempts</a>
+<ul>
+<li><a href=#cef-applications-and-windows-proxy-settings>CEF Applications and Windows Proxy Settings</a></li>
+<li><a href=#config-files>Config Files</a></li>
+<li><a href=#command-line-parameters>Command Line Parameters</a>
+<ul>
+<li><a href=#checksum-error>Checksum Error</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href=#the-good-old-hosts-file>The Good Old hosts File</a>
+<ul>
+<li><a href=#gog-galaxy-error-in-a-hyper-v>GOG Galaxy Error in a Hyper-V</a></li>
+<li><a href=#identifying-endpoints>Identifying Endpoints</a></li>
+<li><a href=#introducing-extract-sni>Introducing Extract-SNI</a></li>
+<li><a href=#using-extract-sni-here>Using Extract-SNI Here</a></li>
+<li><a href=#defeating-certificate-pinning>Defeating Certificate Pinning</a></li>
+<li><a href=#detecting-more-endpoints>Detecting More Endpoints</a></li>
+<li><a href=#error-message-troubleshooting>Error Message Troubleshooting</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+<p>In this post we will use our knowledge from
+<a href=/blog/2020-05-09-thick-client-proxying-part-10-the-hosts-file/ title="Thick Client Proxying - Part 10 - The hosts File" rel=nofollow target=_blank>Thick Client Proxying - Part 10 - The hosts File</a>
+to proxy GOG Galaxy 2. I will also introduce
+<a href=https://github.com/parsiya/extract-sni target=_blank rel="noreferrer noopener">some automation</a> to make our lives easier.</p>
+<h1 id=setup>Setup
+<a class=header-link href=#setup><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>If you want to follow along.</p>
+<ol>
+<li>If you are not familiar with proxying using the <code>hosts</code> file, please read part 10.</li>
+<li>Windows virtual machine.</li>
+<li>GOG Galaxy <code>2.0.15.43</code> installed.
+<ol>
+<li>This blog will most likely work for other versions but this is the
+current version at the time of writing.</li>
+</ol>
+</li>
+<li>GOG Galaxy 2 login credentials.</li>
+<li>Burp free or pro.</li>
+<li><a href="https://www.microsoft.com/en-ca/download/details.aspx?id=4865" target=_blank rel="noreferrer noopener">Microsoft Network Monitor</a>.</li>
+<li><a href=https://golang.org/dl/ target=_blank rel="noreferrer noopener">Go</a>.</li>
+</ol>
+<h1 id=proxy-attempts>Proxy Attempts
+<a class=header-link href=#proxy-attempts><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Before we take extreme measures like modifying the <code>hosts</code> file, we have to try
+other things. First, we search and see if we can find anything. Seems like the
+app does not like proxies.</p>
+<h2 id=cef-applications-and-windows-proxy-settings>CEF Applications and Windows Proxy Settings
+<a class=header-link href=#cef-applications-and-windows-proxy-settings><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>GOG Galaxy is based on <a href=https://bitbucket.org/chromiumembedded/cef/src target=_blank rel="noreferrer noopener">CEF</a>. CEF stands for Chromium Embedded
+Framework. It's similar to Electron but not exactly<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>. Definitely, harder to
+reverse as we cannot just unpack the <code>app.asar</code> file and read the JavaScript
+code.</p>
+<p>So the first thing we try is changing the Windows proxy settings and see it
+works. GOG Galaxy ignores it.</p>
+<p>Some CEF apps honor this. Like the retired <code>Razer Comms</code>. I found some nice
+issues in it, you can read about them in
+<a href=/blog/2017-09-21-razer-comms/ title="Razer Comms" rel=nofollow target=_blank>Razer Comms</a></p>
+<h2 id=config-files>Config Files
+<a class=header-link href=#config-files><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Some frameworks and applications have configuration files that allow you to
+specify proxies. There are a couple of config files in
+<code>C:\ProgramData\GOG.com\Galaxy</code>.</p>
+<ul>
+<li><code>communication_config.json</code>
+<ul>
+<li>This is probably for <code>C:\ProgramData\GOG.com\Galaxy\redists\GalaxyCommunication.exe</code></li>
+</ul>
+</li>
+<li><code>config.json</code></li>
+</ul>
+<p>Neither of them appear to have anything to do with proxying. Contents of
+<code>config.json</code>:</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
+     <span style=color:#268bd2>&#34;clientInstanceId&#34;</span> : <span style=color:#2aa198>&#34;[removed]&#34;</span>,
+     <span style=color:#268bd2>&#34;lastAllProductDetailsUpdateTimeStamp&#34;</span> : <span style=color:#2aa198>1589215518</span>,
+     <span style=color:#268bd2>&#34;libraryPath&#34;</span> : <span style=color:#2aa198>&#34;C:\\Program Files (x86)\\GOG Galaxy\\Games&#34;</span>,
+     <span style=color:#268bd2>&#34;previewBuildsEnabled&#34;</span> : <span style=color:#cb4b16>false</span>,
+     <span style=color:#268bd2>&#34;storagePath&#34;</span> : <span style=color:#2aa198>&#34;C:\\ProgramData\\GOG.com\\Galaxy\\storage&#34;</span>,
+     <span style=color:#268bd2>&#34;supportPath&#34;</span> : <span style=color:#2aa198>&#34;C:\\ProgramData\\GOG.com\\Galaxy\\support&#34;</span>
+}
+</code></pre></div>
+<h2 id=command-line-parameters>Command Line Parameters
+<a class=header-link href=#command-line-parameters><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Chromium based browsers support a command line parameter named <code>--proxy-server</code>.
+You can use it to individually proxy Chrome and Edge browsers instead of using
+the Windows proxy settings.</p>
+<p>We can start the application with this parameter:</p>
+<ul>
+<li><code>C:\Program Files (x86)\GOG Galaxy>GalaxyClient.exe --proxy-server="http://localhost:8080"</code></li>
+</ul>
+<p>Unfortunately, it does not work either. We can see it in the logs at<sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup>:</p>
+<ul>
+<li><code>C:\ProgramData\GOG.com\Galaxy\logs\cef.log</code></li>
+</ul>
+<p>This line in the logs is interesting.</p>
+<pre tabindex=0><code>[0516/100718.650:WARNING:chrome_command_line_pref_store.cc(123)]
+    Additional command-line proxy switches specified when --no-proxy-server was also specified.
+</code></pre><p>It seems like the developers have intentionally disabled proxy support. This
+does not work for us. Can we modify the binary and remove this command? :)</p>
+<pre tabindex=0><code>Parsia@DESKTOP-2CMT6C6 /cygdrive/c/Program Files (x86)/GOG Galaxy
+$ grep -ir &quot;proxy-server&quot;
+Binary file GalaxyClient.exe matches
+Binary file GOG Galaxy Notifications Renderer.exe matches
+Binary file libcef.dll matches
+</code></pre><p>And we can see it in the binary with a hex editor or Ghidra (if you want to be
+fancy).</p>
+<span class=caption-wrapper>
+<img class=caption src=01-config-ghidra.png title="no-proxy-server string in GalaxyClient.exe" alt="no-proxy-server string in GalaxyClient.exe">
+<span class=caption-text>no-proxy-server string in GalaxyClient.exe</span>
+</span>
+<p>This appears to be the global config for the application. It's the same in the
+other executable, too.</p>
+<p>What if we just zero-ed out this. If we modify it directly in the hex editor, we
+will get a checksum error message.</p>
+<span class=caption-wrapper>
+<img class=caption src=02-checksum-error.png title="Checksum error" alt="Checksum error">
+<span class=caption-text>Checksum error</span>
+</span>
+<h3 id=checksum-error>Checksum Error
+<a class=header-link href=#checksum-error><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>For a few minutes I though it references the PE header checksum but then I
+looked in the <code>GalaxyInitialization.log</code> file:</p>
+<pre tabindex=0><code>2020-05-16 12:21:42.728 [Warning][ (0)] [TID 1620][galaxy_client]:
+    getValidFileSignature failed during WinVerifyTrust with error -2146869232 (detail code: 2148098064).
+2020-05-16 12:21:42.728 [Fatal][ (0)] [TID 1620][galaxy_client]:
+    Invalid client signature.
+</code></pre><p>I went down the road to bypass the authenticode checks. I found more checks,
+bypassed them but it did not work. I finally gave up. It's a pain in the neck.
+There must be an easier way.</p>
+<h1 id=the-good-old-hosts-file>The Good Old hosts File
+<a class=header-link href=#the-good-old-hosts-file><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>I decided to go back to using the hosts file. It does not need patching and the
+application can work the way it was before. The process as described in
+<a href=/blog/2020-05-09-thick-client-proxying-part-10-the-hosts-file/ title="Part 10 - The hosts File" rel=nofollow target=_blank>Part 10 - The hosts File</a>
+was:</p>
+<ol>
+<li>Run the app.</li>
+<li>Identify endpoints.</li>
+<li>Ping the endpoint to get its IP.</li>
+<li>Add the endpoint to the <code>hosts</code> file.</li>
+<li>Add the endpoint domain and IP to Burp's <code>Hostname Resolution</code>.</li>
+<li>???</li>
+<li>Rinse and repeat.</li>
+</ol>
+<p>This can get tedious if you have more than a few endpoints and more importantly
+if you keep discovering new endpoints. I am going to share my workflow to make
+thing a bit easier.</p>
+<h2 id=gog-galaxy-error-in-a-hyper-v>GOG Galaxy Error in a Hyper-V
+<a class=header-link href=#gog-galaxy-error-in-a-hyper-v><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Running GOG Galaxy in Hyper-V (probably in some other hypervisors) results in an
+error. After logging in, you will see this message box pop up. If you click OK,
+the app will be closed. You can safely ignore it in this blog post. But this
+means you should run it in the host OS to be able to test all the application's
+functionality.</p>
+<span class=caption-wrapper>
+<img class=caption src=03-gog-error.png title="Galaxy error in Hyper-V" alt="Galaxy error in Hyper-V">
+<span class=caption-text>Galaxy error in Hyper-V</span>
+</span>
+<h2 id=identifying-endpoints>Identifying Endpoints
+<a class=header-link href=#identifying-endpoints><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>I have talked about this a lot. I have explained the fundamentals at
+<a href=/blog/2015-08-01-network-traffic-attribution-on-windows/ title="Network Traffic Attribution on Windows" rel=nofollow target=_blank>Network Traffic Attribution on Windows</a>.
+I reviewed it and realized my techniques have only gotten more efficient but
+have not changed. I am not sure if this is a good thing or not.</p>
+<p>In short, I am going to use Netmon to identify the endpoints. I will do this by
+running Netmon and then the app. Because the app most likely talks to all
+endpoints via TLS we will only show <code>ClientHello</code> packets. I will use the
+Server Name Indication (SNI) extension in it to figure out which domain is
+contacted.</p>
+<p>The filter to only display <code>ClientHello</code>s in Netmon is:</p>
+<ul>
+<li><code>TLS.TlsRecLayer.TlsRecordLayer.SSLHandshake.HandShake.ClientHello</code></li>
+</ul>
+<p>Remember to click <code>Apply</code> after pasting the filter in Netmon. Inside the app,
+login and do whatever you can. We want to hit as many endpoints as we can.</p>
+<p>After we look in Netmon and see a lot of endpoints. Most of them are duplicates.
+If there were only a few endpoints we could just look for the SNI and do the
+rest of the steps manually. Unfortunately, we have a lot of endpoints.</p>
+<span class=caption-wrapper>
+<img class=caption src=04-galaxy-netmon.png title="GOG Galaxy endpoints in Netmon" alt="GOG Galaxy endpoints in Netmon">
+<span class=caption-text>GOG Galaxy endpoints in Netmon</span>
+</span>
+<p>So what do we do? Automation. Remember
+<a href=/blog/2018-10-03-reflections-on-manual-work-is-a-bug/ title="Reflections on 'Manual Work is a Bug'" rel=nofollow target=_blank>Manual Work is a Bug</a></p>
+<h2 id=introducing-extract-sni>Introducing Extract-SNI
+<a class=header-link href=#introducing-extract-sni><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p><a href=https://github.com/parsiya/extract-sni target=_blank rel="noreferrer noopener">Extract-SNI</a> is a small Go application that parses pcap files and
+extracts SNIs from it. It generates two kinds of output:</p>
+<ol>
+<li>A report that contains the information on how to get started. Some of this
+includes some lines of text that should be added to <code>hosts</code> file to redirect
+the endpoints to the proxy.</li>
+<li>A Burp config file that sets up <code>Hostname Resolution</code> and proxy listeners.</li>
+</ol>
+<p>In other words, it does steps 3, 4, and 5 for us.</p>
+<h2 id=using-extract-sni-here>Using Extract-SNI Here
+<a class=header-link href=#using-extract-sni-here><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p><code>Extract-SNI</code> works on pcap files because I could find a parser library for
+Netmon cap files. pcap is also the industry standard so you can use Wireshark or
+other tools.</p>
+<p>Follow these steps:</p>
+<ol>
+<li>Filter the traffic to what we want.
+<ol>
+<li>Remember that we can filter by <code>ProcessID</code> and <code>ProcessName</code>.</li>
+<li>E.g., <code>ProcessName.Contains("galaxy")</code>.</li>
+</ol>
+</li>
+<li>Add the filter to only show <code>ClientHello</code>s.</li>
+<li><code>File > Save As</code>.
+<ol>
+<li>Under <code>Frame selection</code> check <code>Displayed frames</code>.</li>
+<li><strong>Un-check <code>Record display filter in capture file</code></strong>. If you keep this,
+the first packet in the file will be the filter and Wireshark will be
+<a href=/cheatsheet/#open-a-network-monitor-cap-file-in-wireshark-and-save-is-disabled title="Open a Network Monitor cap File in Wireshark and Save is Disabled" rel=nofollow target=_blank>unable to convert it to pcap format</a></li>
+</ol>
+</li>
+<li>Convert the <code>cap</code> file to <code>pcap</code> format. Wireshark can do this.</li>
+<li>Run <code>Extract-sni</code> on the pcap file.
+<ol>
+<li><code>go run extract-sni.go C:\path\to\file.pcap -o goggalaxy</code></li>
+</ol>
+</li>
+<li>Read <code>goggalaxy.html</code>.</li>
+<li>Copy the related section into the <code>hosts</code> file.
+<ol>
+<li>You need admin access to do this.</li>
+</ol>
+</li>
+<li>Open Burp, load it with your default config.</li>
+<li>Load <code>goggalaxy.json</code> in Burp via <code>Project (menu) > Project options > Load project options</code>.</li>
+<li>Check the Burp dashboard to see all proxy listeners have started. There should be one proxy listener on port <code>443</code>.</li>
+<li>Run the GOG application and see the traffic.</li>
+</ol>
+<p>To see usage and more information please see the readme on <a href=https://github.com/parsiya/extract-sni target=_blank rel="noreferrer noopener">github</a>.</p>
+<h2 id=defeating-certificate-pinning>Defeating Certificate Pinning
+<a class=header-link href=#defeating-certificate-pinning><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>We do all of this and run Galaxy. We see some traffic in Burp. But we cannot
+login. Every time we enter our credentials we see a POST request to
+<a href=https://login.gog.com/login target=_blank rel="noreferrer noopener">https://login.gog.com/login</a> but nothing else. And login fails with
+<code>incorrect password</code>. We are also missing some of the domains that we saw
+before.</p>
+<span class=caption-wrapper>
+<img class=caption src=08-requests-burp.png title="Requests in Burp after login" alt="Requests in Burp after login">
+<span class=caption-text>Requests in Burp after login</span>
+</span>
+<p>What is the issue? Open the log file at
+<code>C:\ProgramData\GOG.com\Galaxy\logs\GalaxyClient.log</code> and search for<code>certificate</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=07-login-error.png title="Certificate verify failed" alt="Certificate verify failed">
+<span class=caption-text>Certificate verify failed</span>
+</span>
+<p>This was frustrating to troubleshoot without the log files because the error
+message in the UI is completely different. So the application has some sort of
+certificate pinning or at least it does not use the Windows certificate store to
+validate root CAs.</p>
+<p>The proper way to find the file with the CAs (it also might be embedded in the
+binary) was to use procmon and check the files that are accessed by the app.
+However, I have had experience with other CEF apps so I just searched for
+<code>rootCA</code> in the usual locations. Applications usually stores files in their
+respective directories under these locations:</p>
+<ol>
+<li><code>Program Files</code></li>
+<li><code>Appdata</code></li>
+<li><code>ProgramData</code></li>
+</ol>
+<p>And I found the Mozilla root CA bundle.</p>
+<ul>
+<li><code>C:\ProgramData\GOG.com\Galaxy\redists\rootCA.pem</code></li>
+</ul>
+<span class=caption-wrapper>
+<img class=caption src=09-rootca.png title=rootCA.pem alt=rootCA.pem>
+<span class=caption-text>rootCA.pem</span>
+</span>
+<p>We must add Burp's CA to this file. Convert it from DER to PEM and add it to the
+<strong>top of this file</strong>.</p>
+<p>Why top do you ask? Well, there was this app that I was trying to proxy. It used
+the same type of file. I added Burp's CA to the end of this file and it did not
+work. A few hours of troubleshooting and I realized it was loading X
+certificates for this file where X was the number of certificates in the
+original file. So I added Burp's CA to the start of the file and it worked.
+Since then, it has become a habit.</p>
+<span class=caption-wrapper>
+<img class=caption src=10-rootca-modified.png title="Modified rootCA.pem" alt="Modified rootCA.pem">
+<span class=caption-text>Modified rootCA.pem</span>
+</span>
+<p>Re-run the app and now you can proxy it.</p>
+<span class=caption-wrapper>
+<img class=caption src=11-galaxy-proxied.png title="GOG Galaxy 2.0 proxied" alt="GOG Galaxy 2.0 proxied">
+<span class=caption-text>GOG Galaxy 2.0 proxied</span>
+</span>
+<h2 id=detecting-more-endpoints>Detecting More Endpoints
+<a class=header-link href=#detecting-more-endpoints><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Keep running Netmon even after proxying. See if there are more direct
+connections from the Galaxy app. These are the endpoints that were not included
+in the original list. We can proxy them similar to the previous ones.</p>
+<p>For example, in my original list I did not have <code>chat.gog.com</code>.</p>
+<h2 id=error-message-troubleshooting>Error Message Troubleshooting
+<a class=header-link href=#error-message-troubleshooting><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>I have tried to troubleshoot the error message that we ignored.. It's a
+<a href=https://www.gog.com/forum/general_beta_gog_galaxy_2.0/bug_gog_galaxy_20_doesnt_works_via_remote_desktop target=_blank rel="noreferrer noopener">known issue</a> because people on the forums have the same problem. At
+first it looks like the <code>Galaxy Communications</code> service is not running. Manually
+starting <code>GalaxyCommunication</code> results in this error in the
+<code>CommunicationServiceInitialization.log</code> file.</p>
+<pre tabindex=0><code>2020-02-16 11:35:22.495 [Information][ (0)] [TID 5556][comm_service]: Log
+started. Application version: 1.2.39.40 (2019-10-29 04:59).
+
+2020-02-16 11:35:22.495 [Information][ (0)] [TID 5556][comm_service]: Operating
+system: Windows 8 6.2 (Build 9200) (IA32)
+
+2020-02-16 11:35:22.823 [Warning][ (0)] [TID 5556][comm_service]: SessionID is
+not equal to ActiveConsoleSessionId while getting process token from process
+explorer.exe, error code= 0
+
+2020-02-16 11:35:22.823 [Warning][ (0)] [TID 5556][comm_service]: Failed getting
+token for process explorer.exe, checked processes: 163.
+
+2020-02-16 11:35:22.823 [Error][ (0)] [TID 5556][comm_service]: Failure getting
+the explorer.exe token. Last error code: 0
+
+2020-02-16 11:35:22.823 [Warning][ (0)] [TID 5556][comm_service]:
+GetCurrentUserSID() failed
+
+2020-02-16 11:35:22.823 [Information][ (0)] [TID 8368][comm_service]: [main]
+Stop serving due to lack of user authorization info
+</code></pre><p>Searching for the error above (<code>sessionID is not equal</code>) we get to this page
+<a href=https://d4stiny.github.io/Local-Privilege-Escalation-on-most-Dell-computers/ target=_blank rel="noreferrer noopener">https://d4stiny.github.io/Local-Privilege-Escalation-on-most-Dell-computers/</a>.</p>
+<p>It explains how <code>PushNotification</code> works in Windows 10.</p>
+<p>"For most versions of Windows 10, <code>PushNotification</code> will call a method called
+<code>LaunchUwpApp</code>. <code>LaunchUwpApp</code> takes the following steps:</p>
+<ol>
+<li>Grab the active console session ID. This value represents the session ID for
+the user that is currently logged in.</li>
+<li>For every process named <code>explorer</code>, it will check if its session ID matches
+the active console session ID.</li>
+<li>If the explorer process has the same session ID, the agent will duplicate the
+token of the process.</li>
+<li>Finally, if the duplicated token is valid, the Agent will start a child
+process named <code>SupportAssistAppWire.exe</code>, with InheritHandles set to true.
+SupportAssistAppWire.exe will then create the notification."</li>
+</ol>
+<p>Seems like it's a problem when using remote desktop. Which is what Hyper-V uses
+to connect to VMs. Looking around the internet, it seems like there is no cure.
+The active console session ID when using RDP is different from the session ID
+for explorer.exe. I am not sure why GOG Galaxy does this but it's an issue.</p>
+<p>As I said before, just ignore this message box.</p>
+<section class=footnotes role=doc-endnotes>
+<hr>
+<ol>
+<li id=fn:1 role=doc-endnote>
+<p>Not exactly correct but the analogy works.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
+</li>
+<li id=fn:2 role=doc-endnote>
+<p>GOG Galaxy creates a good amount of logs in that directory. Be sure to check them out when researching this application.&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+</div>
+<footer>
+<p class=meta>
+<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Jun 22, 2020</time>
+</span>
+</p>
+<p class=meta>
+<a class="basic-alignment left" href=https://parsiya.net/blog/2020-05-17-go-slices-and-their-oddities/ title="Go Slices and Their Oddities">Go Slices and Their Oddities</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2020-07-25-no-you-are-not-getting-a-cve-for-that/ title="No, You Are Not Getting a CVE for That">No, You Are Not Getting a CVE for That</a>
+</p>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</div>
+<aside class="sidebar thirds">
+<section class="first odd">
+<h1>Who am I?</h1>
+<p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
+<p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p>
+<p>Click on <a href=/about/>About Me!</a> to know more.</p>
+</p>
+</section>
+<ul class=sidebar-nav>
+<li class=sidebar-nav-item>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
+</li>
+</ul>
+<section class=odd>
+<h1>Collections</h1>
+<li>
+<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
+</li>
+<li>
+<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
+</li>
+</section>
+</aside>
+</div>
+</div>
+<footer role=contentinfo>
+<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
+</p>
+</footer>
+</body>
+</html>

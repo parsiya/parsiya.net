@@ -1,0 +1,521 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
+<link href=/css/fonts.css rel=stylesheet type=text/css>
+<title>The Golang int and the Overlooked Bug</title>
+<link rel=stylesheet href=/css/hugo-octopress.css>
+<link rel=stylesheet href=/css/fork-awesome.min.css>
+<link href=https://parsiya.net/favicon.png rel=icon>
+<meta name=description content>
+<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
+<meta name=author content="Parsia">
+<meta name=generator content="Hugo 0.92.0">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image:src content="https://parsiya.net/blog/2020-04-05-the-golang-int-and-the-overlooked-bug/06-duty_calls.png">
+<meta name=twitter:title content="The Golang int and the Overlooked Bug">
+<meta name=twitter:description content="This blog is about a GitHub Security Lab Spot The Bug
+challenge that had an overlooked bug. Github Security Lab's Twitter account
+tweets code snippets from time to time. The challenge is to spot the bug.
+Disclosure: I might be completely wrong because we only have access to the
+snippet in the picture and people at the GitHub Security Lab are better than me
+in static analysis.">
+<meta name=twitter:domain content="parsiya.net">
+<meta name=twitter:creator content="@CryptoGangsta">
+</head>
+<body>
+<header role=banner>
+<hgroup>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
+<h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2>
+</hgroup></header>
+<nav role=navigation>
+<fieldset class=mobile-nav>
+<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
+</fieldset>
+<ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
+<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
+<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
+<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
+<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
+<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
+</ul>
+<ul class=subscription>
+<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
+</ul>
+<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+<fieldset role=search>
+<input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/>
+</fieldset>
+</form>
+</nav>
+<div id=main>
+<div id=content>
+<div>
+<article class=hentry role=article>
+<header>
+<p class=meta>Apr 5, 2020
+- 6 minute read
+- <a href=https://parsiya.net/blog/2020-04-05-the-golang-int-and-the-overlooked-bug/#disqus_thread>Comments</a>
+- <a class=label href=https://parsiya.net/categories/go/>go </a>
+</p>
+<h1 class=entry-title>
+The Golang int and the Overlooked Bug
+</h1>
+</header>
+<div class=entry-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#the-challenge>The Challenge</a></li>
+<li><a href=#int-vs-int>int vs. int</a>
+<ul>
+<li><a href=#the-go-playground>The Go Playground</a></li>
+</ul>
+</li>
+<li><a href=#the-official-answer>The "Official" Answer</a>
+<ul>
+<li><a href=#the-official-fix>The "Official" Fix</a></li>
+</ul>
+</li>
+<li><a href=#but-why-are-you-disagreeing>But Why Are You Disagreeing?</a></li>
+<li><a href=#what-did-we-learn-here-today>What Did We Learn Here Today?</a></li>
+</ul>
+</nav>
+<p>This blog is about a <a href=https://securitylab.github.com/ target=_blank rel="noreferrer noopener">GitHub Security Lab</a> <code>Spot The Bug</code>
+challenge that had an overlooked bug. <a href=https://twitter.com/GHSecurityLab target=_blank rel="noreferrer noopener">Github Security Lab's Twitter account</a>
+tweets code snippets from time to time. The challenge is to spot the bug.</p>
+<p><strong>Disclosure</strong>: I might be completely wrong because we only have access to the
+snippet in the picture and people at the GitHub Security Lab are better than me
+in static analysis.</p>
+<h1 id=the-challenge>The Challenge
+<a class=header-link href=#the-challenge><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>On April 1st, 2020 they <a href=https://twitter.com/GHSecurityLab/status/1245501198628614144 target=_blank rel="noreferrer noopener">tweeted</a> the following code snippet:</p>
+<figure class=code>
+<figcaption>
+<span>Can you #spotthebug in this Go code? What can be the consequences? How would you fix it?</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>num, err <span style=color:#719e07>:=</span> strconv.<span style=color:#268bd2>Atoi</span>(s)
+
+<span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> { <span style=color:#586e75>// not a number, search by name
+</span><span style=color:#586e75></span>    number, err <span style=color:#719e07>:=</span> util.<span style=color:#268bd2>LookupNumberByName</span>(registry, s)
+    <span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+        <span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>, err
+    }
+    num = <span style=color:#b58900>int</span>(number)
+}
+target, err <span style=color:#719e07>:=</span> util.<span style=color:#268bd2>LookupTarget</span>(config, <span style=color:#b58900>int32</span>(num))
+<span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+    <span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>, err
+}
+
+<span style=color:#586e75>// convert the resolved target number back to a string
+</span><span style=color:#586e75></span>s = strconv.<span style=color:#268bd2>Itoa</span>(<span style=color:#b58900>int</span>(target))</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<h1 id=int-vs-int>int vs. int
+<a class=header-link href=#int-vs-int><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>The answer is not that obvious unless you have been bitten by it.
+<strong>The size of <code>int</code> in Go is dependent on the system architecture</strong>. Looking up
+<code>int</code> in the <a href=https://golang.org/pkg/builtin/#int target=_blank rel="noreferrer noopener">docs</a>:</p>
+<blockquote>
+<p>int is a signed integer type that is at least 32 bits in size. It is a
+distinct type, however, and not an alias for, say, int32.</p>
+</blockquote>
+<p>This does not give us much information. I think the docs could be clearer than
+<code>at least 32 bits in size</code> and <code>not an alias</code>. We can get our answer in <a href=https://tour.golang.org/basics/11 target=_blank rel="noreferrer noopener">A Tour
+of Go - Basic Types</a>.</p>
+<blockquote>
+<p>The int, uint, and uintptr types are usually 32 bits wide on 32-bit systems
+and 64 bits wide on 64-bit systems.</p>
+</blockquote>
+<p>And then it continues with the bad advice that results in the bug above.</p>
+<blockquote>
+<p>When you need an integer value you should use int unless you have a specific
+reason to use a sized or unsigned integer type.</p>
+</blockquote>
+<p>You really shouldn't use just <code>int</code> if you want to avoid bugs in different
+machines. Again, if you have not encountered this bug you really do not know
+what to look for.</p>
+<h2 id=the-go-playground>The Go Playground
+<a class=header-link href=#the-go-playground><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>I was trying something in <a href=https://play.golang.org/ target=_blank rel="noreferrer noopener">The Go Playground</a> and realized the
+execution is different than my own machine. After a few hours of
+troubleshooting, I realized the playground is running on a 32-bit machine. We
+cannot run <code>uname</code> on it but we can see the size of an <code>int</code> there.</p>
+<figure class=code>
+<figcaption>
+<span>Go Playground int size</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#719e07>package</span> main
+
+<span style=color:#719e07>import</span> (
+	<span style=color:#2aa198>&#34;fmt&#34;</span>
+	<span style=color:#2aa198>&#34;unsafe&#34;</span>
+)
+
+<span style=color:#268bd2>func</span> <span style=color:#268bd2>main</span>() {
+	<span style=color:#268bd2>var</span> int1 <span style=color:#dc322f>int</span>
+	fmt.<span style=color:#268bd2>Println</span>(unsafe.<span style=color:#268bd2>Sizeof</span>(int1))
+}</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<p>You can run it on the playground at <a href=https://play.golang.org/p/4NhqnMKeXTh target=_blank rel="noreferrer noopener">https://play.golang.org/p/4NhqnMKeXTh</a>.</p>
+<span class=caption-wrapper>
+<img class=caption src=01-playground-int-size.png title="int on the Go playground is 4 bytes" alt="int on the Go playground is 4 bytes">
+<span class=caption-text>int on the Go playground is 4 bytes</span>
+</span>
+<p>On my own machine which is running a 64-bit OS, it's 8 bytes (64 bits).</p>
+<span class=caption-wrapper>
+<img class=caption src=02-my-machine-int-size.png title="int on my machine is 8 bytes" alt="int on my machine is 8 bytes">
+<span class=caption-text>int on my machine is 8 bytes</span>
+</span>
+<h1 id=the-official-answer>The "Official" Answer
+<a class=header-link href=#the-official-answer><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Now, we can trace the bug. <a href=https://golang.org/pkg/strconv/#Atoi target=_blank rel="noreferrer noopener">strconv.Atoi</a> returns <code>(int, error)</code>.
+So <code>num</code> is of type <code>int</code>. On a 64 bit system, it will be an <code>int64</code>. It is then
+converted to <code>int32</code> on line 10.</p>
+<ul>
+<li><code>target, err := util.LookupTarget(config, int32(num))</code></li>
+</ul>
+<p>On a 64 bit system, if the value inside <code>num</code> is bigger (or smaller if negative)
+than what can be stored in an <code>int32</code> we will encounter an integer overflow. An
+<code>int32</code> can store values between <code>-2^31</code> and <code>2^31-1</code>.</p>
+<p>We store <code>2^31</code> on the <code>int</code> value and then convert it to <code>int32</code>. Let's see
+what happens:</p>
+<figure class=code>
+<figcaption>
+<span>int64 to int32 integer overflow</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#719e07>package</span> main
+
+<span style=color:#719e07>import</span> (
+	<span style=color:#2aa198>&#34;fmt&#34;</span>
+)
+
+<span style=color:#268bd2>func</span> <span style=color:#268bd2>main</span>() {
+	<span style=color:#268bd2>var</span> intVar <span style=color:#dc322f>int</span>
+	<span style=color:#268bd2>var</span> int32Var <span style=color:#dc322f>int32</span>
+
+	intVar = <span style=color:#2aa198>1</span> <span style=color:#719e07>&lt;&lt;</span> <span style=color:#2aa198>31</span> <span style=color:#586e75>// 2^31
+</span><span style=color:#586e75></span>	int32Var = <span style=color:#b58900>int32</span>(intVar)
+	fmt.<span style=color:#268bd2>Printf</span>(<span style=color:#2aa198>&#34;int: %v - int32: %v&#34;</span>, intVar, int32Var)
+
+    <span style=color:#586e75>// You could condense it to this unclear code
+</span><span style=color:#586e75></span>	<span style=color:#586e75>// fmt.Printf(&#34;int: %v - int32: %v&#34;, int(1&lt;&lt;31), int32(int(1&lt;&lt;31)))
+</span><span style=color:#586e75></span>}</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<p>This code prints:</p>
+<ul>
+<li><code>int: 2147483648 - int32: -2147483648</code></li>
+</ul>
+<span class=caption-wrapper>
+<img class=caption src=03-integer-overflow.png title="integer overflow" alt="integer overflow">
+<span class=caption-text>integer overflow</span>
+</span>
+<p>Funnily enough, if you try to run something like <code>int32(int(1&lt;&lt;31))</code> the compiler
+throws this error:</p>
+<ul>
+<li><code>constant 2147483648 overflows int32</code></li>
+</ul>
+<span class=caption-wrapper>
+<img class=caption src=04-compiler-error.png title="Compiler error for integer overflow" alt="Compiler error for integer overflow">
+<span class=caption-text>Compiler error for integer overflow</span>
+</span>
+<h2 id=the-official-fix>The "Official" Fix
+<a class=header-link href=#the-official-fix><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>The fix is to replace <code>strconv.Atoi</code> with <code>strconv.ParseInt</code>. After all,
+according to the docs:</p>
+<blockquote>
+<p>Atoi is equivalent to ParseInt(s, 10, 0), converted to type int.</p>
+</blockquote>
+<p>Looking at the <a href="https://golang.org/src/strconv/atoi.go?s=5654:5686#L214" target=_blank rel="noreferrer noopener">source</a> this is not exactly correct. There is a
+"quick path" when the length of the string is less than 10 on 32-bit and less
+than 19 on 64-bit systems.</p>
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>	<span style=color:#719e07>if</span> intSize <span style=color:#719e07>==</span> <span style=color:#2aa198>32</span> <span style=color:#719e07>&amp;&amp;</span> (<span style=color:#2aa198>0</span> &lt; sLen <span style=color:#719e07>&amp;&amp;</span> sLen &lt; <span style=color:#2aa198>10</span>) <span style=color:#719e07>||</span>
+		intSize <span style=color:#719e07>==</span> <span style=color:#2aa198>64</span> <span style=color:#719e07>&amp;&amp;</span> (<span style=color:#2aa198>0</span> &lt; sLen <span style=color:#719e07>&amp;&amp;</span> sLen &lt; <span style=color:#2aa198>19</span>) {
+        <span style=color:#586e75>// Fast path for small integers that fit int type.
+</span></code></pre></div>
+<h1 id=but-why-are-you-disagreeing>But Why Are You Disagreeing?
+<a class=header-link href=#but-why-are-you-disagreeing><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Let's say we have a 32-bit system. <code>s</code> could contain a number that does not fit
+in <code>int32</code> (<code>int</code> for this system). Note that <code>s</code> is a string and could have any
+large value. You can see it on the Go playground (remember it's a 32-bit
+machine) at <a href=https://play.golang.org/p/QEKtDWB7SFd target=_blank rel="noreferrer noopener">https://play.golang.org/p/QEKtDWB7SFd</a>.</p>
+<figure class=code>
+<figcaption>
+<span>strconv.Atoi on 32-bit machines</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#719e07>package</span> main
+
+<span style=color:#719e07>import</span> (
+	<span style=color:#2aa198>&#34;fmt&#34;</span>
+	<span style=color:#2aa198>&#34;strconv&#34;</span>
+)
+
+<span style=color:#268bd2>func</span> <span style=color:#268bd2>main</span>() {
+	s <span style=color:#719e07>:=</span> <span style=color:#2aa198>&#34;2147483648&#34;</span>
+	_, err <span style=color:#719e07>:=</span> strconv.<span style=color:#268bd2>Atoi</span>(s)
+	<span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+		fmt.<span style=color:#268bd2>Println</span>(err)
+	}
+}</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<p><code>strconv.Atoi</code> returns an error message.</p>
+<ul>
+<li><code>strconv.Atoi: parsing "2147483648": value out of range</code></li>
+</ul>
+<span class=caption-wrapper>
+<img class=caption src=05-atoi-error.png title="strconv.Atoi error on the Go playground" alt="strconv.Atoi error on the Go playground">
+<span class=caption-text>strconv.Atoi error on the Go playground</span>
+</span>
+<p>Going back to our original code on a 32-bit system:</p>
+<figure class=code>
+<figcaption>
+<span>Original code</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#586e75>// s := &#34;2147483648&#34;
+</span><span style=color:#586e75></span>num, err <span style=color:#719e07>:=</span> strconv.<span style=color:#268bd2>Atoi</span>(s)
+
+<span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> { <span style=color:#586e75>// not a number, search by name
+</span><span style=color:#586e75></span>    <span style=color:#586e75>// On a 32-bit system we land here with the error message `value out of range`
+</span><span style=color:#586e75></span>    <span style=color:#586e75>// Then we call LookupNumberByName with `2147483648`
+</span><span style=color:#586e75></span>    number, err <span style=color:#719e07>:=</span> util.<span style=color:#268bd2>LookupNumberByName</span>(registry, s = <span style=color:#2aa198>&#34;2147483648&#34;</span>)
+    <span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+        <span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>, err
+    }
+    num = <span style=color:#b58900>int</span>(number)
+}
+target, err <span style=color:#719e07>:=</span> util.<span style=color:#268bd2>LookupTarget</span>(config, <span style=color:#b58900>int32</span>(num))
+<span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+    <span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>, err
+}
+
+<span style=color:#586e75>// convert the resolved target number back to a string
+</span><span style=color:#586e75></span>s = strconv.<span style=color:#268bd2>Itoa</span>(<span style=color:#b58900>int</span>(target))</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<p><code>strconv.Atoi</code> returns the <code>value out of range</code> error and we land in the error
+block. Because the code assumes <code>s</code> is not a number and the name of the target,
+it tries to call <code>LookupNumberByName</code> with <code>2147483648</code>.</p>
+<p>I do not know how <code>LookupNumberByName</code> works and that is <em>why I might be wrong</em>.
+However, if I were creating such a function that tries to look up a name from a
+registry I would return an error if I could not find it (remember errors are
+values in Go). That means there is a good chance that we land in the error block
+on line 9 and we never reach where the "official" answer is.</p>
+<h1 id=what-did-we-learn-here-today>What Did We Learn Here Today?
+<a class=header-link href=#what-did-we-learn-here-today><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><ul>
+<li><code>int</code> in Go is dependent on the machine. It's 32 bits on a 32-bit machine and
+64 bits on 64-bit machines.</li>
+<li>The Go playground is running on a 32-bit machine.</li>
+<li>Don't use <code>int</code>.</li>
+</ul>
+<p>I finished this blog at 3 AM and I feel like the below XKCD does the trick.
+Notice the <code>WRONG</code> with underscores, the person on the internet might not be
+really wrong here but the writer feels like they are.</p>
+<span class=caption-wrapper>
+<img class=caption src=06-duty_calls.png title="Source: https://xkcd.com/386/" alt="Source: https://xkcd.com/386/">
+<span class=caption-text>Source: https://xkcd.com/386/</span>
+</span>
+</div>
+<footer>
+<p class=meta>
+<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Apr 5, 2020</time>
+</span>
+</p>
+<p class=meta>
+<a class="basic-alignment left" href=https://parsiya.net/blog/2020-03-13-time-management-for-systems-administrators-lessons-learned/ title="Time Management For Systems Administrators - Lessons Learned">Time Management For Systems Administrators - Lessons Learned</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2020-04-17-the-encrypted-logz-some-simple-reverse-engineering/ title="The Encrypted Logz - Some Simple Reverse Engineering">The Encrypted Logz - Some Simple Reverse Engineering</a>
+</p>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</div>
+<aside class="sidebar thirds">
+<section class="first odd">
+<h1>Who am I?</h1>
+<p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
+<p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p>
+<p>Click on <a href=/about/>About Me!</a> to know more.</p>
+</p>
+</section>
+<ul class=sidebar-nav>
+<li class=sidebar-nav-item>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
+</li>
+</ul>
+<section class=odd>
+<h1>Collections</h1>
+<li>
+<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
+</li>
+<li>
+<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
+</li>
+</section>
+</aside>
+</div>
+</div>
+<footer role=contentinfo>
+<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
+</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1031 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
+<link href=/css/fonts.css rel=stylesheet type=text/css>
+<title>Intro to .NET Remoting for Hackers</title>
+<link rel=stylesheet href=/css/hugo-octopress.css>
+<link rel=stylesheet href=/css/fork-awesome.min.css>
+<link href=https://parsiya.net/favicon.png rel=icon>
+<meta name=description content>
+<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
+<meta name=author content="Parsia">
+<meta name=generator content="Hugo 0.92.0">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Intro to .NET Remoting for Hackers">
+<meta name=twitter:description content="This is a simple tutorial about .NET Remoting. I am going to re-create a very simple RCE and local privilege escalation that I encountered in my projects and use it to explain .NET Remoting and simple debugging in dnSpy.
+In this post we will:
+
+Do a brief introduction to .NET Remoting
+Develop a simple .NET Remoting client and a vulnerable server in Visual Studio
+Observe .NET Remoting traffic
+See .NET Remoting in action by doing some basic debugging with dnSpy
+Re-create the vulnerable application
+Use dnSpy to patch and create modified .NET modules to exploit our sample vulnerable server
+
+If you know of any applications that use .NET Remoting please let me know. I want to look at them.
+Code is at:
+
+https://github.com/parsiya/Parsia-Code/tree/master/net-remoting
+">
+<meta name=twitter:domain content="parsiya.net">
+<meta name=twitter:creator content="@CryptoGangsta">
+</head>
+<body>
+<header role=banner>
+<hgroup>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
+<h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2>
+</hgroup></header>
+<nav role=navigation>
+<fieldset class=mobile-nav>
+<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
+</fieldset>
+<ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
+<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
+<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
+<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
+<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
+<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
+</ul>
+<ul class=subscription>
+<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
+</ul>
+<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+<fieldset role=search>
+<input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/>
+</fieldset>
+</form>
+</nav>
+<div id=main>
+<div id=content>
+<div>
+<article class=hentry role=article>
+<header>
+<p class=meta>Nov 14, 2015
+- 23 minute read
+- <a href=https://parsiya.net/blog/2015-11-14-intro-to-.net-remoting-for-hackers/#disqus_thread>Comments</a>
+- <a class=label href=https://parsiya.net/categories/reverse-engineering/>Reverse Engineering </a>
+</p>
+<h1 class=entry-title>
+Intro to .NET Remoting for Hackers
+</h1>
+</header>
+<div class=entry-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#0-ingredients-and-setup>0. Ingredients and Setup</a></li>
+<li><a href=#1-brief-intro-to-net-remoting>1. Brief Intro to .NET Remoting</a></li>
+<li><a href=#2-developing-a-net-remoting-application>2. Developing a .NET Remoting Application</a></li>
+<li><a href=#3-net-remoting-messages>3. .NET Remoting Messages</a></li>
+<li><a href=#4-debugging-with-dnspy>4. Debugging with dnSpy</a>
+<ul>
+<li><a href=#41-finding-nemo>4.1 Finding Nemo</a></li>
+<li><a href=#42-analyze-this>4.2 Analyze This</a></li>
+<li><a href=#43-net-remoting-in-action>4.3 .NET Remoting in Action</a></li>
+</ul>
+</li>
+<li><a href=#5-re-creating-the-vulnerability>5. Re-creating the Vulnerability</a></li>
+<li><a href=#6-modifying-il-instructions-with-dnspy-and-patching-binaries>6. Modifying IL Instructions with dnSpy and Patching Binaries</a></li>
+<li><a href=#7-remediation>7. Remediation</a>
+<ul>
+<li><a href=#71-rce>7.1 RCE</a></li>
+<li><a href=#72-channel-encryption-and-authentication>7.2 Channel Encryption and Authentication</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+<p>This is a simple tutorial about <a href="https://msdn.microsoft.com/en-us/library/kwdt6w2k%28v=vs.71%29.aspx" target=_blank rel="noreferrer noopener">.NET Remoting</a>. I am going to re-create a very simple RCE and local privilege escalation that I encountered in my projects and use it to explain .NET Remoting and simple debugging in <code>dnSpy</code>.</p>
+<p>In this post we will:</p>
+<ol>
+<li>Do a brief introduction to .NET Remoting</li>
+<li>Develop a simple .NET Remoting client and a vulnerable server in Visual Studio</li>
+<li>Observe .NET Remoting traffic</li>
+<li>See .NET Remoting in action by doing some basic debugging with dnSpy</li>
+<li>Re-create the vulnerable application</li>
+<li>Use dnSpy to patch and create modified .NET modules to exploit our sample vulnerable server</li>
+</ol>
+<p>If you know of any applications that use .NET Remoting please let me know. I want to look at them.</p>
+<p>Code is at:</p>
+<ul>
+<li><a href=https://github.com/parsiya/Parsia-Code/tree/master/net-remoting target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/net-remoting</a></li>
+</ul>
+<h1 id=0-ingredients-and-setup>0. Ingredients and Setup
+<a class=header-link href=#0-ingredients-and-setup><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><ul>
+<li>Windows 7 Virtual Machine</li>
+<li>Visual Studio Community 2015: <a href=https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx target=_blank rel="noreferrer noopener">https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx</a>. We only need the C# components which are part of the default installation</li>
+<li>RawCap to capture local traffic</li>
+<li>Wireshark to analyze captured traffic</li>
+<li><a href=https://github.com/0xd4d/dnSpy/releases/tag/v1.4.0.0 target=_blank rel="noreferrer noopener">dnSpy (1.4.0.0)</a> to decompile and debug C# code</li>
+</ul>
+<h1 id=1-brief-intro-to-net-remoting>1. Brief Intro to .NET Remoting
+<a class=header-link href=#1-brief-intro-to-net-remoting><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>In simple words, .NET Remoting is a means to achieve InterProcess Communication (IPC). One application (let's call it server) exposes some remotable objects. Other applications (we will call them clients) create an instance of those objects and treat them like local objects. But these local objects will be executed on the server. Usually these remotable objects are in a shared library (e.g. DLL). Both client and server will have a copy of this DLL. .NET Remoting can use TCP, HTTP or named pipes to transfer the remotable objects.</p>
+<p>The concept of .NET Remoting is very similar to <a href=http://www.oracle.com/technetwork/java/javase/tech/index-jsp-138781.html target=_blank rel="noreferrer noopener">Java Remote Method Invocation (Java RMI)</a>. In Java RMI we will see serialized Java objects being passed around and in .NET Remoting we will see .NET objects.</p>
+<p>Don't worry if you do not understand parts of it because this was a very short intro. We will see how .NET Remoting works later.</p>
+<p><strong>Note</strong>: .NET Remoting is deprecated and you should not be using it. But who am I kidding? We are all using old technology all the time so we might as well get used to it.</p>
+<h1 id=2-developing-a-net-remoting-application>2. Developing a .NET Remoting Application
+<a class=header-link href=#2-developing-a-net-remoting-application><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>I am going to create two version of my simple .NET Remoting applications. Both are very simple. The first application will act as tutorial about how to create a .NET Remoting client/server application and the second aims to re-create a vulnerable server that I encountered in one of my projects.</p>
+<p>I am going to be using <a href=https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx target=_blank rel="noreferrer noopener">Visual Studio Community 2015</a> which is free. We will have three different projects in one solution:</p>
+<ul>
+<li>Remoting Library: A DLL which contains the remotable objects.</li>
+<li>Server</li>
+<li>Client</li>
+</ul>
+<p>If you want to play along, Visual Studio solutions are at <a href=https://github.com/parsiya/Parsia-Code/tree/master/net-remoting target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/net-remoting</a>. With compiled executables being in the <code>Executables</code> directory (keep in mind that these are executables from a stranger on the internet so treat them accordingly).</p>
+<p>First the DLL. Create a solution and a new project. Choose <code>Class Library</code> as type of the project. According to <a href="https://msdn.microsoft.com/en-us/library/vstudio/h8f0y3fc%28v=vs.100%29.aspx" target=_blank rel="noreferrer noopener">this MSDN article</a>, in order for an object to be remotable it should either be <code>Serializable</code> or inherit <a href="https://msdn.microsoft.com/en-us/library/system.marshalbyrefobject%28v=vs.110%29.aspx" target=_blank rel="noreferrer noopener"><code>MarshalByRefObject</code></a> class. I am taking the <code>MarshalByRefObject</code> route. For more information please refer to <a href="https://msdn.microsoft.com/library/wcf3swha%28v=vs.100%29.aspx" target=_blank rel="noreferrer noopener">Making Objects Remotable</a>.</p>
+<p>Here's how the Remoting Library (the DLL) looks like:</p>
+<figure class=code>
+<figcaption>
+<span>RemotingLibrary.cs</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#719e07>using</span> System;
+<span style=color:#719e07>using</span> System.Collections.Generic;
+<span style=color:#719e07>using</span> System.Linq;
+<span style=color:#719e07>using</span> System.Text;
+<span style=color:#719e07>using</span> System.Threading.Tasks;
+
+<span style=color:#719e07>namespace</span> RemotingSample
+{
+  <span style=color:#719e07>public</span> <span style=color:#719e07>class</span> <span style=color:#268bd2>RemoteMath</span> : MarshalByRefObject
+  {
+    <span style=color:#719e07>public</span> <span style=color:#dc322f>int</span> Add(<span style=color:#dc322f>int</span> a, <span style=color:#dc322f>int</span> b)    <span style=color:#586e75>// add
+</span><span style=color:#586e75></span>    {
+      Console.WriteLine(<span style=color:#2aa198>&#34;Add({0},{1}) called&#34;</span>, a, b);
+      <span style=color:#719e07>return</span> a + b;
+    }
+
+    <span style=color:#719e07>public</span> <span style=color:#dc322f>int</span> Sub(<span style=color:#dc322f>int</span> a, <span style=color:#dc322f>int</span> b)    <span style=color:#586e75>// subtract
+</span><span style=color:#586e75></span>    {
+      Console.WriteLine(<span style=color:#2aa198>&#34;Sub({0},{1}) called&#34;</span>, a, b);
+      <span style=color:#719e07>return</span> a - b;
+    }
+  }
+}</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<p>Note that the class <code>RemoteMath</code> is derived from <code>MarshalByRefObject</code> to make it remotable. We don't need to do anything else with regards to .NET Remoting in this DLL. Each function will print some text when it is called so we can see where the function actually runs.</p>
+<p>Create a new project named <code>Server</code> and use the following code. The comments should explain what is happening:</p>
+<figure class=code>
+<figcaption>
+<span>Server.cs</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">31
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">32
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">33
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">34
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">35
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">36
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">37
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#719e07>using</span> System;
+<span style=color:#719e07>using</span> System.Collections.Generic;
+<span style=color:#719e07>using</span> System.Linq;
+<span style=color:#719e07>using</span> System.Text;
+<span style=color:#719e07>using</span> System.Threading.Tasks;
+<span style=color:#719e07>using</span> System.Runtime.Remoting;
+<span style=color:#719e07>using</span> System.Runtime.Remoting.Channels;
+<span style=color:#719e07>using</span> System.Runtime.Remoting.Channels.Tcp;
+
+<span style=color:#719e07>namespace</span> RemotingSample
+{
+  <span style=color:#719e07>class</span> <span style=color:#268bd2>Server</span>
+  {
+    <span style=color:#719e07>static</span> <span style=color:#719e07>void</span> Main(<span style=color:#dc322f>string</span>[] args)
+    {
+      <span style=color:#586e75>// create a TCP channel and bind it to port 8888
+</span><span style=color:#586e75></span>      TcpChannel remotingChannel = <span style=color:#719e07>new</span> TcpChannel(<span style=color:#2aa198>8888</span>);
+
+      <span style=color:#586e75>// register the channel, the second parameter is ensureSecurity
+</span><span style=color:#586e75></span>      <span style=color:#586e75>// I have set it to false to disable encryption and signing
+</span><span style=color:#586e75></span>      <span style=color:#586e75>// for more information see section Remarks in https://msdn.microsoft.com/en-us/library/ms223155(v=vs.90).aspx
+</span><span style=color:#586e75></span>      ChannelServices.RegisterChannel(remotingChannel, <span style=color:#719e07>false</span>);
+
+      <span style=color:#586e75>// create a new servicetype of type RemoteMath named &#34;rMath&#34; and of type SingleCall
+</span><span style=color:#586e75></span>      <span style=color:#586e75>// SingleCall: a new object will be created for each call
+</span><span style=color:#586e75></span>      <span style=color:#586e75>// as opposed to WellKnownObjectMode.Singleton where there is one object for all calls (and clients)
+</span><span style=color:#586e75></span>      WellKnownServiceTypeEntry remoteObject = <span style=color:#719e07>new</span> WellKnownServiceTypeEntry(<span style=color:#719e07>typeof</span>(RemoteMath), <span style=color:#2aa198>&#34;rMath&#34;</span>, WellKnownObjectMode.SingleCall);
+
+      <span style=color:#586e75>// register the remoteObject servicetype
+</span><span style=color:#586e75></span>      RemotingConfiguration.RegisterWellKnownServiceType(remoteObject);
+
+      Console.WriteLine(<span style=color:#2aa198>&#34;Registered service&#34;</span>);
+      Console.WriteLine(<span style=color:#2aa198>&#34;Press any key to exit&#34;</span>);
+      Console.ReadLine();
+    }
+  }
+}</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<p>We need to add two references to the project using <code>Project (menu) > Add References</code>:</p>
+<ol>
+<li><code>System.Runtime.Remoting</code> assembly</li>
+<li>Remoting Library project</li>
+</ol>
+<p>Server will expose the <code>RemoteMath</code> class and wait until a key is pressed. Client can call the functions in <code>RemoteMath</code> until the server is terminated.</p>
+<p>Client code also needs the same two references. Client calls <code>Add</code> and <code>Sub</code> and prints the results.</p>
+<figure class=code>
+<figcaption>
+<span>Client.cs</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">31
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">32
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">33
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">34
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">35
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">36
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">37
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">38
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">39
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">40
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#719e07>using</span> System;
+<span style=color:#719e07>using</span> System.Collections.Generic;
+<span style=color:#719e07>using</span> System.Linq;
+<span style=color:#719e07>using</span> System.Text;
+<span style=color:#719e07>using</span> System.Threading.Tasks;
+<span style=color:#719e07>using</span> System.Runtime.Remoting;
+<span style=color:#719e07>using</span> System.Runtime.Remoting.Channels;
+<span style=color:#719e07>using</span> System.Runtime.Remoting.Channels.Tcp;
+
+<span style=color:#719e07>namespace</span> RemotingSample
+{
+  <span style=color:#719e07>class</span> <span style=color:#268bd2>Client</span>
+  {
+    <span style=color:#719e07>static</span> <span style=color:#719e07>void</span> Main(<span style=color:#dc322f>string</span>[] args)
+    {
+      <span style=color:#586e75>// create and register the TCP channel
+</span><span style=color:#586e75></span>      <span style=color:#586e75>// please note that I have set the security of the channel to false
+</span><span style=color:#586e75></span>      TcpChannel clientRemotingChannel = <span style=color:#719e07>new</span> TcpChannel();
+      ChannelServices.RegisterChannel(clientRemotingChannel, <span style=color:#719e07>false</span>);
+
+      <span style=color:#586e75>// create an object of type RemothMath
+</span><span style=color:#586e75></span>      <span style=color:#586e75>// we have to do a cast because Activator.GetObject returns an object (doh)
+</span><span style=color:#586e75></span>      <span style=color:#586e75>// type is RemoteMath and server address is what we created in Server.cs (port:8888 and rMath)
+</span><span style=color:#586e75></span>
+      <span style=color:#586e75>// Server.cs code:
+</span><span style=color:#586e75></span>      <span style=color:#586e75>// TcpChannel remotingChannel = new TcpChannel(8888);
+</span><span style=color:#586e75></span>      <span style=color:#586e75>// ChannelServices.RegisterChannel(remotingChannel, false);
+</span><span style=color:#586e75></span>      <span style=color:#586e75>// WellKnownServiceTypeEntry remoteObject = new WellKnownServiceTypeEntry(typeof(RemoteMath), &#34;rMath&#34;, WellKnownObjectMode.SingleCall);
+</span><span style=color:#586e75></span>
+      RemoteMath remoteMathObject = (RemoteMath)Activator.GetObject(<span style=color:#719e07>typeof</span>(RemoteMath), <span style=color:#2aa198>&#34;tcp://localhost:8888/rMath&#34;</span>);
+
+      <span style=color:#586e75>// now we can call Add and Sub functions
+</span><span style=color:#586e75></span>      Console.WriteLine(<span style=color:#2aa198>&#34;Result of Add(1, 2): {0}&#34;</span>, remoteMathObject.Add(<span style=color:#2aa198>1</span>, <span style=color:#2aa198>2</span>));
+      Console.WriteLine(<span style=color:#2aa198>&#34;Result of Sub(10, 3): {0}&#34;</span>, remoteMathObject.Sub(<span style=color:#2aa198>10</span>, <span style=color:#2aa198>3</span>));
+
+      Console.WriteLine(<span style=color:#2aa198>&#34;Press any key to exit&#34;</span>);
+      Console.ReadLine();
+    }
+  }
+}</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<p>Now we can build the solution. If you look at the resulting executables we will that both client and server have a copy of <code>RemotingLibrary.dll</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/01.png title="Both Client and Server have the same DLL" alt="Both Client and Server have the same DLL">
+<span class=caption-text>Both Client and Server have the same DLL</span>
+</span>
+<p>Now start <code>RawCap</code> and capture local traffic.</p>
+<h1 id=3-net-remoting-messages>3. .NET Remoting Messages
+<a class=header-link href=#3-net-remoting-messages><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>When you initially run the server, it will ask to be added to Windows Firewall's exceptions. You can safely deny that as both client and server are local. This is a major vulnerability in many .NET Remoting applications that work locally (like our example). If we do a <code>netstat</code> we can see that server is bound to <code>0.0.0.0</code> and is listening on all interfaces. Meaning anyone can connect to the server and execute exposed functions on our computer. We will read more about this later.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/02.png title="Server listening on all interfaces" alt="Server listening on all interfaces">
+<span class=caption-text>Server listening on all interfaces</span>
+</span>
+<p>Now run both server and client and look at the results.</p>
+<p>We can see client calling both functions and printing the result.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/03.png title="Client execution" alt="Client execution">
+<span class=caption-text>Client execution</span>
+</span>
+<p>We can clearly see that the functions were executed in server's application context because server is printing the verbose messages from <code>RemotingLibrary.dll</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/04.png title="Server execution" alt="Server execution">
+<span class=caption-text>Server execution</span>
+</span>
+<p>If we look at the traffic in Wireshark and filter all traffic to/from port <code>8888</code>:</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/05.png title=".NET Remoting traffic in Wireshark" alt=".NET Remoting traffic in Wireshark">
+<span class=caption-text>.NET Remoting traffic in Wireshark</span>
+</span>
+<p>You can read about the format and structure of .NET Remoting packets in the following documents:</p>
+<ul>
+<li><a href=https://msdn.microsoft.com/en-us/library/cc237297.aspx target=_blank rel="noreferrer noopener">[MS-NRTP].NET Core Protocol</a> or just search for <code>[MS-NRTP]</code>.</li>
+<li><a href=https://msdn.microsoft.com/en-us/library/cc236844.aspx target=_blank rel="noreferrer noopener">[MS-NRBF] .NET Remoting: Binary Format Data Structure</a> or just search for <code>[MS-NRBF]</code>.</li>
+</ul>
+<p>After the TCP handshake we see the first packet from client to server. According to section <code>2.2.3.3 Message Frame Structure</code> of <code>[MS-NRTP]</code> every message should start with <code>ProtocolId</code> which is 4 bytes and should be <code>0x54454E2E</code> or <code>.NET</code>.</p>
+<pre><code>2e 4e 45 54 01 00 00 00 00 00 8d 00 00 00 04 00  .NET............
+01 01 1a 00 00 00 74 63 70 3a 2f 2f 6c 6f 63 61  ......tcp://loca
+6c 68 6f 73 74 3a 38 38 38 38 2f 72 4d 61 74 68  lhost:8888/rMath
+06 00 01 01 18 00 00 00 61 70 70 6c 69 63 61 74  ........applicat
+69 6f 6e 2f 6f 63 74 65 74 2d 73 74 72 65 61 6d  ion/octet-stream
+00 00                                            ..
+
+.NET tcp://localhost:8888/rMath application/octet-stream
+
+ProtocolId: 0x54454E2E or .NET
+Major version: 0x00
+Minor Version: 0x00
+OperationType: 0x0000 or Request
+</code></pre>
+<p>This is setting up the .NET Remoting channel and specifying the exposed class that it wants to access <code>rMath</code>. Next is the second part of the first message.</p>
+<pre><code>00 00 00 00 00 00 00 00 00 01 00 00 00 00 00 00  ................
+00 15 12 00 00 00 12 03 41 64 64 12 61 52 65 6d  ........Add.aRem
+6f 74 69 6e 67 53 61 6d 70 6c 65 2e 52 65 6d 6f  otingSample.Remo
+74 65 4d 61 74 68 2c 20 52 65 6d 6f 74 69 6e 67  teMath, Remoting
+4c 69 62 72 61 72 79 2c 20 56 65 72 73 69 6f 6e  Library, Version
+3d 31 2e 30 2e 30 2e 30 2c 20 43 75 6c 74 75 72  =1.0.0.0, Cultur
+65 3d 6e 65 75 74 72 61 6c 2c 20 50 75 62 6c 69  e=neutral, Publi
+63 4b 65 79 54 6f 6b 65 6e 3d 6e 75 6c 6c 02 00  cKeyToken=null..
+00 00 08 01 00 00 00 08 02 00 00 00 0b           .............
+
+Add RemotingSample.RemoteMath, RemotingLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+</code></pre>
+<p>This is the <code>Add(1,2)</code> call. We can see the following in this message:</p>
+<pre><code>RemotingLibrary: DLL containing the exposed class
+RemotingSample.Remotemath: The exposed class
+Add: The function that is called
+</code></pre>
+<p>And if you look closely you can see the <code>Add</code> parameters in the last line in little endian (Int32 or 4 bytes).</p>
+<pre><code>01 00 00 00: int a
+02 00 00 00: int b
+</code></pre>
+<p>I don't want to talk about the message structure, just identifying the method, parameters, class and DLL when we see such a packet is enough.</p>
+<p>For a very good explanation of all fields using examples please refer to section <code>4.1 Two-Way Method Invocation Using TCP-Binary</code> of <code>[MS-NRTP]</code>.</p>
+<p>Think of the reply as an ACK and like any other .NET Remoting message it starts with <code>.NET</code>. According to <code>[MS-NRTP] Section 2.1.1.1.2 Receiving Reply</code> "If the OperationType of the message is Request(0), an implementation MUST wait for the Two-Way Reply message in the same connection."</p>
+<pre><code>2e 4e 45 54 01 00 02 00 00 00 1c 00 00 00 00 00 .NET............
+
+ProtocolId: 0x54454E2E or .NET
+Major version: 0x00
+Minor Version: 0x00
+OperationType: 0x0002 or Response
+</code></pre>
+<p>Then the actual result is sent from server to client.</p>
+<pre><code>00 00 00 00 00 00 00 00 00 01 00 00 00 00 00 00  ................
+00 16 11 08 00 00 08 03 00 00 00 0b              ............
+</code></pre>
+<p>We can see the return value (which is again an Int32 and 4 bytes) at the end of the packet prefixed by the same <code>0x08</code> byte that we saw before (remember the parameters?), and is <code>03 00 00 00</code>.</p>
+<p>Messages for <code>Sub</code> are very similar. I am not going to talk about them because, ahem <code>they are left as an exercise for the reader</code>.</p>
+<h1 id=4-debugging-with-dnspy>4. Debugging with dnSpy
+<a class=header-link href=#4-debugging-with-dnspy><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>In this section, I assume you know basic debugging (e.g. breakpoints, step into/over/out) so I will not go into details. I will mostly just talk about (some of) dnSpy's features.</p>
+<p>Run <code>Server.exe</code> and then run dnSpy (for x86 application use <code>dnSpy-x86.exe</code>). Drag and drop <code>Client.exe</code> into it and navigate to <code>Main</code>. Notice that dnSpy automatically loads referenced DLLs including <code>RemotingLibrary.dll</code>. The decompiled code in dnSpy is the same as our original code but without the comments.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/06.png title="Opening Client.exe in dnSpy" alt="Opening Client.exe in dnSpy">
+<span class=caption-text>Opening Client.exe in dnSpy</span>
+</span>
+<p>Now we can run the client in dnSpy. Click on the green button named <code>Start</code> and it will open a dialog to start an executable in dnSpy. In version 1.4 it is pre-populated with <code>Client.exe</code> that we just dragged and dropped into dnSpy. As you can see, what can also specify arguments and also order the debugger to break on certain events. Let's keep the original selection and run <code>Client.exe</code>. dnSpy will break on <code>Main</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/07.png title="Start options" alt="Start options">
+<span class=caption-text>Start options</span>
+</span>
+<p>Now we can debug normally using shortcut keys or small button to the right of the <code>Continue</code> button (formerly <code>Start</code>).</p>
+<p>To set a breakpoint, you can either select a line and press <code>F2</code>, click on the space left of the line number or right click on the line and select it from the context menu. In this case we put a breakpoint on line <code>16</code> or the first <code>Console.WriteLine</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/08.png title=Breakpoint alt=Breakpoint>
+<span class=caption-text>Breakpoint</span>
+</span>
+<h2 id=41-finding-nemo>4.1 Finding Nemo
+<a class=header-link href=#41-finding-nemo><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>In this case, we can clearly see the <code>Add</code> function and where it is called. But let's assume that we only saw the traffic and opened the binary in dnSpy and didn't know where it is called. Our binary contains tons and tons of imaginary functions that may or may not call <code>Add</code>. How do we find <code>Add</code>?</p>
+<p>From the traffic we know that the function name is <code>Add</code> and it is in class <code>RemotingSample.Remotemath</code> and resides in <code>RemotingLibrary.dll</code>. Using these clues we can easily find the <code>Add</code> function in dnSpy.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/09.png title="Finding Add" alt="Finding Add">
+<span class=caption-text>Finding Add</span>
+</span>
+<p>Our first instinct would be to put a breakpoint on <code>Add</code> and let the client <code>Continue</code>. But <strong>this breakpoint will never trigger</strong>. Because in .NET Remoting an instance of the function is created on the client and then executed on the server. If you don't believe me, try it. But how do we find who uses this function?</p>
+<h2 id=42-analyze-this>4.2 Analyze This
+<a class=header-link href=#42-analyze-this><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Now we can use the <code>Analyze</code> feature of dnSpy. Right click on the <code>Add</code> function in <code>RemotingLibrary.dll</code> and select <code>Analyze</code>. Now a very handy new pane (window? seriously what are these called?) named <code>Analyzer</code> pops up. We can see the function and two items <code>Uses</code> and <code>Used By</code>. <code>Uses</code> shows us the other functions (in loaded binaries in dnSpy) that are used by <code>Add</code> and <code>Used By</code> shows other functions that use <code>Add</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/10.png title="Analyze this" alt="Analyze this">
+<span class=caption-text>Analyze this</span>
+</span>
+<p>That is a very nifty feature, neh? As you can see we can go down the wormhole and follow the chain. In this case we see that the <code>Main</code> function calls <code>Add</code>. If we double click on <code>Main</code> we will go back to the original entry point.</p>
+<h2 id=43-net-remoting-in-action>4.3 .NET Remoting in Action
+<a class=header-link href=#43-net-remoting-in-action><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Now we can <code>Step Into</code> the line that calls <code>Add</code> in the client. If you have not changed the default settings, you should land in <code>mscorlib.dll</code> or more exactly in <code>CommonLanguageRuntimeLibrary.System.Runtime.Remoting.Proxies.RealProxy.PrivateInvoke()</code>. dnSpy's default settings, will skip all the other code (like attribute get/set etc). You can change this in <code>View (menu) > Options (menu item) > Debugger (tab) > DebuggerBrowsable</code> and <code>Call string-conversion</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/11.png title="Landed in RealProxy" alt="Landed in RealProxy">
+<span class=caption-text>Landed in RealProxy</span>
+</span>
+<p>In order to see local variables and their values press <code>Alt+4</code> to open the <code>Locals</code> window. This was changed in version 1.3 and up and is a huge UX upgrade.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/12.png title="Meeting the Locals" alt="Meeting the Locals">
+<span class=caption-text>Meeting the Locals</span>
+</span>
+<p>This where we always end up after following .NET Remoting calls; where the message is being sent and we can see its contents. In version 1.3 of dnSpy, any breakpoints set here would not be triggered but now we can do it (what a time to be alive). So you can set a breakpoint on line 404 (if you can find it <em>he he he</em>) <code>RemotingProxy remotingProxy = null;</code> just right before <code>if (1 == type)</code> and look at messages.</p>
+<p><code>Type == 1</code> so the first <code>if</code> will be true. Let's look at it (with some comments):</p>
+<figure class=code>
+<figcaption>
+<span></span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#719e07>if</span> (<span style=color:#2aa198>1</span> == type)
+{
+  Message expr_14 = <span style=color:#719e07>new</span> Message();
+
+  <span style=color:#586e75>// msgData is one of the function parameters (along with type) and contains the message info
+</span><span style=color:#586e75></span>  <span style=color:#586e75>// we can see that it is used to populate expr_14 which looks like a temp Message
+</span><span style=color:#586e75></span>  expr_14.InitFields(msgData);
+
+  <span style=color:#586e75>// expr_14 is copied to message
+</span><span style=color:#586e75></span>  message = expr_14;			<span style=color:#586e75>// put a breakpoint here
+</span><span style=color:#586e75></span>
+  num = expr_14.GetCallType();
+}</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<p>Let's put a breakpoint on line <code>409 num = message = expr_14;</code> and continue. When we reach this line, we can step over it until we reach line <code>410</code> and then see the contents of the variable named <code>message</code>. Why didn't we put a breakpoint on the next line? Because if it won't trigger with default settings (remember those debugger settings at the start of this section?). Press <code>Alt+4</code> to look at <code>message</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/13.png title="Contents of variable message" alt="Contents of variable message">
+<span class=caption-text>Contents of variable message</span>
+</span>
+<p>We can see the message and a lot of information about it. Scroll down to line <code>474 RealProxy.HandleReturnMessage(message, message2);</code> and set a breakpoint on line <code>475</code> and <code>Continue</code>. We can see that the text in the function is printed on the server and we land in the new breakpoint and can see the return value in <code>message2</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/14.png title="Return value" alt="Return value">
+<span class=caption-text>Return value</span>
+</span>
+<p>If we <code>Step Out</code> we will land back in <code>Main</code>. Try doing the same for the <code>Sub</code> function call.</p>
+<p>Now we know the places to see the outgoing .NET Remoting message and return values. In a real world project we could do this to look at the messages instead of Wireshark or developing our own .NET Remoting proxy.</p>
+<h1 id=5-re-creating-the-vulnerability>5. Re-creating the Vulnerability
+<a class=header-link href=#5-re-creating-the-vulnerability><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p><strong>Note:</strong> Please run this application in a Virtual Machine disconnected from the internet. This application will make your machine vulnerable to unauthenticated RCE. Make sure that Windows firewall is not disabled and do not allow <code>Server.exe</code> through it. I believe the chance of someone getting compromised is very very slim because no one reads these posts anyway, but it never hurts to be careful.</p>
+<p>One application that I looked at, let's call it <code>Remoting Expanded</code> had two components. A server which was run as <code>SYSTEM</code> on startup via a Windows service and a client application which was executed by an standard user. Client used .NET Remoting to execute functions in server to perform actions that were not available to standard users. I basically went through the same steps to look at and debug the .NET Remoting calls. I was looking at the decompiled code of the DLL containing the remotable objects and discovered that there are a lot of exposed functions which are not used by the client application. One of them was <code>StartProcess</code> (that's not its real name) and executed an executable as SYSTEM.</p>
+<p>To re-create we are going to change our code and add a new function to the <code>RemotingLibrary</code> DLL. Client and server are not modified but be sure to rebuild the solution to get the new DLL in build directories of client and server projects. I created a new project and called it <code>RemotingLibraryExpanded</code>.</p>
+<figure class=code>
+<figcaption>
+<span>RemotingLibraryExpanded.cs</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#719e07>namespace</span> RemotingLibraryExpanded
+{
+  <span style=color:#719e07>public</span> <span style=color:#719e07>class</span> <span style=color:#268bd2>RemoteMathExpanded</span> : MarshalByRefObject
+  {
+    <span style=color:#719e07>public</span> <span style=color:#dc322f>int</span> Add(<span style=color:#dc322f>int</span> a, <span style=color:#dc322f>int</span> b)    <span style=color:#586e75>// add
+</span><span style=color:#586e75></span>    {
+      Console.WriteLine(<span style=color:#2aa198>&#34;Add({0},{1}) called&#34;</span>, a, b);
+      <span style=color:#719e07>return</span> a + b;
+    }
+
+    <span style=color:#719e07>public</span> <span style=color:#dc322f>int</span> Sub(<span style=color:#dc322f>int</span> a, <span style=color:#dc322f>int</span> b)    <span style=color:#586e75>// subtract
+</span><span style=color:#586e75></span>    {
+      Console.WriteLine(<span style=color:#2aa198>&#34;Sub({0},{1}) called&#34;</span>, a, b);
+      <span style=color:#719e07>return</span> a - b;
+    }
+
+    <span style=color:#586e75>// super secret process start method
+</span><span style=color:#586e75></span>    <span style=color:#719e07>public</span> <span style=color:#719e07>void</span> StartProcess(<span style=color:#dc322f>string</span> processPath)
+    {
+      Console.WriteLine(<span style=color:#2aa198>&#34;Starting process {0}&#34;</span>, processPath);
+      Process.Start(processPath);
+    }
+  }
+}</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<p>Now we can rebuild the solution. Client and server will run as before now we want to exploit this new method to do local privilege escalation (running the executable of our choice as SYSTEM). At this point we can either write code (which we already did) or modify the client application using dnSpy (and some other tools). I modified the application in my project because it was much easier than writing code from scratch because there were a lot of stuff happening before the client started making calls to server.</p>
+<h1 id=6-modifying-il-instructions-with-dnspy-and-patching-binaries>6. Modifying IL Instructions with dnSpy and Patching Binaries
+<a class=header-link href=#6-modifying-il-instructions-with-dnspy-and-patching-binaries><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>The easiest thing to do is to modify one of the function calls to call <code>StartProcess</code> and run an executable (e.g. <code>C:\Windows\System32\calc.exe</code>). Open the client in dnSpy and right click on the line that calls <code>Add</code> (line 16 in dnSpy). Choose <code>Edit IL Instructions</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/15.png title="IL instructions" alt="IL instructions">
+<span class=caption-text>IL instructions</span>
+</span>
+<p>What is IL? CIL (Common Intermediate Language) or IL is (almost) the .NET equivalent of Java bytecode. Let's look at what we got and see if we can decipher it (read the comments please):</p>
+<figure class=code>
+<figcaption>
+<span>IL code for line 16</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#586e75>// pop remoteMathObject from stack and put it in local variable 1
+</span><span style=color:#586e75></span><span style=color:#2aa198>12</span>	<span style=color:#2aa198>0028</span>	stloc.<span style=color:#2aa198>1</span>
+
+<span style=color:#586e75>// push the string to stack
+</span><span style=color:#586e75></span><span style=color:#2aa198>13</span>	<span style=color:#2aa198>0029</span>	ldstr	<span style=color:#2aa198>&#34;Result of Add(1, 2): {0}&#34;</span>
+
+<span style=color:#586e75>// push local variable 1 to stack. In this case, remoteMathObject is pushed to stack
+</span><span style=color:#586e75>// this is done because we are going to call remoteMathObject.Add
+</span><span style=color:#586e75></span><span style=color:#2aa198>14</span>	<span style=color:#2aa198>002</span>E	ldloc.<span style=color:#2aa198>1</span>
+
+<span style=color:#586e75>// push the value 0x1 to the stack
+</span><span style=color:#586e75>// IL has ldc.i4.1 to ldc.i4.8 and also a separate ldc.i4 &lt;Int32&gt; to push Ints to the stack
+</span><span style=color:#586e75></span><span style=color:#2aa198>15</span>	<span style=color:#2aa198>002F</span>	ldc.i4.<span style=color:#2aa198>1</span>
+
+<span style=color:#586e75>// push the value 0x2 to the stack
+</span><span style=color:#586e75></span><span style=color:#2aa198>16</span>	<span style=color:#2aa198>0030</span>	ldc.i4.<span style=color:#2aa198>2</span>
+
+<span style=color:#586e75>// call Add
+</span><span style=color:#586e75></span><span style=color:#2aa198>17</span>	<span style=color:#2aa198>0031</span>	callvirt	instance int32 [RemotingLibrary]RemotingSample.RemoteMath::Add(int32, int32)
+
+<span style=color:#586e75>// box converts a value type to an object reference.
+</span><span style=color:#586e75>// I assume it means that we are converting the result of add to Int32
+</span><span style=color:#586e75></span><span style=color:#2aa198>18</span>	<span style=color:#2aa198>0036</span>	box	[mscorlib]System.Int32
+
+<span style=color:#586e75>// call console.writeline (parameters are the format string that was pushed to stack and return value of add)
+</span><span style=color:#586e75></span><span style=color:#2aa198>19</span>	<span style=color:#2aa198>003</span>B	call	<span style=color:#719e07>void</span> [mscorlib]System.Console::WriteLine(<span style=color:#dc322f>string</span>, <span style=color:#dc322f>object</span>)</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<p>Now we have a general idea of what's happening here. We need to change <code>Add</code> to <code>StartProcess</code>. Click on <code>Add</code> and a small context menu pops up.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/16.png title="Method context menu" alt="Method context menu">
+<span class=caption-text>Method context menu</span>
+</span>
+<p>Select <code>Method</code> and a new page pops up that allows you to modify it to any method in all loaded assemblies. We can see the new fancy <code>StartProcess</code> function. So we select that. There's also a handy search feature.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/17.png title="Pick a method" alt="Pick a method">
+<span class=caption-text>Pick a method</span>
+</span>
+<p>The method call is changed but <code>Add</code> had two Int32 parameters while <code>StartProcess</code> has only one string parameter. Without more modifications, two Int32s are pushed to the stack before the new method is being called. If we press OK on the IL code window we will see this monstrosity.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/18.png title="You ruined everything!!1!" alt="You ruined everything!!1!">
+<span class=caption-text>You ruined everything!!1!</span>
+</span>
+<p>But that's fine, we can edit the IL instructions and fix it. But how do we know what to do? At this point we can just learn IL coding but based on the instructions that we have seen, we should have a general idea of what to do. We also need to remove the <code>Console.WriteLine</code> because <code>StartProcess</code> has no return value (well <code>void()</code> but you know what I mean) and we should be calling <code>remoteMathObject.StartProcess("c:\\windows\\system32\\calc.exe");</code> individually.</p>
+<p>The following IL code does the trick:</p>
+<figure class=code>
+<figcaption>
+<span>Fixed IL instructions</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">5
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#2aa198>12</span>	<span style=color:#2aa198>0028</span>	stloc.<span style=color:#2aa198>1</span>
+<span style=color:#2aa198>13</span>	<span style=color:#2aa198>0029</span>	ldloc.<span style=color:#2aa198>1</span>
+<span style=color:#2aa198>14</span>	<span style=color:#2aa198>002</span>A	ldstr	<span style=color:#2aa198>&#34;c:\\windows\\system32\\calc.exe&#34;</span>
+<span style=color:#2aa198>15</span>	<span style=color:#2aa198>002F</span>	callvirt	instance <span style=color:#719e07>void</span> [RemotingLibraryExpanded]RemotingLibraryExpanded.RemoteMathExpanded::StartProcess(<span style=color:#dc322f>string</span>)
+<span style=color:#2aa198>16</span>	<span style=color:#2aa198>0034</span>	nop</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/19.png title="You fixed it!!1!" alt="You fixed it!!1!">
+<span class=caption-text>You fixed it!!1!</span>
+</span>
+<p>There is another way to do this. Download <a href=https://www.linqpad.net/Download.aspx target=_blank rel="noreferrer noopener">LINQPad 5.0</a>. The standard version is free and is more than enough for our purpose. Copy paste all of the code in the client class into it. Now just like in Visual Studio we need to add references and import namespaces.</p>
+<ol>
+<li>Change the <code>Language</code> drop-down list to <code>C# Program</code>.</li>
+<li>Right click and select <code>References and Properties</code>.</li>
+<li>In the <code>References</code> tab click <code>Add</code> and search for <code>System.Runtime.Remoting.dll</code>.</li>
+<li>Click <code>Browse</code> and select <code>RemotingLibraryExpanded.dll</code>.</li>
+<li>Select the <code>Additional Namespace Imports</code> tab.</li>
+<li>Click <code>Pick from assemblies</code>.</li>
+<li>Select <code>RemotingLibraryExpanded.dll</code> and add its namespace.</li>
+<li>Select <code>System.Runtime.Remoting.dll</code> and add <code>System.Runtime.Remoting.Channels</code> and <code>System.Runtime.Remoting.Channels.Tcp</code>.</li>
+</ol>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/20.png title="References in LINQPad" alt="References in LINQPad">
+<span class=caption-text>References in LINQPad</span>
+</span>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/21.png title="Namespaces in LINQPad" alt="Namespaces in LINQPad">
+<span class=caption-text>Namespaces in LINQPad</span>
+</span>
+<p>Now all of the errors in LINQPad should be gone and we can modify the code. Modify the first <code>Console.WriteLine</code> to <code>StartProcess("c:\\windows\system32\calc.exe")</code> and press <code>Execute</code>. The application may or may not execute properly. It will probably fail because we already have a TCP channel registered but we don't care about that. Click on the <code>IL</code> button at the bottom to see the generated IL code which is the same as what we wrote in dnSpy.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/22.png title="IL code in LINQPad" alt="IL code in LINQPad">
+<span class=caption-text>IL code in LINQPad</span>
+</span>
+<p>Now we can save the modified module (in this case a new version of the client executable) using dnSpy. Use <code>File (menu) > Save Module</code> to save the new executable (let's call it <code>Client1.exe</code>). Run <code>Client1.exe</code> and Pew.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/23.png title="Pew Pew" alt="Pew Pew">
+<span class=caption-text>Pew Pew</span>
+</span>
+<p><em>How can this be used in local privilege escalation?</em><br>
+In the original project, server was running as SYSTEM, which means any standard user could run any binary or command and effectively give themselves admin.</p>
+<p><em>How does this lead to Remote Code Execution (RCE)?</em><br>
+As we saw at the start of this post, server is listening on <code>0.0.0.0</code> or all interfaces. This means any attacker can connect to the server and execute arbitrary commands. Windows Firewall will not help if you had added an exception for server when it was initially started.</p>
+<h1 id=7-remediation>7. Remediation
+<a class=header-link href=#7-remediation><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Remediation is an important part of my day job. I am not an <code>infosec thoughtleader</code> but I think breaking is worth nothing if we don't want to/cannot talk to and work with the developers to fix things. So I am going to add remediation sections to my posts where appropriate and do my small part in helping. As with any other part of these posts, if you think there is a better way of doing things please let me know.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/24.jpg title="[insert reference to Starship Troopers and killing bugs and call yourself a geek]" alt="[insert reference to Starship Troopers and killing bugs and call yourself a geek]">
+<span class=caption-text>[insert reference to Starship Troopers and killing bugs and call yourself a geek]</span>
+</span>
+<p>It should be noted that channel properties and registration could also be done in executables' config files. Please refer to <a href=https://msdn.microsoft.com/en-us/library/ms973907.aspx target=_blank rel="noreferrer noopener">Format for .NET Remoting Configuration Files</a> for more information.</p>
+<p>I also have to reiterate that <strong>this is deprecated technology</strong> and it should not be used for new applications. But if you are stuck with legacy code and want to fix it, please read on.</p>
+<p>Start here for MSDN articles on this topic: <a href="https://msdn.microsoft.com/en-us/library/9hwst9th%28v=vs.85%29.aspx" target=_blank rel="noreferrer noopener">Security in Remoting</a>.</p>
+<h2 id=71-rce>7.1 RCE
+<a class=header-link href=#71-rce><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>In this scenario we should only be listening on <code>localhost</code>. We have to modify the server. If we look at <a href="https://msdn.microsoft.com/library/bb397830%28v=vs.100%29.aspx" target=_blank rel="noreferrer noopener">TcpChannel properties</a> we can see there is a <code>bindTo</code> property. We can add it to a dictionary and use it in the constructor as follows:</p>
+<figure class=code>
+<figcaption>
+<span>Binding the server to localhost</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#719e07>using</span> System.Collections;
+
+IDictionary tcpChannelProperties = <span style=color:#719e07>new</span> Hashtable();
+tcpChannelProperties[<span style=color:#2aa198>&#34;port&#34;</span>] = <span style=color:#2aa198>8888</span>;
+tcpChannelProperties[<span style=color:#2aa198>&#34;bindTo&#34;</span>] = <span style=color:#2aa198>&#34;127.0.0.1&#34;</span>;
+
+TcpChannel remotingChannel = <span style=color:#719e07>new</span> TcpChannel(tcpChannelProperties, <span style=color:#719e07>null</span>, <span style=color:#719e07>null</span>);
+
+<span style=color:#586e75>// Or in the config file:
+</span><span style=color:#586e75></span>
+&lt;channels&gt;
+  &lt;channel <span style=color:#719e07>ref</span>=<span style=color:#2aa198>&#34;tcp&#34;</span> port=<span style=color:#2aa198>&#34;8888&#34;</span> bindTo=<span style=color:#2aa198>&#34;127.0.0.1&#34;</span> /&gt;
+&lt;/channels&gt;</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<p>And now we can see the server listening only on localhost.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/25.png title="Server listening on localhost" alt="Server listening on localhost">
+<span class=caption-text>Server listening on localhost</span>
+</span>
+<p>We can also <a href="https://msdn.microsoft.com/en-us/library/bb187429%28v=vs.85%29.aspx" target=_blank rel="noreferrer noopener">authenticate the client</a>.</p>
+<h2 id=72-channel-encryption-and-authentication>7.2 Channel Encryption and Authentication
+<a class=header-link href=#72-channel-encryption-and-authentication><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>We can also encrypt the channel. Channels have a <code>Secure</code> property that will encrypt the channel if set to <code>true</code>. However, <strong>both client and server channels should be set to secure</strong>. We can simply add it to <code>tcpChannelProperties</code> in both client and server and set it to <code>true</code>:</p>
+<figure class=code>
+<figcaption>
+<span>Securing the server channel</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#719e07>using</span> System.Collections;
+
+IDictionary tcpChannelProperties = <span style=color:#719e07>new</span> Hashtable();
+properttcpChannelPropertiesies[<span style=color:#2aa198>&#34;port&#34;</span>] = <span style=color:#2aa198>8888</span>;
+tcpChannelProperties[<span style=color:#2aa198>&#34;bindTo&#34;</span>] = <span style=color:#2aa198>&#34;127.0.0.1&#34;</span>;
+tcpChannelProperties[<span style=color:#2aa198>&#34;secure&#34;</span>] = <span style=color:#719e07>true</span>
+
+TcpChannel remotingChannel = <span style=color:#719e07>new</span> TcpChannel(tcpChannelProperties, <span style=color:#719e07>null</span>, <span style=color:#719e07>null</span>);
+
+<span style=color:#586e75>// Or in the config file:
+</span><span style=color:#586e75></span>
+&lt;channels&gt;
+	&lt;channel <span style=color:#719e07>ref</span>=<span style=color:#2aa198>&#34;tcp&#34;</span> port=<span style=color:#2aa198>&#34;8888&#34;</span> bindTo=<span style=color:#2aa198>&#34;127.0.0.1&#34;</span> secure=<span style=color:#2aa198>&#34;true&#34;</span> /&gt;
+&lt;/channels&gt;</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<p>Let's only set the server channel to secure and see what happens:</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/26.png title="Insecure client channel and secure server channel" alt="Insecure client channel and secure server channel">
+<span class=caption-text>Insecure client channel and secure server channel</span>
+</span>
+<p>The client establishes the TCP connection and starts sending message in plaintext, but server never responds.</p>
+<p>If we modify the client code similar to the server:</p>
+<figure class=code>
+<figcaption>
+<span>Securing the client channel</span>
+</figcaption>
+<div class=codewrapper>
+<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">9
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#719e07>using</span> System.Collections;
+
+IDictionary tcpChannelProperties = <span style=color:#719e07>new</span> Hashtable();
+tcpChannelProperties[<span style=color:#2aa198>&#34;secure&#34;</span>] = <span style=color:#719e07>true</span>;
+
+<span style=color:#586e75>// Or in the config file:
+</span><span style=color:#586e75></span>&lt;channels&gt;
+	&lt;channel <span style=color:#719e07>ref</span>=<span style=color:#2aa198>&#34;tcp&#34;</span> secure=<span style=color:#2aa198>&#34;true&#34;</span> /&gt;
+&lt;/channels&gt;</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</figure>
+<p>Now the channel is encrypted.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/remoting1/27.png title="Encrypted TCP channel" alt="Encrypted TCP channel">
+<span class=caption-text>Encrypted TCP channel</span>
+</span>
+<p>The <a href="https://msdn.microsoft.com/en-us/library/k62k71x0%28v=vs.85%29.aspx" target=_blank rel="noreferrer noopener">Encryption and Message Integrity</a> MSDN article talks about encryption. The <code>See Also</code> links at the bottom of the page go to authentication articles. For example <a href="https://msdn.microsoft.com/en-us/library/59hafwyt%28v=vs.85%29.aspx" target=_blank rel="noreferrer noopener">Authentication with the TCP Channel</a>.</p>
+<hr>
+<p>Hopefully this was useful. This will pave the way for another blog post where I talk about an older vulnerability that we will investigate using dnSpy and .NET Remoting. If you have any comments/feedback/corrections/complaints, please let me know; you know where to find me.</p>
+</div>
+<footer>
+<p class=meta>
+<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Nov 14, 2015</time>
+<span class=categories>
+Tags:
+<a class=category href=https://parsiya.net/tags/.net-remoting>.NET Remoting</a> <a class=category href=https://parsiya.net/tags/dnspy>dnSpy</a> <a class=category href=https://parsiya.net/tags/.net>.NET</a>
+</span>
+</p>
+<p class=meta>
+<a class="basic-alignment left" href=https://parsiya.net/blog/2015-10-19-proxying-hipchat-part-3-ssl-added-and-removed-here/ title="Proxying Hipchat Part 3: SSL Added and Removed Here :^)">Proxying Hipchat Part 3: SSL Added and Removed Here :^)</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2016-01-31-why-hugo/ title="Why Hugo?">Why Hugo?</a>
+</p>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</div>
+<aside class="sidebar thirds">
+<section class="first odd">
+<h1>Who am I?</h1>
+<p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
+<p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p>
+<p>Click on <a href=/about/>About Me!</a> to know more.</p>
+</p>
+</section>
+<ul class=sidebar-nav>
+<li class=sidebar-nav-item>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
+</li>
+</ul>
+<section class=odd>
+<h1>Collections</h1>
+<li>
+<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
+</li>
+<li>
+<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
+</li>
+</section>
+</aside>
+</div>
+</div>
+<footer role=contentinfo>
+<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
+</p>
+</footer>
+</body>
+</html>

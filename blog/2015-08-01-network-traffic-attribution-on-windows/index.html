@@ -1,0 +1,453 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
+<link href=/css/fonts.css rel=stylesheet type=text/css>
+<title>Network Traffic Attribution on Windows</title>
+<link rel=stylesheet href=/css/hugo-octopress.css>
+<link rel=stylesheet href=/css/fork-awesome.min.css>
+<link href=https://parsiya.net/favicon.png rel=icon>
+<meta name=description content>
+<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
+<meta name=author content="Parsia">
+<meta name=generator content="Hugo 0.92.0">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Network Traffic Attribution on Windows">
+<meta name=twitter:description content="Thick client assessments come in different flavors. Most of our work is on
+consumer applications where consumer means either the customer or an
+employee of our client. But these applications usually have network
+communications.
+When looking at thick client applications from a network traffic perspective, we
+face two big challenges:
+
+
+Traffic Attribution or Where does this traffic come from?: How to we
+identify application's traffic? The operating system (in this case Windows)
+is running many applications and services. Each of them may have network
+connectivity.
+
+
+Proxying Traffic or How do I look view/modify traffic?: This is more
+challenging and involves capturing, modifying and in a lot of cases
+decrypting/decoding target application's traffic. This could be as easy as
+setting up Burp via an application setting (EZ-mode) or as hard as setting up
+your own access point to capture a device's traffic then developing your own
+decryption plugin for your proxy tool (good luck).
+
+
+In this post, I will be talking about the much easier first challenge. I will be
+talking about some of the tools and techniques that I use to accomplish this.
+This is not a groundbreaking post ;). We will use a simple application, in this
+case notepad++.">
+<meta name=twitter:domain content="parsiya.net">
+<meta name=twitter:creator content="@CryptoGangsta">
+</head>
+<body>
+<header role=banner>
+<hgroup>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
+<h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2>
+</hgroup></header>
+<nav role=navigation>
+<fieldset class=mobile-nav>
+<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
+</fieldset>
+<ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
+<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
+<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
+<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
+<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
+<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
+</ul>
+<ul class=subscription>
+<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
+</ul>
+<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+<fieldset role=search>
+<input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/>
+</fieldset>
+</form>
+</nav>
+<div id=main>
+<div id=content>
+<div>
+<article class=hentry role=article>
+<header>
+<p class=meta>Aug 1, 2015
+- 9 minute read
+- <a href=https://parsiya.net/blog/2015-08-01-network-traffic-attribution-on-windows/#disqus_thread>Comments</a>
+- <a class=label href=https://parsiya.net/categories/thick-client-proxying/>thick client proxying </a>
+</p>
+<h1 class=entry-title>
+Network Traffic Attribution on Windows
+</h1>
+</header>
+<div class=entry-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#1-our-setup>1. Our Setup</a></li>
+<li><a href=#2-list-of-tools>2. List of Tools</a></li>
+<li><a href=#3-test-application>3. Test Application</a></li>
+<li><a href=#4-traffic-attribution>4. Traffic Attribution</a>
+<ul>
+<li><a href=#41-netmon>4.1 Netmon</a>
+<ul>
+<li><a href=#411-how-to-search-in-netmon>4.1.1 How to search in Netmon?</a></li>
+</ul>
+</li>
+<li><a href=#42-procmon>4.2 Procmon</a></li>
+</ul>
+</li>
+<li><a href=#questions>Questions:</a></li>
+<li><a href=#5-exercise>5. Exercise:</a></li>
+</ul>
+</nav>
+<p>Thick client assessments come in different flavors. Most of our work is on
+<code>consumer applications</code> where <code>consumer</code> means either the customer or an
+employee of our client. But these applications usually have network
+communications.</p>
+<p>When looking at thick client applications from a network traffic perspective, we
+face two big challenges:</p>
+<ol>
+<li>
+<p><strong>Traffic Attribution</strong> or <strong>Where does this traffic come from?</strong>: How to we
+identify application's traffic? The operating system (in this case Windows)
+is running many applications and services. Each of them may have network
+connectivity.</p>
+</li>
+<li>
+<p><strong>Proxying Traffic</strong> or <strong>How do I look view/modify traffic?</strong>: This is more
+challenging and involves capturing, modifying and in a lot of cases
+decrypting/decoding target application's traffic. This could be as easy as
+setting up Burp via an application setting (EZ-mode) or as hard as setting up
+your own access point to capture a device's traffic then developing your own
+decryption plugin for your proxy tool (good luck).</p>
+</li>
+</ol>
+<p>In this post, I will be talking about the much easier first challenge. I will be
+talking about some of the tools and techniques that I use to accomplish this.
+This is not a groundbreaking post ;). We will use a simple application, in this
+case <code>notepad++</code>.</p>
+<h1 id=1-our-setup>1. Our Setup
+<a class=header-link href=#1-our-setup><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>I am using Windows 7 VM running via VirtualBox. You can probably use anything
+newer than Windows XP. You can get VMs from Microsoft at
+<a href=http://dev.modern.ie/tools/vms/windows/ target=_blank rel="noreferrer noopener">http://dev.modern.ie/tools/vms/windows/</a>. These VMs have 90 day
+activation periods and are for testing different versions of IE but they are
+enough for our purpose. One downside is the huge virtual disk drive (110GB) that
+can be shrinked in half. Hard drive is still dynamically located but if you do
+not watch out, it ends up filling up your hard drive (especially if you are
+taking snapshots).</p>
+<h1 id=2-list-of-tools>2. List of Tools
+<a class=header-link href=#2-list-of-tools><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><ol>
+<li><strong>Microsoft Network Monitor (Netmon)</strong>:
+<a href=http://blogs.technet.com/b/netmon/p/downloads.aspx target=_blank rel="noreferrer noopener">http://blogs.technet.com/b/netmon/p/downloads.aspx</a></li>
+<li><strong>Wireshark</strong>: <a href=https://www.wireshark.org/download.html target=_blank rel="noreferrer noopener">https://www.wireshark.org/download.html</a></li>
+<li><strong>Process Monitor (Procmon)</strong>: Part of Microsoft Sysinternals Suite:
+<a href=https://technet.microsoft.com/en-us/sysinternals/bb842062.aspx target=_blank rel="noreferrer noopener">https://technet.microsoft.com/en-us/sysinternals/bb842062.aspx</a></li>
+</ol>
+<h1 id=3-test-application>3. Test Application
+<a class=header-link href=#3-test-application><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>I will be using <code>Notepad++ 6.7.9.2</code>. It was the current version at the time of
+writing but by the time I got to publishing this post it has been updated to
+version <code>6.8</code>. You can download it from
+<a href=https://notepad-plus-plus.org/download/v6.7.9.2.html target=_blank rel="noreferrer noopener">https://notepad-plus-plus.org/download/v6.7.9.2.html</a>. Install
+Notepad++ but make sure to select <code>Auto Updater</code> and <code>Plugin Manager</code> during
+installation. <strong>Do not run the application at the end of the installation
+process</strong>.</p>
+<h1 id=4-traffic-attribution>4. Traffic Attribution
+<a class=header-link href=#4-traffic-attribution><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Run Netmon, Wireshark and Procmon (as Administrator) then run <code>Notepad++</code>.</p>
+<p><strong>Procmon Note</strong>: Never select <code>Drop Filtered Events</code> in the Filter menu. It
+will discard all events that are not shown by your filters. There is no going
+back to viewing filtered events.</p>
+<h2 id=41-netmon>4.1 Netmon
+<a class=header-link href=#41-netmon><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>We can see some traffic in Netmon. See this handy tree view to the left? That is
+why we are using Netmon.</p>
+<p>Click on <code>notepad++.exe</code> in the tree view to view all of its traffic. We can see
+that it is communicating with <code>superb-dca2.dl.sourceforge.net</code> and
+<code>downloads.sourceforge.net</code> over HTTP <em>gasp</em>. You may observe a different
+endpoint depending on your location (because SourceForge).</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/TrafficAttribution1/01.PNG title="Notepad++ traffic in Netmon" alt="Notepad++ traffic in Netmon">
+<span class=caption-text>Notepad++ traffic in Netmon</span>
+</span>
+<p>There's another <code>suspicious process</code> up there. Select <code>gup.exe</code> and we can see
+it is also related to <code>Notepad++</code> as it's creating a TLS connection to
+<code>notepad-plus-plus.org</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/TrafficAttribution1/02.PNG title="gup.exe traffic in Netmon" alt="gup.exe traffic in Netmon">
+<span class=caption-text>gup.exe traffic in Netmon</span>
+</span>
+<p>But wait, there's more. There may be traffic that is not correctly attributed
+due to the way that Netmon identifies traffic. We may be able to find some extra
+stuff there.</p>
+<p>Here's a Catch-22, there may be traffic related to our application that Netmon
+wasn't able to correlate back to the process but how can we identify it if we do
+not know the endpoints. We will be using Procmon to compile a more comprehensive
+endpoint collection later.</p>
+<h3 id=411-how-to-search-in-netmon>4.1.1 How to search in Netmon?
+<a class=header-link href=#411-how-to-search-in-netmon><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p><code>Contains</code> is a filter that allows us to do case-insensitive searches for
+strings. For example we can use this filter to search for packets with
+destinations containing the string <code>sourceforge</code>. We can use the following
+filters (they both do the same thing):</p>
+<ul>
+<li><code>Contains(property.Destination, "sourceforge")</code></li>
+<li><code>Destination.Contains("sourceforge")</code></li>
+</ul>
+<p>Be sure to select <code>All Traffic</code> in the tree-view when applying filters search in
+all traffic.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/TrafficAttribution1/03.PNG title="Contains(property.Destination, 'sourceforge')" alt="Contains(property.Destination, 'sourceforge')">
+<span class=caption-text>Contains(property.Destination, 'sourceforge')</span>
+</span>
+<p>We can search in different columns, one of the most common columns is
+<code>property.description</code>. Description is a column with a lot of information and is
+usually our best bet. For example if we want to see all GET request we can use
+the following filters (again they both do the same thing):</p>
+<ul>
+<li><code>Contains(property.Description,"GET")</code></li>
+<li><code>Description.Contains("GET")</code></li>
+</ul>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/TrafficAttribution1/04.PNG title="Contains(property.Description,'GET')" alt="Contains(property.Description,'GET')">
+<span class=caption-text>Contains(property.Description,'GET')</span>
+</span>
+<p>We can also see Windows checking for certificate revocation lists over HTTP
+<em>zomg</em>.</p>
+<p>To search for binary data use <code>ContainsBin</code>. For example to search for the CRLF
+binary string in frame data use this filter:</p>
+<ul>
+<li><code>ContainsBin(FrameData, HEX, "0D 0A")</code></li>
+</ul>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/TrafficAttribution1/05.PNG title="ContainsBin(FrameData, HEX, '0D 0A')" alt="ContainsBin(FrameData, HEX, '0D 0A')">
+<span class=caption-text>ContainsBin(FrameData, HEX, '0D 0A')</span>
+</span>
+<p>We can also search for strings using <code>ContainsBin</code> by using <code>ASCII</code>. But
+remember this search is case-sensitive. To replicate our previous search for
+<code>sourceforge</code> we can use the following filter:</p>
+<ul>
+<li><code>ContainsBin(FrameData, ASCII, "sourceforge")</code></li>
+</ul>
+<p><strong>Update May 2020:</strong> Hello. This is the future me. I have streamlined the
+process a bit. When dealing with TLS (which is common), we can use the following
+query just to show the <code>ClientHello</code> packets. We can use the SNI extension in it
+to figure out which domains we are talking to.</p>
+<ul>
+<li><code>TLS.TlsRecLayer.TlsRecordLayer.SSLHandshake.HandShake.ClientHello</code></li>
+</ul>
+<h2 id=42-procmon>4.2 Procmon
+<a class=header-link href=#42-procmon><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Procmon does not display traffic but it's a great tool to identify endpoints.
+Stop the Procmon capture. It is time to add Procmon filters.</p>
+<p>I am in the process of writing a longer blog entry about using Procmon but that
+is for another day. For now we will discuss some filters related to network
+endpoint discovery.</p>
+<p>Procmon has a lot of filters but we will be using only a few of them. The first
+filter is <code>ProcessName</code>. Using this filter we can see only events belonging to
+specific process(es). Select Filter from the Filter menu or press Ctrl+L. Now
+create this filter <code>ProcessName is Notepad++.exe</code>. Note that Procmon will show
+you all processes with events in the drop down menu.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/TrafficAttribution1/06.PNG title="Creating a filter" alt="Creating a filter">
+<span class=caption-text>Creating a filter</span>
+</span>
+<p><strong>Update May 2020:</strong> An easier way of doing this is to use the <code>Tools > Process Tree</code> feature of procmon. Then we can select the program, right-click and add it
+(and its children to the filter). This is quicker and more accurate. The
+downside is that it uses pid so the filter is not reusable for other sessions.</p>
+<p>And we can see all events for <code>notepad++.exe</code> in Procmon. Take a note of
+ProcessID (PID) for <code>notepad++.exe</code>. In this case PID is <code>3964</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/TrafficAttribution1/07.PNG title="ProcessName is notepad++.exe" alt="ProcessName is notepad++.exe">
+<span class=caption-text>ProcessName is notepad++.exe</span>
+</span>
+<p>But we want to look at spawned processes too. Let's remove this filter and find
+all child processes for <code>notepad++.exe</code> using another filter. The new filter is
+<code>Parent PID is 3964</code>and it will show captured events for <code>gup.exe</code>.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/TrafficAttribution1/08.PNG title="ProcessName is Parent PID is 3964" alt="ProcessName is Parent PID is 3964">
+<span class=caption-text>ProcessName is Parent PID is 3964</span>
+</span>
+<p>Double-click on the first line (<code>Process Start</code>) to view command line parameters
+and other details for <code>gup.exe</code>. Note that the <code>gup.exe</code> application was ran
+with parameter <code>-v6.792</code> (version of Notepad++). So theoretically we can pretend
+that we are any version. It would be nice to look at this request and play with
+it.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/TrafficAttribution1/09.PNG title="ProcessName is gup.exe and ProcessStart" alt="ProcessName is gup.exe and ProcessStart">
+<span class=caption-text>ProcessName is gup.exe and ProcessStart</span>
+</span>
+<p>An alternate way to get the same results is to use these two filter:</p>
+<ul>
+<li><code>ProcessName is notepad++.exe</code></li>
+<li><code>Operation is Process Create</code></li>
+</ul>
+<p>If we want to make sure that we have identified all processes, we have to go one
+level deeper and check if <code>gup.exe</code> spawned any other processes.</p>
+<p>We have two options:</p>
+<ol>
+<li><code>ProcessName is gup.exe</code> and <code>Operation is Process Create</code></li>
+<li><code>Parent PID is 3992</code> (pid of <code>gup.exe</code>)</li>
+</ol>
+<p>But as expected both filters return nothing. <code>gup.exe</code> did not spawn anything.</p>
+<p>Now we can add both <code>notepad++.exe</code> and <code>gup.exe</code> as filters to view all events
+related to our application in Procmon.</p>
+<p>In order to watch network traffic we can use the handy <code>Operation is TCP Send</code>
+filter. Note there are other operations (i.e. UDP ones). <code>TCP Connect</code> will also
+work if you just want endpoints and less noise.</p>
+<p>We use the following filters:</p>
+<ol>
+<li><code>ProcessName is notepad++.exe</code></li>
+<li><code>ProcessName is gup.exe</code></li>
+<li><code>Operation is TCP Send</code></li>
+<li><code>Operation is TCP Connect</code></li>
+</ol>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/TrafficAttribution1/10.PNG title="Operation is TCP Connect and TCP Send" alt="Operation is TCP Connect and TCP Send">
+<span class=caption-text>Operation is TCP Connect and TCP Send</span>
+</span>
+<p><strong>Update May 2020:</strong> We can filter network activity by using the small buttons
+in the middle of the toolbar. We can have registry, file, network, and Windows
+activity. In this case instead of filtering by <code>TCP Connect/Send</code> we can use
+that. We can also use <code>Tools > Network Summary</code> to see all the connection
+endpoints.</p>
+<p>We have already seen <code>downloads.sourceforge.net</code> but <code>ns378545.ip-91-121-64.eu</code>
+is new.</p>
+<p>If we ping it, we can see that the corresponding IP address is <code>91.121.64.34</code>.
+We can filter the results in Netmon by using this filter <code>IPv4.Address == 91.121.64.34</code> to view traffic related to his IP address.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/TrafficAttribution1/11.PNG title="IPv4.Address == 91.121.64.34" alt="IPv4.Address == 91.121.64.34">
+<span class=caption-text>IPv4.Address == 91.121.64.34</span>
+</span>
+<p>It is <code>notepad-plus-plus.org</code>. Try pinging <code>notepad-plus-plus.org</code> to get <code>91.121.64.34</code>.</p>
+<p>That was easy wasn't it?</p>
+<p>What did we do? We used Netmon and Procmon to identify the endpoints that an
+specific application communicates with and isolate traffic belonging to that
+application. I told you this is nothing ground breaking.</p>
+<h1 id=questions>Questions:
+<a class=header-link href=#questions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p><strong>But what about Microsoft Message Analyzer (MMA)?</strong></p>
+<p>It is a good tool. But I do not like its UI but I saw an interesting feature in
+it to decrypt SSL traffic. I will be looking at that feature soon. It is also
+much more resource intensive than Netmon.</p>
+<p>For more information: <a href=http://blogs.technet.com/b/messageanalyzer/archive/2015/06/08/process-tracking-with-message-analyzer.aspx target=_blank rel="noreferrer noopener">http://blogs.technet.com/b/messageanalyzer/archive/2015/06/08/process-tracking-with-message-analyzer.aspx</a></p>
+<p><strong>But I want to use Wireshark</strong></p>
+<p>Sure, go ahead. Use Procmon and filters to identify the endpoints and then add
+filters in Wireshark. Another good thing is that Netmon's export format (*.cap
+files) can be opened in Wireshark. If you prefer Wireshark's UI, you can isolate
+traffic by process in Netmon, save it and then open the resulting cap file in
+Wireshark.</p>
+<p><strong>Where are DNS requests? I do not see them in process traffic in Netmon</strong></p>
+<p>Select all traffic and use the filter <code>DNS</code>. Due to the way Netmon associates
+traffic with processes, DNS requests may be in Unknown or System.</p>
+<span class=caption-wrapper>
+<img class=caption src=/images/2015/TrafficAttribution1/12.PNG title=DNS alt=DNS>
+<span class=caption-text>DNS</span>
+</span>
+<p>Note that while we had a DNS query for <code>superb-dca2.dl.sourceforge.net</code>, we
+never connected to it so we did not see a <code>TCP Connect</code> event for it in Procmon.</p>
+<h1 id=5-exercise>5. Exercise:
+<a class=header-link href=#5-exercise><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Run the tools again and install a plugin. This can be accomplished by going to
+<code>Plugins > Plugin Manager > Show Plugin Manager</code>. Try to locate the endpoints
+and traffic in this case. See what process is spawned by <code>notepad++.exe</code> this
+time.</p>
+<p>This time, it will not be as easy as last time because Netmon did not associate
+all packets with the process but you can find the endpoints via Procmon and
+filter them in Netmon.</p>
+<p>I hope this was useful. If you have any questions, you know where to find me.</p>
+</div>
+<footer>
+<p class=meta>
+<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Aug 1, 2015</time>
+<span class=categories>
+Tags:
+<a class=category href=https://parsiya.net/tags/netmon>Netmon</a>
+</span>
+</p>
+<p class=meta>
+<a class="basic-alignment left" href=https://parsiya.net/blog/2015-07-26-image-popup-and-octopress/ title="Image Popup and Octopress">Image Popup and Octopress</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2015-10-08-proxying-hipchat-part-1-where-did-the-traffic-go/ title="Proxying Hipchat Part 1: Where did the Traffic Go?">Proxying Hipchat Part 1: Where did the Traffic Go?</a>
+</p>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</div>
+<aside class="sidebar thirds">
+<section class="first odd">
+<h1>Who am I?</h1>
+<p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
+<p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p>
+<p>Click on <a href=/about/>About Me!</a> to know more.</p>
+</p>
+</section>
+<ul class=sidebar-nav>
+<li class=sidebar-nav-item>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
+</li>
+</ul>
+<section class=odd>
+<h1>Collections</h1>
+<li>
+<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
+</li>
+<li>
+<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
+</li>
+</section>
+</aside>
+</div>
+</div>
+<footer role=contentinfo>
+<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
+</p>
+</footer>
+</body>
+</html>
