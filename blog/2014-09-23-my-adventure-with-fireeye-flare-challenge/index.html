@@ -2412,9 +2412,6 @@ gethostbyname ( <span style=color:#2aa198>&#34;e.root-servers.net&#34;</span> )<
 </figure>
 <p>Query for <code>www.dogecoin.com</code>, <code>e.root-servers.net</code> and <code>www.twitter.com</code>. Then TLS handshake in lines 7-11 and finally a request to twitter (line 12) and reply (lines 13-14). Let's search for "twitter" in API Monitor and we see this <code>InternetOpenUrlW ( 0x00cc0004, "https://twitter.com/FireEye/status/484033515538116608", NULL, 0, INTERNET_FLAG_KEEP_CONNECTION | INTERNET_FLAG_PRAGMA_NOCACHE, 0 )</code>. Let's find that tweet and it looks normal.</p>
 <p><img src=/images/2014/flare/7-2.jpg alt="When embed tweet plugins for Octopress don't work" title="When embed tweet plugins for Octopress don't work"></p>
-<p>After migrating to <a href=https://gohugo.io target=_blank rel="noreferrer noopener">Hugo</a>, I can embed tweets now.</p>
-<blockquote class=twitter-tweet><p lang=en dir=ltr>The Service You Can’t Refuse: A Secluded HijackRAT <a href=http://t.co/ckx18JHdkb>http://t.co/ckx18JHdkb</a> <a href="https://twitter.com/hashtag/infosec?src=hash&ref_src=twsrc%5Etfw">#infosec</a> <a href="https://twitter.com/hashtag/malware?src=hash&ref_src=twsrc%5Etfw">#malware</a></p>&mdash; FireEye (@FireEye) <a href="https://twitter.com/FireEye/status/484033515538116608?ref_src=twsrc%5Etfw">July 1, 2014</a></blockquote>
-<script async src=https://platform.twitter.com/widgets.js></script>
 <p>Because this challenge employs a good number of Anti-Debug/Anti-VM protections, I will try to explain what I learned at each stage. Even after finishing the challenge I went back and looked at some steps again to learn more.</p>
 <p>Here are some useful resources:</p>
 <ul>
@@ -3791,8 +3788,7 @@ Forces the request to be resolved by the origin server.</code></pre></td></tr></
 </div>
 </figure>
 <p>Lines 9 to 35 are saving the URL, we know what it is without even looking at it. We have seen it in Wireshark before. The URL is <code>https://twitter.com/FireEye/status/484033515538116608</code>.</p>
-<blockquote class=twitter-tweet><p lang=en dir=ltr>The Service You Can’t Refuse: A Secluded HijackRAT <a href=http://t.co/ckx18JHdkb>http://t.co/ckx18JHdkb</a> <a href="https://twitter.com/hashtag/infosec?src=hash&ref_src=twsrc%5Etfw">#infosec</a> <a href="https://twitter.com/hashtag/malware?src=hash&ref_src=twsrc%5Etfw">#malware</a></p>&mdash; FireEye (@FireEye) <a href="https://twitter.com/FireEye/status/484033515538116608?ref_src=twsrc%5Etfw">July 1, 2014</a></blockquote>
-<script async src=https://platform.twitter.com/widgets.js></script>
+<p><img src=/images/2014/flare/7-2.jpg alt="Fireeye tweet" title="Fireeye tweet"></p>
 <p>Line 37 saves return value which is a "valid handle to the URL if the connection is successfully established, or NULL if the connection fails". Then it is checked for being NULL, if so we will jump to <code>loc_4018D4</code> and function returns immediately. If we have a handle to the tweet, execution continues.</p>
 <figure class=code>
 <figcaption>
