@@ -1,3 +1,4 @@
+# old script that deployed the blog to AWS
 # name: Deploy Blog
   
 # # run on every commit on the master branch
@@ -27,5 +28,5 @@
 #       - name: Install s3deploy
 #         run: sudo dpkg -i s3deploy*.deb
 #       - name: Run s3deploy
-#         run: s3deploy -source=public/ -region=us-east-1 -bucket=parsiya.net -distribution-id E3S0DM3VADRBW7 -key ${{ secrets.ID }} -secret ${{ secrets.KEY }}
+#         run: s3deploy -source=public/ -region=us-east-1 -bucket=parsiya.net -distribution-id ${{secrets.CLOUDFRONT_DISTRO}} -key ${{ secrets.ID }} -secret ${{ secrets.KEY }}
 
