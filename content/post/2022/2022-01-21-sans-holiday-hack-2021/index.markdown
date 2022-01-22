@@ -25,8 +25,8 @@ Previous writeups:
 The only `novel` thing in this blog is how I used local overrides to modify
 the webpage JavaScript to solve the
 [Santa's Holiday Hero](#xchimney-scissorsticks---santas-holiday-hero) challenge.
-I owe it to the `[redacted]` game team for using gRPC in their app companion app
-so I had to learn it to debug their client-side JavaScript.
+I owe it to the `[redacted]` game team for using gRPC in their companion app so
+I used it to debug and modify their client-side JavaScript.
 
 # 1) KringleCon Orientation
 
@@ -227,7 +227,7 @@ So we calculate each and then subtract.
 
 * Number of `Up` lines: 26054.
 * Number of `Ports` lines: 15242.
-* Answer = 26054 - 25652 = 02.
+* Answer = 26054 - 25652 = 402.
 
 ### 6. What's the greatest number of TCP ports any one host has open?
 `12`
