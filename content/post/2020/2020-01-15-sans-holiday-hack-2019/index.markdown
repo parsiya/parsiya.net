@@ -7,6 +7,7 @@ comments: true
 categories:
 - Crypto
 - Writeup
+- Holiday Hack
 ---
 
 I did some of the solutions for the SANS Holiday Hack Challenge of 2019. Last

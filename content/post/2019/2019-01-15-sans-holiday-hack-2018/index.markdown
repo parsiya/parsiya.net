@@ -9,6 +9,7 @@ categories:
 - Writeup
 - Crypto
 - Reverse Engineering
+- Holiday Hack
 ---
 
 SANS Holiday hack challenge 2018 was fun. It was also the first one I tried. I liked the talks and that the challenges were accessible to most skill levels. I mean [RCE through the -0 bug in v8 is great and all](https://abiondo.me/2019/01/02/exploiting-math-expm1-v8/) but I want people to be able to have fun and learn new skills.

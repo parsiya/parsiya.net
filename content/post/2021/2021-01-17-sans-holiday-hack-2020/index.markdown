@@ -7,6 +7,7 @@ comments: true
 twitterImage: .png
 categories:
 - Writeup
+- Holiday Hack
 ---
 
 This year like last year and unlike 2018, I only did a few of the SANS Holiday
