@@ -1336,11 +1336,6 @@ Query for ``www.dogecoin.com``, ``e.root-servers.net`` and ``www.twitter.com``. 
 
 ![When embed tweet plugins for Octopress don't work](/images/2014/flare/7-2.jpg "When embed tweet plugins for Octopress don't work")
 
-After migrating to [Hugo](https://gohugo.io), I can embed tweets now.
-
-{{< tweet 484033515538116608 >}}
-
-
 Because this challenge employs a good number of Anti-Debug/Anti-VM protections, I will try to explain what I learned at each stage. Even after finishing the challenge I went back and looked at some steps again to learn more.
 
 Here are some useful resources:
@@ -2011,11 +2006,9 @@ Forces the request to be resolved by the origin server.
 
 {{< /codecaption >}}
 
-Lines 9 to 35 are saving the URL, we know what it is without even looking at it. We have seen it in Wireshark before. The URL is ``https://twitter.com/FireEye/status/484033515538116608``.
+Lines 9 to 35 are saving the URL, we know what it is without even looking at it. We have seen it in Wireshark before. The URL is `https://twitter.com/FireEye/status/484033515538116608`.
 
-<!-- ![Fireeye tweet](/images/2014/flare/7-2.jpg "Fireeye tweet") -->
-
-{{< tweet 484033515538116608 >}}
+![Fireeye tweet](/images/2014/flare/7-2.jpg "Fireeye tweet")
 
 Line 37 saves return value which is a "valid handle to the URL if the connection is successfully established, or NULL if the connection fails". Then it is checked for being NULL, if so we will jump to ``loc_4018D4`` and function returns immediately. If we have a handle to the tweet, execution continues.
 
