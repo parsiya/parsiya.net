@@ -1,0 +1,309 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
+<link href=/css/fonts.css rel=stylesheet type=text/css>
+<title>The Security of Game Package Managers</title>
+<link rel=stylesheet href=/css/hugo-octopress.css>
+<link rel=stylesheet href=/css/fork-awesome.min.css>
+<link href=https://parsiya.net/favicon.png rel=icon>
+<meta name=description content>
+<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
+<meta name=author content="Parsia">
+<meta name=generator content="Hugo 0.92.1">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="The Security of Game Package Managers">
+<meta name=twitter:description content="Let's talk about the security nightmare of handling hundreds of different game
+installations. Over the years I have become the de facto security engineer
+responsible for EA's &#34;game package managers&#34; Origin and the
+EA App.">
+<meta name=twitter:domain content="parsiya.net">
+<meta name=twitter:creator content="@CryptoGangsta">
+</head>
+<body>
+<header role=banner>
+<hgroup>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
+<h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2>
+</hgroup></header>
+<nav role=navigation>
+<fieldset class=mobile-nav>
+<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
+</fieldset>
+<ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
+<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
+<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
+<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
+<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
+<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
+</ul>
+<ul class=subscription>
+<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
+</ul>
+<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+<fieldset role=search>
+<input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/>
+</fieldset>
+</form>
+</nav>
+<div id=main>
+<div id=content>
+<div>
+<article class=hentry role=article>
+<header>
+<p class=meta>Feb 7, 2022
+- 6 minute read
+- <a href=https://parsiya.net/blog/2022-02-07-the-security-of-game-package-managers/#disqus_thread>Comments</a>
+- <a class=label href=https://parsiya.net/categories/attack-surface-analysis/>Attack Surface Analysis </a>
+</p>
+<h1 class=entry-title>
+The Security of Game Package Managers
+</h1>
+</header>
+<div class=entry-content>
+<p>Let's talk about the security nightmare of handling hundreds of different game
+installations. Over the years I have become the de facto security engineer
+responsible for EA's "game package managers" <a href=https://www.origin.com/usa/en-us/store/download target=_blank rel="noreferrer noopener">Origin</a> and the
+<a href=https://www.ea.com/ea-app-beta target=_blank rel="noreferrer noopener">EA App</a>.</p>
+<p>You can see all Attack Surface Analysis posts at
+<a href=/categories/attack-surface-analysis/>https://parsiya.net/categories/attack-surface-analysis/</a></p>
+<h1 id=the-focus-of-this-article>The Focus of this Article
+<a class=header-link href=#the-focus-of-this-article><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>You install a game at a specific location. How do you set the permissions for
+the installation path? Do you give RWX to everyone? Do you only give RX to
+standard users?</p>
+<p>If you have restrictive permissions the game might not work. Permissive ACLs
+might have security implications and might lead to Local Privilege Escalations
+(LPEs).</p>
+<p>I will assume the user can download the content they have access to<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup> and
+there are licensing checks that prevent them from launching a game they do not
+own. While these are security concerns, I will not talk about them here.</p>
+<h1 id=what-are-game-package-managers>What are Game Package Managers?
+<a class=header-link href=#what-are-game-package-managers><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>There are only a few "package managers" in the world. Your first reaction here
+is probably "Not a few, I can recite half a dozen off the top of my head." True,
+but mainly because there are no alternatives. How many different editors do you
+use daily? Usually one or two. How many can you name? A dozen. How many more
+editors can you find by searching? Thousands!</p>
+<p>There are fewer game package managers. Most gamers can name <code>Steam</code>,
+<code>GOG Galaxy</code>, <code>Ubisoft Connect</code>, <code>Battle.Net</code>, <code>Epic Games Launcher</code>,
+<code>Windows Store</code>, <code>Origin</code>, and <code>EA App</code>.</p>
+<p>A game package manager allows you to buy, download, install, and run games
+(among other things). I am going to focus on the installation part here. As a
+package manager you usually get an installer or a compressed file with some
+directives (dependencies, registry keys, special paths).</p>
+<p>A game package manager has to install a wide range of games. Each of these game
+might be from a different developer, packaged with a different installer, and be
+new or from 20 years ago. Backwards compatibility is decent in Windows gaming<sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup>.</p>
+<h2 id=windows-software-installation-paths>Windows Software Installation Paths
+<a class=header-link href=#windows-software-installation-paths><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>Most games are made for Windows<sup id=fnref:3><a href=#fn:3 class=footnote-ref role=doc-noteref>3</a></sup> (pun not intended). Microsoft pays each of
+us a monthly stipend to not work on Linux games :p. Windows is a lot more
+permissive in its directory structure. There are mostly guidelines.</p>
+<h3 id=program-files>Program Files
+<a class=header-link href=#program-files><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>Contains most game files that are usually not modified except when the game is
+updated. Standard users cannot write to this path by default hence why most
+updates need admin access.</p>
+<p>There are two versions of this <code>Program Files</code> and <code>Program Files (x86)</code> and
+they are usually in the <code>C</code> drive.</p>
+<h3 id=programdata>ProgramData
+<a class=header-link href=#programdata><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>Usually used when you need to modify a file frequently, but it's not a user
+file. For example, system-wide settings. Popular place to store updates before
+execution. Standard users have write access here by default. It's usually
+located at <code>C:\ProgramData</code>. More info at <a href=https://docs.microsoft.com/en-us/windows-hardware/customize/desktop/unattend/microsoft-windows-shell-setup-folderlocations-programdata target=_blank rel="noreferrer noopener">Microsoft Docs</a>.</p>
+<h3 id=appdata>AppData
+<a class=header-link href=#appdata><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>This is a popular place to store user specific configuration files. Some apps
+install themselves completely in this path to avoid dealing with
+<code>Program Files</code>. <code>C:\%username%\Documents\</code> is another popular location for
+save games and user configurations.</p>
+<h1 id=local-privilege-escalation-bugs-and-game-package-managers>Local Privilege Escalation Bugs and Game Package Managers
+<a class=header-link href=#local-privilege-escalation-bugs-and-game-package-managers><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h1><p>Local Privilege Escalation happens when you can go down this list:</p>
+<ol>
+<li>Remote attacker.</li>
+<li>Standard user.</li>
+<li>Local admin/SYSTEM.</li>
+</ol>
+<p>I have deliberately omitted domain connected machines because the overwhelming
+majority of machines running games run on normal consumer machines.</p>
+<p>In the context of game updates, we mostly care about going from standard user to
+admin. You can make the case about MITM-ing the game update files as a remote
+attacker, but in the current age of TLS that's usually not an issue.</p>
+<p>Most bugs of this type happen when apps run something as admin from a path where
+standard users have write access. It's very common for apps to store their
+updates in <code>ProgramData</code> where users have write access and then execute them as
+admin.</p>
+<p>I even found a security bug where the updater wanted to run without admin
+access so it had
+<a href=/blog/2021-01-08-attack-surface-analysis-part-1-application-update-a-novel-way-to-bypass-executable-signature-checks-with-electron/#my-undisclosed-bug-2---installer-modified-the-program-directory-acl title="modified the program directory ACL in ProgramFiles" rel=nofollow target=_blank>modified the program directory ACL in ProgramFiles</a>
+and given write access to standard users.</p>
+<h2 id=how-do-game-package-managers-install-and-update-games>How do Game Package Managers Install and Update Games?
+<a class=header-link href=#how-do-game-package-managers-install-and-update-games><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>The software runs as standard user, but needs to run as admin/SYSTEM to install
+and update games. This is usually done in two ways:</p>
+<ol>
+<li>Most game package manager use a Windows service (e.g., <code>Origin</code>, <code>EA App</code>,
+and <code>Steam</code>). This is seamless.</li>
+<li>The <code>Epic Games Launcher</code> appears to be the only exception I can think of. It
+just pops a manual UAC prompt and wants to run the installer as admin.</li>
+</ol>
+<p>When using a Windows service we have to pay attention to two items:</p>
+<ol>
+<li><strong>Where are the updates stored?</strong> We will need to run them as admin/SYSTEM
+when updating the game. Can users modify the updates before they are
+executed?</li>
+<li><strong>How do we trigger the Windows Service?</strong> We need to signal the service to
+download and install and update from userland. Can an attacker just point the
+Windows Service to a path of their choosing?</li>
+</ol>
+<h3 id=older-games-and-installation-paths>Older Games and Installation Paths
+<a class=header-link href=#older-games-and-installation-paths><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h3><p>Most modern games adhere to the path guidelines we saw before. You can install
+them under <code>ProgramFiles</code> and have a Windows service (or pop a manual UAC) to
+update the installations.</p>
+<p>With <code>EA App</code> and <code>Origin</code> we try to take advantage of this. For example,
+<a href=https://www.ea.com/games/lost-in-random target=_blank rel="noreferrer noopener">Lost in Random</a> is by default stored at
+<code>C:\Program Files\EA Games\Lost In Random</code> and has correct permissions:</p>
+<pre tabindex=0><code>PS&gt; Get-Acl -Path 'C:\Program Files\EA Games\Lost In Random' | Format-List
+
+Path   : Microsoft.PowerShell.Core\FileSystem::C:\Program Files\EA Games\Lost In Random
+Owner  : BUILTIN\Administrators
+Group  : NT AUTHORITY\SYSTEM
+Access : ...
+         BUILTIN\Users Allow  ReadAndExecute, Synchronize
+</code></pre><p>Older games are a completely different ball game. Most of them should be run as
+admin. They were designed in the age before <code>ProgramFiles</code> and write their
+configuration files, save games, and similar to their root directory. Installing
+these games under <code>ProgramFiles</code> with default ACLs will prevent them from
+working if we execute them as standard users.</p>
+<p>Most game package manager modify the ACLs of these games and give write access
+to standard users. This is what <code>Steam</code> does. Check the security permissions for
+<code>C:\Program Files (x86)\Steam\steamapps\common</code>.</p>
+<pre tabindex=0><code>PS&gt; Get-Acl -Path 'C:\Program Files (x86)\Steam\steamapps\common\' | Format-List
+
+Path   : Microsoft.PowerShell.Core\FileSystem::C:\Program Files (x86)\Steam\steamapps\common\
+Owner  : Parsia-PC\Parsia
+Group  : Parsia-PC\None
+Access : BUILTIN\Users Allow  FullControl
+</code></pre><p><strong>Custom paths</strong> are another headache. If you install the game in a different
+path, it's probably insecure and can lead to LPE.</p>
+<h2 id=but-this-is-insecure>But This is Insecure!
+<a class=header-link href=#but-this-is-insecure><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
+</h2><p>I know! There's no good way to fix it. Here's my answer:</p>
+<ol>
+<li>More than 90% of users run our desktop apps as admin. This is expected
+because gaming PCs are like that.</li>
+<li>For old games, compatibility trumps security. Users just want a seamless
+experience (buy > download > play).</li>
+<li><code>Insecure system is insecure</code>. If you install games (or Origin/EA App) at an
+insecure location there's not much we can do.</li>
+</ol>
+<p>Actually, the 3rd one is a lie. There are some things we can do. We store the
+binaries associated with Windows services at
+<code>C:\Program Files (x86)\Common Files\</code>. We already do some of this for modern
+games.Look under <code>C:\Program Files\Common Files\EAInstaller</code> to see the cleanup
+crew (the files are named <code>Cleanup</code>, har har!)</p>
+<section class=footnotes role=doc-endnotes>
+<hr>
+<ol>
+<li id=fn:1 role=doc-endnote>
+<p>A mix of owned games + the subscription library + trials + ....&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
+</li>
+<li id=fn:2 role=doc-endnote>
+<p>See <a href=https://twitter.com/pwnallthethings/status/1363260064929362047 target=_blank rel="noreferrer noopener">https://twitter.com/pwnallthethings/status/1363260064929362047</a>&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
+</li>
+<li id=fn:3 role=doc-endnote>
+<p>Is "Games for Windows" still a thing?&#160;<a href=#fnref:3 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+</div>
+<footer>
+<p class=meta>
+<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Feb 7, 2022</time>
+</span>
+</p>
+<p class=meta>
+<a class="basic-alignment left" href=https://parsiya.net/blog/2022-01-21-some-sans-holiday-hack-2021-solutions/ title="Some SANS Holiday Hack 2021 Solutions">Some SANS Holiday Hack 2021 Solutions</a>
+</p>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</div>
+<aside class="sidebar thirds">
+<section class="first odd">
+<h1>Who am I?</h1>
+<p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
+<p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p>
+<p>Click on <a href=/about/>About Me!</a> to know more.</p>
+</p>
+</section>
+<ul class=sidebar-nav>
+<li class=sidebar-nav-item>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
+</li>
+</ul>
+<section class=odd>
+<h1>Collections</h1>
+<li>
+<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
+</li>
+<li>
+<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
+</li>
+<li>
+<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
+</li>
+</section>
+</aside>
+</div>
+</div>
+<footer role=contentinfo>
+<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
+</p>
+</footer>
+</body>
+</html>
