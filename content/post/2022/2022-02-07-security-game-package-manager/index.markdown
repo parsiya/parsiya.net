@@ -1,5 +1,5 @@
 ---
-title: "The Security of Game Package Managers"
+title: "Security Nightmares of Game Package Managers"
 date: 2022-02-07T22:37:59-08:00
 draft: false
 toc: false
@@ -12,7 +12,7 @@ categories:
 Let's talk about the security nightmare of handling hundreds of different game
 installations. Over the years I have become the de facto security engineer
 responsible for EA's "game package managers" [Origin][origin-link] and the
-[EA App][ea-app-link].
+[EA App][ea-app-link] and we have our own unique issues.
 
 [origin-link]: https://www.origin.com/usa/en-us/store/download
 [ea-app-link]: https://www.ea.com/ea-app-beta
@@ -32,10 +32,10 @@ might have security implications and might lead to Local Privilege Escalations
 (LPEs).
 
 I will assume the user can download the content they have access to[^1] and
-there are licensing checks that prevent them from launching a game they do not
-own. While these are security concerns, I will not talk about them here.
+there are license checks to prevent them from running a game they do not own.
+These are security concerns, but I will not talk about them here.
 
-[^1]: A mix of owned games + the subscription library + trials + ....
+[^1]: A mix of owned games + the subscription library + trials.
 
 # What are Game Package Managers?
 There are only a few "package managers" in the world. Your first reaction here
@@ -44,16 +44,17 @@ but mainly because there are no alternatives. How many different editors do you
 use daily? Usually one or two. How many can you name? A dozen. How many more
 editors can you find by searching? Thousands! 
 
-There are fewer game package managers. Most gamers can name `Steam`,
+There are only a few game package managers. Most gamers can name `Steam`,
 `GOG Galaxy`, `Ubisoft Connect`, `Battle.Net`, `Epic Games Launcher`,
-`Windows Store`, `Origin`, and `EA App`.
+`Windows Store`, `Origin`, and `EA App`. Is there more? Probably, but I think
+this covers most of the major games.
 
 A game package manager allows you to buy, download, install, and run games
 (among other things). I am going to focus on the installation part here. As a
 package manager you usually get an installer or a compressed file with some
 directives (dependencies, registry keys, special paths).
 
-A game package manager has to install a wide range of games. Each of these game
+A game package manager has to install a wide range of games. Each of these games
 might be from a different developer, packaged with a different installer, and be
 new or from 20 years ago. Backwards compatibility is decent in Windows gaming[^2].
 
@@ -71,14 +72,14 @@ Contains most game files that are usually not modified except when the game is
 updated. Standard users cannot write to this path by default hence why most
 updates need admin access.
 
-There are two versions of this `Program Files` and `Program Files (x86)` and
-they are usually in the `C` drive.
+There are two versions of this `Program Files` and `Program Files (x86)`
+directory.
 
 ### ProgramData
-Usually used when you need to modify a file frequently, but it's not a user
-file. For example, system-wide settings. Popular place to store updates before
-execution. Standard users have write access here by default. It's usually
-located at `C:\ProgramData`. More info at [Microsoft Docs][programdata-docs].
+Usually used when you need to modify a file frequently, but it's not a user file
+(e.g., system-wide settings). Popular place to store updates before execution.
+Standard users have write access here by default. It's usually located at
+`C:\ProgramData`. More info at [Microsoft Docs][programdata-docs].
 
 [programdata-docs]: https://docs.microsoft.com/en-us/windows-hardware/customize/desktop/unattend/microsoft-windows-shell-setup-folderlocations-programdata
 
@@ -130,7 +131,7 @@ When using a Windows service we have to pay attention to two items:
    executed?
 2. **How do we trigger the Windows Service?** We need to signal the service to
    download and install and update from userland. Can an attacker just point the
-   Windows Service to a path of their choosing?
+   Windows Service to any random binary?
 
 ### Older Games and Installation Paths
 Most modern games adhere to the path guidelines we saw before. You can install
@@ -176,10 +177,10 @@ Access : BUILTIN\Users Allow  FullControl
 path, it's probably insecure and can lead to LPE.
 
 ## But This is Insecure!
-I know! There's no good way to fix it. Here's my answer:
+I know! There's no good way to fix it. Additionally:
 
-1. More than 90% of users run our desktop apps as admin. This is expected
-   because gaming PCs are like that.
+1. More than 90% of users run our desktop apps as admin. This is expected and I
+   am sure other game companies see a similar pattern.
 2. For old games, compatibility trumps security. Users just want a seamless
    experience (buy > download > play).
 3. `Insecure system is insecure`. If you install games (or Origin/EA App) at an
@@ -188,5 +189,5 @@ I know! There's no good way to fix it. Here's my answer:
 Actually, the 3rd one is a lie. There are some things we can do. We store the
 binaries associated with Windows services at
 `C:\Program Files (x86)\Common Files\`. We already do some of this for modern
-games.Look under `C:\Program Files\Common Files\EAInstaller` to see the cleanup
+games. Look under `C:\Program Files\Common Files\EAInstaller` to see the cleanup
 crew (the files are named `Cleanup`, har har!)
