@@ -3,20 +3,20 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
 <link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>The Security of Game Package Managers</title>
+<title>Security Nightmares of Game Package Managers</title>
 <link rel=stylesheet href=/css/hugo-octopress.css>
 <link rel=stylesheet href=/css/fork-awesome.min.css>
 <link href=https://parsiya.net/favicon.png rel=icon>
 <meta name=description content>
 <meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
 <meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.92.1">
+<meta name=generator content="Hugo 0.92.2">
 <meta name=twitter:card content="summary">
-<meta name=twitter:title content="The Security of Game Package Managers">
+<meta name=twitter:title content="Security Nightmares of Game Package Managers">
 <meta name=twitter:description content="Let's talk about the security nightmare of handling hundreds of different game
 installations. Over the years I have become the de facto security engineer
 responsible for EA's &#34;game package managers&#34; Origin and the
-EA App.">
+EA App and we have our own unique issues.">
 <meta name=twitter:domain content="parsiya.net">
 <meta name=twitter:creator content="@CryptoGangsta">
 </head>
@@ -56,18 +56,18 @@ complete unless it is known by its causes. - Avicenna</h2>
 <header>
 <p class=meta>Feb 7, 2022
 - 6 minute read
-- <a href=https://parsiya.net/blog/2022-02-07-the-security-of-game-package-managers/#disqus_thread>Comments</a>
+- <a href=https://parsiya.net/blog/2022-02-07-security-nightmares-of-game-package-managers/#disqus_thread>Comments</a>
 - <a class=label href=https://parsiya.net/categories/attack-surface-analysis/>Attack Surface Analysis </a>
 </p>
 <h1 class=entry-title>
-The Security of Game Package Managers
+Security Nightmares of Game Package Managers
 </h1>
 </header>
 <div class=entry-content>
 <p>Let's talk about the security nightmare of handling hundreds of different game
 installations. Over the years I have become the de facto security engineer
 responsible for EA's "game package managers" <a href=https://www.origin.com/usa/en-us/store/download target=_blank rel="noreferrer noopener">Origin</a> and the
-<a href=https://www.ea.com/ea-app-beta target=_blank rel="noreferrer noopener">EA App</a>.</p>
+<a href=https://www.ea.com/ea-app-beta target=_blank rel="noreferrer noopener">EA App</a> and we have our own unique issues.</p>
 <p>You can see all Attack Surface Analysis posts at
 <a href=/categories/attack-surface-analysis/>https://parsiya.net/categories/attack-surface-analysis/</a></p>
 <h1 id=the-focus-of-this-article>The Focus of this Article
@@ -79,8 +79,8 @@ standard users?</p>
 might have security implications and might lead to Local Privilege Escalations
 (LPEs).</p>
 <p>I will assume the user can download the content they have access to<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup> and
-there are licensing checks that prevent them from launching a game they do not
-own. While these are security concerns, I will not talk about them here.</p>
+there are license checks to prevent them from running a game they do not own.
+These are security concerns, but I will not talk about them here.</p>
 <h1 id=what-are-game-package-managers>What are Game Package Managers?
 <a class=header-link href=#what-are-game-package-managers><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><p>There are only a few "package managers" in the world. Your first reaction here
@@ -88,14 +88,15 @@ is probably "Not a few, I can recite half a dozen off the top of my head." True,
 but mainly because there are no alternatives. How many different editors do you
 use daily? Usually one or two. How many can you name? A dozen. How many more
 editors can you find by searching? Thousands!</p>
-<p>There are fewer game package managers. Most gamers can name <code>Steam</code>,
+<p>There are only a few game package managers. Most gamers can name <code>Steam</code>,
 <code>GOG Galaxy</code>, <code>Ubisoft Connect</code>, <code>Battle.Net</code>, <code>Epic Games Launcher</code>,
-<code>Windows Store</code>, <code>Origin</code>, and <code>EA App</code>.</p>
+<code>Windows Store</code>, <code>Origin</code>, and <code>EA App</code>. Is there more? Probably, but I think
+this covers most of the major games.</p>
 <p>A game package manager allows you to buy, download, install, and run games
 (among other things). I am going to focus on the installation part here. As a
 package manager you usually get an installer or a compressed file with some
 directives (dependencies, registry keys, special paths).</p>
-<p>A game package manager has to install a wide range of games. Each of these game
+<p>A game package manager has to install a wide range of games. Each of these games
 might be from a different developer, packaged with a different installer, and be
 new or from 20 years ago. Backwards compatibility is decent in Windows gaming<sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup>.</p>
 <h2 id=windows-software-installation-paths>Windows Software Installation Paths
@@ -108,14 +109,14 @@ permissive in its directory structure. There are mostly guidelines.</p>
 </h3><p>Contains most game files that are usually not modified except when the game is
 updated. Standard users cannot write to this path by default hence why most
 updates need admin access.</p>
-<p>There are two versions of this <code>Program Files</code> and <code>Program Files (x86)</code> and
-they are usually in the <code>C</code> drive.</p>
+<p>There are two versions of this <code>Program Files</code> and <code>Program Files (x86)</code>
+directory.</p>
 <h3 id=programdata>ProgramData
 <a class=header-link href=#programdata><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>Usually used when you need to modify a file frequently, but it's not a user
-file. For example, system-wide settings. Popular place to store updates before
-execution. Standard users have write access here by default. It's usually
-located at <code>C:\ProgramData</code>. More info at <a href=https://docs.microsoft.com/en-us/windows-hardware/customize/desktop/unattend/microsoft-windows-shell-setup-folderlocations-programdata target=_blank rel="noreferrer noopener">Microsoft Docs</a>.</p>
+</h3><p>Usually used when you need to modify a file frequently, but it's not a user file
+(e.g., system-wide settings). Popular place to store updates before execution.
+Standard users have write access here by default. It's usually located at
+<code>C:\ProgramData</code>. More info at <a href=https://docs.microsoft.com/en-us/windows-hardware/customize/desktop/unattend/microsoft-windows-shell-setup-folderlocations-programdata target=_blank rel="noreferrer noopener">Microsoft Docs</a>.</p>
 <h3 id=appdata>AppData
 <a class=header-link href=#appdata><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h3><p>This is a popular place to store user specific configuration files. Some apps
@@ -160,7 +161,7 @@ when updating the game. Can users modify the updates before they are
 executed?</li>
 <li><strong>How do we trigger the Windows Service?</strong> We need to signal the service to
 download and install and update from userland. Can an attacker just point the
-Windows Service to a path of their choosing?</li>
+Windows Service to any random binary?</li>
 </ol>
 <h3 id=older-games-and-installation-paths>Older Games and Installation Paths
 <a class=header-link href=#older-games-and-installation-paths><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
@@ -195,10 +196,10 @@ Access : BUILTIN\Users Allow  FullControl
 path, it's probably insecure and can lead to LPE.</p>
 <h2 id=but-this-is-insecure>But This is Insecure!
 <a class=header-link href=#but-this-is-insecure><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>I know! There's no good way to fix it. Here's my answer:</p>
+</h2><p>I know! There's no good way to fix it. Additionally:</p>
 <ol>
-<li>More than 90% of users run our desktop apps as admin. This is expected
-because gaming PCs are like that.</li>
+<li>More than 90% of users run our desktop apps as admin. This is expected and I
+am sure other game companies see a similar pattern.</li>
 <li>For old games, compatibility trumps security. Users just want a seamless
 experience (buy > download > play).</li>
 <li><code>Insecure system is insecure</code>. If you install games (or Origin/EA App) at an
@@ -207,13 +208,13 @@ insecure location there's not much we can do.</li>
 <p>Actually, the 3rd one is a lie. There are some things we can do. We store the
 binaries associated with Windows services at
 <code>C:\Program Files (x86)\Common Files\</code>. We already do some of this for modern
-games.Look under <code>C:\Program Files\Common Files\EAInstaller</code> to see the cleanup
+games. Look under <code>C:\Program Files\Common Files\EAInstaller</code> to see the cleanup
 crew (the files are named <code>Cleanup</code>, har har!)</p>
 <section class=footnotes role=doc-endnotes>
 <hr>
 <ol>
 <li id=fn:1 role=doc-endnote>
-<p>A mix of owned games + the subscription library + trials + ....&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
+<p>A mix of owned games + the subscription library + trials.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
 </li>
 <li id=fn:2 role=doc-endnote>
 <p>See <a href=https://twitter.com/pwnallthethings/status/1363260064929362047 target=_blank rel="noreferrer noopener">https://twitter.com/pwnallthethings/status/1363260064929362047</a>&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
