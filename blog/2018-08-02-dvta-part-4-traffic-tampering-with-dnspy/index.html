@@ -3,14 +3,13 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
 <link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>DVTA - Part 4 - Traffic Tampering with dnSpy</title>
-<link rel=stylesheet href=/css/hugo-octopress.css>
+<title>DVTA - Part 4 - Traffic Tampering with dnSpy</title><link rel=stylesheet href=/css/hugo-octopress.css>
 <link rel=stylesheet href=/css/fork-awesome.min.css>
 <link href=https://parsiya.net/favicon.png rel=icon>
 <meta name=description content>
 <meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
 <meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.92.2">
+<meta name=generator content="Hugo 0.93.0">
 <meta name=twitter:card content="summary_large_image">
 <meta name=twitter:image:src content="https://parsiya.net/blog/2018-08-02-dvta-part-4-traffic-tampering-with-dnspy/16.png">
 <meta name=twitter:title content="DVTA - Part 4 - Traffic Tampering with dnSpy">
@@ -23,37 +22,21 @@ DVTA - Part 3 - Network Recon
 ">
 <meta name=twitter:domain content="parsiya.net">
 <meta name=twitter:creator content="@CryptoGangsta">
-</head>
-<body>
+</head><body>
 <header role=banner>
 <hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
-<h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2>
-</hgroup></header>
-<nav role=navigation>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
 <fieldset class=mobile-nav>
 <select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset>
-<ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
-<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
-<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
-<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
-<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
-<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
-</ul>
-<ul class=subscription>
+</fieldset><ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
 <a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul>
-<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
 <fieldset role=search>
 <input class=search type=text name=q results=0 placeholder=Search>
 <input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset>
-</form>
-</nav>
-<div id=main>
+</fieldset></form></nav><div id=main>
 <div id=content>
 <div>
 <article class=hentry role=article>
@@ -62,260 +45,164 @@ complete unless it is known by its causes. - Avicenna</h2>
 - 7 minute read
 - <a href=https://parsiya.net/blog/2018-08-02-dvta-part-4-traffic-tampering-with-dnspy/#disqus_thread>Comments</a>
 - <a class=label href=https://parsiya.net/categories/reverse-engineering/>Reverse Engineering </a><a class=label href=https://parsiya.net/categories/dvta/>DVTA </a><a class=label href=https://parsiya.net/categories/writeup/>Writeup </a>
-</p>
-<h1 class=entry-title>
+</p><h1 class=entry-title>
 DVTA - Part 4 - Traffic Tampering with dnSpy
-</h1>
-</header>
-<div class=entry-content>
+</h1></header><div class=entry-content>
 <nav id=TableOfContents>
 <ul>
-<li><a href=#general-traffic-manipulation-intro>General Traffic Manipulation Intro</a></li>
-<li><a href=#debugging-with-dnspy>Debugging with dnSpy</a>
+<li><a href=#general-traffic-manipulation-intro>General Traffic Manipulation Intro</a></li><li><a href=#debugging-with-dnspy>Debugging with dnSpy</a>
 <ul>
 <li><a href=#login>Login</a>
 <ul>
-<li><a href=#bypassing-login>Bypassing Login</a></li>
-</ul>
-</li>
-<li><a href=#register>Register</a>
+<li><a href=#bypassing-login>Bypassing Login</a></li></ul></li><li><a href=#register>Register</a>
 <ul>
-<li><a href=#registering-admins>Registering Admins</a></li>
-</ul>
-</li>
-<li><a href=#grabbing-the-database-credentials>Grabbing the Database Credentials</a></li>
-</ul>
-</li>
-<li><a href=#conclusion>Conclusion</a></li>
-</ul>
-</nav>
-<p>After doing network recon in part three, it's time to do some traffic manipulation. We will learn how to capture and modify network traffic using dnSpy. This is much easier than trying to intercept and modify traffic after it's transmitted.</p>
-<p>Previous parts are at:</p>
-<ul>
-<li><a href=/blog/2018-07-15-dvta-part-1-setup/ title="DVTA - Part 1 - Setup">DVTA - Part 1 - Setup</a></li>
-<li><a href=/blog/2018-07-21-dvta-part-2-cert-pinning-and-login-button/ title="DVTA - Part 2 - Cert Pinning and Login Button">DVTA - Part 2 - Cert Pinning and Login Button</a></li>
-<li><a href=/blog/2018-07-30-dvta-part-3-network-recon/ title="DVTA - Part 3 - Network Recon">DVTA - Part 3 - Network Recon</a></li>
-</ul>
-<h1 id=general-traffic-manipulation-intro>General Traffic Manipulation Intro
+<li><a href=#registering-admins>Registering Admins</a></li></ul></li><li><a href=#grabbing-the-database-credentials>Grabbing the Database Credentials</a></li></ul></li><li><a href=#conclusion>Conclusion</a></li></ul></nav><p>After doing network recon in part three, it's time to do some traffic manipulation. We will learn how to capture and modify network traffic using dnSpy. This is much easier than trying to intercept and modify traffic after it's transmitted.</p><p>Previous parts are at:</p><ul>
+<li><a href=/blog/2018-07-15-dvta-part-1-setup/ title="DVTA - Part 1 - Setup">DVTA - Part 1 - Setup</a></li><li><a href=/blog/2018-07-21-dvta-part-2-cert-pinning-and-login-button/ title="DVTA - Part 2 - Cert Pinning and Login Button">DVTA - Part 2 - Cert Pinning and Login Button</a></li><li><a href=/blog/2018-07-30-dvta-part-3-network-recon/ title="DVTA - Part 3 - Network Recon">DVTA - Part 3 - Network Recon</a></li></ul><h1 id=general-traffic-manipulation-intro>General Traffic Manipulation Intro
 <a class=header-link href=#general-traffic-manipulation-intro><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Previously we used Wireshark to capture network traffic. Passive sniffing is usually easy but only useful to a degree. If the application was using TLS, we would have seen garbage after the TLS handshake <sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>. In these cases, Man-in-the-Middling (MitM-ing) the traffic with a proxy tool (e.g. Burp) is usually the way to go. But that introduces new challenges.</p>
-<ol>
-<li>Redirecting the traffic to the proxy.</li>
-<li>Masquerading as the server (e.g. make client accept our proxy's certificate instead of server).</li>
-<li>Modifying packets.</li>
-</ol>
-<p>I will need a lot of pages to talk about these and document what I have learned through the years. This is not the place for it.</p>
-<p>Depending on the interception method, you can bypass some of these challenges. For example, by hooking application's function calls that send the data, you can omit the first two (traffic redirection and server emulation). This is exactly what we are going to do to manipulate traffic in two ways:</p>
-<ol>
-<li>Debugging with dnSpy - this part.</li>
-<li><del>Hooking with WinAppDbg - next part.</del> Seems like this is much harder than I expected. I need to learn about hooking .NET functions with WinAppDbg (or in general). Added to my TODO list.</li>
-</ol>
-<h1 id=debugging-with-dnspy>Debugging with dnSpy
+</h1><p>Previously we used Wireshark to capture network traffic. Passive sniffing is usually easy but only useful to a degree. If the application was using TLS, we would have seen garbage after the TLS handshake <sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>. In these cases, Man-in-the-Middling (MitM-ing) the traffic with a proxy tool (e.g. Burp) is usually the way to go. But that introduces new challenges.</p><ol>
+<li>Redirecting the traffic to the proxy.</li><li>Masquerading as the server (e.g. make client accept our proxy's certificate instead of server).</li><li>Modifying packets.</li></ol><p>I will need a lot of pages to talk about these and document what I have learned through the years. This is not the place for it.</p><p>Depending on the interception method, you can bypass some of these challenges. For example, by hooking application's function calls that send the data, you can omit the first two (traffic redirection and server emulation). This is exactly what we are going to do to manipulate traffic in two ways:</p><ol>
+<li>Debugging with dnSpy - this part.</li><li><del>Hooking with WinAppDbg - next part.</del> Seems like this is much harder than I expected. I need to learn about hooking .NET functions with WinAppDbg (or in general). Added to my TODO list.</li></ol><h1 id=debugging-with-dnspy>Debugging with dnSpy
 <a class=header-link href=#debugging-with-dnspy><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>My first interaction with dnSpy was when version 1 was released. I used it to modify the outgoing traffic and make myself admin. It was one of my first thick client tests and I was so proud of myself. We are going to do the same here. We will debug the application with dnSpy and then view/modify the outgoing data. We need to:</p>
-<ol>
-<li>Identify the function/code where data is assembled before transmission.</li>
-<li>Set a breakpoint.</li>
-<li>Debug the application with dnSpy.</li>
-<li>Use the application.</li>
-<li>Modify the traffic when the breakpoint is triggered.</li>
-<li>???</li>
-<li>Profit.</li>
-</ol>
-<p>Putting a breakpoint where the traffic is being transmitted is also viable in some use-cases. But in this case with the direct connection to MSSQL server, we want to manipulate queries.</p>
-<h2 id=login>Login
+</h1><p>My first interaction with dnSpy was when version 1 was released. I used it to modify the outgoing traffic and make myself admin. It was one of my first thick client tests and I was so proud of myself. We are going to do the same here. We will debug the application with dnSpy and then view/modify the outgoing data. We need to:</p><ol>
+<li>Identify the function/code where data is assembled before transmission.</li><li>Set a breakpoint.</li><li>Debug the application with dnSpy.</li><li>Use the application.</li><li>Modify the traffic when the breakpoint is triggered.</li><li>???</li><li>Profit.</li></ol><p>Putting a breakpoint where the traffic is being transmitted is also viable in some use-cases. But in this case with the direct connection to MSSQL server, we want to manipulate queries.</p><h2 id=login>Login
 <a class=header-link href=#login><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>We will start with the login request. We already know where it happens but let's pretend we do not<sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup>. Drag and drop <code>dvta.exe</code> into dnSpy. Then click on <code>Start</code>. Note the dialog box allows you to enter command line parameters and set initial breakpoints. None is needed in our case so we will just press <code>Ok</code>.</p>
-<span class=caption-wrapper>
+</h2><p>We will start with the login request. We already know where it happens but let's pretend we do not<sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup>. Drag and drop <code>dvta.exe</code> into dnSpy. Then click on <code>Start</code>. Note the dialog box allows you to enter command line parameters and set initial breakpoints. None is needed in our case so we will just press <code>Ok</code>.</p><span class=caption-wrapper>
 <img class=caption src=img/01.png title="Starting the application with dnSpy" alt="Starting the application with dnSpy">
 <span class=caption-text>Starting the application with dnSpy</span>
 </span>
-<p>The anti-debug does not get triggered. We could have easily removed it anyway. Fetch the login token and try to login with dummy credentials. After it fails, do not close the <code>Invalid Login</code> button.</p>
-<p>In dnSpy click on the pause button (tooltip says <code>Break All</code>).</p>
-<span class=caption-wrapper>
+<p>The anti-debug does not get triggered. We could have easily removed it anyway. Fetch the login token and try to login with dummy credentials. After it fails, do not close the <code>Invalid Login</code> button.</p><p>In dnSpy click on the pause button (tooltip says <code>Break All</code>).</p><span class=caption-wrapper>
 <img class=caption src=img/02.png title='"Break All" button' alt='"Break All" button'>
 <span class=caption-text>"Break All" button</span>
 </span>
-<p>We break in <code>System.Windows.Forms.dll > MessageBox</code>.</p>
-<span class=caption-wrapper>
+<p>We break in <code>System.Windows.Forms.dll > MessageBox</code>.</p><span class=caption-wrapper>
 <img class=caption src=img/03.png title="MessageBox break" alt="MessageBox break">
 <span class=caption-text>MessageBox break</span>
 </span>
-<p>This is a system DLL and not part of the application. Time for another useful dnSpy feature. Use <code>Debug (menu) > Windows > Call Stack</code> or <code>Ctrl+Alt+C</code>.</p>
-<span class=caption-wrapper>
+<p>This is a system DLL and not part of the application. Time for another useful dnSpy feature. Use <code>Debug (menu) > Windows > Call Stack</code> or <code>Ctrl+Alt+C</code>.</p><span class=caption-wrapper>
 <img class=caption src=img/04.png title="Viewing call Stack" alt="Viewing call Stack">
 <span class=caption-text>Viewing call Stack</span>
 </span>
-<p>Call stack allows us to see how we got here.</p>
-<span class=caption-wrapper>
+<p>Call stack allows us to see how we got here.</p><span class=caption-wrapper>
 <img class=caption src=img/05.png title="Call stack displayed in dnSpy" alt="Call stack displayed in dnSpy">
 <span class=caption-text>Call stack displayed in dnSpy</span>
 </span>
-<p><code>Login.btnLogin_Click</code> is in the call chain. We can double-click on it to get to the code.</p>
-<span class=caption-wrapper>
+<p><code>Login.btnLogin_Click</code> is in the call chain. We can double-click on it to get to the code.</p><span class=caption-wrapper>
 <img class=caption src=img/06.png title=btnLogin_Click alt=btnLogin_Click>
 <span class=caption-text>btnLogin_Click</span>
 </span>
-<p>Username and password are passed to <code>db.checkLogin</code>. Click on it:</p>
-<figure class=code>
+<p>Username and password are passed to <code>db.checkLogin</code>. Click on it:</p><figure class=code>
 <figcaption>
 <span>db.checkLogin</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#586e75>// Token: 0x06000003 RID: 3 RVA: 0x00002204 File Offset: 0x00000404
-</span><span style=color:#586e75></span><span style=color:#719e07>public</span> SqlDataReader checkLogin(<span style=color:#dc322f>string</span> clientusername, <span style=color:#dc322f>string</span> clientpassword)
-{
-    <span style=color:#dc322f>string</span> text = <span style=color:#dc322f>string</span>.Concat(<span style=color:#719e07>new</span> <span style=color:#dc322f>string</span>[]
-    {
-        <span style=color:#2aa198>&#34;SELECT * FROM users where username=&#39;&#34;</span>,
-        clientusername,
-        <span style=color:#2aa198>&#34;&#39; and password=&#39;&#34;</span>,
-        clientpassword,
-        <span style=color:#2aa198>&#34;&#39;&#34;</span>
-    });
-    Console.WriteLine(text);
-    <span style=color:#719e07>return</span> <span style=color:#719e07>new</span> SqlCommand(text, <span style=color:#719e07>this</span>.conn).ExecuteReader();
-}</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>Query is created in a way that is vulnerable to SQL injection (but we were expecting that in a damn vulnerable application). Put a breakpoint here to see the query in action.</p>
-<p>Right-click on the <code>string text =</code> line and select <code>Add Breakpoint</code> or click on the grey edge to the left of the line number (where the red circle is in the following image):</p>
-<span class=caption-wrapper>
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=display:flex><span><span style=color:#586e75>// Token: 0x06000003 RID: 3 RVA: 0x00002204 File Offset: 0x00000404</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>public</span> SqlDataReader checkLogin(<span style=color:#dc322f>string</span> clientusername, <span style=color:#dc322f>string</span> clientpassword)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>string</span> text = <span style=color:#dc322f>string</span>.Concat(<span style=color:#719e07>new</span> <span style=color:#dc322f>string</span>[]
+</span></span><span style=display:flex><span>    {
+</span></span><span style=display:flex><span>        <span style=color:#2aa198>&#34;SELECT * FROM users where username=&#39;&#34;</span>,
+</span></span><span style=display:flex><span>        clientusername,
+</span></span><span style=display:flex><span>        <span style=color:#2aa198>&#34;&#39; and password=&#39;&#34;</span>,
+</span></span><span style=display:flex><span>        clientpassword,
+</span></span><span style=display:flex><span>        <span style=color:#2aa198>&#34;&#39;&#34;</span>
+</span></span><span style=display:flex><span>    });
+</span></span><span style=display:flex><span>    Console.WriteLine(text);
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> <span style=color:#719e07>new</span> SqlCommand(text, <span style=color:#719e07>this</span>.conn).ExecuteReader();
+</span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>Query is created in a way that is vulnerable to SQL injection (but we were expecting that in a damn vulnerable application). Put a breakpoint here to see the query in action.</p><p>Right-click on the <code>string text =</code> line and select <code>Add Breakpoint</code> or click on the grey edge to the left of the line number (where the red circle is in the following image):</p><span class=caption-wrapper>
 <img class=caption src=img/07.png title="Breakpoint set" alt="Breakpoint set">
 <span class=caption-text>Breakpoint set</span>
 </span>
-<p>Click on <code>Continue</code> and try to login again. The breakpoint will get triggered. Close the call stack window and you should see a new window named <code>Locals</code>. This window is used to view and modify the value of variables in scope.</p>
-<span class=caption-wrapper>
+<p>Click on <code>Continue</code> and try to login again. The breakpoint will get triggered. Close the call stack window and you should see a new window named <code>Locals</code>. This window is used to view and modify the value of variables in scope.</p><span class=caption-wrapper>
 <img class=caption src=img/08.png title="Breakpoint triggered" alt="Breakpoint triggered">
 <span class=caption-text>Breakpoint triggered</span>
 </span>
-<p>Like any other debugger, we can <code>Step Into</code>, <code>Step Over</code>, and the rest of the usual control. You can navigate with the shortcut keys or the buttons to the right of <code>Start/Continue</code>. Press <code>F10</code> or <code>Step Over</code> to get to the next decompiled instruction which is <code>Console.WriteLine(text);</code>.</p>
-<span class=caption-wrapper>
+<p>Like any other debugger, we can <code>Step Into</code>, <code>Step Over</code>, and the rest of the usual control. You can navigate with the shortcut keys or the buttons to the right of <code>Start/Continue</code>. Press <code>F10</code> or <code>Step Over</code> to get to the next decompiled instruction which is <code>Console.WriteLine(text);</code>.</p><span class=caption-wrapper>
 <img class=caption src=img/09.png title="text cannot be modified" alt="text cannot be modified">
 <span class=caption-text>text cannot be modified</span>
 </span>
-<p>We have a problem inside dnSpy. We cannot modify the value of <code>text</code>. The <a href=https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-messages/cs0103 target=_blank rel="noreferrer noopener">cs0103</a> error means variable does not exist (e.g. not in scope). I am not sure why this is happening but we can modify the value in a different place. Set a breakpoint on <code>return new SqlCommand ...</code> and click <code>Continue</code>.</p>
-<span class=caption-wrapper>
+<p>We have a problem inside dnSpy. We cannot modify the value of <code>text</code>. The <a href=https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-messages/cs0103 target=_blank rel="noreferrer noopener">cs0103</a> error means variable does not exist (e.g. not in scope). I am not sure why this is happening but we can modify the value in a different place. Set a breakpoint on <code>return new SqlCommand ...</code> and click <code>Continue</code>.</p><span class=caption-wrapper>
 <img class=caption src=img/10.png title="Breakpoint at return triggered" alt="Breakpoint at return triggered">
 <span class=caption-text>Breakpoint at return triggered</span>
 </span>
 <h3 id=bypassing-login>Bypassing Login
 <a class=header-link href=#bypassing-login><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>This time, we want to jump inside the function call. Click <code>Step Into</code>.</p>
-<span class=caption-wrapper>
+</h3><p>This time, we want to jump inside the function call. Click <code>Step Into</code>.</p><span class=caption-wrapper>
 <img class=caption src=img/11.png title="Inside SqlCommand constructor" alt="Inside SqlCommand constructor">
 <span class=caption-text>Inside SqlCommand constructor</span>
 </span>
-<p>Here we can modify the value of the query. Double-click on the value in the <code>Locals</code> window and type the following (don't forget the double quotes because we are modifying a string):</p>
-<ul>
-<li><code>"SELECT * FROM users where username='admin'"</code></li>
-</ul>
-<p>Then press <code>Enter</code> and notice the modified value is highlighted:</p>
-<span class=caption-wrapper>
+<p>Here we can modify the value of the query. Double-click on the value in the <code>Locals</code> window and type the following (don't forget the double quotes because we are modifying a string):</p><ul>
+<li><code>"SELECT * FROM users where username='admin'"</code></li></ul><p>Then press <code>Enter</code> and notice the modified value is highlighted:</p><span class=caption-wrapper>
 <img class=caption src=img/12.png title="SQL query modified" alt="SQL query modified">
 <span class=caption-text>SQL query modified</span>
 </span>
-<p>Press <code>Continue</code> and let this query run. We are logged in as admin.</p>
-<span class=caption-wrapper>
+<p>Press <code>Continue</code> and let this query run. We are logged in as admin.</p><span class=caption-wrapper>
 <img class=caption src=img/13.png title="Logged in as admin" alt="Logged in as admin">
 <span class=caption-text>Logged in as admin</span>
 </span>
-<p>Note that we can change this query to anything we want (e.g. <code>INSERT</code> or <code>DELETE</code>).</p>
-<h2 id=register>Register
+<p>Note that we can change this query to anything we want (e.g. <code>INSERT</code> or <code>DELETE</code>).</p><h2 id=register>Register
 <a class=header-link href=#register><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Messing with the register function is similar. Run the application with dnSpy and attempt to register any user. Do not close the message box and stop dnSpy with <code>Break All</code> like we saw before.</p>
-<span class=caption-wrapper>
+</h2><p>Messing with the register function is similar. Run the application with dnSpy and attempt to register any user. Do not close the message box and stop dnSpy with <code>Break All</code> like we saw before.</p><span class=caption-wrapper>
 <img class=caption src=img/14.png title="dnSpy after Break All" alt="dnSpy after Break All">
 <span class=caption-text>dnSpy after Break All</span>
 </span>
-<p>Next, use the call stack to discover where it was called.</p>
-<span class=caption-wrapper>
+<p>Next, use the call stack to discover where it was called.</p><span class=caption-wrapper>
 <img class=caption src=img/15.png title=btnReg_Click alt=btnReg_Click>
 <span class=caption-text>btnReg_Click</span>
 </span>
-<p>Click on <code>RegisterUser</code> in line 64 <code>if (dbaccessClass.RegisterUser(username, password, email))</code> to see the query being created. Set a breakpoint on line 93 <code>cmd.ExecuteNonQuery();</code> and press <code>Continue</code>.</p>
-<span class=caption-wrapper>
+<p>Click on <code>RegisterUser</code> in line 64 <code>if (dbaccessClass.RegisterUser(username, password, email))</code> to see the query being created. Set a breakpoint on line 93 <code>cmd.ExecuteNonQuery();</code> and press <code>Continue</code>.</p><span class=caption-wrapper>
 <img class=caption src=img/16.png title=RegisterUser alt=RegisterUser>
 <span class=caption-text>RegisterUser</span>
 </span>
 <h3 id=registering-admins>Registering Admins
 <a class=header-link href=#registering-admins><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>New users cannot be admin. The admin account is hardcoded. We can bypass this restriction and register a new admin.</p>
-<p>Try to register again. When the breakpoint is reached, expand the <code>cmd</code> object in the <code>Locals</code> window to see the <code>CommandText</code>:</p>
-<span class=caption-wrapper>
+</h3><p>New users cannot be admin. The admin account is hardcoded. We can bypass this restriction and register a new admin.</p><p>Try to register again. When the breakpoint is reached, expand the <code>cmd</code> object in the <code>Locals</code> window to see the <code>CommandText</code>:</p><span class=caption-wrapper>
 <img class=caption src=img/17.png title="Register user SQL statement" alt="Register user SQL statement">
 <span class=caption-text>Register user SQL statement</span>
 </span>
-<p>The statement looks like this:</p>
-<ul>
-<li><code>"insert into users values('user2','pass2','user2@example.com','0')"</code></li>
-</ul>
-<p>We already know the last value is <code>isAdmin</code>. We can modify this to create a new admin.</p>
-<span class=caption-wrapper>
+<p>The statement looks like this:</p><ul>
+<li><code>"insert into users values('user2','pass2','user2@example.com','0')"</code></li></ul><p>We already know the last value is <code>isAdmin</code>. We can modify this to create a new admin.</p><span class=caption-wrapper>
 <img class=caption src=img/18.png title="Modified register payload" alt="Modified register payload">
 <span class=caption-text>Modified register payload</span>
 </span>
-<p>Press <code>Continue</code> and login as admin with <code>user2:pass2</code>.</p>
-<span class=caption-wrapper>
+<p>Press <code>Continue</code> and login as admin with <code>user2:pass2</code>.</p><span class=caption-wrapper>
 <img class=caption src=img/19.png title="New admin user in the database" alt="New admin user in the database">
 <span class=caption-text>New admin user in the database</span>
 </span>
-<p><strong>Note</strong>: We could have done this in different ways. Another way (because in the real world you are not usually creating queries client-side and contacting the DB directly), was to put a breakpoint where the SQL statement is created and flip the value of <code>isadmin</code> to <code>1</code>.</p>
-<h2 id=grabbing-the-database-credentials>Grabbing the Database Credentials
+<p><strong>Note</strong>: We could have done this in different ways. Another way (because in the real world you are not usually creating queries client-side and contacting the DB directly), was to put a breakpoint where the SQL statement is created and flip the value of <code>isadmin</code> to <code>1</code>.</p><h2 id=grabbing-the-database-credentials>Grabbing the Database Credentials
 <a class=header-link href=#grabbing-the-database-credentials><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Database credentials are hardcoded in the application. It's very easy to see them using dnSpy.</p>
-<p>We already know where the SQL queries are created. Go back to the <code>cmd.ExecuteNonQuery()</code> line from last section. Run the application again and try to register a user. We want the breakpoint to be reached.</p>
-<p>After the breakpoint is triggered, open the <code>Locals</code> window and expand <code>this</code>. We can see a variable called <code>decryptedDBPassword</code> with value <code>p@ssw0rd</code>. This means the password was stored in some encrypted format. In future sections we will return to figure out how it's encrypted.</p>
-<span class=caption-wrapper>
+</h2><p>Database credentials are hardcoded in the application. It's very easy to see them using dnSpy.</p><p>We already know where the SQL queries are created. Go back to the <code>cmd.ExecuteNonQuery()</code> line from last section. Run the application again and try to register a user. We want the breakpoint to be reached.</p><p>After the breakpoint is triggered, open the <code>Locals</code> window and expand <code>this</code>. We can see a variable called <code>decryptedDBPassword</code> with value <code>p@ssw0rd</code>. This means the password was stored in some encrypted format. In future sections we will return to figure out how it's encrypted.</p><span class=caption-wrapper>
 <img class=caption src=img/20.png title="DB password" alt="DB password">
 <span class=caption-text>DB password</span>
 </span>
-<p>To see the complete connection string, expand <code>conn</code> and scroll down to <code>_connectionString</code>:</p>
-<span class=caption-wrapper>
+<p>To see the complete connection string, expand <code>conn</code> and scroll down to <code>_connectionString</code>:</p><span class=caption-wrapper>
 <img class=caption src=img/21.png title="Connection string" alt="Connection string">
 <span class=caption-text>Connection string</span>
 </span>
 <h1 id=conclusion>Conclusion
 <a class=header-link href=#conclusion><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>In this part, we learned how to debug with dnSpy. We used our new power to manipulate the outgoing traffic, made ourselves admin, and managed to discover the database credentials.</p>
-<p>In the next part, we will focus on client-side and break some encryption. By client-side I mean what is stored on the machine, where, and how it can be accessed.</p>
-<p><del>In next part, we will use WinAppDbg to hook function calls and intercept/modify traffic. To get started see my WinAppDbg posts:</del></p>
-<ul>
-<li><del><a href=https://parsiya.net/categories/winappdbg/ target=_blank rel="noreferrer noopener">https://parsiya.net/categories/winappdbg/</a></del></li>
-</ul>
-<section class=footnotes role=doc-endnotes>
+</h1><p>In this part, we learned how to debug with dnSpy. We used our new power to manipulate the outgoing traffic, made ourselves admin, and managed to discover the database credentials.</p><p>In the next part, we will focus on client-side and break some encryption. By client-side I mean what is stored on the machine, where, and how it can be accessed.</p><p><del>In next part, we will use WinAppDbg to hook function calls and intercept/modify traffic. To get started see my WinAppDbg posts:</del></p><ul>
+<li><del><a href=https://parsiya.net/categories/winappdbg/ target=_blank rel="noreferrer noopener">https://parsiya.net/categories/winappdbg/</a></del></li></ul><section class=footnotes role=doc-endnotes>
 <hr>
 <ol>
 <li id=fn:1 role=doc-endnote>
-<p>Same with any other sort of encryption, but those are rare these days.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
-</li>
-<li id=fn:2 role=doc-endnote>
-<p>By now you should know this pattern. I use it to show new ways of doing things. If it gets boring, feel free to skip but I hope you will read and learn something new.&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
-</li>
-</ol>
-</section>
-</div>
-<footer>
+<p>Same with any other sort of encryption, but those are rare these days.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:2 role=doc-endnote>
+<p>By now you should know this pattern. I use it to show new ways of doing things. If it gets boring, feel free to skip but I hope you will read and learn something new.&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section></div><footer>
 <p class=meta>
 <span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>Aug 2, 2018</time>
@@ -323,82 +210,47 @@ DVTA - Part 4 - Traffic Tampering with dnSpy
 Tags:
 <a class=category href=https://parsiya.net/tags/dnspy>dnSpy</a>
 </span>
-</p>
-<p class=meta>
+</p><p class=meta>
 <a class="basic-alignment left" href=https://parsiya.net/blog/2018-07-30-dvta-part-3-network-recon/ title="DVTA - Part 3 - Network Recon">DVTA - Part 3 - Network Recon</a>
 <a class="basic-alignment right" href=https://parsiya.net/blog/2018-08-23-committing-insurance-fraud-with-tineola/ title="Committing Insurance Fraud with Tineola">Committing Insurance Fraud with Tineola</a>
-</p>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</div>
-<aside class="sidebar thirds">
+</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer></article></div><aside class="sidebar thirds">
 <section class="first odd">
-<h1>Who am I?</h1>
-<p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
-<p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p>
-<p>Click on <a href=/about/>About Me!</a> to know more.</p>
-</p>
-</section>
-<ul class=sidebar-nav>
+<h1>Who am I?</h1><p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
 <li class=sidebar-nav-item>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li>
-</ul>
-<section class=odd>
-<h1>Collections</h1>
-<li>
+</li></ul><section class=odd>
+<h1>Collections</h1><li>
 <a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li>
-<li>
+</li><li>
 <a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li>
-</section>
-</aside>
-</div>
-</div>
-<footer role=contentinfo>
+</li></section></aside></div></div><footer role=contentinfo>
 <p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>

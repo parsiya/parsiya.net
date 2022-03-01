@@ -3,14 +3,13 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
 <link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>Thick Client Proxying - Part 1: Burp Interception and Proxy Listeners</title>
-<link rel=stylesheet href=/css/hugo-octopress.css>
+<title>Thick Client Proxying - Part 1: Burp Interception and Proxy Listeners</title><link rel=stylesheet href=/css/hugo-octopress.css>
 <link rel=stylesheet href=/css/fork-awesome.min.css>
 <link href=https://parsiya.net/favicon.png rel=icon>
 <meta name=description content>
 <meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
 <meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.92.2">
+<meta name=generator content="Hugo 0.93.0">
 <meta name=twitter:card content="summary">
 <meta name=twitter:title content="Thick Client Proxying - Part 1: Burp Interception and Proxy Listeners">
 <meta name=twitter:description content="Burp is not just used for web application testing. I usually use it during mobile and thick client tests. If the application is using HTTP methods then Burp is your best friend.
@@ -20,37 +19,21 @@ At the time of writing the current version of Burp Pro is 1.6.39 and most items 
 When I started this, I did not think I have so much stuff to write about Burp. So I broke it into multiple parts. Please note that these series of posts are not targeted towards web application testing so I have skipped some functionalities. If you have any favorite tips or usecases and want them included with credit please let me know, as usual feedback is always welcome.">
 <meta name=twitter:domain content="parsiya.net">
 <meta name=twitter:creator content="@CryptoGangsta">
-</head>
-<body>
+</head><body>
 <header role=banner>
 <hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
-<h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2>
-</hgroup></header>
-<nav role=navigation>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
 <fieldset class=mobile-nav>
 <select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset>
-<ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
-<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
-<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
-<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
-<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
-<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
-</ul>
-<ul class=subscription>
+</fieldset><ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
 <a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul>
-<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
 <fieldset role=search>
 <input class=search type=text name=q results=0 placeholder=Search>
 <input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset>
-</form>
-</nav>
-<div id=main>
+</fieldset></form></nav><div id=main>
 <div id=content>
 <div>
 <article class=hentry role=article>
@@ -59,142 +42,82 @@ complete unless it is known by its causes. - Avicenna</h2>
 - 9 minute read
 - <a href=https://parsiya.net/blog/2016-03-27-thick-client-proxying-part-1-burp-interception-and-proxy-listeners/#disqus_thread>Comments</a>
 - <a class=label href=https://parsiya.net/categories/burp/>Burp </a><a class=label href=https://parsiya.net/categories/thick-client-proxying/>Thick Client Proxying </a>
-</p>
-<h1 class=entry-title>
+</p><h1 class=entry-title>
 Thick Client Proxying - Part 1: Burp Interception and Proxy Listeners
-</h1>
-</header>
-<div class=entry-content>
+</h1></header><div class=entry-content>
 <nav id=TableOfContents>
 <ul>
 <li><a href=#1-interception>1. Interception</a>
 <ul>
-<li><a href=#11-intercepting-responses>1.1 Intercepting Responses</a></li>
-<li><a href=#12-intercepting-requestresponses-rules>1.2 Intercepting Request/Responses Rules</a></li>
-<li><a href=#13-match-and-replace>1.3 Match and Replace</a></li>
-<li><a href=#14-ssl-pass-through>1.4 SSL Pass Through</a></li>
-<li><a href=#15-response-modification-options>1.5 Response Modification Options</a></li>
-<li><a href=#16-disable-intercept-at-startup-and-miscellaneous>1.6 Disable Intercept at Startup and Miscellaneous</a></li>
-</ul>
-</li>
-<li><a href=#2-proxy-listeners>2. Proxy Listeners</a>
+<li><a href=#11-intercepting-responses>1.1 Intercepting Responses</a></li><li><a href=#12-intercepting-requestresponses-rules>1.2 Intercepting Request/Responses Rules</a></li><li><a href=#13-match-and-replace>1.3 Match and Replace</a></li><li><a href=#14-ssl-pass-through>1.4 SSL Pass Through</a></li><li><a href=#15-response-modification-options>1.5 Response Modification Options</a></li><li><a href=#16-disable-intercept-at-startup-and-miscellaneous>1.6 Disable Intercept at Startup and Miscellaneous</a></li></ul></li><li><a href=#2-proxy-listeners>2. Proxy Listeners</a>
 <ul>
-<li><a href=#21-binding>2.1 Binding</a></li>
-<li><a href=#22-request-handling>2.2 Request Handling</a>
+<li><a href=#21-binding>2.1 Binding</a></li><li><a href=#22-request-handling>2.2 Request Handling</a>
 <ul>
-<li><a href=#221-burps-invisible-proxying>2.2.1 Burp's Invisible Proxying</a></li>
-</ul>
-</li>
-<li><a href=#23-certificate>2.3 Certificate</a></li>
-</ul>
-</li>
-<li><a href=#3-bonus-tip-running-burp-with-a-set-amount-of-memory>3. Bonus tip: Running Burp with a Set Amount of Memory</a></li>
-</ul>
-</nav>
-<p>Burp is not just used for web application testing. I usually use it during mobile and thick client tests. If the application is using HTTP methods then Burp is your best friend.</p>
-<p>I am going to document a bunch of Burp tips and tricks that have helped me during my work. One purpose is to share it with the world and not be the other guy from Wham! (:D) and the other is to have it in an accessible place (similar to the cheat sheet in the menu).</p>
-<p>This part one I talk about Interception and Proxy listeners which are configured via <code>Proxy > Options</code>.</p>
-<p>At the time of writing the current version of Burp Pro is <code>1.6.39</code> and most items should apply to the current Burp Free version (<code>1.6.32</code>). Most settings have not changed since I started working with Burp (v1.5). You can download Burp from: <a href=https://portswigger.net/burp/download.html target=_blank rel="noreferrer noopener">https://portswigger.net/burp/download.html</a>.</p>
-<p>When I started this, I did not think I have so much stuff to write about Burp. So I broke it into multiple parts. Please note that these series of posts are not targeted towards web application testing so I have skipped some functionalities. If you have any favorite tips or usecases and want them included with credit please let me know, as usual feedback is always welcome.</p>
-<h1 id=1-interception>1. Interception
+<li><a href=#221-burps-invisible-proxying>2.2.1 Burp's Invisible Proxying</a></li></ul></li><li><a href=#23-certificate>2.3 Certificate</a></li></ul></li><li><a href=#3-bonus-tip-running-burp-with-a-set-amount-of-memory>3. Bonus tip: Running Burp with a Set Amount of Memory</a></li></ul></nav><p>Burp is not just used for web application testing. I usually use it during mobile and thick client tests. If the application is using HTTP methods then Burp is your best friend.</p><p>I am going to document a bunch of Burp tips and tricks that have helped me during my work. One purpose is to share it with the world and not be the other guy from Wham! (:D) and the other is to have it in an accessible place (similar to the cheat sheet in the menu).</p><p>This part one I talk about Interception and Proxy listeners which are configured via <code>Proxy > Options</code>.</p><p>At the time of writing the current version of Burp Pro is <code>1.6.39</code> and most items should apply to the current Burp Free version (<code>1.6.32</code>). Most settings have not changed since I started working with Burp (v1.5). You can download Burp from: <a href=https://portswigger.net/burp/download.html target=_blank rel="noreferrer noopener">https://portswigger.net/burp/download.html</a>.</p><p>When I started this, I did not think I have so much stuff to write about Burp. So I broke it into multiple parts. Please note that these series of posts are not targeted towards web application testing so I have skipped some functionalities. If you have any favorite tips or usecases and want them included with credit please let me know, as usual feedback is always welcome.</p><h1 id=1-interception>1. Interception
 <a class=header-link href=#1-interception><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Burp supports request/response interception and modification. You can configure most of these settings in <code>Proxy > Options</code>.</p>
-<h2 id=11-intercepting-responses>1.1 Intercepting Responses
+</h1><p>Burp supports request/response interception and modification. You can configure most of these settings in <code>Proxy > Options</code>.</p><h2 id=11-intercepting-responses>1.1 Intercepting Responses
 <a class=header-link href=#11-intercepting-responses><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Sometimes you want to intercept the response for manual modification. Enable it at <code>Proxy > Options > Intercept responses based ...</code>. Be sure to remove the checkbox on the first rule, otherwise binary payloads may not be intercepted.</p>
-<span class=caption-wrapper>
+</h2><p>Sometimes you want to intercept the response for manual modification. Enable it at <code>Proxy > Options > Intercept responses based ...</code>. Be sure to remove the checkbox on the first rule, otherwise binary payloads may not be intercepted.</p><span class=caption-wrapper>
 <img class=caption src=/images/2016/burp-tips-1/02.PNG title="Intercepting responses" alt="Intercepting responses">
 <span class=caption-text>Intercepting responses</span>
 </span>
 <h2 id=12-intercepting-requestresponses-rules>1.2 Intercepting Request/Responses Rules
 <a class=header-link href=#12-intercepting-requestresponses-rules><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Burp supports rules for intercepting requests/responses. This is extremely useful when you have redirected a lot of traffic to Burp (e.g. using the IE proxy settings) but only want to intercept traffic for some specific endpoints. Go to <code>Proxy > Options</code> and see the rules <code>Intercept Client/Server Requests</code>. There is a pre-defined rule to only intercept requests in scope. You can also add your own rules and it supports regex to match the content and headers.</p>
-<span class=caption-wrapper>
+</h2><p>Burp supports rules for intercepting requests/responses. This is extremely useful when you have redirected a lot of traffic to Burp (e.g. using the IE proxy settings) but only want to intercept traffic for some specific endpoints. Go to <code>Proxy > Options</code> and see the rules <code>Intercept Client/Server Requests</code>. There is a pre-defined rule to only intercept requests in scope. You can also add your own rules and it supports regex to match the content and headers.</p><span class=caption-wrapper>
 <img class=caption src=/images/2016/burp-tips-1/03.PNG title="Intercept rules" alt="Intercept rules">
 <span class=caption-text>Intercept rules</span>
 </span>
 <h2 id=13-match-and-replace>1.3 Match and Replace
 <a class=header-link href=#13-match-and-replace><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>You can do match/replace under <code>Proxy > Options > Match and Replace</code>. Meaning that you can replace something in the request or response with something of your choice. It supports regex too. I usually use it to change the <code>User-Agent</code> (see the default rules or add your own User-Agent). Another way is to automatically change something in the response to bypass client-side controls without patching the binary. For example if the server responds to the login with <code>true/false</code>, I make a match/replace rule to modify the bad login response to <code>true</code> and bypass login (this will only work if the server does not care that your login was not successful).</p>
-<span class=caption-wrapper>
+</h2><p>You can do match/replace under <code>Proxy > Options > Match and Replace</code>. Meaning that you can replace something in the request or response with something of your choice. It supports regex too. I usually use it to change the <code>User-Agent</code> (see the default rules or add your own User-Agent). Another way is to automatically change something in the response to bypass client-side controls without patching the binary. For example if the server responds to the login with <code>true/false</code>, I make a match/replace rule to modify the bad login response to <code>true</code> and bypass login (this will only work if the server does not care that your login was not successful).</p><span class=caption-wrapper>
 <img class=caption src=/images/2016/burp-tips-1/04.PNG title="Match and replace rules" alt="Match and replace rules">
 <span class=caption-text>Match and replace rules</span>
 </span>
 <h2 id=14-ssl-pass-through>1.4 SSL Pass Through
 <a class=header-link href=#14-ssl-pass-through><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>This is an underrated functionality of Burp (<code>Proxy > Options > SSL Pass Through</code>). Burp will not MitM anything added to this section and just act like a non-terminating TLS proxy.</p>
-<p>Suppose you are trying to proxy something but it doesn't work. You add the endpoints to <code>SSL Pass Through</code> and see if the problem is with Burp.</p>
-<p>This frequently happens with thick clients that use a mix of HTTP and non-HTTP protocols to talk to different endpoints. <em>Burp will MitM the non-HTTP connections and may silently drop or modify packets</em>. This will cause the application to malfunction. First <a href=https://parsiya.net/blog/2015-10-08-proxying-hipchat-part-1-where-did-the-traffic-go/ title="Proxying Hipchat Part 1: Where did the Traffic Go?">identify the endpoints</a> and then add them to <code>SSL Pass Through</code>. For a practical example see <a href=https://parsiya.net/blog/2015-10-09-proxying-hipchat-part-2-so-you-think-you-can-use-burp/#3-burp-s-ssl-pass-through title="3. Burp's SSL Pass Through">Proxying Hipchat Part 2: So You Think You Can Use Burp?</a>.</p>
-<p>You can use this functionality to use Burp as a quick and simple <code>port changer</code>. Let's say that you want to connect a client that sends data to port <code>1234</code> to a remote server that is listening on port <code>5678</code>. If you do not want to write code (or use other utilities) to redirect ports. Set up Burp as proxy on port <code>1234</code>, redirect the endpoint to localhost using the <code>hosts</code> file (or other OS specific methods). In Burp you can set the proxy to redirect all traffic to the endpoint using the <code>Request Handling</code> functionality and a different port. The add the endpoint to the <code>SSL Pass Through</code>.</p>
-<h2 id=15-response-modification-options>1.5 Response Modification Options
+</h2><p>This is an underrated functionality of Burp (<code>Proxy > Options > SSL Pass Through</code>). Burp will not MitM anything added to this section and just act like a non-terminating TLS proxy.</p><p>Suppose you are trying to proxy something but it doesn't work. You add the endpoints to <code>SSL Pass Through</code> and see if the problem is with Burp.</p><p>This frequently happens with thick clients that use a mix of HTTP and non-HTTP protocols to talk to different endpoints. <em>Burp will MitM the non-HTTP connections and may silently drop or modify packets</em>. This will cause the application to malfunction. First <a href=https://parsiya.net/blog/2015-10-08-proxying-hipchat-part-1-where-did-the-traffic-go/ title="Proxying Hipchat Part 1: Where did the Traffic Go?">identify the endpoints</a> and then add them to <code>SSL Pass Through</code>. For a practical example see <a href=https://parsiya.net/blog/2015-10-09-proxying-hipchat-part-2-so-you-think-you-can-use-burp/#3-burp-s-ssl-pass-through title="3. Burp's SSL Pass Through">Proxying Hipchat Part 2: So You Think You Can Use Burp?</a>.</p><p>You can use this functionality to use Burp as a quick and simple <code>port changer</code>. Let's say that you want to connect a client that sends data to port <code>1234</code> to a remote server that is listening on port <code>5678</code>. If you do not want to write code (or use other utilities) to redirect ports. Set up Burp as proxy on port <code>1234</code>, redirect the endpoint to localhost using the <code>hosts</code> file (or other OS specific methods). In Burp you can set the proxy to redirect all traffic to the endpoint using the <code>Request Handling</code> functionality and a different port. The add the endpoint to the <code>SSL Pass Through</code>.</p><h2 id=15-response-modification-options>1.5 Response Modification Options
 <a class=header-link href=#15-response-modification-options><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Most of these are self explanatory and are mostly only useful for web applications.</p>
-<p><code>Convert HTTPS links to HTTP</code> and <code>Remove secure flag from cookies</code> fit nicely with the <code>Force use of SSL</code> in <a href=#2-2-request-handling:dd27d7b63bfec82bf20dab0a96096152>Request Handling</a>. If we have disabled TLS between the application (or browser) and Burp, a <code>Secure</code> cookie will not be transmitted and the app will stop working. Burp can remove the <code>Secure</code> flag when it is set using the <code>Set-Cookie</code> response header.</p>
-<span class=caption-wrapper>
+</h2><p>Most of these are self explanatory and are mostly only useful for web applications.</p><p><code>Convert HTTPS links to HTTP</code> and <code>Remove secure flag from cookies</code> fit nicely with the <code>Force use of SSL</code> in <a href=#2-2-request-handling:dd27d7b63bfec82bf20dab0a96096152>Request Handling</a>. If we have disabled TLS between the application (or browser) and Burp, a <code>Secure</code> cookie will not be transmitted and the app will stop working. Burp can remove the <code>Secure</code> flag when it is set using the <code>Set-Cookie</code> response header.</p><span class=caption-wrapper>
 <img class=caption src=/images/2016/burp-tips-1/08.PNG title="Response modification options" alt="Response modification options">
 <span class=caption-text>Response modification options</span>
 </span>
 <h2 id=16-disable-intercept-at-startup-and-miscellaneous>1.6 Disable Intercept at Startup and Miscellaneous
 <a class=header-link href=#16-disable-intercept-at-startup-and-miscellaneous><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>I run Burp and set it up to proxy, run the application and wonder why it is stalled. Then I realize that by default intercept is on at startup.</p>
-<p><code>Proxy > Options > Scroll all the way to the bottom > Under Miscellaneous > Enable interception at startup > Always disable.</code></p>
-<span class=caption-wrapper>
+</h2><p>I run Burp and set it up to proxy, run the application and wonder why it is stalled. Then I realize that by default intercept is on at startup.</p><p><code>Proxy > Options > Scroll all the way to the bottom > Under Miscellaneous > Enable interception at startup > Always disable.</code></p><span class=caption-wrapper>
 <img class=caption src=/images/2016/burp-tips-1/01.PNG title="Interception startup settings" alt="Interception startup settings">
 <span class=caption-text>Interception startup settings</span>
 </span>
 <h1 id=2-proxy-listeners>2. Proxy Listeners
 <a class=header-link href=#2-proxy-listeners><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Burp listens on a port. This is the port that you forward the traffic too. The default settings is <code>127.0.0.1:8080</code> but it can be changed. You can also make new proxy listeners on other interfaces or all interfaces <code>0.0.0.0</code>. The only restriction is that another program cannot be using that port on the selected interface.</p>
-<p>Proxy listeners can be accessed from <code>Proxy > Option > Proxy Listeners</code> (on top).</p>
-<span class=caption-wrapper>
+</h1><p>Burp listens on a port. This is the port that you forward the traffic too. The default settings is <code>127.0.0.1:8080</code> but it can be changed. You can also make new proxy listeners on other interfaces or all interfaces <code>0.0.0.0</code>. The only restriction is that another program cannot be using that port on the selected interface.</p><p>Proxy listeners can be accessed from <code>Proxy > Option > Proxy Listeners</code> (on top).</p><span class=caption-wrapper>
 <img class=caption src=/images/2016/burp-tips-1/05.PNG title="Proxy listeners" alt="Proxy listeners">
 <span class=caption-text>Proxy listeners</span>
 </span>
 <h2 id=21-binding>2.1 Binding
 <a class=header-link href=#21-binding><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Adding a new listener is easy, just click thr <code>Add</code> button. Loopback is <code>127.0.0.1</code> or <code>localhost</code>. If you want Burp to listen on another interface, it can be chosen here. This is useful if I am proxying a mobile device. In this case I will create the listener on all interfaces (<code>0.0.0.0</code>) or the network interface that is shared with the mobile device (e.g. a Windows hostednetwork).</p>
-<span class=caption-wrapper>
+</h2><p>Adding a new listener is easy, just click thr <code>Add</code> button. Loopback is <code>127.0.0.1</code> or <code>localhost</code>. If you want Burp to listen on another interface, it can be chosen here. This is useful if I am proxying a mobile device. In this case I will create the listener on all interfaces (<code>0.0.0.0</code>) or the network interface that is shared with the mobile device (e.g. a Windows hostednetwork).</p><span class=caption-wrapper>
 <img class=caption src=/images/2016/burp-tips-1/06.PNG title="Proxy binding" alt="Proxy binding">
 <span class=caption-text>Proxy binding</span>
 </span>
-<p>We can import/export Burp's root CA using the <code>Import/export CA certificate</code> or use <code>Regenerate CA certificate</code> to create a new one. For more information read this post: <a href=/blog/2016-02-21-installing-burp-certificate-authority-in-windows-certificate-store/ title="Installing Burp Certificate Authority in Windows Certificate Store">Installing Burp Certificate Authority in Windows Certificate Store</a>. If you regenerate the root CA, you have to replace the old one in the certificate store (of OS and browsers like Firefox) with the new certificate.</p>
-<h2 id=22-request-handling>2.2 Request Handling
+<p>We can import/export Burp's root CA using the <code>Import/export CA certificate</code> or use <code>Regenerate CA certificate</code> to create a new one. For more information read this post: <a href=/blog/2016-02-21-installing-burp-certificate-authority-in-windows-certificate-store/ title="Installing Burp Certificate Authority in Windows Certificate Store">Installing Burp Certificate Authority in Windows Certificate Store</a>. If you regenerate the root CA, you have to replace the old one in the certificate store (of OS and browsers like Firefox) with the new certificate.</p><h2 id=22-request-handling>2.2 Request Handling
 <a class=header-link href=#22-request-handling><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>This is a useful feature for non-web applications. Supposed I have proxied a thick client application which connects to <code>www.google.com:8000</code> by using the Windows <code>hosts</code> file. In that file, <code>www.google.com</code> is redirected to <code>127.0.0.1</code> and I have created a Burp listener on port <code>8000</code>. Now I need to redirect all traffic from this listener back to the original endpoint (<code>www.google.com:8000</code>). One way of doing this is this section <code>Redirect to host</code> and <code>Redirect to port</code> will contain <code>www.google.com</code> and <code>8000</code> respectively.</p>
-<span class=caption-wrapper>
+</h2><p>This is a useful feature for non-web applications. Supposed I have proxied a thick client application which connects to <code>www.google.com:8000</code> by using the Windows <code>hosts</code> file. In that file, <code>www.google.com</code> is redirected to <code>127.0.0.1</code> and I have created a Burp listener on port <code>8000</code>. Now I need to redirect all traffic from this listener back to the original endpoint (<code>www.google.com:8000</code>). One way of doing this is this section <code>Redirect to host</code> and <code>Redirect to port</code> will contain <code>www.google.com</code> and <code>8000</code> respectively.</p><span class=caption-wrapper>
 <img class=caption src=/images/2016/burp-tips-1/07.PNG title="Redirecting traffic to www.google.com:8000" alt="Redirecting traffic to www.google.com:8000">
 <span class=caption-text>Redirecting traffic to www.google.com:8000</span>
 </span>
-<p>If the application is connecting to different endpoints on the same port (e.g. if we wanted to proxy traffic going to port 80 or 443), then we cannot redirect the traffic in here. We need to use <code>Options > Connections > Hostname Resolution</code>. We will get to this part in next parts.</p>
-<p>This is also useful if I am using Burp to pipe the traffic to another proxy tool such as Fiddler or Charles.</p>
-<p>The <code>Force use of SSL</code> option is used when I am stripping TLS between Burp and the application and want to add it from Burp to the endpoint. One documented instance is when I used it with <a href=https://parsiya.net/blog/2014-06-25-piping-ssl/tls-traffic-from-soapui-to-burp/ title="Piping SSL/TLS Traffic from SoapUI to Burp">SOAPUI</a>.</p>
-<h3 id=221-burps-invisible-proxying>2.2.1 Burp's Invisible Proxying
+<p>If the application is connecting to different endpoints on the same port (e.g. if we wanted to proxy traffic going to port 80 or 443), then we cannot redirect the traffic in here. We need to use <code>Options > Connections > Hostname Resolution</code>. We will get to this part in next parts.</p><p>This is also useful if I am using Burp to pipe the traffic to another proxy tool such as Fiddler or Charles.</p><p>The <code>Force use of SSL</code> option is used when I am stripping TLS between Burp and the application and want to add it from Burp to the endpoint. One documented instance is when I used it with <a href=https://parsiya.net/blog/2014-06-25-piping-ssl/tls-traffic-from-soapui-to-burp/ title="Piping SSL/TLS Traffic from SoapUI to Burp">SOAPUI</a>.</p><h3 id=221-burps-invisible-proxying>2.2.1 Burp's Invisible Proxying
 <a class=header-link href=#221-burps-invisible-proxying><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>For more information please see <a href=https://parsiya.net/blog/2015-10-19-proxying-hipchat-part-3-ssl-added-and-removed-here/#2-2-1-what-is-this-connect title="2.2.1 What is this CONNECT?">Hipchat part 3</a> and read sections <code>2.2.1</code> and <code>2.2.2</code>. To be honest read the whole series to see how Burp works as a proxy. You will evade so many problems down the road.</p>
-<p>If we have proxied a client and the client is proxy-aware it will send a <code>CONNECT</code> request to the endpoint that it wants to connect to (in this case <code>www.google.com</code>) before starting the actual TLS connection. This is to tell the proxy where to redirect the traffic. This is because the proxy (which in most cases is a non-TLS terminating proxy unlike Burp) cannot see inside the TLS encrypted TCP payload in the packet. As a result it does not know where to send this traffic. This <code>CONNECT</code> request solves this problem. Example of proxy aware clients are browsers.</p>
-<p>Non-proxy-aware clients, don't know (or don't care) that they are proxied. This is the case for most applications that either do not have proxy settings or do not use the OS proxy settings. The application still thinks that it is sending information to the endpoint but it is being redirected to Burp. Burp being a TLS terminating proxy can decrypt the packets and look inside them to discover the original endpoint by reading the <code>host</code> header. This is <code>Burp's invisible proxying</code>.</p>
-<p>It can be enabled at <code>Proxy > Options</code>. Select the proxy listener, click <code>edit</code> and under <code>Request Handling</code> select <code>Support invisible proxying (enable only if needed)</code>.</p>
-<span class=caption-wrapper>
+</h3><p>For more information please see <a href=https://parsiya.net/blog/2015-10-19-proxying-hipchat-part-3-ssl-added-and-removed-here/#2-2-1-what-is-this-connect title="2.2.1 What is this CONNECT?">Hipchat part 3</a> and read sections <code>2.2.1</code> and <code>2.2.2</code>. To be honest read the whole series to see how Burp works as a proxy. You will evade so many problems down the road.</p><p>If we have proxied a client and the client is proxy-aware it will send a <code>CONNECT</code> request to the endpoint that it wants to connect to (in this case <code>www.google.com</code>) before starting the actual TLS connection. This is to tell the proxy where to redirect the traffic. This is because the proxy (which in most cases is a non-TLS terminating proxy unlike Burp) cannot see inside the TLS encrypted TCP payload in the packet. As a result it does not know where to send this traffic. This <code>CONNECT</code> request solves this problem. Example of proxy aware clients are browsers.</p><p>Non-proxy-aware clients, don't know (or don't care) that they are proxied. This is the case for most applications that either do not have proxy settings or do not use the OS proxy settings. The application still thinks that it is sending information to the endpoint but it is being redirected to Burp. Burp being a TLS terminating proxy can decrypt the packets and look inside them to discover the original endpoint by reading the <code>host</code> header. This is <code>Burp's invisible proxying</code>.</p><p>It can be enabled at <code>Proxy > Options</code>. Select the proxy listener, click <code>edit</code> and under <code>Request Handling</code> select <code>Support invisible proxying (enable only if needed)</code>.</p><span class=caption-wrapper>
 <img class=caption src=/images/2015/hipchat3/07-Burp-invisible-proxy-mode.png title="Burp invisible proxying option (copied from Hipchat part 3)" alt="Burp invisible proxying option (copied from Hipchat part 3)">
 <span class=caption-text>Burp invisible proxying option (copied from Hipchat part 3)</span>
 </span>
-<p>What I usually do is capture the local traffic between the application and Burp (using <code>RawCap</code>) and see if the application sends the <code>CONNECT</code> request. If so, then this is not needed. Another way is to just try both settings and see which one works <code>;)</code>.</p>
-<h2 id=23-certificate>2.3 Certificate
+<p>What I usually do is capture the local traffic between the application and Burp (using <code>RawCap</code>) and see if the application sends the <code>CONNECT</code> request. If so, then this is not needed. Another way is to just try both settings and see which one works <code>;)</code>.</p><h2 id=23-certificate>2.3 Certificate
 <a class=header-link href=#23-certificate><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>We can configure how Burp's MitM certificate here.</p>
-<ul>
-<li><code>Use a self-signed certificate</code>: This means that Burp only uses one single certificate for all connections.</li>
-<li><code>Geneate CA-signed per-host certificates</code>: This is the most common. Burp will generate a different certificate for each host. The Common Name (CN) for the certificate is the same as the domain name.</li>
-<li><code>Generate a CA-signed certificate with a specific hostname</code>: We can specify the CN in the certificate. This is useful when an application is doing certificate pinning by checking the CN but it is different from the endpoint usually using wildcards. For example the application is connecting to <code>images.google.com</code> but it is looking for a certificate for <code>\*.google.com</code>. If we choose the last option, Burp will create a certificate for <code>images.google.com</code> (because that is the endpoint) and the certificate pinning mechanism will reject the certificate.</li>
-<li><code>Use a custom certificate (PKCS#12)</code>: If we have a certain certificate (including the private key) that we need to use, we can use it here. This is useful when the certificate pinning mechanism is checking for more than CN, so we generate a certificate manually (or if use the original certificate if we have access to it) and use it here.</li>
-</ul>
-<h1 id=3-bonus-tip-running-burp-with-a-set-amount-of-memory>3. Bonus tip: Running Burp with a Set Amount of Memory
+</h2><p>We can configure how Burp's MitM certificate here.</p><ul>
+<li><code>Use a self-signed certificate</code>: This means that Burp only uses one single certificate for all connections.</li><li><code>Geneate CA-signed per-host certificates</code>: This is the most common. Burp will generate a different certificate for each host. The Common Name (CN) for the certificate is the same as the domain name.</li><li><code>Generate a CA-signed certificate with a specific hostname</code>: We can specify the CN in the certificate. This is useful when an application is doing certificate pinning by checking the CN but it is different from the endpoint usually using wildcards. For example the application is connecting to <code>images.google.com</code> but it is looking for a certificate for <code>\*.google.com</code>. If we choose the last option, Burp will create a certificate for <code>images.google.com</code> (because that is the endpoint) and the certificate pinning mechanism will reject the certificate.</li><li><code>Use a custom certificate (PKCS#12)</code>: If we have a certain certificate (including the private key) that we need to use, we can use it here. This is useful when the certificate pinning mechanism is checking for more than CN, so we generate a certificate manually (or if use the original certificate if we have access to it) and use it here.</li></ul><h1 id=3-bonus-tip-running-burp-with-a-set-amount-of-memory>3. Bonus tip: Running Burp with a Set Amount of Memory
 <a class=header-link href=#3-bonus-tip-running-burp-with-a-set-amount-of-memory><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Personally I have never had any problems with Burp running out of memory. But I usually save my Burp states at the end of the day and do not use a lot of Python/Ruby extension but YMMV.</p>
-<p>Run this via command line to assign 2048 MBs (or 2 GBs) of memory to Burp:
-<code>java -jar -Xmx2048m /burp_directory/burpsuite_whatever.jar</code>.</p>
-</div>
-<footer>
+</h1><p>Personally I have never had any problems with Burp running out of memory. But I usually save my Burp states at the end of the day and do not use a lot of Python/Ruby extension but YMMV.</p><p>Run this via command line to assign 2048 MBs (or 2 GBs) of memory to Burp:
+<code>java -jar -Xmx2048m /burp_directory/burpsuite_whatever.jar</code>.</p></div><footer>
 <p class=meta>
 <span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>Mar 27, 2016</time>
@@ -202,82 +125,47 @@ Thick Client Proxying - Part 1: Burp Interception and Proxy Listeners
 Tags:
 <a class=category href=https://parsiya.net/tags/burp>Burp</a> <a class=category href=https://parsiya.net/tags/tutorial>Tutorial</a>
 </span>
-</p>
-<p class=meta>
+</p><p class=meta>
 <a class="basic-alignment left" href=https://parsiya.net/blog/2016-02-21-installing-burp-certificate-authority-in-windows-certificate-store/ title="Installing Burp Certificate Authority in Windows Certificate Store">Installing Burp Certificate Authority in Windows Certificate Store</a>
 <a class="basic-alignment right" href=https://parsiya.net/blog/2016-03-29-thick-client-proxying-part-2-burp-history-intruder-scanner-and-more/ title="Thick Client Proxying - Part 2: Burp History, Intruder, Scanner and More">Thick Client Proxying - Part 2: Burp History, Intruder, Scanner and More</a>
-</p>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</div>
-<aside class="sidebar thirds">
+</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer></article></div><aside class="sidebar thirds">
 <section class="first odd">
-<h1>Who am I?</h1>
-<p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
-<p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p>
-<p>Click on <a href=/about/>About Me!</a> to know more.</p>
-</p>
-</section>
-<ul class=sidebar-nav>
+<h1>Who am I?</h1><p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
 <li class=sidebar-nav-item>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li>
-</ul>
-<section class=odd>
-<h1>Collections</h1>
-<li>
+</li></ul><section class=odd>
+<h1>Collections</h1><li>
 <a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li>
-<li>
+</li><li>
 <a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li>
-</section>
-</aside>
-</div>
-</div>
-<footer role=contentinfo>
+</li></section></aside></div></div><footer role=contentinfo>
 <p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>

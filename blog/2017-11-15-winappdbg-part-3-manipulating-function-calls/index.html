@@ -3,14 +3,13 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
 <link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>WinAppDbg - Part 3 - Manipulating Function Calls</title>
-<link rel=stylesheet href=/css/hugo-octopress.css>
+<title>WinAppDbg - Part 3 - Manipulating Function Calls</title><link rel=stylesheet href=/css/hugo-octopress.css>
 <link rel=stylesheet href=/css/fork-awesome.min.css>
 <link href=https://parsiya.net/favicon.png rel=icon>
 <meta name=description content>
 <meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
 <meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.92.2">
+<meta name=generator content="Hugo 0.93.0">
 <meta name=twitter:card content="summary">
 <meta name=twitter:title content="WinAppDbg - Part 3 - Manipulating Function Calls">
 <meta name=twitter:description content="Previously on WinAppDbg-TV:
@@ -26,37 +25,21 @@ In part two we learned how to hook functions by hooking IE and Firefox to see pr
 In this part we will learn how to do that (and a few other things). We will start with something simple and then move on to more complex examples.">
 <meta name=twitter:domain content="parsiya.net">
 <meta name=twitter:creator content="@CryptoGangsta">
-</head>
-<body>
+</head><body>
 <header role=banner>
 <hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
-<h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2>
-</hgroup></header>
-<nav role=navigation>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
 <fieldset class=mobile-nav>
 <select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset>
-<ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
-<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
-<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
-<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
-<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
-<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
-</ul>
-<ul class=subscription>
+</fieldset><ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
 <a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul>
-<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
 <fieldset role=search>
 <input class=search type=text name=q results=0 placeholder=Search>
 <input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset>
-</form>
-</nav>
-<div id=main>
+</fieldset></form></nav><div id=main>
 <div id=content>
 <div>
 <article class=hentry role=article>
@@ -65,856 +48,582 @@ complete unless it is known by its causes. - Avicenna</h2>
 - 17 minute read
 - <a href=https://parsiya.net/blog/2017-11-15-winappdbg-part-3-manipulating-function-calls/#disqus_thread>Comments</a>
 - <a class=label href=https://parsiya.net/categories/winappdbg/>winappdbg </a><a class=label href=https://parsiya.net/categories/reverse-engineering/>reverse engineering </a>
-</p>
-<h1 class=entry-title>
+</p><h1 class=entry-title>
 WinAppDbg - Part 3 - Manipulating Function Calls
-</h1>
-</header>
-<div class=entry-content>
+</h1></header><div class=entry-content>
 <nav id=TableOfContents>
 <ul>
 <li><a href=#winapi-test>WinAPI Test</a>
 <ul>
-<li><a href=#installing-mingw-on-windows>Installing MinGW on Windows</a></li>
-</ul>
-</li>
-<li><a href=#15---modify-sleep-call>15 - Modify Sleep Call</a>
+<li><a href=#installing-mingw-on-windows>Installing MinGW on Windows</a></li></ul></li><li><a href=#15---modify-sleep-call>15 - Modify Sleep Call</a>
 <ul>
-<li><a href=#why-sleep>Why Sleep?</a></li>
-<li><a href=#tldr-function-calls>tl;dr: Function Calls</a></li>
-<li><a href=#hooking-sleep>Hooking Sleep</a></li>
-<li><a href=#modifying-parameters>Modifying Parameters</a></li>
-<li><a href=#modifysleep-in-action>ModifySleep in Action</a></li>
-</ul>
-</li>
-<li><a href=#16---modify-domain---ie>16 - Modify Domain - IE</a>
+<li><a href=#why-sleep>Why Sleep?</a></li><li><a href=#tldr-function-calls>tl;dr: Function Calls</a></li><li><a href=#hooking-sleep>Hooking Sleep</a></li><li><a href=#modifying-parameters>Modifying Parameters</a></li><li><a href=#modifysleep-in-action>ModifySleep in Action</a></li></ul></li><li><a href=#16---modify-domain---ie>16 - Modify Domain - IE</a>
 <ul>
-<li><a href=#internetconnect>InternetConnect</a></li>
-<li><a href=#step-by-step-guide>Step by Step Guide</a></li>
-<li><a href=#code>Code</a></li>
-<li><a href=#corporate-shilling-in-action>Corporate Shilling in Action</a></li>
-</ul>
-</li>
-<li><a href=#17---how-calc-preserves-its-view>17 - How calc Preserves its View</a>
+<li><a href=#internetconnect>InternetConnect</a></li><li><a href=#step-by-step-guide>Step by Step Guide</a></li><li><a href=#code>Code</a></li><li><a href=#corporate-shilling-in-action>Corporate Shilling in Action</a></li></ul></li><li><a href=#17---how-calc-preserves-its-view>17 - How calc Preserves its View</a>
 <ul>
 <li><a href=#hunt-for-layout>Hunt for Layout</a>
 <ul>
-<li><a href=#calcs-file-access>calc's File Access</a></li>
-<li><a href=#calcs-registry-access>calc's Registry Access</a></li>
-<li><a href=#procmons-call-stack-tab>Procmon's Call Stack Tab</a></li>
-</ul>
-</li>
-<li><a href=#regqueryvalueexw>RegQueryValueExW</a>
+<li><a href=#calcs-file-access>calc's File Access</a></li><li><a href=#calcs-registry-access>calc's Registry Access</a></li><li><a href=#procmons-call-stack-tab>Procmon's Call Stack Tab</a></li></ul></li><li><a href=#regqueryvalueexw>RegQueryValueExW</a>
 <ul>
-<li><a href=#dll-export-forwarding>DLL Export Forwarding</a></li>
-</ul>
-</li>
-<li><a href=#calc-recon-code>calc Recon Code</a></li>
-</ul>
-</li>
-<li><a href=#18---calc-layout-manipulation>18 - calc Layout Manipulation</a>
+<li><a href=#dll-export-forwarding>DLL Export Forwarding</a></li></ul></li><li><a href=#calc-recon-code>calc Recon Code</a></li></ul></li><li><a href=#18---calc-layout-manipulation>18 - calc Layout Manipulation</a>
 <ul>
-<li><a href=#scientific-experiment>"Scientific" Experiment</a></li>
-</ul>
-</li>
-<li><a href=#conclusion>Conclusion</a></li>
-</ul>
-</nav>
-<p>Previously on WinAppDbg-TV:</p>
-<ul>
-<li><a href=https://parsiya.net/blog/2017-11-09-winappdbg-part-1-basics/ title="WinAppDbg - Part 1 - Basics">Part 1 - Basics</a></li>
-<li><a href=https://parsiya.net/blog/2017-11-11-winappdbg-part-2-function-hooking-and-others/ title="WinAppDbg - Part 2 - Function Hooking and Others">Part 2 - Function Hooking and Others</a></li>
-</ul>
-<p>As usual, code is in my clone on Github. Download that directory to your VM and follow along:</p>
-<ul>
-<li><a href=https://github.com/parsiya/Parsia-Code/tree/master/winappdbg title="WinAppDbg code in Parsia-Code" target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/winappdbg</a></li>
-</ul>
-<p>In part two we learned how to hook functions by hooking IE and Firefox to see pre-TLS traffic. Just looking at function calls is fun but often not enough. We need to be able to modify function parameters and return values.</p>
-<p>In this part we will learn how to do that (and a few other things). We will start with something simple and then move on to more complex examples.</p>
-<h1 id=winapi-test>WinAPI Test
+<li><a href=#scientific-experiment>"Scientific" Experiment</a></li></ul></li><li><a href=#conclusion>Conclusion</a></li></ul></nav><p>Previously on WinAppDbg-TV:</p><ul>
+<li><a href=https://parsiya.net/blog/2017-11-09-winappdbg-part-1-basics/ title="WinAppDbg - Part 1 - Basics">Part 1 - Basics</a></li><li><a href=https://parsiya.net/blog/2017-11-11-winappdbg-part-2-function-hooking-and-others/ title="WinAppDbg - Part 2 - Function Hooking and Others">Part 2 - Function Hooking and Others</a></li></ul><p>As usual, code is in my clone on Github. Download that directory to your VM and follow along:</p><ul>
+<li><a href=https://github.com/parsiya/Parsia-Code/tree/master/winappdbg title="WinAppDbg code in Parsia-Code" target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/winappdbg</a></li></ul><p>In part two we learned how to hook functions by hooking IE and Firefox to see pre-TLS traffic. Just looking at function calls is fun but often not enough. We need to be able to modify function parameters and return values.</p><p>In this part we will learn how to do that (and a few other things). We will start with something simple and then move on to more complex examples.</p><h1 id=winapi-test>WinAPI Test
 <a class=header-link href=#winapi-test><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>I could not find a real-world example with a simple WinAPI call. I created my own. It's a simple program that calls some WinAPIs.</p>
-<figure class=code>
+</h1><p>I could not find a real-world example with a simple WinAPI call. I created my own. It's a simple program that calls some WinAPIs.</p><figure class=code>
 <figcaption>
 <span>WinAPI-test</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">9
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#719e07>#include</span> <span style=color:#719e07>&lt;windows.h&gt;</span><span style=color:#719e07>
-</span><span style=color:#719e07></span>
-<span style=color:#dc322f>int</span> <span style=color:#268bd2>main</span>(<span style=color:#dc322f>void</span>)
-{
-    MessageBox(<span style=color:#b58900>NULL</span>, <span style=color:#2aa198>&#34;test&#34;</span>, <span style=color:#2aa198>&#34;test&#34;</span>, <span style=color:#2aa198>0x20</span>);
-    Sleep(<span style=color:#2aa198>2000</span>);
-    MessageBox(<span style=color:#b58900>NULL</span>, <span style=color:#2aa198>&#34;test2&#34;</span>, <span style=color:#2aa198>&#34;test2&#34;</span>, <span style=color:#2aa198>0x06</span>);
-    <span style=color:#719e07>return</span> <span style=color:#2aa198>0</span>;
-}</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>You can use MinGW to build it on Windows using gcc. If you do not care about this, skip to <a href=#hooking-sleep title="Hooking Sleep">next section</a>.</p>
-<p>You can also use the binaries from the repository <code>test-32.exe</code> and <code>test-64.exe</code>. <strong>Run them in a VM, these are binaries made by a random stranger from the interwebz</strong>. Ignore the bold words, my integrity is on a par with the blockchain<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>.</p>
-<h2 id=installing-mingw-on-windows>Installing MinGW on Windows
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">9
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#719e07>#include</span> <span style=color:#719e07>&lt;windows.h&gt;</span><span style=color:#719e07>
+</span></span></span><span style=display:flex><span><span style=color:#719e07></span>
+</span></span><span style=display:flex><span><span style=color:#dc322f>int</span> <span style=color:#268bd2>main</span>(<span style=color:#dc322f>void</span>)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    MessageBox(<span style=color:#b58900>NULL</span>, <span style=color:#2aa198>&#34;test&#34;</span>, <span style=color:#2aa198>&#34;test&#34;</span>, <span style=color:#2aa198>0x20</span>);
+</span></span><span style=display:flex><span>    Sleep(<span style=color:#2aa198>2000</span>);
+</span></span><span style=display:flex><span>    MessageBox(<span style=color:#b58900>NULL</span>, <span style=color:#2aa198>&#34;test2&#34;</span>, <span style=color:#2aa198>&#34;test2&#34;</span>, <span style=color:#2aa198>0x06</span>);
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> <span style=color:#2aa198>0</span>;
+</span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>You can use MinGW to build it on Windows using gcc. If you do not care about this, skip to <a href=#hooking-sleep title="Hooking Sleep">next section</a>.</p><p>You can also use the binaries from the repository <code>test-32.exe</code> and <code>test-64.exe</code>. <strong>Run them in a VM, these are binaries made by a random stranger from the interwebz</strong>. Ignore the bold words, my integrity is on a par with the blockchain<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>.</p><h2 id=installing-mingw-on-windows>Installing MinGW on Windows
 <a class=header-link href=#installing-mingw-on-windows><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>I did not want to install Visual Studio on my VM so I used gcc. I found two different methods. First one allows us to build both 32 and 64-bit executables but second one is 32-bit only. Not that it really matters for our purpose.</p>
-<p>I wrote something in my clone about it, use these instructions to install MinGW (or use any other means to build the program):</p>
-<ul>
-<li><a href=https://github.com/parsiya/Parsia-Clone/blob/master/random/mingw-windows.md target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Clone/blob/master/random/mingw-windows.md</a></li>
-</ul>
-<p>There are most likely better/easier ways of doing this. If so, please let me know so I can update my notes.</p>
-<h1 id=15---modify-sleep-call>15 - Modify Sleep Call
+</h2><p>I did not want to install Visual Studio on my VM so I used gcc. I found two different methods. First one allows us to build both 32 and 64-bit executables but second one is 32-bit only. Not that it really matters for our purpose.</p><p>I wrote something in my clone about it, use these instructions to install MinGW (or use any other means to build the program):</p><ul>
+<li><a href=https://github.com/parsiya/Parsia-Clone/blob/master/random/mingw-windows.md target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Clone/blob/master/random/mingw-windows.md</a></li></ul><p>There are most likely better/easier ways of doing this. If so, please let me know so I can update my notes.</p><h1 id=15---modify-sleep-call>15 - Modify Sleep Call
 <a class=header-link href=#15---modify-sleep-call><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>The test application is very simple. It displays a MessageBox, sleeps for 2 seconds (2000 milliseconds) and then displays a second one. It does not matter which button you choose for the second one, I just wanted to play with different styles.</p>
-<h2 id=why-sleep>Why Sleep?
+</h1><p>The test application is very simple. It displays a MessageBox, sleeps for 2 seconds (2000 milliseconds) and then displays a second one. It does not matter which button you choose for the second one, I just wanted to play with different styles.</p><h2 id=why-sleep>Why Sleep?
 <a class=header-link href=#why-sleep><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>We want to modify the <code>Sleep(2000)</code> call. Why you ask?</p>
-<p>I got the idea from this <a href=http://blog.wizche.ch/2015/07/06/modify-intercepted-windows-api.html title="Modify intercepted Windows API functions parameters with WinAppDbg - Sergio Paganoni" target=_blank rel="noreferrer noopener">blog post</a> (one of the few places talking about WinAppDbg) by Wizche (Sergio Paganoni).</p>
-<p>Let's look at it:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm><span style=color:#268bd2>VOID</span> <span style=color:#cb4b16>WINAPI</span> <span style=color:#cb4b16>Sleep</span>(
-  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>DWORD</span> <span style=color:#cb4b16>dwMilliseconds</span>
-)<span style=color:#586e75>;
-</span></code></pre></div><p>It's a simple call but most importantly the parameter is just a DWORD. It's not a pointer, meaning if we access it on the stack we will have the actual value. We can just overwrite it with another DWORD and it will work. Don't worry about pointed for now, we will manipulate them later.</p>
-<h2 id=tldr-function-calls>tl;dr: Function Calls
+</h2><p>We want to modify the <code>Sleep(2000)</code> call. Why you ask?</p><p>I got the idea from this <a href=http://blog.wizche.ch/2015/07/06/modify-intercepted-windows-api.html title="Modify intercepted Windows API functions parameters with WinAppDbg - Sergio Paganoni" target=_blank rel="noreferrer noopener">blog post</a> (one of the few places talking about WinAppDbg) by Wizche (Sergio Paganoni).</p><p>Let's look at it:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm><span style=display:flex><span><span style=color:#268bd2>VOID</span> <span style=color:#cb4b16>WINAPI</span> <span style=color:#cb4b16>Sleep</span>(
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>DWORD</span> <span style=color:#cb4b16>dwMilliseconds</span>
+</span></span><span style=display:flex><span>)<span style=color:#586e75>;
+</span></span></span></code></pre></div><p>It's a simple call but most importantly the parameter is just a DWORD. It's not a pointer, meaning if we access it on the stack we will have the actual value. We can just overwrite it with another DWORD and it will work. Don't worry about pointed for now, we will manipulate them later.</p><h2 id=tldr-function-calls>tl;dr: Function Calls
 <a class=header-link href=#tldr-function-calls><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><ul>
 <li>Windows 32-bit stdcall/cdecl: Parameters are pushed to the stack from right to left<sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup>.
 <ul>
-<li>This means when we just drop into the function with a <code>pre</code> breakpoint, we will have the return address on top of the stack and then parameters from left to right.</li>
-</ul>
-</li>
-<li>Windows 64-bit uses fast call: First four parameters are stored in <code>rcx</code>, <code>rdx</code>, <code>r8</code> and <code>r9</code>. The rest are pushed to the stack from right to left.</li>
-</ul>
-<h2 id=hooking-sleep>Hooking Sleep
+<li>This means when we just drop into the function with a <code>pre</code> breakpoint, we will have the return address on top of the stack and then parameters from left to right.</li></ul></li><li>Windows 64-bit uses fast call: First four parameters are stored in <code>rcx</code>, <code>rdx</code>, <code>r8</code> and <code>r9</code>. The rest are pushed to the stack from right to left.</li></ul><h2 id=hooking-sleep>Hooking Sleep
 <a class=header-link href=#hooking-sleep><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>We already know how to it with <code>apiHooks</code>.</p>
-<figure class=code>
+</h2><p>We already know how to it with <code>apiHooks</code>.</p><figure class=code>
 <figcaption>
 <span>15-ModifySleep.py</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">29
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">30
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">31
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">32
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">33
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">34
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">35
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">36
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">37
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">38
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">39
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">40
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">41
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">42
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">43
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">44
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">45
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">46
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">47
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">48
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">49
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">50
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">51
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">52
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">53
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">54
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">55
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">56
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">57
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">58
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">59
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">60
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>from</span> winappdbg.win32 <span style=color:#719e07>import</span> PVOID, DWORD, HANDLE
-
-
-<span style=color:#719e07>class</span> <span style=color:#268bd2>DebugEvents</span>(winappdbg<span style=color:#719e07>.</span>EventHandler):
-    <span style=color:#2aa198>&#34;&#34;&#34;
-</span><span style=color:#2aa198>    Event handler class.
-</span><span style=color:#2aa198>    event: https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/event.py
-</span><span style=color:#2aa198>    &#34;&#34;&#34;</span>
-
-    apiHooks <span style=color:#719e07>=</span> {
-
-        <span style=color:#586e75># Hooks for the kernel32.dll library</span>
-        <span style=color:#2aa198>&#34;kernel32.dll&#34;</span>: [
-
-            <span style=color:#586e75># Note how are passing only one parameter</span>
-            (<span style=color:#2aa198>&#34;Sleep&#34;</span>, (DWORD, )),
-
-            <span style=color:#586e75># We can also pass the number of arguments instead of signature</span>
-            <span style=color:#586e75># (&#34;Sleep&#34;, 1),</span>
-        ],
-    }
-
-    <span style=color:#719e07>def</span> <span style=color:#268bd2>pre_Sleep</span>(<span style=color:#268bd2>self</span>, event, ra, dwMilliseconds):
-
-        process <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_process()
-        process<span style=color:#719e07>.</span>suspend()
-
-        thread <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_thread()
-
-        bits <span style=color:#719e07>=</span> thread<span style=color:#719e07>.</span>get_bits()
-        emulation <span style=color:#719e07>=</span> thread<span style=color:#719e07>.</span>is_wow64()
-
-        logstring <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;Original dwMilliseconds </span><span style=color:#2aa198>%d</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> dwMilliseconds
-
-        mylogger<span style=color:#719e07>.</span>log_text(logstring)
-
-        <span style=color:#586e75># If running on a 32-bit machine or 32-bit process on 64-bit machine</span>
-        <span style=color:#719e07>if</span> bits <span style=color:#719e07>==</span> <span style=color:#2aa198>32</span> <span style=color:#719e07>or</span> emulation <span style=color:#719e07>is</span> <span style=color:#cb4b16>True</span>:
-            top_of_stack <span style=color:#719e07>=</span> thread<span style=color:#719e07>.</span>get_sp()
-
-            <span style=color:#586e75># return_address, dwMilliseconds = thread.read_stack_dwords(2)</span>
-            <span style=color:#586e75># logstring = &#34;Return Address %s&#34; % \</span>
-            <span style=color:#586e75>#     winappdbg.HexDump.address(return_address, bits)</span>
-
-            <span style=color:#586e75># mylogger.log_text(logstring)</span>
-
-            process<span style=color:#719e07>.</span>write_dword(top_of_stack<span style=color:#719e07>+</span>((bits<span style=color:#719e07>/</span><span style=color:#2aa198>8</span>)<span style=color:#719e07>*</span><span style=color:#2aa198>1</span>), <span style=color:#2aa198>10000</span>)
-
-        <span style=color:#586e75># AMD64 calling convention on Windows uses fastcall</span>
-        <span style=color:#586e75># rcx, rdx, r8, r9 then stack</span>
-
-        <span style=color:#719e07>elif</span> bits <span style=color:#719e07>==</span> <span style=color:#2aa198>64</span>:
-            thread<span style=color:#719e07>.</span>set_register(<span style=color:#2aa198>&#34;Rcx&#34;</span>, <span style=color:#2aa198>10000</span>)
-
-        process<span style=color:#719e07>.</span>resume()
-
-<span style=color:#586e75># ---------------</span>
-
-<span style=color:#719e07>def</span> <span style=color:#268bd2>main</span>():
-    <span style=color:#719e07>...</span></code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<h2 id=modifying-parameters>Modifying Parameters
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">31
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">32
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">33
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">34
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">35
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">36
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">37
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">38
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">39
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">40
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">41
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">42
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">43
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">44
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">45
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">46
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">47
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">48
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">49
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">50
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">51
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">52
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">53
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">54
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">55
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">56
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">57
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">58
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">59
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">60
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>from</span> winappdbg.win32 <span style=color:#719e07>import</span> PVOID, DWORD, HANDLE
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>class</span> <span style=color:#268bd2>DebugEvents</span>(winappdbg<span style=color:#719e07>.</span>EventHandler):
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;&#34;&#34;
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>    Event handler class.
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>    event: https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/event.py
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>    &#34;&#34;&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    apiHooks <span style=color:#719e07>=</span> {
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#586e75># Hooks for the kernel32.dll library</span>
+</span></span><span style=display:flex><span>        <span style=color:#2aa198>&#34;kernel32.dll&#34;</span>: [
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># Note how are passing only one parameter</span>
+</span></span><span style=display:flex><span>            (<span style=color:#2aa198>&#34;Sleep&#34;</span>, (DWORD, )),
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># We can also pass the number of arguments instead of signature</span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># (&#34;Sleep&#34;, 1),</span>
+</span></span><span style=display:flex><span>        ],
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>def</span> <span style=color:#268bd2>pre_Sleep</span>(<span style=color:#268bd2>self</span>, event, ra, dwMilliseconds):
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        process <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_process()
+</span></span><span style=display:flex><span>        process<span style=color:#719e07>.</span>suspend()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        thread <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_thread()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        bits <span style=color:#719e07>=</span> thread<span style=color:#719e07>.</span>get_bits()
+</span></span><span style=display:flex><span>        emulation <span style=color:#719e07>=</span> thread<span style=color:#719e07>.</span>is_wow64()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        logstring <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;Original dwMilliseconds </span><span style=color:#2aa198>%d</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> dwMilliseconds
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        mylogger<span style=color:#719e07>.</span>log_text(logstring)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#586e75># If running on a 32-bit machine or 32-bit process on 64-bit machine</span>
+</span></span><span style=display:flex><span>        <span style=color:#719e07>if</span> bits <span style=color:#719e07>==</span> <span style=color:#2aa198>32</span> <span style=color:#719e07>or</span> emulation <span style=color:#719e07>is</span> <span style=color:#cb4b16>True</span>:
+</span></span><span style=display:flex><span>            top_of_stack <span style=color:#719e07>=</span> thread<span style=color:#719e07>.</span>get_sp()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># return_address, dwMilliseconds = thread.read_stack_dwords(2)</span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># logstring = &#34;Return Address %s&#34; % \</span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75>#     winappdbg.HexDump.address(return_address, bits)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># mylogger.log_text(logstring)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            process<span style=color:#719e07>.</span>write_dword(top_of_stack<span style=color:#719e07>+</span>((bits<span style=color:#719e07>/</span><span style=color:#2aa198>8</span>)<span style=color:#719e07>*</span><span style=color:#2aa198>1</span>), <span style=color:#2aa198>10000</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#586e75># AMD64 calling convention on Windows uses fastcall</span>
+</span></span><span style=display:flex><span>        <span style=color:#586e75># rcx, rdx, r8, r9 then stack</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#719e07>elif</span> bits <span style=color:#719e07>==</span> <span style=color:#2aa198>64</span>:
+</span></span><span style=display:flex><span>            thread<span style=color:#719e07>.</span>set_register(<span style=color:#2aa198>&#34;Rcx&#34;</span>, <span style=color:#2aa198>10000</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        process<span style=color:#719e07>.</span>resume()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75># ---------------</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>main</span>():
+</span></span><span style=display:flex><span>    <span style=color:#719e07>...</span></span></span></code></pre></td></tr></table></div></div></div></figure><h2 id=modifying-parameters>Modifying Parameters
 <a class=header-link href=#modifying-parameters><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Hooking is easy, modifying parameters is harder.</p>
-<p>To be cross-platform, we need two pieces of information:</p>
-<ul>
-<li><code>thread.get_bits()</code> returns the number of bits in the <strong>system</strong>. A 32-bit process on 64-bit machine will return 32.</li>
-<li><code>thread.is_wow64()</code> returns <code>True</code> if a process is running in emulation mode (32-bit process on 64-bit machine). This will return <code>False</code> for 64-bit processes and on 32-bit machines.</li>
-</ul>
-<p>In a 32-bit process, <code>dwMilliseconds</code> will be the second parameter (after the return address) on the stack after we enter the function (e.g. <code>pre</code>). We can get a pointer to the top of the stack with <code>thread.get_sp()</code> and read them both with the commented out line <code>return_address, dwMilliseconds = thread.read_stack_dwords(2)</code>. Note we are reading dwords, in a 64-bit process we must read qwords.</p>
-<p>Then we overwrite it with <code>10000</code> (10 seconds) with:</p>
-<ul>
-<li><code>process.write_dword(top_of_stack+((bits/8)*1), 10000)</code></li>
-<li>which is <code>process.write_dword(top_of_stack+4, 10000)</code></li>
-<li>or in asm speak <code>mov [esp+4], 0x2710</code> (0x2710 == 10000 decimal)</li>
-</ul>
-<p>Those calculations are completely unnecessary. But it gives us a formula by showing how to replace the first argument (argument <code>1</code> starting from one). For 5th argument we can use <code>top_of_stack+((bits/8)*5</code> or <code>top_of_stack+20</code> (20 is decimal here).</p>
-<p>In a 64-bit process we just replace <code>rcx</code> with <code>10000</code> using <code>thread.set_register("Rcx", 10000)</code>.</p>
-<h2 id=modifysleep-in-action>ModifySleep in Action
+</h2><p>Hooking is easy, modifying parameters is harder.</p><p>To be cross-platform, we need two pieces of information:</p><ul>
+<li><code>thread.get_bits()</code> returns the number of bits in the <strong>system</strong>. A 32-bit process on 64-bit machine will return 32.</li><li><code>thread.is_wow64()</code> returns <code>True</code> if a process is running in emulation mode (32-bit process on 64-bit machine). This will return <code>False</code> for 64-bit processes and on 32-bit machines.</li></ul><p>In a 32-bit process, <code>dwMilliseconds</code> will be the second parameter (after the return address) on the stack after we enter the function (e.g. <code>pre</code>). We can get a pointer to the top of the stack with <code>thread.get_sp()</code> and read them both with the commented out line <code>return_address, dwMilliseconds = thread.read_stack_dwords(2)</code>. Note we are reading dwords, in a 64-bit process we must read qwords.</p><p>Then we overwrite it with <code>10000</code> (10 seconds) with:</p><ul>
+<li><code>process.write_dword(top_of_stack+((bits/8)*1), 10000)</code></li><li>which is <code>process.write_dword(top_of_stack+4, 10000)</code></li><li>or in asm speak <code>mov [esp+4], 0x2710</code> (0x2710 == 10000 decimal)</li></ul><p>Those calculations are completely unnecessary. But it gives us a formula by showing how to replace the first argument (argument <code>1</code> starting from one). For 5th argument we can use <code>top_of_stack+((bits/8)*5</code> or <code>top_of_stack+20</code> (20 is decimal here).</p><p>In a 64-bit process we just replace <code>rcx</code> with <code>10000</code> using <code>thread.set_register("Rcx", 10000)</code>.</p><h2 id=modifysleep-in-action>ModifySleep in Action
 <a class=header-link href=#modifysleep-in-action><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>The following command will run it:</p>
-<ul>
-<li><code>$ python 15-ModifySleep.py -r test-32.exe</code></li>
-</ul>
-<p>First MessageBox will pop up, after we click OK, applications waits 10 seconds (instead of 2) to display the second MessageBox. No gifs because 10 seconds of not doing anything is boring.</p>
-<h1 id=16---modify-domain---ie>16 - Modify Domain - IE
+</h2><p>The following command will run it:</p><ul>
+<li><code>$ python 15-ModifySleep.py -r test-32.exe</code></li></ul><p>First MessageBox will pop up, after we click OK, applications waits 10 seconds (instead of 2) to display the second MessageBox. No gifs because 10 seconds of not doing anything is boring.</p><h1 id=16---modify-domain---ie>16 - Modify Domain - IE
 <a class=header-link href=#16---modify-domain---ie><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Now let's change something that is not passed by value. We are going back to our good old friend IE and will redirect one domain to another.</p>
-<h2 id=internetconnect>InternetConnect
+</h1><p>Now let's change something that is not passed by value. We are going back to our good old friend IE and will redirect one domain to another.</p><h2 id=internetconnect>InternetConnect
 <a class=header-link href=#internetconnect><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p><code>InternetConnect</code> is what we are looking for. According to <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa384363%28v=vs.85%29.aspx" title="InternetConnect - MSDN" target=_blank rel="noreferrer noopener">MSDN</a> "it opens an HTTP session for a given site" and looks like this:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm><span style=color:#268bd2>HINTERNET</span> <span style=color:#cb4b16>InternetConnect</span>(
-  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>HINTERNET</span>     <span style=color:#cb4b16>hInternet</span>,
-  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>LPCTSTR</span>       <span style=color:#cb4b16>lpszServerName</span>,
-  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>INTERNET_PORT</span> <span style=color:#cb4b16>nServerPort</span>,
-  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>LPCTSTR</span>       <span style=color:#cb4b16>lpszUsername</span>,
-  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>LPCTSTR</span>       <span style=color:#cb4b16>lpszPassword</span>,
-  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>DWORD</span>         <span style=color:#cb4b16>dwService</span>,
-  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>DWORD</span>         <span style=color:#cb4b16>dwFlags</span>,
-  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>DWORD_PTR</span>     <span style=color:#cb4b16>dwContext</span>
-)<span style=color:#586e75>;
-</span></code></pre></div><p>We need to change <code>lpszServerName</code> which is a pointer to a UTF-16 null-terminated string (unless you are running some archaic version of Windows, IE will use the Unicode version <code>InternetConnectW</code>).</p>
-<h2 id=step-by-step-guide>Step by Step Guide
+</h2><p><code>InternetConnect</code> is what we are looking for. According to <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa384363%28v=vs.85%29.aspx" title="InternetConnect - MSDN" target=_blank rel="noreferrer noopener">MSDN</a> "it opens an HTTP session for a given site" and looks like this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm><span style=display:flex><span><span style=color:#268bd2>HINTERNET</span> <span style=color:#cb4b16>InternetConnect</span>(
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>HINTERNET</span>     <span style=color:#cb4b16>hInternet</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>LPCTSTR</span>       <span style=color:#cb4b16>lpszServerName</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>INTERNET_PORT</span> <span style=color:#cb4b16>nServerPort</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>LPCTSTR</span>       <span style=color:#cb4b16>lpszUsername</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>LPCTSTR</span>       <span style=color:#cb4b16>lpszPassword</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>DWORD</span>         <span style=color:#cb4b16>dwService</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>DWORD</span>         <span style=color:#cb4b16>dwFlags</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>_In_</span> <span style=color:#cb4b16>DWORD_PTR</span>     <span style=color:#cb4b16>dwContext</span>
+</span></span><span style=display:flex><span>)<span style=color:#586e75>;
+</span></span></span></code></pre></div><p>We need to change <code>lpszServerName</code> which is a pointer to a UTF-16 null-terminated string (unless you are running some archaic version of Windows, IE will use the Unicode version <code>InternetConnectW</code>).</p><h2 id=step-by-step-guide>Step by Step Guide
 <a class=header-link href=#step-by-step-guide><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>But this is a pointer, how do we swap pointers? It's pretty easy.</p>
-<ol>
-<li>Hook <code>InternetConnect</code>.</li>
-<li>Check if <code>lpszServerName</code> is <code>example.com</code>.</li>
-<li>Allocate some memory <strong>in the target process</strong> and get a pointer to it.</li>
-<li>Overwrite the location from step 3 with our new data (<code>synopsys.com</code>).</li>
-<li>Swap the pointers.
+</h2><p>But this is a pointer, how do we swap pointers? It's pretty easy.</p><ol>
+<li>Hook <code>InternetConnect</code>.</li><li>Check if <code>lpszServerName</code> is <code>example.com</code>.</li><li>Allocate some memory <strong>in the target process</strong> and get a pointer to it.</li><li>Overwrite the location from step 3 with our new data (<code>synopsys.com</code>).</li><li>Swap the pointers.
 <ul>
-<li>32-bit process: Write our new pointer (DWORD == 4 bytes) to <code>[ESP+8]</code>.</li>
-<li>64-bit process: Overwrite <code>rdx</code>.</li>
-</ul>
-</li>
-<li>???</li>
-<li><del>Profit</del> Fun<sup id=fnref:3><a href=#fn:3 class=footnote-ref role=doc-noteref>3</a></sup>.</li>
-</ol>
-<h2 id=code>Code
+<li>32-bit process: Write our new pointer (DWORD == 4 bytes) to <code>[ESP+8]</code>.</li><li>64-bit process: Overwrite <code>rdx</code>.</li></ul></li><li>???</li><li><del>Profit</del> Fun<sup id=fnref:3><a href=#fn:3 class=footnote-ref role=doc-noteref>3</a></sup>.</li></ol><h2 id=code>Code
 <a class=header-link href=#code><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2>
-<figure class=code>
+</h2><figure class=code>
 <figcaption>
 <span>16-ModifyDomain-IE.py</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">29
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">30
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">31
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">32
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">33
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">34
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">35
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">36
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">37
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">38
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">39
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">40
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">41
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">42
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">43
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">44
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">45
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">46
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">47
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">48
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">49
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">50
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">51
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">52
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">53
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">54
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">55
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">56
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">57
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">58
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">59
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">60
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">61
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">62
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">63
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>from</span> winappdbg.win32 <span style=color:#719e07>import</span> PVOID, DWORD, HANDLE
-
-
-<span style=color:#719e07>class</span> <span style=color:#268bd2>DebugEvents</span>(winappdbg<span style=color:#719e07>.</span>EventHandler):
-    <span style=color:#2aa198>&#34;&#34;&#34;
-</span><span style=color:#2aa198>    Event handler class.
-</span><span style=color:#2aa198>    event: https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/event.py
-</span><span style=color:#2aa198>    &#34;&#34;&#34;</span>
-
-    apiHooks <span style=color:#719e07>=</span> {
-
-        <span style=color:#586e75># Hooks for the wininet.dll library - note this is case-sensitive</span>
-        <span style=color:#2aa198>&#39;wininet.dll&#39;</span>: [
-
-            <span style=color:#586e75># (&#39;InternetConnectW&#39;, (HANDLE, PVOID, WORD, PVOID, PVOID, DWORD, DWORD, PVOID)),</span>
-            (<span style=color:#2aa198>&#39;InternetConnectW&#39;</span>, <span style=color:#2aa198>8</span>),
-
-        ],
-    }
-
-    <span style=color:#719e07>def</span> <span style=color:#268bd2>pre_InternetConnectW</span>(<span style=color:#268bd2>self</span>, event, ra, hInternet, lpszServerName,
-                             nServerPort, lpszUsername, lpszPassword,
-                             dwService, dwFlags, dwContext):
-
-        process <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_process()
-        process<span style=color:#719e07>.</span>suspend()
-        thread <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_thread()
-
-        server_name <span style=color:#719e07>=</span> process<span style=color:#719e07>.</span>peek_string(lpszServerName, fUnicode<span style=color:#719e07>=</span><span style=color:#cb4b16>True</span>)
-
-        <span style=color:#719e07>if</span> server_name <span style=color:#719e07>==</span> <span style=color:#2aa198>&#34;example.com&#34;</span>:
-
-            <span style=color:#586e75># mylogger.log_text(server_name)</span>
-
-            <span style=color:#586e75># Encoding as UTF16</span>
-            new_server_name <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;synopsys.com&#34;</span><span style=color:#719e07>.</span>encode(<span style=color:#2aa198>&#34;utf-16le&#34;</span>)
-
-            <span style=color:#586e75># Get length of new payload</span>
-            payload_length <span style=color:#719e07>=</span> <span style=color:#b58900>len</span>(new_server_name)
-
-            <span style=color:#586e75># Allocate memory in target process and get a pointer</span>
-            new_payload_addr <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_process()<span style=color:#719e07>.</span>malloc(payload_length)
-
-            <span style=color:#586e75># Write the new payload to that pointer</span>
-            process<span style=color:#719e07>.</span>write(new_payload_addr, new_server_name)
-
-            top_of_stack <span style=color:#719e07>=</span> thread<span style=color:#719e07>.</span>get_sp()
-
-            bits <span style=color:#719e07>=</span> thread<span style=color:#719e07>.</span>get_bits()
-            emulation <span style=color:#719e07>=</span> thread<span style=color:#719e07>.</span>is_wow64()
-
-            <span style=color:#719e07>if</span> bits <span style=color:#719e07>==</span> <span style=color:#2aa198>32</span> <span style=color:#719e07>or</span> emulation <span style=color:#719e07>is</span> <span style=color:#cb4b16>True</span>:
-
-                <span style=color:#586e75># Write the pointer to the new payload with the old one</span>
-                process<span style=color:#719e07>.</span>write_dword(top_of_stack <span style=color:#719e07>+</span> <span style=color:#2aa198>8</span>, new_payload_addr)
-
-            <span style=color:#719e07>elif</span> bits <span style=color:#719e07>==</span> <span style=color:#2aa198>64</span>:
-                thread<span style=color:#719e07>.</span>set_register(<span style=color:#2aa198>&#34;Rdx&#34;</span>, new_payload_addr)
-
-        process<span style=color:#719e07>.</span>resume()
-
-<span style=color:#719e07>def</span> <span style=color:#268bd2>main</span>():
-    <span style=color:#719e07>...</span></code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>This time I hooked the function by number of parameters instead of the signature.</p>
-<p>The rest is as we described in the steps.</p>
-<p>We read the string that <code>lpszServerName</code> is pointing to with <code>peek_string</code>. Check if it's <code>example.com</code>. If so, we create a new UTF-16 string from <code>synopsys.com</code> and get its length (we will need the length to allocate memory).</p>
-<p>Here we see a magic of WinAppDbg. <code>event.get_process().malloc(payload_length)</code> allocates memory <strong>in the target process</strong> for our string and returns a pointer. We write our new payload to that location with <code>process.write(new_payload_addr, new_server_name)</code>.</p>
-<p>We swap this pointer with the old one (<code>lpszServerName = new_payload_addr</code> will not work, we need to modify the stack/registers). Because it's the second parameter we write the pointer (which is a DWORD) to <code>[ESP+8]</code> (and <code>Rdx</code> for 64-bit):</p>
-<ul>
-<li>32-bit: <code>process.write_dword(top_of_stack + 8, new_payload_addr)</code></li>
-<li>64-bit: <code>thread.set_register("Rdx", new_payload_addr)</code></li>
-</ul>
-<h2 id=corporate-shilling-in-action>Corporate Shilling in Action
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">31
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">32
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">33
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">34
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">35
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">36
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">37
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">38
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">39
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">40
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">41
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">42
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">43
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">44
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">45
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">46
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">47
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">48
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">49
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">50
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">51
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">52
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">53
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">54
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">55
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">56
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">57
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">58
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">59
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">60
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">61
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">62
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">63
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>from</span> winappdbg.win32 <span style=color:#719e07>import</span> PVOID, DWORD, HANDLE
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>class</span> <span style=color:#268bd2>DebugEvents</span>(winappdbg<span style=color:#719e07>.</span>EventHandler):
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;&#34;&#34;
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>    Event handler class.
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>    event: https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/event.py
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>    &#34;&#34;&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    apiHooks <span style=color:#719e07>=</span> {
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#586e75># Hooks for the wininet.dll library - note this is case-sensitive</span>
+</span></span><span style=display:flex><span>        <span style=color:#2aa198>&#39;wininet.dll&#39;</span>: [
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># (&#39;InternetConnectW&#39;, (HANDLE, PVOID, WORD, PVOID, PVOID, DWORD, DWORD, PVOID)),</span>
+</span></span><span style=display:flex><span>            (<span style=color:#2aa198>&#39;InternetConnectW&#39;</span>, <span style=color:#2aa198>8</span>),
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        ],
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>def</span> <span style=color:#268bd2>pre_InternetConnectW</span>(<span style=color:#268bd2>self</span>, event, ra, hInternet, lpszServerName,
+</span></span><span style=display:flex><span>                             nServerPort, lpszUsername, lpszPassword,
+</span></span><span style=display:flex><span>                             dwService, dwFlags, dwContext):
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        process <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_process()
+</span></span><span style=display:flex><span>        process<span style=color:#719e07>.</span>suspend()
+</span></span><span style=display:flex><span>        thread <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_thread()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        server_name <span style=color:#719e07>=</span> process<span style=color:#719e07>.</span>peek_string(lpszServerName, fUnicode<span style=color:#719e07>=</span><span style=color:#cb4b16>True</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#719e07>if</span> server_name <span style=color:#719e07>==</span> <span style=color:#2aa198>&#34;example.com&#34;</span>:
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># mylogger.log_text(server_name)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># Encoding as UTF16</span>
+</span></span><span style=display:flex><span>            new_server_name <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;synopsys.com&#34;</span><span style=color:#719e07>.</span>encode(<span style=color:#2aa198>&#34;utf-16le&#34;</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># Get length of new payload</span>
+</span></span><span style=display:flex><span>            payload_length <span style=color:#719e07>=</span> <span style=color:#b58900>len</span>(new_server_name)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># Allocate memory in target process and get a pointer</span>
+</span></span><span style=display:flex><span>            new_payload_addr <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_process()<span style=color:#719e07>.</span>malloc(payload_length)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># Write the new payload to that pointer</span>
+</span></span><span style=display:flex><span>            process<span style=color:#719e07>.</span>write(new_payload_addr, new_server_name)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            top_of_stack <span style=color:#719e07>=</span> thread<span style=color:#719e07>.</span>get_sp()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            bits <span style=color:#719e07>=</span> thread<span style=color:#719e07>.</span>get_bits()
+</span></span><span style=display:flex><span>            emulation <span style=color:#719e07>=</span> thread<span style=color:#719e07>.</span>is_wow64()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#719e07>if</span> bits <span style=color:#719e07>==</span> <span style=color:#2aa198>32</span> <span style=color:#719e07>or</span> emulation <span style=color:#719e07>is</span> <span style=color:#cb4b16>True</span>:
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>                <span style=color:#586e75># Write the pointer to the new payload with the old one</span>
+</span></span><span style=display:flex><span>                process<span style=color:#719e07>.</span>write_dword(top_of_stack <span style=color:#719e07>+</span> <span style=color:#2aa198>8</span>, new_payload_addr)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#719e07>elif</span> bits <span style=color:#719e07>==</span> <span style=color:#2aa198>64</span>:
+</span></span><span style=display:flex><span>                thread<span style=color:#719e07>.</span>set_register(<span style=color:#2aa198>&#34;Rdx&#34;</span>, new_payload_addr)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        process<span style=color:#719e07>.</span>resume()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>main</span>():
+</span></span><span style=display:flex><span>    <span style=color:#719e07>...</span></span></span></code></pre></td></tr></table></div></div></div></figure><p>This time I hooked the function by number of parameters instead of the signature.</p><p>The rest is as we described in the steps.</p><p>We read the string that <code>lpszServerName</code> is pointing to with <code>peek_string</code>. Check if it's <code>example.com</code>. If so, we create a new UTF-16 string from <code>synopsys.com</code> and get its length (we will need the length to allocate memory).</p><p>Here we see a magic of WinAppDbg. <code>event.get_process().malloc(payload_length)</code> allocates memory <strong>in the target process</strong> for our string and returns a pointer. We write our new payload to that location with <code>process.write(new_payload_addr, new_server_name)</code>.</p><p>We swap this pointer with the old one (<code>lpszServerName = new_payload_addr</code> will not work, we need to modify the stack/registers). Because it's the second parameter we write the pointer (which is a DWORD) to <code>[ESP+8]</code> (and <code>Rdx</code> for 64-bit):</p><ul>
+<li>32-bit: <code>process.write_dword(top_of_stack + 8, new_payload_addr)</code></li><li>64-bit: <code>thread.set_register("Rdx", new_payload_addr)</code></li></ul><h2 id=corporate-shilling-in-action>Corporate Shilling in Action
 <a class=header-link href=#corporate-shilling-in-action><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><ol>
-<li>Run <code>$ python 16-ModifyDomain-IE.py -r "c:\program files\Internet Explorer\iexplore.exe"</code>.</li>
-<li>Go to <code>example.com</code>.</li>
-<li>Embrace the purple.</li>
-</ol>
-<span class=caption-wrapper>
+<li>Run <code>$ python 16-ModifyDomain-IE.py -r "c:\program files\Internet Explorer\iexplore.exe"</code>.</li><li>Go to <code>example.com</code>.</li><li>Embrace the purple.</li></ol><span class=caption-wrapper>
 <img class=caption src=/images/2017/winappdbg-3/01-internetconnect-hooked.gif title="Note address bar is example.com" alt="Note address bar is example.com">
 <span class=caption-text>Note address bar is example.com</span>
 </span>
-<p>Now we know to manipulate function parameters. Let's learn about return values.</p>
-<h1 id=17---how-calc-preserves-its-view>17 - How calc Preserves its View
+<p>Now we know to manipulate function parameters. Let's learn about return values.</p><h1 id=17---how-calc-preserves-its-view>17 - How calc Preserves its View
 <a class=header-link href=#17---how-calc-preserves-its-view><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>For this example I am choosing the famous Windows <code>calc</code>.</p>
-<p>calc has different layouts. Standard, Scientific, Programmer and Statistics. Every time we close <code>calc</code> in a specific style, it's saved. First we take a detour to discover how <code>calc</code> saves this configuration and then we will learn how to manipulate it.</p>
-<h2 id=hunt-for-layout>Hunt for Layout
+</h1><p>For this example I am choosing the famous Windows <code>calc</code>.</p><p>calc has different layouts. Standard, Scientific, Programmer and Statistics. Every time we close <code>calc</code> in a specific style, it's saved. First we take a detour to discover how <code>calc</code> saves this configuration and then we will learn how to manipulate it.</p><h2 id=hunt-for-layout>Hunt for Layout
 <a class=header-link href=#hunt-for-layout><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>As with any other application, there are different ways to save configurations:</p>
-<ol>
-<li>Configuration files: Usually these are either in the program directory or somewhere in <code>%appdata%</code> or <code>ProgramData</code>.</li>
-<li>Registry:
+</h2><p>As with any other application, there are different ways to save configurations:</p><ol>
+<li>Configuration files: Usually these are either in the program directory or somewhere in <code>%appdata%</code> or <code>ProgramData</code>.</li><li>Registry:
 <ul>
-<li>HKCU: Standard user can write.</li>
-<li>HKLM: Only admin can write.</li>
-</ul>
-</li>
-</ol>
-<h3 id=calcs-file-access>calc's File Access
+<li>HKCU: Standard user can write.</li><li>HKLM: Only admin can write.</li></ul></li></ol><h3 id=calcs-file-access>calc's File Access
 <a class=header-link href=#calcs-file-access><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>We use procmon to see if any files are accessed. Filters are (or we can use the <code>Show File System Activity</code> button - see below):</p>
-<ul>
-<li><code>Process Name is calc.exe</code>.</li>
-<li><code>Operation is ReadFile</code>.</li>
-</ul>
-<p><code>C:\Windows\Fonts\StaticCache.dat</code> is the only entry and not what we are looking for.</p>
-<span class=caption-wrapper>
+</h3><p>We use procmon to see if any files are accessed. Filters are (or we can use the <code>Show File System Activity</code> button - see below):</p><ul>
+<li><code>Process Name is calc.exe</code>.</li><li><code>Operation is ReadFile</code>.</li></ul><p><code>C:\Windows\Fonts\StaticCache.dat</code> is the only entry and not what we are looking for.</p><span class=caption-wrapper>
 <img class=caption src=/images/2017/winappdbg-3/02-procmon-calc-file-access.png title="calc file access in procmon" alt="calc file access in procmon">
 <span class=caption-text>calc file access in procmon</span>
 </span>
 <h3 id=calcs-registry-access>calc's Registry Access
 <a class=header-link href=#calcs-registry-access><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>There are some preset filter buttons in procmon. These are pretty useful when trying to do a mass-filter of one type. They are:</p>
-<ul>
-<li><code>Show Registry Activity</code>.</li>
-<li><code>Show File System Activity</code>.</li>
-<li><code>Show Network Activity</code>.</li>
-<li><code>Show Process and Thread Activity</code>.</li>
-<li><code>Show Profiling Events</code>.</li>
-</ul>
-<p>A note about these buttons: They override manual filters. If you are using specific filters (like we just did for file access), remember to enable all these (except the profiling events). Oyou will miss events otherwise.</p>
-<span class=caption-wrapper>
+</h3><p>There are some preset filter buttons in procmon. These are pretty useful when trying to do a mass-filter of one type. They are:</p><ul>
+<li><code>Show Registry Activity</code>.</li><li><code>Show File System Activity</code>.</li><li><code>Show Network Activity</code>.</li><li><code>Show Process and Thread Activity</code>.</li><li><code>Show Profiling Events</code>.</li></ul><p>A note about these buttons: They override manual filters. If you are using specific filters (like we just did for file access), remember to enable all these (except the profiling events). Oyou will miss events otherwise.</p><span class=caption-wrapper>
 <img class=caption src=/images/2017/winappdbg-3/03-procmon-show-registry-activity.png title="Procmon 'Show Registry Activity' and other buttons" alt="Procmon 'Show Registry Activity' and other buttons">
 <span class=caption-text>Procmon 'Show Registry Activity' and other buttons</span>
 </span>
-<p>To see calc's registry activity:</p>
-<ul>
-<li>Filter: <code>Process Name is calc.exe</code>.</li>
-<li>Enable: <code>Show Registry Activity</code>.</li>
-</ul>
-<span class=caption-wrapper>
+<p>To see calc's registry activity:</p><ul>
+<li>Filter: <code>Process Name is calc.exe</code>.</li><li>Enable: <code>Show Registry Activity</code>.</li></ul><span class=caption-wrapper>
 <img class=caption src=/images/2017/winappdbg-3/04-calc-registry-all.png title="calc's registry activity in procmon" alt="calc's registry activity in procmon">
 <span class=caption-text>calc's registry activity in procmon</span>
 </span>
-<p>But that's a lot of noise. We need to be clever. We would expect a registry key for calc have "calc" somewhere in its path. Use these filters and re-run calc:</p>
-<ul>
-<li><code>Process Name is calc.exe</code>.</li>
-<li><code>Path contains calc</code>.</li>
-</ul>
-<span class=caption-wrapper>
+<p>But that's a lot of noise. We need to be clever. We would expect a registry key for calc have "calc" somewhere in its path. Use these filters and re-run calc:</p><ul>
+<li><code>Process Name is calc.exe</code>.</li><li><code>Path contains calc</code>.</li></ul><span class=caption-wrapper>
 <img class=caption src=/images/2017/winappdbg-3/05-calc-registry-path-filter.png title="calc's registry activity after path filter" alt="calc's registry activity after path filter">
 <span class=caption-text>calc's registry activity after path filter</span>
 </span>
-<p>Much better. And we can see key event <code>RegQueryValue HKCU\Software\Microsoft\Calc\layout</code>.</p>
-<span class=caption-wrapper>
+<p>Much better. And we can see key event <code>RegQueryValue HKCU\Software\Microsoft\Calc\layout</code>.</p><span class=caption-wrapper>
 <img class=caption src=/images/2017/winappdbg-3/06-calc-registry-key.png title="calc's registry key" alt="calc's registry key">
 <span class=caption-text>calc's registry key</span>
 </span>
 <h3 id=procmons-call-stack-tab>Procmon's Call Stack Tab
 <a class=header-link href=#procmons-call-stack-tab><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>Now we know what's accessed. We also need to know <em>how</em> it's accessed. Luckily for us, promon is just not for tracing events. We can also analyze events in detail. Double-click on any event and open the <code>stack</code> tab to see the call stack.</p>
-<span class=caption-wrapper>
+</h3><p>Now we know what's accessed. We also need to know <em>how</em> it's accessed. Luckily for us, promon is just not for tracing events. We can also analyze events in detail. Double-click on any event and open the <code>stack</code> tab to see the call stack.</p><span class=caption-wrapper>
 <img class=caption src=/images/2017/winappdbg-3/07-regquery-call-stack.png title="Registry query call stack" alt="Registry query call stack">
 <span class=caption-text>Registry query call stack</span>
 </span>
 <table>
 <thead>
 <tr>
-<th>Frame</th>
-<th>Module</th>
-<th>Location</th>
-<th>Address</th>
-<th>Path</th>
-</tr>
-</thead>
-<tbody>
+<th>Frame</th><th>Module</th><th>Location</th><th>Address</th><th>Path</th></tr></thead><tbody>
 <tr>
-<td>0</td>
-<td>ntkrnlpa.exe</td>
-<td>CmUnRegisterCallback + 0x51c</td>
-<td>0x82ad4481</td>
-<td>C:\Windows\system32\ntkrnlpa.exe</td>
-</tr>
-<tr>
-<td>1</td>
-<td>ntkrnlpa.exe</td>
-<td>NtMapViewOfSection + 0x42e1</td>
-<td>0x82a81abc</td>
-<td>C:\Windows\system32\ntkrnlpa.exe</td>
-</tr>
-<tr>
-<td>2</td>
-<td>ntkrnlpa.exe</td>
-<td>ZwYieldExecution + 0xb92</td>
-<td>0x8286ee06</td>
-<td>C:\Windows\system32\ntkrnlpa.exe</td>
-</tr>
-<tr>
-<td>3</td>
-<td>ntdll.dll</td>
-<td>ZwQueryValueKey + 0xc</td>
-<td>0x775d5e1c</td>
-<td>C:\Windows\System32\ntdll.dll</td>
-</tr>
-<tr>
-<td>4</td>
-<td>kernel32.dll</td>
-<td>RegOpenKeyExW + 0x3e4</td>
-<td>0x75c1d575</td>
-<td>C:\Windows\System32\kernel32.dll</td>
-</tr>
-<tr>
-<td>5</td>
-<td>kernel32.dll</td>
-<td>RegQueryValueExW + 0xae</td>
-<td>0x75c1d725</td>
-<td>C:\Windows\System32\kernel32.dll</td>
-</tr>
-<tr>
-<td>6</td>
-<td>calc.exe</td>
-<td>calc.exe + 0x157e0</td>
-<td>0xf657e0</td>
-<td>C:\Windows\System32\calc.exe</td>
-</tr>
-<tr>
-<td>7</td>
-<td>calc.exe</td>
-<td>calc.exe + 0x1950</td>
-<td>0xf51950</td>
-<td>C:\Windows\System32\calc.exe</td>
-</tr>
-<tr>
-<td>8</td>
-<td>calc.exe</td>
-<td>calc.exe + 0x1219a</td>
-<td>0xf6219a</td>
-<td>C:\Windows\System32\calc.exe</td>
-</tr>
-<tr>
-<td>9</td>
-<td>kernel32.dll</td>
-<td>BaseThreadInitThunk + 0x12</td>
-<td>0x75c1ef8c</td>
-<td>C:\Windows\System32\kernel32.dll</td>
-</tr>
-<tr>
-<td>10</td>
-<td>ntdll.dll</td>
-<td>RtlInitializeExceptionChain + 0xef</td>
-<td>0x775f367a</td>
-<td>C:\Windows\System32\ntdll.dll</td>
-</tr>
-<tr>
-<td>11</td>
-<td>ntdll.dll</td>
-<td>RtlInitializeExceptionChain + 0xc2</td>
-<td>0x775f364d</td>
-<td>C:\Windows\System32\ntdll.dll</td>
-</tr>
-<tr>
-<td>\</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Now you are wondering how I made this table. <del>I definitely "crafted" this by hand.</del> Well, the <code>Save...</code> button allows you to save the callstack to a <code>csv</code> file. I fed it to some online markdown table generator.</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<p>This call stack tab is great in many ways.</p>
-<p>We can use it to discover which WinAPI was used to read the registry key. Start from line 0 and come down until you get to the first instance of <code>calc.exe</code> (line 6). This is where calc calls the WinAPI which is <code>Kernel32!RegQueryValueExW</code> in next line.</p>
-<p>Another piece of very useful information is again in line 6 and that's the <code>Location</code>. This is the address of the instruction <strong>after</strong> the DLL call (same as the <code>-i</code> switch in <code>ltrace</code>)<sup id=fnref:4><a href=#fn:4 class=footnote-ref role=doc-noteref>4</a></sup>. This is super useful when you want to trace back some action in the binary. If we drop calc in IDA Free and go to that address, we can see the function call.</p>
-<span class=caption-wrapper>
+<td>0</td><td>ntkrnlpa.exe</td><td>CmUnRegisterCallback + 0x51c</td><td>0x82ad4481</td><td>C:\Windows\system32\ntkrnlpa.exe</td></tr><tr>
+<td>1</td><td>ntkrnlpa.exe</td><td>NtMapViewOfSection + 0x42e1</td><td>0x82a81abc</td><td>C:\Windows\system32\ntkrnlpa.exe</td></tr><tr>
+<td>2</td><td>ntkrnlpa.exe</td><td>ZwYieldExecution + 0xb92</td><td>0x8286ee06</td><td>C:\Windows\system32\ntkrnlpa.exe</td></tr><tr>
+<td>3</td><td>ntdll.dll</td><td>ZwQueryValueKey + 0xc</td><td>0x775d5e1c</td><td>C:\Windows\System32\ntdll.dll</td></tr><tr>
+<td>4</td><td>kernel32.dll</td><td>RegOpenKeyExW + 0x3e4</td><td>0x75c1d575</td><td>C:\Windows\System32\kernel32.dll</td></tr><tr>
+<td>5</td><td>kernel32.dll</td><td>RegQueryValueExW + 0xae</td><td>0x75c1d725</td><td>C:\Windows\System32\kernel32.dll</td></tr><tr>
+<td>6</td><td>calc.exe</td><td>calc.exe + 0x157e0</td><td>0xf657e0</td><td>C:\Windows\System32\calc.exe</td></tr><tr>
+<td>7</td><td>calc.exe</td><td>calc.exe + 0x1950</td><td>0xf51950</td><td>C:\Windows\System32\calc.exe</td></tr><tr>
+<td>8</td><td>calc.exe</td><td>calc.exe + 0x1219a</td><td>0xf6219a</td><td>C:\Windows\System32\calc.exe</td></tr><tr>
+<td>9</td><td>kernel32.dll</td><td>BaseThreadInitThunk + 0x12</td><td>0x75c1ef8c</td><td>C:\Windows\System32\kernel32.dll</td></tr><tr>
+<td>10</td><td>ntdll.dll</td><td>RtlInitializeExceptionChain + 0xef</td><td>0x775f367a</td><td>C:\Windows\System32\ntdll.dll</td></tr><tr>
+<td>11</td><td>ntdll.dll</td><td>RtlInitializeExceptionChain + 0xc2</td><td>0x775f364d</td><td>C:\Windows\System32\ntdll.dll</td></tr><tr>
+<td>\</td><td></td><td></td><td></td><td></td></tr><tr>
+<td>Now you are wondering how I made this table. <del>I definitely "crafted" this by hand.</del> Well, the <code>Save...</code> button allows you to save the callstack to a <code>csv</code> file. I fed it to some online markdown table generator.</td><td></td><td></td><td></td><td></td></tr></tbody></table><p>This call stack tab is great in many ways.</p><p>We can use it to discover which WinAPI was used to read the registry key. Start from line 0 and come down until you get to the first instance of <code>calc.exe</code> (line 6). This is where calc calls the WinAPI which is <code>Kernel32!RegQueryValueExW</code> in next line.</p><p>Another piece of very useful information is again in line 6 and that's the <code>Location</code>. This is the address of the instruction <strong>after</strong> the DLL call (same as the <code>-i</code> switch in <code>ltrace</code>)<sup id=fnref:4><a href=#fn:4 class=footnote-ref role=doc-noteref>4</a></sup>. This is super useful when you want to trace back some action in the binary. If we drop calc in IDA Free and go to that address, we can see the function call.</p><span class=caption-wrapper>
 <img class=caption src=/images/2017/winappdbg-3/08-dll-call-in-ida.png title="RegQueryValueExW in IDA" alt="RegQueryValueExW in IDA">
 <span class=caption-text>RegQueryValueExW in IDA</span>
 </span>
-<p>We can also see the internal subroutines and their address. This is also useful when we want to trace things internally.</p>
-<h2 id=regqueryvalueexw>RegQueryValueExW
+<p>We can also see the internal subroutines and their address. This is also useful when we want to trace things internally.</p><h2 id=regqueryvalueexw>RegQueryValueExW
 <a class=header-link href=#regqueryvalueexw><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms724911%28v=vs.85%29.aspx" title=" RegQueryValueEx - MSDN" target=_blank rel="noreferrer noopener">RegQueryValueExW</a> is the wide version of RegQueryValueEx:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm><span style=color:#268bd2>LONG</span> <span style=color:#cb4b16>WINAPI</span> <span style=color:#cb4b16>RegQueryValueEx</span>(
-  <span style=color:#268bd2>_In_</span>        <span style=color:#cb4b16>HKEY</span>    <span style=color:#cb4b16>hKey</span>,
-  <span style=color:#268bd2>_In_opt_</span>    <span style=color:#cb4b16>LPCTSTR</span> <span style=color:#cb4b16>lpValueName</span>,
-  <span style=color:#268bd2>_Reserved_</span>  <span style=color:#cb4b16>LPDWORD</span> <span style=color:#cb4b16>lpReserved</span>,
-  <span style=color:#268bd2>_Out_opt_</span>   <span style=color:#cb4b16>LPDWORD</span> <span style=color:#cb4b16>lpType</span>,
-  <span style=color:#268bd2>_Out_opt_</span>   <span style=color:#cb4b16>LPBYTE</span>  <span style=color:#cb4b16>lpData</span>,
-  <span style=color:#268bd2>_Inout_opt_</span> <span style=color:#cb4b16>LPDWORD</span> <span style=color:#cb4b16>lpcbData</span>
-)<span style=color:#586e75>;
-</span></code></pre></div><p>Unfortunately for me, the return value of <code>RegQueryValueExW</code> is not what it read. It's some ENUM and <code>ERROR_SUCCESS</code> if call succeeds<sup id=fnref:5><a href=#fn:5 class=footnote-ref role=doc-noteref>5</a></sup>. My plan to show you how to modify return values is foiled but I am too invested in this to give up. We will modify the "other" outputs.</p>
-<p>When we look up the DLL name to start hooking, we see another anomaly. It's listed under <code>advapi32.dll</code> but procmon call stack said it's in <code>kernel32.dll</code>. Aaaaaaaaaand we're back in Raymond's Chen blog again.</p>
-<h3 id=dll-export-forwarding>DLL Export Forwarding
+</h2><p><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms724911%28v=vs.85%29.aspx" title=" RegQueryValueEx - MSDN" target=_blank rel="noreferrer noopener">RegQueryValueExW</a> is the wide version of RegQueryValueEx:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm><span style=display:flex><span><span style=color:#268bd2>LONG</span> <span style=color:#cb4b16>WINAPI</span> <span style=color:#cb4b16>RegQueryValueEx</span>(
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>_In_</span>        <span style=color:#cb4b16>HKEY</span>    <span style=color:#cb4b16>hKey</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>_In_opt_</span>    <span style=color:#cb4b16>LPCTSTR</span> <span style=color:#cb4b16>lpValueName</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>_Reserved_</span>  <span style=color:#cb4b16>LPDWORD</span> <span style=color:#cb4b16>lpReserved</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>_Out_opt_</span>   <span style=color:#cb4b16>LPDWORD</span> <span style=color:#cb4b16>lpType</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>_Out_opt_</span>   <span style=color:#cb4b16>LPBYTE</span>  <span style=color:#cb4b16>lpData</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>_Inout_opt_</span> <span style=color:#cb4b16>LPDWORD</span> <span style=color:#cb4b16>lpcbData</span>
+</span></span><span style=display:flex><span>)<span style=color:#586e75>;
+</span></span></span></code></pre></div><p>Unfortunately for me, the return value of <code>RegQueryValueExW</code> is not what it read. It's some ENUM and <code>ERROR_SUCCESS</code> if call succeeds<sup id=fnref:5><a href=#fn:5 class=footnote-ref role=doc-noteref>5</a></sup>. My plan to show you how to modify return values is foiled but I am too invested in this to give up. We will modify the "other" outputs.</p><p>When we look up the DLL name to start hooking, we see another anomaly. It's listed under <code>advapi32.dll</code> but procmon call stack said it's in <code>kernel32.dll</code>. Aaaaaaaaaand we're back in Raymond's Chen blog again.</p><h3 id=dll-export-forwarding>DLL Export Forwarding
 <a class=header-link href=#dll-export-forwarding><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>In an entry named <a href="https://blogs.msdn.microsoft.com/oldnewthing/20060719-24/?p=30473" title="Exported functions that are really forwarders - The Old New Thing" target=_blank rel="noreferrer noopener">Exported functions that are really forwarders</a>, Raymond explains the concept of "Export Forwarding." Essentially loader silently forwards the call from <code>kernel32</code> to <code>advapi32</code>. This is a good way to keep exported functions for compatibility reasons but actually implement them in new DLLs (e.g. if your code expects <code>A.dll</code> to export <code>func1</code> you can implement it in <code>B.dll</code> and forward it).</p>
-<h2 id=calc-recon-code>calc Recon Code
+</h3><p>In an entry named <a href="https://blogs.msdn.microsoft.com/oldnewthing/20060719-24/?p=30473" title="Exported functions that are really forwarders - The Old New Thing" target=_blank rel="noreferrer noopener">Exported functions that are really forwarders</a>, Raymond explains the concept of "Export Forwarding." Essentially loader silently forwards the call from <code>kernel32</code> to <code>advapi32</code>. This is a good way to keep exported functions for compatibility reasons but actually implement them in new DLLs (e.g. if your code expects <code>A.dll</code> to export <code>func1</code> you can implement it in <code>B.dll</code> and forward it).</p><h2 id=calc-recon-code>calc Recon Code
 <a class=header-link href=#calc-recon-code><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>By now you have most likely discovered the registry key that stores the view. But let's do some recon and list all registry calls as a warm-up exercise.</p>
-<figure class=code>
+</h2><p>By now you have most likely discovered the registry key that stores the view. But let's do some recon and list all registry calls as a warm-up exercise.</p><figure class=code>
 <figcaption>
 <span>17.CalcRecon.py</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">29
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">30
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">31
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">32
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">33
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">34
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">35
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">36
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">37
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">38
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">39
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">40
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">41
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">42
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">43
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">44
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">45
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">46
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">47
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">48
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">49
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">50
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">51
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">52
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">53
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">54
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">55
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">56
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">57
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">58
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">59
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">60
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">61
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">62
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">63
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">64
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">65
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">66
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">67
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>from</span> winappdbg.win32 <span style=color:#719e07>import</span> PVOID, DWORD, HANDLE
-<span style=color:#719e07>import</span> winappdbg
-
-
-<span style=color:#719e07>class</span> <span style=color:#268bd2>DebugEvents</span>(winappdbg<span style=color:#719e07>.</span>EventHandler):
-    <span style=color:#2aa198>&#34;&#34;&#34;
-</span><span style=color:#2aa198>    Event handler class.
-</span><span style=color:#2aa198>    event: https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/event.py
-</span><span style=color:#2aa198>    &#34;&#34;&#34;</span>
-
-    apiHooks <span style=color:#719e07>=</span> {
-
-        <span style=color:#586e75># Hooks for the adviapi32.dll library</span>
-        <span style=color:#586e75># Can also hook kernel32.dll here</span>
-        <span style=color:#2aa198>&#34;advapi32.dll&#34;</span>: [
-
-            <span style=color:#586e75># RegQueryValueEx</span>
-            <span style=color:#586e75># https://msdn.microsoft.com/en-us/library/windows/desktop/ms724911(v=vs.85).aspx</span>
-            <span style=color:#586e75># (&#34;RegQueryValueExW&#34;, (HANDLE, PVOID, PVOID, PVOID, PVOID, PVOID)),</span>
-            (<span style=color:#2aa198>&#34;RegQueryValueExW&#34;</span>, <span style=color:#2aa198>6</span>),
-
-        ],
-    }
-
-    <span style=color:#719e07>def</span> <span style=color:#268bd2>pre_RegQueryValueExW</span>(<span style=color:#268bd2>self</span>, event, ra, hKey, lpValueName, lpReserved,
-                             lpType, lpData, lpcbData):
-
-        <span style=color:#586e75># Store the pointer for later use</span>
-        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>hKey <span style=color:#719e07>=</span> hKey
-        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpValueName <span style=color:#719e07>=</span> lpValueName
-        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpType <span style=color:#719e07>=</span> lpType
-        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpData <span style=color:#719e07>=</span> lpData
-        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpcbData <span style=color:#719e07>=</span> lpcbData
-
-    <span style=color:#719e07>def</span> <span style=color:#268bd2>post_RegQueryValueExW</span>(<span style=color:#268bd2>self</span>, event, retval):
-        process <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_process()
-
-        process<span style=color:#719e07>.</span>suspend()
-
-        table <span style=color:#719e07>=</span> winappdbg<span style=color:#719e07>.</span>Table(<span style=color:#2aa198>&#34;</span><span style=color:#cb4b16>\t</span><span style=color:#2aa198>&#34;</span>)
-        table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;&#34;</span>, <span style=color:#2aa198>&#34;&#34;</span>)
-
-        <span style=color:#586e75># Need to watch out for optional parameters</span>
-        <span style=color:#719e07>if</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpType <span style=color:#719e07>is</span> <span style=color:#719e07>not</span> <span style=color:#2aa198>0</span>:
-            keyType <span style=color:#719e07>=</span> process<span style=color:#719e07>.</span>read_dword(<span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpType)
-            table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;keyType&#34;</span>, keyType)
-
-        valueName <span style=color:#719e07>=</span> process<span style=color:#719e07>.</span>peek_string(<span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpValueName, fUnicode<span style=color:#719e07>=</span><span style=color:#cb4b16>True</span>)
-        size <span style=color:#719e07>=</span> process<span style=color:#719e07>.</span>read_dword(<span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpcbData)
-
-        table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;valueName&#34;</span>, valueName)
-        table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;size&#34;</span>, size)
-
-        <span style=color:#719e07>if</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpData <span style=color:#719e07>is</span> <span style=color:#719e07>not</span> <span style=color:#2aa198>0</span>:
-            data <span style=color:#719e07>=</span> process<span style=color:#719e07>.</span>read(<span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpData, size)
-            table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;data&#34;</span>, data)
-            table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;data-hex&#34;</span>, data<span style=color:#719e07>.</span>encode(<span style=color:#2aa198>&#34;hex&#34;</span>))
-
-        mylogger<span style=color:#719e07>.</span>log_text(table<span style=color:#719e07>.</span>getOutput())
-        mylogger<span style=color:#719e07>.</span>log_text(<span style=color:#2aa198>&#34;-&#34;</span><span style=color:#719e07>*</span><span style=color:#2aa198>30</span>)
-
-        process<span style=color:#719e07>.</span>resume()
-
-<span style=color:#586e75># ---------------</span>
-
-<span style=color:#719e07>def</span> <span style=color:#268bd2>main</span>():
-    <span style=color:#719e07>...</span></code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>When hooking, we can hook either <code>kernel32</code> or <code>advapi32</code>. Using <code>kernel32</code> prints more noise.</p>
-<p>Note how we are checking for 0 values in some parameters. These are pointers that might be optional. If we do not check, we will attempt to read memory at address 0 and get errors.</p>
-<pre tabindex=0><code>Z:\WinAppDbg&gt;python 17-CalcRecon.py -r calc
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">31
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">32
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">33
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">34
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">35
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">36
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">37
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">38
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">39
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">40
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">41
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">42
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">43
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">44
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">45
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">46
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">47
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">48
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">49
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">50
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">51
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">52
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">53
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">54
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">55
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">56
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">57
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">58
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">59
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">60
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">61
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">62
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">63
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">64
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">65
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">66
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">67
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>from</span> winappdbg.win32 <span style=color:#719e07>import</span> PVOID, DWORD, HANDLE
+</span></span><span style=display:flex><span><span style=color:#719e07>import</span> winappdbg
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>class</span> <span style=color:#268bd2>DebugEvents</span>(winappdbg<span style=color:#719e07>.</span>EventHandler):
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;&#34;&#34;
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>    Event handler class.
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>    event: https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/event.py
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>    &#34;&#34;&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    apiHooks <span style=color:#719e07>=</span> {
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#586e75># Hooks for the adviapi32.dll library</span>
+</span></span><span style=display:flex><span>        <span style=color:#586e75># Can also hook kernel32.dll here</span>
+</span></span><span style=display:flex><span>        <span style=color:#2aa198>&#34;advapi32.dll&#34;</span>: [
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># RegQueryValueEx</span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># https://msdn.microsoft.com/en-us/library/windows/desktop/ms724911(v=vs.85).aspx</span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># (&#34;RegQueryValueExW&#34;, (HANDLE, PVOID, PVOID, PVOID, PVOID, PVOID)),</span>
+</span></span><span style=display:flex><span>            (<span style=color:#2aa198>&#34;RegQueryValueExW&#34;</span>, <span style=color:#2aa198>6</span>),
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        ],
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>def</span> <span style=color:#268bd2>pre_RegQueryValueExW</span>(<span style=color:#268bd2>self</span>, event, ra, hKey, lpValueName, lpReserved,
+</span></span><span style=display:flex><span>                             lpType, lpData, lpcbData):
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#586e75># Store the pointer for later use</span>
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>hKey <span style=color:#719e07>=</span> hKey
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpValueName <span style=color:#719e07>=</span> lpValueName
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpType <span style=color:#719e07>=</span> lpType
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpData <span style=color:#719e07>=</span> lpData
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpcbData <span style=color:#719e07>=</span> lpcbData
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>def</span> <span style=color:#268bd2>post_RegQueryValueExW</span>(<span style=color:#268bd2>self</span>, event, retval):
+</span></span><span style=display:flex><span>        process <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_process()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        process<span style=color:#719e07>.</span>suspend()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        table <span style=color:#719e07>=</span> winappdbg<span style=color:#719e07>.</span>Table(<span style=color:#2aa198>&#34;</span><span style=color:#cb4b16>\t</span><span style=color:#2aa198>&#34;</span>)
+</span></span><span style=display:flex><span>        table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;&#34;</span>, <span style=color:#2aa198>&#34;&#34;</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#586e75># Need to watch out for optional parameters</span>
+</span></span><span style=display:flex><span>        <span style=color:#719e07>if</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpType <span style=color:#719e07>is</span> <span style=color:#719e07>not</span> <span style=color:#2aa198>0</span>:
+</span></span><span style=display:flex><span>            keyType <span style=color:#719e07>=</span> process<span style=color:#719e07>.</span>read_dword(<span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpType)
+</span></span><span style=display:flex><span>            table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;keyType&#34;</span>, keyType)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        valueName <span style=color:#719e07>=</span> process<span style=color:#719e07>.</span>peek_string(<span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpValueName, fUnicode<span style=color:#719e07>=</span><span style=color:#cb4b16>True</span>)
+</span></span><span style=display:flex><span>        size <span style=color:#719e07>=</span> process<span style=color:#719e07>.</span>read_dword(<span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpcbData)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;valueName&#34;</span>, valueName)
+</span></span><span style=display:flex><span>        table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;size&#34;</span>, size)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#719e07>if</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpData <span style=color:#719e07>is</span> <span style=color:#719e07>not</span> <span style=color:#2aa198>0</span>:
+</span></span><span style=display:flex><span>            data <span style=color:#719e07>=</span> process<span style=color:#719e07>.</span>read(<span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpData, size)
+</span></span><span style=display:flex><span>            table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;data&#34;</span>, data)
+</span></span><span style=display:flex><span>            table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;data-hex&#34;</span>, data<span style=color:#719e07>.</span>encode(<span style=color:#2aa198>&#34;hex&#34;</span>))
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        mylogger<span style=color:#719e07>.</span>log_text(table<span style=color:#719e07>.</span>getOutput())
+</span></span><span style=display:flex><span>        mylogger<span style=color:#719e07>.</span>log_text(<span style=color:#2aa198>&#34;-&#34;</span><span style=color:#719e07>*</span><span style=color:#2aa198>30</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        process<span style=color:#719e07>.</span>resume()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75># ---------------</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>main</span>():
+</span></span><span style=display:flex><span>    <span style=color:#719e07>...</span></span></span></code></pre></td></tr></table></div></div></div></figure><p>When hooking, we can hook either <code>kernel32</code> or <code>advapi32</code>. Using <code>kernel32</code> prints more noise.</p><p>Note how we are checking for 0 values in some parameters. These are pointers that might be optional. If we do not check, we will attempt to read memory at address 0 and get errors.</p><pre tabindex=0><code>Z:\WinAppDbg&gt;python 17-CalcRecon.py -r calc
 [23:32:07.0417] Starting calc
 [23:32:07.0467]
 keyType         0
@@ -940,201 +649,152 @@ data            ♥
 data-hex        03000000
 [23:32:07.0487] ------------------------------
 [output truncated]
-</code></pre><p>Gotcha!</p>
-<p><code>HKCU\Software\Microsoft\calc\layout</code> is what we are looking for. After a bit of experimenting we can document the different <code>layout</code> values<sup id=fnref:6><a href=#fn:6 class=footnote-ref role=doc-noteref>6</a></sup>:</p>
-<ul>
-<li><code>0</code>: Scientific</li>
-<li><code>1</code>: Standard</li>
-<li><code>2</code>: Programmer</li>
-<li><code>3</code>: Statistics</li>
-</ul>
-<p>We know enough to manipulate the return value and change the layout to what we want.</p>
-<h1 id=18---calc-layout-manipulation>18 - calc Layout Manipulation
+</code></pre><p>Gotcha!</p><p><code>HKCU\Software\Microsoft\calc\layout</code> is what we are looking for. After a bit of experimenting we can document the different <code>layout</code> values<sup id=fnref:6><a href=#fn:6 class=footnote-ref role=doc-noteref>6</a></sup>:</p><ul>
+<li><code>0</code>: Scientific</li><li><code>1</code>: Standard</li><li><code>2</code>: Programmer</li><li><code>3</code>: Statistics</li></ul><p>We know enough to manipulate the return value and change the layout to what we want.</p><h1 id=18---calc-layout-manipulation>18 - calc Layout Manipulation
 <a class=header-link href=#18---calc-layout-manipulation><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Our battle plan is as follows:</p>
-<ol>
-<li>Hook <code>RegQueryValueExW</code>.</li>
-<li>In <code>pre_RegQueryValueExW</code> store the "output pointers" somewhere<sup id=fnref:7><a href=#fn:7 class=footnote-ref role=doc-noteref>7</a></sup>.</li>
-<li>In <code>post_RegQueryValueExW</code> modify the <code>DWORD</code> at <code>lpData</code> (remember it's a byte pointer).
+</h1><p>Our battle plan is as follows:</p><ol>
+<li>Hook <code>RegQueryValueExW</code>.</li><li>In <code>pre_RegQueryValueExW</code> store the "output pointers" somewhere<sup id=fnref:7><a href=#fn:7 class=footnote-ref role=doc-noteref>7</a></sup>.</li><li>In <code>post_RegQueryValueExW</code> modify the <code>DWORD</code> at <code>lpData</code> (remember it's a byte pointer).
 <ul>
-<li>We know it's a <code>DWORD</code> from two places: the registry key type in regedit and the size from <code>lpcbData</code> from our recon script (DWORD = 4 bytes).</li>
-</ul>
-</li>
-</ol>
-<p>This is accomplished by this code:</p>
-<figure class=code>
+<li>We know it's a <code>DWORD</code> from two places: the registry key type in regedit and the size from <code>lpcbData</code> from our recon script (DWORD = 4 bytes).</li></ul></li></ol><p>This is accomplished by this code:</p><figure class=code>
 <figcaption>
 <span>18-CalcLayout.py</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">29
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">30
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">31
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">32
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">33
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">34
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">35
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">36
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">37
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">38
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">39
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">40
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">41
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">42
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">43
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">44
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">45
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">46
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">47
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">48
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">49
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">50
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">51
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">52
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">53
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">54
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">55
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">56
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">57
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>from</span> winappdbg.win32 <span style=color:#719e07>import</span> PVOID, DWORD, HANDLE
-
-
-<span style=color:#719e07>class</span> <span style=color:#268bd2>DebugEvents</span>(winappdbg<span style=color:#719e07>.</span>EventHandler):
-    <span style=color:#2aa198>&#34;&#34;&#34;
-</span><span style=color:#2aa198>    Event handler class.
-</span><span style=color:#2aa198>    event: https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/event.py
-</span><span style=color:#2aa198>    &#34;&#34;&#34;</span>
-
-    apiHooks <span style=color:#719e07>=</span> {
-
-        <span style=color:#586e75># Hooks for the advapi32.dll library</span>
-        <span style=color:#2aa198>&#34;advapi32.dll&#34;</span>: [
-
-            <span style=color:#586e75># RegQueryValueEx</span>
-            <span style=color:#586e75># https://msdn.microsoft.com/en-us/library/windows/desktop/ms724911(v=vs.85).aspx</span>
-            <span style=color:#586e75># (&#34;RegQueryValueExW&#34;, (HANDLE, PVOID, PVOID, PVOID, PVOID, PVOID)),</span>
-            (<span style=color:#2aa198>&#34;RegQueryValueExW&#34;</span>, <span style=color:#2aa198>6</span>),
-
-        ],
-    }
-
-    <span style=color:#719e07>def</span> <span style=color:#268bd2>pre_RegQueryValueExW</span>(<span style=color:#268bd2>self</span>, event, ra, hKey, lpValueName, lpReserved,
-                             lpType, lpData, lpcbData):
-
-        <span style=color:#586e75># Store the pointer for later use</span>
-        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>hKey <span style=color:#719e07>=</span> hKey
-        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpValueName <span style=color:#719e07>=</span> lpValueName
-        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpType <span style=color:#719e07>=</span> lpType
-        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpData <span style=color:#719e07>=</span> lpData
-        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpcbData <span style=color:#719e07>=</span> lpcbData
-
-    <span style=color:#719e07>def</span> <span style=color:#268bd2>post_RegQueryValueExW</span>(<span style=color:#268bd2>self</span>, event, retval):
-        process <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_process()
-
-        process<span style=color:#719e07>.</span>suspend()
-
-        valueName <span style=color:#719e07>=</span> process<span style=color:#719e07>.</span>peek_string(<span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpValueName, fUnicode<span style=color:#719e07>=</span><span style=color:#cb4b16>True</span>)
-
-        <span style=color:#719e07>if</span> valueName <span style=color:#719e07>==</span> <span style=color:#2aa198>&#34;layout&#34;</span>:
-            <span style=color:#586e75># size = process.read_dword(self.lpcbData)</span>
-            <span style=color:#586e75># data = process.read(self.lpData, size)</span>
-
-            newLayout <span style=color:#719e07>=</span> <span style=color:#2aa198>0x00</span>
-
-            process<span style=color:#719e07>.</span>write_dword(<span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpData, newLayout)
-
-            <span style=color:#586e75># OR</span>
-            <span style=color:#586e75># process.write(self.lpData, &#34;00&#34;.decode(&#34;hex&#34;))</span>
-
-        process<span style=color:#719e07>.</span>resume()
-
-
-<span style=color:#586e75># ---------------</span>
-
-<span style=color:#719e07>def</span> <span style=color:#268bd2>main</span>():
-    <span style=color:#719e07>...</span></code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>We're telling calc that layout is always <code>0x00</code> (scientific). As you can see we can overwrite the memory in two ways:</p>
-<ul>
-<li><code>process.write_dword(self.lpData, 0x00)</code></li>
-<li><code>process.write(self.lpData, "00".decode("hex"))</code></li>
-</ul>
-<p>We could also malloc and do the pointer swap from our IE adventure but it's not necessary here. Our new data still fits in the 4 allocated bytes.</p>
-<h2 id=scientific-experiment>"Scientific" Experiment
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">31
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">32
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">33
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">34
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">35
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">36
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">37
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">38
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">39
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">40
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">41
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">42
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">43
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">44
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">45
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">46
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">47
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">48
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">49
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">50
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">51
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">52
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">53
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">54
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">55
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">56
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">57
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>from</span> winappdbg.win32 <span style=color:#719e07>import</span> PVOID, DWORD, HANDLE
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>class</span> <span style=color:#268bd2>DebugEvents</span>(winappdbg<span style=color:#719e07>.</span>EventHandler):
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;&#34;&#34;
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>    Event handler class.
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>    event: https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/event.py
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>    &#34;&#34;&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    apiHooks <span style=color:#719e07>=</span> {
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#586e75># Hooks for the advapi32.dll library</span>
+</span></span><span style=display:flex><span>        <span style=color:#2aa198>&#34;advapi32.dll&#34;</span>: [
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># RegQueryValueEx</span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># https://msdn.microsoft.com/en-us/library/windows/desktop/ms724911(v=vs.85).aspx</span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># (&#34;RegQueryValueExW&#34;, (HANDLE, PVOID, PVOID, PVOID, PVOID, PVOID)),</span>
+</span></span><span style=display:flex><span>            (<span style=color:#2aa198>&#34;RegQueryValueExW&#34;</span>, <span style=color:#2aa198>6</span>),
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        ],
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>def</span> <span style=color:#268bd2>pre_RegQueryValueExW</span>(<span style=color:#268bd2>self</span>, event, ra, hKey, lpValueName, lpReserved,
+</span></span><span style=display:flex><span>                             lpType, lpData, lpcbData):
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#586e75># Store the pointer for later use</span>
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>hKey <span style=color:#719e07>=</span> hKey
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpValueName <span style=color:#719e07>=</span> lpValueName
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpType <span style=color:#719e07>=</span> lpType
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpData <span style=color:#719e07>=</span> lpData
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpcbData <span style=color:#719e07>=</span> lpcbData
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>def</span> <span style=color:#268bd2>post_RegQueryValueExW</span>(<span style=color:#268bd2>self</span>, event, retval):
+</span></span><span style=display:flex><span>        process <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>get_process()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        process<span style=color:#719e07>.</span>suspend()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        valueName <span style=color:#719e07>=</span> process<span style=color:#719e07>.</span>peek_string(<span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpValueName, fUnicode<span style=color:#719e07>=</span><span style=color:#cb4b16>True</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#719e07>if</span> valueName <span style=color:#719e07>==</span> <span style=color:#2aa198>&#34;layout&#34;</span>:
+</span></span><span style=display:flex><span>            <span style=color:#586e75># size = process.read_dword(self.lpcbData)</span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># data = process.read(self.lpData, size)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            newLayout <span style=color:#719e07>=</span> <span style=color:#2aa198>0x00</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            process<span style=color:#719e07>.</span>write_dword(<span style=color:#268bd2>self</span><span style=color:#719e07>.</span>lpData, newLayout)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># OR</span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># process.write(self.lpData, &#34;00&#34;.decode(&#34;hex&#34;))</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        process<span style=color:#719e07>.</span>resume()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75># ---------------</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>main</span>():
+</span></span><span style=display:flex><span>    <span style=color:#719e07>...</span></span></span></code></pre></td></tr></table></div></div></div></figure><p>We're telling calc that layout is always <code>0x00</code> (scientific). As you can see we can overwrite the memory in two ways:</p><ul>
+<li><code>process.write_dword(self.lpData, 0x00)</code></li><li><code>process.write(self.lpData, "00".decode("hex"))</code></li></ul><p>We could also malloc and do the pointer swap from our IE adventure but it's not necessary here. Our new data still fits in the 4 allocated bytes.</p><h2 id=scientific-experiment>"Scientific" Experiment
 <a class=header-link href=#scientific-experiment><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Start calc and change the view, notice it saves the view after it's closed.</p>
-<p>Now run <code>$ python python 18-CalcLayout.py -r calc</code> and see it always opens in Scientific mode (layout 0).</p>
-<span class=caption-wrapper>
+</h2><p>Start calc and change the view, notice it saves the view after it's closed.</p><p>Now run <code>$ python python 18-CalcLayout.py -r calc</code> and see it always opens in Scientific mode (layout 0).</p><span class=caption-wrapper>
 <img class=caption src=/images/2017/winappdbg-3/09-calc-in-action.gif title="calc always opening in Scientific mode" alt="calc always opening in Scientific mode">
 <span class=caption-text>calc always opening in Scientific mode</span>
 </span>
 <h1 id=conclusion>Conclusion
 <a class=header-link href=#conclusion><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Now you know how to manipulate function calls and return values. Along the way we saw a few useful procmon tricks and learned DLL Export Forwarding.</p>
-<p>But function hooking is not all we can do with WinAppDbg. In part four we will learn how to use to hook internal functions and run arbitrary assembly blobs to solve FlareOn 2017 CTF challenge 3. Until then practice what we learned. As usual, let me know if you have any questions (or spot any errors).</p>
-<section class=footnotes role=doc-endnotes>
+</h1><p>Now you know how to manipulate function calls and return values. Along the way we saw a few useful procmon tricks and learned DLL Export Forwarding.</p><p>But function hooking is not all we can do with WinAppDbg. In part four we will learn how to use to hook internal functions and run arbitrary assembly blobs to solve FlareOn 2017 CTF challenge 3. Until then practice what we learned. As usual, let me know if you have any questions (or spot any errors).</p><section class=footnotes role=doc-endnotes>
 <hr>
 <ol>
 <li id=fn:1 role=doc-endnote>
-<p>No seriously, run everything in a VM. Also, read this footnote's anchor.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
-</li>
-<li id=fn:2 role=doc-endnote>
-<p>In <code>cdecl</code>, <strong>caller</strong> cleans up the stack (you will see an <code>add esp, 4</code> instruction after the <code>call</code> instruction). <strong>Callee</strong> (the function that is called) cleans up the stack in <code>stdcall</code>, so you will see the instructions before <code>ret</code> or just <code>ret 4</code>. For more information see <a href="https://blogs.msdn.microsoft.com/oldnewthing/20040108-00/?p=41163/" title="The history of calling conventions, part 3 - Old New Thing" target=_blank rel="noreferrer noopener">The history of calling conventions, part 3</a> by Raymond Chen. The broken "nice diagrams on MSDN" link is <a href="https://msdn.microsoft.com/en-us/library/aa295770%28v=vs.60%29.aspx" title="Results of Calling Example - MSDN" target=_blank rel="noreferrer noopener">here</a>.&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
-</li>
-<li id=fn:3 role=doc-endnote>
-<p>Actually no profit. This is how I spent my weekend.&#160;<a href=#fnref:3 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
-</li>
-<li id=fn:4 role=doc-endnote>
-<p>This is the return address pushed to the stack right before the function call is made. Print the dword (or qword for 64-bit) on top of the stack in the <code>pre_</code> function to see the same thing.&#160;<a href=#fnref:4 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
-</li>
-<li id=fn:5 role=doc-endnote>
-<p>Repeat after me ERROR_SUCCESS, ERROR_SUCCESS, ERROR_.&#160;<a href=#fnref:5 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
-</li>
-<li id=fn:6 role=doc-endnote>
-<p>For some reason Standard that appears first in the UI is 1 and Scientific is 0.&#160;<a href=#fnref:6 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
-</li>
-<li id=fn:7 role=doc-endnote>
-<p>What I call output pointer is one of the tricks to return multiple values in C/C++/etc. If you are familiar with assembly, you know that <code>eax/rax</code> (or <code>rdx:rax - edx:eax</code> if it does not fit in one register) contains the return value of a function after <code>ret</code> so you get <strong>one</strong> return value. I bet that programming languages that allow multiple return values use the same mechanism under the hood. This is just speculation and I could be wrong here; this is another TODO that I need to do later.&#160;<a href=#fnref:7 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
-</li>
-</ol>
-</section>
-</div>
-<footer>
+<p>No seriously, run everything in a VM. Also, read this footnote's anchor.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:2 role=doc-endnote>
+<p>In <code>cdecl</code>, <strong>caller</strong> cleans up the stack (you will see an <code>add esp, 4</code> instruction after the <code>call</code> instruction). <strong>Callee</strong> (the function that is called) cleans up the stack in <code>stdcall</code>, so you will see the instructions before <code>ret</code> or just <code>ret 4</code>. For more information see <a href="https://blogs.msdn.microsoft.com/oldnewthing/20040108-00/?p=41163/" title="The history of calling conventions, part 3 - Old New Thing" target=_blank rel="noreferrer noopener">The history of calling conventions, part 3</a> by Raymond Chen. The broken "nice diagrams on MSDN" link is <a href="https://msdn.microsoft.com/en-us/library/aa295770%28v=vs.60%29.aspx" title="Results of Calling Example - MSDN" target=_blank rel="noreferrer noopener">here</a>.&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:3 role=doc-endnote>
+<p>Actually no profit. This is how I spent my weekend.&#160;<a href=#fnref:3 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:4 role=doc-endnote>
+<p>This is the return address pushed to the stack right before the function call is made. Print the dword (or qword for 64-bit) on top of the stack in the <code>pre_</code> function to see the same thing.&#160;<a href=#fnref:4 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:5 role=doc-endnote>
+<p>Repeat after me ERROR_SUCCESS, ERROR_SUCCESS, ERROR_.&#160;<a href=#fnref:5 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:6 role=doc-endnote>
+<p>For some reason Standard that appears first in the UI is 1 and Scientific is 0.&#160;<a href=#fnref:6 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:7 role=doc-endnote>
+<p>What I call output pointer is one of the tricks to return multiple values in C/C++/etc. If you are familiar with assembly, you know that <code>eax/rax</code> (or <code>rdx:rax - edx:eax</code> if it does not fit in one register) contains the return value of a function after <code>ret</code> so you get <strong>one</strong> return value. I bet that programming languages that allow multiple return values use the same mechanism under the hood. This is just speculation and I could be wrong here; this is another TODO that I need to do later.&#160;<a href=#fnref:7 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section></div><footer>
 <p class=meta>
 <span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>Nov 15, 2017</time>
@@ -1142,82 +802,47 @@ data-hex        03000000
 Tags:
 <a class=category href=https://parsiya.net/tags/python>python</a> <a class=category href=https://parsiya.net/tags/function-hooking>function hooking</a>
 </span>
-</p>
-<p class=meta>
+</p><p class=meta>
 <a class="basic-alignment left" href=https://parsiya.net/blog/2017-11-11-winappdbg-part-2-function-hooking-and-others/ title="WinAppDbg - Part 2 - Function Hooking and Others">WinAppDbg - Part 2 - Function Hooking and Others</a>
 <a class="basic-alignment right" href=https://parsiya.net/blog/2017-11-15-winappdbg-part-4-bruteforcing-flareon-2017-challenge-3/ title="WinAppDbg - Part 4 - Bruteforcing FlareOn 2017 - Challenge 3">WinAppDbg - Part 4 - Bruteforcing FlareOn 2017 - Challenge 3</a>
-</p>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</div>
-<aside class="sidebar thirds">
+</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer></article></div><aside class="sidebar thirds">
 <section class="first odd">
-<h1>Who am I?</h1>
-<p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
-<p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p>
-<p>Click on <a href=/about/>About Me!</a> to know more.</p>
-</p>
-</section>
-<ul class=sidebar-nav>
+<h1>Who am I?</h1><p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
 <li class=sidebar-nav-item>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li>
-</ul>
-<section class=odd>
-<h1>Collections</h1>
-<li>
+</li></ul><section class=odd>
+<h1>Collections</h1><li>
 <a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li>
-<li>
+</li><li>
 <a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li>
-</section>
-</aside>
-</div>
-</div>
-<footer role=contentinfo>
+</li></section></aside></div></div><footer role=contentinfo>
 <p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>

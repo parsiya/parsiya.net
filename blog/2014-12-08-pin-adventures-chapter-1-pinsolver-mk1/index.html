@@ -3,51 +3,34 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
 <link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>Pin Adventures - Chapter 1 - PinSolver Mk1</title>
-<link rel=stylesheet href=/css/hugo-octopress.css>
+<title>Pin Adventures - Chapter 1 - PinSolver Mk1</title><link rel=stylesheet href=/css/hugo-octopress.css>
 <link rel=stylesheet href=/css/fork-awesome.min.css>
 <link href=https://parsiya.net/favicon.png rel=icon>
 <meta name=description content>
 <meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
 <meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.92.2">
+<meta name=generator content="Hugo 0.93.0">
 <meta name=twitter:card content="summary">
 <meta name=twitter:title content="Pin Adventures - Chapter 1 - PinSolver Mk1">
 <meta name=twitter:description content="While writing the writeups for the Flare On Challenge 6 I came upon an alternative solution by @gaasedelen to use the number of executed instructions as a side-channel. Recently during an engagement I used Pintool to do [redacted]. Now that I have a bit of time, I decided to use the idea to write such a tool.
 As an example, we will use a C program that checks input for a hardcoded value using strncmp. We want to see if it's vulnerable to this side-channel (number of executed instructions).">
 <meta name=twitter:domain content="parsiya.net">
 <meta name=twitter:creator content="@CryptoGangsta">
-</head>
-<body>
+</head><body>
 <header role=banner>
 <hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
-<h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2>
-</hgroup></header>
-<nav role=navigation>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
 <fieldset class=mobile-nav>
 <select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset>
-<ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
-<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
-<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
-<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
-<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
-<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
-</ul>
-<ul class=subscription>
+</fieldset><ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
 <a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul>
-<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
 <fieldset role=search>
 <input class=search type=text name=q results=0 placeholder=Search>
 <input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset>
-</form>
-</nav>
-<div id=main>
+</fieldset></form></nav><div id=main>
 <div id=content>
 <div>
 <article class=hentry role=article>
@@ -56,721 +39,631 @@ complete unless it is known by its causes. - Avicenna</h2>
 - 11 minute read
 - <a href=https://parsiya.net/blog/2014-12-08-pin-adventures-chapter-1-pinsolver-mk1/#disqus_thread>Comments</a>
 - <a class=label href=https://parsiya.net/categories/reverse-engineering/>Reverse Engineering </a>
-</p>
-<h1 class=entry-title>
+</p><h1 class=entry-title>
 Pin Adventures - Chapter 1 - PinSolver Mk1
-</h1>
-</header>
-<div class=entry-content>
-<p>While writing the writeups for the <a href=http://parsiya.net/blog/2014-10-07-my-adventure-with-fireeye-flare-challenge/#ch6 target=_blank rel="noreferrer noopener">Flare On Challenge 6</a> I came upon <a href=http://gaasedelen.blogspot.com/2014/09/solving-fireeyes-flare-on-six-via-side.html target=_blank rel="noreferrer noopener">an alternative solution</a> by <a href=https://twitter.com/gaasedelen target=_blank rel="noreferrer noopener">@gaasedelen</a> to use the number of executed instructions as a side-channel. Recently during an engagement I used <a href=https://software.intel.com/en-us/articles/pintool target=_blank rel="noreferrer noopener">Pintool</a> to do <code>[redacted]</code>. Now that I have a bit of time, I decided to use the idea to write such a tool.</p>
-<p>As an example, we will use a C program that checks input for a hardcoded value using <code>strncmp</code>. We want to see if it's vulnerable to this side-channel (number of executed instructions).</p>
-<p>##My Setup
-I will be using a Kali 32-bit VM using VirtualBox. Installing Pin is as simple as extracting the appropriate distribution in a directory and adding it to path.</p>
-<p>###Pintool
-Pin is a dynamic binary instrumentation framework by Intel. The default installation contains a good number of examples in <code>/pintool/source/tools/ManualExamples/</code>. If you look at various tutorials on it, most will use instruction count example in <code>inscount0.cpp</code>. I will be simplifying it to suit our needs and do <em>some</em> comments.</p>
-<p>Here is the modified code. Let's name it <code>myins.cpp</code> and save it in the ManualExamples directory. Apologies for the legal stuff at the start but I'd rather keep them than risk the wrath of open source gods.</p>
-<figure class=code>
+</h1></header><div class=entry-content>
+<p>While writing the writeups for the <a href=http://parsiya.net/blog/2014-10-07-my-adventure-with-fireeye-flare-challenge/#ch6 target=_blank rel="noreferrer noopener">Flare On Challenge 6</a> I came upon <a href=http://gaasedelen.blogspot.com/2014/09/solving-fireeyes-flare-on-six-via-side.html target=_blank rel="noreferrer noopener">an alternative solution</a> by <a href=https://twitter.com/gaasedelen target=_blank rel="noreferrer noopener">@gaasedelen</a> to use the number of executed instructions as a side-channel. Recently during an engagement I used <a href=https://software.intel.com/en-us/articles/pintool target=_blank rel="noreferrer noopener">Pintool</a> to do <code>[redacted]</code>. Now that I have a bit of time, I decided to use the idea to write such a tool.</p><p>As an example, we will use a C program that checks input for a hardcoded value using <code>strncmp</code>. We want to see if it's vulnerable to this side-channel (number of executed instructions).</p><p>##My Setup
+I will be using a Kali 32-bit VM using VirtualBox. Installing Pin is as simple as extracting the appropriate distribution in a directory and adding it to path.</p><p>###Pintool
+Pin is a dynamic binary instrumentation framework by Intel. The default installation contains a good number of examples in <code>/pintool/source/tools/ManualExamples/</code>. If you look at various tutorials on it, most will use instruction count example in <code>inscount0.cpp</code>. I will be simplifying it to suit our needs and do <em>some</em> comments.</p><p>Here is the modified code. Let's name it <code>myins.cpp</code> and save it in the ManualExamples directory. Apologies for the legal stuff at the start but I'd rather keep them than risk the wrath of open source gods.</p><figure class=code>
 <figcaption>
 <span>myins.c</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">29
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">30
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">31
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">32
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">33
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">34
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">35
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">36
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">37
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">38
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">39
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">40
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">41
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">42
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">43
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">44
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">45
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">46
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">47
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">48
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">49
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">50
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">51
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">52
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">53
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">54
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">55
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">56
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">57
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">58
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">59
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">60
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">61
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">62
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">63
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">64
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">65
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">66
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">67
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">68
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">69
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">70
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">71
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">72
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">73
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">74
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">75
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">76
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">77
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">78
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">79
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">80
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">81
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">82
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">83
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">84
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">85
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">86
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">87
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">88
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">89
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">90
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">91
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">92
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">93
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">94
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">95
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">96
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">97
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">98
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#586e75>/*BEGIN_LEGAL 
-</span><span style=color:#586e75>Intel Open Source License 
-</span><span style=color:#586e75>
-</span><span style=color:#586e75>Copyright (c) 2002-2014 Intel Corporation. All rights reserved.
-</span><span style=color:#586e75> 
-</span><span style=color:#586e75>Redistribution and use in source and binary forms, with or without
-</span><span style=color:#586e75>modification, are permitted provided that the following conditions are
-</span><span style=color:#586e75>met:
-</span><span style=color:#586e75>
-</span><span style=color:#586e75>Redistributions of source code must retain the above copyright notice,
-</span><span style=color:#586e75>this list of conditions and the following disclaimer.  Redistributions
-</span><span style=color:#586e75>in binary form must reproduce the above copyright notice, this list of
-</span><span style=color:#586e75>conditions and the following disclaimer in the documentation and/or
-</span><span style=color:#586e75>other materials provided with the distribution.  Neither the name of
-</span><span style=color:#586e75>the Intel Corporation nor the names of its contributors may be used to
-</span><span style=color:#586e75>endorse or promote products derived from this software without
-</span><span style=color:#586e75>specific prior written permission.
-</span><span style=color:#586e75> 
-</span><span style=color:#586e75>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-</span><span style=color:#586e75>``AS IS&#39;&#39; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-</span><span style=color:#586e75>LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-</span><span style=color:#586e75>A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE INTEL OR
-</span><span style=color:#586e75>ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-</span><span style=color:#586e75>SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-</span><span style=color:#586e75>LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-</span><span style=color:#586e75>DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-</span><span style=color:#586e75>THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-</span><span style=color:#586e75>(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-</span><span style=color:#586e75>OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-</span><span style=color:#586e75>END_LEGAL */</span>
-<span style=color:#719e07>#include</span> <span style=color:#719e07>&lt;iostream&gt;</span><span style=color:#719e07>
-</span><span style=color:#719e07>#include</span> <span style=color:#719e07>&#34;pin.H&#34;</span><span style=color:#719e07>
-</span><span style=color:#719e07></span>
-<span style=color:#586e75>// modified version of /pintool/source/tools/ManualExamples/inscount0.cpp
-</span><span style=color:#586e75></span>
-
-<span style=color:#586e75>// The running count of instructions is kept here
-</span><span style=color:#586e75>// make it static to help the compiler optimize docount
-</span><span style=color:#586e75></span><span style=color:#719e07>static</span> UINT64 icount <span style=color:#719e07>=</span> <span style=color:#2aa198>0</span>;
-
-<span style=color:#586e75>// This function is called before every instruction is executed
-</span><span style=color:#586e75>// increase the count every time it is called, which is before every instruction
-</span><span style=color:#586e75></span>VOID <span style=color:#268bd2>docount</span>() { icount<span style=color:#719e07>++</span>; }
-    
-<span style=color:#586e75>// Pin calls this function every time a new instruction is encountered
-</span><span style=color:#586e75></span>VOID <span style=color:#268bd2>Instruction</span>(INS ins, VOID <span style=color:#719e07>*</span>v)
-{
-    <span style=color:#586e75>// Insert a call to docount before every instruction, no arguments are passed
-</span><span style=color:#586e75></span>    <span style=color:#586e75>// ins: instruction about to be executed
-</span><span style=color:#586e75></span>    <span style=color:#586e75>// IPOINT_BEFORE: call is placed before each instruction
-</span><span style=color:#586e75></span>    <span style=color:#586e75>// (AFUNPTR)docount: name of the function to call before every instruction
-</span><span style=color:#586e75></span>    <span style=color:#586e75>// If any arguments are to be passed to the called function, they will be placed here
-</span><span style=color:#586e75></span>    <span style=color:#586e75>// IARG_END: indicates the end of arguments
-</span><span style=color:#586e75></span>    
-    <span style=color:#586e75>// as a result before each instruction, docount is called
-</span><span style=color:#586e75></span>    INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)docount, IARG_END);
-}
-
-<span style=color:#586e75>// This function is called when the application exits
-</span><span style=color:#586e75></span>VOID <span style=color:#268bd2>Fini</span>(INT32 code, VOID <span style=color:#719e07>*</span>v)
-{
-    <span style=color:#586e75>// print the number of executed instructions
-</span><span style=color:#586e75></span>    cout <span style=color:#719e07>&lt;&lt;</span> <span style=color:#2aa198>&#34;Count: &#34;</span> <span style=color:#719e07>&lt;&lt;</span> icount <span style=color:#719e07>&lt;&lt;</span> endl;
-
-}
-
-<span style=color:#586e75>/* ===================================================================== */</span>
-<span style=color:#586e75>/* Print Help Message                                                    */</span>
-<span style=color:#586e75>/* ===================================================================== */</span>
-
-INT32 <span style=color:#268bd2>Usage</span>()
-{
-    cout <span style=color:#719e07>&lt;&lt;</span> <span style=color:#2aa198>&#34;This tool counts the number of dynamic instructions executed&#34;</span> <span style=color:#719e07>&lt;&lt;</span> endl;
-    <span style=color:#719e07>return</span> <span style=color:#719e07>-</span><span style=color:#2aa198>1</span>;
-}
-
-<span style=color:#586e75>/* ===================================================================== */</span>
-<span style=color:#586e75>/* Main                                                                  */</span>
-<span style=color:#586e75>/* ===================================================================== */</span>
-<span style=color:#586e75>/*   argc, argv are the entire command line: pin -t &lt;toolname&gt; -- ...    */</span>
-<span style=color:#586e75>/* ===================================================================== */</span>
-
-<span style=color:#dc322f>int</span> <span style=color:#268bd2>main</span>(<span style=color:#dc322f>int</span> argc, <span style=color:#dc322f>char</span> <span style=color:#719e07>*</span> argv[])
-{
-    <span style=color:#586e75>// Initialize pin
-</span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> (PIN_Init(argc, argv)) <span style=color:#719e07>return</span> Usage();
-
-    <span style=color:#586e75>// Register Instruction to be called to instrument instructions
-</span><span style=color:#586e75></span>    INS_AddInstrumentFunction(Instruction, <span style=color:#2aa198>0</span>);
-
-    <span style=color:#586e75>// Register Fini to be called when the application exits
-</span><span style=color:#586e75></span>    PIN_AddFiniFunction(Fini, <span style=color:#2aa198>0</span>);
-    
-    <span style=color:#586e75>// Start the program, never returns
-</span><span style=color:#586e75></span>    PIN_StartProgram();
-    
-    <span style=color:#719e07>return</span> <span style=color:#2aa198>0</span>;
-}</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>To compile it, we can use the provided makefile. In ManualExamples run <code>make obj-ia32/myins.so</code>. Note the filename and path. If everything works correctly, we will have <code>myins.so</code>. Let's copy it to where we want to write our example program.</p>
-<h3 id=crackme-1---example-c-program>Crackme 1 - Example C Program
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">31
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">32
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">33
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">34
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">35
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">36
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">37
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">38
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">39
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">40
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">41
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">42
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">43
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">44
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">45
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">46
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">47
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">48
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">49
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">50
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">51
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">52
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">53
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">54
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">55
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">56
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">57
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">58
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">59
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">60
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">61
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">62
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">63
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">64
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">65
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">66
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">67
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">68
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">69
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">70
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">71
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">72
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">73
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">74
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">75
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">76
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">77
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">78
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">79
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">80
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">81
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">82
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">83
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">84
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">85
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">86
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">87
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">88
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">89
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">90
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">91
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">92
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">93
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">94
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">95
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">96
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">97
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">98
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#586e75>/*BEGIN_LEGAL 
+</span></span></span><span style=display:flex><span><span style=color:#586e75>Intel Open Source License 
+</span></span></span><span style=display:flex><span><span style=color:#586e75>
+</span></span></span><span style=display:flex><span><span style=color:#586e75>Copyright (c) 2002-2014 Intel Corporation. All rights reserved.
+</span></span></span><span style=display:flex><span><span style=color:#586e75> 
+</span></span></span><span style=display:flex><span><span style=color:#586e75>Redistribution and use in source and binary forms, with or without
+</span></span></span><span style=display:flex><span><span style=color:#586e75>modification, are permitted provided that the following conditions are
+</span></span></span><span style=display:flex><span><span style=color:#586e75>met:
+</span></span></span><span style=display:flex><span><span style=color:#586e75>
+</span></span></span><span style=display:flex><span><span style=color:#586e75>Redistributions of source code must retain the above copyright notice,
+</span></span></span><span style=display:flex><span><span style=color:#586e75>this list of conditions and the following disclaimer.  Redistributions
+</span></span></span><span style=display:flex><span><span style=color:#586e75>in binary form must reproduce the above copyright notice, this list of
+</span></span></span><span style=display:flex><span><span style=color:#586e75>conditions and the following disclaimer in the documentation and/or
+</span></span></span><span style=display:flex><span><span style=color:#586e75>other materials provided with the distribution.  Neither the name of
+</span></span></span><span style=display:flex><span><span style=color:#586e75>the Intel Corporation nor the names of its contributors may be used to
+</span></span></span><span style=display:flex><span><span style=color:#586e75>endorse or promote products derived from this software without
+</span></span></span><span style=display:flex><span><span style=color:#586e75>specific prior written permission.
+</span></span></span><span style=display:flex><span><span style=color:#586e75> 
+</span></span></span><span style=display:flex><span><span style=color:#586e75>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+</span></span></span><span style=display:flex><span><span style=color:#586e75>``AS IS&#39;&#39; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+</span></span></span><span style=display:flex><span><span style=color:#586e75>LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+</span></span></span><span style=display:flex><span><span style=color:#586e75>A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE INTEL OR
+</span></span></span><span style=display:flex><span><span style=color:#586e75>ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+</span></span></span><span style=display:flex><span><span style=color:#586e75>SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+</span></span></span><span style=display:flex><span><span style=color:#586e75>LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+</span></span></span><span style=display:flex><span><span style=color:#586e75>DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+</span></span></span><span style=display:flex><span><span style=color:#586e75>THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+</span></span></span><span style=display:flex><span><span style=color:#586e75>(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+</span></span></span><span style=display:flex><span><span style=color:#586e75>OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+</span></span></span><span style=display:flex><span><span style=color:#586e75>END_LEGAL */</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>#include</span> <span style=color:#719e07>&lt;iostream&gt;</span><span style=color:#719e07>
+</span></span></span><span style=display:flex><span><span style=color:#719e07>#include</span> <span style=color:#719e07>&#34;pin.H&#34;</span><span style=color:#719e07>
+</span></span></span><span style=display:flex><span><span style=color:#719e07></span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// modified version of /pintool/source/tools/ManualExamples/inscount0.cpp
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// The running count of instructions is kept here
+</span></span></span><span style=display:flex><span><span style=color:#586e75>// make it static to help the compiler optimize docount
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>static</span> UINT64 icount <span style=color:#719e07>=</span> <span style=color:#2aa198>0</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// This function is called before every instruction is executed
+</span></span></span><span style=display:flex><span><span style=color:#586e75>// increase the count every time it is called, which is before every instruction
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>VOID <span style=color:#268bd2>docount</span>() { icount<span style=color:#719e07>++</span>; }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span><span style=color:#586e75>// Pin calls this function every time a new instruction is encountered
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>VOID <span style=color:#268bd2>Instruction</span>(INS ins, VOID <span style=color:#719e07>*</span>v)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Insert a call to docount before every instruction, no arguments are passed
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#586e75>// ins: instruction about to be executed
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#586e75>// IPOINT_BEFORE: call is placed before each instruction
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#586e75>// (AFUNPTR)docount: name of the function to call before every instruction
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#586e75>// If any arguments are to be passed to the called function, they will be placed here
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#586e75>// IARG_END: indicates the end of arguments
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// as a result before each instruction, docount is called
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)docount, IARG_END);
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// This function is called when the application exits
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>VOID <span style=color:#268bd2>Fini</span>(INT32 code, VOID <span style=color:#719e07>*</span>v)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// print the number of executed instructions
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    cout <span style=color:#719e07>&lt;&lt;</span> <span style=color:#2aa198>&#34;Count: &#34;</span> <span style=color:#719e07>&lt;&lt;</span> icount <span style=color:#719e07>&lt;&lt;</span> endl;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75>/* ===================================================================== */</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>/* Print Help Message                                                    */</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>/* ===================================================================== */</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>INT32 <span style=color:#268bd2>Usage</span>()
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    cout <span style=color:#719e07>&lt;&lt;</span> <span style=color:#2aa198>&#34;This tool counts the number of dynamic instructions executed&#34;</span> <span style=color:#719e07>&lt;&lt;</span> endl;
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> <span style=color:#719e07>-</span><span style=color:#2aa198>1</span>;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75>/* ===================================================================== */</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>/* Main                                                                  */</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>/* ===================================================================== */</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>/*   argc, argv are the entire command line: pin -t &lt;toolname&gt; -- ...    */</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>/* ===================================================================== */</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#dc322f>int</span> <span style=color:#268bd2>main</span>(<span style=color:#dc322f>int</span> argc, <span style=color:#dc322f>char</span> <span style=color:#719e07>*</span> argv[])
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Initialize pin
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> (PIN_Init(argc, argv)) <span style=color:#719e07>return</span> Usage();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Register Instruction to be called to instrument instructions
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    INS_AddInstrumentFunction(Instruction, <span style=color:#2aa198>0</span>);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Register Fini to be called when the application exits
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    PIN_AddFiniFunction(Fini, <span style=color:#2aa198>0</span>);
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Start the program, never returns
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    PIN_StartProgram();
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> <span style=color:#2aa198>0</span>;
+</span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>To compile it, we can use the provided makefile. In ManualExamples run <code>make obj-ia32/myins.so</code>. Note the filename and path. If everything works correctly, we will have <code>myins.so</code>. Let's copy it to where we want to write our example program.</p><h3 id=crackme-1---example-c-program>Crackme 1 - Example C Program
 <a class=header-link href=#crackme-1---example-c-program><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h3><p>The program is quite simple, it checks the first argument against the hardcoded value <code>7bc3a60fbf38e98f6fef654afa26d270</code>. We will use this program to test our Pin tool.
 <figure class=code>
 <figcaption>
 <span>crkme1.c</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#719e07>#include</span> <span style=color:#719e07>&lt;stdio.h&gt;</span><span style=color:#719e07>
-</span><span style=color:#719e07>#include</span> <span style=color:#719e07>&lt;string.h&gt;</span><span style=color:#719e07>
-</span><span style=color:#719e07></span>
-<span style=color:#dc322f>int</span> <span style=color:#268bd2>main</span>(<span style=color:#dc322f>int</span> argc, <span style=color:#dc322f>char</span> <span style=color:#719e07>**</span>argv)
-{
-
-  <span style=color:#719e07>if</span> ( argc<span style=color:#719e07>!=</span><span style=color:#2aa198>2</span> )
-  {
-    printf(<span style=color:#2aa198>&#34;usage: ./crkme1 code</span><span style=color:#cb4b16>\n</span><span style=color:#2aa198>&#34;</span>);
-    <span style=color:#719e07>return</span> <span style=color:#2aa198>1</span>;
-  }
-  
-  <span style=color:#dc322f>char</span> code[] <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;7bc3a60fbf38e98f6fef654afa26d270&#34;</span>;
-  
-  <span style=color:#719e07>if</span> ( <span style=color:#719e07>!</span>strncmp(argv[<span style=color:#2aa198>1</span>],code,<span style=color:#2aa198>32</span>) )
-  {
-    printf(<span style=color:#2aa198>&#34;Correct</span><span style=color:#cb4b16>\n</span><span style=color:#2aa198>&#34;</span>);
-  }
-  <span style=color:#719e07>else</span>
-  {
-    printf(<span style=color:#2aa198>&#34;Wrong</span><span style=color:#cb4b16>\n</span><span style=color:#2aa198>&#34;</span>);
-  }
-
-  <span style=color:#719e07>return</span> <span style=color:#2aa198>0</span>;
-}</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure></p>
-<p>Remember to use the <code>ggdb</code> option to compile with debug information (for GDB). From what I understand this is very similar to the <code>g</code> option. We will be using GDB to dive into the binary to observe strncmp's behavior. Let's use <code>gcc -ggdb -o crkme1 crkme1.c</code>.</p>
-<h3 id=using-pin-with-crkme1>Using Pin with Crkme1
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#719e07>#include</span> <span style=color:#719e07>&lt;stdio.h&gt;</span><span style=color:#719e07>
+</span></span></span><span style=display:flex><span><span style=color:#719e07>#include</span> <span style=color:#719e07>&lt;string.h&gt;</span><span style=color:#719e07>
+</span></span></span><span style=display:flex><span><span style=color:#719e07></span>
+</span></span><span style=display:flex><span><span style=color:#dc322f>int</span> <span style=color:#268bd2>main</span>(<span style=color:#dc322f>int</span> argc, <span style=color:#dc322f>char</span> <span style=color:#719e07>**</span>argv)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#719e07>if</span> ( argc<span style=color:#719e07>!=</span><span style=color:#2aa198>2</span> )
+</span></span><span style=display:flex><span>  {
+</span></span><span style=display:flex><span>    printf(<span style=color:#2aa198>&#34;usage: ./crkme1 code</span><span style=color:#cb4b16>\n</span><span style=color:#2aa198>&#34;</span>);
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> <span style=color:#2aa198>1</span>;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  
+</span></span><span style=display:flex><span>  <span style=color:#dc322f>char</span> code[] <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;7bc3a60fbf38e98f6fef654afa26d270&#34;</span>;
+</span></span><span style=display:flex><span>  
+</span></span><span style=display:flex><span>  <span style=color:#719e07>if</span> ( <span style=color:#719e07>!</span>strncmp(argv[<span style=color:#2aa198>1</span>],code,<span style=color:#2aa198>32</span>) )
+</span></span><span style=display:flex><span>  {
+</span></span><span style=display:flex><span>    printf(<span style=color:#2aa198>&#34;Correct</span><span style=color:#cb4b16>\n</span><span style=color:#2aa198>&#34;</span>);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  <span style=color:#719e07>else</span>
+</span></span><span style=display:flex><span>  {
+</span></span><span style=display:flex><span>    printf(<span style=color:#2aa198>&#34;Wrong</span><span style=color:#cb4b16>\n</span><span style=color:#2aa198>&#34;</span>);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#719e07>return</span> <span style=color:#2aa198>0</span>;
+</span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure></p><p>Remember to use the <code>ggdb</code> option to compile with debug information (for GDB). From what I understand this is very similar to the <code>g</code> option. We will be using GDB to dive into the binary to observe strncmp's behavior. Let's use <code>gcc -ggdb -o crkme1 crkme1.c</code>.</p><h3 id=using-pin-with-crkme1>Using Pin with Crkme1
 <a class=header-link href=#using-pin-with-crkme1><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>To run our Pin tool against any executable execute <code>pin -t myins.so -- ./crkme1 012345</code>. Now let's experiment with some input. Our super secret code starts with <code>7b</code> so I will be <code>fuzzing</code> (for very simplistic definition of fuzzing) the first character and look at the number of executed instructions.</p>
-<figure class=code>
+</h3><p>To run our Pin tool against any executable execute <code>pin -t myins.so -- ./crkme1 012345</code>. Now let's experiment with some input. Our super secret code starts with <code>7b</code> so I will be <code>fuzzing</code> (for very simplistic definition of fuzzing) the first character and look at the number of executed instructions.</p><figure class=code>
 <figcaption>
 <span>Changing first character</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ pin -t myins.so -- ./crkme1 1zzz
-Wrong
-Count: <span style=color:#2aa198>100013</span>
-$ pin -t myins.so -- ./crkme1 5zzz
-Wrong
-Count: <span style=color:#2aa198>100013</span>
-$ pin -t myins.so -- ./crkme1 7zzz
-Wrong
-Count: <span style=color:#2aa198>100015</span> <span style=color:#586e75># interesting</span>
-$ pin -t myins.so -- ./crkme1 bzzz
-Wrong
-Count: <span style=color:#2aa198>100013</span>
-<span style=color:#268bd2>$pin</span> -t myins.so -- ./crkme1 @zzz
-Wrong
-Count: <span style=color:#2aa198>100013</span></code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>Notice a pattern? Seems like we executed two extra instructions when our first character matched. Assuming our theory is correct and we have the first character <code>7</code>, let's experiment with the second character.</p>
-<figure class=code>
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ pin -t myins.so -- ./crkme1 1zzz
+</span></span><span style=display:flex><span>Wrong
+</span></span><span style=display:flex><span>Count: <span style=color:#2aa198>100013</span>
+</span></span><span style=display:flex><span>$ pin -t myins.so -- ./crkme1 5zzz
+</span></span><span style=display:flex><span>Wrong
+</span></span><span style=display:flex><span>Count: <span style=color:#2aa198>100013</span>
+</span></span><span style=display:flex><span>$ pin -t myins.so -- ./crkme1 7zzz
+</span></span><span style=display:flex><span>Wrong
+</span></span><span style=display:flex><span>Count: <span style=color:#2aa198>100015</span> <span style=color:#586e75># interesting</span>
+</span></span><span style=display:flex><span>$ pin -t myins.so -- ./crkme1 bzzz
+</span></span><span style=display:flex><span>Wrong
+</span></span><span style=display:flex><span>Count: <span style=color:#2aa198>100013</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>$pin</span> -t myins.so -- ./crkme1 @zzz
+</span></span><span style=display:flex><span>Wrong
+</span></span><span style=display:flex><span>Count: <span style=color:#2aa198>100013</span></span></span></code></pre></td></tr></table></div></div></div></figure><p>Notice a pattern? Seems like we executed two extra instructions when our first character matched. Assuming our theory is correct and we have the first character <code>7</code>, let's experiment with the second character.</p><figure class=code>
 <figcaption>
 <span>Changing second character</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ pin -t myins.so -- ./crkme1 71zz
-Wrong
-Count: <span style=color:#2aa198>100015</span>
-$ pin -t myins.so -- ./crkme1 75zz
-Wrong
-Count: <span style=color:#2aa198>100015</span>
-$ pin -t myins.so -- ./crkme1 7bzz
-Wrong
-Count: <span style=color:#2aa198>100017</span> <span style=color:#586e75># 2 extra instructions executed</span>
-$ pin -t myins.so -- ./crkme1 7@zz
-Wrong
-Count: <span style=color:#2aa198>100015</span></code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>At this point you probably have a good idea why this is happening. But let's look at the assembly code.</p>
-<h3 id=gdb-and-strncmp>GDB and strncmp
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ pin -t myins.so -- ./crkme1 71zz
+</span></span><span style=display:flex><span>Wrong
+</span></span><span style=display:flex><span>Count: <span style=color:#2aa198>100015</span>
+</span></span><span style=display:flex><span>$ pin -t myins.so -- ./crkme1 75zz
+</span></span><span style=display:flex><span>Wrong
+</span></span><span style=display:flex><span>Count: <span style=color:#2aa198>100015</span>
+</span></span><span style=display:flex><span>$ pin -t myins.so -- ./crkme1 7bzz
+</span></span><span style=display:flex><span>Wrong
+</span></span><span style=display:flex><span>Count: <span style=color:#2aa198>100017</span> <span style=color:#586e75># 2 extra instructions executed</span>
+</span></span><span style=display:flex><span>$ pin -t myins.so -- ./crkme1 7@zz
+</span></span><span style=display:flex><span>Wrong
+</span></span><span style=display:flex><span>Count: <span style=color:#2aa198>100015</span></span></span></code></pre></td></tr></table></div></div></div></figure><p>At this point you probably have a good idea why this is happening. But let's look at the assembly code.</p><h3 id=gdb-and-strncmp>GDB and strncmp
 <a class=header-link href=#gdb-and-strncmp><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>Good thing we compiled our binary with debug information. Let's look at the assembly code for strncmp:</p>
-<figure class=code>
+</h3><p>Good thing we compiled our binary with debug information. Let's look at the assembly code for strncmp:</p><figure class=code>
 <figcaption>
 <span>Running crkme1 in gdb</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#586e75># q starts gdb in quiet mode</span>
-$ gdb ./crkme1 -q
-Reading symbols from /root/Desktop/kek/crkme1...done.
-<span style=color:#586e75># putting a break on strncmp, this is possible because we compiled with -ggdb option</span>
-<span style=color:#719e07>(</span>gdb<span style=color:#719e07>)</span> <span style=color:#b58900>break</span> strncmp
-Breakpoint <span style=color:#2aa198>1</span> at 0x8048350
-<span style=color:#586e75># passing 7bzz as a run-time argument. r stands for run</span>
-<span style=color:#719e07>(</span>gdb<span style=color:#719e07>)</span> r 7bzz
-Starting program: /root/Desktop/kek/crkme1 7bzz
-
-Breakpoint 1, 0xb7f82b80 in ?? <span style=color:#719e07>()</span> from /lib/i386-linux-gnu/i686/cmov/libc.so.6
-<span style=color:#719e07>(</span>gdb<span style=color:#719e07>)</span> disass
-No <span style=color:#719e07>function</span> contains program counter <span style=color:#719e07>for</span> selected frame.
-<span style=color:#586e75># oops what happened here?</span>
-<span style=color:#719e07>(</span>gdb<span style=color:#719e07>)</span> </code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>To get a better a picture of the problem, we're going to go through the same process in verbose mode in GDB using the <code>set verbose on</code> command.</p>
-<figure class=code>
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#586e75># q starts gdb in quiet mode</span>
+</span></span><span style=display:flex><span>$ gdb ./crkme1 -q
+</span></span><span style=display:flex><span>Reading symbols from /root/Desktop/kek/crkme1...done.
+</span></span><span style=display:flex><span><span style=color:#586e75># putting a break on strncmp, this is possible because we compiled with -ggdb option</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>(</span>gdb<span style=color:#719e07>)</span> <span style=color:#b58900>break</span> strncmp
+</span></span><span style=display:flex><span>Breakpoint <span style=color:#2aa198>1</span> at 0x8048350
+</span></span><span style=display:flex><span><span style=color:#586e75># passing 7bzz as a run-time argument. r stands for run</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>(</span>gdb<span style=color:#719e07>)</span> r 7bzz
+</span></span><span style=display:flex><span>Starting program: /root/Desktop/kek/crkme1 7bzz
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Breakpoint 1, 0xb7f82b80 in ?? <span style=color:#719e07>()</span> from /lib/i386-linux-gnu/i686/cmov/libc.so.6
+</span></span><span style=display:flex><span><span style=color:#719e07>(</span>gdb<span style=color:#719e07>)</span> disass
+</span></span><span style=display:flex><span>No <span style=color:#719e07>function</span> contains program counter <span style=color:#719e07>for</span> selected frame.
+</span></span><span style=display:flex><span><span style=color:#586e75># oops what happened here?</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>(</span>gdb<span style=color:#719e07>)</span> </span></span></code></pre></td></tr></table></div></div></div></figure><p>To get a better a picture of the problem, we're going to go through the same process in verbose mode in GDB using the <code>set verbose on</code> command.</p><figure class=code>
 <figcaption>
 <span>Running in gdb with verbose on</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ gdb ./crkme1 -q
-Reading symbols from /root/Desktop/kek/crkme1...done.
-<span style=color:#719e07>(</span>gdb<span style=color:#719e07>)</span> <span style=color:#b58900>set</span> verbose on
-<span style=color:#719e07>(</span>gdb<span style=color:#719e07>)</span> <span style=color:#b58900>break</span> strncmp
-Breakpoint <span style=color:#2aa198>1</span> at 0x8048350
-<span style=color:#719e07>(</span>gdb<span style=color:#719e07>)</span> r 7bzz
-Starting program: /root/Desktop/kek/crkme1 7bzz
-Reading symbols from /lib/ld-linux.so.2...<span style=color:#719e07>(</span>no debugging symbols found<span style=color:#719e07>)</span>...done.
-Loaded symbols <span style=color:#719e07>for</span> /lib/ld-linux.so.2
-Reading symbols from system-supplied DSO at 0xb7fe1000...<span style=color:#719e07>(</span>no debugging symbols found<span style=color:#719e07>)</span>...done.
-<span style=color:#586e75># aha, no debugging symbols found for libc6</span>
-Reading symbols from /lib/i386-linux-gnu/i686/cmov/libc.so.6...<span style=color:#719e07>(</span>no debugging symbols found<span style=color:#719e07>)</span>...done.
-Loaded symbols <span style=color:#719e07>for</span> /lib/i386-linux-gnu/i686/cmov/libc.so.6
-
-Breakpoint 1, 0xb7f82b80 in ?? <span style=color:#719e07>()</span> from /lib/i386-linux-gnu/i686/cmov/libc.so.6
-<span style=color:#719e07>(</span>gdb<span style=color:#719e07>)</span> disass
-No <span style=color:#719e07>function</span> contains program counter <span style=color:#719e07>for</span> selected frame.</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>According to line 12, we we need the debugging symbols for libc to look inside the code.
-On Kali use <code>apt-get install libc6-dbg</code>. Here we go again:</p>
-<figure class=code>
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ gdb ./crkme1 -q
+</span></span><span style=display:flex><span>Reading symbols from /root/Desktop/kek/crkme1...done.
+</span></span><span style=display:flex><span><span style=color:#719e07>(</span>gdb<span style=color:#719e07>)</span> <span style=color:#b58900>set</span> verbose on
+</span></span><span style=display:flex><span><span style=color:#719e07>(</span>gdb<span style=color:#719e07>)</span> <span style=color:#b58900>break</span> strncmp
+</span></span><span style=display:flex><span>Breakpoint <span style=color:#2aa198>1</span> at 0x8048350
+</span></span><span style=display:flex><span><span style=color:#719e07>(</span>gdb<span style=color:#719e07>)</span> r 7bzz
+</span></span><span style=display:flex><span>Starting program: /root/Desktop/kek/crkme1 7bzz
+</span></span><span style=display:flex><span>Reading symbols from /lib/ld-linux.so.2...<span style=color:#719e07>(</span>no debugging symbols found<span style=color:#719e07>)</span>...done.
+</span></span><span style=display:flex><span>Loaded symbols <span style=color:#719e07>for</span> /lib/ld-linux.so.2
+</span></span><span style=display:flex><span>Reading symbols from system-supplied DSO at 0xb7fe1000...<span style=color:#719e07>(</span>no debugging symbols found<span style=color:#719e07>)</span>...done.
+</span></span><span style=display:flex><span><span style=color:#586e75># aha, no debugging symbols found for libc6</span>
+</span></span><span style=display:flex><span>Reading symbols from /lib/i386-linux-gnu/i686/cmov/libc.so.6...<span style=color:#719e07>(</span>no debugging symbols found<span style=color:#719e07>)</span>...done.
+</span></span><span style=display:flex><span>Loaded symbols <span style=color:#719e07>for</span> /lib/i386-linux-gnu/i686/cmov/libc.so.6
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Breakpoint 1, 0xb7f82b80 in ?? <span style=color:#719e07>()</span> from /lib/i386-linux-gnu/i686/cmov/libc.so.6
+</span></span><span style=display:flex><span><span style=color:#719e07>(</span>gdb<span style=color:#719e07>)</span> disass
+</span></span><span style=display:flex><span>No <span style=color:#719e07>function</span> contains program counter <span style=color:#719e07>for</span> selected frame.</span></span></code></pre></td></tr></table></div></div></div></figure><p>According to line 12, we we need the debugging symbols for libc to look inside the code.
+On Kali use <code>apt-get install libc6-dbg</code>. Here we go again:</p><figure class=code>
 <figcaption>
 <span>After installing libc6-dbg</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-nasm data-lang=nasm>root@kali:~/<span style=color:#268bd2>Desktop</span><span style=color:#719e07>/</span><span style=color:#268bd2>kek#</span> <span style=color:#268bd2>gdb</span> <span style=color:#268bd2>.</span><span style=color:#719e07>/</span><span style=color:#268bd2>crkme1</span> <span style=color:#719e07>-</span><span style=color:#268bd2>q</span>
-<span style=color:#268bd2>Reading</span> <span style=color:#268bd2>symbols</span> <span style=color:#268bd2>from</span> <span style=color:#719e07>/</span><span style=color:#268bd2>root</span><span style=color:#719e07>/</span><span style=color:#268bd2>Desktop</span><span style=color:#719e07>/</span><span style=color:#268bd2>kek</span><span style=color:#719e07>/</span><span style=color:#268bd2>crkme1...done.</span>
-(<span style=color:#268bd2>gdb</span>) <span style=color:#268bd2>break</span> <span style=color:#268bd2>strncmp</span>
-<span style=color:#268bd2>Breakpoint</span> <span style=color:#2aa198>1</span> <span style=color:#268bd2>at</span> <span style=color:#2aa198>0x8048350</span>
-(<span style=color:#268bd2>gdb</span>) <span style=color:#268bd2>r</span> <span style=color:#2aa198>7</span><span style=color:#268bd2>bzz</span>
-<span style=color:#268bd2>Starting</span> <span style=color:#268bd2>program</span>: <span style=color:#719e07>/</span><span style=color:#268bd2>root</span><span style=color:#719e07>/</span><span style=color:#268bd2>Desktop</span><span style=color:#719e07>/</span><span style=color:#268bd2>kek</span><span style=color:#719e07>/</span><span style=color:#268bd2>crkme1</span> <span style=color:#2aa198>7</span><span style=color:#268bd2>bzz</span>
-
-<span style=color:#268bd2>Breakpoint</span> <span style=color:#2aa198>1</span>, <span style=color:#268bd2>__strncmp_ssse3</span> ()
-    <span style=color:#268bd2>at</span> <span style=color:#268bd2>..</span><span style=color:#719e07>/</span><span style=color:#268bd2>sysdeps</span><span style=color:#719e07>/</span><span style=color:#268bd2>i386</span><span style=color:#719e07>/</span><span style=color:#268bd2>i686</span><span style=color:#719e07>/</span><span style=color:#268bd2>multiarch</span><span style=color:#719e07>/</span><span style=color:#268bd2>strcmp</span><span style=color:#719e07>-</span><span style=color:#b58900>ss</span><span style=color:#268bd2>se3.S</span>:<span style=color:#2aa198>65</span>
-65	<span style=color:#268bd2>..</span><span style=color:#719e07>/</span><span style=color:#268bd2>sysdeps</span><span style=color:#719e07>/</span><span style=color:#268bd2>i386</span><span style=color:#719e07>/</span><span style=color:#268bd2>i686</span><span style=color:#719e07>/</span><span style=color:#268bd2>multiarch</span><span style=color:#719e07>/</span><span style=color:#268bd2>strcmp</span><span style=color:#719e07>-</span><span style=color:#b58900>ss</span><span style=color:#268bd2>se3.S</span>: <span style=color:#268bd2>No</span> <span style=color:#268bd2>such</span> <span style=color:#268bd2>file</span> <span style=color:#268bd2>or</span> <span style=color:#b58900>di</span><span style=color:#268bd2>rectory.</span>
-(<span style=color:#268bd2>gdb</span>) <span style=color:#b58900>di</span><span style=color:#268bd2>sass</span>
-<span style=color:#268bd2>Dump</span> <span style=color:#268bd2>of</span> <span style=color:#268bd2>assembler</span> <span style=color:#268bd2>code</span> <span style=color:#268bd2>for</span> <span style=color:#268bd2>function</span> <span style=color:#268bd2>__strncmp_ssse3</span>:
-=&gt; 0<span style=color:#268bd2>xb7f82b80</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>0</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>push</span>   <span style=color:#b58900>ebp</span>
-   0<span style=color:#268bd2>xb7f82b81</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>1</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>mov</span>    <span style=color:#b58900>edx</span>,<span style=color:#dc322f>DWORD</span> <span style=color:#268bd2>PTR</span> [<span style=color:#b58900>esp</span><span style=color:#719e07>+</span><span style=color:#2aa198>0x8</span>]
-   0<span style=color:#268bd2>xb7f82b85</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>5</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>mov</span>    <span style=color:#b58900>eax</span>,<span style=color:#dc322f>DWORD</span> <span style=color:#268bd2>PTR</span> [<span style=color:#b58900>esp</span><span style=color:#719e07>+</span><span style=color:#2aa198>0xc</span>]
-   0<span style=color:#268bd2>xb7f82b89</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>9</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>mov</span>    <span style=color:#b58900>ebp</span>,<span style=color:#dc322f>DWORD</span> <span style=color:#268bd2>PTR</span> [<span style=color:#b58900>esp</span><span style=color:#719e07>+</span><span style=color:#2aa198>0x10</span>]
-   0<span style=color:#268bd2>xb7f82b8d</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>13</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>cmp</span>    <span style=color:#b58900>ebp</span>,<span style=color:#2aa198>0x10</span>
-   0<span style=color:#268bd2>xb7f82b90</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>16</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>jb</span>     <span style=color:#2aa198>0xb7f843d0</span> <span style=color:#719e07>&lt;</span><span style=color:#268bd2>__strncmp_ssse3</span><span style=color:#719e07>+</span><span style=color:#2aa198>6224</span><span style=color:#719e07>&gt;</span></code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>Now we can see what happens in strncmp. The following is the cleaned up version of the assembly of strncmp.</p>
-<figure class=code>
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-nasm data-lang=nasm><span style=display:flex><span>root@kali:~/<span style=color:#268bd2>Desktop</span><span style=color:#719e07>/</span><span style=color:#268bd2>kek#</span> <span style=color:#268bd2>gdb</span> <span style=color:#268bd2>.</span><span style=color:#719e07>/</span><span style=color:#268bd2>crkme1</span> <span style=color:#719e07>-</span><span style=color:#268bd2>q</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>Reading</span> <span style=color:#268bd2>symbols</span> <span style=color:#268bd2>from</span> <span style=color:#719e07>/</span><span style=color:#268bd2>root</span><span style=color:#719e07>/</span><span style=color:#268bd2>Desktop</span><span style=color:#719e07>/</span><span style=color:#268bd2>kek</span><span style=color:#719e07>/</span><span style=color:#268bd2>crkme1...done.</span>
+</span></span><span style=display:flex><span>(<span style=color:#268bd2>gdb</span>) <span style=color:#268bd2>break</span> <span style=color:#268bd2>strncmp</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>Breakpoint</span> <span style=color:#2aa198>1</span> <span style=color:#268bd2>at</span> <span style=color:#2aa198>0x8048350</span>
+</span></span><span style=display:flex><span>(<span style=color:#268bd2>gdb</span>) <span style=color:#268bd2>r</span> <span style=color:#2aa198>7</span><span style=color:#268bd2>bzz</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>Starting</span> <span style=color:#268bd2>program</span>: <span style=color:#719e07>/</span><span style=color:#268bd2>root</span><span style=color:#719e07>/</span><span style=color:#268bd2>Desktop</span><span style=color:#719e07>/</span><span style=color:#268bd2>kek</span><span style=color:#719e07>/</span><span style=color:#268bd2>crkme1</span> <span style=color:#2aa198>7</span><span style=color:#268bd2>bzz</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>Breakpoint</span> <span style=color:#2aa198>1</span>, <span style=color:#268bd2>__strncmp_ssse3</span> ()
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>at</span> <span style=color:#268bd2>..</span><span style=color:#719e07>/</span><span style=color:#268bd2>sysdeps</span><span style=color:#719e07>/</span><span style=color:#268bd2>i386</span><span style=color:#719e07>/</span><span style=color:#268bd2>i686</span><span style=color:#719e07>/</span><span style=color:#268bd2>multiarch</span><span style=color:#719e07>/</span><span style=color:#268bd2>strcmp</span><span style=color:#719e07>-</span><span style=color:#b58900>ss</span><span style=color:#268bd2>se3.S</span>:<span style=color:#2aa198>65</span>
+</span></span><span style=display:flex><span>65	<span style=color:#268bd2>..</span><span style=color:#719e07>/</span><span style=color:#268bd2>sysdeps</span><span style=color:#719e07>/</span><span style=color:#268bd2>i386</span><span style=color:#719e07>/</span><span style=color:#268bd2>i686</span><span style=color:#719e07>/</span><span style=color:#268bd2>multiarch</span><span style=color:#719e07>/</span><span style=color:#268bd2>strcmp</span><span style=color:#719e07>-</span><span style=color:#b58900>ss</span><span style=color:#268bd2>se3.S</span>: <span style=color:#268bd2>No</span> <span style=color:#268bd2>such</span> <span style=color:#268bd2>file</span> <span style=color:#268bd2>or</span> <span style=color:#b58900>di</span><span style=color:#268bd2>rectory.</span>
+</span></span><span style=display:flex><span>(<span style=color:#268bd2>gdb</span>) <span style=color:#b58900>di</span><span style=color:#268bd2>sass</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>Dump</span> <span style=color:#268bd2>of</span> <span style=color:#268bd2>assembler</span> <span style=color:#268bd2>code</span> <span style=color:#268bd2>for</span> <span style=color:#268bd2>function</span> <span style=color:#268bd2>__strncmp_ssse3</span>:
+</span></span><span style=display:flex><span>=&gt; 0<span style=color:#268bd2>xb7f82b80</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>0</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>push</span>   <span style=color:#b58900>ebp</span>
+</span></span><span style=display:flex><span>   0<span style=color:#268bd2>xb7f82b81</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>1</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>mov</span>    <span style=color:#b58900>edx</span>,<span style=color:#dc322f>DWORD</span> <span style=color:#268bd2>PTR</span> [<span style=color:#b58900>esp</span><span style=color:#719e07>+</span><span style=color:#2aa198>0x8</span>]
+</span></span><span style=display:flex><span>   0<span style=color:#268bd2>xb7f82b85</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>5</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>mov</span>    <span style=color:#b58900>eax</span>,<span style=color:#dc322f>DWORD</span> <span style=color:#268bd2>PTR</span> [<span style=color:#b58900>esp</span><span style=color:#719e07>+</span><span style=color:#2aa198>0xc</span>]
+</span></span><span style=display:flex><span>   0<span style=color:#268bd2>xb7f82b89</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>9</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>mov</span>    <span style=color:#b58900>ebp</span>,<span style=color:#dc322f>DWORD</span> <span style=color:#268bd2>PTR</span> [<span style=color:#b58900>esp</span><span style=color:#719e07>+</span><span style=color:#2aa198>0x10</span>]
+</span></span><span style=display:flex><span>   0<span style=color:#268bd2>xb7f82b8d</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>13</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>cmp</span>    <span style=color:#b58900>ebp</span>,<span style=color:#2aa198>0x10</span>
+</span></span><span style=display:flex><span>   0<span style=color:#268bd2>xb7f82b90</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>16</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>jb</span>     <span style=color:#2aa198>0xb7f843d0</span> <span style=color:#719e07>&lt;</span><span style=color:#268bd2>__strncmp_ssse3</span><span style=color:#719e07>+</span><span style=color:#2aa198>6224</span><span style=color:#719e07>&gt;</span></span></span></code></pre></td></tr></table></div></div></div></figure><p>Now we can see what happens in strncmp. The following is the cleaned up version of the assembly of strncmp.</p><figure class=code>
 <figcaption>
 <span>strncmp</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">29
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">30
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">31
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">32
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">33
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">34
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">35
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">36
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">37
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">38
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">39
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-nasm data-lang=nasm><span style=color:#586e75>; assuming we called strncmp (argv[1],code,32);</span>
-
-0<span style=color:#268bd2>xb7f82b80</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>0</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>push</span>   <span style=color:#b58900>ebp</span>
-0<span style=color:#268bd2>xb7f82b81</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>1</span><span style=color:#719e07>&gt;</span>: 	<span style=color:#268bd2>mov</span>    <span style=color:#b58900>edx</span>,<span style=color:#dc322f>DWORD</span> <span style=color:#268bd2>PTR</span> [<span style=color:#b58900>esp</span><span style=color:#719e07>+</span><span style=color:#2aa198>0x8</span>]  <span style=color:#586e75>; argv[1] or &#34;7bzz&#34;</span>
-0<span style=color:#268bd2>xb7f82b85</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>5</span><span style=color:#719e07>&gt;</span>: 	<span style=color:#268bd2>mov</span>    <span style=color:#b58900>eax</span>,<span style=color:#dc322f>DWORD</span> <span style=color:#268bd2>PTR</span> [<span style=color:#b58900>esp</span><span style=color:#719e07>+</span><span style=color:#2aa198>0xc</span>]  <span style=color:#586e75>; code or &#34;7bc3 ..&#34;</span>
-0<span style=color:#268bd2>xb7f82b89</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>9</span><span style=color:#719e07>&gt;</span>: 	<span style=color:#268bd2>mov</span>    <span style=color:#b58900>ebp</span>,<span style=color:#dc322f>DWORD</span> <span style=color:#268bd2>PTR</span> [<span style=color:#b58900>esp</span><span style=color:#719e07>+</span><span style=color:#2aa198>0x10</span>] <span style=color:#586e75>; 32 or 0x20</span>
-0<span style=color:#268bd2>xb7f82b8d</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>13</span><span style=color:#719e07>&gt;</span>: 	<span style=color:#268bd2>cmp</span>    <span style=color:#b58900>ebp</span>,<span style=color:#2aa198>0x10</span>                 <span style=color:#586e75>; 32 compared to 0x10 (16 decimal)</span>
-0<span style=color:#268bd2>xb7f82b90</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>16</span><span style=color:#719e07>&gt;</span>: 	<span style=color:#268bd2>jb</span>     <span style=color:#2aa198>0xb7f843d0</span> <span style=color:#719e07>&lt;</span><span style=color:#268bd2>__strncmp_ssse3</span><span style=color:#719e07>+</span><span style=color:#2aa198>6224</span><span style=color:#719e07>&gt;</span>
-<span style=color:#268bd2>...</span>
-<span style=color:#586e75>; if number of bytes to compare is bigger than 16</span>
-<span style=color:#586e75>; let&#39;s assume it is not and see what happens next</span>
-<span style=color:#268bd2>...</span>
-0<span style=color:#268bd2>xb7f843d0</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6224</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>test</span>   <span style=color:#b58900>ebp</span>,<span style=color:#b58900>ebp</span>  <span style=color:#586e75>; if (ebp == 0) goto 0xb7f843c3</span>
-0<span style=color:#268bd2>xb7f843d2</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6226</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>je</span>     <span style=color:#2aa198>0xb7f843c3</span> <span style=color:#719e07>&lt;</span><span style=color:#268bd2>__strncmp_ssse3</span><span style=color:#719e07>+</span><span style=color:#2aa198>6211</span><span style=color:#719e07>&gt;</span> 
-0<span style=color:#268bd2>xb7f843d4</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6228</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>movzx</span>  <span style=color:#b58900>ecx</span>,<span style=color:#dc322f>BYTE</span> <span style=color:#268bd2>PTR</span> [<span style=color:#b58900>eax</span>] <span style=color:#586e75>; ecx = code</span>
-0<span style=color:#268bd2>xb7f843d7</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6231</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>cmp</span>    <span style=color:#dc322f>BYTE</span> <span style=color:#268bd2>PTR</span> [<span style=color:#b58900>edx</span>],<span style=color:#b58900>cl</span>  <span style=color:#586e75>; if (code[0] != argv[1][0]) goto 0xb7f843b0;</span>
-0<span style=color:#268bd2>xb7f843d9</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6233</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>jne</span>    <span style=color:#2aa198>0xb7f843b0</span> <span style=color:#719e07>&lt;</span><span style=color:#268bd2>__strncmp_ssse3</span><span style=color:#719e07>+</span><span style=color:#2aa198>6192</span><span style=color:#719e07>&gt;</span>
-0<span style=color:#268bd2>xb7f843db</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6235</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>test</span>   <span style=color:#b58900>cl</span>,<span style=color:#b58900>cl</span>  <span style=color:#586e75>; if (code[0] == 0) goto 0xb7f843c3; // have we reached the end of code?</span>
-0<span style=color:#268bd2>xb7f843dd</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6237</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>je</span>     <span style=color:#2aa198>0xb7f843c3</span> <span style=color:#719e07>&lt;</span><span style=color:#268bd2>__strncmp_ssse3</span><span style=color:#719e07>+</span><span style=color:#2aa198>6211</span><span style=color:#719e07>&gt;</span>
-0<span style=color:#268bd2>xb7f843df</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6239</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>cmp</span>    <span style=color:#b58900>ebp</span>,<span style=color:#2aa198>0x1</span>  <span style=color:#586e75>; if (counter == 1) goto 0xb7f843c3; // was this our last compare?</span>
-0<span style=color:#268bd2>xb7f843e2</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6242</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>je</span>     <span style=color:#2aa198>0xb7f843c3</span> <span style=color:#719e07>&lt;</span><span style=color:#268bd2>__strncmp_ssse3</span><span style=color:#719e07>+</span><span style=color:#2aa198>6211</span><span style=color:#719e07>&gt;</span>
-0<span style=color:#268bd2>xb7f843e4</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6244</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>movzx</span>  <span style=color:#b58900>ecx</span>,<span style=color:#dc322f>BYTE</span> <span style=color:#268bd2>PTR</span> [<span style=color:#b58900>eax</span><span style=color:#719e07>+</span><span style=color:#2aa198>0x1</span>]	<span style=color:#586e75>; ecx = code[1];</span>
-0<span style=color:#268bd2>xb7f843e8</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6248</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>cmp</span>    <span style=color:#dc322f>BYTE</span> <span style=color:#268bd2>PTR</span> [<span style=color:#b58900>edx</span><span style=color:#719e07>+</span><span style=color:#2aa198>0x1</span>],<span style=color:#b58900>cl</span>  <span style=color:#586e75>; if (code[1] != argv[1][1]) goto 0xb7f843b0;</span>
-0<span style=color:#268bd2>xb7f843eb</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6251</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>jne</span>    <span style=color:#2aa198>0xb7f843b0</span> <span style=color:#719e07>&lt;</span><span style=color:#268bd2>__strncmp_ssse3</span><span style=color:#719e07>+</span><span style=color:#2aa198>6192</span><span style=color:#719e07>&gt;</span>
-0<span style=color:#268bd2>xb7f843ed</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6253</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>test</span>   <span style=color:#b58900>cl</span>,<span style=color:#b58900>cl</span>  <span style=color:#586e75>; if (code[1] == 0) goto 0xb7f843c3; // have we reached the end of code?</span>
-0<span style=color:#268bd2>xb7f843ef</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6255</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>je</span>     <span style=color:#2aa198>0xb7f843c3</span> <span style=color:#719e07>&lt;</span><span style=color:#268bd2>__strncmp_ssse3</span><span style=color:#719e07>+</span><span style=color:#2aa198>6211</span><span style=color:#719e07>&gt;</span>
-0<span style=color:#268bd2>xb7f843f1</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6257</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>cmp</span>    <span style=color:#b58900>ebp</span>,<span style=color:#2aa198>0x2</span>
-0<span style=color:#268bd2>xb7f843f4</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6260</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>je</span>     <span style=color:#2aa198>0xb7f843c3</span> <span style=color:#719e07>&lt;</span><span style=color:#268bd2>__strncmp_ssse3</span><span style=color:#719e07>+</span><span style=color:#2aa198>6211</span><span style=color:#719e07>&gt;</span>
-<span style=color:#268bd2>...</span>
-<span style=color:#586e75>; similar byte compares until the end</span>
-<span style=color:#268bd2>...</span>
-0<span style=color:#268bd2>xb7f8453f</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6591</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>test</span>   <span style=color:#b58900>cl</span>,<span style=color:#b58900>cl</span>
-0<span style=color:#268bd2>xb7f84541</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6593</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>je</span>     <span style=color:#2aa198>0xb7f843c3</span> <span style=color:#719e07>&lt;</span><span style=color:#268bd2>__strncmp_ssse3</span><span style=color:#719e07>+</span><span style=color:#2aa198>621</span>
-0<span style=color:#268bd2>xb7f84547</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6599</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>cmp</span>    <span style=color:#b58900>ebp</span>,<span style=color:#2aa198>0xf</span>
-0<span style=color:#268bd2>xb7f8454a</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6602</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>je</span>     <span style=color:#2aa198>0xb7f843c3</span> <span style=color:#719e07>&lt;</span><span style=color:#268bd2>__strncmp_ssse3</span><span style=color:#719e07>+</span><span style=color:#2aa198>621</span>
-0<span style=color:#268bd2>xb7f84550</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6608</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>movzx</span>  <span style=color:#b58900>ecx</span>,<span style=color:#dc322f>BYTE</span> <span style=color:#268bd2>PTR</span> [<span style=color:#b58900>eax</span><span style=color:#719e07>+</span><span style=color:#2aa198>0xf</span>]
-0<span style=color:#268bd2>xb7f84554</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6612</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>cmp</span>    <span style=color:#dc322f>BYTE</span> <span style=color:#268bd2>PTR</span> [<span style=color:#b58900>edx</span><span style=color:#719e07>+</span><span style=color:#2aa198>0xf</span>],<span style=color:#b58900>cl</span>
-0<span style=color:#268bd2>xb7f84557</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6615</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>jne</span>    <span style=color:#2aa198>0xb7f843b0</span> <span style=color:#719e07>&lt;</span><span style=color:#268bd2>__strncmp_ssse3</span><span style=color:#719e07>+</span><span style=color:#2aa198>619</span>
-0<span style=color:#268bd2>xb7f8455d</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6621</span><span style=color:#719e07>&gt;</span><span style=color:#586e75>;	test   cl,cl</span></code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>We can see that the implementation has unrolled the for and compares 16 bytes one by one. If a character is correct, two more instructions are executed (as we saw) which are <code>test cl,cl</code> and <code>je 0xb7f843c3</code> which basically checks if we have reached the end of first string. Now we know why. Let us build our tool.</p>
-<h3 id=pinsolver-mk1>PinSolver Mk1
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">31
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">32
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">33
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">34
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">35
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">36
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">37
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">38
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">39
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-nasm data-lang=nasm><span style=display:flex><span><span style=color:#586e75>; assuming we called strncmp (argv[1],code,32);</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f82b80</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>0</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>push</span>   <span style=color:#b58900>ebp</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f82b81</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>1</span><span style=color:#719e07>&gt;</span>: 	<span style=color:#268bd2>mov</span>    <span style=color:#b58900>edx</span>,<span style=color:#dc322f>DWORD</span> <span style=color:#268bd2>PTR</span> [<span style=color:#b58900>esp</span><span style=color:#719e07>+</span><span style=color:#2aa198>0x8</span>]  <span style=color:#586e75>; argv[1] or &#34;7bzz&#34;</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f82b85</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>5</span><span style=color:#719e07>&gt;</span>: 	<span style=color:#268bd2>mov</span>    <span style=color:#b58900>eax</span>,<span style=color:#dc322f>DWORD</span> <span style=color:#268bd2>PTR</span> [<span style=color:#b58900>esp</span><span style=color:#719e07>+</span><span style=color:#2aa198>0xc</span>]  <span style=color:#586e75>; code or &#34;7bc3 ..&#34;</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f82b89</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>9</span><span style=color:#719e07>&gt;</span>: 	<span style=color:#268bd2>mov</span>    <span style=color:#b58900>ebp</span>,<span style=color:#dc322f>DWORD</span> <span style=color:#268bd2>PTR</span> [<span style=color:#b58900>esp</span><span style=color:#719e07>+</span><span style=color:#2aa198>0x10</span>] <span style=color:#586e75>; 32 or 0x20</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f82b8d</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>13</span><span style=color:#719e07>&gt;</span>: 	<span style=color:#268bd2>cmp</span>    <span style=color:#b58900>ebp</span>,<span style=color:#2aa198>0x10</span>                 <span style=color:#586e75>; 32 compared to 0x10 (16 decimal)</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f82b90</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>16</span><span style=color:#719e07>&gt;</span>: 	<span style=color:#268bd2>jb</span>     <span style=color:#2aa198>0xb7f843d0</span> <span style=color:#719e07>&lt;</span><span style=color:#268bd2>__strncmp_ssse3</span><span style=color:#719e07>+</span><span style=color:#2aa198>6224</span><span style=color:#719e07>&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>...</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>; if number of bytes to compare is bigger than 16</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>; let&#39;s assume it is not and see what happens next</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>...</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f843d0</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6224</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>test</span>   <span style=color:#b58900>ebp</span>,<span style=color:#b58900>ebp</span>  <span style=color:#586e75>; if (ebp == 0) goto 0xb7f843c3</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f843d2</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6226</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>je</span>     <span style=color:#2aa198>0xb7f843c3</span> <span style=color:#719e07>&lt;</span><span style=color:#268bd2>__strncmp_ssse3</span><span style=color:#719e07>+</span><span style=color:#2aa198>6211</span><span style=color:#719e07>&gt;</span> 
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f843d4</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6228</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>movzx</span>  <span style=color:#b58900>ecx</span>,<span style=color:#dc322f>BYTE</span> <span style=color:#268bd2>PTR</span> [<span style=color:#b58900>eax</span>] <span style=color:#586e75>; ecx = code</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f843d7</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6231</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>cmp</span>    <span style=color:#dc322f>BYTE</span> <span style=color:#268bd2>PTR</span> [<span style=color:#b58900>edx</span>],<span style=color:#b58900>cl</span>  <span style=color:#586e75>; if (code[0] != argv[1][0]) goto 0xb7f843b0;</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f843d9</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6233</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>jne</span>    <span style=color:#2aa198>0xb7f843b0</span> <span style=color:#719e07>&lt;</span><span style=color:#268bd2>__strncmp_ssse3</span><span style=color:#719e07>+</span><span style=color:#2aa198>6192</span><span style=color:#719e07>&gt;</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f843db</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6235</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>test</span>   <span style=color:#b58900>cl</span>,<span style=color:#b58900>cl</span>  <span style=color:#586e75>; if (code[0] == 0) goto 0xb7f843c3; // have we reached the end of code?</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f843dd</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6237</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>je</span>     <span style=color:#2aa198>0xb7f843c3</span> <span style=color:#719e07>&lt;</span><span style=color:#268bd2>__strncmp_ssse3</span><span style=color:#719e07>+</span><span style=color:#2aa198>6211</span><span style=color:#719e07>&gt;</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f843df</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6239</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>cmp</span>    <span style=color:#b58900>ebp</span>,<span style=color:#2aa198>0x1</span>  <span style=color:#586e75>; if (counter == 1) goto 0xb7f843c3; // was this our last compare?</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f843e2</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6242</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>je</span>     <span style=color:#2aa198>0xb7f843c3</span> <span style=color:#719e07>&lt;</span><span style=color:#268bd2>__strncmp_ssse3</span><span style=color:#719e07>+</span><span style=color:#2aa198>6211</span><span style=color:#719e07>&gt;</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f843e4</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6244</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>movzx</span>  <span style=color:#b58900>ecx</span>,<span style=color:#dc322f>BYTE</span> <span style=color:#268bd2>PTR</span> [<span style=color:#b58900>eax</span><span style=color:#719e07>+</span><span style=color:#2aa198>0x1</span>]	<span style=color:#586e75>; ecx = code[1];</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f843e8</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6248</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>cmp</span>    <span style=color:#dc322f>BYTE</span> <span style=color:#268bd2>PTR</span> [<span style=color:#b58900>edx</span><span style=color:#719e07>+</span><span style=color:#2aa198>0x1</span>],<span style=color:#b58900>cl</span>  <span style=color:#586e75>; if (code[1] != argv[1][1]) goto 0xb7f843b0;</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f843eb</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6251</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>jne</span>    <span style=color:#2aa198>0xb7f843b0</span> <span style=color:#719e07>&lt;</span><span style=color:#268bd2>__strncmp_ssse3</span><span style=color:#719e07>+</span><span style=color:#2aa198>6192</span><span style=color:#719e07>&gt;</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f843ed</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6253</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>test</span>   <span style=color:#b58900>cl</span>,<span style=color:#b58900>cl</span>  <span style=color:#586e75>; if (code[1] == 0) goto 0xb7f843c3; // have we reached the end of code?</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f843ef</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6255</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>je</span>     <span style=color:#2aa198>0xb7f843c3</span> <span style=color:#719e07>&lt;</span><span style=color:#268bd2>__strncmp_ssse3</span><span style=color:#719e07>+</span><span style=color:#2aa198>6211</span><span style=color:#719e07>&gt;</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f843f1</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6257</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>cmp</span>    <span style=color:#b58900>ebp</span>,<span style=color:#2aa198>0x2</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f843f4</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6260</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>je</span>     <span style=color:#2aa198>0xb7f843c3</span> <span style=color:#719e07>&lt;</span><span style=color:#268bd2>__strncmp_ssse3</span><span style=color:#719e07>+</span><span style=color:#2aa198>6211</span><span style=color:#719e07>&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>...</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>; similar byte compares until the end</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>...</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f8453f</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6591</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>test</span>   <span style=color:#b58900>cl</span>,<span style=color:#b58900>cl</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f84541</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6593</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>je</span>     <span style=color:#2aa198>0xb7f843c3</span> <span style=color:#719e07>&lt;</span><span style=color:#268bd2>__strncmp_ssse3</span><span style=color:#719e07>+</span><span style=color:#2aa198>621</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f84547</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6599</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>cmp</span>    <span style=color:#b58900>ebp</span>,<span style=color:#2aa198>0xf</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f8454a</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6602</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>je</span>     <span style=color:#2aa198>0xb7f843c3</span> <span style=color:#719e07>&lt;</span><span style=color:#268bd2>__strncmp_ssse3</span><span style=color:#719e07>+</span><span style=color:#2aa198>621</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f84550</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6608</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>movzx</span>  <span style=color:#b58900>ecx</span>,<span style=color:#dc322f>BYTE</span> <span style=color:#268bd2>PTR</span> [<span style=color:#b58900>eax</span><span style=color:#719e07>+</span><span style=color:#2aa198>0xf</span>]
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f84554</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6612</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>cmp</span>    <span style=color:#dc322f>BYTE</span> <span style=color:#268bd2>PTR</span> [<span style=color:#b58900>edx</span><span style=color:#719e07>+</span><span style=color:#2aa198>0xf</span>],<span style=color:#b58900>cl</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f84557</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6615</span><span style=color:#719e07>&gt;</span>:	<span style=color:#268bd2>jne</span>    <span style=color:#2aa198>0xb7f843b0</span> <span style=color:#719e07>&lt;</span><span style=color:#268bd2>__strncmp_ssse3</span><span style=color:#719e07>+</span><span style=color:#2aa198>619</span>
+</span></span><span style=display:flex><span>0<span style=color:#268bd2>xb7f8455d</span> <span style=color:#719e07>&lt;+</span><span style=color:#2aa198>6621</span><span style=color:#719e07>&gt;</span><span style=color:#586e75>;	test   cl,cl</span></span></span></code></pre></td></tr></table></div></div></div></figure><p>We can see that the implementation has unrolled the for and compares 16 bytes one by one. If a character is correct, two more instructions are executed (as we saw) which are <code>test cl,cl</code> and <code>je 0xb7f843c3</code> which basically checks if we have reached the end of first string. Now we know why. Let us build our tool.</p><h3 id=pinsolver-mk1>PinSolver Mk1
 <a class=header-link href=#pinsolver-mk1><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>I am going to use Python's subprocess module and reuse <a href=http://parsiya.net/blog/2014-05-25-pasting-shellcode-into-gdb-using-python/ target=_blank rel="noreferrer noopener">some old code</a>. The script simply iterates through all valid characters (note: do not include space or some other special characters). For this example I am going to use alphanumeric characters. Character with the largest number of executed instructions will be chose and we move on to the next character.</p>
-<figure class=code>
+</h3><p>I am going to use Python's subprocess module and reuse <a href=http://parsiya.net/blog/2014-05-25-pasting-shellcode-into-gdb-using-python/ target=_blank rel="noreferrer noopener">some old code</a>. The script simply iterates through all valid characters (note: do not include space or some other special characters). For this example I am going to use alphanumeric characters. Character with the largest number of executed instructions will be chose and we move on to the next character.</p><figure class=code>
 <figcaption>
 <span>pinsolvermk1.py</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">29
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">30
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">31
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">32
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">33
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">34
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">35
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">36
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">37
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">38
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#586e75>#!/usr/bin/python</span>
-
-<span style=color:#719e07>from</span> subprocess <span style=color:#719e07>import</span> Popen, PIPE
-
-<span style=color:#586e75># create a set of alphanumeric chars</span>
-alphanumeric <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;0123456789&#34;</span> <span style=color:#719e07>+</span> <span style=color:#2aa198>&#34;ABCDEFGHIJKLMNOPQRSTUVWXYZ&#34;</span> <span style=color:#719e07>+</span> <span style=color:#2aa198>&#34;abcdefghijklmnopqrstuvwxyz&#34;</span>
-
-solution <span style=color:#719e07>=</span> []
-
-flag <span style=color:#719e07>=</span> <span style=color:#cb4b16>False</span>
-
-<span style=color:#719e07>while</span> (<span style=color:#cb4b16>True</span>):
-
-  maxcount <span style=color:#719e07>=</span> <span style=color:#2aa198>0</span>
-  candidate_char <span style=color:#719e07>=</span> <span style=color:#2aa198>0</span>
-
-  <span style=color:#719e07>for</span> char <span style=color:#719e07>in</span> alphanumeric:
-    <span style=color:#586e75># construct</span>
-    fez <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;&#34;</span><span style=color:#719e07>.</span>join(solution) <span style=color:#719e07>+</span> char
-    proc <span style=color:#719e07>=</span> Popen([<span style=color:#2aa198>&#34;pin&#34;</span>, <span style=color:#2aa198>&#34;-t&#34;</span>, <span style=color:#2aa198>&#34;myins.so&#34;</span>, <span style=color:#2aa198>&#34;--&#34;</span>,<span style=color:#2aa198>&#34;./crkme1&#34;</span>, fez], stdout<span style=color:#719e07>=</span>PIPE, stderr<span style=color:#719e07>=</span>PIPE)
-  
-    <span style=color:#586e75># read output and split by lines</span>
-    output <span style=color:#719e07>=</span> proc<span style=color:#719e07>.</span>stdout<span style=color:#719e07>.</span>read()<span style=color:#719e07>.</span>splitlines()
-  
-    <span style=color:#719e07>if</span> (output[<span style=color:#2aa198>0</span>] <span style=color:#719e07>==</span> <span style=color:#2aa198>&#34;Correct&#34;</span>):
-      <span style=color:#b58900>print</span> <span style=color:#2aa198>&#34;Code found: &#34;</span>, <span style=color:#2aa198>&#34;&#34;</span><span style=color:#719e07>.</span>join(solution)
-      <span style=color:#719e07>break</span>
-    <span style=color:#719e07>else</span>:
-      count <span style=color:#719e07>=</span> <span style=color:#b58900>int</span> (output[<span style=color:#2aa198>1</span>]<span style=color:#719e07>.</span>split(<span style=color:#2aa198>&#39; &#39;</span>)[<span style=color:#2aa198>1</span>])
-    
-      <span style=color:#719e07>if</span> (count <span style=color:#719e07>&gt;</span> maxcount):
-        maxcount <span style=color:#719e07>=</span> count
-        candidate_char <span style=color:#719e07>=</span> char
-    
-    <span style=color:#586e75># print (&#34;Trying %s - Count is: %d - Maxcount is: %d - Candidate_char is: %s&#34;) % (fez, count, maxcount, candidate_char)</span>
-  
-  <span style=color:#586e75># after a loop has finished, add the chosen char to the solution</span>
-  solution<span style=color:#719e07>.</span>append(candidate_char)</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>Note: If your VM has multiple CPUs this will not work. At this moment I do not know why.</p>
-<p>TODO in next chapter:</p>
-<ol>
-<li>Try to find some simple crackmes2 from CTFs to run this tool on</li>
-<li>Find a way to increase pin's performance</li>
-<li>Why is the instruction count not calculated correctly occasionally when VM has multiple CPUs?</li>
-</ol>
-<p>As usual, if there is a any feedback please feel free to comment or contact me on Twitter. My handle is in the side bar ---->.</p>
-</div>
-<footer>
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">31
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">32
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">33
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">34
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">35
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">36
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">37
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">38
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#586e75>#!/usr/bin/python</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>from</span> subprocess <span style=color:#719e07>import</span> Popen, PIPE
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75># create a set of alphanumeric chars</span>
+</span></span><span style=display:flex><span>alphanumeric <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;0123456789&#34;</span> <span style=color:#719e07>+</span> <span style=color:#2aa198>&#34;ABCDEFGHIJKLMNOPQRSTUVWXYZ&#34;</span> <span style=color:#719e07>+</span> <span style=color:#2aa198>&#34;abcdefghijklmnopqrstuvwxyz&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>solution <span style=color:#719e07>=</span> []
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>flag <span style=color:#719e07>=</span> <span style=color:#cb4b16>False</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>while</span> (<span style=color:#cb4b16>True</span>):
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  maxcount <span style=color:#719e07>=</span> <span style=color:#2aa198>0</span>
+</span></span><span style=display:flex><span>  candidate_char <span style=color:#719e07>=</span> <span style=color:#2aa198>0</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#719e07>for</span> char <span style=color:#719e07>in</span> alphanumeric:
+</span></span><span style=display:flex><span>    <span style=color:#586e75># construct</span>
+</span></span><span style=display:flex><span>    fez <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;&#34;</span><span style=color:#719e07>.</span>join(solution) <span style=color:#719e07>+</span> char
+</span></span><span style=display:flex><span>    proc <span style=color:#719e07>=</span> Popen([<span style=color:#2aa198>&#34;pin&#34;</span>, <span style=color:#2aa198>&#34;-t&#34;</span>, <span style=color:#2aa198>&#34;myins.so&#34;</span>, <span style=color:#2aa198>&#34;--&#34;</span>,<span style=color:#2aa198>&#34;./crkme1&#34;</span>, fez], stdout<span style=color:#719e07>=</span>PIPE, stderr<span style=color:#719e07>=</span>PIPE)
+</span></span><span style=display:flex><span>  
+</span></span><span style=display:flex><span>    <span style=color:#586e75># read output and split by lines</span>
+</span></span><span style=display:flex><span>    output <span style=color:#719e07>=</span> proc<span style=color:#719e07>.</span>stdout<span style=color:#719e07>.</span>read()<span style=color:#719e07>.</span>splitlines()
+</span></span><span style=display:flex><span>  
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> (output[<span style=color:#2aa198>0</span>] <span style=color:#719e07>==</span> <span style=color:#2aa198>&#34;Correct&#34;</span>):
+</span></span><span style=display:flex><span>      <span style=color:#b58900>print</span> <span style=color:#2aa198>&#34;Code found: &#34;</span>, <span style=color:#2aa198>&#34;&#34;</span><span style=color:#719e07>.</span>join(solution)
+</span></span><span style=display:flex><span>      <span style=color:#719e07>break</span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>else</span>:
+</span></span><span style=display:flex><span>      count <span style=color:#719e07>=</span> <span style=color:#b58900>int</span> (output[<span style=color:#2aa198>1</span>]<span style=color:#719e07>.</span>split(<span style=color:#2aa198>&#39; &#39;</span>)[<span style=color:#2aa198>1</span>])
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>      <span style=color:#719e07>if</span> (count <span style=color:#719e07>&gt;</span> maxcount):
+</span></span><span style=display:flex><span>        maxcount <span style=color:#719e07>=</span> count
+</span></span><span style=display:flex><span>        candidate_char <span style=color:#719e07>=</span> char
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#586e75># print (&#34;Trying %s - Count is: %d - Maxcount is: %d - Candidate_char is: %s&#34;) % (fez, count, maxcount, candidate_char)</span>
+</span></span><span style=display:flex><span>  
+</span></span><span style=display:flex><span>  <span style=color:#586e75># after a loop has finished, add the chosen char to the solution</span>
+</span></span><span style=display:flex><span>  solution<span style=color:#719e07>.</span>append(candidate_char)</span></span></code></pre></td></tr></table></div></div></div></figure><p>Note: If your VM has multiple CPUs this will not work. At this moment I do not know why.</p><p>TODO in next chapter:</p><ol>
+<li>Try to find some simple crackmes2 from CTFs to run this tool on</li><li>Find a way to increase pin's performance</li><li>Why is the instruction count not calculated correctly occasionally when VM has multiple CPUs?</li></ol><p>As usual, if there is a any feedback please feel free to comment or contact me on Twitter. My handle is in the side bar ---->.</p></div><footer>
 <p class=meta>
 <span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>Dec 8, 2014</time>
@@ -778,82 +671,47 @@ flag <span style=color:#719e07>=</span> <span style=color:#cb4b16>False</span>
 Tags:
 <a class=category href=https://parsiya.net/tags/pin>PIN</a> <a class=category href=https://parsiya.net/tags/pin-tool>PIN tool</a> <a class=category href=https://parsiya.net/tags/pinsolver>PINSolver</a>
 </span>
-</p>
-<p class=meta>
-<a class="basic-alignment left" href=https://parsiya.net/blog/2014-11-18-building-memfetch-on-kali-comments/ title="Building memfetch on Kali + Comments">Building memfetch on Kali + Comments</a>
+</p><p class=meta>
+<a class="basic-alignment left" href=https://parsiya.net/blog/2014-11-18-building-memfetch-on-kali--comments/ title="Building memfetch on Kali + Comments">Building memfetch on Kali + Comments</a>
 <a class="basic-alignment right" href=https://parsiya.net/blog/2015-01-06-tales-from-the-crypto-leaking-aes-keys/ title="Tales from the Crypt(o) - Leaking AES Keys">Tales from the Crypt(o) - Leaking AES Keys</a>
-</p>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</div>
-<aside class="sidebar thirds">
+</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer></article></div><aside class="sidebar thirds">
 <section class="first odd">
-<h1>Who am I?</h1>
-<p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
-<p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p>
-<p>Click on <a href=/about/>About Me!</a> to know more.</p>
-</p>
-</section>
-<ul class=sidebar-nav>
+<h1>Who am I?</h1><p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
 <li class=sidebar-nav-item>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li>
-</ul>
-<section class=odd>
-<h1>Collections</h1>
-<li>
+</li></ul><section class=odd>
+<h1>Collections</h1><li>
 <a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li>
-<li>
+</li><li>
 <a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li>
-</section>
-</aside>
-</div>
-</div>
-<footer role=contentinfo>
+</li></section></aside></div></div><footer role=contentinfo>
 <p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>

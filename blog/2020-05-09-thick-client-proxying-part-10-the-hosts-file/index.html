@@ -3,14 +3,13 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
 <link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>Thick Client Proxying - Part 10 - The hosts File</title>
-<link rel=stylesheet href=/css/hugo-octopress.css>
+<title>Thick Client Proxying - Part 10 - The hosts File</title><link rel=stylesheet href=/css/hugo-octopress.css>
 <link rel=stylesheet href=/css/fork-awesome.min.css>
 <link href=https://parsiya.net/favicon.png rel=icon>
 <meta name=description content>
 <meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
 <meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.92.2">
+<meta name=generator content="Hugo 0.93.0">
 <meta name=twitter:card content="summary_large_image">
 <meta name=twitter:image:src content="https://parsiya.net/blog/2020-05-09-thick-client-proxying-part-10-the-hosts-file/04-example-in-burp.png">
 <meta name=twitter:title content="Thick Client Proxying - Part 10 - The hosts File">
@@ -20,37 +19,21 @@ A series running since 2016. Woot! Today I will talk about traffic redirection
 using the hosts file.">
 <meta name=twitter:domain content="parsiya.net">
 <meta name=twitter:creator content="@CryptoGangsta">
-</head>
-<body>
+</head><body>
 <header role=banner>
 <hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
-<h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2>
-</hgroup></header>
-<nav role=navigation>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
 <fieldset class=mobile-nav>
 <select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset>
-<ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
-<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
-<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
-<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
-<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
-<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
-</ul>
-<ul class=subscription>
+</fieldset><ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
 <a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul>
-<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
 <fieldset role=search>
 <input class=search type=text name=q results=0 placeholder=Search>
 <input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset>
-</form>
-</nav>
-<div id=main>
+</fieldset></form></nav><div id=main>
 <div id=content>
 <div>
 <article class=hentry role=article>
@@ -59,394 +42,217 @@ complete unless it is known by its causes. - Avicenna</h2>
 - 7 minute read
 - <a href=https://parsiya.net/blog/2020-05-09-thick-client-proxying-part-10-the-hosts-file/#disqus_thread>Comments</a>
 - <a class=label href=https://parsiya.net/categories/thick-client-proxying/>Thick client proxying </a><a class=label href=https://parsiya.net/categories/burp/>Burp </a>
-</p>
-<h1 class=entry-title>
+</p><h1 class=entry-title>
 Thick Client Proxying - Part 10 - The hosts File
-</h1>
-</header>
-<div class=entry-content>
+</h1></header><div class=entry-content>
 <nav id=TableOfContents>
 <ul>
-<li><a href=#this-is-not-really-new>This Is Not Really New</a></li>
-<li><a href=#the-hosts-file>The hosts File</a></li>
-<li><a href=#windows-dns-cache>Windows DNS Cache</a>
+<li><a href=#this-is-not-really-new>This Is Not Really New</a></li><li><a href=#the-hosts-file>The hosts File</a></li><li><a href=#windows-dns-cache>Windows DNS Cache</a>
 <ul>
 <li><a href=#windows-dns-cache-in-action>Windows DNS Cache in Action</a>
 <ul>
-<li><a href=#note-for-hyper-v-users>Note for Hyper-V Users</a></li>
-<li><a href=#useful-commands>Useful Commands</a></li>
-<li><a href=#view-the-dns-cache>View the DNS Cache</a></li>
-</ul>
-</li>
-<li><a href=#the-relation-between-the-hosts-file-and-the-dns-cache>The Relation Between the hosts File and the DNS Cache</a></li>
-</ul>
-</li>
-<li><a href=#how-is-this-useful>How is This Useful?</a>
+<li><a href=#note-for-hyper-v-users>Note for Hyper-V Users</a></li><li><a href=#useful-commands>Useful Commands</a></li><li><a href=#view-the-dns-cache>View the DNS Cache</a></li></ul></li><li><a href=#the-relation-between-the-hosts-file-and-the-dns-cache>The Relation Between the hosts File and the DNS Cache</a></li></ul></li><li><a href=#how-is-this-useful>How is This Useful?</a>
 <ul>
 <li><a href=#how-do-we-proxy-with-this>How Do We Proxy With This?</a>
 <ul>
-<li><a href=#generic-steps>Generic Steps</a></li>
-</ul>
-</li>
-<li><a href=#what-if-we-are-not-using-http>What If We Are Not Using HTTP?</a>
+<li><a href=#generic-steps>Generic Steps</a></li></ul></li><li><a href=#what-if-we-are-not-using-http>What If We Are Not Using HTTP?</a>
 <ul>
-<li><a href=#no-host-header-with-one-endpoint>No Host Header with One Endpoint</a></li>
-<li><a href=#no-host-header-with-multiple-endpoints-on-the-same-port>No Host Header with Multiple Endpoints on The Same Port</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href=#troubleshooting>Troubleshooting</a>
+<li><a href=#no-host-header-with-one-endpoint>No Host Header with One Endpoint</a></li><li><a href=#no-host-header-with-multiple-endpoints-on-the-same-port>No Host Header with Multiple Endpoints on The Same Port</a></li></ul></li></ul></li><li><a href=#troubleshooting>Troubleshooting</a>
 <ul>
-<li><a href=#i-see-the-burp-interface-instead-of-examplenet>I See the Burp Interface Instead of example.net</a></li>
-<li><a href=#proxy-server-is-refusing-connection-error-message>Proxy Server is Refusing Connection Error Message</a></li>
-<li><a href=#the-connection-times-out-after-a-long-time>The Connection times out after a Long Time</a></li>
-<li><a href=#tls-certificate-issues>TLS Certificate Issues</a></li>
-</ul>
-</li>
-<li><a href=#limitations>Limitations</a></li>
-<li><a href=#what-did-we-learn-here-today>What Did We Learn Here Today?</a></li>
-</ul>
-</nav>
-<p>Welcome to the 10th installment of
+<li><a href=#i-see-the-burp-interface-instead-of-examplenet>I See the Burp Interface Instead of example.net</a></li><li><a href=#proxy-server-is-refusing-connection-error-message>Proxy Server is Refusing Connection Error Message</a></li><li><a href=#the-connection-times-out-after-a-long-time>The Connection times out after a Long Time</a></li><li><a href=#tls-certificate-issues>TLS Certificate Issues</a></li></ul></li><li><a href=#limitations>Limitations</a></li><li><a href=#what-did-we-learn-here-today>What Did We Learn Here Today?</a></li></ul></nav><p>Welcome to the 10th installment of
 <a href=/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>.
 A series running since 2016. Woot! Today I will talk about traffic redirection
-using the <code>hosts</code> file.</p>
-<h1 id=this-is-not-really-new>This Is Not Really New
+using the <code>hosts</code> file.</p><h1 id=this-is-not-really-new>This Is Not Really New
 <a class=header-link href=#this-is-not-really-new><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><p>Yeah! I realized I have talked about it in <a href="https://www.google.com/search?q=%22hosts%22+site%3Ahttps%3A%2F%2Fparsiya.net%2Fblog%2F" target=_blank rel="noreferrer noopener">19 different posts</a> but
-never explicitly wrote about it. I just assumed readers would know this.</p>
-<p>If you are already familiar with these concepts please directly go to the
-<a href=#how-do-we-proxy-with-this>How Do We Proxy With This?</a> section.</p>
-<h1 id=the-hosts-file>The hosts File
+never explicitly wrote about it. I just assumed readers would know this.</p><p>If you are already familiar with these concepts please directly go to the
+<a href=#how-do-we-proxy-with-this>How Do We Proxy With This?</a> section.</p><h1 id=the-hosts-file>The hosts File
 <a class=header-link href=#the-hosts-file><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><p>The <code>hosts</code> file is located at <code>C:\Windows\System32\Drivers\etc\hosts</code>. Each
-line in the file looks like this:</p>
-<ul>
-<li><code>IP-Address domain</code>.</li>
-<li><code>127.0.0.1 google.com</code></li>
-</ul>
-<p>Any change in this file results in a change in the Windows DNS cache. Note that
-you need admin access to edit this file.</p>
-<p>On nix-based operating systems (e.g., GNU/Linux<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup> and Apple stuff) the
+line in the file looks like this:</p><ul>
+<li><code>IP-Address domain</code>.</li><li><code>127.0.0.1 google.com</code></li></ul><p>Any change in this file results in a change in the Windows DNS cache. Note that
+you need admin access to edit this file.</p><p>On nix-based operating systems (e.g., GNU/Linux<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup> and Apple stuff) the
 <code>hosts</code> file has the same format and functionality. BUT there is no local DNS
 cache on Linux (not sure about Apple operating systems). The OS checks this file
 before making a DNS request. You could say this file IS the DNS cache. See the
-[hosts manual page][hosts-manual] for more information.</p>
-<p>For the rest of the blog I am going to talk about Windows but the same principle
-applies to others.</p>
-<h1 id=windows-dns-cache>Windows DNS Cache
+[hosts manual page][hosts-manual] for more information.</p><p>For the rest of the blog I am going to talk about Windows but the same principle
+applies to others.</p><h1 id=windows-dns-cache>Windows DNS Cache
 <a class=header-link href=#windows-dns-cache><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><p>The complete name for this entity is <code>local DNS resolver cache</code> but I will just
 call it the Windows DNS cache. When the OS wants to resolve a domain, it will
 first look in this cache to see if it's already been resolved. If the entry has
-expired or an entry for that domain does not exist the OS will do a lookup.</p>
-<h2 id=windows-dns-cache-in-action>Windows DNS Cache in Action
+expired or an entry for that domain does not exist the OS will do a lookup.</p><h2 id=windows-dns-cache-in-action>Windows DNS Cache in Action
 <a class=header-link href=#windows-dns-cache-in-action><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Start your favorite Windows VM (also works on your host) and start doing things.</p>
-<h3 id=note-for-hyper-v-users>Note for Hyper-V Users
+</h2><p>Start your favorite Windows VM (also works on your host) and start doing things.</p><h3 id=note-for-hyper-v-users>Note for Hyper-V Users
 <a class=header-link href=#note-for-hyper-v-users><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h3><p>For some reason, Hyper-V Windows VMs do not update their local DNS cache. It
 remains empty. I do not know the reason but the solution is to manually
-configure a DNS server in the VM.</p>
-<ol>
-<li><code>Control Panel > Network and Internet > Network Connections</code> in the VM.</li>
-<li>Right click on the <code>Ethernet Adapter</code> and select <code>Properties</code>.</li>
-<li>Select <code>Internet Protocol Version 4 (TCP/IPv4)</code> and click the <code>Properties</code>
-button.</li>
-<li>Select the <code>Use the following DNS server addresses</code> radio button.</li>
-<li>Enter <code>8.8.8.8</code> (or your preferred DNS server like <code>1.1.1.1</code>).</li>
-</ol>
-<span class=caption-wrapper>
+configure a DNS server in the VM.</p><ol>
+<li><code>Control Panel > Network and Internet > Network Connections</code> in the VM.</li><li>Right click on the <code>Ethernet Adapter</code> and select <code>Properties</code>.</li><li>Select <code>Internet Protocol Version 4 (TCP/IPv4)</code> and click the <code>Properties</code>
+button.</li><li>Select the <code>Use the following DNS server addresses</code> radio button.</li><li>Enter <code>8.8.8.8</code> (or your preferred DNS server like <code>1.1.1.1</code>).</li></ol><span class=caption-wrapper>
 <img class=caption src=01-manual-dns-server.png title="Hyper-V guest with manual DNS server" alt="Hyper-V guest with manual DNS server">
 <span class=caption-text>Hyper-V guest with manual DNS server</span>
 </span>
 <h3 id=useful-commands>Useful Commands
 <a class=header-link href=#useful-commands><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h3><ul>
-<li>View the Windows DNS cache: <code>ipconfig /displaydns</code> or <code>Get-DnsClientCache</code>.</li>
-<li>Clear the cache: <code>ipconfig /flushdns</code> or <code>Clear-DnsClientCache</code>
+<li>View the Windows DNS cache: <code>ipconfig /displaydns</code> or <code>Get-DnsClientCache</code>.</li><li>Clear the cache: <code>ipconfig /flushdns</code> or <code>Clear-DnsClientCache</code>
 <ul>
 <li>In my Hyper-V guest <code>ipconfig /flushdns</code> asks for elevation but
-<code>Clear-DnsClientCache</code> works in a non-elevated PowerShell prompt.</li>
-<li>In my host both work without elevation.</li>
-</ul>
-</li>
-</ul>
-<h3 id=view-the-dns-cache>View the DNS Cache
+<code>Clear-DnsClientCache</code> works in a non-elevated PowerShell prompt.</li><li>In my host both work without elevation.</li></ul></li></ul><h3 id=view-the-dns-cache>View the DNS Cache
 <a class=header-link href=#view-the-dns-cache><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>No we can see the DNS cache in our VM.</p>
-<ol>
-<li>Clear the DNS cache.</li>
-<li><code>ping example.net</code> or <code>nslookup example.net</code></li>
-<li>View the DNS cache.</li>
-</ol>
-<span class=caption-wrapper>
+</h3><p>No we can see the DNS cache in our VM.</p><ol>
+<li>Clear the DNS cache.</li><li><code>ping example.net</code> or <code>nslookup example.net</code></li><li>View the DNS cache.</li></ol><span class=caption-wrapper>
 <img class=caption src=02-dns-cache-view.png title="DNS cache after resolving example.net" alt="DNS cache after resolving example.net">
 <span class=caption-text>DNS cache after resolving example.net</span>
 </span>
 <h2 id=the-relation-between-the-hosts-file-and-the-dns-cache>The Relation Between the hosts File and the DNS Cache
 <a class=header-link href=#the-relation-between-the-hosts-file-and-the-dns-cache><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><p>Each line in the hosts file becomes an entry in the DNS cache. Do some
-experiments:</p>
+experiments:</p><ol>
+<li>Open the <code>hosts</code> file in an elevated editor (e.g., notepad as admin).</li><li>Add the following entry:
 <ol>
-<li>Open the <code>hosts</code> file in an elevated editor (e.g., notepad as admin).</li>
-<li>Add the following entry:
+<li><code>127.0.0.1 example.net</code>.</li></ol></li><li>Save the file.</li><li>Clear the DNS cache.
 <ol>
-<li><code>127.0.0.1 example.net</code>.</li>
-</ol>
-</li>
-<li>Save the file.</li>
-<li>Clear the DNS cache.
-<ol>
-<li>This removes the extra entries that have been cached.</li>
-</ol>
-</li>
-<li>View the DNS cache.</li>
-</ol>
-<span class=caption-wrapper>
+<li>This removes the extra entries that have been cached.</li></ol></li><li>View the DNS cache.</li></ol><span class=caption-wrapper>
 <img class=caption src=03-example-local-cache.png title="example.net entry from the hosts file" alt="example.net entry from the hosts file">
 <span class=caption-text>example.net entry from the hosts file</span>
 </span>
 <h1 id=how-is-this-useful>How is This Useful?
 <a class=header-link href=#how-is-this-useful><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>I have two proxy use cases for the Windows DNS cache.</p>
-<ol>
+</h1><p>I have two proxy use cases for the Windows DNS cache.</p><ol>
 <li>We can use it to discover endpoints. Read
-<a href=/blog/2019-04-28-thick-client-proxying-part-9-the-windows-dns-cache/ title="Thick Client Proxying - Part 9 - The Windows DNS Cache" rel=nofollow target=_blank>Thick Client Proxying - Part 9 - The Windows DNS Cache</a></li>
-<li>We can redirect domains to our proxy.</li>
-</ol>
-<h2 id=how-do-we-proxy-with-this>How Do We Proxy With This?
+<a href=/blog/2019-04-28-thick-client-proxying-part-9-the-windows-dns-cache/ title="Thick Client Proxying - Part 9 - The Windows DNS Cache" rel=nofollow target=_blank>Thick Client Proxying - Part 9 - The Windows DNS Cache</a></li><li>We can redirect domains to our proxy.</li></ol><h2 id=how-do-we-proxy-with-this>How Do We Proxy With This?
 <a class=header-link href=#how-do-we-proxy-with-this><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><p>If your application is using HTTP but is not
 <a href=/blog/2016-07-28-thick-client-proxying-part-6-how-https-proxies-work/ title="Proxy-Aware Clients" rel=nofollow target=_blank>proxy-aware</a>
-then you can redirect its endpoints to your proxy listener.</p>
-<p>PortSwigger has a great page on invisible proxying. Be sure to read it:</p>
-<ul>
-<li><a href=https://portswigger.net/burp/documentation/desktop/tools/proxy/options/invisible target=_blank rel="noreferrer noopener">https://portswigger.net/burp/documentation/desktop/tools/proxy/options/invisible</a></li>
-</ul>
-<h3 id=generic-steps>Generic Steps
+then you can redirect its endpoints to your proxy listener.</p><p>PortSwigger has a great page on invisible proxying. Be sure to read it:</p><ul>
+<li><a href=https://portswigger.net/burp/documentation/desktop/tools/proxy/options/invisible target=_blank rel="noreferrer noopener">https://portswigger.net/burp/documentation/desktop/tools/proxy/options/invisible</a></li></ul><h3 id=generic-steps>Generic Steps
 <a class=header-link href=#generic-steps><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h3><ol>
-<li>Identify the endpoints. E.g., <code>example.net:443</code>.</li>
-<li>Ping the endpoint to get its IP address. Do this before the next step.
+<li>Identify the endpoints. E.g., <code>example.net:443</code>.</li><li>Ping the endpoint to get its IP address. Do this before the next step.
 <ol>
-<li><code>93.184.216.34</code>.</li>
-</ol>
-</li>
-<li>Redirect them to Burp (e.g., <code>localhost</code>) using the hosts file.
+<li><code>93.184.216.34</code>.</li></ol></li><li>Redirect them to Burp (e.g., <code>localhost</code>) using the hosts file.
 <ol>
-<li>We already did it with <code>127.0.0.1 example.net</code>.</li>
-</ol>
-</li>
-<li>Start a Burp proxy listener on <code>localhost:443</code>. The hosts file does not
-change the destination port so the Burp listener should be on the same port.</li>
-<li>Enable <code>invisible proxying</code> for the Burp listener above.
+<li>We already did it with <code>127.0.0.1 example.net</code>.</li></ol></li><li>Start a Burp proxy listener on <code>localhost:443</code>. The hosts file does not
+change the destination port so the Burp listener should be on the same port.</li><li>Enable <code>invisible proxying</code> for the Burp listener above.
 <ol>
-<li><code>Proxy > Option > Select the listener > Edit > Request Handling > Check 'Support invisible ...</code>.</li>
-</ol>
-</li>
-<li>Add the endpoint's IP address and domain to <code>Project Options > Connections > Hostname Resolution</code>.
+<li><code>Proxy > Option > Select the listener > Edit > Request Handling > Check 'Support invisible ...</code>.</li></ol></li><li>Add the endpoint's IP address and domain to <code>Project Options > Connections > Hostname Resolution</code>.
 <ol>
-<li>This tells Burp use that IP address directly instead of looking up the domain.</li>
-</ol>
-</li>
-<li>Profit.</li>
-</ol>
-<p>Now we can open our browser and go to <code>http://example.net</code>.</p>
-<span class=caption-wrapper>
+<li>This tells Burp use that IP address directly instead of looking up the domain.</li></ol></li><li>Profit.</li></ol><p>Now we can open our browser and go to <code>http://example.net</code>.</p><span class=caption-wrapper>
 <img class=caption src=04-example-in-burp.png title="example.net proxied in Burp" alt="example.net proxied in Burp">
 <span class=caption-text>example.net proxied in Burp</span>
 </span>
 <h2 id=what-if-we-are-not-using-http>What If We Are Not Using HTTP?
 <a class=header-link href=#what-if-we-are-not-using-http><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><p>If your application is not using HTTP then Burp's invisible proxying does not
-work. It relies on the <code>Host</code> header in the request to identify the endpoint.</p>
-<p>There are some cases where the application uses a text-based protocol that can
-be proxied with Burp.</p>
-<h3 id=no-host-header-with-one-endpoint>No Host Header with One Endpoint
+work. It relies on the <code>Host</code> header in the request to identify the endpoint.</p><p>There are some cases where the application uses a text-based protocol that can
+be proxied with Burp.</p><h3 id=no-host-header-with-one-endpoint>No Host Header with One Endpoint
 <a class=header-link href=#no-host-header-with-one-endpoint><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h3><p>If there is only one endpoint, then we can use the <code>Request Handling</code> tab of the
 proxy listener (where invisible proxying was). It has a redirection setting. You
 can redirect everything that comes to a specific listener to a specific host and
 port. Checking <code>Force use of TLS</code> just automatically populates the port field
-with <code>443</code>.</p>
-<span class=caption-wrapper>
+with <code>443</code>.</p><span class=caption-wrapper>
 <img class=caption src=05-request-handling.png title="Request Handling tab" alt="Request Handling tab">
 <span class=caption-text>Request Handling tab</span>
 </span>
 <p>If we have multiple endpoints but each use a different port then our work is
-still easy. We create one listener for each port and use the same technique.</p>
-<h3 id=no-host-header-with-multiple-endpoints-on-the-same-port>No Host Header with Multiple Endpoints on The Same Port
+still easy. We create one listener for each port and use the same technique.</p><h3 id=no-host-header-with-multiple-endpoints-on-the-same-port>No Host Header with Multiple Endpoints on The Same Port
 <a class=header-link href=#no-host-header-with-multiple-endpoints-on-the-same-port><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h3><p>Then tough luck. I mean, yeah. This is commonly the case where the thickclient
 talks to several endpoints over TLS on port 443. The problem is that we have no
 way of telling Burp to differentiate between traffic going to <code>example.net</code> and
-<code>ea.com</code> without the <code>Host</code> header.</p>
-<p>In these cases I usually just proxied one endpoint at a time to see the traffic.
+<code>ea.com</code> without the <code>Host</code> header.</p><p>In these cases I usually just proxied one endpoint at a time to see the traffic.
 The Burp documentation for invisible proxying (linked above) has a section named
 <code>Redirecting outbound requests</code> (the page does not have anchors so I cannot
-directly link to the section). It says:</p>
+directly link to the section). It says:</p><ol>
+<li>Create a network interface for each endpoint.</li><li>Redirect one endpoint to one interface.</li><li>Create a separate listener on each interface for each endpoint.
 <ol>
-<li>Create a network interface for each endpoint.</li>
-<li>Redirect one endpoint to one interface.</li>
-<li>Create a separate listener on each interface for each endpoint.
-<ol>
-<li>Now each listener only gets one endpoint's traffic.</li>
-</ol>
-</li>
-<li>Use the <code>Request Handling</code> tab above to redirect it to the endpoint.</li>
-</ol>
-<p>It's a pain to accomplish as you can imagine. This works if you have a couple of
-endpoints.</p>
-<h1 id=troubleshooting>Troubleshooting
+<li>Now each listener only gets one endpoint's traffic.</li></ol></li><li>Use the <code>Request Handling</code> tab above to redirect it to the endpoint.</li></ol><p>It's a pain to accomplish as you can imagine. This works if you have a couple of
+endpoints.</p><h1 id=troubleshooting>Troubleshooting
 <a class=header-link href=#troubleshooting><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><p>It's not always easy like our <code>example.net</code> example. In fact, it's never easy
-like this. This section discusses the issues I have usually seen.</p>
-<h2 id=i-see-the-burp-interface-instead-of-examplenet>I See the Burp Interface Instead of example.net
+like this. This section discusses the issues I have usually seen.</p><h2 id=i-see-the-burp-interface-instead-of-examplenet>I See the Burp Interface Instead of example.net
 <a class=header-link href=#i-see-the-burp-interface-instead-of-examplenet><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><p>After browsing to <code>http://example.net</code> the Burp's web interface shows up or it
-does not connect.</p>
-<ul>
+does not connect.</p><ul>
 <li>Have you added the domain in <code>Hostname Resolution</code>?
 <ul>
 <li>Burp is asking the OS to resolve domains for it so it's using the hosts
 file. This means the traffic leaving Burp is redirected back to
-<code>localhost:443</code> which is the proxy listener.</li>
-</ul>
-</li>
-</ul>
-<h2 id=proxy-server-is-refusing-connection-error-message>Proxy Server is Refusing Connection Error Message
+<code>localhost:443</code> which is the proxy listener.</li></ul></li></ul><h2 id=proxy-server-is-refusing-connection-error-message>Proxy Server is Refusing Connection Error Message
 <a class=header-link href=#proxy-server-is-refusing-connection-error-message><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><ul>
-<li>Have you set the Firefox or Windows proxy settings to some another value?</li>
-<li>Is your Burp listener listening on port <code>443</code> (or whatever port the
-application is trying to connect to)?</li>
-</ul>
-<h2 id=the-connection-times-out-after-a-long-time>The Connection times out after a Long Time
+<li>Have you set the Firefox or Windows proxy settings to some another value?</li><li>Is your Burp listener listening on port <code>443</code> (or whatever port the
+application is trying to connect to)?</li></ul><h2 id=the-connection-times-out-after-a-long-time>The Connection times out after a Long Time
 <a class=header-link href=#the-connection-times-out-after-a-long-time><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><ul>
-<li>Have you enabled "invisible proxying"?</li>
-</ul>
-<h2 id=tls-certificate-issues>TLS Certificate Issues
+<li>Have you enabled "invisible proxying"?</li></ul><h2 id=tls-certificate-issues>TLS Certificate Issues
 <a class=header-link href=#tls-certificate-issues><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><ul>
 <li>Have you added Burp to the operating system's certificate store?
 <ul>
-<li>Is the app using a separate certificate store (bundled JVM keystore)?</li>
-</ul>
-</li>
-<li>Is there certificate pinning?</li>
-<li>Is the app looking for a specific Common Name in the generated certificate?</li>
-</ul>
-<h1 id=limitations>Limitations
+<li>Is the app using a separate certificate store (bundled JVM keystore)?</li></ul></li><li>Is there certificate pinning?</li><li>Is the app looking for a specific Common Name in the generated certificate?</li></ul><h1 id=limitations>Limitations
 <a class=header-link href=#limitations><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>This method has a few limitations:</p>
-<ol>
+</h1><p>This method has a few limitations:</p><ol>
 <li>Doesn't work if your application contacts the endpoint by IP (happens in
 internal applications) or does its own DNS lookup (very rare as in I have
-never seen one).</li>
-<li>Does not scale. If there are multiple endpoints we have to make one interface
-per endpoint.</li>
-</ol>
-<h1 id=what-did-we-learn-here-today>What Did We Learn Here Today?
+never seen one).</li><li>Does not scale. If there are multiple endpoints we have to make one interface
+per endpoint.</li></ol><h1 id=what-did-we-learn-here-today>What Did We Learn Here Today?
 <a class=header-link href=#what-did-we-learn-here-today><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><ul>
-<li>We can proxy using the <code>hosts</code> file.</li>
-<li>Be sure to somehow tell Burp (or your proxy) where to send the requests.</li>
-<li>Having multiple endpoints on one port (which is common) is an open problem.</li>
-</ul>
-<section class=footnotes role=doc-endnotes>
+<li>We can proxy using the <code>hosts</code> file.</li><li>Be sure to somehow tell Burp (or your proxy) where to send the requests.</li><li>Having multiple endpoints on one port (which is common) is an open problem.</li></ul><section class=footnotes role=doc-endnotes>
 <hr>
 <ol>
 <li id=fn:1 role=doc-endnote>
 <p>Interjection avoided.
-[hosts-manual]: <a href=http://man7.org/linux/man-pages/man5/hosts.5.html target=_blank rel="noreferrer noopener">http://man7.org/linux/man-pages/man5/hosts.5.html</a>&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
-</li>
-</ol>
-</section>
-</div>
-<footer>
+[hosts-manual]: <a href=http://man7.org/linux/man-pages/man5/hosts.5.html target=_blank rel="noreferrer noopener">http://man7.org/linux/man-pages/man5/hosts.5.html</a>&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section></div><footer>
 <p class=meta>
 <span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>May 9, 2020</time>
 </span>
-</p>
-<p class=meta>
+</p><p class=meta>
 <a class="basic-alignment left" href=https://parsiya.net/blog/2020-05-01-towards-a-quieter-burp-history/ title="Towards a Quieter Burp History">Towards a Quieter Burp History</a>
 <a class="basic-alignment right" href=https://parsiya.net/blog/2020-05-17-go-slices-and-their-oddities/ title="Go Slices and Their Oddities">Go Slices and Their Oddities</a>
-</p>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</div>
-<aside class="sidebar thirds">
+</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer></article></div><aside class="sidebar thirds">
 <section class="first odd">
-<h1>Who am I?</h1>
-<p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
-<p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p>
-<p>Click on <a href=/about/>About Me!</a> to know more.</p>
-</p>
-</section>
-<ul class=sidebar-nav>
+<h1>Who am I?</h1><p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
 <li class=sidebar-nav-item>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li>
-</ul>
-<section class=odd>
-<h1>Collections</h1>
-<li>
+</li></ul><section class=odd>
+<h1>Collections</h1><li>
 <a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li>
-<li>
+</li><li>
 <a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li>
-</section>
-</aside>
-</div>
-</div>
-<footer role=contentinfo>
+</li></section></aside></div></div><footer role=contentinfo>
 <p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>

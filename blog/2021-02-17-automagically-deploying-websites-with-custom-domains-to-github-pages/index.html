@@ -3,51 +3,34 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
 <link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>Automagically Deploying Websites with Custom Domains to GitHub Pages</title>
-<link rel=stylesheet href=/css/hugo-octopress.css>
+<title>Automagically Deploying Websites with Custom Domains to GitHub Pages</title><link rel=stylesheet href=/css/hugo-octopress.css>
 <link rel=stylesheet href=/css/fork-awesome.min.css>
 <link href=https://parsiya.net/favicon.png rel=icon>
 <meta name=description content>
 <meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
 <meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.92.2">
+<meta name=generator content="Hugo 0.93.0">
 <meta name=twitter:card content="summary">
 <meta name=twitter:title content="Automagically Deploying Websites with Custom Domains to GitHub Pages">
 <meta name=twitter:description content="Recently, I have started moving my non-critical websites to GitHub pages. I am
 documenting the process in one place for future me.">
 <meta name=twitter:domain content="parsiya.net">
 <meta name=twitter:creator content="@CryptoGangsta">
-</head>
-<body>
+</head><body>
 <header role=banner>
 <hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
-<h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2>
-</hgroup></header>
-<nav role=navigation>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
 <fieldset class=mobile-nav>
 <select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset>
-<ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
-<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
-<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
-<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
-<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
-<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
-</ul>
-<ul class=subscription>
+</fieldset><ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
 <a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul>
-<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
 <fieldset role=search>
 <input class=search type=text name=q results=0 placeholder=Search>
 <input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset>
-</form>
-</nav>
-<div id=main>
+</fieldset></form></nav><div id=main>
 <div id=content>
 <div>
 <article class=hentry role=article>
@@ -56,247 +39,139 @@ complete unless it is known by its causes. - Avicenna</h2>
 - 5 minute read
 - <a href=https://parsiya.net/blog/2021-02-17-automagically-deploying-websites-with-custom-domains-to-github-pages/#disqus_thread>Comments</a>
 - <a class=label href=https://parsiya.net/categories/not-security/>Not Security </a><a class=label href=https://parsiya.net/categories/clone/>Clone </a><a class=label href=https://parsiya.net/categories/automation/>Automation </a>
-</p>
-<h1 class=entry-title>
+</p><h1 class=entry-title>
 Automagically Deploying Websites with Custom Domains to GitHub Pages
-</h1>
-</header>
-<div class=entry-content>
+</h1></header><div class=entry-content>
 <p>Recently, I have started moving my non-critical websites to GitHub pages. I am
-documenting the process in one place for future me.</p>
-<h2 id=objectives>Objectives
+documenting the process in one place for future me.</p><h2 id=objectives>Objectives
 <a class=header-link href=#objectives><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><ol>
 <li>I should be able to edit the website by committing to a git repository.
 <ol>
-<li>We can also modify the blog using the web IDE if needed.</li>
-</ol>
-</li>
-<li>The system must generate the website after every push and deploy it to GitHub
-pages.</li>
-<li>I want to use my own custom domain.</li>
-</ol>
-<h2 id=requirements>Requirements
+<li>We can also modify the blog using the web IDE if needed.</li></ol></li><li>The system must generate the website after every push and deploy it to GitHub
+pages.</li><li>I want to use my own custom domain.</li></ol><h2 id=requirements>Requirements
 <a class=header-link href=#requirements><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><ol>
-<li>You have a custom domain. Mine are registered with Namecheap.</li>
-<li>You either have a generated website or you can use a static
-website generator like <a href=https://gohugo.io target=_blank rel="noreferrer noopener">Hugo</a>.</li>
-<li>You have a GitHub account.</li>
-</ol>
-<h2 id=github-project-sites>GitHub Project Sites
+<li>You have a custom domain. Mine are registered with Namecheap.</li><li>You either have a generated website or you can use a static
+website generator like <a href=https://gohugo.io target=_blank rel="noreferrer noopener">Hugo</a>.</li><li>You have a GitHub account.</li></ol><h2 id=github-project-sites>GitHub Project Sites
 <a class=header-link href=#github-project-sites><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><p>If you have a GitHub account (either user or organization) you can have a
 website using GitHub pages at <code>your-account.github.io</code>. These are called user or
-organization sites.</p>
-<p>Each project in an account can have its own website. These are called <code>Project</code>
-sites. They are available under <code>your-account.github.io/repository-name</code>.</p>
-<p>We are going to leverage these project sites and deploy each project with a
-custom domain.</p>
-<p>For more info please see
-<a href=https://docs.github.com/en/github/working-with-github-pages/about-github-pages#types-of-github-pages-sites target=_blank rel="noreferrer noopener">https://docs.github.com/en/github/working-with-github-pages/about-github-pages#types-of-github-pages-sites</a>.</p>
-<h2 id=the-process>The Process
+organization sites.</p><p>Each project in an account can have its own website. These are called <code>Project</code>
+sites. They are available under <code>your-account.github.io/repository-name</code>.</p><p>We are going to leverage these project sites and deploy each project with a
+custom domain.</p><p>For more info please see
+<a href=https://docs.github.com/en/github/working-with-github-pages/about-github-pages#types-of-github-pages-sites target=_blank rel="noreferrer noopener">https://docs.github.com/en/github/working-with-github-pages/about-github-pages#types-of-github-pages-sites</a>.</p><h2 id=the-process>The Process
 <a class=header-link href=#the-process><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>I am going to write this as concise as I can.</p>
-<h3 id=step-1-change-the-dns-records>Step 1: Change the DNS Records
+</h2><p>I am going to write this as concise as I can.</p><h3 id=step-1-change-the-dns-records>Step 1: Change the DNS Records
 <a class=header-link href=#step-1-change-the-dns-records><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h3><p>You need to change the DNS records of your custom domain. This change is very
 quick if your existing DNS is handled by Namecheap (e.g., a new domain) but it
-took 24 hours for my AWS hosted websites.</p>
-<p>If your domain has any existing DNS records, you need to delete them. This also
+took 24 hours for my AWS hosted websites.</p><p>If your domain has any existing DNS records, you need to delete them. This also
 includes the default records pointing to the Namecheap parking page for new
-domains.</p>
-<p>One of my domains was hosted out of an S3 bucket so I had pointed the DNS
+domains.</p><p>One of my domains was hosted out of an S3 bucket so I had pointed the DNS
 records to Amazon. In NameCheap, I had to switch the DNS back to <code>Namecheap BasicDNS</code> under <code>Nameservers</code> in the <code>Domain</code> tab. This Namecheap KB article
-shows how:</p>
-<ul>
-<li><a href=https://www.namecheap.com/support/knowledgebase/article.aspx/323/46/why-cant-i-modify-email-domain-redirect-and-host-records-in-my-namecheap-account/ target=_blank rel="noreferrer noopener">Why can't I modify Email, Domain Redirect, and Host Records in my Namecheap account?</a></li>
-</ul>
-<p>After switching, switch to the <code>Advanced DNS</code> tab and create five records.</p>
-<ul>
+shows how:</p><ul>
+<li><a href=https://www.namecheap.com/support/knowledgebase/article.aspx/323/46/why-cant-i-modify-email-domain-redirect-and-host-records-in-my-namecheap-account/ target=_blank rel="noreferrer noopener">Why can't I modify Email, Domain Redirect, and Host Records in my Namecheap account?</a></li></ul><p>After switching, switch to the <code>Advanced DNS</code> tab and create five records.</p><ul>
 <li>Four <code>A records</code> with host <code>@</code> and the following values:
 <ul>
-<li><code>185.199.108.153</code></li>
-<li><code>185.199.109.153</code></li>
-<li><code>185.199.110.153</code></li>
-<li><code>185.199.111.153</code></li>
-</ul>
-</li>
-<li><code>CNAME</code> record with host <code>www</code> and value <code>your-account.github.io.</code>.
+<li><code>185.199.108.153</code></li><li><code>185.199.109.153</code></li><li><code>185.199.110.153</code></li><li><code>185.199.111.153</code></li></ul></li><li><code>CNAME</code> record with host <code>www</code> and value <code>your-account.github.io.</code>.
 <ul>
-<li><strong>Note the extra dot in the end.</strong> This is needed for project sites.</li>
-</ul>
-</li>
-</ul>
-<p>Reference: <a href=https://deanattali.com/blog/multiple-github-pages-domains/ target=_blank rel="noreferrer noopener">https://deanattali.com/blog/multiple-github-pages-domains/</a></p>
-<p>Namecheap has a guide for using user or organization GitHub pages. The process
-is the same as above except the value of the CNAME record:</p>
-<ul>
-<li><a href=https://www.namecheap.com/support/knowledgebase/article.aspx/9645/2208/how-do-i-link-my-domain-to-github-pages/ target=_blank rel="noreferrer noopener">How do I link my domain to GitHub Pages?</a></li>
-</ul>
-<h3 id=step-2-creating-a-deploy-workflow>Step 2: Creating a Deploy Workflow
+<li><strong>Note the extra dot in the end.</strong> This is needed for project sites.</li></ul></li></ul><p>Reference: <a href=https://deanattali.com/blog/multiple-github-pages-domains/ target=_blank rel="noreferrer noopener">https://deanattali.com/blog/multiple-github-pages-domains/</a></p><p>Namecheap has a guide for using user or organization GitHub pages. The process
+is the same as above except the value of the CNAME record:</p><ul>
+<li><a href=https://www.namecheap.com/support/knowledgebase/article.aspx/9645/2208/how-do-i-link-my-domain-to-github-pages/ target=_blank rel="noreferrer noopener">How do I link my domain to GitHub Pages?</a></li></ul><h3 id=step-2-creating-a-deploy-workflow>Step 2: Creating a Deploy Workflow
 <a class=header-link href=#step-2-creating-a-deploy-workflow><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>The workflow is pretty straightforward and based on this Hugo docs page:</p>
-<ul>
-<li><a href=https://gohugo.io/hosting-and-deployment/hosting-on-github/ target=_blank rel="noreferrer noopener">https://gohugo.io/hosting-and-deployment/hosting-on-github/</a></li>
-</ul>
-<p><a href=https://begbounty.com target=_blank rel="noreferrer noopener">begbounty.com</a> is a simple single page Hugo website. But it works
-for more complex deployments.</p>
-<p>You can see the workflow here:</p>
-<ul>
-<li><a href=https://github.com/parsiya/begbounty.com/blob/main/.github/workflows/gh-pages.yml target=_blank rel="noreferrer noopener">https://github.com/parsiya/begbounty.com/blob/main/.github/workflows/gh-pages.yml</a></li>
-</ul>
-<p>The <code>peaceiris-actions-hugo</code> action builds the Hugo website. If your website
+</h3><p>The workflow is pretty straightforward and based on this Hugo docs page:</p><ul>
+<li><a href=https://gohugo.io/hosting-and-deployment/hosting-on-github/ target=_blank rel="noreferrer noopener">https://gohugo.io/hosting-and-deployment/hosting-on-github/</a></li></ul><p><a href=https://begbounty.com target=_blank rel="noreferrer noopener">begbounty.com</a> is a simple single page Hugo website. But it works
+for more complex deployments.</p><p>You can see the workflow here:</p><ul>
+<li><a href=https://github.com/parsiya/begbounty.com/blob/main/.github/workflows/gh-pages.yml target=_blank rel="noreferrer noopener">https://github.com/parsiya/begbounty.com/blob/main/.github/workflows/gh-pages.yml</a></li></ul><p>The <code>peaceiris-actions-hugo</code> action builds the Hugo website. If your website
 does not need the extended version, be sure to remove the <code>extended: true</code>
-field.</p>
-<p><code>peaceiris/actions-gh-pages</code> grabs the generated files from the <code>public</code>
-directory and stores them in the <code>gh-pages</code> branch.</p>
-<p>There is no need to setup the <code>secrets.GITHUB_TOKEN</code> token manually.</p>
-<p><strong>Note:</strong> I did not have this issue but the first deployment run might encounter
-some issues and <a href=https://github.com/peaceiris/actions-gh-pages#%EF%B8%8F-first-deployment-with-github_token target=_blank rel="noreferrer noopener">you have to do re-run it</a>.</p>
-<h3 id=step-3-push-a-commit>Step 3: Push a Commit
+field.</p><p><code>peaceiris/actions-gh-pages</code> grabs the generated files from the <code>public</code>
+directory and stores them in the <code>gh-pages</code> branch.</p><p>There is no need to setup the <code>secrets.GITHUB_TOKEN</code> token manually.</p><p><strong>Note:</strong> I did not have this issue but the first deployment run might encounter
+some issues and <a href=https://github.com/peaceiris/actions-gh-pages#%EF%B8%8F-first-deployment-with-github_token target=_blank rel="noreferrer noopener">you have to do re-run it</a>.</p><h3 id=step-3-push-a-commit>Step 3: Push a Commit
 <a class=header-link href=#step-3-push-a-commit><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h3><p>We need to get the workflow to create the <code>gh-pages</code> branch. This is where you
 can troubleshoot the site build. Clone the resulting branch locally to see how
-the site looks like and fix any issues.</p>
-<h3 id=step-4-repository-settings>Step 4: Repository Settings
+the site looks like and fix any issues.</p><h3 id=step-4-repository-settings>Step 4: Repository Settings
 <a class=header-link href=#step-4-repository-settings><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>Now, we need to setup the repository.</p>
-<ol>
-<li>Go to the repository's <code>Settings</code> on GitHub.</li>
-<li>Select <code>Pages</code> from the sidebar.</li>
-<li>Under <code>Source</code> select the <code>gh-pages</code> branch.</li>
-<li>Under <code>Custom domain</code> enter your domain. E.g., <code>begbounty.com</code>.
+</h3><p>Now, we need to setup the repository.</p><ol>
+<li>Go to the repository's <code>Settings</code> on GitHub.</li><li>Select <code>Pages</code> from the sidebar.</li><li>Under <code>Source</code> select the <code>gh-pages</code> branch.</li><li>Under <code>Custom domain</code> enter your domain. E.g., <code>begbounty.com</code>.
 <ol>
 <li>This will create a file in the root of the repository named <code>CNAME</code> with
 value of <code>begbounty.com</code>. This is useless for a Hugo website but I chose
-to keep it.</li>
-<li>For Hugo websites, you should create it in <code>static/CNAME</code>. If you follow
+to keep it.</li><li>For Hugo websites, you should create it in <code>static/CNAME</code>. If you follow
 the instructions on the Hugo documentation page linked above, you already
-it.</li>
-</ol>
-</li>
-<li>Enable <code>Enforce HTTPS</code>. This will generate a certificate by <code>Let's Encrypt</code>.
-This is usually done in 15 minutes.</li>
-</ol>
-<p>For more information please see this page on GitHub docs:</p>
-<ul>
-<li><a href=https://docs.github.com/en/github/working-with-github-pages/configuring-a-custom-domain-for-your-github-pages-site target=_blank rel="noreferrer noopener">Configuring a custom domain for your GitHub Pages site</a></li>
-</ul>
-<p>Now, you should be good to go. Fingers crossed.</p>
-<h4 id=a-more-complex-workflow>A More Complex Workflow
+it.</li></ol></li><li>Enable <code>Enforce HTTPS</code>. This will generate a certificate by <code>Let's Encrypt</code>.
+This is usually done in 15 minutes.</li></ol><p>For more information please see this page on GitHub docs:</p><ul>
+<li><a href=https://docs.github.com/en/github/working-with-github-pages/configuring-a-custom-domain-for-your-github-pages-site target=_blank rel="noreferrer noopener">Configuring a custom domain for your GitHub Pages site</a></li></ul><p>Now, you should be good to go. Fingers crossed.</p><h4 id=a-more-complex-workflow>A More Complex Workflow
 <a class=header-link href=#a-more-complex-workflow><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h4><p>For a more complex workflow for <a href=https://parsiya.io target=_blank rel="noreferrer noopener">parsiya.io</a> (my clone) see this:</p>
-<ul>
-<li><a href=https://github.com/parsiya/Parsia-Clone/blob/main/.github/workflows/gh-pages.yml target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Clone/blob/main/.github/workflows/gh-pages.yml</a></li>
-</ul>
-<p>This website is a bit special. The contents are in
+</h4><p>For a more complex workflow for <a href=https://parsiya.io target=_blank rel="noreferrer noopener">parsiya.io</a> (my clone) see this:</p><ul>
+<li><a href=https://github.com/parsiya/Parsia-Clone/blob/main/.github/workflows/gh-pages.yml target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Clone/blob/main/.github/workflows/gh-pages.yml</a></li></ul><p>This website is a bit special. The contents are in
 <a href=https://github.com/parsiya/Parsia-Clone target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Clone</a> but the actual
 Hugo theme is in a different repository at
-<a href=https://github.com/parsiya/parsiya.io target=_blank rel="noreferrer noopener">https://github.com/parsiya/parsiya.io</a>.</p>
-<p>I wanted to have the contents in a separate place without the theme. The
+<a href=https://github.com/parsiya/parsiya.io target=_blank rel="noreferrer noopener">https://github.com/parsiya/parsiya.io</a>.</p><p>I wanted to have the contents in a separate place without the theme. The
 workflow checks out the <code>parsiya.io</code> repository first and then checks out
-<code>parsia-clone</code> under the <code>content</code> directory.</p>
-<p>While the theme has the content directory as a submodule, just populating the
+<code>parsia-clone</code> under the <code>content</code> directory.</p><p>While the theme has the content directory as a submodule, just populating the
 submodule means I am looking an older commit so the new content are not pulled.
-Hence, this in the workflow:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml>- <span style=color:#268bd2>name</span>: Checkout parsiya.io
-<span style=color:#268bd2>uses</span>: actions/checkout@v2
-<span style=color:#268bd2>with</span>:
-    <span style=color:#268bd2>repository</span>: <span style=color:#2aa198>&#39;parsiya/parsiya.io&#39;</span> <span style=color:#586e75># Get parsiya.io the parent repo</span>
-    <span style=color:#268bd2>submodules</span>: <span style=color:#cb4b16>true</span>  <span style=color:#586e75># Fetch Hugo themes (true OR recursive)</span>
-    <span style=color:#268bd2>fetch-depth</span>: <span style=color:#2aa198>1</span>    <span style=color:#586e75># Fetch all history for .GitInfo and .Lastmod</span>
-
-- <span style=color:#268bd2>name</span>: Checkout parsia-clone <span style=color:#586e75># Otherwise the outdated commit will be pulled</span>
-<span style=color:#268bd2>uses</span>: actions/checkout@v2
-<span style=color:#268bd2>with</span>:
-    <span style=color:#268bd2>repository</span>: <span style=color:#2aa198>&#39;parsiya/parsia-clone&#39;</span>
-    <span style=color:#268bd2>path</span>: <span style=color:#2aa198>&#39;content&#39;</span>
-</code></pre></div><p>There appears to be some ways to make a submodule pull to get the latest commit.
+Hence, this in the workflow:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>- <span style=color:#268bd2>name</span>: Checkout parsiya.io
+</span></span><span style=display:flex><span><span style=color:#268bd2>uses</span>: actions/checkout@v2
+</span></span><span style=display:flex><span><span style=color:#268bd2>with</span>:
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>repository</span>: <span style=color:#2aa198>&#39;parsiya/parsiya.io&#39;</span> <span style=color:#586e75># Get parsiya.io the parent repo</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>submodules</span>: <span style=color:#cb4b16>true</span>  <span style=color:#586e75># Fetch Hugo themes (true OR recursive)</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>fetch-depth</span>: <span style=color:#2aa198>1</span>    <span style=color:#586e75># Fetch all history for .GitInfo and .Lastmod</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>- <span style=color:#268bd2>name</span>: Checkout parsia-clone <span style=color:#586e75># Otherwise the outdated commit will be pulled</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>uses</span>: actions/checkout@v2
+</span></span><span style=display:flex><span><span style=color:#268bd2>with</span>:
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>repository</span>: <span style=color:#2aa198>&#39;parsiya/parsia-clone&#39;</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>path</span>: <span style=color:#2aa198>&#39;content&#39;</span>
+</span></span></code></pre></div><p>There appears to be some ways to make a submodule pull to get the latest commit.
 I searched around the internet and realized a second checkout is not going to be
-end of the world and is much simpler to accomplish.</p>
-</div>
-<footer>
+end of the world and is much simpler to accomplish.</p></div><footer>
 <p class=meta>
 <span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>Feb 17, 2021</time>
 </span>
-</p>
-<p class=meta>
+</p><p class=meta>
 <a class="basic-alignment left" href=https://parsiya.net/blog/2021-01-17-some-sans-holiday-hack-2020-solutions/ title="Some SANS Holiday Hack 2020 Solutions">Some SANS Holiday Hack 2020 Solutions</a>
 <a class="basic-alignment right" href=https://parsiya.net/blog/2021-03-17-attack-surface-analysis-part-2-custom-protocol-handlers/ title="Attack Surface Analysis - Part 2 - Custom Protocol Handlers">Attack Surface Analysis - Part 2 - Custom Protocol Handlers</a>
-</p>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</div>
-<aside class="sidebar thirds">
+</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer></article></div><aside class="sidebar thirds">
 <section class="first odd">
-<h1>Who am I?</h1>
-<p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
-<p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p>
-<p>Click on <a href=/about/>About Me!</a> to know more.</p>
-</p>
-</section>
-<ul class=sidebar-nav>
+<h1>Who am I?</h1><p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
 <li class=sidebar-nav-item>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li>
-</ul>
-<section class=odd>
-<h1>Collections</h1>
-<li>
+</li></ul><section class=odd>
+<h1>Collections</h1><li>
 <a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li>
-<li>
+</li><li>
 <a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li>
-</section>
-</aside>
-</div>
-</div>
-<footer role=contentinfo>
+</li></section></aside></div></div><footer role=contentinfo>
 <p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>

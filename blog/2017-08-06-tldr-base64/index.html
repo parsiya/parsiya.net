@@ -3,51 +3,34 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
 <link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>TLDR: Base64</title>
-<link rel=stylesheet href=/css/hugo-octopress.css>
+<title>TLDR: Base64</title><link rel=stylesheet href=/css/hugo-octopress.css>
 <link rel=stylesheet href=/css/fork-awesome.min.css>
 <link href=https://parsiya.net/favicon.png rel=icon>
 <meta name=description content>
 <meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
 <meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.92.2">
+<meta name=generator content="Hugo 0.93.0">
 <meta name=twitter:card content="summary">
 <meta name=twitter:title content="TLDR: Base64">
 <meta name=twitter:description content="Some quick notes about base64 encoding. URL safe and avoiding a pitfall when using Burp Decoder.
 This document assumes you already know what base64 is and some of the major use-cases.">
 <meta name=twitter:domain content="parsiya.net">
 <meta name=twitter:creator content="@CryptoGangsta">
-</head>
-<body>
+</head><body>
 <header role=banner>
 <hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
-<h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2>
-</hgroup></header>
-<nav role=navigation>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
 <fieldset class=mobile-nav>
 <select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset>
-<ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
-<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
-<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
-<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
-<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
-<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
-</ul>
-<ul class=subscription>
+</fieldset><ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
 <a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul>
-<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
 <fieldset role=search>
 <input class=search type=text name=q results=0 placeholder=Search>
 <input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset>
-</form>
-</nav>
-<div id=main>
+</fieldset></form></nav><div id=main>
 <div id=content>
 <div>
 <article class=hentry role=article>
@@ -56,142 +39,81 @@ complete unless it is known by its causes. - Avicenna</h2>
 - 3 minute read
 - <a href=https://parsiya.net/blog/2017-08-06-tldr-base64/#disqus_thread>Comments</a>
 - <a class=label href=https://parsiya.net/categories/base64/>base64 </a>
-</p>
-<h1 class=entry-title>
+</p><h1 class=entry-title>
 TLDR: Base64
-</h1>
-</header>
-<div class=entry-content>
+</h1></header><div class=entry-content>
 <nav id=TableOfContents>
 <ul>
-<li><a href=#quick-intro>Quick Intro</a></li>
-<li><a href=#padding>Padding</a></li>
-<li><a href=#url-safe-base64-encoding>URL-Safe Base64 Encoding</a></li>
-<li><a href=#base64-in-burp-decoder-issues>Base64 in Burp Decoder Issues</a>
+<li><a href=#quick-intro>Quick Intro</a></li><li><a href=#padding>Padding</a></li><li><a href=#url-safe-base64-encoding>URL-Safe Base64 Encoding</a></li><li><a href=#base64-in-burp-decoder-issues>Base64 in Burp Decoder Issues</a>
 <ul>
-<li><a href=#pad-strings-before-decoding-with-burp-decoder>Pad Strings before Decoding with Burp Decoder</a></li>
-<li><a href=#convert-url-safe-base64-to-standard-before-decoding-with-burp-decoder>Convert URL-Safe Base64 to Standard before Decoding with Burp Decoder</a></li>
-</ul>
-</li>
-</ul>
-</nav>
-<p>Some quick notes about base64 encoding. URL safe and avoiding a pitfall when using Burp Decoder.</p>
-<p>This document assumes you already know what base64 is and some of the major use-cases.</p>
-<h1 id=quick-intro>Quick Intro
+<li><a href=#pad-strings-before-decoding-with-burp-decoder>Pad Strings before Decoding with Burp Decoder</a></li><li><a href=#convert-url-safe-base64-to-standard-before-decoding-with-burp-decoder>Convert URL-Safe Base64 to Standard before Decoding with Burp Decoder</a></li></ul></li></ul></nav><p>Some quick notes about base64 encoding. URL safe and avoiding a pitfall when using Burp Decoder.</p><p>This document assumes you already know what base64 is and some of the major use-cases.</p><h1 id=quick-intro>Quick Intro
 <a class=header-link href=#quick-intro><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><ul>
-<li>Wikipedia link: <a href=https://en.wikipedia.org/wiki/Base64 target=_blank rel="noreferrer noopener">https://en.wikipedia.org/wiki/Base64</a></li>
-<li>Usually used convert binary data into text.
+<li>Wikipedia link: <a href=https://en.wikipedia.org/wiki/Base64 target=_blank rel="noreferrer noopener">https://en.wikipedia.org/wiki/Base64</a></li><li>Usually used convert binary data into text.
 <ul>
-<li>Storage: Text file or DB field.</li>
-<li>Transport: Email, HTTP parameters/payloads.</li>
-</ul>
-</li>
-<li>Takes 3 bytes, returns 4.</li>
-<li>No header/footer.</li>
-<li>Alphabet: <code>A-Z a-z 0-9 + / =</code>
+<li>Storage: Text file or DB field.</li><li>Transport: Email, HTTP parameters/payloads.</li></ul></li><li>Takes 3 bytes, returns 4.</li><li>No header/footer.</li><li>Alphabet: <code>A-Z a-z 0-9 + / =</code>
 <ul>
-<li><code>=</code> padding character.</li>
-</ul>
-</li>
-<li>See also <a href=https://en.wikipedia.org/wiki/Uuencoding#Disadvantages target=_blank rel="noreferrer noopener">uuencoding on Wikipedia</a> if you happen to encounter one in the wild.</li>
-</ul>
-<h1 id=padding>Padding
+<li><code>=</code> padding character.</li></ul></li><li>See also <a href=https://en.wikipedia.org/wiki/Uuencoding#Disadvantages target=_blank rel="noreferrer noopener">uuencoding on Wikipedia</a> if you happen to encounter one in the wild.</li></ul><h1 id=padding>Padding
 <a class=header-link href=#padding><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p><code>=</code> is the padding char. It is used to pad the string to a multiple of four. You can remove them from the final result without any issues, as a result a lot of times you see base64 encoded characters without padding.</p>
-<p>This is usually not an issue because you can just pad it back to a multiple of four and decode it. Due to the format, you will only see one or two padding chars.</p>
-<h1 id=url-safe-base64-encoding>URL-Safe Base64 Encoding
+</h1><p><code>=</code> is the padding char. It is used to pad the string to a multiple of four. You can remove them from the final result without any issues, as a result a lot of times you see base64 encoded characters without padding.</p><p>This is usually not an issue because you can just pad it back to a multiple of four and decode it. Due to the format, you will only see one or two padding chars.</p><h1 id=url-safe-base64-encoding>URL-Safe Base64 Encoding
 <a class=header-link href=#url-safe-base64-encoding><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>In order to use it in URLs and file names, the special characters are replaced:</p>
-<ul>
-<li><code>+</code> -> <code>-</code></li>
-<li><code>/</code> -> <code>_</code></li>
-<li><code>=</code> -> <code>.</code> but usually removed</li>
-</ul>
-<h1 id=base64-in-burp-decoder-issues>Base64 in Burp Decoder Issues
+</h1><p>In order to use it in URLs and file names, the special characters are replaced:</p><ul>
+<li><code>+</code> -> <code>-</code></li><li><code>/</code> -> <code>_</code></li><li><code>=</code> -> <code>.</code> but usually removed</li></ul><h1 id=base64-in-burp-decoder-issues>Base64 in Burp Decoder Issues
 <a class=header-link href=#base64-in-burp-decoder-issues><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Burp Decoder support multiple encoding/decoding/functions including base64.</p>
-<h2 id=pad-strings-before-decoding-with-burp-decoder>Pad Strings before Decoding with Burp Decoder
+</h1><p>Burp Decoder support multiple encoding/decoding/functions including base64.</p><h2 id=pad-strings-before-decoding-with-burp-decoder>Pad Strings before Decoding with Burp Decoder
 <a class=header-link href=#pad-strings-before-decoding-with-burp-decoder><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>You should remember two things when using Burp Decoder to decode base64 without padding.</p>
-<ul>
-<li>If input is not padded, it will not be padded automatically.</li>
-<li>The last group of input will be copied as-is to output if not a multiple of four.</li>
-</ul>
-<p>As a result when decoding a base64 string without padding in Burp Decoder you might see the wrong output.</p>
-<p>For example the hex blob <code>0a0b0c0d</code> converted to bytes and then base64 results in <code>CgsMDQ==</code>.</p>
-<figure class=code>
+</h2><p>You should remember two things when using Burp Decoder to decode base64 without padding.</p><ul>
+<li>If input is not padded, it will not be padded automatically.</li><li>The last group of input will be copied as-is to output if not a multiple of four.</li></ul><p>As a result when decoding a base64 string without padding in Burp Decoder you might see the wrong output.</p><p>For example the hex blob <code>0a0b0c0d</code> converted to bytes and then base64 results in <code>CgsMDQ==</code>.</p><figure class=code>
 <figcaption>
 <span>Base64 conversion in Python</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">5
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>from</span> base64 <span style=color:#719e07>import</span> b64encode
-<span style=color:#719e07>from</span> binascii <span style=color:#719e07>import</span> unhexlify
-
-<span style=color:#b58900>print</span> b64encode(unhexlify(<span style=color:#2aa198>&#34;0a0b0c0d&#34;</span>))
-CgsMDQ<span style=color:#719e07>==</span></code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>If padding chars are not stored/transmitted and we paste <code>CgsMDQ</code> in Burp Decoder we get <code>0a0b0c4451</code>. Burp decodes the string in blocks of four characters but when it reaches the last block, if the length is less than four it just displays <code>DQ</code> or <code>4451</code> in the output. If the input string is big, you might not notice the length difference or the last chars.</p>
-<p>Padding the string with <code>=</code> returns the correct output.</p>
-<span class=caption-wrapper>
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>from</span> base64 <span style=color:#719e07>import</span> b64encode
+</span></span><span style=display:flex><span><span style=color:#719e07>from</span> binascii <span style=color:#719e07>import</span> unhexlify
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#b58900>print</span> b64encode(unhexlify(<span style=color:#2aa198>&#34;0a0b0c0d&#34;</span>))
+</span></span><span style=display:flex><span>CgsMDQ<span style=color:#719e07>==</span></span></span></code></pre></td></tr></table></div></div></div></figure><p>If padding chars are not stored/transmitted and we paste <code>CgsMDQ</code> in Burp Decoder we get <code>0a0b0c4451</code>. Burp decodes the string in blocks of four characters but when it reaches the last block, if the length is less than four it just displays <code>DQ</code> or <code>4451</code> in the output. If the input string is big, you might not notice the length difference or the last chars.</p><p>Padding the string with <code>=</code> returns the correct output.</p><span class=caption-wrapper>
 <img class=caption src=/images/2017/base64/1-burpdecoder.gif title="Adding padding string in Burp Decoder" alt="Adding padding string in Burp Decoder">
 <span class=caption-text>Adding padding string in Burp Decoder</span>
 </span>
 <h2 id=convert-url-safe-base64-to-standard-before-decoding-with-burp-decoder>Convert URL-Safe Base64 to Standard before Decoding with Burp Decoder
 <a class=header-link href=#convert-url-safe-base64-to-standard-before-decoding-with-burp-decoder><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Burp Decoder does not Recognize URL-Safe Base64 strings. If it reaches a block containing these characters, it copies it to the output and moves to the next block.</p>
-<p>We can see both of these behaviors in this example. The hex blob <code>20939e8f6202fcd43ef603</code> in URL-safe base64 and without padding is <code>IJOej2IC_NQ-9gM</code>.</p>
-<figure class=code>
+</h2><p>Burp Decoder does not Recognize URL-Safe Base64 strings. If it reaches a block containing these characters, it copies it to the output and moves to the next block.</p><p>We can see both of these behaviors in this example. The hex blob <code>20939e8f6202fcd43ef603</code> in URL-safe base64 and without padding is <code>IJOej2IC_NQ-9gM</code>.</p><figure class=code>
 <figcaption>
 <span>URL-Safe base64 conversion in Python</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">7
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>from</span> base64 <span style=color:#719e07>import</span> urlsafe_b64encode, b64encode
-
-<span style=color:#b58900>print</span> urlsafe_b64encode(unhexlify(<span style=color:#2aa198>&#34;20939e8f6202fcd43ef603&#34;</span>))
-IJOej2IC_NQ<span style=color:#719e07>-</span><span style=color:#2aa198>9</span>gM<span style=color:#719e07>=</span>
-
-<span style=color:#b58900>print</span> b64encode(unhexlify(<span style=color:#2aa198>&#34;20939e8f6202fcd43ef603&#34;</span>))
-IJOej2IC<span style=color:#719e07>/</span>NQ<span style=color:#719e07>+</span><span style=color:#2aa198>9</span>gM<span style=color:#719e07>=</span></code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>In Burp Decoder we see block 3 directly in output because it doesn't contain standard base64 characters. Block 4 is also not decoded because it's not a multiple of 4.</p>
-<span class=caption-wrapper>
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">7
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>from</span> base64 <span style=color:#719e07>import</span> urlsafe_b64encode, b64encode
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#b58900>print</span> urlsafe_b64encode(unhexlify(<span style=color:#2aa198>&#34;20939e8f6202fcd43ef603&#34;</span>))
+</span></span><span style=display:flex><span>IJOej2IC_NQ<span style=color:#719e07>-</span><span style=color:#2aa198>9</span>gM<span style=color:#719e07>=</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#b58900>print</span> b64encode(unhexlify(<span style=color:#2aa198>&#34;20939e8f6202fcd43ef603&#34;</span>))
+</span></span><span style=display:flex><span>IJOej2IC<span style=color:#719e07>/</span>NQ<span style=color:#719e07>+</span><span style=color:#2aa198>9</span>gM<span style=color:#719e07>=</span></span></span></code></pre></td></tr></table></div></div></div></figure><p>In Burp Decoder we see block 3 directly in output because it doesn't contain standard base64 characters. Block 4 is also not decoded because it's not a multiple of 4.</p><span class=caption-wrapper>
 <img class=caption src=/images/2017/base64/2-urlsafe.png title="URL-safe base64 string in Burp Decoder" alt="URL-safe base64 string in Burp Decoder">
 <span class=caption-text>URL-safe base64 string in Burp Decoder</span>
 </span>
-<p>The standard string with padding is displayed correctly.</p>
-<span class=caption-wrapper>
+<p>The standard string with padding is displayed correctly.</p><span class=caption-wrapper>
 <img class=caption src=/images/2017/base64/3-standard.png title="Standard base64 in Burp Decoder" alt="Standard base64 in Burp Decoder">
 <span class=caption-text>Standard base64 in Burp Decoder</span>
 </span>
-</div>
-<footer>
+</div><footer>
 <p class=meta>
 <span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>Aug 6, 2017</time>
@@ -199,82 +121,47 @@ IJOej2IC<span style=color:#719e07>/</span>NQ<span style=color:#719e07>+</span><s
 Tags:
 <a class=category href=https://parsiya.net/tags/burp>Burp</a>
 </span>
-</p>
-<p class=meta>
+</p><p class=meta>
 <a class="basic-alignment left" href=https://parsiya.net/blog/2017-07-08-from-atom-to-sublime-text/ title="From Atom to Sublime Text">From Atom to Sublime Text</a>
 <a class="basic-alignment right" href=https://parsiya.net/blog/2017-09-21-razer-comms/ title="Razer Comms">Razer Comms</a>
-</p>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</div>
-<aside class="sidebar thirds">
+</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer></article></div><aside class="sidebar thirds">
 <section class="first odd">
-<h1>Who am I?</h1>
-<p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
-<p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p>
-<p>Click on <a href=/about/>About Me!</a> to know more.</p>
-</p>
-</section>
-<ul class=sidebar-nav>
+<h1>Who am I?</h1><p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
 <li class=sidebar-nav-item>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li>
-</ul>
-<section class=odd>
-<h1>Collections</h1>
-<li>
+</li></ul><section class=odd>
+<h1>Collections</h1><li>
 <a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li>
-<li>
+</li><li>
 <a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li>
-</section>
-</aside>
-</div>
-</div>
-<footer role=contentinfo>
+</li></section></aside></div></div><footer role=contentinfo>
 <p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>

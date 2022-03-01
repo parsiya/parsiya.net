@@ -3,14 +3,13 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
 <link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>Gophercises - Lessons Learned</title>
-<link rel=stylesheet href=/css/hugo-octopress.css>
+<title>Gophercises - Lessons Learned</title><link rel=stylesheet href=/css/hugo-octopress.css>
 <link rel=stylesheet href=/css/fork-awesome.min.css>
 <link href=https://parsiya.net/favicon.png rel=icon>
 <meta name=description content>
 <meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
 <meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.92.2">
+<meta name=generator content="Hugo 0.93.0">
 <meta name=twitter:card content="summary_large_image">
 <meta name=twitter:image:src content="https://parsiya.net/blog/2018-10-06-gophercises-lessons-learned/github-sc.jpg">
 <meta name=twitter:title content="Gophercises - Lessons Learned">
@@ -21,37 +20,21 @@ https://github.com/parsiya/Parsia-Code/tree/master/gophercises
 ">
 <meta name=twitter:domain content="parsiya.net">
 <meta name=twitter:creator content="@CryptoGangsta">
-</head>
-<body>
+</head><body>
 <header role=banner>
 <hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
-<h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2>
-</hgroup></header>
-<nav role=navigation>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
 <fieldset class=mobile-nav>
 <select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset>
-<ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
-<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
-<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
-<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
-<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
-<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
-</ul>
-<ul class=subscription>
+</fieldset><ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
 <a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul>
-<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
 <fieldset role=search>
 <input class=search type=text name=q results=0 placeholder=Search>
 <input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset>
-</form>
-</nav>
-<div id=main>
+</fieldset></form></nav><div id=main>
 <div id=content>
 <div>
 <article class=hentry role=article>
@@ -60,563 +43,337 @@ complete unless it is known by its causes. - Avicenna</h2>
 - 12 minute read
 - <a href=https://parsiya.net/blog/2018-10-06-gophercises-lessons-learned/#disqus_thread>Comments</a>
 - <a class=label href=https://parsiya.net/categories/go/>Go </a><a class=label href=https://parsiya.net/categories/not-security/>Not Security </a><a class=label href=https://parsiya.net/categories/lessons-learned/>Lessons Learned </a>
-</p>
-<h1 class=entry-title>
+</p><h1 class=entry-title>
 Gophercises - Lessons Learned
-</h1>
-</header>
-<div class=entry-content>
+</h1></header><div class=entry-content>
 <nav id=TableOfContents>
 <ul>
-<li><a href=#timers>Timers</a></li>
-<li><a href=#randshuffle>rand.Shuffle</a></li>
-<li><a href=#httphandler>http.Handler</a></li>
-<li><a href=#json-to-objects-mappings>JSON to Objects Mappings</a></li>
-<li><a href=#htmltemplate>"html/template"</a></li>
-<li><a href=#texttemplate>"text/template"</a></li>
-<li><a href=#xnethtml>/x/net/html</a></li>
-<li><a href=#stringsbuilder>strings.Builder</a></li>
-<li><a href=#ioreader-for-string>io.Reader for string</a></li>
-<li><a href=#neturl>net.URL</a></li>
-<li><a href=#ioutildiscard>ioutil.Discard</a></li>
-<li><a href=#breakcontinue-to-label>Break/Continue to Label</a></li>
-<li><a href=#range-on-string-returns-runes>Range on string returns Runes</a></li>
-<li><a href=#string-vs-rune>String vs. Rune</a></li>
-<li><a href=#boltdb>BoltDB</a>
+<li><a href=#timers>Timers</a></li><li><a href=#randshuffle>rand.Shuffle</a></li><li><a href=#httphandler>http.Handler</a></li><li><a href=#json-to-objects-mappings>JSON to Objects Mappings</a></li><li><a href=#htmltemplate>"html/template"</a></li><li><a href=#texttemplate>"text/template"</a></li><li><a href=#xnethtml>/x/net/html</a></li><li><a href=#stringsbuilder>strings.Builder</a></li><li><a href=#ioreader-for-string>io.Reader for string</a></li><li><a href=#neturl>net.URL</a></li><li><a href=#ioutildiscard>ioutil.Discard</a></li><li><a href=#breakcontinue-to-label>Break/Continue to Label</a></li><li><a href=#range-on-string-returns-runes>Range on string returns Runes</a></li><li><a href=#string-vs-rune>String vs. Rune</a></li><li><a href=#boltdb>BoltDB</a>
 <ul>
-<li><a href=#using-time-as-keys-in-boltdb-for-indexing>Using Time as Keys in BoltDB for Indexing</a></li>
-</ul>
-</li>
-<li><a href=#timeadd-vs-timesub>time.Add vs. time.Sub</a></li>
-<li><a href=#convert-int-variable-to-timeduration>Convert int Variable to time.Duration</a></li>
-<li><a href=#jmoironsqlx>jmoiron/sqlx</a></li>
-<li><a href=#stringer-package>Stringer package</a></li>
-<li><a href=#filepathwalk>filepath.Walk</a></li>
-<li><a href=#print-stacktrace>Print Stacktrace</a></li>
-<li><a href=#custom-httpresponsewriter>Custom http.ResponseWriter</a></li>
-<li><a href=#embed>Embed</a></li>
-<li><a href=#type-assertion>Type Assertion</a></li>
-<li><a href=#httperror-only-support-plaintext>http.Error Only Support Plaintext</a></li>
-<li><a href=#chroma>Chroma</a></li>
-<li><a href=#jsonnewdecoder-jsonnewencoder>json.NewDecoder json.NewEncoder</a></li>
-<li><a href=#twitter-apis>Twitter APIs</a>
+<li><a href=#using-time-as-keys-in-boltdb-for-indexing>Using Time as Keys in BoltDB for Indexing</a></li></ul></li><li><a href=#timeadd-vs-timesub>time.Add vs. time.Sub</a></li><li><a href=#convert-int-variable-to-timeduration>Convert int Variable to time.Duration</a></li><li><a href=#jmoironsqlx>jmoiron/sqlx</a></li><li><a href=#stringer-package>Stringer package</a></li><li><a href=#filepathwalk>filepath.Walk</a></li><li><a href=#print-stacktrace>Print Stacktrace</a></li><li><a href=#custom-httpresponsewriter>Custom http.ResponseWriter</a></li><li><a href=#embed>Embed</a></li><li><a href=#type-assertion>Type Assertion</a></li><li><a href=#httperror-only-support-plaintext>http.Error Only Support Plaintext</a></li><li><a href=#chroma>Chroma</a></li><li><a href=#jsonnewdecoder-jsonnewencoder>json.NewDecoder json.NewEncoder</a></li><li><a href=#twitter-apis>Twitter APIs</a>
 <ul>
-<li><a href=#twitter-application-only-auth-flow>Twitter Application-Only Auth-Flow</a></li>
-<li><a href=#get-retweeters>Get Retweeters</a></li>
-</ul>
-</li>
-<li><a href=#chaining-reader-and-writer-interfaces>Chaining Reader and Writer Interfaces</a></li>
-<li><a href=#ioteereaderr-ioreader-w-iowriter-ioreader>io.TeeReader(r io.Reader, w io.Writer) io.Reader</a></li>
-<li><a href=#pass-arguments-to-delve-debugger-in-vs-code>Pass Arguments to Delve Debugger in VS Code</a></li>
-<li><a href=#html-input-type-file>HTML Input type File</a></li>
-<li><a href=#int-to-enum>Int to Enum</a></li>
-<li><a href=#httprequestformfile>http.Request.FormFile</a></li>
-<li><a href=#access-struct-fields-with-the-reflect-package>Access Struct Fields with the Reflect Package</a></li>
-<li><a href=#convert-float-to-string-with-two-floating-points>Convert Float to String with Two Floating Points</a></li>
-</ul>
-</nav>
-<p>I recently finished <a href=https://gophercises.com target=_blank rel="noreferrer noopener">Gophercises</a>, a great set of Go practice lessons by <a href=https://www.calhoun.io/ target=_blank rel="noreferrer noopener">Jon Calhoun</a>. I think it took me around a month from start to finish with some stuff in the middle. Most were nice, some were tedious. For example, the last exercise was about <a href=https://gophercises.com/exercises/pdf target=_blank rel="noreferrer noopener">PDF generation</a> and went to boring quickly.</p>
-<p>After every lesson, I wrote down "Lessons Learned" in the README. This page collects most of them. All code is here:</p>
-<ul>
-<li><a href=https://github.com/parsiya/Parsia-Code/tree/master/gophercises target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/gophercises</a></li>
-</ul>
-<h1 id=timers>Timers
+<li><a href=#twitter-application-only-auth-flow>Twitter Application-Only Auth-Flow</a></li><li><a href=#get-retweeters>Get Retweeters</a></li></ul></li><li><a href=#chaining-reader-and-writer-interfaces>Chaining Reader and Writer Interfaces</a></li><li><a href=#ioteereaderr-ioreader-w-iowriter-ioreader>io.TeeReader(r io.Reader, w io.Writer) io.Reader</a></li><li><a href=#pass-arguments-to-delve-debugger-in-vs-code>Pass Arguments to Delve Debugger in VS Code</a></li><li><a href=#html-input-type-file>HTML Input type File</a></li><li><a href=#int-to-enum>Int to Enum</a></li><li><a href=#httprequestformfile>http.Request.FormFile</a></li><li><a href=#access-struct-fields-with-the-reflect-package>Access Struct Fields with the Reflect Package</a></li><li><a href=#convert-float-to-string-with-two-floating-points>Convert Float to String with Two Floating Points</a></li></ul></nav><p>I recently finished <a href=https://gophercises.com target=_blank rel="noreferrer noopener">Gophercises</a>, a great set of Go practice lessons by <a href=https://www.calhoun.io/ target=_blank rel="noreferrer noopener">Jon Calhoun</a>. I think it took me around a month from start to finish with some stuff in the middle. Most were nice, some were tedious. For example, the last exercise was about <a href=https://gophercises.com/exercises/pdf target=_blank rel="noreferrer noopener">PDF generation</a> and went to boring quickly.</p><p>After every lesson, I wrote down "Lessons Learned" in the README. This page collects most of them. All code is here:</p><ul>
+<li><a href=https://github.com/parsiya/Parsia-Code/tree/master/gophercises target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/gophercises</a></li></ul><h1 id=timers>Timers
 <a class=header-link href=#timers><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><ul>
-<li>Read this: <a href=https://gobyexample.com/timers target=_blank rel="noreferrer noopener">https://gobyexample.com/timers</a></li>
-<li>Block with <code>&lt;-timerVar.C</code></li>
-<li>Stop the timer with <code>stop := timerVar.Stop()</code>
+<li>Read this: <a href=https://gobyexample.com/timers target=_blank rel="noreferrer noopener">https://gobyexample.com/timers</a></li><li>Block with <code>&lt;-timerVar.C</code></li><li>Stop the timer with <code>stop := timerVar.Stop()</code>
 <ul>
-<li>If timer is stopped, <code>stop</code> will be <code>true</code>.</li>
-</ul>
-</li>
-<li><strong>Stop doesn't unblock the channel.</strong> If you stop the timer, the channel will remain blocked.
+<li>If timer is stopped, <code>stop</code> will be <code>true</code>.</li></ul></li><li><strong>Stop doesn't unblock the channel.</strong> If you stop the timer, the channel will remain blocked.
 <ul>
 <li>Here's code based on gobyexample that will dead-lock if executed.
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#719e07>package</span> main
-
-<span style=color:#719e07>import</span> <span style=color:#2aa198>&#34;time&#34;</span>
-<span style=color:#719e07>import</span> <span style=color:#2aa198>&#34;fmt&#34;</span>
-
-<span style=color:#268bd2>func</span> <span style=color:#268bd2>main</span>() {
-
-    timer2 <span style=color:#719e07>:=</span> time.<span style=color:#268bd2>NewTimer</span>(<span style=color:#2aa198>10</span> <span style=color:#719e07>*</span> time.Second)
-    stop2 <span style=color:#719e07>:=</span> timer2.<span style=color:#268bd2>Stop</span>()
-    <span style=color:#719e07>if</span> stop2 {
-        fmt.<span style=color:#268bd2>Println</span>(<span style=color:#2aa198>&#34;Timer 2 stopped&#34;</span>)
-    }
-    <span style=color:#719e07>&lt;-</span>timer2.C
-}
-</code></pre></div></li>
-<li>Instead, use <code>timerVar.Reset(0)</code>. This will stop the timer and unblock the channel.</li>
-</ul>
-</li>
-</ul>
-<h1 id=randshuffle>rand.Shuffle
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#719e07>package</span> main
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>import</span> <span style=color:#2aa198>&#34;time&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>import</span> <span style=color:#2aa198>&#34;fmt&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>main</span>() {
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    timer2 <span style=color:#719e07>:=</span> time.<span style=color:#268bd2>NewTimer</span>(<span style=color:#2aa198>10</span> <span style=color:#719e07>*</span> time.Second)
+</span></span><span style=display:flex><span>    stop2 <span style=color:#719e07>:=</span> timer2.<span style=color:#268bd2>Stop</span>()
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> stop2 {
+</span></span><span style=display:flex><span>        fmt.<span style=color:#268bd2>Println</span>(<span style=color:#2aa198>&#34;Timer 2 stopped&#34;</span>)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#719e07>&lt;-</span>timer2.C
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div></li><li>Instead, use <code>timerVar.Reset(0)</code>. This will stop the timer and unblock the channel.</li></ul></li></ul><h1 id=randshuffle>rand.Shuffle
 <a class=header-link href=#randshuffle><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><ul>
-<li><a href=https://golang.org/pkg/math/rand/#Shuffle target=_blank rel="noreferrer noopener">https://golang.org/pkg/math/rand/#Shuffle</a></li>
-<li>Remember to seed a rand object.
+<li><a href=https://golang.org/pkg/math/rand/#Shuffle target=_blank rel="noreferrer noopener">https://golang.org/pkg/math/rand/#Shuffle</a></li><li>Remember to seed a rand object.
 <ul>
-<li><code>rnd := rand.New(rand.NewSource(time.Now().Unix()))</code></li>
-</ul>
-</li>
-<li>Needs a swap function of this type <code>func(i, j int)</code>.
+<li><code>rnd := rand.New(rand.NewSource(time.Now().Unix()))</code></li></ul></li><li>Needs a swap function of this type <code>func(i, j int)</code>.
 <ul>
-<li>Inside the swap function (does not need to be named <code>swap</code>), do the swaps.</li>
-</ul>
-</li>
-</ul>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#268bd2>func</span> (e <span style=color:#719e07>*</span>Exam) <span style=color:#268bd2>Shuffle</span>() {
-	rnd <span style=color:#719e07>:=</span> rand.<span style=color:#268bd2>New</span>(rand.<span style=color:#268bd2>NewSource</span>(time.<span style=color:#268bd2>Now</span>().<span style=color:#268bd2>Unix</span>()))
-	rnd.<span style=color:#268bd2>Shuffle</span>(<span style=color:#b58900>len</span>(e.problems), <span style=color:#268bd2>func</span>(i, j <span style=color:#dc322f>int</span>) {
-		e.problems[i], e.problems[j] = e.problems[j], e.problems[i]
-	})
-}
-</code></pre></div>
-<h1 id=httphandler>http.Handler
+<li>Inside the swap function (does not need to be named <code>swap</code>), do the swaps.</li></ul></li></ul><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>func</span> (e <span style=color:#719e07>*</span>Exam) <span style=color:#268bd2>Shuffle</span>() {
+</span></span><span style=display:flex><span>	rnd <span style=color:#719e07>:=</span> rand.<span style=color:#268bd2>New</span>(rand.<span style=color:#268bd2>NewSource</span>(time.<span style=color:#268bd2>Now</span>().<span style=color:#268bd2>Unix</span>()))
+</span></span><span style=display:flex><span>	rnd.<span style=color:#268bd2>Shuffle</span>(<span style=color:#b58900>len</span>(e.problems), <span style=color:#268bd2>func</span>(i, j <span style=color:#dc322f>int</span>) {
+</span></span><span style=display:flex><span>		e.problems[i], e.problems[j] = e.problems[j], e.problems[i]
+</span></span><span style=display:flex><span>	})
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h1 id=httphandler>http.Handler
 <a class=header-link href=#httphandler><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><ul>
 <li>Read this: <a href=https://medium.com/@matryer/the-http-handler-wrapper-technique-in-golang-updated-bc7fbcffa702 target=_blank rel="noreferrer noopener">https://medium.com/@matryer/the-http-handler-wrapper-technique-in-golang-updated-bc7fbcffa702</a>
 <ul>
-<li>"The idea is that you take in an http.Handler and return a new one that does something else before and/or after calling the ServeHTTP method on the original."</li>
-</ul>
-</li>
-<li>Then pass the custom handler to <code>http.ListenAndServe(":8080", customHandler)</code></li>
-</ul>
-<h1 id=json-to-objects-mappings>JSON to Objects Mappings
+<li>"The idea is that you take in an http.Handler and return a new one that does something else before and/or after calling the ServeHTTP method on the original."</li></ul></li><li>Then pass the custom handler to <code>http.ListenAndServe(":8080", customHandler)</code></li></ul><h1 id=json-to-objects-mappings>JSON to Objects Mappings
 <a class=header-link href=#json-to-objects-mappings><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Your best friend:</p>
-<ul>
-<li><a href=https://mholt.github.io/json-to-go/ target=_blank rel="noreferrer noopener">https://mholt.github.io/json-to-go/</a></li>
-<li>Doublecheck where you need to have maps. Doesn't detect them all the time.</li>
-</ul>
-<p>Maps to a <code>[]object</code> or array of objects:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>[
-    { 
-        <span style=color:#268bd2>&#34;key1&#34;</span>: <span style=color:#2aa198>&#34;value1&#34;</span>,
-        <span style=color:#268bd2>&#34;key2&#34;</span>: <span style=color:#2aa198>&#34;value2&#34;</span>
-    },
-    { 
-        <span style=color:#268bd2>&#34;key1&#34;</span>: <span style=color:#2aa198>&#34;value3&#34;</span>,
-        <span style=color:#268bd2>&#34;key2&#34;</span>: <span style=color:#2aa198>&#34;value4&#34;</span>
-    }
-]
-</code></pre></div><p>Maps to a map of <code>[string]object</code></p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
-	<span style=color:#268bd2>&#34;object1&#34;</span>: {
-		<span style=color:#268bd2>&#34;key1&#34;</span>: <span style=color:#2aa198>&#34;value1&#34;</span>,
-		<span style=color:#268bd2>&#34;key2&#34;</span>: <span style=color:#2aa198>&#34;value2&#34;</span>
-	},
-	<span style=color:#268bd2>&#34;object2&#34;</span>: {
-		<span style=color:#268bd2>&#34;key1&#34;</span>: <span style=color:#2aa198>&#34;value3&#34;</span>,
-		<span style=color:#268bd2>&#34;key2&#34;</span>: <span style=color:#2aa198>&#34;value4&#34;</span>
-	}
-}
-</code></pre></div>
-<h1 id=htmltemplate>"html/template"
+</h1><p>Your best friend:</p><ul>
+<li><a href=https://mholt.github.io/json-to-go/ target=_blank rel="noreferrer noopener">https://mholt.github.io/json-to-go/</a></li><li>Doublecheck where you need to have maps. Doesn't detect them all the time.</li></ul><p>Maps to a <code>[]object</code> or array of objects:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>[
+</span></span><span style=display:flex><span>    { 
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;key1&#34;</span>: <span style=color:#2aa198>&#34;value1&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;key2&#34;</span>: <span style=color:#2aa198>&#34;value2&#34;</span>
+</span></span><span style=display:flex><span>    },
+</span></span><span style=display:flex><span>    { 
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;key1&#34;</span>: <span style=color:#2aa198>&#34;value3&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;key2&#34;</span>: <span style=color:#2aa198>&#34;value4&#34;</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>]
+</span></span></code></pre></div><p>Maps to a map of <code>[string]object</code></p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	<span style=color:#268bd2>&#34;object1&#34;</span>: {
+</span></span><span style=display:flex><span>		<span style=color:#268bd2>&#34;key1&#34;</span>: <span style=color:#2aa198>&#34;value1&#34;</span>,
+</span></span><span style=display:flex><span>		<span style=color:#268bd2>&#34;key2&#34;</span>: <span style=color:#2aa198>&#34;value2&#34;</span>
+</span></span><span style=display:flex><span>	},
+</span></span><span style=display:flex><span>	<span style=color:#268bd2>&#34;object2&#34;</span>: {
+</span></span><span style=display:flex><span>		<span style=color:#268bd2>&#34;key1&#34;</span>: <span style=color:#2aa198>&#34;value3&#34;</span>,
+</span></span><span style=display:flex><span>		<span style=color:#268bd2>&#34;key2&#34;</span>: <span style=color:#2aa198>&#34;value4&#34;</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h1 id=htmltemplate>"html/template"
 <a class=header-link href=#htmltemplate><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><ul>
-<li><a href=https://golang.org/pkg/html/template/ target=_blank rel="noreferrer noopener">https://golang.org/pkg/html/template/</a></li>
-<li>Same as Hugo's templates.</li>
-</ul>
-<h1 id=texttemplate>"text/template"
+<li><a href=https://golang.org/pkg/html/template/ target=_blank rel="noreferrer noopener">https://golang.org/pkg/html/template/</a></li><li>Same as Hugo's templates.</li></ul><h1 id=texttemplate>"text/template"
 <a class=header-link href=#texttemplate><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><ul>
-<li><a href=https://golang.org/pkg/text/template/ target=_blank rel="noreferrer noopener">https://golang.org/pkg/text/template/</a></li>
-<li>Very similar to HTML templates but used for manipulating text.</li>
-<li>Use instead of a lot of <code>fmt.Sprintf</code>s.</li>
-</ul>
-<h1 id=xnethtml>/x/net/html
+<li><a href=https://golang.org/pkg/text/template/ target=_blank rel="noreferrer noopener">https://golang.org/pkg/text/template/</a></li><li>Very similar to HTML templates but used for manipulating text.</li><li>Use instead of a lot of <code>fmt.Sprintf</code>s.</li></ul><h1 id=xnethtml>/x/net/html
 <a class=header-link href=#xnethtml><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><ul>
-<li>Read the package example: <a href=https://godoc.org/golang.org/x/net/html target=_blank rel="noreferrer noopener">https://godoc.org/golang.org/x/net/html</a></li>
-<li>Token struct:
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#268bd2>type</span> Token <span style=color:#268bd2>struct</span> {
-    Type     TokenType
-    DataAtom atom.Atom
-    Data     <span style=color:#dc322f>string</span>
-    Attr     []Attribute
-}
-</code></pre></div></li>
-<li><code>Type</code> can give us information about what kind of token it is. Important ones for this exercise are:
+<li>Read the package example: <a href=https://godoc.org/golang.org/x/net/html target=_blank rel="noreferrer noopener">https://godoc.org/golang.org/x/net/html</a></li><li>Token struct:
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>type</span> Token <span style=color:#268bd2>struct</span> {
+</span></span><span style=display:flex><span>    Type     TokenType
+</span></span><span style=display:flex><span>    DataAtom atom.Atom
+</span></span><span style=display:flex><span>    Data     <span style=color:#dc322f>string</span>
+</span></span><span style=display:flex><span>    Attr     []Attribute
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div></li><li><code>Type</code> can give us information about what kind of token it is. Important ones for this exercise are:
 <ul>
-<li><code>StartTagToken</code>: <code>&lt;a href></code></li>
-<li><code>EndTagToken</code>: <code>&lt;/a></code></li>
-<li><code>TextToken</code>: Text in between. Using text nodes will skip other elements inside the link.</li>
-</ul>
-</li>
-<li><code>Data</code> contains the data in the node.
+<li><code>StartTagToken</code>: <code>&lt;a href></code></li><li><code>EndTagToken</code>: <code>&lt;/a></code></li><li><code>TextToken</code>: Text in between. Using text nodes will skip other elements inside the link.</li></ul></li><li><code>Data</code> contains the data in the node.
 <ul>
-<li>Anchor tags: <code>a</code>.</li>
-<li>Text nodes: The actual text of the node.</li>
-</ul>
-</li>
-<li>Attribute is of type:
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#268bd2>type</span> Attribute <span style=color:#268bd2>struct</span> {
-    Namespace, Key, Val <span style=color:#dc322f>string</span>
-}
-</code></pre></div></li>
-<li><code>Key</code> is the name of the attribute and <code>Value</code> is the value.
+<li>Anchor tags: <code>a</code>.</li><li>Text nodes: The actual text of the node.</li></ul></li><li>Attribute is of type:
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>type</span> Attribute <span style=color:#268bd2>struct</span> {
+</span></span><span style=display:flex><span>    Namespace, Key, Val <span style=color:#dc322f>string</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div></li><li><code>Key</code> is the name of the attribute and <code>Value</code> is the value.
 <ul>
-<li><code>&lt;a href="example.net"></code>: <code>key</code> = <code>href</code> and <code>value</code> = <code>example.net</code>.</li>
-</ul>
-</li>
-</ul>
-<h1 id=stringsbuilder>strings.Builder
+<li><code>&lt;a href="example.net"></code>: <code>key</code> = <code>href</code> and <code>value</code> = <code>example.net</code>.</li></ul></li></ul><h1 id=stringsbuilder>strings.Builder
 <a class=header-link href=#stringsbuilder><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Strings are immutable, use this to append to strings for better efficiency.</p>
-<ul>
-<li>Example: <a href=https://golang.org/pkg/strings/#example_Builder target=_blank rel="noreferrer noopener">https://golang.org/pkg/strings/#example_Builder</a></li>
-</ul>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#268bd2>var</span> sb strings.Builder  <span style=color:#586e75>// Create the builder.
-</span><span style=color:#586e75></span>sb.<span style=color:#268bd2>WriteString</span>(<span style=color:#2aa198>&#34;whatever&#34;</span>)  <span style=color:#586e75>// Write to it. We can use fmt.Sprintf as param too.
-</span><span style=color:#586e75></span><span style=color:#719e07>return</span> sb.<span style=color:#268bd2>String</span>()  <span style=color:#586e75>// Get the final string.
-</span></code></pre></div><p>We can also pass one as a pointer as <code>io.Writer</code>. For example, <code>json.NewEncoder(&sb)</code>.</p>
-<h1 id=ioreader-for-string>io.Reader for string
+</h1><p>Strings are immutable, use this to append to strings for better efficiency.</p><ul>
+<li>Example: <a href=https://golang.org/pkg/strings/#example_Builder target=_blank rel="noreferrer noopener">https://golang.org/pkg/strings/#example_Builder</a></li></ul><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>var</span> sb strings.Builder  <span style=color:#586e75>// Create the builder.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>sb.<span style=color:#268bd2>WriteString</span>(<span style=color:#2aa198>&#34;whatever&#34;</span>)  <span style=color:#586e75>// Write to it. We can use fmt.Sprintf as param too.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>return</span> sb.<span style=color:#268bd2>String</span>()  <span style=color:#586e75>// Get the final string.
+</span></span></span></code></pre></div><p>We can also pass one as a pointer as <code>io.Writer</code>. For example, <code>json.NewEncoder(&sb)</code>.</p><h1 id=ioreader-for-string>io.Reader for string
 <a class=header-link href=#ioreader-for-string><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Get an <code>io.Reader</code> from a string.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>reader: = strings.<span style=color:#268bd2>NewReader</span>(<span style=color:#2aa198>&#34;Whatever&#34;</span>)
-</code></pre></div>
-<h1 id=neturl>net.URL
+</h1><p>Get an <code>io.Reader</code> from a string.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>reader: = strings.<span style=color:#268bd2>NewReader</span>(<span style=color:#2aa198>&#34;Whatever&#34;</span>)
+</span></span></code></pre></div><h1 id=neturl>net.URL
 <a class=header-link href=#neturl><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><ul>
-<li><a href=https://golang.org/pkg/net/url/ target=_blank rel="noreferrer noopener">https://golang.org/pkg/net/url/</a></li>
-<li>There are tons of great methods.</li>
-<li>Convert a string to URL: <code>Parse(rawurl string) (*URL, error)</code></li>
-<li>URL will give you tons of utilities:</li>
-</ul>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#268bd2>type</span> URL <span style=color:#268bd2>struct</span> {
-    Scheme     <span style=color:#dc322f>string</span>
-    Opaque     <span style=color:#dc322f>string</span>    <span style=color:#586e75>// encoded opaque data
-</span><span style=color:#586e75></span>    User       <span style=color:#719e07>*</span>Userinfo <span style=color:#586e75>// username and password information
-</span><span style=color:#586e75></span>    Host       <span style=color:#dc322f>string</span>    <span style=color:#586e75>// host or host:port
-</span><span style=color:#586e75></span>    Path       <span style=color:#dc322f>string</span>    <span style=color:#586e75>// path (relative paths may omit leading slash)
-</span><span style=color:#586e75></span>    RawPath    <span style=color:#dc322f>string</span>    <span style=color:#586e75>// encoded path hint (see EscapedPath method)
-</span><span style=color:#586e75></span>    ForceQuery <span style=color:#dc322f>bool</span>      <span style=color:#586e75>// append a query (&#39;?&#39;) even if RawQuery is empty
-</span><span style=color:#586e75></span>    RawQuery   <span style=color:#dc322f>string</span>    <span style=color:#586e75>// encoded query values, without &#39;?&#39;
-</span><span style=color:#586e75></span>    Fragment   <span style=color:#dc322f>string</span>    <span style=color:#586e75>// fragment for references, without &#39;#&#39;
-</span><span style=color:#586e75></span>}
-</code></pre></div><ul>
-<li><code>IsAbs()</code> returns true if path is absolute.</li>
-<li><code>Hostname()</code> returns host and port.</li>
-<li>Contents are case-sensitive.</li>
-<li>Get the complete URL with <code>URL.String()</code>.</li>
-</ul>
-<h1 id=ioutildiscard>ioutil.Discard
+<li><a href=https://golang.org/pkg/net/url/ target=_blank rel="noreferrer noopener">https://golang.org/pkg/net/url/</a></li><li>There are tons of great methods.</li><li>Convert a string to URL: <code>Parse(rawurl string) (*URL, error)</code></li><li>URL will give you tons of utilities:</li></ul><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>type</span> URL <span style=color:#268bd2>struct</span> {
+</span></span><span style=display:flex><span>    Scheme     <span style=color:#dc322f>string</span>
+</span></span><span style=display:flex><span>    Opaque     <span style=color:#dc322f>string</span>    <span style=color:#586e75>// encoded opaque data
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    User       <span style=color:#719e07>*</span>Userinfo <span style=color:#586e75>// username and password information
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    Host       <span style=color:#dc322f>string</span>    <span style=color:#586e75>// host or host:port
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    Path       <span style=color:#dc322f>string</span>    <span style=color:#586e75>// path (relative paths may omit leading slash)
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    RawPath    <span style=color:#dc322f>string</span>    <span style=color:#586e75>// encoded path hint (see EscapedPath method)
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    ForceQuery <span style=color:#dc322f>bool</span>      <span style=color:#586e75>// append a query (&#39;?&#39;) even if RawQuery is empty
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    RawQuery   <span style=color:#dc322f>string</span>    <span style=color:#586e75>// encoded query values, without &#39;?&#39;
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    Fragment   <span style=color:#dc322f>string</span>    <span style=color:#586e75>// fragment for references, without &#39;#&#39;
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>}
+</span></span></code></pre></div><ul>
+<li><code>IsAbs()</code> returns true if path is absolute.</li><li><code>Hostname()</code> returns host and port.</li><li>Contents are case-sensitive.</li><li>Get the complete URL with <code>URL.String()</code>.</li></ul><h1 id=ioutildiscard>ioutil.Discard
 <a class=header-link href=#ioutildiscard><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><ul>
-<li><code>var Discard io.Writer = devNull(0)</code></li>
-</ul>
-<h1 id=breakcontinue-to-label>Break/Continue to Label
+<li><code>var Discard io.Writer = devNull(0)</code></li></ul><h1 id=breakcontinue-to-label>Break/Continue to Label
 <a class=header-link href=#breakcontinue-to-label><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><ul>
 <li>
-<p>Really helps when inside a select which is inside an infinite loop.</p>
-</li>
-<li>
-<p>Designate labels as usual.</p>
-</li>
-<li>
-<p><code>break</code> or <code>continue</code> to label.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>Mainloop:
-    <span style=color:#719e07>for</span> {
-        <span style=color:#719e07>select</span> {
-        <span style=color:#719e07>case</span> whatever:
-            <span style=color:#586e75>//
-</span><span style=color:#586e75></span>        <span style=color:#719e07>default</span>:
-            <span style=color:#586e75>// Do what you want
-</span><span style=color:#586e75></span>            <span style=color:#719e07>break</span> Mainloop
-        }
-    }
-</code></pre></div></li>
-</ul>
-<h1 id=range-on-string-returns-runes>Range on string returns Runes
+<p>Really helps when inside a select which is inside an infinite loop.</p></li><li>
+<p>Designate labels as usual.</p></li><li>
+<p><code>break</code> or <code>continue</code> to label.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>Mainloop:
+</span></span><span style=display:flex><span>    <span style=color:#719e07>for</span> {
+</span></span><span style=display:flex><span>        <span style=color:#719e07>select</span> {
+</span></span><span style=display:flex><span>        <span style=color:#719e07>case</span> whatever:
+</span></span><span style=display:flex><span>            <span style=color:#586e75>//
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        <span style=color:#719e07>default</span>:
+</span></span><span style=display:flex><span>            <span style=color:#586e75>// Do what you want
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>            <span style=color:#719e07>break</span> Mainloop
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span></code></pre></div></li></ul><h1 id=range-on-string-returns-runes>Range on string returns Runes
 <a class=header-link href=#range-on-string-returns-runes><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><ul>
-<li>These runes must be converted to string before usage with <code>string(ch)</code></li>
-</ul>
-<h1 id=string-vs-rune>String vs. Rune
+<li>These runes must be converted to string before usage with <code>string(ch)</code></li></ul><h1 id=string-vs-rune>String vs. Rune
 <a class=header-link href=#string-vs-rune><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><ul>
-<li><code>"a"</code> is a string, <code>'a'</code> is a rune.</li>
-<li>rune to string with <code>string('a')</code>.</li>
-<li>string to rune with <code>rune("a")</code>.</li>
-<li>string to int with <code>int("a")</code>.</li>
-</ul>
-<h1 id=boltdb>BoltDB
+<li><code>"a"</code> is a string, <code>'a'</code> is a rune.</li><li>rune to string with <code>string('a')</code>.</li><li>string to rune with <code>rune("a")</code>.</li><li>string to int with <code>int("a")</code>.</li></ul><h1 id=boltdb>BoltDB
 <a class=header-link href=#boltdb><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><ul>
 <li><a href=https://github.com/boltdb/bolt target=_blank rel="noreferrer noopener">https://github.com/boltdb/bolt</a>
 <ul>
-<li>Repository's README is a good guide to get started.</li>
-</ul>
-</li>
-<li>Key/Value store.</li>
-<li>Create buckets first.</li>
-<li>At the start of each transaction you need to get the buckets.</li>
-<li>In general, values do not transfer between transactions. If you want do, you need to <code>Copy</code> slice of results to another variable to use it outside.</li>
-</ul>
-<h2 id=using-time-as-keys-in-boltdb-for-indexing>Using Time as Keys in BoltDB for Indexing
+<li>Repository's README is a good guide to get started.</li></ul></li><li>Key/Value store.</li><li>Create buckets first.</li><li>At the start of each transaction you need to get the buckets.</li><li>In general, values do not transfer between transactions. If you want do, you need to <code>Copy</code> slice of results to another variable to use it outside.</li></ul><h2 id=using-time-as-keys-in-boltdb-for-indexing>Using Time as Keys in BoltDB for Indexing
 <a class=header-link href=#using-time-as-keys-in-boltdb-for-indexing><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Read this:</p>
-<ul>
-<li>Source: <a href=https://zupzup.org/boltdb-example/ target=_blank rel="noreferrer noopener">https://zupzup.org/boltdb-example/</a></li>
-<li>Code: <a href=https://github.com/zupzup/boltdb-example target=_blank rel="noreferrer noopener">https://github.com/zupzup/boltdb-example</a></li>
-</ul>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>key <span style=color:#719e07>:=</span> []<span style=color:#b58900>byte</span>(time.<span style=color:#268bd2>Now</span>().<span style=color:#268bd2>Format</span>(time.RFC3339))
-</code></pre></div><p>And later we can search with <code>seek</code>.</p>
-<h1 id=timeadd-vs-timesub>time.Add vs. time.Sub
+</h2><p>Read this:</p><ul>
+<li>Source: <a href=https://zupzup.org/boltdb-example/ target=_blank rel="noreferrer noopener">https://zupzup.org/boltdb-example/</a></li><li>Code: <a href=https://github.com/zupzup/boltdb-example target=_blank rel="noreferrer noopener">https://github.com/zupzup/boltdb-example</a></li></ul><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>key <span style=color:#719e07>:=</span> []<span style=color:#b58900>byte</span>(time.<span style=color:#268bd2>Now</span>().<span style=color:#268bd2>Format</span>(time.RFC3339))
+</span></span></code></pre></div><p>And later we can search with <code>seek</code>.</p><h1 id=timeadd-vs-timesub>time.Add vs. time.Sub
 <a class=header-link href=#timeadd-vs-timesub><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><ul>
 <li><code>time.Add</code> gets a <code>time.Duration</code> and returns <code>time.Time</code>:
 <ul>
-<li><code>func (t Time) Add(d Duration) Time</code></li>
-<li><a href=https://golang.org/pkg/time/#Time.Add target=_blank rel="noreferrer noopener">https://golang.org/pkg/time/#Time.Add</a></li>
-</ul>
-</li>
-<li><code>time.Sub</code> gets a <code>time.Time</code> and returns <code>time.Duration</code>:
+<li><code>func (t Time) Add(d Duration) Time</code></li><li><a href=https://golang.org/pkg/time/#Time.Add target=_blank rel="noreferrer noopener">https://golang.org/pkg/time/#Time.Add</a></li></ul></li><li><code>time.Sub</code> gets a <code>time.Time</code> and returns <code>time.Duration</code>:
 <ul>
-<li><code>func (t Time) Sub(u Time) Duration</code></li>
-<li><a href=https://golang.org/pkg/time/#Time.Sub target=_blank rel="noreferrer noopener">https://golang.org/pkg/time/#Time.Sub</a></li>
-</ul>
-</li>
-</ul>
-<p>Obviously, both support negative values.</p>
-<h1 id=convert-int-variable-to-timeduration>Convert int Variable to time.Duration
+<li><code>func (t Time) Sub(u Time) Duration</code></li><li><a href=https://golang.org/pkg/time/#Time.Sub target=_blank rel="noreferrer noopener">https://golang.org/pkg/time/#Time.Sub</a></li></ul></li></ul><p>Obviously, both support negative values.</p><h1 id=convert-int-variable-to-timeduration>Convert int Variable to time.Duration
 <a class=header-link href=#convert-int-variable-to-timeduration><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>You can multiple <code>time.Duration</code> by a constant (e.g. <code>time.Hours * 2</code>) but cannot multiply it by an <code>int</code> variable with value of 2 (e.g. <code>time.Hours * n</code>).</p>
-<p><code>n</code> needs to be converted to <code>in64</code> and then passed to <code>time.Duration(int64)</code>. For example, to go back <code>n</code> hours:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>past <span style=color:#719e07>:=</span> time.<span style=color:#268bd2>Now</span>().<span style=color:#268bd2>Add</span>(<span style=color:#719e07>-</span>time.<span style=color:#268bd2>Duration</span>(<span style=color:#b58900>int64</span>(n)) <span style=color:#719e07>*</span> time.Hour)
-</code></pre></div>
-<h1 id=jmoironsqlx>jmoiron/sqlx
+</h1><p>You can multiple <code>time.Duration</code> by a constant (e.g. <code>time.Hours * 2</code>) but cannot multiply it by an <code>int</code> variable with value of 2 (e.g. <code>time.Hours * n</code>).</p><p><code>n</code> needs to be converted to <code>in64</code> and then passed to <code>time.Duration(int64)</code>. For example, to go back <code>n</code> hours:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>past <span style=color:#719e07>:=</span> time.<span style=color:#268bd2>Now</span>().<span style=color:#268bd2>Add</span>(<span style=color:#719e07>-</span>time.<span style=color:#268bd2>Duration</span>(<span style=color:#b58900>int64</span>(n)) <span style=color:#719e07>*</span> time.Hour)
+</span></span></code></pre></div><h1 id=jmoironsqlx>jmoiron/sqlx
 <a class=header-link href=#jmoironsqlx><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Troubleshooting:</p>
-<ul>
-<li>Problem: <code>panic: sql: unknown driver "sqlite3" (forgotten import?)</code></li>
-<li>Solution: <code>import _ "github.com/mattn/go-sqlite3"</code></li>
-<li>Problem:
+</h1><p>Troubleshooting:</p><ul>
+<li>Problem: <code>panic: sql: unknown driver "sqlite3" (forgotten import?)</code></li><li>Solution: <code>import _ "github.com/mattn/go-sqlite3"</code></li><li>Problem:
 <pre tabindex=0><code># github.com/mattn/go-sqlite3
-exec: &quot;gcc&quot;: executable file not found in %PATH%
-</code></pre></li>
-<li>Solution: Install <a href=https://sourceforge.net/projects/mingw-w64/ target=_blank rel="noreferrer noopener">https://sourceforge.net/projects/mingw-w64/</a>.</li>
-</ul>
-<p>Good examples:</p>
+exec: &#34;gcc&#34;: executable file not found in %PATH%
+</code></pre></li><li>Solution: Install <a href=https://sourceforge.net/projects/mingw-w64/ target=_blank rel="noreferrer noopener">https://sourceforge.net/projects/mingw-w64/</a>.</li></ul><p>Good examples:</p><ul>
+<li><a href=https://jmoiron.github.io/sqlx/ target=_blank rel="noreferrer noopener">https://jmoiron.github.io/sqlx/</a></li><li><a href=https://github.com/joncrlsn/go-examples/blob/master/sqlx-sqlite.go target=_blank rel="noreferrer noopener">https://github.com/joncrlsn/go-examples/blob/master/sqlx-sqlite.go</a></li></ul><p>Some troubleshooting:</p><ul>
+<li>Problem: "missing destination name" error when using <code>Queryx</code> and <code>StructScan</code>.</li><li>Solutions:
 <ul>
-<li><a href=https://jmoiron.github.io/sqlx/ target=_blank rel="noreferrer noopener">https://jmoiron.github.io/sqlx/</a></li>
-<li><a href=https://github.com/joncrlsn/go-examples/blob/master/sqlx-sqlite.go target=_blank rel="noreferrer noopener">https://github.com/joncrlsn/go-examples/blob/master/sqlx-sqlite.go</a></li>
-</ul>
-<p>Some troubleshooting:</p>
-<ul>
-<li>Problem: "missing destination name" error when using <code>Queryx</code> and <code>StructScan</code>.</li>
-<li>Solutions:
-<ul>
-<li>Struct fields must be exported.</li>
-<li>Map the table columns to struct fields with <code>db:"table-column"</code>.</li>
-</ul>
-</li>
-</ul>
-<h1 id=stringer-package>Stringer package
+<li>Struct fields must be exported.</li><li>Map the table columns to struct fields with <code>db:"table-column"</code>.</li></ul></li></ul><h1 id=stringer-package>Stringer package
 <a class=header-link href=#stringer-package><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Stringer package can generate <code>String()</code> for types. In this case, we can use it to make one for <code>Suit</code> and <code>Value</code> types.</p>
-<ul>
-<li><code>go get golang.org/x/tools/cmd/stringer</code></li>
-<li>go doc with example: <a href=https://godoc.org/golang.org/x/tools/cmd/stringer target=_blank rel="noreferrer noopener">https://godoc.org/golang.org/x/tools/cmd/stringer</a></li>
-</ul>
-<ol>
+</h1><p>Stringer package can generate <code>String()</code> for types. In this case, we can use it to make one for <code>Suit</code> and <code>Value</code> types.</p><ul>
+<li><code>go get golang.org/x/tools/cmd/stringer</code></li><li>go doc with example: <a href=https://godoc.org/golang.org/x/tools/cmd/stringer target=_blank rel="noreferrer noopener">https://godoc.org/golang.org/x/tools/cmd/stringer</a></li></ul><ol>
 <li>Add the following on top of the file with the types (in this case <code>deck/card.go</code>).
 <ul>
-<li>`//go:generate stringer -type=Suit,Value``</li>
-</ul>
-</li>
-<li>Run <code>go generate</code> inside the <code>deck</code> directory.</li>
-<li>It will create a file named <code>suit_string.go</code>.</li>
-<li>Now we can call <code>Suit.String()</code> and it will return a string.</li>
-</ol>
-<h1 id=filepathwalk>filepath.Walk
+<li>`//go:generate stringer -type=Suit,Value``</li></ul></li><li>Run <code>go generate</code> inside the <code>deck</code> directory.</li><li>It will create a file named <code>suit_string.go</code>.</li><li>Now we can call <code>Suit.String()</code> and it will return a string.</li></ol><h1 id=filepathwalk>filepath.Walk
 <a class=header-link href=#filepathwalk><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p><a href=https://golang.org/pkg/path/filepath/#Walk target=_blank rel="noreferrer noopener">filepath.Walk</a> can be used to traverse all files in a path recursively.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#268bd2>func</span> <span style=color:#268bd2>Walk</span>(root <span style=color:#dc322f>string</span>, walkFn WalkFunc) <span style=color:#dc322f>error</span>
-</code></pre></div><p><code>root</code> is the starting path and <code>WalkFunc</code> is a function that is called after visiting each file:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#268bd2>func</span>(path <span style=color:#dc322f>string</span>, info os.FileInfo, err <span style=color:#dc322f>error</span>) <span style=color:#dc322f>error</span>
-</code></pre></div><p><a href=https://golang.org/pkg/os/#FileInfo target=_blank rel="noreferrer noopener">os.FileInfo</a> has a bunch of methods:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#586e75>// A FileInfo describes a file and is returned by Stat and Lstat.
-</span><span style=color:#586e75></span><span style=color:#268bd2>type</span> FileInfo <span style=color:#268bd2>interface</span> {
-	<span style=color:#268bd2>Name</span>() <span style=color:#dc322f>string</span>       <span style=color:#586e75>// base name of the file
-</span><span style=color:#586e75></span>	<span style=color:#268bd2>Size</span>() <span style=color:#dc322f>int64</span>        <span style=color:#586e75>// length in bytes for regular files; system-dependent for others
-</span><span style=color:#586e75></span>	<span style=color:#268bd2>Mode</span>() FileMode     <span style=color:#586e75>// file mode bits
-</span><span style=color:#586e75></span>	<span style=color:#268bd2>ModTime</span>() time.Time <span style=color:#586e75>// modification time
-</span><span style=color:#586e75></span>	<span style=color:#268bd2>IsDir</span>() <span style=color:#dc322f>bool</span>        <span style=color:#586e75>// abbreviation for Mode().IsDir()
-</span><span style=color:#586e75></span>	<span style=color:#268bd2>Sys</span>() <span style=color:#268bd2>interface</span>{}   <span style=color:#586e75>// underlying data source (can return nil)
-</span><span style=color:#586e75></span>}
-</code></pre></div><p>So to list everything in a directory (<a href=main0.go>main0.go</a>):</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#268bd2>func</span> <span style=color:#268bd2>main</span>() {
-
-	<span style=color:#586e75>// Make a list of all files in sample.
-</span><span style=color:#586e75></span>	err <span style=color:#719e07>:=</span> filepath.<span style=color:#268bd2>Walk</span>(<span style=color:#2aa198>&#34;sample&#34;</span>, walkWithMe0)
-	<span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
-		log.<span style=color:#268bd2>Println</span>(err)
-	}
-}
-
-<span style=color:#586e75>// walkWithMe0 returns info about files.
-</span><span style=color:#586e75></span><span style=color:#268bd2>func</span> <span style=color:#268bd2>walkWithMe0</span>(file <span style=color:#dc322f>string</span>, info os.FileInfo, err <span style=color:#dc322f>error</span>) <span style=color:#dc322f>error</span> {
-
-	<span style=color:#586e75>// Now we can do what we want with os.FileInfo.
-</span><span style=color:#586e75></span>	fmt.<span style=color:#268bd2>Printf</span>(<span style=color:#2aa198>&#34;Visiting %v\n&#34;</span>, info.<span style=color:#268bd2>Name</span>())
-	<span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>
-}
-</code></pre></div><p><code>walkWithMe</code> is good for listing things but bad for saving info. The easiest way to pass into out is using an anonymous (or inline) function.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#268bd2>func</span> <span style=color:#268bd2>main</span>() {
-
-	<span style=color:#586e75>// Make a list of all files in sample.
-</span><span style=color:#586e75></span>	err <span style=color:#719e07>:=</span> filepath.<span style=color:#268bd2>Walk</span>(<span style=color:#2aa198>&#34;sample&#34;</span>, <span style=color:#268bd2>func</span>(file <span style=color:#dc322f>string</span>, info os.FileInfo, err <span style=color:#dc322f>error</span>) <span style=color:#dc322f>error</span> {
-
-		<span style=color:#586e75>// Now we can do what we want with os.FileInfo.
-</span><span style=color:#586e75></span>		fmt.<span style=color:#268bd2>Printf</span>(<span style=color:#2aa198>&#34;Visiting %v\n&#34;</span>, info.<span style=color:#268bd2>Name</span>())
-		<span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>
-	})
-	<span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
-		log.<span style=color:#268bd2>Println</span>(err)
-	}
-}
-</code></pre></div><ul>
-<li>Detect directories: <a href=https://golang.org/pkg/os/#FileInfo target=_blank rel="noreferrer noopener">info.IsDir()</a>.</li>
-<li>On Windows <a href="https://golang.org/pkg/syscall/?GOOS=windows&GOARCH=amd64#Win32FileAttributeData" target=_blank rel="noreferrer noopener">*syscall.Win32FileAttributeData</a>.</li>
-<li>Get file extension: <a href=https://golang.org/pkg/path/filepath/#Ext target=_blank rel="noreferrer noopener">file.Ext()</a> returns the extension which just does some text processing on path. <strong>It returns the period (e.g. ".txt").</strong> Edit from the future: Read more about <code>ext</code> at: <a href=/blog/2018-11-10-filepath.ext-notes/ title="filepath.Ext Notes">filepath.Ext Notes</a>.</li>
-<li>To match filenames: <a href=https://golang.org/pkg/path/filepath/#Match target=_blank rel="noreferrer noopener">file.Match</a>.</li>
-</ul>
-<h1 id=print-stacktrace>Print Stacktrace
+</h1><p><a href=https://golang.org/pkg/path/filepath/#Walk target=_blank rel="noreferrer noopener">filepath.Walk</a> can be used to traverse all files in a path recursively.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>Walk</span>(root <span style=color:#dc322f>string</span>, walkFn WalkFunc) <span style=color:#dc322f>error</span>
+</span></span></code></pre></div><p><code>root</code> is the starting path and <code>WalkFunc</code> is a function that is called after visiting each file:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>func</span>(path <span style=color:#dc322f>string</span>, info os.FileInfo, err <span style=color:#dc322f>error</span>) <span style=color:#dc322f>error</span>
+</span></span></code></pre></div><p><a href=https://golang.org/pkg/os/#FileInfo target=_blank rel="noreferrer noopener">os.FileInfo</a> has a bunch of methods:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// A FileInfo describes a file and is returned by Stat and Lstat.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>type</span> FileInfo <span style=color:#268bd2>interface</span> {
+</span></span><span style=display:flex><span>	<span style=color:#268bd2>Name</span>() <span style=color:#dc322f>string</span>       <span style=color:#586e75>// base name of the file
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>	<span style=color:#268bd2>Size</span>() <span style=color:#dc322f>int64</span>        <span style=color:#586e75>// length in bytes for regular files; system-dependent for others
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>	<span style=color:#268bd2>Mode</span>() FileMode     <span style=color:#586e75>// file mode bits
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>	<span style=color:#268bd2>ModTime</span>() time.Time <span style=color:#586e75>// modification time
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>	<span style=color:#268bd2>IsDir</span>() <span style=color:#dc322f>bool</span>        <span style=color:#586e75>// abbreviation for Mode().IsDir()
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>	<span style=color:#268bd2>Sys</span>() <span style=color:#268bd2>interface</span>{}   <span style=color:#586e75>// underlying data source (can return nil)
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>}
+</span></span></code></pre></div><p>So to list everything in a directory (<a href=main0.go>main0.go</a>):</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>main</span>() {
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#586e75>// Make a list of all files in sample.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>	err <span style=color:#719e07>:=</span> filepath.<span style=color:#268bd2>Walk</span>(<span style=color:#2aa198>&#34;sample&#34;</span>, walkWithMe0)
+</span></span><span style=display:flex><span>	<span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+</span></span><span style=display:flex><span>		log.<span style=color:#268bd2>Println</span>(err)
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// walkWithMe0 returns info about files.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>func</span> <span style=color:#268bd2>walkWithMe0</span>(file <span style=color:#dc322f>string</span>, info os.FileInfo, err <span style=color:#dc322f>error</span>) <span style=color:#dc322f>error</span> {
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#586e75>// Now we can do what we want with os.FileInfo.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>	fmt.<span style=color:#268bd2>Printf</span>(<span style=color:#2aa198>&#34;Visiting %v\n&#34;</span>, info.<span style=color:#268bd2>Name</span>())
+</span></span><span style=display:flex><span>	<span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p><code>walkWithMe</code> is good for listing things but bad for saving info. The easiest way to pass into out is using an anonymous (or inline) function.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>main</span>() {
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#586e75>// Make a list of all files in sample.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>	err <span style=color:#719e07>:=</span> filepath.<span style=color:#268bd2>Walk</span>(<span style=color:#2aa198>&#34;sample&#34;</span>, <span style=color:#268bd2>func</span>(file <span style=color:#dc322f>string</span>, info os.FileInfo, err <span style=color:#dc322f>error</span>) <span style=color:#dc322f>error</span> {
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>		<span style=color:#586e75>// Now we can do what we want with os.FileInfo.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>		fmt.<span style=color:#268bd2>Printf</span>(<span style=color:#2aa198>&#34;Visiting %v\n&#34;</span>, info.<span style=color:#268bd2>Name</span>())
+</span></span><span style=display:flex><span>		<span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>
+</span></span><span style=display:flex><span>	})
+</span></span><span style=display:flex><span>	<span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+</span></span><span style=display:flex><span>		log.<span style=color:#268bd2>Println</span>(err)
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><ul>
+<li>Detect directories: <a href=https://golang.org/pkg/os/#FileInfo target=_blank rel="noreferrer noopener">info.IsDir()</a>.</li><li>On Windows <a href="https://golang.org/pkg/syscall/?GOOS=windows&GOARCH=amd64#Win32FileAttributeData" target=_blank rel="noreferrer noopener">*syscall.Win32FileAttributeData</a>.</li><li>Get file extension: <a href=https://golang.org/pkg/path/filepath/#Ext target=_blank rel="noreferrer noopener">file.Ext()</a> returns the extension which just does some text processing on path. <strong>It returns the period (e.g. ".txt").</strong> Edit from the future: Read more about <code>ext</code> at: <a href=/blog/2018-11-10-filepath.ext-notes/ title="filepath.Ext Notes">filepath.Ext Notes</a>.</li><li>To match filenames: <a href=https://golang.org/pkg/path/filepath/#Match target=_blank rel="noreferrer noopener">file.Match</a>.</li></ul><h1 id=print-stacktrace>Print Stacktrace
 <a class=header-link href=#print-stacktrace><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><ul>
-<li><a href=https://golang.org/pkg/runtime/debug/#Stack target=_blank rel="noreferrer noopener">debug.Stack()</a>: Returns a <code>[]byte</code> (remember to convert to string before printing).</li>
-<li><a href=https://golang.org/pkg/runtime/#Stack target=_blank rel="noreferrer noopener">runtime.Stack(buf []byte, all bool) int</a>: Pass a <code>[]byte</code> that gets filled.</li>
-</ul>
-<h1 id=custom-httpresponsewriter>Custom http.ResponseWriter
+<li><a href=https://golang.org/pkg/runtime/debug/#Stack target=_blank rel="noreferrer noopener">debug.Stack()</a>: Returns a <code>[]byte</code> (remember to convert to string before printing).</li><li><a href=https://golang.org/pkg/runtime/#Stack target=_blank rel="noreferrer noopener">runtime.Stack(buf []byte, all bool) int</a>: Pass a <code>[]byte</code> that gets filled.</li></ul><h1 id=custom-httpresponsewriter>Custom http.ResponseWriter
 <a class=header-link href=#custom-httpresponsewriter><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>See this:</p>
-<ul>
-<li><a href=https://upgear.io/blog/golang-tip-wrapping-http-response-writer-for-middleware/ target=_blank rel="noreferrer noopener">https://upgear.io/blog/golang-tip-wrapping-http-response-writer-for-middleware/</a></li>
-</ul>
-<h1 id=embed>Embed
+</h1><p>See this:</p><ul>
+<li><a href=https://upgear.io/blog/golang-tip-wrapping-http-response-writer-for-middleware/ target=_blank rel="noreferrer noopener">https://upgear.io/blog/golang-tip-wrapping-http-response-writer-for-middleware/</a></li></ul><h1 id=embed>Embed
 <a class=header-link href=#embed><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Embed stuff in structs to use them.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#268bd2>type</span> myRW <span style=color:#268bd2>struct</span> {
-    http.ResponseWriter
-}
-</code></pre></div>
-<h1 id=type-assertion>Type Assertion
+</h1><p>Embed stuff in structs to use them.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>type</span> myRW <span style=color:#268bd2>struct</span> {
+</span></span><span style=display:flex><span>    http.ResponseWriter
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h1 id=type-assertion>Type Assertion
 <a class=header-link href=#type-assertion><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><ul>
-<li><a href=https://tour.golang.org/methods/15 target=_blank rel="noreferrer noopener">https://tour.golang.org/methods/15</a></li>
-</ul>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>t, ok <span style=color:#719e07>:=</span> i.(T)
-<span style=color:#719e07>if</span> ok {
-    <span style=color:#586e75>// i.T is implemented and stored in T
-</span><span style=color:#586e75></span>}
-</code></pre></div>
-<h1 id=httperror-only-support-plaintext>http.Error Only Support Plaintext
+<li><a href=https://tour.golang.org/methods/15 target=_blank rel="noreferrer noopener">https://tour.golang.org/methods/15</a></li></ul><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>t, ok <span style=color:#719e07>:=</span> i.(T)
+</span></span><span style=display:flex><span><span style=color:#719e07>if</span> ok {
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// i.T is implemented and stored in T
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>}
+</span></span></code></pre></div><h1 id=httperror-only-support-plaintext>http.Error Only Support Plaintext
 <a class=header-link href=#httperror-only-support-plaintext><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>When doing <code>http.Error</code> the result will be sent as text and not <code>text/html</code>.</p>
-<p>Use <code>fmt.Fprintf(w, ...)</code> instead.</p>
-<h1 id=chroma>Chroma
+</h1><p>When doing <code>http.Error</code> the result will be sent as text and not <code>text/html</code>.</p><p>Use <code>fmt.Fprintf(w, ...)</code> instead.</p><h1 id=chroma>Chroma
 <a class=header-link href=#chroma><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Already familiar because it's used in Hugo.</p>
-<p><code>quick.Highlight</code> sacrifices control but does things quickly:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>quick.<span style=color:#268bd2>Highlight</span>(os.Stdout, someSourceCode, <span style=color:#2aa198>&#34;go&#34;</span>, <span style=color:#2aa198>&#34;html&#34;</span>, <span style=color:#2aa198>&#34;monokai&#34;</span>)
-</code></pre></div><p>For more control use <code>formatter.Format(w io.Writer, s *Style, it Iterator)</code>:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#586e75>// Highlighter is a more hands-on version of QuickHighlighter and comes with
-</span><span style=color:#586e75>// lines highlight support.
-</span><span style=color:#586e75></span><span style=color:#268bd2>func</span> <span style=color:#268bd2>Highlighter</span>(fileName, source, style <span style=color:#dc322f>string</span>, lineno <span style=color:#dc322f>int</span>) (<span style=color:#dc322f>string</span>, <span style=color:#dc322f>error</span>) {
-	<span style=color:#586e75>// If styleText does not match any style, it will return &#34;swapoff.&#34;
-</span><span style=color:#586e75></span>	<span style=color:#586e75>// So we check if we entered &#34;swapoff&#34; and if not, we will change it to
-</span><span style=color:#586e75></span>	<span style=color:#586e75>// &#34;solarized-dark.&#34;
-</span><span style=color:#586e75></span>	st <span style=color:#719e07>:=</span> styles.<span style=color:#268bd2>Get</span>(style)
-	<span style=color:#719e07>if</span> st.Name <span style=color:#719e07>==</span> <span style=color:#2aa198>&#34;swapoff&#34;</span> <span style=color:#719e07>&amp;&amp;</span> style <span style=color:#719e07>!=</span> <span style=color:#2aa198>&#34;swapoff&#34;</span> {
-		st = styles.<span style=color:#268bd2>Get</span>(<span style=color:#2aa198>&#34;solarized-dark&#34;</span>)
-	}
-
-	<span style=color:#586e75>// While we already know we are looking at Go code, we are going to
-</span><span style=color:#586e75></span>	<span style=color:#586e75>// Chroma&#39;s lexer.Analyze to get the lexer based on extension.
-</span><span style=color:#586e75></span>	<span style=color:#586e75>// https://github.com/alecthomas/chroma#identifying-the-language
-</span><span style=color:#586e75></span>	lexer <span style=color:#719e07>:=</span> lexers.<span style=color:#268bd2>Match</span>(fileName)
-	<span style=color:#586e75>// lexer is nil if no match could be found.
-</span><span style=color:#586e75></span>	<span style=color:#719e07>if</span> lexer <span style=color:#719e07>==</span> <span style=color:#cb4b16>nil</span> {
-		<span style=color:#586e75>// So we use the Analyse function.
-</span><span style=color:#586e75></span>		lexer = lexers.<span style=color:#268bd2>Analyse</span>(source)
-	}
-	<span style=color:#586e75>// Default to Go, if neither process detected a lexer.
-</span><span style=color:#586e75></span>	<span style=color:#719e07>if</span> lexer <span style=color:#719e07>==</span> <span style=color:#cb4b16>nil</span> {
-		lexer = lexers.<span style=color:#268bd2>Get</span>(<span style=color:#2aa198>&#34;go&#34;</span>)
-	}
-
-	<span style=color:#586e75>// Create the range variable for highlighting line numbers.
-</span><span style=color:#586e75></span>	<span style=color:#586e75>// It&#39;s of type [][2]int.
-</span><span style=color:#586e75></span>	hl <span style=color:#719e07>:=</span> [][<span style=color:#2aa198>2</span>]<span style=color:#dc322f>int</span>{[<span style=color:#2aa198>2</span>]<span style=color:#dc322f>int</span>{lineno, lineno}}
-	<span style=color:#586e75>// We are only highlighting one line so both items in the [2]int array
-</span><span style=color:#586e75></span>	<span style=color:#586e75>// are the same. If we wanted to highlight a range, we would have used
-</span><span style=color:#586e75></span>	<span style=color:#586e75>// start and finish line numbers.
-</span><span style=color:#586e75></span>
-	<span style=color:#586e75>// Create a customized html.Formatter.
-</span><span style=color:#586e75></span>	<span style=color:#586e75>// We can also get rid of the 8 tab space now.
-</span><span style=color:#586e75></span>	formatter <span style=color:#719e07>:=</span> html.<span style=color:#268bd2>New</span>(html.<span style=color:#268bd2>Standalone</span>(), html.<span style=color:#268bd2>WithLineNumbers</span>(),
-		html.<span style=color:#268bd2>HighlightLines</span>(hl), html.<span style=color:#268bd2>TabWidth</span>(<span style=color:#2aa198>4</span>))
-
-	<span style=color:#586e75>// Get iterator.
-</span><span style=color:#586e75></span>	it, err <span style=color:#719e07>:=</span> lexer.<span style=color:#268bd2>Tokenise</span>(<span style=color:#cb4b16>nil</span>, source)
-	<span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
-		<span style=color:#719e07>return</span> <span style=color:#2aa198>&#34;&#34;</span>, err
-	}
-
-	<span style=color:#268bd2>var</span> b bytes.Buffer
-	wri <span style=color:#719e07>:=</span> bufio.<span style=color:#268bd2>NewWriter</span>(<span style=color:#719e07>&amp;</span>b)
-
-	<span style=color:#719e07>if</span> err <span style=color:#719e07>:=</span> formatter.<span style=color:#268bd2>Format</span>(wri, st, it); err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
-		<span style=color:#719e07>return</span> <span style=color:#2aa198>&#34;&#34;</span>, err
-	}
-
-	<span style=color:#719e07>return</span> b.<span style=color:#268bd2>String</span>(), <span style=color:#cb4b16>nil</span>
-}
-</code></pre></div>
-<h1 id=jsonnewdecoder-jsonnewencoder>json.NewDecoder json.NewEncoder
+</h1><p>Already familiar because it's used in Hugo.</p><p><code>quick.Highlight</code> sacrifices control but does things quickly:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>quick.<span style=color:#268bd2>Highlight</span>(os.Stdout, someSourceCode, <span style=color:#2aa198>&#34;go&#34;</span>, <span style=color:#2aa198>&#34;html&#34;</span>, <span style=color:#2aa198>&#34;monokai&#34;</span>)
+</span></span></code></pre></div><p>For more control use <code>formatter.Format(w io.Writer, s *Style, it Iterator)</code>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Highlighter is a more hands-on version of QuickHighlighter and comes with
+</span></span></span><span style=display:flex><span><span style=color:#586e75>// lines highlight support.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>func</span> <span style=color:#268bd2>Highlighter</span>(fileName, source, style <span style=color:#dc322f>string</span>, lineno <span style=color:#dc322f>int</span>) (<span style=color:#dc322f>string</span>, <span style=color:#dc322f>error</span>) {
+</span></span><span style=display:flex><span>	<span style=color:#586e75>// If styleText does not match any style, it will return &#34;swapoff.&#34;
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>	<span style=color:#586e75>// So we check if we entered &#34;swapoff&#34; and if not, we will change it to
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>	<span style=color:#586e75>// &#34;solarized-dark.&#34;
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>	st <span style=color:#719e07>:=</span> styles.<span style=color:#268bd2>Get</span>(style)
+</span></span><span style=display:flex><span>	<span style=color:#719e07>if</span> st.Name <span style=color:#719e07>==</span> <span style=color:#2aa198>&#34;swapoff&#34;</span> <span style=color:#719e07>&amp;&amp;</span> style <span style=color:#719e07>!=</span> <span style=color:#2aa198>&#34;swapoff&#34;</span> {
+</span></span><span style=display:flex><span>		st = styles.<span style=color:#268bd2>Get</span>(<span style=color:#2aa198>&#34;solarized-dark&#34;</span>)
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#586e75>// While we already know we are looking at Go code, we are going to
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>	<span style=color:#586e75>// Chroma&#39;s lexer.Analyze to get the lexer based on extension.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>	<span style=color:#586e75>// https://github.com/alecthomas/chroma#identifying-the-language
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>	lexer <span style=color:#719e07>:=</span> lexers.<span style=color:#268bd2>Match</span>(fileName)
+</span></span><span style=display:flex><span>	<span style=color:#586e75>// lexer is nil if no match could be found.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>	<span style=color:#719e07>if</span> lexer <span style=color:#719e07>==</span> <span style=color:#cb4b16>nil</span> {
+</span></span><span style=display:flex><span>		<span style=color:#586e75>// So we use the Analyse function.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>		lexer = lexers.<span style=color:#268bd2>Analyse</span>(source)
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	<span style=color:#586e75>// Default to Go, if neither process detected a lexer.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>	<span style=color:#719e07>if</span> lexer <span style=color:#719e07>==</span> <span style=color:#cb4b16>nil</span> {
+</span></span><span style=display:flex><span>		lexer = lexers.<span style=color:#268bd2>Get</span>(<span style=color:#2aa198>&#34;go&#34;</span>)
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#586e75>// Create the range variable for highlighting line numbers.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>	<span style=color:#586e75>// It&#39;s of type [][2]int.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>	hl <span style=color:#719e07>:=</span> [][<span style=color:#2aa198>2</span>]<span style=color:#dc322f>int</span>{[<span style=color:#2aa198>2</span>]<span style=color:#dc322f>int</span>{lineno, lineno}}
+</span></span><span style=display:flex><span>	<span style=color:#586e75>// We are only highlighting one line so both items in the [2]int array
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>	<span style=color:#586e75>// are the same. If we wanted to highlight a range, we would have used
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>	<span style=color:#586e75>// start and finish line numbers.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>
+</span></span><span style=display:flex><span>	<span style=color:#586e75>// Create a customized html.Formatter.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>	<span style=color:#586e75>// We can also get rid of the 8 tab space now.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>	formatter <span style=color:#719e07>:=</span> html.<span style=color:#268bd2>New</span>(html.<span style=color:#268bd2>Standalone</span>(), html.<span style=color:#268bd2>WithLineNumbers</span>(),
+</span></span><span style=display:flex><span>		html.<span style=color:#268bd2>HighlightLines</span>(hl), html.<span style=color:#268bd2>TabWidth</span>(<span style=color:#2aa198>4</span>))
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#586e75>// Get iterator.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>	it, err <span style=color:#719e07>:=</span> lexer.<span style=color:#268bd2>Tokenise</span>(<span style=color:#cb4b16>nil</span>, source)
+</span></span><span style=display:flex><span>	<span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+</span></span><span style=display:flex><span>		<span style=color:#719e07>return</span> <span style=color:#2aa198>&#34;&#34;</span>, err
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#268bd2>var</span> b bytes.Buffer
+</span></span><span style=display:flex><span>	wri <span style=color:#719e07>:=</span> bufio.<span style=color:#268bd2>NewWriter</span>(<span style=color:#719e07>&amp;</span>b)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#719e07>if</span> err <span style=color:#719e07>:=</span> formatter.<span style=color:#268bd2>Format</span>(wri, st, it); err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+</span></span><span style=display:flex><span>		<span style=color:#719e07>return</span> <span style=color:#2aa198>&#34;&#34;</span>, err
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#719e07>return</span> b.<span style=color:#268bd2>String</span>(), <span style=color:#cb4b16>nil</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h1 id=jsonnewdecoder-jsonnewencoder>json.NewDecoder json.NewEncoder
 <a class=header-link href=#jsonnewdecoder-jsonnewencoder><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>When decoding from or encoding to an <code>io.Reader/Writer</code> (e.g. file, HTTP response), we can do this:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#268bd2>var</span> []obj MyStruct
-<span style=color:#586e75>// fill in []obj
-</span><span style=color:#586e75></span>
-<span style=color:#586e75>// File to encode stuff to.
-</span><span style=color:#586e75></span>f, _ <span style=color:#719e07>:=</span> os.<span style=color:#268bd2>Create</span>(<span style=color:#2aa198>&#34;whatever.txt&#34;</span>)
-enc <span style=color:#719e07>:=</span> json.<span style=color:#268bd2>NewEncoder</span>(f)
-<span style=color:#719e07>if</span> err <span style=color:#719e07>:=</span> enc.<span style=color:#268bd2>Encode</span>(obj); err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
-    <span style=color:#586e75>// Handle error
-</span><span style=color:#586e75></span>}
-
-<span style=color:#586e75>// Now json is saved to file.
-</span></code></pre></div><p>To decode, we can do something similar with an <code>io.Reader</code> (e.g. file).</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#268bd2>var</span> []obj2 MyStruct
-
-f, _ <span style=color:#719e07>:=</span> os.<span style=color:#268bd2>Open</span>(<span style=color:#2aa198>&#34;whatever.txt&#34;</span>)
-dec <span style=color:#719e07>:=</span> json.<span style=color:#268bd2>NewDecoder</span>(f)
-<span style=color:#719e07>if</span> err <span style=color:#719e07>:=</span> enc.<span style=color:#268bd2>Decode</span>(<span style=color:#719e07>&amp;</span>obj2); err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
-    <span style=color:#586e75>// Handle error
-</span><span style=color:#586e75></span>}
-
-<span style=color:#586e75>// Now json is populated from file.
-</span></code></pre></div>
-<h1 id=twitter-apis>Twitter APIs
+</h1><p>When decoding from or encoding to an <code>io.Reader/Writer</code> (e.g. file, HTTP response), we can do this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>var</span> []obj MyStruct
+</span></span><span style=display:flex><span><span style=color:#586e75>// fill in []obj
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// File to encode stuff to.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>f, _ <span style=color:#719e07>:=</span> os.<span style=color:#268bd2>Create</span>(<span style=color:#2aa198>&#34;whatever.txt&#34;</span>)
+</span></span><span style=display:flex><span>enc <span style=color:#719e07>:=</span> json.<span style=color:#268bd2>NewEncoder</span>(f)
+</span></span><span style=display:flex><span><span style=color:#719e07>if</span> err <span style=color:#719e07>:=</span> enc.<span style=color:#268bd2>Encode</span>(obj); err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Handle error
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// Now json is saved to file.
+</span></span></span></code></pre></div><p>To decode, we can do something similar with an <code>io.Reader</code> (e.g. file).</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>var</span> []obj2 MyStruct
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>f, _ <span style=color:#719e07>:=</span> os.<span style=color:#268bd2>Open</span>(<span style=color:#2aa198>&#34;whatever.txt&#34;</span>)
+</span></span><span style=display:flex><span>dec <span style=color:#719e07>:=</span> json.<span style=color:#268bd2>NewDecoder</span>(f)
+</span></span><span style=display:flex><span><span style=color:#719e07>if</span> err <span style=color:#719e07>:=</span> enc.<span style=color:#268bd2>Decode</span>(<span style=color:#719e07>&amp;</span>obj2); err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Handle error
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// Now json is populated from file.
+</span></span></span></code></pre></div><h1 id=twitter-apis>Twitter APIs
 <a class=header-link href=#twitter-apis><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1>
-<h2 id=twitter-application-only-auth-flow>Twitter Application-Only Auth-Flow
+</h1><h2 id=twitter-application-only-auth-flow>Twitter Application-Only Auth-Flow
 <a class=header-link href=#twitter-application-only-auth-flow><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Docs: <a href=https://developer.twitter.com/en/docs/basics/authentication/overview/application-only target=_blank rel="noreferrer noopener">https://developer.twitter.com/en/docs/basics/authentication/overview/application-only</a></p>
-<ol>
-<li>Create an application and a set of read-only consumer API keys. Twitter will ask you to write 300 words about your application and other crap.</li>
-<li>Create the authorization token by combining the key and secret and then base64 encoding them. <code>base64(Key:Secret)</code>.
+</h2><p>Docs: <a href=https://developer.twitter.com/en/docs/basics/authentication/overview/application-only target=_blank rel="noreferrer noopener">https://developer.twitter.com/en/docs/basics/authentication/overview/application-only</a></p><ol>
+<li>Create an application and a set of read-only consumer API keys. Twitter will ask you to write 300 words about your application and other crap.</li><li>Create the authorization token by combining the key and secret and then base64 encoding them. <code>base64(Key:Secret)</code>.
 <ul>
-<li>Use <a href=https://golang.org/pkg/net/http/?#Request.SetBasicAuth target=_blank rel="noreferrer noopener">request.SetBasicAuth(Key,Secret)</a> in the <code>http</code> package.</li>
-</ul>
-</li>
-<li>Send the following POST request to <a href=https://api.twitter.com/oauth2/token target=_blank rel="noreferrer noopener">https://api.twitter.com/oauth2/token</a> to get the bearer token.
+<li>Use <a href=https://golang.org/pkg/net/http/?#Request.SetBasicAuth target=_blank rel="noreferrer noopener">request.SetBasicAuth(Key,Secret)</a> in the <code>http</code> package.</li></ul></li><li>Send the following POST request to <a href=https://api.twitter.com/oauth2/token target=_blank rel="noreferrer noopener">https://api.twitter.com/oauth2/token</a> to get the bearer token.
 <pre tabindex=0><code>POST /oauth2/token HTTP/1.1
 Host: api.twitter.com
 User-Agent: Whatever
@@ -625,129 +382,88 @@ Content-Type: application/x-www-form-urlencoded;charset=UTF-8
 Accept-Encoding: gzip
 
 grant_type=client_credentials
-</code></pre></li>
-<li>Response will have the bearer token if successful (and a 200 OK status)
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{<span style=color:#268bd2>&#34;token_type&#34;</span>:<span style=color:#2aa198>&#34;bearer&#34;</span>,<span style=color:#268bd2>&#34;access_token&#34;</span>:<span style=color:#2aa198>&#34;AAAAAAAAAAAAAAAAAAAAAAAAAA&#34;</span>}
-</code></pre></div></li>
-<li>Use the token in the header of every request <code>Authorization: Bearer AAAAAAAAAAAAAAAAAAAAAAAAAA</code></li>
-<li>???</li>
-<li>Profit</li>
-</ol>
-<h2 id=get-retweeters>Get Retweeters
+</code></pre></li><li>Response will have the bearer token if successful (and a 200 OK status)
+<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{<span style=color:#268bd2>&#34;token_type&#34;</span>:<span style=color:#2aa198>&#34;bearer&#34;</span>,<span style=color:#268bd2>&#34;access_token&#34;</span>:<span style=color:#2aa198>&#34;AAAAAAAAAAAAAAAAAAAAAAAAAA&#34;</span>}
+</span></span></code></pre></div></li><li>Use the token in the header of every request <code>Authorization: Bearer AAAAAAAAAAAAAAAAAAAAAAAAAA</code></li><li>???</li><li>Profit</li></ol><h2 id=get-retweeters>Get Retweeters
 <a class=header-link href=#get-retweeters><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>GET request to <a href="https://api.twitter.com/1.1/statuses/retweets/tweetID.json?count=100" target=_blank rel="noreferrer noopener">https://api.twitter.com/1.1/statuses/retweets/tweetID.json?count=100</a>.</p>
-<ul>
-<li><a href=https://developer.twitter.com/en/docs/tweets/post-and-engage/api-reference/get-statuses-retweets-id target=_blank rel="noreferrer noopener">https://developer.twitter.com/en/docs/tweets/post-and-engage/api-reference/get-statuses-retweets-id</a></li>
-</ul>
-<p>Results has these fields.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>[
-  {
-    <span style=color:#586e75>// ...
-</span><span style=color:#586e75></span>    <span style=color:#268bd2>&#34;user&#34;</span>: {
-      <span style=color:#586e75>// ...
-</span><span style=color:#586e75></span>      <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>281679947</span>,
-      <span style=color:#268bd2>&#34;id_str&#34;</span>: <span style=color:#2aa198>&#34;281679947&#34;</span>,
-      <span style=color:#268bd2>&#34;is_translation_enabled&#34;</span>: <span style=color:#cb4b16>false</span>,
-      <span style=color:#268bd2>&#34;is_translator&#34;</span>: <span style=color:#cb4b16>false</span>,
-      <span style=color:#268bd2>&#34;lang&#34;</span>: <span style=color:#2aa198>&#34;en&#34;</span>,
-      <span style=color:#268bd2>&#34;listed_count&#34;</span>: <span style=color:#2aa198>43</span>,
-      <span style=color:#268bd2>&#34;location&#34;</span>: <span style=color:#2aa198>&#34;NYC&#34;</span>,
-      <span style=color:#268bd2>&#34;name&#34;</span>: <span style=color:#2aa198>&#34;Christine Romo&#34;</span>,
-      <span style=color:#586e75>// ...
-</span><span style=color:#586e75></span>      <span style=color:#268bd2>&#34;screen_name&#34;</span>: <span style=color:#2aa198>&#34;romoabcnews&#34;</span>,
-    }
-  }
-]
-</code></pre></div><p>We want to read <code>id_str</code> and <code>screen_name</code> so we unmarshal the JSON to <code>[]Retweeter</code> where:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#586e75>// User represents a user.
-</span><span style=color:#586e75></span><span style=color:#268bd2>type</span> User <span style=color:#268bd2>struct</span> {
-	Id   <span style=color:#dc322f>string</span> <span style=color:#2aa198>`json:&#34;id_str&#34;`</span>
-	Name <span style=color:#dc322f>string</span> <span style=color:#2aa198>`json:&#34;screen_name&#34;`</span>
-}
-
-<span style=color:#586e75>// Retweeter represents a user who has retweeted the content.
-</span><span style=color:#586e75></span><span style=color:#268bd2>type</span> Retweeter <span style=color:#268bd2>struct</span> {
-	TwitterUser User <span style=color:#2aa198>`json:&#34;user&#34;`</span>
-}
-</code></pre></div>
-<h1 id=chaining-reader-and-writer-interfaces>Chaining Reader and Writer Interfaces
+</h2><p>GET request to <a href="https://api.twitter.com/1.1/statuses/retweets/tweetID.json?count=100" target=_blank rel="noreferrer noopener">https://api.twitter.com/1.1/statuses/retweets/tweetID.json?count=100</a>.</p><ul>
+<li><a href=https://developer.twitter.com/en/docs/tweets/post-and-engage/api-reference/get-statuses-retweets-id target=_blank rel="noreferrer noopener">https://developer.twitter.com/en/docs/tweets/post-and-engage/api-reference/get-statuses-retweets-id</a></li></ul><p>Results has these fields.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>[
+</span></span><span style=display:flex><span>  {
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// ...
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#268bd2>&#34;user&#34;</span>: {
+</span></span><span style=display:flex><span>      <span style=color:#586e75>// ...
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>      <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>281679947</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;id_str&#34;</span>: <span style=color:#2aa198>&#34;281679947&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;is_translation_enabled&#34;</span>: <span style=color:#cb4b16>false</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;is_translator&#34;</span>: <span style=color:#cb4b16>false</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;lang&#34;</span>: <span style=color:#2aa198>&#34;en&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;listed_count&#34;</span>: <span style=color:#2aa198>43</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;location&#34;</span>: <span style=color:#2aa198>&#34;NYC&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;name&#34;</span>: <span style=color:#2aa198>&#34;Christine Romo&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#586e75>// ...
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>      <span style=color:#268bd2>&#34;screen_name&#34;</span>: <span style=color:#2aa198>&#34;romoabcnews&#34;</span>,
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>]
+</span></span></code></pre></div><p>We want to read <code>id_str</code> and <code>screen_name</code> so we unmarshal the JSON to <code>[]Retweeter</code> where:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// User represents a user.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>type</span> User <span style=color:#268bd2>struct</span> {
+</span></span><span style=display:flex><span>	Id   <span style=color:#dc322f>string</span> <span style=color:#2aa198>`json:&#34;id_str&#34;`</span>
+</span></span><span style=display:flex><span>	Name <span style=color:#dc322f>string</span> <span style=color:#2aa198>`json:&#34;screen_name&#34;`</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// Retweeter represents a user who has retweeted the content.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>type</span> Retweeter <span style=color:#268bd2>struct</span> {
+</span></span><span style=display:flex><span>	TwitterUser User <span style=color:#2aa198>`json:&#34;user&#34;`</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h1 id=chaining-reader-and-writer-interfaces>Chaining Reader and Writer Interfaces
 <a class=header-link href=#chaining-reader-and-writer-interfaces><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>This is pretty cool. You can see it inside <code>Encrypter</code> and <code>Decrypter</code>.</p>
-<p>In short, you pass an <code>io.Reader</code> or <code>io.Writer</code> to another and chain them. Then you write to one (or read from one) and encryption/decryption works. We have already seen this in a previous lesson where we used <code>json.NewDecoder/NewEncoder</code> on files or buffers.</p>
-<h1 id=ioteereaderr-ioreader-w-iowriter-ioreader>io.TeeReader(r io.Reader, w io.Writer) io.Reader
+</h1><p>This is pretty cool. You can see it inside <code>Encrypter</code> and <code>Decrypter</code>.</p><p>In short, you pass an <code>io.Reader</code> or <code>io.Writer</code> to another and chain them. Then you write to one (or read from one) and encryption/decryption works. We have already seen this in a previous lesson where we used <code>json.NewDecoder/NewEncoder</code> on files or buffers.</p><h1 id=ioteereaderr-ioreader-w-iowriter-ioreader>io.TeeReader(r io.Reader, w io.Writer) io.Reader
 <a class=header-link href=#ioteereaderr-ioreader-w-iowriter-ioreader><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>"TeeReader returns a Reader that writes to w what it reads from r. All reads from r performed through it are matched with corresponding writes to w. There is no internal buffering ..."</p>
-<ul>
-<li><a href=https://golang.org/pkg/io/#TeeReader target=_blank rel="noreferrer noopener">https://golang.org/pkg/io/#TeeReader</a></li>
-</ul>
-<p>I did not use it in this lesson, but seems like a useful thing.</p>
-<h1 id=pass-arguments-to-delve-debugger-in-vs-code>Pass Arguments to Delve Debugger in VS Code
+</h1><p>"TeeReader returns a Reader that writes to w what it reads from r. All reads from r performed through it are matched with corresponding writes to w. There is no internal buffering ..."</p><ul>
+<li><a href=https://golang.org/pkg/io/#TeeReader target=_blank rel="noreferrer noopener">https://golang.org/pkg/io/#TeeReader</a></li></ul><p>I did not use it in this lesson, but seems like a useful thing.</p><h1 id=pass-arguments-to-delve-debugger-in-vs-code>Pass Arguments to Delve Debugger in VS Code
 <a class=header-link href=#pass-arguments-to-delve-debugger-in-vs-code><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Pass the arguments inside <code>launch.json</code> like this.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=color:#2aa198>&#34;args&#34;</span>: [
-    <span style=color:#2aa198>&#34;get&#34;</span>,
-    <span style=color:#2aa198>&#34;test&#34;</span>,
-    <span style=color:#2aa198>&#34;yolo&#34;</span>,
-    <span style=color:#2aa198>&#34;key3&#34;</span>,
-],
-</code></pre></div>
-<h1 id=html-input-type-file>HTML Input type File
+</h1><p>Pass the arguments inside <code>launch.json</code> like this.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span><span style=color:#2aa198>&#34;args&#34;</span>: [
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;get&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;test&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;yolo&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;key3&#34;</span>,
+</span></span><span style=display:flex><span>],
+</span></span></code></pre></div><h1 id=html-input-type-file>HTML Input type File
 <a class=header-link href=#html-input-type-file><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>We can use something like this</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html>&lt;<span style=color:#268bd2>input</span> type<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;file&#34;</span>
-    id<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;upload&#34;</span> name<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;upload&#34;</span>
-    accept<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;image/jpeg,image/png&#34;</span> /&gt;
-</code></pre></div><p>This only shows files of type <code>jpeg</code> and <code>png</code>. We can also do <code>image/*</code> to show all images.</p>
-<h1 id=int-to-enum>Int to Enum
+</h1><p>We can use something like this</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html><span style=display:flex><span>&lt;<span style=color:#268bd2>input</span> type<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;file&#34;</span>
+</span></span><span style=display:flex><span>    id<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;upload&#34;</span> name<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;upload&#34;</span>
+</span></span><span style=display:flex><span>    accept<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;image/jpeg,image/png&#34;</span> /&gt;
+</span></span></code></pre></div><p>This only shows files of type <code>jpeg</code> and <code>png</code>. We can also do <code>image/*</code> to show all images.</p><h1 id=int-to-enum>Int to Enum
 <a class=header-link href=#int-to-enum><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Assuming we have this enum:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#268bd2>type</span> EnumType <span style=color:#dc322f>int</span>
-
-<span style=color:#268bd2>const</span> (
-	Zero Enum = <span style=color:#cb4b16>iota</span>
-	One
-	Two
-	Three
-)
-</code></pre></div><p>We can convert an int to this type with <code>EnumType(2)</code>.</p>
-<h1 id=httprequestformfile>http.Request.FormFile
+</h1><p>Assuming we have this enum:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>type</span> EnumType <span style=color:#dc322f>int</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>const</span> (
+</span></span><span style=display:flex><span>	Zero Enum = <span style=color:#cb4b16>iota</span>
+</span></span><span style=display:flex><span>	One
+</span></span><span style=display:flex><span>	Two
+</span></span><span style=display:flex><span>	Three
+</span></span><span style=display:flex><span>)
+</span></span></code></pre></div><p>We can convert an int to this type with <code>EnumType(2)</code>.</p><h1 id=httprequestformfile>http.Request.FormFile
 <a class=header-link href=#httprequestformfile><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Gets the first file in the param (usually POST body).</p>
+</h1><p>Gets the first file in the param (usually POST body).</p><ul>
+<li><a href=https://golang.org/pkg/net/http/?#Request.FormFile target=_blank rel="noreferrer noopener">https://golang.org/pkg/net/http/?#Request.FormFile</a></li><li><code>file, header, err := r.FormFile("upload")</code></li><li><code>file</code> can be used like any other file (hint: implements <code>io.Reader</code>).
 <ul>
-<li><a href=https://golang.org/pkg/net/http/?#Request.FormFile target=_blank rel="noreferrer noopener">https://golang.org/pkg/net/http/?#Request.FormFile</a></li>
-<li><code>file, header, err := r.FormFile("upload")</code></li>
-<li><code>file</code> can be used like any other file (hint: implements <code>io.Reader</code>).
+<li><a href=https://golang.org/pkg/mime/multipart/#File target=_blank rel="noreferrer noopener">https://golang.org/pkg/mime/multipart/#File</a></li></ul></li><li><code>header</code> has info about the file like name and size.
 <ul>
-<li><a href=https://golang.org/pkg/mime/multipart/#File target=_blank rel="noreferrer noopener">https://golang.org/pkg/mime/multipart/#File</a></li>
-</ul>
-</li>
-<li><code>header</code> has info about the file like name and size.
-<ul>
-<li><a href=https://golang.org/pkg/mime/multipart/#FileHeader target=_blank rel="noreferrer noopener">https://golang.org/pkg/mime/multipart/#FileHeader</a></li>
-</ul>
-</li>
-</ul>
-<p>Response.PostForm is a map of <code>url.Values</code> (<code>map[string][]string</code>).</p>
-<h1 id=access-struct-fields-with-the-reflect-package>Access Struct Fields with the Reflect Package
+<li><a href=https://golang.org/pkg/mime/multipart/#FileHeader target=_blank rel="noreferrer noopener">https://golang.org/pkg/mime/multipart/#FileHeader</a></li></ul></li></ul><p>Response.PostForm is a map of <code>url.Values</code> (<code>map[string][]string</code>).</p><h1 id=access-struct-fields-with-the-reflect-package>Access Struct Fields with the Reflect Package
 <a class=header-link href=#access-struct-fields-with-the-reflect-package><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Don't use <code>reflect</code> I guess. But this is fun. Seems like it will panic if unexported fields are accessed.</p>
-<p>In this case, our struct only has string fields so we only check for empty string.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>v <span style=color:#719e07>:=</span> reflect.<span style=color:#268bd2>ValueOf</span>(c)
-<span style=color:#719e07>for</span> i <span style=color:#719e07>:=</span> <span style=color:#2aa198>0</span>; i &lt; v.<span style=color:#268bd2>NumField</span>(); i<span style=color:#719e07>++</span> {
-    <span style=color:#719e07>if</span> v.<span style=color:#268bd2>Field</span>(i).<span style=color:#268bd2>Interface</span>() <span style=color:#719e07>==</span> <span style=color:#2aa198>&#34;&#34;</span> {
-        <span style=color:#719e07>return</span> fmt.<span style=color:#268bd2>Errorf</span>(<span style=color:#2aa198>&#34;Corp not initialized. Set value of %s&#34;</span>, v.<span style=color:#268bd2>Type</span>().<span style=color:#268bd2>Field</span>(i).Name)
-    }
-}
-</code></pre></div><p>We can access the value of a field with <code>v.Field(i).Interface()</code> and its name with <code>v.Type().Field(i).Name</code>.</p>
-<h1 id=convert-float-to-string-with-two-floating-points>Convert Float to String with Two Floating Points
+</h1><p>Don't use <code>reflect</code> I guess. But this is fun. Seems like it will panic if unexported fields are accessed.</p><p>In this case, our struct only has string fields so we only check for empty string.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>v <span style=color:#719e07>:=</span> reflect.<span style=color:#268bd2>ValueOf</span>(c)
+</span></span><span style=display:flex><span><span style=color:#719e07>for</span> i <span style=color:#719e07>:=</span> <span style=color:#2aa198>0</span>; i &lt; v.<span style=color:#268bd2>NumField</span>(); i<span style=color:#719e07>++</span> {
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> v.<span style=color:#268bd2>Field</span>(i).<span style=color:#268bd2>Interface</span>() <span style=color:#719e07>==</span> <span style=color:#2aa198>&#34;&#34;</span> {
+</span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> fmt.<span style=color:#268bd2>Errorf</span>(<span style=color:#2aa198>&#34;Corp not initialized. Set value of %s&#34;</span>, v.<span style=color:#268bd2>Type</span>().<span style=color:#268bd2>Field</span>(i).Name)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>We can access the value of a field with <code>v.Field(i).Interface()</code> and its name with <code>v.Type().Field(i).Name</code>.</p><h1 id=convert-float-to-string-with-two-floating-points>Convert Float to String with Two Floating Points
 <a class=header-link href=#convert-float-to-string-with-two-floating-points><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Change <code>2</code> to get more floating points.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#268bd2>func</span> <span style=color:#268bd2>FloatToString</span>(f <span style=color:#dc322f>float64</span>) <span style=color:#dc322f>string</span> {
-	<span style=color:#719e07>return</span> strconv.<span style=color:#268bd2>FormatFloat</span>(f, <span style=color:#2aa198>&#39;f&#39;</span>, <span style=color:#2aa198>2</span>, <span style=color:#2aa198>64</span>)
-}
-</code></pre></div>
-</div>
-<footer>
+</h1><p>Change <code>2</code> to get more floating points.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>FloatToString</span>(f <span style=color:#dc322f>float64</span>) <span style=color:#dc322f>string</span> {
+</span></span><span style=display:flex><span>	<span style=color:#719e07>return</span> strconv.<span style=color:#268bd2>FormatFloat</span>(f, <span style=color:#2aa198>&#39;f&#39;</span>, <span style=color:#2aa198>2</span>, <span style=color:#2aa198>64</span>)
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div></div><footer>
 <p class=meta>
 <span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>Oct 6, 2018</time>
@@ -755,82 +471,47 @@ grant_type=client_credentials
 Tags:
 <a class=category href=https://parsiya.net/tags/gophercises>Gophercises</a>
 </span>
-</p>
-<p class=meta>
+</p><p class=meta>
 <a class="basic-alignment left" href=https://parsiya.net/blog/2018-10-03-reflections-on-manual-work-is-a-bug/ title='Reflections on "Manual Work is a Bug"'>Reflections on "Manual Work is a Bug"</a>
 <a class="basic-alignment right" href=https://parsiya.net/blog/2018-10-26-def-con-26-tineola-youtube-video/ title="DEF CON 26 - Tineola - Youtube Video">DEF CON 26 - Tineola - Youtube Video</a>
-</p>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</div>
-<aside class="sidebar thirds">
+</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer></article></div><aside class="sidebar thirds">
 <section class="first odd">
-<h1>Who am I?</h1>
-<p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
-<p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p>
-<p>Click on <a href=/about/>About Me!</a> to know more.</p>
-</p>
-</section>
-<ul class=sidebar-nav>
+<h1>Who am I?</h1><p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
 <li class=sidebar-nav-item>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li>
-</ul>
-<section class=odd>
-<h1>Collections</h1>
-<li>
+</li></ul><section class=odd>
+<h1>Collections</h1><li>
 <a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li>
-<li>
+</li><li>
 <a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li>
-</section>
-</aside>
-</div>
-</div>
-<footer role=contentinfo>
+</li></section></aside></div></div><footer role=contentinfo>
 <p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>

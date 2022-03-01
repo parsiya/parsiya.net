@@ -3,14 +3,13 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
 <link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>Documentation Writing for System Administrators - Notes</title>
-<link rel=stylesheet href=/css/hugo-octopress.css>
+<title>Documentation Writing for System Administrators - Notes</title><link rel=stylesheet href=/css/hugo-octopress.css>
 <link rel=stylesheet href=/css/fork-awesome.min.css>
 <link href=https://parsiya.net/favicon.png rel=icon>
 <meta name=description content>
 <meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
 <meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.92.2">
+<meta name=generator content="Hugo 0.93.0">
 <meta name=twitter:card content="summary_large_image">
 <meta name=twitter:image:src content="https://parsiya.net/blog/2020-02-06-documentation-writing-for-system-administrators-notes/merrin-cal.jpg">
 <meta name=twitter:title content="Documentation Writing for System Administrators - Notes">
@@ -22,37 +21,21 @@ https://www.usenix.org/short-topics/documentation-writing-system-administrators
 ">
 <meta name=twitter:domain content="parsiya.net">
 <meta name=twitter:creator content="@CryptoGangsta">
-</head>
-<body>
+</head><body>
 <header role=banner>
 <hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
-<h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2>
-</hgroup></header>
-<nav role=navigation>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
 <fieldset class=mobile-nav>
 <select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset>
-<ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
-<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
-<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
-<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
-<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
-<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
-</ul>
-<ul class=subscription>
+</fieldset><ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
 <a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul>
-<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
 <fieldset role=search>
 <input class=search type=text name=q results=0 placeholder=Search>
 <input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset>
-</form>
-</nav>
-<div id=main>
+</fieldset></form></nav><div id=main>
 <div id=content>
 <div>
 <article class=hentry role=article>
@@ -61,250 +44,115 @@ complete unless it is known by its causes. - Avicenna</h2>
 - 4 minute read
 - <a href=https://parsiya.net/blog/2020-02-06-documentation-writing-for-system-administrators-notes/#disqus_thread>Comments</a>
 - <a class=label href=https://parsiya.net/categories/not-security/>Not Security </a><a class=label href=https://parsiya.net/categories/automation/>Automation </a><a class=label href=https://parsiya.net/categories/documentation/>Documentation </a>
-</p>
-<h1 class=entry-title>
+</p><h1 class=entry-title>
 Documentation Writing for System Administrators - Notes
-</h1>
-</header>
-<div class=entry-content>
+</h1></header><div class=entry-content>
 <nav id=TableOfContents>
 <ul>
-<li><a href=#introduction>Introduction</a></li>
-<li><a href=#1-documentation-content>1. Documentation Content</a>
+<li><a href=#introduction>Introduction</a></li><li><a href=#1-documentation-content>1. Documentation Content</a>
 <ul>
-<li><a href=#procedural-documentation>Procedural Documentation</a></li>
-<li><a href=#informational-documentation>Informational Documentation</a></li>
-</ul>
-</li>
-<li><a href=#2-writing-good-documentation>2. Writing Good Documentation</a>
+<li><a href=#procedural-documentation>Procedural Documentation</a></li><li><a href=#informational-documentation>Informational Documentation</a></li></ul></li><li><a href=#2-writing-good-documentation>2. Writing Good Documentation</a>
 <ul>
-<li><a href=#know-your-audience>Know Your Audience</a></li>
-<li><a href=#the-keys-to-good-documentation>The Keys to Good Documentation</a>
+<li><a href=#know-your-audience>Know Your Audience</a></li><li><a href=#the-keys-to-good-documentation>The Keys to Good Documentation</a>
 <ul>
-<li><a href=#the-components-of-good-documentation>The Components of Good Documentation</a></li>
-<li><a href=#reviewing>Reviewing</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href=#3-documentation-format>3. Documentation Format</a>
+<li><a href=#the-components-of-good-documentation>The Components of Good Documentation</a></li><li><a href=#reviewing>Reviewing</a></li></ul></li></ul></li><li><a href=#3-documentation-format>3. Documentation Format</a>
 <ul>
-<li><a href=#web-based-documentation>Web-Based Documentation</a></li>
-<li><a href=#flat-file-documentation>Flat-File Documentation</a></li>
-</ul>
-</li>
-<li><a href=#4-documentation-tools>4. Documentation Tools</a>
+<li><a href=#web-based-documentation>Web-Based Documentation</a></li><li><a href=#flat-file-documentation>Flat-File Documentation</a></li></ul></li><li><a href=#4-documentation-tools>4. Documentation Tools</a>
 <ul>
-<li><a href=#testing-the-documentation>Testing the Documentation</a></li>
-</ul>
-</li>
-<li><a href=#5-documentation-strategy>5. Documentation Strategy</a>
+<li><a href=#testing-the-documentation>Testing the Documentation</a></li></ul></li><li><a href=#5-documentation-strategy>5. Documentation Strategy</a>
 <ul>
-<li><a href=#documentation-maintenance-and-designated-responsible-individual-dri>Documentation Maintenance and Designated Responsible Individual (DRI)</a></li>
-</ul>
-</li>
-</ul>
-</nav>
-<p>These are my notes for the booklet <code>Documentation Writing for System Administrtors</code>.
+<li><a href=#documentation-maintenance-and-designated-responsible-individual-dri>Documentation Maintenance and Designated Responsible Individual (DRI)</a></li></ul></li></ul></nav><p>These are my notes for the booklet <code>Documentation Writing for System Administrtors</code>.
 It's from 2003, so some of the tools and procedures are old. However, somethings
-never change and it's still useful.</p>
-<ul>
-<li><a href=https://www.usenix.org/short-topics/documentation-writing-system-administrators target=_blank rel="noreferrer noopener">https://www.usenix.org/short-topics/documentation-writing-system-administrators</a></li>
-</ul>
-<span class=caption-wrapper>
+never change and it's still useful.</p><ul>
+<li><a href=https://www.usenix.org/short-topics/documentation-writing-system-administrators target=_blank rel="noreferrer noopener">https://www.usenix.org/short-topics/documentation-writing-system-administrators</a></li></ul><span class=caption-wrapper>
 <img class=caption src=merrin-cal.jpg title="Do you have the documentation for this planet, Cal?" alt="Do you have the documentation for this planet, Cal?">
 <span class=caption-text>Do you have the documentation for this planet, Cal?</span>
 </span>
-<p><a href=https://www.ea.com/games/starwars/jedi-fallen-order/media target=_blank rel="noreferrer noopener">Image credit: Electronic Arts - Star Wars Jedi: Fallen Order</a>.</p>
-<h1 id=introduction>Introduction
+<p><a href=https://www.ea.com/games/starwars/jedi-fallen-order/media target=_blank rel="noreferrer noopener">Image credit: Electronic Arts - Star Wars Jedi: Fallen Order</a>.</p><h1 id=introduction>Introduction
 <a class=header-link href=#introduction><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Follow five simple rules when setting out to write your documentation:</p>
-<ol>
+</h1><p>Follow five simple rules when setting out to write your documentation:</p><ol>
 <li>Know your audience.
 <ol>
-<li>Know who will be reading your documentation.</li>
-<li>Know what they need to get out of it.</li>
-</ol>
-</li>
-<li>Know your content.
-3. Know what type of information you're going to present and what level of detail is appropriate for your audience.</li>
-<li>Know your requirements.
-4. Define requirements before you start.</li>
-<li>Make it a habit.
+<li>Know who will be reading your documentation.</li><li>Know what they need to get out of it.</li></ol></li><li>Know your content.
+3. Know what type of information you're going to present and what level of detail is appropriate for your audience.</li><li>Know your requirements.
+4. Define requirements before you start.</li><li>Make it a habit.
 5. All documentation should be viewed as “living” documentation.
-6. Keep maintaining it and modify it if changes happen.</li>
-<li>Advertise.
-7. Tell people about it.</li>
-</ol>
-<h1 id=1-documentation-content>1. Documentation Content
+6. Keep maintaining it and modify it if changes happen.</li><li>Advertise.
+7. Tell people about it.</li></ol><h1 id=1-documentation-content>1. Documentation Content
 <a class=header-link href=#1-documentation-content><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>There are two basic types of documentation:</p>
-<ul>
+</h1><p>There are two basic types of documentation:</p><ul>
 <li>Procedural
 <ul>
-<li>Offers a set of instructions, telling the reader how to achieve some goal.</li>
-</ul>
-</li>
-<li>Informational
+<li>Offers a set of instructions, telling the reader how to achieve some goal.</li></ul></li><li>Informational
 <ul>
-<li>Records the state of an object or collectivity.</li>
-<li>E.g., System configuration, network diagrams.
+<li>Records the state of an object or collectivity.</li><li>E.g., System configuration, network diagrams.
 Good quote:
-“Approach each day with the assumption that anything not written down will be forgotten.”</li>
-</ul>
-</li>
-</ul>
-<h2 id=procedural-documentation>Procedural Documentation
+“Approach each day with the assumption that anything not written down will be forgotten.”</li></ul></li></ul><h2 id=procedural-documentation>Procedural Documentation
 <a class=header-link href=#procedural-documentation><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Producing documentation as you work has several other benefits:</p>
-<ol>
-<li>Creating a record of your work that will come in handy down the road</li>
-<li>Producing a tangible product of your labor. This is useful for job reviews.</li>
-<li>Giving yourself small breaks in your work to review it. Catching small mistakes before they become big problems.
-Procedural documentation addresses multiple goals:</li>
-</ol>
+</h2><p>Producing documentation as you work has several other benefits:</p><ol>
+<li>Creating a record of your work that will come in handy down the road</li><li>Producing a tangible product of your labor. This is useful for job reviews.</li><li>Giving yourself small breaks in your work to review it. Catching small mistakes before they become big problems.
+Procedural documentation addresses multiple goals:</li></ol><ul>
+<li>Standardize departmental behavior.</li><li>Provide a means to automate and optimize tasks.
 <ul>
-<li>Standardize departmental behavior.</li>
-<li>Provide a means to automate and optimize tasks.
+<li>Procedural documentation is usually a means to automation.</li></ul></li><li>Facilitate troubleshooting.
 <ul>
-<li>Procedural documentation is usually a means to automation.</li>
-</ul>
-</li>
-<li>Facilitate troubleshooting.
-<ul>
-<li>Easier to fix problems with documentation.</li>
-</ul>
-</li>
-<li>Assist others who must accomplish the same or similar tasks in the future.</li>
-</ul>
-<h2 id=informational-documentation>Informational Documentation
+<li>Easier to fix problems with documentation.</li></ul></li><li>Assist others who must accomplish the same or similar tasks in the future.</li></ul><h2 id=informational-documentation>Informational Documentation
 <a class=header-link href=#informational-documentation><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><ul>
-<li>Configuration data, software inventories, etc.</li>
-<li>Looks static but it's not. Changes all the time.</li>
-<li>If it changes a lot, consider using another way of documenting it.
+<li>Configuration data, software inventories, etc.</li><li>Looks static but it's not. Changes all the time.</li><li>If it changes a lot, consider using another way of documenting it.
 <ul>
-<li>E.g., automation.</li>
-</ul>
-</li>
-</ul>
-<h1 id=2-writing-good-documentation>2. Writing Good Documentation
+<li>E.g., automation.</li></ul></li></ul><h1 id=2-writing-good-documentation>2. Writing Good Documentation
 <a class=header-link href=#2-writing-good-documentation><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1>
-<h2 id=know-your-audience>Know Your Audience
+</h1><h2 id=know-your-audience>Know Your Audience
 <a class=header-link href=#know-your-audience><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><ul>
-<li>What are you documenting and for whom?</li>
-<li>Define your audience in writing when beginning a new document until you are finished.
+<li>What are you documenting and for whom?</li><li>Define your audience in writing when beginning a new document until you are finished.
 <ul>
-<li>Might even keep it in an appendix.</li>
-</ul>
-</li>
-</ul>
-<h2 id=the-keys-to-good-documentation>The Keys to Good Documentation
+<li>Might even keep it in an appendix.</li></ul></li></ul><h2 id=the-keys-to-good-documentation>The Keys to Good Documentation
 <a class=header-link href=#the-keys-to-good-documentation><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2>
-<h3 id=the-components-of-good-documentation>The Components of Good Documentation
+</h2><h3 id=the-components-of-good-documentation>The Components of Good Documentation
 <a class=header-link href=#the-components-of-good-documentation><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>Good documentation is:</p>
-<ul>
+</h3><p>Good documentation is:</p><ul>
 <li>Useful
 <ul>
-<li>Serves a purpose and addresses a need.</li>
-</ul>
-</li>
-<li>Accessible
+<li>Serves a purpose and addresses a need.</li></ul></li><li>Accessible
 <ul>
-<li>Communicates clearly.</li>
-<li>Its purpose and audience are obvious to the reader.</li>
-</ul>
-</li>
-<li>Accurate
+<li>Communicates clearly.</li><li>Its purpose and audience are obvious to the reader.</li></ul></li><li>Accurate
 <ul>
-<li>Factually correct and complete.</li>
-<li>Kept current as the subject matter changes.</li>
-</ul>
-</li>
-<li>Available
+<li>Factually correct and complete.</li><li>Kept current as the subject matter changes.</li></ul></li><li>Available
 <ul>
-<li>There when you need it.</li>
-</ul>
-</li>
-</ul>
-<h3 id=reviewing>Reviewing
+<li>There when you need it.</li></ul></li></ul><h3 id=reviewing>Reviewing
 <a class=header-link href=#reviewing><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h3><ul>
-<li>Review the documentation regularly to ensure that it continues to meet these criteria.</li>
-<li>First review immediately after writing and before publication.</li>
-<li>Reviews whenever changes are made that directly impact the document's content.</li>
-<li>Allow users to submit feedback.</li>
-</ul>
-<h1 id=3-documentation-format>3. Documentation Format
+<li>Review the documentation regularly to ensure that it continues to meet these criteria.</li><li>First review immediately after writing and before publication.</li><li>Reviews whenever changes are made that directly impact the document's content.</li><li>Allow users to submit feedback.</li></ul><h1 id=3-documentation-format>3. Documentation Format
 <a class=header-link href=#3-documentation-format><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><ul>
 <li>
-<p>Biggest problem with documentation is that it seems like extra work.</p>
-</li>
-<li>
-<p>Routinize writing documentation:</p>
-<ul>
-<li>Do it as you research a new procedure.</li>
-<li>Do it when you change anything.</li>
-<li>Do it when you successfully solve an issue.
-Three formats:</li>
-</ul>
-</li>
-<li>
-<p>Paper</p>
-<ul>
-<li>Did not take any notes for the paper section because I do not use paper most of the time.</li>
-</ul>
-</li>
-<li>
-<p>Web-based</p>
-</li>
-</ul>
-<h2 id=web-based-documentation>Web-Based Documentation
+<p>Biggest problem with documentation is that it seems like extra work.</p></li><li>
+<p>Routinize writing documentation:</p><ul>
+<li>Do it as you research a new procedure.</li><li>Do it when you change anything.</li><li>Do it when you successfully solve an issue.
+Three formats:</li></ul></li><li>
+<p>Paper</p><ul>
+<li>Did not take any notes for the paper section because I do not use paper most of the time.</li></ul></li><li>
+<p>Web-based</p></li></ul><h2 id=web-based-documentation>Web-Based Documentation
 <a class=header-link href=#web-based-documentation><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><ul>
-<li>Searchable</li>
-<li>Easy maintenance
+<li>Searchable</li><li>Easy maintenance
 <ul>
-<li>Can even be automated (usually for informational documentation).</li>
-</ul>
-</li>
-<li>Easier presentation. Can highlight, add comments, code blocks.</li>
-<li>Easy hierarchies, links, etc.</li>
-<li>Bookmarks.</li>
-</ul>
-<h2 id=flat-file-documentation>Flat-File Documentation
+<li>Can even be automated (usually for informational documentation).</li></ul></li><li>Easier presentation. Can highlight, add comments, code blocks.</li><li>Easy hierarchies, links, etc.</li><li>Bookmarks.</li></ul><h2 id=flat-file-documentation>Flat-File Documentation
 <a class=header-link href=#flat-file-documentation><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><ul>
-<li>Everything in one file and freeform.</li>
-<li>Useful for quick notes and simple tasks.</li>
-<li>Source code comments are an example of this type of documentation.</li>
-</ul>
-<h1 id=4-documentation-tools>4. Documentation Tools
+<li>Everything in one file and freeform.</li><li>Useful for quick notes and simple tasks.</li><li>Source code comments are an example of this type of documentation.</li></ul><h1 id=4-documentation-tools>4. Documentation Tools
 <a class=header-link href=#4-documentation-tools><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Skipped over most of this section because the document is old and does not have a lot of newer tools that are in use today.</p>
-<h2 id=testing-the-documentation>Testing the Documentation
+</h1><p>Skipped over most of this section because the document is old and does not have a lot of newer tools that are in use today.</p><h2 id=testing-the-documentation>Testing the Documentation
 <a class=header-link href=#testing-the-documentation><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Provide it to the following people in order:</p>
-<ol>
-<li>Yourself</li>
-<li>One or more members of the target audience.</li>
-<li>At least one person outside the target audience.</li>
-</ol>
-<h1 id=5-documentation-strategy>5. Documentation Strategy
+</h2><p>Provide it to the following people in order:</p><ol>
+<li>Yourself</li><li>One or more members of the target audience.</li><li>At least one person outside the target audience.</li></ol><h1 id=5-documentation-strategy>5. Documentation Strategy
 <a class=header-link href=#5-documentation-strategy><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>What if there's no documentation and no policy?</p>
-<ol>
+</h1><p>What if there's no documentation and no policy?</p><ol>
 <li>Identify what's necessary.
 <ol>
-<li>For a week or two write down anything you need to do.</li>
-</ol>
-</li>
-<li>Identify what's available.
+<li>For a week or two write down anything you need to do.</li></ol></li><li>Identify what's available.
 2. Gather everything that is available and categorize it.
 3. Can you reuse anything here for tasks in the last step?
 1. Re-examine it and revise it if needed.
@@ -313,105 +161,59 @@ Three formats:</li>
 5. Now you have three categories:
 3. Documents that are necessary and adequate.
 4. Documents that are necessary but need work.
-5. Unnecessary documents.</li>
-<li>Identify what's important.
+5. Unnecessary documents.</li><li>Identify what's important.
 6. Prioritize documentation.
 6. Some are more important.
-7. Some are easy work.</li>
-<li>Establish policy and procedure.
-7. Setup as a framework for documentation efforts moving forward.</li>
-</ol>
-<h2 id=documentation-maintenance-and-designated-responsible-individual-dri>Documentation Maintenance and Designated Responsible Individual (DRI)
+7. Some are easy work.</li><li>Establish policy and procedure.
+7. Setup as a framework for documentation efforts moving forward.</li></ol><h2 id=documentation-maintenance-and-designated-responsible-individual-dri>Documentation Maintenance and Designated Responsible Individual (DRI)
 <a class=header-link href=#documentation-maintenance-and-designated-responsible-individual-dri><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>DRI is the person that ensures documentation is:</p>
-<ul>
-<li>Complete</li>
-<li>Accurate</li>
-<li>Necessary</li>
-</ul>
-<p>DRI also needs to review the documentation at intervals.</p>
-</div>
-<footer>
+</h2><p>DRI is the person that ensures documentation is:</p><ul>
+<li>Complete</li><li>Accurate</li><li>Necessary</li></ul><p>DRI also needs to review the documentation at intervals.</p></div><footer>
 <p class=meta>
 <span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>Feb 6, 2020</time>
 </span>
-</p>
-<p class=meta>
+</p><p class=meta>
 <a class="basic-alignment left" href=https://parsiya.net/blog/2020-01-15-some-sans-holiday-hack-2019-solutions/ title="Some SANS Holiday Hack 2019 Solutions">Some SANS Holiday Hack 2019 Solutions</a>
 <a class="basic-alignment right" href=https://parsiya.net/blog/2020-02-09-old-contextis-challenge-solutions/ title="Old ContextIS Challenge Solutions">Old ContextIS Challenge Solutions</a>
-</p>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</div>
-<aside class="sidebar thirds">
+</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer></article></div><aside class="sidebar thirds">
 <section class="first odd">
-<h1>Who am I?</h1>
-<p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
-<p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p>
-<p>Click on <a href=/about/>About Me!</a> to know more.</p>
-</p>
-</section>
-<ul class=sidebar-nav>
+<h1>Who am I?</h1><p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
 <li class=sidebar-nav-item>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li>
-</ul>
-<section class=odd>
-<h1>Collections</h1>
-<li>
+</li></ul><section class=odd>
+<h1>Collections</h1><li>
 <a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li>
-<li>
+</li><li>
 <a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li>
-</section>
-</aside>
-</div>
-</div>
-<footer role=contentinfo>
+</li></section></aside></div></div><footer role=contentinfo>
 <p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>

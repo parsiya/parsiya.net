@@ -3,14 +3,13 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
 <link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>From Atom to Sublime Text</title>
-<link rel=stylesheet href=/css/hugo-octopress.css>
+<title>From Atom to Sublime Text</title><link rel=stylesheet href=/css/hugo-octopress.css>
 <link rel=stylesheet href=/css/fork-awesome.min.css>
 <link href=https://parsiya.net/favicon.png rel=icon>
 <meta name=description content>
 <meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
 <meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.92.2">
+<meta name=generator content="Hugo 0.93.0">
 <meta name=twitter:card content="summary">
 <meta name=twitter:title content="From Atom to Sublime Text">
 <meta name=twitter:description content="I have moved from Atom to Sublime. Atom is a nice editor with a lot of features but it has a lot of performance issues for what I want to do.
@@ -20,37 +19,21 @@ https://github.com/parsiya/Parsia-Clone/tree/master/configs/sublime-text
 ">
 <meta name=twitter:domain content="parsiya.net">
 <meta name=twitter:creator content="@CryptoGangsta">
-</head>
-<body>
+</head><body>
 <header role=banner>
 <hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
-<h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2>
-</hgroup></header>
-<nav role=navigation>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
 <fieldset class=mobile-nav>
 <select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset>
-<ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
-<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
-<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
-<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
-<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
-<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
-</ul>
-<ul class=subscription>
+</fieldset><ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
 <a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul>
-<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
 <fieldset role=search>
 <input class=search type=text name=q results=0 placeholder=Search>
 <input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset>
-</form>
-</nav>
-<div id=main>
+</fieldset></form></nav><div id=main>
 <div id=content>
 <div>
 <article class=hentry role=article>
@@ -59,290 +42,176 @@ complete unless it is known by its causes. - Avicenna</h2>
 - 8 minute read
 - <a href=https://parsiya.net/blog/2017-07-08-from-atom-to-sublime-text/#disqus_thread>Comments</a>
 - <a class=label href=https://parsiya.net/categories/not-security/>Not security </a>
-</p>
-<h1 class=entry-title>
+</p><h1 class=entry-title>
 From Atom to Sublime Text
-</h1>
-</header>
-<div class=entry-content>
+</h1></header><div class=entry-content>
 <nav id=TableOfContents>
 <ul>
-<li><a href=#install-package-control>Install Package Control</a></li>
-<li><a href=#install-packages>Install Packages</a></li>
-<li><a href=#markdown-packages>Markdown Packages</a></li>
-<li><a href=#how-to-use-the-config-files>How to Use the Config Files</a></li>
-<li><a href=#package-settings-and-locations>Package Settings and Locations</a></li>
-<li><a href=#markdown-highlighting-and-spell-check>Markdown Highlighting and Spell Check</a></li>
-<li><a href=#setting-up-markdown-live-preview>Setting up Markdown Live Preview</a>
+<li><a href=#install-package-control>Install Package Control</a></li><li><a href=#install-packages>Install Packages</a></li><li><a href=#markdown-packages>Markdown Packages</a></li><li><a href=#how-to-use-the-config-files>How to Use the Config Files</a></li><li><a href=#package-settings-and-locations>Package Settings and Locations</a></li><li><a href=#markdown-highlighting-and-spell-check>Markdown Highlighting and Spell Check</a></li><li><a href=#setting-up-markdown-live-preview>Setting up Markdown Live Preview</a>
 <ul>
-<li><a href=#enable-livereload-via-settings>Enable LiveReload via Settings</a></li>
-<li><a href=#enable-livereload-manually-need-to-do-after-every-sublime-launch>Enable LiveReload Manually (need to do after every Sublime launch)</a></li>
-<li><a href=#configure-markdown-preview>Configure Markdown Preview</a></li>
-<li><a href=#preview-files>Preview Files</a></li>
-<li><a href=#preview-keybind>Preview Keybind</a></li>
-</ul>
-</li>
-<li><a href=#markdown-table-of-content>Markdown Table of Content</a>
+<li><a href=#enable-livereload-via-settings>Enable LiveReload via Settings</a></li><li><a href=#enable-livereload-manually-need-to-do-after-every-sublime-launch>Enable LiveReload Manually (need to do after every Sublime launch)</a></li><li><a href=#configure-markdown-preview>Configure Markdown Preview</a></li><li><a href=#preview-files>Preview Files</a></li><li><a href=#preview-keybind>Preview Keybind</a></li></ul></li><li><a href=#markdown-table-of-content>Markdown Table of Content</a>
 <ul>
-<li><a href=#toc-keybind>TOC Keybind</a></li>
-</ul>
-</li>
-<li><a href=#change-bold-and-italic-markers>Change Bold and Italic Markers</a></li>
-<li><a href=#snippets-vs-completions>Snippets vs. Completions</a>
+<li><a href=#toc-keybind>TOC Keybind</a></li></ul></li><li><a href=#change-bold-and-italic-markers>Change Bold and Italic Markers</a></li><li><a href=#snippets-vs-completions>Snippets vs. Completions</a>
 <ul>
-<li><a href=#snippet>Snippet</a></li>
-<li><a href=#completions>Completions</a></li>
-<li><a href=#snippet-and-completion-triggers>Snippet and Completion Triggers</a></li>
-</ul>
-</li>
-</ul>
-</nav>
-<p>I have moved from Atom to Sublime. Atom is a nice editor with a lot of features but it has a lot of performance issues for what I want to do.</p>
-<p>Below is my setup for reference. When I want to do it again in a year (or a new machine) I can just use everything here or just use the config files. You can find the config files in my clone:</p>
-<ul>
-<li><a href=https://github.com/parsiya/Parsia-Clone/tree/master/configs/sublime-text target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Clone/tree/master/configs/sublime-text</a></li>
-</ul>
-<h1 id=install-package-control>Install Package Control
+<li><a href=#snippet>Snippet</a></li><li><a href=#completions>Completions</a></li><li><a href=#snippet-and-completion-triggers>Snippet and Completion Triggers</a></li></ul></li></ul></nav><p>I have moved from Atom to Sublime. Atom is a nice editor with a lot of features but it has a lot of performance issues for what I want to do.</p><p>Below is my setup for reference. When I want to do it again in a year (or a new machine) I can just use everything here or just use the config files. You can find the config files in my clone:</p><ul>
+<li><a href=https://github.com/parsiya/Parsia-Clone/tree/master/configs/sublime-text target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Clone/tree/master/configs/sublime-text</a></li></ul><h1 id=install-package-control>Install Package Control
 <a class=header-link href=#install-package-control><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Install package control using: <a href=https://packagecontrol.io/installation target=_blank rel="noreferrer noopener">https://packagecontrol.io/installation</a>.</p>
-<h1 id=install-packages>Install Packages
+</h1><p>Install package control using: <a href=https://packagecontrol.io/installation target=_blank rel="noreferrer noopener">https://packagecontrol.io/installation</a>.</p><h1 id=install-packages>Install Packages
 <a class=header-link href=#install-packages><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Now you can install packages.</p>
-<ol>
-<li>Press <code>Ctrl+Shift+P</code> to open the command palette.</li>
-<li>Type <code>Install</code> and then select <code>Package Control: Install Package</code>.</li>
-<li>Type the name of the package you are looking for to search for it.</li>
-<li>Select the package and press Enter.</li>
-</ol>
-<h1 id=markdown-packages>Markdown Packages
+</h1><p>Now you can install packages.</p><ol>
+<li>Press <code>Ctrl+Shift+P</code> to open the command palette.</li><li>Type <code>Install</code> and then select <code>Package Control: Install Package</code>.</li><li>Type the name of the package you are looking for to search for it.</li><li>Select the package and press Enter.</li></ol><h1 id=markdown-packages>Markdown Packages
 <a class=header-link href=#markdown-packages><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><ol>
-<li>Markdown Extended: Syntax highlighting.</li>
-<li>Markdown Preview.</li>
-<li>Markdown Editing: Shortcut keys (e.g. ctrl+1 means heading 1).</li>
-<li>Monokai Extended: Needed for highlighting.</li>
-<li>LiveReload: For live markdown preview.</li>
-<li>MarkdownTOC: Automatically generate clickable table of contents to markdown documents.</li>
-<li>TOML: TOML highlighting.</li>
-</ol>
-<h1 id=how-to-use-the-config-files>How to Use the Config Files
+<li>Markdown Extended: Syntax highlighting.</li><li>Markdown Preview.</li><li>Markdown Editing: Shortcut keys (e.g. ctrl+1 means heading 1).</li><li>Monokai Extended: Needed for highlighting.</li><li>LiveReload: For live markdown preview.</li><li>MarkdownTOC: Automatically generate clickable table of contents to markdown documents.</li><li>TOML: TOML highlighting.</li></ol><h1 id=how-to-use-the-config-files>How to Use the Config Files
 <a class=header-link href=#how-to-use-the-config-files><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>After installing packages, just copy the config files to the user package settings directory. On Windows it will be <code>"%Appdata%\Sublime Text 3\Packages\User\"</code> (don't forget the double quotes if you want to just paste it into the run prompt).</p>
-<h1 id=package-settings-and-locations>Package Settings and Locations
+</h1><p>After installing packages, just copy the config files to the user package settings directory. On Windows it will be <code>"%Appdata%\Sublime Text 3\Packages\User\"</code> (don't forget the double quotes if you want to just paste it into the run prompt).</p><h1 id=package-settings-and-locations>Package Settings and Locations
 <a class=header-link href=#package-settings-and-locations><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Generally sublime and each package have two types of settings, default and user. User settings are used to override default ones. Both are in JSON.</p>
-<p>Settings can be opened via <code>Preferences > Package Settings > Settings Default/User</code>. I usually copy from default file to user, remove the unneeded settings and override the rest.</p>
-<p>Package settings on Windows are at <code>%Appdata%\Sublime Text 3\Packages\User\package-name.sublime-settings</code>.</p>
-<p>Main settings can be overridden in <code>Preferences.sublime-settings</code> or accessed via <code>Preferences > Settings</code>. This will open two files in one window. Left are the defaults settings and right is the user settings file. Copy from left pane to the right one and override.</p>
-<h1 id=markdown-highlighting-and-spell-check>Markdown Highlighting and Spell Check
+</h1><p>Generally sublime and each package have two types of settings, default and user. User settings are used to override default ones. Both are in JSON.</p><p>Settings can be opened via <code>Preferences > Package Settings > Settings Default/User</code>. I usually copy from default file to user, remove the unneeded settings and override the rest.</p><p>Package settings on Windows are at <code>%Appdata%\Sublime Text 3\Packages\User\package-name.sublime-settings</code>.</p><p>Main settings can be overridden in <code>Preferences.sublime-settings</code> or accessed via <code>Preferences > Settings</code>. This will open two files in one window. Left are the defaults settings and right is the user settings file. Copy from left pane to the right one and override.</p><h1 id=markdown-highlighting-and-spell-check>Markdown Highlighting and Spell Check
 <a class=header-link href=#markdown-highlighting-and-spell-check><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p><code>Markdown Editing</code> has its own color scheme. I don't like it. Instead I use <code>Monokai Extended</code>. It can be selected from <code>Preferences > Color Scheme > Monokai Extended > Monokai Extended</code>.</p>
-<p>In order for it to kick in, the document type need to be set to <code>Markdown Extended</code>. This can be set by clicking on document type (bottom right).</p>
-<p>Next you want to set all markdown files to be opened as <code>Markdown Extended</code> for syntax highlighting (including code blocks). This can be done by:</p>
-<ul>
-<li><code>View (menu) > Syntax > Open all with current extension as > Markdown Extended</code>.</li>
-</ul>
-<p>This method only sets it for the current extension (e.g. md).</p>
-<p>Go to <code>Preferences > Settings - Syntax Specific</code> or edit package settings <code>Markdown Extended.sublime-settings</code> and add the following:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
-  <span style=color:#268bd2>&#34;extensions&#34;</span>:
-  [
-    <span style=color:#2aa198>&#34;md&#34;</span>,
-    <span style=color:#2aa198>&#34;markdown&#34;</span>,
-    <span style=color:#2aa198>&#34;moreextensions&#34;</span>
-  ],
-  <span style=color:#268bd2>&#34;spell_check&#34;</span>: <span style=color:#cb4b16>true</span>	<span style=color:#586e75>// enable spell check
-</span><span style=color:#586e75></span>}
-</code></pre></div><p>Note that <code>Markdown Editing</code> has added itself for <code>.mdown</code> files. You can just delete the file <code>Markdown.sublime-settings</code> and add the extensions in the previous file.</p>
-<h1 id=setting-up-markdown-live-preview>Setting up Markdown Live Preview
+</h1><p><code>Markdown Editing</code> has its own color scheme. I don't like it. Instead I use <code>Monokai Extended</code>. It can be selected from <code>Preferences > Color Scheme > Monokai Extended > Monokai Extended</code>.</p><p>In order for it to kick in, the document type need to be set to <code>Markdown Extended</code>. This can be set by clicking on document type (bottom right).</p><p>Next you want to set all markdown files to be opened as <code>Markdown Extended</code> for syntax highlighting (including code blocks). This can be done by:</p><ul>
+<li><code>View (menu) > Syntax > Open all with current extension as > Markdown Extended</code>.</li></ul><p>This method only sets it for the current extension (e.g. md).</p><p>Go to <code>Preferences > Settings - Syntax Specific</code> or edit package settings <code>Markdown Extended.sublime-settings</code> and add the following:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;extensions&#34;</span>:
+</span></span><span style=display:flex><span>  [
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;md&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;markdown&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;moreextensions&#34;</span>
+</span></span><span style=display:flex><span>  ],
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;spell_check&#34;</span>: <span style=color:#cb4b16>true</span>	<span style=color:#586e75>// enable spell check
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>}
+</span></span></code></pre></div><p>Note that <code>Markdown Editing</code> has added itself for <code>.mdown</code> files. You can just delete the file <code>Markdown.sublime-settings</code> and add the extensions in the previous file.</p><h1 id=setting-up-markdown-live-preview>Setting up Markdown Live Preview
 <a class=header-link href=#setting-up-markdown-live-preview><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1>
-<h2 id=enable-livereload-via-settings>Enable LiveReload via Settings
+</h1><h2 id=enable-livereload-via-settings>Enable LiveReload via Settings
 <a class=header-link href=#enable-livereload-via-settings><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Add the following to user settings for the LiveReload package <code>LiveReload.sublime-settings</code>:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
-  <span style=color:#268bd2>&#34;enabled_plugins&#34;</span>: [
-   <span style=color:#2aa198>&#34;SimpleReloadPlugin&#34;</span>,
-   <span style=color:#2aa198>&#34;SimpleRefreshDelay&#34;</span>	<span style=color:#586e75>// use SimpleRefresh for reload without delay
-</span><span style=color:#586e75></span>  ]
-}
-</code></pre></div><p>This way it does not need to be re-enabled after every start.</p>
-<h2 id=enable-livereload-manually-need-to-do-after-every-sublime-launch>Enable LiveReload Manually (need to do after every Sublime launch)
+</h2><p>Add the following to user settings for the LiveReload package <code>LiveReload.sublime-settings</code>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;enabled_plugins&#34;</span>: [
+</span></span><span style=display:flex><span>   <span style=color:#2aa198>&#34;SimpleReloadPlugin&#34;</span>,
+</span></span><span style=display:flex><span>   <span style=color:#2aa198>&#34;SimpleRefreshDelay&#34;</span>	<span style=color:#586e75>// use SimpleRefresh for reload without delay
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>  ]
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>This way it does not need to be re-enabled after every start.</p><h2 id=enable-livereload-manually-need-to-do-after-every-sublime-launch>Enable LiveReload Manually (need to do after every Sublime launch)
 <a class=header-link href=#enable-livereload-manually-need-to-do-after-every-sublime-launch><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><ol>
-<li>Open command palette and type <code>livereload</code>.</li>
-<li>Select <code>LiveReload: Enable/disable plug-ins</code>.</li>
-<li>Select <code>Enable - Simple Reload with delay(400ms)</code>.</li>
-<li>You should see a console message saying it was enabled. Note that the menu will say <code>Enable</code> whether it's enabled or not, if it's already enabled choosing the menu will disable it so make sure to look at the console messages.</li>
-</ol>
-<h2 id=configure-markdown-preview>Configure Markdown Preview
+<li>Open command palette and type <code>livereload</code>.</li><li>Select <code>LiveReload: Enable/disable plug-ins</code>.</li><li>Select <code>Enable - Simple Reload with delay(400ms)</code>.</li><li>You should see a console message saying it was enabled. Note that the menu will say <code>Enable</code> whether it's enabled or not, if it's already enabled choosing the menu will disable it so make sure to look at the console messages.</li></ol><h2 id=configure-markdown-preview>Configure Markdown Preview
 <a class=header-link href=#configure-markdown-preview><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Supposedly these two plugins work out of the box. It was not in my case. I had to add autoreload in markdown preview. I removed the <code>github</code> parser because it sends the markdown file to Github to be processed.</p>
-<p>Add the following to <code>MarkdownPreview.sublime-settings</code>:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
-  <span style=color:#268bd2>&#34;enable_autoreload&#34;</span>: <span style=color:#cb4b16>true</span>,
-  <span style=color:#268bd2>&#34;enabled_parsers&#34;</span>: [<span style=color:#2aa198>&#34;markdown&#34;</span>],
-  <span style=color:#268bd2>&#34;enable_highlight&#34;</span>: <span style=color:#cb4b16>true</span>
-}
-</code></pre></div>
-<h2 id=preview-files>Preview Files
+</h2><p>Supposedly these two plugins work out of the box. It was not in my case. I had to add autoreload in markdown preview. I removed the <code>github</code> parser because it sends the markdown file to Github to be processed.</p><p>Add the following to <code>MarkdownPreview.sublime-settings</code>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;enable_autoreload&#34;</span>: <span style=color:#cb4b16>true</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;enabled_parsers&#34;</span>: [<span style=color:#2aa198>&#34;markdown&#34;</span>],
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;enable_highlight&#34;</span>: <span style=color:#cb4b16>true</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=preview-files>Preview Files
 <a class=header-link href=#preview-files><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><ol>
-<li>Open command palette and select <code>Markdown Preview: Preview in Browser</code>.</li>
-<li>A new browser window will open to display the rendered document.</li>
-<li>Browser should update after every save.</li>
-</ol>
-<h2 id=preview-keybind>Preview Keybind
+<li>Open command palette and select <code>Markdown Preview: Preview in Browser</code>.</li><li>A new browser window will open to display the rendered document.</li><li>Browser should update after every save.</li></ol><h2 id=preview-keybind>Preview Keybind
 <a class=header-link href=#preview-keybind><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Add the following to <code>Default (Windows).sublime-keymap</code> or open it via <code>Preferences > Key Bindings</code>.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>[
-  {
-  <span style=color:#268bd2>&#34;keys&#34;</span>: [
-    <span style=color:#2aa198>&#34;alt+p&#34;</span>
-  ],
-  <span style=color:#268bd2>&#34;command&#34;</span>: <span style=color:#2aa198>&#34;markdown_preview&#34;</span>,
-  <span style=color:#268bd2>&#34;args&#34;</span>: {
-    <span style=color:#268bd2>&#34;target&#34;</span>: <span style=color:#2aa198>&#34;browser&#34;</span>,
-    <span style=color:#268bd2>&#34;parser&#34;</span>: <span style=color:#2aa198>&#34;markdown&#34;</span>
-  }
-  }
-]
-</code></pre></div>
-<h1 id=markdown-table-of-content>Markdown Table of Content
+</h2><p>Add the following to <code>Default (Windows).sublime-keymap</code> or open it via <code>Preferences > Key Bindings</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>[
+</span></span><span style=display:flex><span>  {
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;keys&#34;</span>: [
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;alt+p&#34;</span>
+</span></span><span style=display:flex><span>  ],
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;command&#34;</span>: <span style=color:#2aa198>&#34;markdown_preview&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;args&#34;</span>: {
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;target&#34;</span>: <span style=color:#2aa198>&#34;browser&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;parser&#34;</span>: <span style=color:#2aa198>&#34;markdown&#34;</span>
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>]
+</span></span></code></pre></div><h1 id=markdown-table-of-content>Markdown Table of Content
 <a class=header-link href=#markdown-table-of-content><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><ol>
-<li>Install package <code>Markdown TOC</code>.</li>
-<li>Add the following user settings to <code>MarkdownTOC.sublime-settings</code>:</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
-  <span style=color:#268bd2>&#34;default_autoanchor&#34;</span>: <span style=color:#cb4b16>true</span>,  <span style=color:#586e75>// adds anchor to headings in not present
-</span><span style=color:#586e75></span>  <span style=color:#268bd2>&#34;default_autolink&#34;</span>: <span style=color:#cb4b16>true</span>,	 <span style=color:#586e75>// make the ToC linkable
-</span><span style=color:#586e75></span>  <span style=color:#268bd2>&#34;default_bracket&#34;</span>: <span style=color:#2aa198>&#34;round&#34;</span>,  <span style=color:#586e75>// use parentheses for link (e.g. [linktext](linkreference)) otherwise both will be brackets (square)
-</span><span style=color:#586e75></span>  <span style=color:#268bd2>&#34;default_depth&#34;</span>: <span style=color:#2aa198>0</span>  <span style=color:#586e75>// 0 = unlimited depth
-</span><span style=color:#586e75></span>}
-</code></pre></div><ol start=3>
-<li>In any markdown document, put the cursor where you want the T0C. Then <code>Tools > MarkdownTOC > Insert TOC</code>.</li>
-<li>All settings can also be controlled in the T0C by adding them to the top comment. For example:</li>
-</ol>
-<pre tabindex=0><code>&lt;!-- MarkdownTOC style=&quot;round&quot; autolink=&quot;true&quot; depth=0 --&gt;
+<li>Install package <code>Markdown TOC</code>.</li><li>Add the following user settings to <code>MarkdownTOC.sublime-settings</code>:</li></ol><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;default_autoanchor&#34;</span>: <span style=color:#cb4b16>true</span>,  <span style=color:#586e75>// adds anchor to headings in not present
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>  <span style=color:#268bd2>&#34;default_autolink&#34;</span>: <span style=color:#cb4b16>true</span>,	 <span style=color:#586e75>// make the ToC linkable
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>  <span style=color:#268bd2>&#34;default_bracket&#34;</span>: <span style=color:#2aa198>&#34;round&#34;</span>,  <span style=color:#586e75>// use parentheses for link (e.g. [linktext](linkreference)) otherwise both will be brackets (square)
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>  <span style=color:#268bd2>&#34;default_depth&#34;</span>: <span style=color:#2aa198>0</span>  <span style=color:#586e75>// 0 = unlimited depth
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>}
+</span></span></code></pre></div><ol start=3>
+<li>In any markdown document, put the cursor where you want the T0C. Then <code>Tools > MarkdownTOC > Insert TOC</code>.</li><li>All settings can also be controlled in the T0C by adding them to the top comment. For example:</li></ol><pre tabindex=0><code>&lt;!-- MarkdownTOC style=&#34;round&#34; autolink=&#34;true&#34; depth=0 --&gt;
 
 - [Heading 1]
 - [Heading 2]
 
 &lt;!-- /MarkdownTOC --&gt;
-</code></pre>
-<h2 id=toc-keybind>TOC Keybind
+</code></pre><h2 id=toc-keybind>TOC Keybind
 <a class=header-link href=#toc-keybind><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Add the following to the keymap <code>Default (Windows).sublime-keymap</code>:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
-  <span style=color:#268bd2>&#34;keys&#34;</span>: [
-    <span style=color:#2aa198>&#34;alt+t&#34;</span>
-  ],
-  <span style=color:#268bd2>&#34;command&#34;</span>: <span style=color:#2aa198>&#34;markdowntoc_insert&#34;</span>  <span style=color:#586e75>// update is markdowntoc_update
-</span><span style=color:#586e75></span>}
-</code></pre></div>
-<h1 id=change-bold-and-italic-markers>Change Bold and Italic Markers
+</h2><p>Add the following to the keymap <code>Default (Windows).sublime-keymap</code>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;keys&#34;</span>: [
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;alt+t&#34;</span>
+</span></span><span style=display:flex><span>  ],
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;command&#34;</span>: <span style=color:#2aa198>&#34;markdowntoc_insert&#34;</span>  <span style=color:#586e75>// update is markdowntoc_update
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>}
+</span></span></code></pre></div><h1 id=change-bold-and-italic-markers>Change Bold and Italic Markers
 <a class=header-link href=#change-bold-and-italic-markers><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>By default in markdown editing, bold marker is <code>__</code> and italic is <code>_</code>. I am more used to <code>**</code> for bold and <code>*</code> for italic.</p>
-<p>Simply add a file named <code>Bold and Italic Markers.tmPreferences</code> and put it in the usual User directory.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#719e07>&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
-<span style=color:#719e07>&lt;!DOCTYPE plist PUBLIC &#34;-//Apple Computer//DTD PLIST 1.0//EN&#34; &#34;http://www.apple.com/DTDs/PropertyList-1.0.dtd&#34;&gt;</span>
-<span style=color:#268bd2>&lt;plist</span> version=<span style=color:#2aa198>&#34;1.0&#34;</span><span style=color:#268bd2>&gt;</span>
-<span style=color:#268bd2>&lt;dict&gt;</span>
-  <span style=color:#268bd2>&lt;key&gt;</span>name<span style=color:#268bd2>&lt;/key&gt;</span>
-  <span style=color:#268bd2>&lt;string&gt;</span>Bold and Italic Markers<span style=color:#268bd2>&lt;/string&gt;</span>
-  <span style=color:#268bd2>&lt;key&gt;</span>scope<span style=color:#268bd2>&lt;/key&gt;</span>
-  <span style=color:#268bd2>&lt;string&gt;</span>text.html.markdown<span style=color:#268bd2>&lt;/string&gt;</span>
-  <span style=color:#268bd2>&lt;key&gt;</span>settings<span style=color:#268bd2>&lt;/key&gt;</span>
-  <span style=color:#268bd2>&lt;dict&gt;</span>
-    <span style=color:#268bd2>&lt;key&gt;</span>shellVariables<span style=color:#268bd2>&lt;/key&gt;</span>
-    <span style=color:#268bd2>&lt;array&gt;</span>
-      <span style=color:#268bd2>&lt;dict&gt;</span>
-        <span style=color:#268bd2>&lt;key&gt;</span>name<span style=color:#268bd2>&lt;/key&gt;</span>
-        <span style=color:#268bd2>&lt;string&gt;</span>MD_BOLD_MARKER<span style=color:#268bd2>&lt;/string&gt;</span>
-        <span style=color:#268bd2>&lt;key&gt;</span>value<span style=color:#268bd2>&lt;/key&gt;</span>
-        <span style=color:#268bd2>&lt;string&gt;</span>**<span style=color:#268bd2>&lt;/string&gt;</span>
-      <span style=color:#268bd2>&lt;/dict&gt;</span>
-      <span style=color:#268bd2>&lt;dict&gt;</span>
-        <span style=color:#268bd2>&lt;key&gt;</span>name<span style=color:#268bd2>&lt;/key&gt;</span>
-        <span style=color:#268bd2>&lt;string&gt;</span>MD_ITALIC_MARKER<span style=color:#268bd2>&lt;/string&gt;</span>
-        <span style=color:#268bd2>&lt;key&gt;</span>value<span style=color:#268bd2>&lt;/key&gt;</span>
-        <span style=color:#268bd2>&lt;string&gt;</span>*<span style=color:#268bd2>&lt;/string&gt;</span>
-      <span style=color:#268bd2>&lt;/dict&gt;</span>
-    <span style=color:#268bd2>&lt;/array&gt;</span>
-  <span style=color:#268bd2>&lt;/dict&gt;</span>
-  <span style=color:#268bd2>&lt;key&gt;</span>uuid<span style=color:#268bd2>&lt;/key&gt;</span>
-  <span style=color:#268bd2>&lt;string&gt;</span>E3F0F1B0-53C8-11E3-8F96-0800200C9A66<span style=color:#268bd2>&lt;/string&gt;</span>
-<span style=color:#268bd2>&lt;/dict&gt;</span>
-<span style=color:#268bd2>&lt;/plist&gt;</span>
-</code></pre></div>
-<h1 id=snippets-vs-completions>Snippets vs. Completions
+</h1><p>By default in markdown editing, bold marker is <code>__</code> and italic is <code>_</code>. I am more used to <code>**</code> for bold and <code>*</code> for italic.</p><p>Simply add a file named <code>Bold and Italic Markers.tmPreferences</code> and put it in the usual User directory.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#719e07>&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>&lt;!DOCTYPE plist PUBLIC &#34;-//Apple Computer//DTD PLIST 1.0//EN&#34; &#34;http://www.apple.com/DTDs/PropertyList-1.0.dtd&#34;&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>&lt;plist</span> version=<span style=color:#2aa198>&#34;1.0&#34;</span><span style=color:#268bd2>&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>&lt;dict&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&lt;key&gt;</span>name<span style=color:#268bd2>&lt;/key&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&lt;string&gt;</span>Bold and Italic Markers<span style=color:#268bd2>&lt;/string&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&lt;key&gt;</span>scope<span style=color:#268bd2>&lt;/key&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&lt;string&gt;</span>text.html.markdown<span style=color:#268bd2>&lt;/string&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&lt;key&gt;</span>settings<span style=color:#268bd2>&lt;/key&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&lt;dict&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;key&gt;</span>shellVariables<span style=color:#268bd2>&lt;/key&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;array&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&lt;dict&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&lt;key&gt;</span>name<span style=color:#268bd2>&lt;/key&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&lt;string&gt;</span>MD_BOLD_MARKER<span style=color:#268bd2>&lt;/string&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&lt;key&gt;</span>value<span style=color:#268bd2>&lt;/key&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&lt;string&gt;</span>**<span style=color:#268bd2>&lt;/string&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&lt;/dict&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&lt;dict&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&lt;key&gt;</span>name<span style=color:#268bd2>&lt;/key&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&lt;string&gt;</span>MD_ITALIC_MARKER<span style=color:#268bd2>&lt;/string&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&lt;key&gt;</span>value<span style=color:#268bd2>&lt;/key&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&lt;string&gt;</span>*<span style=color:#268bd2>&lt;/string&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&lt;/dict&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;/array&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&lt;/dict&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&lt;key&gt;</span>uuid<span style=color:#268bd2>&lt;/key&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&lt;string&gt;</span>E3F0F1B0-53C8-11E3-8F96-0800200C9A66<span style=color:#268bd2>&lt;/string&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>&lt;/dict&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>&lt;/plist&gt;</span>
+</span></span></code></pre></div><h1 id=snippets-vs-completions>Snippets vs. Completions
 <a class=header-link href=#snippets-vs-completions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Essentially both do the same.</p>
-<ol>
-<li>Snippets are XML while Completions are JSON.</li>
-<li>Snippets are easier to read because you can have new lines in <code>CDATA</code> tags while you have to escape doublequotes and use special characters for new lines (e.g. <code>\n</code>).</li>
-<li>Only one snippet is allowed per file while you can have multiple completions in one file.</li>
-</ol>
-<p>Mainly as a result of 3, I went with completions because it's just one file and easier to manage (although harder to read).</p>
-<h2 id=snippet>Snippet
+</h1><p>Essentially both do the same.</p><ol>
+<li>Snippets are XML while Completions are JSON.</li><li>Snippets are easier to read because you can have new lines in <code>CDATA</code> tags while you have to escape doublequotes and use special characters for new lines (e.g. <code>\n</code>).</li><li>Only one snippet is allowed per file while you can have multiple completions in one file.</li></ol><p>Mainly as a result of 3, I went with completions because it's just one file and easier to manage (although harder to read).</p><h2 id=snippet>Snippet
 <a class=header-link href=#snippet><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p><code>Tools > Developer > New Snippet</code> will create and open a template. Files are stored in the <code>User</code> directory similar to config files (although packages can have their own snippets). Extension for snippets is <code>sublime-snippet</code>.</p>
-<p>Unofficial documentation page: <a href=http://docs.sublimetext.info/en/latest/extensibility/snippets.html target=_blank rel="noreferrer noopener">http://docs.sublimetext.info/en/latest/extensibility/snippets.html</a>.</p>
-<p>Actual snippet is in the <code>content</code> tag which supports new lines inside <code>CDATA</code>.</p>
-<p>For example the Snippet for my Hugo shortcode <code>codecaption</code> <a href=https://github.com/parsiya/Hugo-Shortcodes#codecaption-codecaptionhtml target=_blank rel="noreferrer noopener">(link)</a>. Remove the space in <code>{{[space]&lt;</code> to get the actual snippet or look at the repo (otherwise my theme's shortcode would break the codeblock).</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#268bd2>&lt;snippet&gt;</span>
-  <span style=color:#268bd2>&lt;content&gt;</span><span style=color:#719e07>&lt;![CDATA[{{ &lt; codecaption title=&#34;$1&#34; lang=&#34;$2&#34; &gt;}}
-</span><span style=color:#719e07>${3:default text}
-</span><span style=color:#719e07>{{ &lt; /codecaption &gt;}}
-</span><span style=color:#719e07>    ]]&gt;</span><span style=color:#268bd2>&lt;/content&gt;</span>
-  <span style=color:#586e75>&lt;!-- Optional: Set a tabTrigger to define how to trigger the snippet --&gt;</span>
-  <span style=color:#268bd2>&lt;tabTrigger&gt;</span>codecap<span style=color:#268bd2>&lt;/tabTrigger&gt;</span>
-  <span style=color:#586e75>&lt;!-- Optional: Set a scope to limit where the snippet will trigger --&gt;</span>
-  <span style=color:#268bd2>&lt;scope&gt;</span>text.html.markdown<span style=color:#268bd2>&lt;/scope&gt;</span>
-  <span style=color:#586e75>&lt;!-- Optional: Description to show in the menu --&gt;</span>
-  <span style=color:#268bd2>&lt;description&gt;</span>Codecaption Hugo Shortcode<span style=color:#268bd2>&lt;/description&gt;</span>
-<span style=color:#268bd2>&lt;/snippet&gt;</span>
-</code></pre></div><p><code>$1</code> means the cursor will be there after the snippet is activated, after typing and pressing <code>tab</code> we will jump to <code>$2</code>. <code>$3</code> has a default text which will be highlighted after cursor jumps to it and can be overwritten.</p>
-<p><code>scope</code>is where the snippet will be active. Without a scope, it's active in all documents. To get the current scope press <code>ctrl+alt+shift+p</code> or through <code>Tools > Developer > Show Scope Name</code>.</p>
-<p>Same thing can be done for <code>imgcaption</code> <a href=https://github.com/parsiya/Hugo-Shortcodes#image-caption-imgcaphtml target=_blank rel="noreferrer noopener">(link)</a>. Remove the space in <code>{{[space]&lt;</code> to get the actual snippet.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#268bd2>&lt;snippet&gt;</span>
-	<span style=color:#268bd2>&lt;content&gt;</span><span style=color:#719e07>&lt;![CDATA[{{ &lt; imgcap title=&#34;$1&#34; src=&#34;/images/2017/${2:imagepath}&#34; &gt;}}]]&gt;</span><span style=color:#268bd2>&lt;/content&gt;</span>
-	<span style=color:#586e75>&lt;!-- Optional: Set a tabTrigger to define how to trigger the snippet --&gt;</span>
-	<span style=color:#268bd2>&lt;tabTrigger&gt;</span>imgcap<span style=color:#268bd2>&lt;/tabTrigger&gt;</span>
-	<span style=color:#586e75>&lt;!-- Optional: Set a scope to limit where the snippet will trigger --&gt;</span>
-	<span style=color:#268bd2>&lt;scope&gt;</span>text.html.markdown<span style=color:#268bd2>&lt;/scope&gt;</span>
-	<span style=color:#586e75>&lt;!-- Optional: Description to show in the menu --&gt;</span>
-  <span style=color:#268bd2>&lt;description&gt;</span>Imagecaption Hugo Shortcode<span style=color:#268bd2>&lt;/description&gt;</span>
-<span style=color:#268bd2>&lt;/snippet&gt;</span>
-</code></pre></div>
-<h2 id=completions>Completions
+</h2><p><code>Tools > Developer > New Snippet</code> will create and open a template. Files are stored in the <code>User</code> directory similar to config files (although packages can have their own snippets). Extension for snippets is <code>sublime-snippet</code>.</p><p>Unofficial documentation page: <a href=http://docs.sublimetext.info/en/latest/extensibility/snippets.html target=_blank rel="noreferrer noopener">http://docs.sublimetext.info/en/latest/extensibility/snippets.html</a>.</p><p>Actual snippet is in the <code>content</code> tag which supports new lines inside <code>CDATA</code>.</p><p>For example the Snippet for my Hugo shortcode <code>codecaption</code> <a href=https://github.com/parsiya/Hugo-Shortcodes#codecaption-codecaptionhtml target=_blank rel="noreferrer noopener">(link)</a>. Remove the space in <code>{{[space]&lt;</code> to get the actual snippet or look at the repo (otherwise my theme's shortcode would break the codeblock).</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#268bd2>&lt;snippet&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&lt;content&gt;</span><span style=color:#719e07>&lt;![CDATA[{{ &lt; codecaption title=&#34;$1&#34; lang=&#34;$2&#34; &gt;}}
+</span></span></span><span style=display:flex><span><span style=color:#719e07>${3:default text}
+</span></span></span><span style=display:flex><span><span style=color:#719e07>{{ &lt; /codecaption &gt;}}
+</span></span></span><span style=display:flex><span><span style=color:#719e07>    ]]&gt;</span><span style=color:#268bd2>&lt;/content&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#586e75>&lt;!-- Optional: Set a tabTrigger to define how to trigger the snippet --&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&lt;tabTrigger&gt;</span>codecap<span style=color:#268bd2>&lt;/tabTrigger&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#586e75>&lt;!-- Optional: Set a scope to limit where the snippet will trigger --&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&lt;scope&gt;</span>text.html.markdown<span style=color:#268bd2>&lt;/scope&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#586e75>&lt;!-- Optional: Description to show in the menu --&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&lt;description&gt;</span>Codecaption Hugo Shortcode<span style=color:#268bd2>&lt;/description&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>&lt;/snippet&gt;</span>
+</span></span></code></pre></div><p><code>$1</code> means the cursor will be there after the snippet is activated, after typing and pressing <code>tab</code> we will jump to <code>$2</code>. <code>$3</code> has a default text which will be highlighted after cursor jumps to it and can be overwritten.</p><p><code>scope</code>is where the snippet will be active. Without a scope, it's active in all documents. To get the current scope press <code>ctrl+alt+shift+p</code> or through <code>Tools > Developer > Show Scope Name</code>.</p><p>Same thing can be done for <code>imgcaption</code> <a href=https://github.com/parsiya/Hugo-Shortcodes#image-caption-imgcaphtml target=_blank rel="noreferrer noopener">(link)</a>. Remove the space in <code>{{[space]&lt;</code> to get the actual snippet.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#268bd2>&lt;snippet&gt;</span>
+</span></span><span style=display:flex><span>	<span style=color:#268bd2>&lt;content&gt;</span><span style=color:#719e07>&lt;![CDATA[{{ &lt; imgcap title=&#34;$1&#34; src=&#34;/images/2017/${2:imagepath}&#34; &gt;}}]]&gt;</span><span style=color:#268bd2>&lt;/content&gt;</span>
+</span></span><span style=display:flex><span>	<span style=color:#586e75>&lt;!-- Optional: Set a tabTrigger to define how to trigger the snippet --&gt;</span>
+</span></span><span style=display:flex><span>	<span style=color:#268bd2>&lt;tabTrigger&gt;</span>imgcap<span style=color:#268bd2>&lt;/tabTrigger&gt;</span>
+</span></span><span style=display:flex><span>	<span style=color:#586e75>&lt;!-- Optional: Set a scope to limit where the snippet will trigger --&gt;</span>
+</span></span><span style=display:flex><span>	<span style=color:#268bd2>&lt;scope&gt;</span>text.html.markdown<span style=color:#268bd2>&lt;/scope&gt;</span>
+</span></span><span style=display:flex><span>	<span style=color:#586e75>&lt;!-- Optional: Description to show in the menu --&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&lt;description&gt;</span>Imagecaption Hugo Shortcode<span style=color:#268bd2>&lt;/description&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>&lt;/snippet&gt;</span>
+</span></span></code></pre></div><h2 id=completions>Completions
 <a class=header-link href=#completions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>I prefer completions because all can be in one file. For most purposes we can treat them like snippets. They are JSON files so escape <code>"</code> with <code>\"</code> and new line is <code>\n</code>.</p>
-<p>Link to unofficial wiki: <a href=http://docs.sublimetext.info/en/latest/reference/completions.html target=_blank rel="noreferrer noopener">http://docs.sublimetext.info/en/latest/reference/completions.html</a>.</p>
-<p>Completions are stored in the <code>User</code> directory with extension <code>.sublime-completions</code>.</p>
-<p>Sample completion file for markdown for the same shortcodes. Note the triggers are the same as the ones in snippet examples above. Snippets always have priority over completions. Remove the space in <code>{{[space]&lt;</code>.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
-   <span style=color:#268bd2>&#34;scope&#34;</span>: <span style=color:#2aa198>&#34;text.html.markdown - source - meta.tag, punctuation.definition.tag.begin&#34;</span>,
-
-   <span style=color:#268bd2>&#34;completions&#34;</span>:
-   [
-      { <span style=color:#268bd2>&#34;trigger&#34;</span>: <span style=color:#2aa198>&#34;codecap\tCodecaption Hugo Shortcode&#34;</span>, <span style=color:#268bd2>&#34;contents&#34;</span>: <span style=color:#2aa198>&#34;{{ &lt; codecaption title=\&#34;$1\&#34; lang=\&#34;$2\&#34; &gt;}}\n${3:default text}\n{{ &lt; /codecaption &gt;}}&#34;</span> },
-      { <span style=color:#268bd2>&#34;trigger&#34;</span>: <span style=color:#2aa198>&#34;imgcap\tImagecaption Hugo Shortcode&#34;</span>, <span style=color:#268bd2>&#34;contents&#34;</span>: <span style=color:#2aa198>&#34;{{ &lt; imgcap title=\&#34;$1\&#34; src=\&#34;/images/2017/${2:1.png}\&#34; &gt;}}&#34;</span> }
-   ]
-}
-</code></pre></div><p>Note the <code>trigger</code>, the first part is the actual trigger and everything after <code>\t</code> is the hint that appears in the autocompletion list similar to snippet descriptions.</p>
-<p>There are tons of <code>completion</code> files for different languages and frameworks online and in package control.</p>
-<h2 id=snippet-and-completion-triggers>Snippet and Completion Triggers
+</h2><p>I prefer completions because all can be in one file. For most purposes we can treat them like snippets. They are JSON files so escape <code>"</code> with <code>\"</code> and new line is <code>\n</code>.</p><p>Link to unofficial wiki: <a href=http://docs.sublimetext.info/en/latest/reference/completions.html target=_blank rel="noreferrer noopener">http://docs.sublimetext.info/en/latest/reference/completions.html</a>.</p><p>Completions are stored in the <code>User</code> directory with extension <code>.sublime-completions</code>.</p><p>Sample completion file for markdown for the same shortcodes. Note the triggers are the same as the ones in snippet examples above. Snippets always have priority over completions. Remove the space in <code>{{[space]&lt;</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span><span style=display:flex><span>   <span style=color:#268bd2>&#34;scope&#34;</span>: <span style=color:#2aa198>&#34;text.html.markdown - source - meta.tag, punctuation.definition.tag.begin&#34;</span>,
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>   <span style=color:#268bd2>&#34;completions&#34;</span>:
+</span></span><span style=display:flex><span>   [
+</span></span><span style=display:flex><span>      { <span style=color:#268bd2>&#34;trigger&#34;</span>: <span style=color:#2aa198>&#34;codecap\tCodecaption Hugo Shortcode&#34;</span>, <span style=color:#268bd2>&#34;contents&#34;</span>: <span style=color:#2aa198>&#34;{{ &lt; codecaption title=\&#34;$1\&#34; lang=\&#34;$2\&#34; &gt;}}\n${3:default text}\n{{ &lt; /codecaption &gt;}}&#34;</span> },
+</span></span><span style=display:flex><span>      { <span style=color:#268bd2>&#34;trigger&#34;</span>: <span style=color:#2aa198>&#34;imgcap\tImagecaption Hugo Shortcode&#34;</span>, <span style=color:#268bd2>&#34;contents&#34;</span>: <span style=color:#2aa198>&#34;{{ &lt; imgcap title=\&#34;$1\&#34; src=\&#34;/images/2017/${2:1.png}\&#34; &gt;}}&#34;</span> }
+</span></span><span style=display:flex><span>   ]
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Note the <code>trigger</code>, the first part is the actual trigger and everything after <code>\t</code> is the hint that appears in the autocompletion list similar to snippet descriptions.</p><p>There are tons of <code>completion</code> files for different languages and frameworks online and in package control.</p><h2 id=snippet-and-completion-triggers>Snippet and Completion Triggers
 <a class=header-link href=#snippet-and-completion-triggers><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>In short type the trigger (or parts of it if it's unique) and press <code>tab</code>. If there are snippets and completions with the same triggers, snippets always have priority.</p>
-<ul>
-<li>Typing <code>codecap</code> and pressing <code>tab</code> will activate the snippet/completion.</li>
-<li>Typing <code>code</code> and <code>ctrl+space</code> will show it in the auto-complete menu.</li>
-<li>Typing <code>snippet</code> in the command palette will show all snippets for the current scope along with their triggers.</li>
-</ul>
-</div>
-<footer>
+</h2><p>In short type the trigger (or parts of it if it's unique) and press <code>tab</code>. If there are snippets and completions with the same triggers, snippets always have priority.</p><ul>
+<li>Typing <code>codecap</code> and pressing <code>tab</code> will activate the snippet/completion.</li><li>Typing <code>code</code> and <code>ctrl+space</code> will show it in the auto-complete menu.</li><li>Typing <code>snippet</code> in the command palette will show all snippets for the current scope along with their triggers.</li></ul></div><footer>
 <p class=meta>
 <span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>Jul 8, 2017</time>
@@ -350,82 +219,47 @@ From Atom to Sublime Text
 Tags:
 <a class=category href=https://parsiya.net/tags/sublime-text>Sublime Text</a> <a class=category href=https://parsiya.net/tags/atom>Atom</a>
 </span>
-</p>
-<p class=meta>
+</p><p class=meta>
 <a class="basic-alignment left" href=https://parsiya.net/blog/2016-08-01-the-great-hiatus/ title="The Great Hiatus">The Great Hiatus</a>
 <a class="basic-alignment right" href=https://parsiya.net/blog/2017-08-06-tldr-base64/ title="TLDR: Base64">TLDR: Base64</a>
-</p>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</div>
-<aside class="sidebar thirds">
+</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer></article></div><aside class="sidebar thirds">
 <section class="first odd">
-<h1>Who am I?</h1>
-<p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
-<p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p>
-<p>Click on <a href=/about/>About Me!</a> to know more.</p>
-</p>
-</section>
-<ul class=sidebar-nav>
+<h1>Who am I?</h1><p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
 <li class=sidebar-nav-item>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li>
-</ul>
-<section class=odd>
-<h1>Collections</h1>
-<li>
+</li></ul><section class=odd>
+<h1>Collections</h1><li>
 <a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li>
-<li>
+</li><li>
 <a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li>
-</section>
-</aside>
-</div>
-</div>
-<footer role=contentinfo>
+</li></section></aside></div></div><footer role=contentinfo>
 <p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>

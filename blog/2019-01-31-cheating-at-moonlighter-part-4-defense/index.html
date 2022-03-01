@@ -3,14 +3,13 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
 <link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>Cheating at Moonlighter - Part 4 - Defense</title>
-<link rel=stylesheet href=/css/hugo-octopress.css>
+<title>Cheating at Moonlighter - Part 4 - Defense</title><link rel=stylesheet href=/css/hugo-octopress.css>
 <link rel=stylesheet href=/css/fork-awesome.min.css>
 <link href=https://parsiya.net/favicon.png rel=icon>
 <meta name=description content>
 <meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
 <meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.92.2">
+<meta name=generator content="Hugo 0.93.0">
 <meta name=twitter:card content="summary">
 <meta name=twitter:title content="Cheating at Moonlighter - Part 4 - Defense">
 <meta name=twitter:description content="I am going to talk about defense. This is a mainly non-technical post. It's a bit different from other posts on this topic and in general. With the existence of a trainer and the debug HUD, I decided to can the idea of using Cheat Engine on Moonlighter.
@@ -22,37 +21,21 @@ Cheating at Moonlighter - Part 3 - Enabling Debug HUD
 ">
 <meta name=twitter:domain content="parsiya.net">
 <meta name=twitter:creator content="@CryptoGangsta">
-</head>
-<body>
+</head><body>
 <header role=banner>
 <hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
-<h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2>
-</hgroup></header>
-<nav role=navigation>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
 <fieldset class=mobile-nav>
 <select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset>
-<ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
-<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
-<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
-<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
-<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
-<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
-</ul>
-<ul class=subscription>
+</fieldset><ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
 <a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul>
-<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
 <fieldset role=search>
 <input class=search type=text name=q results=0 placeholder=Search>
 <input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset>
-</form>
-</nav>
-<div id=main>
+</fieldset></form></nav><div id=main>
 <div id=content>
 <div>
 <article class=hentry role=article>
@@ -61,80 +44,36 @@ complete unless it is known by its causes. - Avicenna</h2>
 - 3 minute read
 - <a href=https://parsiya.net/blog/2019-01-31-cheating-at-moonlighter-part-4-defense/#disqus_thread>Comments</a>
 - <a class=label href=https://parsiya.net/categories/game-hacking/>Game Hacking </a><a class=label href=https://parsiya.net/categories/soapbox/>Soapbox </a>
-</p>
-<h1 class=entry-title>
+</p><h1 class=entry-title>
 Cheating at Moonlighter - Part 4 - Defense
-</h1>
-</header>
-<div class=entry-content>
-<p>I am going to talk about defense. This is a mainly non-technical post. It's a bit different from other posts on this topic and in general. With the existence of a trainer and the debug HUD, I decided to can the idea of using Cheat Engine on Moonlighter.</p>
-<p>Other parts:</p>
-<ul>
-<li><a href=/blog/2019-01-23-cheating-at-moonlighter-part-1-save-file/ title="Cheating at Moonlighter - Part 1 - Save File">Cheating at Moonlighter - Part 1 - Save File</a></li>
-<li><a href=/blog/2019-01-27-cheating-at-moonlighter-part-2-changing-game-logic-with-dnspy/ title="Cheating at Moonlighter - Part 2 - Changing Game Logic with dnSpy">Cheating at Moonlighter - Part 2 - Changing Game Logic with dnSpy</a></li>
-<li><a href=/blog/2019-01-29-cheating-at-moonlighter-part-3-enabling-debug-hud/ title="Cheating at Moonlighter - Part 3 - Enabling Debug HUD">Cheating at Moonlighter - Part 3 - Enabling Debug HUD</a></li>
-</ul>
-<h1 id=defending-against-save-game-edits>Defending Against Save Game Edits
+</h1></header><div class=entry-content>
+<p>I am going to talk about defense. This is a mainly non-technical post. It's a bit different from other posts on this topic and in general. With the existence of a trainer and the debug HUD, I decided to can the idea of using Cheat Engine on Moonlighter.</p><p>Other parts:</p><ul>
+<li><a href=/blog/2019-01-23-cheating-at-moonlighter-part-1-save-file/ title="Cheating at Moonlighter - Part 1 - Save File">Cheating at Moonlighter - Part 1 - Save File</a></li><li><a href=/blog/2019-01-27-cheating-at-moonlighter-part-2-changing-game-logic-with-dnspy/ title="Cheating at Moonlighter - Part 2 - Changing Game Logic with dnSpy">Cheating at Moonlighter - Part 2 - Changing Game Logic with dnSpy</a></li><li><a href=/blog/2019-01-29-cheating-at-moonlighter-part-3-enabling-debug-hud/ title="Cheating at Moonlighter - Part 3 - Enabling Debug HUD">Cheating at Moonlighter - Part 3 - Enabling Debug HUD</a></li></ul><h1 id=defending-against-save-game-edits>Defending Against Save Game Edits
 <a class=header-link href=#defending-against-save-game-edits><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>I was recently asked</p>
-<blockquote>
-<p>Assume we have a single player game that uploads the save game to the cloud every hour. How can we detect these edits?</p>
-</blockquote>
-<p>It's not really possible. Anything you can collect from the machine can be tampered with. Unlike a multiplayer game where the server has access to raw data. You can't trust anything collected from the client.</p>
-<ul>
+</h1><p>I was recently asked</p><blockquote>
+<p>Assume we have a single player game that uploads the save game to the cloud every hour. How can we detect these edits?</p></blockquote><p>It's not really possible. Anything you can collect from the machine can be tampered with. Unlike a multiplayer game where the server has access to raw data. You can't trust anything collected from the client.</p><ul>
 <li>Let's say we collect a log of events happened in the game and then upload it with the save game to detect discrepancies.
 <ul>
-<li>The player can edit the events.</li>
-<li>The player can cut the internet connection to disrupt the sync. You cannot really make people have to be online all the time to play a singleplayer game.</li>
-</ul>
-</li>
-</ul>
-<p>I see the same thing at work. Client-side encryptions and controls can be defeated.</p>
-<h2 id=what-can-we-do>What can we do?
+<li>The player can edit the events.</li><li>The player can cut the internet connection to disrupt the sync. You cannot really make people have to be online all the time to play a singleplayer game.</li></ul></li></ul><p>I see the same thing at work. Client-side encryptions and controls can be defeated.</p><h2 id=what-can-we-do>What can we do?
 <a class=header-link href=#what-can-we-do><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p><strong>We can detect some anomalies</strong>. Things like level and grind gates are very common in RPG games and can be used in our favor.</p>
-<ul>
+</h2><p><strong>We can detect some anomalies</strong>. Things like level and grind gates are very common in RPG games and can be used in our favor.</p><ul>
 <li>If the player has an item that drops in level 4 of the dungeon but the game progress only marks the 1st level boss kill, then this is an anomaly.
 <ul>
-<li>The player can modify the save game/events to indicate that progress.</li>
-</ul>
-</li>
-<li>If the player has suddenly gained 10 million gold (see our initial gold edit) between syncs, then it's probably a cheat.
+<li>The player can modify the save game/events to indicate that progress.</li></ul></li><li>If the player has suddenly gained 10 million gold (see our initial gold edit) between syncs, then it's probably a cheat.
 <ul>
-<li>The player can modify the save game before the sync to show a small number.</li>
-</ul>
-</li>
-</ul>
-<p><strong>We can run anti-cheat measures</strong></p>
-<ul>
-<li>This can only slow down attackers. It can and will be defeated.</li>
-<li>Again there's no way to report cheating if there's no internet connection. When dealing with Moonlighter, I used a Virtual Machine with no internet access and Steam offline mode.</li>
-</ul>
-<h1 id=defending-against-game-logic-manipulation>Defending Against Game Logic Manipulation
+<li>The player can modify the save game before the sync to show a small number.</li></ul></li></ul><p><strong>We can run anti-cheat measures</strong></p><ul>
+<li>This can only slow down attackers. It can and will be defeated.</li><li>Again there's no way to report cheating if there's no internet connection. When dealing with Moonlighter, I used a Virtual Machine with no internet access and Steam offline mode.</li></ul><h1 id=defending-against-game-logic-manipulation>Defending Against Game Logic Manipulation
 <a class=header-link href=#defending-against-game-logic-manipulation><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>In the case of Moonlighter or other Unity Games, it's easy. Unity DLLs can be decompiled from CIL and modified. It's a problem managed code (and Java bytecode) have.</p>
-<ul>
+</h1><p>In the case of Moonlighter or other Unity Games, it's easy. Unity DLLs can be decompiled from CIL and modified. It's a problem managed code (and Java bytecode) have.</p><ul>
 <li>We could use obfuscators, anti-debuggers, etc.
 <ul>
-<li>These just slow down the process.</li>
-</ul>
-</li>
-<li>We could check the integrity of game files through hashes and signing.
+<li>These just slow down the process.</li></ul></li><li>We could check the integrity of game files through hashes and signing.
 <ul>
-<li>It's a client-side control that can be defeated.</li>
-</ul>
-</li>
-<li>We could use native code.
+<li>It's a client-side control that can be defeated.</li></ul></li><li>We could use native code.
 <ul>
-<li>Modification will be harder but still possible.</li>
-</ul>
-</li>
-</ul>
-<h1 id=whats-the-point>What's the Point?
+<li>Modification will be harder but still possible.</li></ul></li></ul><h1 id=whats-the-point>What's the Point?
 <a class=header-link href=#whats-the-point><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>You could argue that a singleplayer game is not worth it. Who cares if players cheat at Moonlighter? Why should we even care? We don't.</p>
-</div>
-<footer>
+</h1><p>You could argue that a singleplayer game is not worth it. Who cares if players cheat at Moonlighter? Why should we even care? We don't.</p></div><footer>
 <p class=meta>
 <span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>Jan 31, 2019</time>
@@ -142,82 +81,47 @@ Cheating at Moonlighter - Part 4 - Defense
 Tags:
 <a class=category href=https://parsiya.net/tags/moonlighter>Moonlighter</a>
 </span>
-</p>
-<p class=meta>
+</p><p class=meta>
 <a class="basic-alignment left" href=https://parsiya.net/blog/2019-01-29-cheating-at-moonlighter-part-3-enabling-debug-hud/ title="Cheating at Moonlighter - Part 3 - Enabling Debug HUD">Cheating at Moonlighter - Part 3 - Enabling Debug HUD</a>
 <a class="basic-alignment right" href=https://parsiya.net/blog/2019-03-09-path.join-considered-harmful/ title="path.Join Considered Harmful">path.Join Considered Harmful</a>
-</p>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</div>
-<aside class="sidebar thirds">
+</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer></article></div><aside class="sidebar thirds">
 <section class="first odd">
-<h1>Who am I?</h1>
-<p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
-<p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p>
-<p>Click on <a href=/about/>About Me!</a> to know more.</p>
-</p>
-</section>
-<ul class=sidebar-nav>
+<h1>Who am I?</h1><p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
 <li class=sidebar-nav-item>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li>
-</ul>
-<section class=odd>
-<h1>Collections</h1>
-<li>
+</li></ul><section class=odd>
+<h1>Collections</h1><li>
 <a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li>
-<li>
+</li><li>
 <a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li>
-</section>
-</aside>
-</div>
-</div>
-<footer role=contentinfo>
+</li></section></aside></div></div><footer role=contentinfo>
 <p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>

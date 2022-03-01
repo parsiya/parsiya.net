@@ -3,14 +3,13 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
 <link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>DVTA - Part 5 - Client-side Storage and DLL Hijacking</title>
-<link rel=stylesheet href=/css/hugo-octopress.css>
+<title>DVTA - Part 5 - Client-side Storage and DLL Hijacking</title><link rel=stylesheet href=/css/hugo-octopress.css>
 <link rel=stylesheet href=/css/fork-awesome.min.css>
 <link href=https://parsiya.net/favicon.png rel=icon>
 <meta name=description content>
 <meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
 <meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.92.2">
+<meta name=generator content="Hugo 0.93.0">
 <meta name=twitter:card content="summary_large_image">
 <meta name=twitter:image:src content="https://parsiya.net/blog/2018-08-25-dvta-part-5-client-side-storage-and-dll-hijacking/img/15.png">
 <meta name=twitter:title content="DVTA - Part 5 - Client-side Storage and DLL Hijacking">
@@ -24,37 +23,21 @@ DVTA - Part 4 - Traffic Tampering with dnSpy
 ">
 <meta name=twitter:domain content="parsiya.net">
 <meta name=twitter:creator content="@CryptoGangsta">
-</head>
-<body>
+</head><body>
 <header role=banner>
 <hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
-<h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2>
-</hgroup></header>
-<nav role=navigation>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
 <fieldset class=mobile-nav>
 <select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset>
-<ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
-<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
-<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
-<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
-<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
-<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
-</ul>
-<ul class=subscription>
+</fieldset><ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
 <a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul>
-<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
 <fieldset role=search>
 <input class=search type=text name=q results=0 placeholder=Search>
 <input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset>
-</form>
-</nav>
-<div id=main>
+</fieldset></form></nav><div id=main>
 <div id=content>
 <div>
 <article class=hentry role=article>
@@ -63,241 +46,168 @@ complete unless it is known by its causes. - Avicenna</h2>
 - 7 minute read
 - <a href=https://parsiya.net/blog/2018-08-25-dvta-part-5-client-side-storage-and-dll-hijacking/#disqus_thread>Comments</a>
 - <a class=label href=https://parsiya.net/categories/reverse-engineering/>Reverse Engineering </a><a class=label href=https://parsiya.net/categories/dvta/>DVTA </a><a class=label href=https://parsiya.net/categories/writeup/>Writeup </a>
-</p>
-<h1 class=entry-title>
+</p><h1 class=entry-title>
 DVTA - Part 5 - Client-side Storage and DLL Hijacking
-</h1>
-</header>
-<div class=entry-content>
-<p>Thick clients store ample information on the device. In this part, we are going to investigate DVTA to see what, how, and where it stores data. We are also going to do some basic DLL hijacking. Our tools are procmon, PowerSploit, and dnSpy.</p>
-<p>Previous parts are at:</p>
-<ul>
-<li><a href=/blog/2018-07-15-dvta-part-1-setup/ title="DVTA - Part 1 - Setup">DVTA - Part 1 - Setup</a></li>
-<li><a href=/blog/2018-07-21-dvta-part-2-cert-pinning-and-login-button/ title="DVTA - Part 2 - Cert Pinning and Login Button">DVTA - Part 2 - Cert Pinning and Login Button</a></li>
-<li><a href=/blog/2018-07-30-dvta-part-3-network-recon/ title="DVTA - Part 3 - Network Recon">DVTA - Part 3 - Network Recon</a></li>
-<li><a href=/blog/2018-08-02-dvta-part-4-traffic-tampering-with-dnspy/ title="DVTA - Part 4 - Traffic Tampering with dnSpy">DVTA - Part 4 - Traffic Tampering with dnSpy</a></li>
-</ul>
-<h1 id=grabbing-database-credentials-via-static-analysis>Grabbing Database Credentials via Static Analysis
+</h1></header><div class=entry-content>
+<p>Thick clients store ample information on the device. In this part, we are going to investigate DVTA to see what, how, and where it stores data. We are also going to do some basic DLL hijacking. Our tools are procmon, PowerSploit, and dnSpy.</p><p>Previous parts are at:</p><ul>
+<li><a href=/blog/2018-07-15-dvta-part-1-setup/ title="DVTA - Part 1 - Setup">DVTA - Part 1 - Setup</a></li><li><a href=/blog/2018-07-21-dvta-part-2-cert-pinning-and-login-button/ title="DVTA - Part 2 - Cert Pinning and Login Button">DVTA - Part 2 - Cert Pinning and Login Button</a></li><li><a href=/blog/2018-07-30-dvta-part-3-network-recon/ title="DVTA - Part 3 - Network Recon">DVTA - Part 3 - Network Recon</a></li><li><a href=/blog/2018-08-02-dvta-part-4-traffic-tampering-with-dnspy/ title="DVTA - Part 4 - Traffic Tampering with dnSpy">DVTA - Part 4 - Traffic Tampering with dnSpy</a></li></ul><h1 id=grabbing-database-credentials-via-static-analysis>Grabbing Database Credentials via Static Analysis
 <a class=header-link href=#grabbing-database-credentials-via-static-analysis><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>In <a href=/blog/2018-08-02-dvta-part-4-traffic-tampering-with-dnspy/#grabbing-the-database-credentials title="Part 4 - Grabbing the Database Credentials">Part 4</a> we discovered the MSSQL credentials through dynamic analysis with dnSpy. The credentials are <code>admin:p@ssw0rd</code>. This time we are going to see where they are stored and how.</p>
-<p>Open up dnSpy and load the application. Search for the <code>RegisterUser</code> method (if the search is not successful manually drag and drop <code>DBAccess.dll</code>). Right-click on the <code>RegisterUser</code> method and select <code>Analyze</code>. Note we are not in the main application anymore but inside <code>DBAccess.dll</code>. Under <code>Used By</code> we can see <code>btnReg_Click</code>.</p>
-<span class=caption-wrapper>
+</h1><p>In <a href=/blog/2018-08-02-dvta-part-4-traffic-tampering-with-dnspy/#grabbing-the-database-credentials title="Part 4 - Grabbing the Database Credentials">Part 4</a> we discovered the MSSQL credentials through dynamic analysis with dnSpy. The credentials are <code>admin:p@ssw0rd</code>. This time we are going to see where they are stored and how.</p><p>Open up dnSpy and load the application. Search for the <code>RegisterUser</code> method (if the search is not successful manually drag and drop <code>DBAccess.dll</code>). Right-click on the <code>RegisterUser</code> method and select <code>Analyze</code>. Note we are not in the main application anymore but inside <code>DBAccess.dll</code>. Under <code>Used By</code> we can see <code>btnReg_Click</code>.</p><span class=caption-wrapper>
 <img class=caption src=img/01.png title="Tracing RegisterUser" alt="Tracing RegisterUser">
 <span class=caption-text>Tracing RegisterUser</span>
 </span>
-<p>Inside <code>btnReg_Click</code> the connection is being created:</p>
-<span class=caption-wrapper>
+<p>Inside <code>btnReg_Click</code> the connection is being created:</p><span class=caption-wrapper>
 <img class=caption src=img/02.png title="Inside btnReg_Click" alt="Inside btnReg_Click">
 <span class=caption-text>Inside btnReg_Click</span>
 </span>
-<p>Double-clicking on <code>openConnection</code> takes us to the method that establishes the connection.</p>
-<span class=caption-wrapper>
+<p>Double-clicking on <code>openConnection</code> takes us to the method that establishes the connection.</p><span class=caption-wrapper>
 <img class=caption src=img/03.png title="openConnection method" alt="openConnection method">
 <span class=caption-text>openConnection method</span>
 </span>
-<p>The application is reading some information from <code>ConfigurationManager.AppSettings</code>. This information comes from the <code>AppSettings</code> tag in the configuration file. If the application is named <code>myFancyApp.exe</code> then the configuration file is usually named <code>myFancyApp.exe.config</code>.</p>
-<p>I have written about configuration files before in context of proxying. More background material here:</p>
-<ul>
-<li><a href=/blog/2017-10-07-thick-client-proxying-part-7-proxying-.net-applications-via-config-file/ title="Thick Client Proxying - Part 7 - Proxying .NET Applications via Config File">Thick Client Proxying - Part 7 - Proxying .NET Applications via Config File</a>.</li>
-</ul>
-<p>Open the configuration file <code>dvta-master\DVTA\DVTA\bin\Release\DVTA.exe.config</code> and look inside. It's an XML file with an <code>appSettings</code> section:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#268bd2>&lt;appSettings&gt;</span>
-    <span style=color:#268bd2>&lt;add</span> key=<span style=color:#2aa198>&#34;DBSERVER&#34;</span> value=<span style=color:#2aa198>&#34;127.0.0.1\SQLEXPRESS&#34;</span> <span style=color:#268bd2>/&gt;</span>
-    <span style=color:#268bd2>&lt;add</span> key=<span style=color:#2aa198>&#34;DBNAME&#34;</span> value=<span style=color:#2aa198>&#34;DVTA&#34;</span> <span style=color:#268bd2>/&gt;</span>
-    <span style=color:#268bd2>&lt;add</span> key=<span style=color:#2aa198>&#34;DBUSERNAME&#34;</span> value=<span style=color:#2aa198>&#34;sa&#34;</span> <span style=color:#268bd2>/&gt;</span>
-    <span style=color:#268bd2>&lt;add</span> key=<span style=color:#2aa198>&#34;DBPASSWORD&#34;</span> value=<span style=color:#2aa198>&#34;CTsvjZ0jQghXYWbSRcPxpQ==&#34;</span> <span style=color:#268bd2>/&gt;</span>
-    <span style=color:#268bd2>&lt;add</span> key=<span style=color:#2aa198>&#34;AESKEY&#34;</span> value=<span style=color:#2aa198>&#34;J8gLXc454o5tW2HEF7HahcXPufj9v8k8&#34;</span> <span style=color:#268bd2>/&gt;</span>
-    <span style=color:#268bd2>&lt;add</span> key=<span style=color:#2aa198>&#34;IV&#34;</span> value=<span style=color:#2aa198>&#34;fq20T0gMnXa6g0l4&#34;</span> <span style=color:#268bd2>/&gt;</span>
-    <span style=color:#268bd2>&lt;add</span> key=<span style=color:#2aa198>&#34;ClientSettingsProvider.ServiceUri&#34;</span> value=<span style=color:#2aa198>&#34;&#34;</span> <span style=color:#268bd2>/&gt;</span>
-<span style=color:#268bd2>&lt;/appSettings&gt;</span>
-</code></pre></div><p>As you can guess, <code>DBPASSWORD</code> is base64 encoded and encrypted. We can decrypt it with this program on Go playground: <a href=https://play.golang.org/p/7Vjw2Asr4Lo target=_blank rel="noreferrer noopener">https://play.golang.org/p/7Vjw2Asr4Lo</a>.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#719e07>package</span> main
-
-<span style=color:#719e07>import</span> (
-	<span style=color:#2aa198>&#34;fmt&#34;</span>
-	<span style=color:#2aa198>&#34;crypto/aes&#34;</span>
-	<span style=color:#2aa198>&#34;encoding/base64&#34;</span>
-	<span style=color:#2aa198>&#34;crypto/cipher&#34;</span>
-)
-
-<span style=color:#268bd2>func</span> <span style=color:#268bd2>main</span>() {
-	dbPassword, err <span style=color:#719e07>:=</span> base64.StdEncoding.<span style=color:#268bd2>DecodeString</span>(<span style=color:#2aa198>&#34;CTsvjZ0jQghXYWbSRcPxpQ==&#34;</span>)
-	<span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
-		<span style=color:#b58900>panic</span>(err)
-	}
-	aesKey <span style=color:#719e07>:=</span> []<span style=color:#b58900>byte</span>(<span style=color:#2aa198>&#34;J8gLXc454o5tW2HEF7HahcXPufj9v8k8&#34;</span>)
-	iv <span style=color:#719e07>:=</span> []<span style=color:#b58900>byte</span>(<span style=color:#2aa198>&#34;fq20T0gMnXa6g0l4&#34;</span>)
-
-
-	cb, err <span style=color:#719e07>:=</span> aes.<span style=color:#268bd2>NewCipher</span>(aesKey)
-	<span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
-		<span style=color:#b58900>panic</span>(err)
-	}
-	mode <span style=color:#719e07>:=</span> cipher.<span style=color:#268bd2>NewCBCDecrypter</span>(cb, iv)
-	
-	dec <span style=color:#719e07>:=</span> <span style=color:#b58900>make</span>([]<span style=color:#dc322f>byte</span>, <span style=color:#b58900>len</span>(dbPassword))
-	mode.<span style=color:#268bd2>CryptBlocks</span>(dec, dbPassword)
-	
-	fmt.<span style=color:#268bd2>Printf</span>(<span style=color:#2aa198>&#34;% x\n&#34;</span>, dec)
-	fmt.<span style=color:#268bd2>Printf</span>(<span style=color:#2aa198>&#34;%s&#34;</span>, dec)
-}
-</code></pre></div><p>Result is (note the <a href=https://tools.ietf.org/html/rfc5652#section-6.3 target=_blank rel="noreferrer noopener">PKCS#7</a> padding):</p>
-<pre tabindex=0><code>70 40 73 73 77 30 72 64 08 08 08 08 08 08 08 08
+<p>The application is reading some information from <code>ConfigurationManager.AppSettings</code>. This information comes from the <code>AppSettings</code> tag in the configuration file. If the application is named <code>myFancyApp.exe</code> then the configuration file is usually named <code>myFancyApp.exe.config</code>.</p><p>I have written about configuration files before in context of proxying. More background material here:</p><ul>
+<li><a href=/blog/2017-10-07-thick-client-proxying-part-7-proxying-.net-applications-via-config-file/ title="Thick Client Proxying - Part 7 - Proxying .NET Applications via Config File">Thick Client Proxying - Part 7 - Proxying .NET Applications via Config File</a>.</li></ul><p>Open the configuration file <code>dvta-master\DVTA\DVTA\bin\Release\DVTA.exe.config</code> and look inside. It's an XML file with an <code>appSettings</code> section:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#268bd2>&lt;appSettings&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;add</span> key=<span style=color:#2aa198>&#34;DBSERVER&#34;</span> value=<span style=color:#2aa198>&#34;127.0.0.1\SQLEXPRESS&#34;</span> <span style=color:#268bd2>/&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;add</span> key=<span style=color:#2aa198>&#34;DBNAME&#34;</span> value=<span style=color:#2aa198>&#34;DVTA&#34;</span> <span style=color:#268bd2>/&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;add</span> key=<span style=color:#2aa198>&#34;DBUSERNAME&#34;</span> value=<span style=color:#2aa198>&#34;sa&#34;</span> <span style=color:#268bd2>/&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;add</span> key=<span style=color:#2aa198>&#34;DBPASSWORD&#34;</span> value=<span style=color:#2aa198>&#34;CTsvjZ0jQghXYWbSRcPxpQ==&#34;</span> <span style=color:#268bd2>/&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;add</span> key=<span style=color:#2aa198>&#34;AESKEY&#34;</span> value=<span style=color:#2aa198>&#34;J8gLXc454o5tW2HEF7HahcXPufj9v8k8&#34;</span> <span style=color:#268bd2>/&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;add</span> key=<span style=color:#2aa198>&#34;IV&#34;</span> value=<span style=color:#2aa198>&#34;fq20T0gMnXa6g0l4&#34;</span> <span style=color:#268bd2>/&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;add</span> key=<span style=color:#2aa198>&#34;ClientSettingsProvider.ServiceUri&#34;</span> value=<span style=color:#2aa198>&#34;&#34;</span> <span style=color:#268bd2>/&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>&lt;/appSettings&gt;</span>
+</span></span></code></pre></div><p>As you can guess, <code>DBPASSWORD</code> is base64 encoded and encrypted. We can decrypt it with this program on Go playground: <a href=https://play.golang.org/p/7Vjw2Asr4Lo target=_blank rel="noreferrer noopener">https://play.golang.org/p/7Vjw2Asr4Lo</a>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#719e07>package</span> main
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>import</span> (
+</span></span><span style=display:flex><span>	<span style=color:#2aa198>&#34;fmt&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#2aa198>&#34;crypto/aes&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#2aa198>&#34;encoding/base64&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#2aa198>&#34;crypto/cipher&#34;</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>main</span>() {
+</span></span><span style=display:flex><span>	dbPassword, err <span style=color:#719e07>:=</span> base64.StdEncoding.<span style=color:#268bd2>DecodeString</span>(<span style=color:#2aa198>&#34;CTsvjZ0jQghXYWbSRcPxpQ==&#34;</span>)
+</span></span><span style=display:flex><span>	<span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+</span></span><span style=display:flex><span>		<span style=color:#b58900>panic</span>(err)
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	aesKey <span style=color:#719e07>:=</span> []<span style=color:#b58900>byte</span>(<span style=color:#2aa198>&#34;J8gLXc454o5tW2HEF7HahcXPufj9v8k8&#34;</span>)
+</span></span><span style=display:flex><span>	iv <span style=color:#719e07>:=</span> []<span style=color:#b58900>byte</span>(<span style=color:#2aa198>&#34;fq20T0gMnXa6g0l4&#34;</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	cb, err <span style=color:#719e07>:=</span> aes.<span style=color:#268bd2>NewCipher</span>(aesKey)
+</span></span><span style=display:flex><span>	<span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+</span></span><span style=display:flex><span>		<span style=color:#b58900>panic</span>(err)
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	mode <span style=color:#719e07>:=</span> cipher.<span style=color:#268bd2>NewCBCDecrypter</span>(cb, iv)
+</span></span><span style=display:flex><span>	
+</span></span><span style=display:flex><span>	dec <span style=color:#719e07>:=</span> <span style=color:#b58900>make</span>([]<span style=color:#dc322f>byte</span>, <span style=color:#b58900>len</span>(dbPassword))
+</span></span><span style=display:flex><span>	mode.<span style=color:#268bd2>CryptBlocks</span>(dec, dbPassword)
+</span></span><span style=display:flex><span>	
+</span></span><span style=display:flex><span>	fmt.<span style=color:#268bd2>Printf</span>(<span style=color:#2aa198>&#34;% x\n&#34;</span>, dec)
+</span></span><span style=display:flex><span>	fmt.<span style=color:#268bd2>Printf</span>(<span style=color:#2aa198>&#34;%s&#34;</span>, dec)
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Result is (note the <a href=https://tools.ietf.org/html/rfc5652#section-6.3 target=_blank rel="noreferrer noopener">PKCS#7</a> padding):</p><pre tabindex=0><code>70 40 73 73 77 30 72 64 08 08 08 08 08 08 08 08
 p@ssw0rd
-</code></pre><p>If we did not know the algorithm, we had to investigate in dnSpy. Click on <code>decryptPassword</code>:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#719e07>public</span> <span style=color:#dc322f>string</span> decryptPassword()
-{
-    <span style=color:#dc322f>string</span> s = ConfigurationManager.AppSettings[<span style=color:#2aa198>&#34;DBPASSWORD&#34;</span>].ToString();
-    <span style=color:#dc322f>string</span> key = ConfigurationManager.AppSettings[<span style=color:#2aa198>&#34;AESKEY&#34;</span>].ToString();
-    <span style=color:#dc322f>string</span> IV = ConfigurationManager.AppSettings[<span style=color:#2aa198>&#34;IV&#34;</span>].ToString();
-    <span style=color:#dc322f>byte</span>[] encryptedBytes = Convert.FromBase64String(s);
-    AesCryptoServiceProvider aes = <span style=color:#719e07>new</span> AesCryptoServiceProvider();
-    aes.BlockSize = <span style=color:#2aa198>128</span>;
-    aes.KeySize = <span style=color:#2aa198>256</span>;
-    aes.Key = Encoding.ASCII.GetBytes(key);
-    aes.IV = Encoding.ASCII.GetBytes(IV);
-    aes.Padding = PaddingMode.PKCS7;
-    aes.Mode = CipherMode.CBC;
-    <span style=color:#dc322f>byte</span>[] decryptedbytes = aes.CreateDecryptor(aes.Key, aes.IV).TransformFinalBlock(encryptedBytes, <span style=color:#2aa198>0</span>, encryptedBytes.Length);
-    <span style=color:#719e07>this</span>.decryptedDBPassword = Encoding.ASCII.GetString(decryptedbytes);
-    Console.WriteLine(<span style=color:#719e07>this</span>.decryptedDBPassword);
-    <span style=color:#719e07>return</span> <span style=color:#719e07>this</span>.decryptedDBPassword;
-}
-</code></pre></div><p>Which is similar to what we did. Note it's also printed to console.</p>
-<h1 id=local-file-access>Local File Access
+</code></pre><p>If we did not know the algorithm, we had to investigate in dnSpy. Click on <code>decryptPassword</code>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=display:flex><span><span style=color:#719e07>public</span> <span style=color:#dc322f>string</span> decryptPassword()
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>string</span> s = ConfigurationManager.AppSettings[<span style=color:#2aa198>&#34;DBPASSWORD&#34;</span>].ToString();
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>string</span> key = ConfigurationManager.AppSettings[<span style=color:#2aa198>&#34;AESKEY&#34;</span>].ToString();
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>string</span> IV = ConfigurationManager.AppSettings[<span style=color:#2aa198>&#34;IV&#34;</span>].ToString();
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>byte</span>[] encryptedBytes = Convert.FromBase64String(s);
+</span></span><span style=display:flex><span>    AesCryptoServiceProvider aes = <span style=color:#719e07>new</span> AesCryptoServiceProvider();
+</span></span><span style=display:flex><span>    aes.BlockSize = <span style=color:#2aa198>128</span>;
+</span></span><span style=display:flex><span>    aes.KeySize = <span style=color:#2aa198>256</span>;
+</span></span><span style=display:flex><span>    aes.Key = Encoding.ASCII.GetBytes(key);
+</span></span><span style=display:flex><span>    aes.IV = Encoding.ASCII.GetBytes(IV);
+</span></span><span style=display:flex><span>    aes.Padding = PaddingMode.PKCS7;
+</span></span><span style=display:flex><span>    aes.Mode = CipherMode.CBC;
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>byte</span>[] decryptedbytes = aes.CreateDecryptor(aes.Key, aes.IV).TransformFinalBlock(encryptedBytes, <span style=color:#2aa198>0</span>, encryptedBytes.Length);
+</span></span><span style=display:flex><span>    <span style=color:#719e07>this</span>.decryptedDBPassword = Encoding.ASCII.GetString(decryptedbytes);
+</span></span><span style=display:flex><span>    Console.WriteLine(<span style=color:#719e07>this</span>.decryptedDBPassword);
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> <span style=color:#719e07>this</span>.decryptedDBPassword;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Which is similar to what we did. Note it's also printed to console.</p><h1 id=local-file-access>Local File Access
 <a class=header-link href=#local-file-access><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>What else is there? Applications usually store information in local files and the registry. We can use procmon to view their filesystem activity. Start procmon and then the application. In procmon, only keep the <code>Process Name is dvta.exe</code> filter and remove our previous ones. Then use the menu buttons to only <code>Show File System Activity</code>. It's beside the <code>Network Activity</code> button that we used before.</p>
-<span class=caption-wrapper>
+</h1><p>What else is there? Applications usually store information in local files and the registry. We can use procmon to view their filesystem activity. Start procmon and then the application. In procmon, only keep the <code>Process Name is dvta.exe</code> filter and remove our previous ones. Then use the menu buttons to only <code>Show File System Activity</code>. It's beside the <code>Network Activity</code> button that we used before.</p><span class=caption-wrapper>
 <img class=caption src=img/04.png title="Enabling Network Activity" alt="Enabling Network Activity">
 <span class=caption-text>Enabling Network Activity</span>
 </span>
-<p>procmon displays files accessed by the application:</p>
-<span class=caption-wrapper>
+<p>procmon displays files accessed by the application:</p><span class=caption-wrapper>
 <img class=caption src=img/05.png title="Reading the config file" alt="Reading the config file">
 <span class=caption-text>Reading the config file</span>
 </span>
-<p>To reduce clutter, you can add filters and exclude paths.</p>
-<p>Play with the application and sign-in with a few different users, Unfortunately it seems like the application does not store any information in local files. However, do not close procmon because we are going to do some DLL hijacking.</p>
-<h1 id=dll-hijacking>DLL Hijacking
+<p>To reduce clutter, you can add filters and exclude paths.</p><p>Play with the application and sign-in with a few different users, Unfortunately it seems like the application does not store any information in local files. However, do not close procmon because we are going to do some DLL hijacking.</p><h1 id=dll-hijacking>DLL Hijacking
 <a class=header-link href=#dll-hijacking><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>There are a lot of articles that explain it much better than me so I am going to do a short description and then link to resources. DLL hijacking happens when the application is looking for a DLL not via an absolute path. This means Windows will search for the DLL is specific paths starting with the root directory of the application. If it's not found in one, it will move on to the other. If attackers have write access to one of those paths (that is higher on the search hierarchy than where the actual DLL is), they can put a malicious DLL there and effectively take control of the application.</p>
-<p>Some links from Microsoft:</p>
-<ul>
-<li>Search order for desktop applications: <a href=https://docs.microsoft.com/en-us/windows/desktop/dlls/dynamic-link-library-search-order#search-order-for-desktop-applications target=_blank rel="noreferrer noopener">https://docs.microsoft.com/en-us/windows/desktop/dlls/dynamic-link-library-search-order#search-order-for-desktop-applications</a></li>
-<li>Dynamic link library security: <a href=https://docs.microsoft.com/en-us/windows/desktop/dlls/dynamic-link-library-security target=_blank rel="noreferrer noopener">https://docs.microsoft.com/en-us/windows/desktop/dlls/dynamic-link-library-security</a></li>
-</ul>
-<p>You can find so many more with a search.</p>
-<h2 id=step-1-identifying-dlls>Step 1: Identifying DLLs
+</h1><p>There are a lot of articles that explain it much better than me so I am going to do a short description and then link to resources. DLL hijacking happens when the application is looking for a DLL not via an absolute path. This means Windows will search for the DLL is specific paths starting with the root directory of the application. If it's not found in one, it will move on to the other. If attackers have write access to one of those paths (that is higher on the search hierarchy than where the actual DLL is), they can put a malicious DLL there and effectively take control of the application.</p><p>Some links from Microsoft:</p><ul>
+<li>Search order for desktop applications: <a href=https://docs.microsoft.com/en-us/windows/desktop/dlls/dynamic-link-library-search-order#search-order-for-desktop-applications target=_blank rel="noreferrer noopener">https://docs.microsoft.com/en-us/windows/desktop/dlls/dynamic-link-library-search-order#search-order-for-desktop-applications</a></li><li>Dynamic link library security: <a href=https://docs.microsoft.com/en-us/windows/desktop/dlls/dynamic-link-library-security target=_blank rel="noreferrer noopener">https://docs.microsoft.com/en-us/windows/desktop/dlls/dynamic-link-library-security</a></li></ul><p>You can find so many more with a search.</p><h2 id=step-1-identifying-dlls>Step 1: Identifying DLLs
 <a class=header-link href=#step-1-identifying-dlls><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>First, we need to figure out which DLLs are vulnerable to hijacking. I am going to show two ways.</p>
-<h3 id=procmon>Procmon
+</h2><p>First, we need to figure out which DLLs are vulnerable to hijacking. I am going to show two ways.</p><h3 id=procmon>Procmon
 <a class=header-link href=#procmon><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>To discover DLL hijacking entry points, we can use procmon. Add these filters:</p>
-<ul>
-<li><code>Process Name contains DVTA</code></li>
-<li><code>Result is NAME NOT FOUND</code></li>
-<li>(optional) <code>Path ends with dll</code></li>
-</ul>
-<span class=caption-wrapper>
+</h3><p>To discover DLL hijacking entry points, we can use procmon. Add these filters:</p><ul>
+<li><code>Process Name contains DVTA</code></li><li><code>Result is NAME NOT FOUND</code></li><li>(optional) <code>Path ends with dll</code></li></ul><span class=caption-wrapper>
 <img class=caption src=img/06.png title="Procmon filters for DLL hijacking" alt="Procmon filters for DLL hijacking">
 <span class=caption-text>Procmon filters for DLL hijacking</span>
 </span>
-<p>A lot of results pop up:</p>
-<span class=caption-wrapper>
+<p>A lot of results pop up:</p><span class=caption-wrapper>
 <img class=caption src=img/07.png title="NAME NOT FOUND results" alt="NAME NOT FOUND results">
 <span class=caption-text>NAME NOT FOUND results</span>
 </span>
-<p>The application is looking for these DLLs in the current directory (or other paths) and cannot find them. This means, Windows will search for these DLLs on the machine according to the search order.</p>
-<h3 id=find-processdllhijack-from-powersploit>Find-ProcessDLLHijack from PowerSploit
+<p>The application is looking for these DLLs in the current directory (or other paths) and cannot find them. This means, Windows will search for these DLLs on the machine according to the search order.</p><h3 id=find-processdllhijack-from-powersploit>Find-ProcessDLLHijack from PowerSploit
 <a class=header-link href=#find-processdllhijack-from-powersploit><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p><a href=https://github.com/PowerShellMafia/PowerSploit target=_blank rel="noreferrer noopener">PowerSploit</a> also has utilities for identifying (and performing) DLL hijacking.</p>
-<p>To install PowerSploit:</p>
-<ol>
-<li>Clone the repository (or download it as a zip file) at <a href=https://github.com/PowerShellMafia/PowerSploit target=_blank rel="noreferrer noopener">https://github.com/PowerShellMafia/PowerSploit</a>.</li>
-<li>Copy the directory to <code>C:\Users\IEUser\Documents\WindowsPowerShell\Modules</code> where <code>IEUser</code> is the current user.</li>
-<li>Open a PowerShell prompt as admin.</li>
-<li>Run <code>Set-ExecutionPolicy bypass</code>. This will disable all the warnings. You are running in a VM right?</li>
-<li>Open a new PowerShell prompt and run <code>Import-Module PowerSploit</code>.</li>
-<li>???</li>
-<li>Profit.</li>
-</ol>
-<p>Run the application and execute the following PowerShell command (we have auto-complete):</p>
-<ul>
-<li><code>Find-ProcessDLLHijack DVTA-v3 | Format-List</code></li>
-</ul>
-<p>I have patched the utility three times, so my executable is named <code>DVTA-v3</code>. Replace it with your process name.</p>
-<span class=caption-wrapper>
+</h3><p><a href=https://github.com/PowerShellMafia/PowerSploit target=_blank rel="noreferrer noopener">PowerSploit</a> also has utilities for identifying (and performing) DLL hijacking.</p><p>To install PowerSploit:</p><ol>
+<li>Clone the repository (or download it as a zip file) at <a href=https://github.com/PowerShellMafia/PowerSploit target=_blank rel="noreferrer noopener">https://github.com/PowerShellMafia/PowerSploit</a>.</li><li>Copy the directory to <code>C:\Users\IEUser\Documents\WindowsPowerShell\Modules</code> where <code>IEUser</code> is the current user.</li><li>Open a PowerShell prompt as admin.</li><li>Run <code>Set-ExecutionPolicy bypass</code>. This will disable all the warnings. You are running in a VM right?</li><li>Open a new PowerShell prompt and run <code>Import-Module PowerSploit</code>.</li><li>???</li><li>Profit.</li></ol><p>Run the application and execute the following PowerShell command (we have auto-complete):</p><ul>
+<li><code>Find-ProcessDLLHijack DVTA-v3 | Format-List</code></li></ul><p>I have patched the utility three times, so my executable is named <code>DVTA-v3</code>. Replace it with your process name.</p><span class=caption-wrapper>
 <img class=caption src=img/08.png title="Hijackable DLLs according to PowerSploit" alt="Hijackable DLLs according to PowerSploit">
 <span class=caption-text>Hijackable DLLs according to PowerSploit</span>
 </span>
 <h2 id=step-2-checking-write-permissions>Step 2: Checking Write Permissions
 <a class=header-link href=#step-2-checking-write-permissions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Without write access to somewhere high enough in the search path to replace the DLL, we cannot do anything. In our sample setup, this is not a problem because we most likely have admin on the machine. In the real world, be sure to check ACLs for write access.</p>
-<p>There are also other paths, <code>Find-PathDLLHijack</code> can identify them.</p>
-<span class=caption-wrapper>
+</h2><p>Without write access to somewhere high enough in the search path to replace the DLL, we cannot do anything. In our sample setup, this is not a problem because we most likely have admin on the machine. In the real world, be sure to check ACLs for write access.</p><p>There are also other paths, <code>Find-PathDLLHijack</code> can identify them.</p><span class=caption-wrapper>
 <img class=caption src=img/09.png title="Paths with Write Access" alt="Paths with Write Access">
 <span class=caption-text>Paths with Write Access</span>
 </span>
 <h2 id=step-3-deploying-the-malicious-dll>Step 3: Deploying the Malicious DLL
 <a class=header-link href=#step-3-deploying-the-malicious-dll><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Now we need to write it to the path identified in the previous section with <code>Write-HijackDll</code>. I chose <code>VERSION.dll</code>.</p>
-<p>We can deploy with PowerSploit using <code>Write-HijackDll</code>. It creates a bat file, runs the command in it and deletes itself. We can specify the bat file path with <code>-BatPath</code> and the command with <code>-Command</code>:</p>
-<ul>
-<li><code>Write-HijackDll -BatPath b.bat -Command "copy NUL testfile.txt"</code></li>
-</ul>
-<span class=caption-wrapper>
+</h2><p>Now we need to write it to the path identified in the previous section with <code>Write-HijackDll</code>. I chose <code>VERSION.dll</code>.</p><p>We can deploy with PowerSploit using <code>Write-HijackDll</code>. It creates a bat file, runs the command in it and deletes itself. We can specify the bat file path with <code>-BatPath</code> and the command with <code>-Command</code>:</p><ul>
+<li><code>Write-HijackDll -BatPath b.bat -Command "copy NUL testfile.txt"</code></li></ul><span class=caption-wrapper>
 <img class=caption src=img/13.png title="Deploying the DLL with Wire-HijackDll" alt="Deploying the DLL with Wire-HijackDll">
 <span class=caption-text>Deploying the DLL with Wire-HijackDll</span>
 </span>
-<p>We run the application and nothing happens. Why? Let's investigate with procmon.</p>
-<p>Disable the <code>NAME NOT FOUND</code> filter and add a new filter <code>Path contains version.dll</code>.</p>
-<span class=caption-wrapper>
+<p>We run the application and nothing happens. Why? Let's investigate with procmon.</p><p>Disable the <code>NAME NOT FOUND</code> filter and add a new filter <code>Path contains version.dll</code>.</p><span class=caption-wrapper>
 <img class=caption src=img/11.png title="Path contains version.dll filter" alt="Path contains version.dll filter">
 <span class=caption-text>Path contains version.dll filter</span>
 </span>
-<p>Which shows us that <code>version.dll</code> was found in <code>System32</code>. Our malicious DLL was not high enough on the DLL search order hierarchy.</p>
-<span class=caption-wrapper>
+<p>Which shows us that <code>version.dll</code> was found in <code>System32</code>. Our malicious DLL was not high enough on the DLL search order hierarchy.</p><span class=caption-wrapper>
 <img class=caption src=img/12.png title="version.dll found in System32" alt="version.dll found in System32">
 <span class=caption-text>version.dll found in System32</span>
 </span>
-<p>We need to deploy the DLL to the application directory. I also learned another lesson, either store the bat file in the same directory as the DLL or provide the full path when running <code>Write-HijackDll</code>. This time I also changed the payload to pop <code>calc.exe</code>.</p>
-<span class=caption-wrapper>
+<p>We need to deploy the DLL to the application directory. I also learned another lesson, either store the bat file in the same directory as the DLL or provide the full path when running <code>Write-HijackDll</code>. This time I also changed the payload to pop <code>calc.exe</code>.</p><span class=caption-wrapper>
 <img class=caption src=img/14.png title="Running Write-HijackDll again" alt="Running Write-HijackDll again">
 <span class=caption-text>Running Write-HijackDll again</span>
 </span>
-<p>And run the application again.</p>
-<span class=caption-wrapper>
+<p>And run the application again.</p><span class=caption-wrapper>
 <img class=caption src=img/15.png title="Calc executed" alt="Calc executed">
 <span class=caption-text>Calc executed</span>
 </span>
 <h1 id=registry-hives>Registry Hives
 <a class=header-link href=#registry-hives><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Registry hives are also popular places for storing information. Procmon allows us to monitor registry activity too. Run procmon and keep the <code>Process Name contains dvta</code> filter. Disable all other filters from before. Enable registry activity with the <code>Show Registry Activity</code> button. It is to the left of the file activity one.</p>
-<span class=caption-wrapper>
+</h1><p>Registry hives are also popular places for storing information. Procmon allows us to monitor registry activity too. Run procmon and keep the <code>Process Name contains dvta</code> filter. Disable all other filters from before. Enable registry activity with the <code>Show Registry Activity</code> button. It is to the left of the file activity one.</p><span class=caption-wrapper>
 <img class=caption src=img/16.png title="Show registry activity button" alt="Show registry activity button">
 <span class=caption-text>Show registry activity button</span>
 </span>
-<p>Run the application and see the registry keys that are accessed.</p>
-<span class=caption-wrapper>
+<p>Run the application and see the registry keys that are accessed.</p><span class=caption-wrapper>
 <img class=caption src=img/17.png title="Registry activity in procmon" alt="Registry activity in procmon">
 <span class=caption-text>Registry activity in procmon</span>
 </span>
-<p>But this is too much, we only want to see what registry keys are created or modified. Add a new filter <code>Operation is RegSetValue</code> (you can also add <code>RegCreateKey</code>). Login to the application and see the important events roll in.</p>
-<span class=caption-wrapper>
+<p>But this is too much, we only want to see what registry keys are created or modified. Add a new filter <code>Operation is RegSetValue</code> (you can also add <code>RegCreateKey</code>). Login to the application and see the important events roll in.</p><span class=caption-wrapper>
 <img class=caption src=img/18.png title="Registry keys modified by the app" alt="Registry keys modified by the app">
 <span class=caption-text>Registry keys modified by the app</span>
 </span>
-<p>The application writes password and other information to the registry at <code>HKCU\dvta</code>. These keys are also not erased when the user exits.</p>
-<span class=caption-wrapper>
+<p>The application writes password and other information to the registry at <code>HKCU\dvta</code>. These keys are also not erased when the user exits.</p><span class=caption-wrapper>
 <img class=caption src=img/19.png title="DVTA registry keys" alt="DVTA registry keys">
 <span class=caption-text>DVTA registry keys</span>
 </span>
 <h1 id=conclusion>Conclusion
 <a class=header-link href=#conclusion><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>That was it for part five. We learned how to look at client-side storage, trace registry activity, and did a bit of DLL hijacking. At this point I think I am done with this app. I might have missed some parts.</p>
-<p>I hope this helped. Thanks for reading this and if you have any questions/feedback, you know where to find me.</p>
-</div>
-<footer>
+</h1><p>That was it for part five. We learned how to look at client-side storage, trace registry activity, and did a bit of DLL hijacking. At this point I think I am done with this app. I might have missed some parts.</p><p>I hope this helped. Thanks for reading this and if you have any questions/feedback, you know where to find me.</p></div><footer>
 <p class=meta>
 <span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>Aug 25, 2018</time>
@@ -305,82 +215,47 @@ p@ssw0rd
 Tags:
 <a class=category href=https://parsiya.net/tags/dnspy>dnSpy</a>
 </span>
-</p>
-<p class=meta>
+</p><p class=meta>
 <a class="basic-alignment left" href=https://parsiya.net/blog/2018-08-23-committing-insurance-fraud-with-tineola/ title="Committing Insurance Fraud with Tineola">Committing Insurance Fraud with Tineola</a>
 <a class="basic-alignment right" href=https://parsiya.net/blog/2018-09-27-tineola-taking-a-bite-out-of-enterprise-blockchain/ title="Tineola: Taking a Bite out of Enterprise Blockchain">Tineola: Taking a Bite out of Enterprise Blockchain</a>
-</p>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</div>
-<aside class="sidebar thirds">
+</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer></article></div><aside class="sidebar thirds">
 <section class="first odd">
-<h1>Who am I?</h1>
-<p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
-<p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p>
-<p>Click on <a href=/about/>About Me!</a> to know more.</p>
-</p>
-</section>
-<ul class=sidebar-nav>
+<h1>Who am I?</h1><p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
 <li class=sidebar-nav-item>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li>
-</ul>
-<section class=odd>
-<h1>Collections</h1>
-<li>
+</li></ul><section class=odd>
+<h1>Collections</h1><li>
 <a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li>
-<li>
+</li><li>
 <a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li>
-</section>
-</aside>
-</div>
-</div>
-<footer role=contentinfo>
+</li></section></aside></div></div><footer role=contentinfo>
 <p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>

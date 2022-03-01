@@ -3,14 +3,13 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
 <link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>DVTA - Part 2 - Cert Pinning and Login Button</title>
-<link rel=stylesheet href=/css/hugo-octopress.css>
+<title>DVTA - Part 2 - Cert Pinning and Login Button</title><link rel=stylesheet href=/css/hugo-octopress.css>
 <link rel=stylesheet href=/css/fork-awesome.min.css>
 <link href=https://parsiya.net/favicon.png rel=icon>
 <meta name=description content>
 <meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
 <meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.92.2">
+<meta name=generator content="Hugo 0.93.0">
 <meta name=twitter:card content="summary_large_image">
 <meta name=twitter:image:src content="https://parsiya.net/blog/2018-07-21-dvta-part-2-cert-pinning-and-login-button/09.png">
 <meta name=twitter:title content="DVTA - Part 2 - Cert Pinning and Login Button">
@@ -22,37 +21,21 @@ Damn Vulnerable Thick Client Application - Part 1 - Setup
 ">
 <meta name=twitter:domain content="parsiya.net">
 <meta name=twitter:creator content="@CryptoGangsta">
-</head>
-<body>
+</head><body>
 <header role=banner>
 <hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
-<h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2>
-</hgroup></header>
-<nav role=navigation>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
 <fieldset class=mobile-nav>
 <select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset>
-<ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
-<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
-<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
-<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
-<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
-<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
-</ul>
-<ul class=subscription>
+</fieldset><ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
 <a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul>
-<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
 <fieldset role=search>
 <input class=search type=text name=q results=0 placeholder=Search>
 <input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset>
-</form>
-</nav>
-<div id=main>
+</fieldset></form></nav><div id=main>
 <div id=content>
 <div>
 <article class=hentry role=article>
@@ -61,328 +44,217 @@ complete unless it is known by its causes. - Avicenna</h2>
 - 7 minute read
 - <a href=https://parsiya.net/blog/2018-07-21-dvta-part-2-cert-pinning-and-login-button/#disqus_thread>Comments</a>
 - <a class=label href=https://parsiya.net/categories/reverse-engineering/>Reverse Engineering </a><a class=label href=https://parsiya.net/categories/dvta/>DVTA </a><a class=label href=https://parsiya.net/categories/writeup/>Writeup </a>
-</p>
-<h1 class=entry-title>
+</p><h1 class=entry-title>
 DVTA - Part 2 - Cert Pinning and Login Button
-</h1>
-</header>
-<div class=entry-content>
+</h1></header><div class=entry-content>
 <nav id=TableOfContents>
 <ul>
-<li><a href=#disabled-login-button>Disabled Login Button</a></li>
-<li><a href=#certificate-pinning-bypass>Certificate Pinning Bypass</a>
+<li><a href=#disabled-login-button>Disabled Login Button</a></li><li><a href=#certificate-pinning-bypass>Certificate Pinning Bypass</a>
 <ul>
-<li><a href=#patching-loginpinpublickey>Patching login.PinPublicKey</a></li>
-</ul>
-</li>
-<li><a href=#enabling-the-login-button>Enabling the Login Button</a>
+<li><a href=#patching-loginpinpublickey>Patching login.PinPublicKey</a></li></ul></li><li><a href=#enabling-the-login-button>Enabling the Login Button</a>
 <ul>
-<li><a href=#bypassing-response-length-check>Bypassing Response Length check</a></li>
-<li><a href=#what-is-il>What is IL?</a></li>
-<li><a href=#patching-il-with-dnspy>Patching IL with dnSpy</a></li>
-</ul>
-</li>
-<li><a href=#conclusion>Conclusion</a></li>
-</ul>
-</nav>
-<p>After setting up the Damn Vulnerable Thick Client Application, we are now ready to hack it.</p>
-<p>In this section, we will bypass the certificate pinning, enable the login button, learn how to modify the code in dnSpy through writing C# code and get a quick intro to Common Intermediate Language (CIL).</p>
-<p>You can see previous parts here:</p>
-<ul>
-<li><a href=/blog/2018-07-15-dvta-part-1-setup/ title="DVTA - Part 1 - Setup">Damn Vulnerable Thick Client Application - Part 1 - Setup</a></li>
-</ul>
-<h1 id=disabled-login-button>Disabled Login Button
+<li><a href=#bypassing-response-length-check>Bypassing Response Length check</a></li><li><a href=#what-is-il>What is IL?</a></li><li><a href=#patching-il-with-dnspy>Patching IL with dnSpy</a></li></ul></li><li><a href=#conclusion>Conclusion</a></li></ul></nav><p>After setting up the Damn Vulnerable Thick Client Application, we are now ready to hack it.</p><p>In this section, we will bypass the certificate pinning, enable the login button, learn how to modify the code in dnSpy through writing C# code and get a quick intro to Common Intermediate Language (CIL).</p><p>You can see previous parts here:</p><ul>
+<li><a href=/blog/2018-07-15-dvta-part-1-setup/ title="DVTA - Part 1 - Setup">Damn Vulnerable Thick Client Application - Part 1 - Setup</a></li></ul><h1 id=disabled-login-button>Disabled Login Button
 <a class=header-link href=#disabled-login-button><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Let's start with the <code>Release</code> binary. First we need to go back and "fix" the FTP address like previous part. Now we can start the application and we can see the login button is disabled.</p>
-<p>Maybe it's enabled when you enter the username and password like some applications/websites. No, it seems it's disabled by default. Register button is working.</p>
-<p>It's time for dnSpy again. Make a copy of the modified binary and drop it into dnSpy.</p>
-<p>We want to enable the login button. Our best guess is to navigate to <code>DVTA > Login</code>. One of the methods is the <code>btnLogin_Click</code>. By now you have figured out the login button is probably named <code>btnlogin</code> but let's assume we do not know that. We need to hunt down button name button in the method.</p>
-<span class=caption-wrapper>
+</h1><p>Let's start with the <code>Release</code> binary. First we need to go back and "fix" the FTP address like previous part. Now we can start the application and we can see the login button is disabled.</p><p>Maybe it's enabled when you enter the username and password like some applications/websites. No, it seems it's disabled by default. Register button is working.</p><p>It's time for dnSpy again. Make a copy of the modified binary and drop it into dnSpy.</p><p>We want to enable the login button. Our best guess is to navigate to <code>DVTA > Login</code>. One of the methods is the <code>btnLogin_Click</code>. By now you have figured out the login button is probably named <code>btnlogin</code> but let's assume we do not know that. We need to hunt down button name button in the method.</p><span class=caption-wrapper>
 <img class=caption src=img/01.png title="Login button method and name in dnSpy" alt="Login button method and name in dnSpy">
 <span class=caption-text>Login button method and name in dnSpy</span>
 </span>
-<p>Right-click on the method and select <code>Analyze</code>, I cannot emphasize how useful this functionality is. We can list where this method is used and what it uses.</p>
-<span class=caption-wrapper>
+<p>Right-click on the method and select <code>Analyze</code>, I cannot emphasize how useful this functionality is. We can list where this method is used and what it uses.</p><span class=caption-wrapper>
 <img class=caption src=img/02.png title="Tracing btnLogin_Click" alt="Tracing btnLogin_Click">
 <span class=caption-text>Tracing btnLogin_Click</span>
 </span>
-<p>Clicking on <code>Login.InitializeComponent</code> brings us to a page where we can see login button's properties. This line shows where the method is assigned to the button object.</p>
-<span class=caption-wrapper>
+<p>Clicking on <code>Login.InitializeComponent</code> brings us to a page where we can see login button's properties. This line shows where the method is assigned to the button object.</p><span class=caption-wrapper>
 <img class=caption src=img/03.png title="Setting btnlogin properties" alt="Setting btnlogin properties">
 <span class=caption-text>Setting btnlogin properties</span>
 </span>
-<p>A few lines before, we can see the line that disabled the button. We can use dnSpy to enable it. At work, I would have enabled it and moved on but we are here to learn. I think there's more to the button than just this workaround. We must detect where the button is enabled to bypass that control.</p>
-<p>Right click <code>btnLogin</code> and select <code>Analyze</code>, then open <code>Read By</code> to see <code>Login.button1_Click</code>.</p>
-<span class=caption-wrapper>
+<p>A few lines before, we can see the line that disabled the button. We can use dnSpy to enable it. At work, I would have enabled it and moved on but we are here to learn. I think there's more to the button than just this workaround. We must detect where the button is enabled to bypass that control.</p><p>Right click <code>btnLogin</code> and select <code>Analyze</code>, then open <code>Read By</code> to see <code>Login.button1_Click</code>.</p><span class=caption-wrapper>
 <img class=caption src=img/04.png title="Hunting btnlogin" alt="Hunting btnlogin">
 <span class=caption-text>Hunting btnlogin</span>
 </span>
-<p>It's enabled in <code>button1_Click</code>. It's not hard to guess that <code>button1</code> is the <code>Fetch Login Token</code> button on the login page (this another one of protections added in this fork). Look at the decompiled code:</p>
-<figure class=code>
+<p>It's enabled in <code>button1_Click</code>. It's not hard to guess that <code>button1</code> is the <code>Fetch Login Token</code> button on the login page (this another one of protections added in this fork). Look at the decompiled code:</p><figure class=code>
 <figcaption>
 <span>button1_Click</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#586e75>// Token: 0x0600001C RID: 28 RVA: 0x00002FBC File Offset: 0x000011BC
-</span><span style=color:#586e75></span><span style=color:#719e07>private</span> <span style=color:#719e07>void</span> button1_Click(<span style=color:#dc322f>object</span> sender, EventArgs e)
-{
-    <span style=color:#719e07>this</span>.checforDebuggers();
-    ServicePointManager.ServerCertificateValidationCallback =
-        <span style=color:#719e07>new</span> RemoteCertificateValidationCallback(Login.PinPublicKey);
-    WebResponse timeResp = WebRequest.Create(<span style=color:#2aa198>&#34;https://time.is/Singapore&#34;</span>).GetResponse();
-    <span style=color:#719e07>this</span>.label1.Text = Convert.ToString(timeResp.ContentLength);
-    <span style=color:#719e07>if</span> (timeResp.ContentLength &lt; <span style=color:#2aa198>143L</span>)
-    {
-        <span style=color:#719e07>this</span>.isLoginAllowed = <span style=color:#719e07>true</span>;
-        <span style=color:#719e07>this</span>.btnlogin.Enabled = <span style=color:#719e07>true</span>;
-    }
-    timeResp.Close();
-}</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>The code is readable without needing to know C#.</p>
-<p>First we call <code>checforDebuggers()</code> which looks like is checking for debuggers. Click to see its code:</p>
-<figure class=code>
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=display:flex><span><span style=color:#586e75>// Token: 0x0600001C RID: 28 RVA: 0x00002FBC File Offset: 0x000011BC</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>private</span> <span style=color:#719e07>void</span> button1_Click(<span style=color:#dc322f>object</span> sender, EventArgs e)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#719e07>this</span>.checforDebuggers();
+</span></span><span style=display:flex><span>    ServicePointManager.ServerCertificateValidationCallback =
+</span></span><span style=display:flex><span>        <span style=color:#719e07>new</span> RemoteCertificateValidationCallback(Login.PinPublicKey);
+</span></span><span style=display:flex><span>    WebResponse timeResp = WebRequest.Create(<span style=color:#2aa198>&#34;https://time.is/Singapore&#34;</span>).GetResponse();
+</span></span><span style=display:flex><span>    <span style=color:#719e07>this</span>.label1.Text = Convert.ToString(timeResp.ContentLength);
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> (timeResp.ContentLength &lt; <span style=color:#2aa198>143L</span>)
+</span></span><span style=display:flex><span>    {
+</span></span><span style=display:flex><span>        <span style=color:#719e07>this</span>.isLoginAllowed = <span style=color:#719e07>true</span>;
+</span></span><span style=display:flex><span>        <span style=color:#719e07>this</span>.btnlogin.Enabled = <span style=color:#719e07>true</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    timeResp.Close();
+</span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>The code is readable without needing to know C#.</p><p>First we call <code>checforDebuggers()</code> which looks like is checking for debuggers. Click to see its code:</p><figure class=code>
 <figcaption>
 <span>checkforDebuggers()</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">7
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#719e07>private</span> <span style=color:#719e07>void</span> checforDebuggers()
-{
-    <span style=color:#719e07>if</span> (Debugger.IsAttached)
-    {
-        Environment.Exit(<span style=color:#2aa198>1</span>);
-    }
-}</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>Looks like a simple anti-debug measure. Later we will see if we can trigger it by running the application through dnSpy.</p>
-<h1 id=certificate-pinning-bypass>Certificate Pinning Bypass
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">7
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=display:flex><span><span style=color:#719e07>private</span> <span style=color:#719e07>void</span> checforDebuggers()
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> (Debugger.IsAttached)
+</span></span><span style=display:flex><span>    {
+</span></span><span style=display:flex><span>        Environment.Exit(<span style=color:#2aa198>1</span>);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>Looks like a simple anti-debug measure. Later we will see if we can trigger it by running the application through dnSpy.</p><h1 id=certificate-pinning-bypass>Certificate Pinning Bypass
 <a class=header-link href=#certificate-pinning-bypass><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Our next hurdle is certificate pinning. A simple description of certificate pinning is "looking for a specific certificate instead of any valid one." In other words, you look for a specific property in the certificate and not just its validity. This property could anything in the certificate like issuer or public key.</p>
-<p>I had never seen this C# methods before, but based on the name we can find out it's a callback to validate the certificate. The callback is trying to pin the public key of the certificate for <code>https://time.is</code>. This is the place where we encounter an error when we press the <code>Fetch Login Token</code> button.</p>
-<figure class=code>
+</h1><p>Our next hurdle is certificate pinning. A simple description of certificate pinning is "looking for a specific certificate instead of any valid one." In other words, you look for a specific property in the certificate and not just its validity. This property could anything in the certificate like issuer or public key.</p><p>I had never seen this C# methods before, but based on the name we can find out it's a callback to validate the certificate. The callback is trying to pin the public key of the certificate for <code>https://time.is</code>. This is the place where we encounter an error when we press the <code>Fetch Login Token</code> button.</p><figure class=code>
 <figcaption>
 <span>Error after pressing the "Fetch Login Token" button</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">6
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>************** Exception Text **************
-System.Net.WebException: The underlying connection was closed:
- Could not establish trust relationship <span style=color:#719e07>for</span> the SSL/TLS secure channel.
- ---&gt; System.Security.Authentication.AuthenticationException:
- The remote certificate <span style=color:#719e07>is</span> invalid according to the validation procedure.
-...</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>In dnSpy Click on <code>login.PinPublicKey</code> to go to the callback method.</p>
-<figure class=code>
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=display:flex><span>************** Exception Text **************
+</span></span><span style=display:flex><span>System.Net.WebException: The underlying connection was closed:
+</span></span><span style=display:flex><span> Could not establish trust relationship <span style=color:#719e07>for</span> the SSL/TLS secure channel.
+</span></span><span style=display:flex><span> ---&gt; System.Security.Authentication.AuthenticationException:
+</span></span><span style=display:flex><span> The remote certificate <span style=color:#719e07>is</span> invalid according to the validation procedure.
+</span></span><span style=display:flex><span>...</span></span></code></pre></td></tr></table></div></div></div></figure><p>In dnSpy Click on <code>login.PinPublicKey</code> to go to the callback method.</p><figure class=code>
 <figcaption>
 <span>login.PinPublicKey method</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">7
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=color:#586e75>// Token: 0x0600001D RID: 29 RVA: 0x00002113 File Offset: 0x00000313
-</span><span style=color:#586e75></span><span style=color:#719e07>public</span> <span style=color:#719e07>static</span> <span style=color:#dc322f>bool</span> PinPublicKey(<span style=color:#dc322f>object</span> sender, X509Certificate certificate,
-    X509Chain chain, SslPolicyErrors sslPolicyErrors)
-{
-    <span style=color:#719e07>return</span> certificate !=
-        <span style=color:#719e07>null</span> &amp;&amp; certificate.GetPublicKeyString().Equals(Login.PUB_KEY);
-}</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>This code is doing public key pinning. Meaning after the application retrieves the certificate from <code>time.is</code>, it checks the public key against the hardcoded one in <code>login.PUB_KEY</code>. We can disable this check in different ways. To name a few:</p>
-<ol>
-<li>Enable the login button manually where we saw before.</li>
-<li>Modify <code>Login.PinPublicKey</code> to always return <code>true</code>.</li>
-<li>Modify the value of <code>login.PUB_KEY</code> to the public key of current certificate for <code>https://time.is</code>.</li>
-</ol>
-<p>I am going with method two to demonstrate patching with dnSpy.</p>
-<h2 id=patching-loginpinpublickey>Patching login.PinPublicKey
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">7
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=display:flex><span><span style=color:#586e75>// Token: 0x0600001D RID: 29 RVA: 0x00002113 File Offset: 0x00000313</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>public</span> <span style=color:#719e07>static</span> <span style=color:#dc322f>bool</span> PinPublicKey(<span style=color:#dc322f>object</span> sender, X509Certificate certificate,
+</span></span><span style=display:flex><span>    X509Chain chain, SslPolicyErrors sslPolicyErrors)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> certificate !=
+</span></span><span style=display:flex><span>        <span style=color:#719e07>null</span> &amp;&amp; certificate.GetPublicKeyString().Equals(Login.PUB_KEY);
+</span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>This code is doing public key pinning. Meaning after the application retrieves the certificate from <code>time.is</code>, it checks the public key against the hardcoded one in <code>login.PUB_KEY</code>. We can disable this check in different ways. To name a few:</p><ol>
+<li>Enable the login button manually where we saw before.</li><li>Modify <code>Login.PinPublicKey</code> to always return <code>true</code>.</li><li>Modify the value of <code>login.PUB_KEY</code> to the public key of current certificate for <code>https://time.is</code>.</li></ol><p>I am going with method two to demonstrate patching with dnSpy.</p><h2 id=patching-loginpinpublickey>Patching login.PinPublicKey
 <a class=header-link href=#patching-loginpinpublickey><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>You should know how to edit the method by now. Edit the method and change the return value to <code>true</code>.</p>
-<span class=caption-wrapper>
+</h2><p>You should know how to edit the method by now. Edit the method and change the return value to <code>true</code>.</p><span class=caption-wrapper>
 <img class=caption src=img/05.png title="Patched login.PinPublicKey" alt="Patched login.PinPublicKey">
 <span class=caption-text>Patched login.PinPublicKey</span>
 </span>
-<p>Now we can use the button. Notice how the label changed to a number. But the login button is still not active so there must be a different check.</p>
-<span class=caption-wrapper>
+<p>Now we can use the button. Notice how the label changed to a number. But the login button is still not active so there must be a different check.</p><span class=caption-wrapper>
 <img class=caption src=img/06.png title="Certificate Pinning bypassed" alt="Certificate Pinning bypassed">
 <span class=caption-text>Certificate Pinning bypassed</span>
 </span>
 <h1 id=enabling-the-login-button>Enabling the Login Button
 <a class=header-link href=#enabling-the-login-button><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>The login button is still disabled. We need to figure how to enable it.</p>
-<h2 id=bypassing-response-length-check>Bypassing Response Length check
+</h1><p>The login button is still disabled. We need to figure how to enable it.</p><h2 id=bypassing-response-length-check>Bypassing Response Length check
 <a class=header-link href=#bypassing-response-length-check><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Let's look at the code again.</p>
-<figure class=code>
+</h2><p>Let's look at the code again.</p><figure class=code>
 <figcaption>
 <span>Response length check</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">9
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp>...
-WebResponse timeResp = WebRequest.Create(<span style=color:#2aa198>&#34;https://time.is/Singapore&#34;</span>).GetResponse();
-<span style=color:#719e07>this</span>.label1.Text = Convert.ToString(timeResp.ContentLength);
-<span style=color:#719e07>if</span> (timeResp.ContentLength &lt; <span style=color:#2aa198>143L</span>)
-{
-    <span style=color:#719e07>this</span>.isLoginAllowed = <span style=color:#719e07>true</span>;
-    <span style=color:#719e07>this</span>.btnlogin.Enabled = <span style=color:#719e07>true</span>;
-}
-...</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>After login, <code>label</code> is replaced with response length. This length is checked against <code>143</code> in the <code>if</code>. In my case, response length was <code>30500</code> bytes did not satisfy the condition. We have acquired enough knowledge to easily reverse this check.</p>
-<span class=caption-wrapper>
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">9
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=display:flex><span>...
+</span></span><span style=display:flex><span>WebResponse timeResp = WebRequest.Create(<span style=color:#2aa198>&#34;https://time.is/Singapore&#34;</span>).GetResponse();
+</span></span><span style=display:flex><span><span style=color:#719e07>this</span>.label1.Text = Convert.ToString(timeResp.ContentLength);
+</span></span><span style=display:flex><span><span style=color:#719e07>if</span> (timeResp.ContentLength &lt; <span style=color:#2aa198>143L</span>)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#719e07>this</span>.isLoginAllowed = <span style=color:#719e07>true</span>;
+</span></span><span style=display:flex><span>    <span style=color:#719e07>this</span>.btnlogin.Enabled = <span style=color:#719e07>true</span>;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>...</span></span></code></pre></td></tr></table></div></div></div></figure><p>After login, <code>label</code> is replaced with response length. This length is checked against <code>143</code> in the <code>if</code>. In my case, response length was <code>30500</code> bytes did not satisfy the condition. We have acquired enough knowledge to easily reverse this check.</p><span class=caption-wrapper>
 <img class=caption src=img/07.png title="Response length check" alt="Response length check">
 <span class=caption-text>Response length check</span>
 </span>
-<p>But this is too easy, let's learn a bit of IL instead.</p>
-<h2 id=what-is-il>What is IL?
+<p>But this is too easy, let's learn a bit of IL instead.</p><h2 id=what-is-il>What is IL?
 <a class=header-link href=#what-is-il><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>IL or CIL stands for Common Intermediate Language. If you are familiar with Java, it's the equivalent of Java bytecode. Both .NET and Java application code is converted to an intermediate language (CIL and bytecode). When it's executed, they are converted to native instructions these instructions of the target machine (based on OS and Architecture). This is the secret to their portability and why we can decompile the intermediate code back to almost the same source code.</p>
-<p>CIL is a stack based assembly language. Meaning values are pushed to the stack before functions are called. It's much easier to read (and learn) than traditional assembly languages (e.g. x86 with its variable length instructions).</p>
-<h2 id=patching-il-with-dnspy>Patching IL with dnSpy
+</h2><p>IL or CIL stands for Common Intermediate Language. If you are familiar with Java, it's the equivalent of Java bytecode. Both .NET and Java application code is converted to an intermediate language (CIL and bytecode). When it's executed, they are converted to native instructions these instructions of the target machine (based on OS and Architecture). This is the secret to their portability and why we can decompile the intermediate code back to almost the same source code.</p><p>CIL is a stack based assembly language. Meaning values are pushed to the stack before functions are called. It's much easier to read (and learn) than traditional assembly languages (e.g. x86 with its variable length instructions).</p><h2 id=patching-il-with-dnspy>Patching IL with dnSpy
 <a class=header-link href=#patching-il-with-dnspy><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Right-click on the <code>if (timeResp.ContentLength &lt; 143L)</code> line and select <code>Edit IL Instructions...</code>. A new page pops up with five instructions highlighted. These instructions implement that <code>if</code>.</p>
-<span class=caption-wrapper>
+</h2><p>Right-click on the <code>if (timeResp.ContentLength &lt; 143L)</code> line and select <code>Edit IL Instructions...</code>. A new page pops up with five instructions highlighted. These instructions implement that <code>if</code>.</p><span class=caption-wrapper>
 <img class=caption src=img/08.png title="IL instructions for the condition" alt="IL instructions for the condition">
 <span class=caption-text>IL instructions for the condition</span>
 </span>
 <figure class=code>
 <figcaption>
 <span>IL instructions for if</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">6
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-nasm data-lang=nasm>003<span style=color:#268bd2>D</span>	<span style=color:#268bd2>ldloc.0</span>
-003<span style=color:#268bd2>E</span>	<span style=color:#268bd2>callvirt</span>	<span style=color:#268bd2>instance</span> <span style=color:#268bd2>int64</span>
-            [<span style=color:#268bd2>System</span>]<span style=color:#268bd2>System.Net.WebResponse</span>::<span style=color:#268bd2>get_ContentLength</span>()
-0043	<span style=color:#268bd2>ldc.i4</span>	    <span style=color:#2aa198>0x8F</span>
-0048	<span style=color:#268bd2>conv.i8</span>
-0049	<span style=color:#268bd2>bge.s</span>	    <span style=color:#2aa198>28</span> (<span style=color:#2aa198>005</span><span style=color:#268bd2>E</span>) <span style=color:#268bd2>ldloc.0</span> </code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>We can search for each instruction to see what it does. I used this as reference: <a href=https://en.wikipedia.org/wiki/List_of_CIL_instructions target=_blank rel="noreferrer noopener">https://en.wikipedia.org/wiki/List_of_CIL_instructions</a>.</p>
-<ul>
-<li><code>ldloc.0</code>: push 0 to stack.</li>
-<li><code>callvirt</code>: call <code>get_ContentLength</code> (the getter for <code>ContentLength</code>).</li>
-<li><code>ldc.i4 0x8F</code>: push <code>0x8F == 143</code> to stack as int32.</li>
-<li><code>conv.i8</code>: convert top item on stack (<code>143</code>) to int64 and store it on stack again.</li>
-<li><code>bge.s</code>: pop value1 and value2 from stack, branch if value1>value2. In this case branch if <code>143</code> is more than <code>ContentLength</code>.</li>
-</ul>
-<p>If you have seen traditional Assembly patching, you already know we just need/want to modify <code>bge.s</code> to <code>ble.s</code>. Similar to patching a <code>JNE</code> (Jump Not Equal) to <code>JE</code> (Jump Equal).</p>
-<p>See more info about <code>bge.s</code> on MSDN:</p>
-<ul>
-<li><a href="https://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.bge_s%28v=vs.110%29.aspx#Anchor_1" target=_blank rel="noreferrer noopener">https://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.bge_s(v=vs.110).aspx#Anchor_1</a></li>
-</ul>
-<p>Click on <code>bge.s</code> and see how dnSpy helps us with providing a list of IL instructions.</p>
-<span class=caption-wrapper>
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-nasm data-lang=nasm><span style=display:flex><span>003<span style=color:#268bd2>D</span>	<span style=color:#268bd2>ldloc.0</span>
+</span></span><span style=display:flex><span>003<span style=color:#268bd2>E</span>	<span style=color:#268bd2>callvirt</span>	<span style=color:#268bd2>instance</span> <span style=color:#268bd2>int64</span>
+</span></span><span style=display:flex><span>            [<span style=color:#268bd2>System</span>]<span style=color:#268bd2>System.Net.WebResponse</span>::<span style=color:#268bd2>get_ContentLength</span>()
+</span></span><span style=display:flex><span>0043	<span style=color:#268bd2>ldc.i4</span>	    <span style=color:#2aa198>0x8F</span>
+</span></span><span style=display:flex><span>0048	<span style=color:#268bd2>conv.i8</span>
+</span></span><span style=display:flex><span>0049	<span style=color:#268bd2>bge.s</span>	    <span style=color:#2aa198>28</span> (<span style=color:#2aa198>005</span><span style=color:#268bd2>E</span>) <span style=color:#268bd2>ldloc.0</span> </span></span></code></pre></td></tr></table></div></div></div></figure><p>We can search for each instruction to see what it does. I used this as reference: <a href=https://en.wikipedia.org/wiki/List_of_CIL_instructions target=_blank rel="noreferrer noopener">https://en.wikipedia.org/wiki/List_of_CIL_instructions</a>.</p><ul>
+<li><code>ldloc.0</code>: push 0 to stack.</li><li><code>callvirt</code>: call <code>get_ContentLength</code> (the getter for <code>ContentLength</code>).</li><li><code>ldc.i4 0x8F</code>: push <code>0x8F == 143</code> to stack as int32.</li><li><code>conv.i8</code>: convert top item on stack (<code>143</code>) to int64 and store it on stack again.</li><li><code>bge.s</code>: pop value1 and value2 from stack, branch if value1>value2. In this case branch if <code>143</code> is more than <code>ContentLength</code>.</li></ul><p>If you have seen traditional Assembly patching, you already know we just need/want to modify <code>bge.s</code> to <code>ble.s</code>. Similar to patching a <code>JNE</code> (Jump Not Equal) to <code>JE</code> (Jump Equal).</p><p>See more info about <code>bge.s</code> on MSDN:</p><ul>
+<li><a href="https://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.bge_s%28v=vs.110%29.aspx#Anchor_1" target=_blank rel="noreferrer noopener">https://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.bge_s(v=vs.110).aspx#Anchor_1</a></li></ul><p>Click on <code>bge.s</code> and see how dnSpy helps us with providing a list of IL instructions.</p><span class=caption-wrapper>
 <img class=caption src=img/09.png title="dnSpy's list of IL instructions" alt="dnSpy's list of IL instructions">
 <span class=caption-text>dnSpy's list of IL instructions</span>
 </span>
-<p>Select <code>ble.s</code> and close the IL window. See decompiled C# code is now modified.</p>
-<span class=caption-wrapper>
+<p>Select <code>ble.s</code> and close the IL window. See decompiled C# code is now modified.</p><span class=caption-wrapper>
 <img class=caption src=img/10.png title="Modified C# code after IL patching" alt="Modified C# code after IL patching">
 <span class=caption-text>Modified C# code after IL patching</span>
 </span>
-<p>Save the patched executable and try again. Login button is now enabled. Now we can login normally.</p>
-<span class=caption-wrapper>
+<p>Save the patched executable and try again. Login button is now enabled. Now we can login normally.</p><span class=caption-wrapper>
 <img class=caption src=img/11.png title="Login button enabled" alt="Login button enabled">
 <span class=caption-text>Login button enabled</span>
 </span>
 <h1 id=conclusion>Conclusion
 <a class=header-link href=#conclusion><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>In this part we learned how to use the very very useful <code>Analyze</code> feature of dnSpy. We did a bit of normal patching and finally learned a bit of IL assembly. In next part we will start with network traffic and do a bit of proxying.</p>
-<p>While waiting, you can my other blog posts on thick client proxying at:</p>
-<ul>
-<li><a href=/categories/thick-client-proxying/ title=https://parsiya.net/categories/thick-client-proxying/>https://parsiya.net/categories/thick-client-proxying/</a></li>
-</ul>
-</div>
-<footer>
+</h1><p>In this part we learned how to use the very very useful <code>Analyze</code> feature of dnSpy. We did a bit of normal patching and finally learned a bit of IL assembly. In next part we will start with network traffic and do a bit of proxying.</p><p>While waiting, you can my other blog posts on thick client proxying at:</p><ul>
+<li><a href=/categories/thick-client-proxying/ title=https://parsiya.net/categories/thick-client-proxying/>https://parsiya.net/categories/thick-client-proxying/</a></li></ul></div><footer>
 <p class=meta>
 <span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>Jul 21, 2018</time>
@@ -390,82 +262,47 @@ WebResponse timeResp = WebRequest.Create(<span style=color:#2aa198>&#34;https://
 Tags:
 <a class=category href=https://parsiya.net/tags/dnspy>dnSpy</a>
 </span>
-</p>
-<p class=meta>
+</p><p class=meta>
 <a class="basic-alignment left" href=https://parsiya.net/blog/2018-07-15-dvta-part-1-setup/ title="DVTA - Part 1 - Setup">DVTA - Part 1 - Setup</a>
 <a class="basic-alignment right" href=https://parsiya.net/blog/2018-07-30-dvta-part-3-network-recon/ title="DVTA - Part 3 - Network Recon">DVTA - Part 3 - Network Recon</a>
-</p>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</div>
-<aside class="sidebar thirds">
+</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer></article></div><aside class="sidebar thirds">
 <section class="first odd">
-<h1>Who am I?</h1>
-<p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
-<p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p>
-<p>Click on <a href=/about/>About Me!</a> to know more.</p>
-</p>
-</section>
-<ul class=sidebar-nav>
+<h1>Who am I?</h1><p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
 <li class=sidebar-nav-item>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li>
-</ul>
-<section class=odd>
-<h1>Collections</h1>
-<li>
+</li></ul><section class=odd>
+<h1>Collections</h1><li>
 <a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li>
-<li>
+</li><li>
 <a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li>
-</section>
-</aside>
-</div>
-</div>
-<footer role=contentinfo>
+</li></section></aside></div></div><footer role=contentinfo>
 <p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>

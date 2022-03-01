@@ -3,14 +3,13 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
 <link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>A Hands-On Intro to Semgrep's Autofix</title>
-<link rel=stylesheet href=/css/hugo-octopress.css>
+<title>A Hands-On Intro to Semgrep's Autofix</title><link rel=stylesheet href=/css/hugo-octopress.css>
 <link rel=stylesheet href=/css/fork-awesome.min.css>
 <link href=https://parsiya.net/favicon.png rel=icon>
 <meta name=description content>
 <meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
 <meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.92.2">
+<meta name=generator content="Hugo 0.93.0">
 <meta name=twitter:card content="summary_large_image">
 <meta name=twitter:image:src content="https://parsiya.net/blog/2021-10-25-a-hands-on-intro-to-semgreps-autofix/11-go-httponly-1.png">
 <meta name=twitter:title content="A Hands-On Intro to Semgrep's Autofix">
@@ -23,37 +22,21 @@ running the rules via the command-line please see the rules and code at
 https://github.com/parsiya/Parsia-Code/tree/master/semgrep-autofix.">
 <meta name=twitter:domain content="parsiya.net">
 <meta name=twitter:creator content="@CryptoGangsta">
-</head>
-<body>
+</head><body>
 <header role=banner>
 <hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
-<h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2>
-</hgroup></header>
-<nav role=navigation>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
 <fieldset class=mobile-nav>
 <select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset>
-<ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
-<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
-<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
-<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
-<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
-<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
-</ul>
-<ul class=subscription>
+</fieldset><ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
 <a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul>
-<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
 <fieldset role=search>
 <input class=search type=text name=q results=0 placeholder=Search>
 <input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset>
-</form>
-</nav>
-<div id=main>
+</fieldset></form></nav><div id=main>
 <div id=content>
 <div>
 <article class=hentry role=article>
@@ -62,170 +45,110 @@ complete unless it is known by its causes. - Avicenna</h2>
 - 10 minute read
 - <a href=https://parsiya.net/blog/2021-10-25-a-hands-on-intro-to-semgreps-autofix/#disqus_thread>Comments</a>
 - <a class=label href=https://parsiya.net/categories/automation/>Automation </a><a class=label href=https://parsiya.net/categories/semgrep/>Semgrep </a>
-</p>
-<h1 class=entry-title>
+</p><h1 class=entry-title>
 A Hands-On Intro to Semgrep's Autofix
-</h1>
-</header>
-<div class=entry-content>
+</h1></header><div class=entry-content>
 <nav id=TableOfContents>
 <ul>
 <li><a href=#prerequisites>Prerequisites</a>
 <ul>
 <li><a href=#testing-rules>Testing Rules</a>
 <ul>
-<li><a href=#semgrep-playground>Semgrep Playground</a></li>
-<li><a href=#semgrep-cli>Semgrep CLI</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href=#autofix-variants>Autofix Variants</a>
+<li><a href=#semgrep-playground>Semgrep Playground</a></li><li><a href=#semgrep-cli>Semgrep CLI</a></li></ul></li></ul></li><li><a href=#autofix-variants>Autofix Variants</a>
 <ul>
 <li><a href=#fix>Fix</a>
 <ul>
-<li><a href=#python---sysexit>Python - sys.exit</a></li>
-<li><a href=#java---cbc-padding-oracle>Java - CBC Padding Oracle</a></li>
-<li><a href=#java---httponly-cookies>Java - HttpOnly Cookies</a>
+<li><a href=#python---sysexit>Python - sys.exit</a></li><li><a href=#java---cbc-padding-oracle>Java - CBC Padding Oracle</a></li><li><a href=#java---httponly-cookies>Java - HttpOnly Cookies</a>
 <ul>
-<li><a href=#httponly-pattern-1>HttpOnly Pattern 1</a></li>
-<li><a href=#httponly-pattern-2>HttpOnly Pattern 2</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href=#fix-regex>fix-regex</a>
+<li><a href=#httponly-pattern-1>HttpOnly Pattern 1</a></li><li><a href=#httponly-pattern-2>HttpOnly Pattern 2</a></li></ul></li></ul></li><li><a href=#fix-regex>fix-regex</a>
 <ul>
-<li><a href=#java---httponly-cookies-revisited>Java - HttpOnly Cookies Revisited</a></li>
-<li><a href=#go---texttemplate>Go - text/template</a></li>
-<li><a href=#go---httponly-cookies>Go - HttpOnly Cookies</a></li>
-<li><a href=#adding-comments>Adding Comments</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href=#what-did-we-learn-here-today>What Did We Learn Here Today?</a></li>
-</ul>
-</nav>
-<p>Semgrep's experimental <a href=https://semgrep.dev/docs/experiments/overview/#autofix target=_blank rel="noreferrer noopener">autofix</a> feature can automagically
+<li><a href=#java---httponly-cookies-revisited>Java - HttpOnly Cookies Revisited</a></li><li><a href=#go---texttemplate>Go - text/template</a></li><li><a href=#go---httponly-cookies>Go - HttpOnly Cookies</a></li><li><a href=#adding-comments>Adding Comments</a></li></ul></li></ul></li><li><a href=#what-did-we-learn-here-today>What Did We Learn Here Today?</a></li></ul></nav><p>Semgrep's experimental <a href=https://semgrep.dev/docs/experiments/overview/#autofix target=_blank rel="noreferrer noopener">autofix</a> feature can automagically
 modify vulnerable code. A few things can be fixed like this but it's worth
 exploring. This post is an introduction to creating fixes for your Semgrep
-rules.</p>
-<p>I have included links to the playground for practicing. If you prefer
+rules.</p><p>I have included links to the playground for practicing. If you prefer
 running the rules via the command-line please see the rules and code at
-<a href=https://github.com/parsiya/Parsia-Code/tree/master/semgrep-autofix target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/semgrep-autofix</a>.</p>
-<p>Note: This is an experimental feature. The following is correct at the time of
-writing (October 2021). If you are from the future, things will be different.</p>
-<h1 id=prerequisites>Prerequisites
+<a href=https://github.com/parsiya/Parsia-Code/tree/master/semgrep-autofix target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/semgrep-autofix</a>.</p><p>Note: This is an experimental feature. The following is correct at the time of
+writing (October 2021). If you are from the future, things will be different.</p><h1 id=prerequisites>Prerequisites
 <a class=header-link href=#prerequisites><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><p>You don't have to be an appsec guru but this blog assumes you are somewhat
-familiar with:</p>
-<ol>
-<li>Semgrep and have done <a href=https://semgrep.dev/learn target=_blank rel="noreferrer noopener">https://semgrep.dev/learn</a>.</li>
-<li>Java and Go code.</li>
-<li>Some application security topics like HttpOnly and XSS.</li>
-</ol>
-<h2 id=testing-rules>Testing Rules
+familiar with:</p><ol>
+<li>Semgrep and have done <a href=https://semgrep.dev/learn target=_blank rel="noreferrer noopener">https://semgrep.dev/learn</a>.</li><li>Java and Go code.</li><li>Some application security topics like HttpOnly and XSS.</li></ol><h2 id=testing-rules>Testing Rules
 <a class=header-link href=#testing-rules><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><p>An essential part of any experimentation like this is running rules against code
-snippets. With Semgrep we have two options:</p>
-<ol>
-<li>Semgrep playground</li>
-<li>Semgrep CLI</li>
-</ol>
-<h3 id=semgrep-playground>Semgrep Playground
+snippets. With Semgrep we have two options:</p><ol>
+<li>Semgrep playground</li><li>Semgrep CLI</li></ol><h3 id=semgrep-playground>Semgrep Playground
 <a class=header-link href=#semgrep-playground><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h3><p>The playground is at <a href=https://semgrep.dev/editor target=_blank rel="noreferrer noopener">https://semgrep.dev/editor</a> and I will
 mostly use it to show my work. If you create an account, you can save your rules
-and save them or, you can use it without one.</p>
-<h3 id=semgrep-cli>Semgrep CLI
+and save them or, you can use it without one.</p><h3 id=semgrep-cli>Semgrep CLI
 <a class=header-link href=#semgrep-cli><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h3><p>If you don't like your rules to hit the cloud (and I usually want to keep my
 rules and code secret), you can use the Semgrep CLI. Getting the CLI is as easy
 as <code>python3 -m pip install semgrep</code> (I use it inside WSL). See more at
-<a href=https://semgrep.dev/docs/getting-started/ target=_blank rel="noreferrer noopener">https://semgrep.dev/docs/getting-started/</a>.</p>
-<p>After writing a rule, verify it to catch any formatting/logic errors (<code>-c</code> can
-also point to a directory of rules):</p>
-<pre tabindex=0><code>semgrep -c rule1.yaml --validate
-</code></pre><p>Run a rule on a file or directory (add <code>--debug</code> for troubleshooting):</p>
-<pre tabindex=0><code>semgrep -c rule1.yaml example.java
+<a href=https://semgrep.dev/docs/getting-started/ target=_blank rel="noreferrer noopener">https://semgrep.dev/docs/getting-started/</a>.</p><p>After writing a rule, verify it to catch any formatting/logic errors (<code>-c</code> can
+also point to a directory of rules):</p><pre tabindex=0><code>semgrep -c rule1.yaml --validate
+</code></pre><p>Run a rule on a file or directory (add <code>--debug</code> for troubleshooting):</p><pre tabindex=0><code>semgrep -c rule1.yaml example.java
 
 semgrep -c my-rules-directory src-directory
 </code></pre><p>Use the <code>--autofix</code> switch to automagically modify files. <code>--dryrun</code> shows the
 changes w/o modification. However, executing rules with <code>fix</code> sections without
-<code>--autofix</code> does the same:</p>
-<pre tabindex=0><code>semgrep -c rule1.yaml example.java --autofix --dryrun
-</code></pre>
-<span class=caption-wrapper>
+<code>--autofix</code> does the same:</p><pre tabindex=0><code>semgrep -c rule1.yaml example.java --autofix --dryrun
+</code></pre><span class=caption-wrapper>
 <img class=caption src=00-autofix-dryrun.png title="No need to use dryrun" alt="No need to use dryrun">
 <span class=caption-text>No need to use dryrun</span>
 </span>
 <h1 id=autofix-variants>Autofix Variants
 <a class=header-link href=#autofix-variants><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>There are two ways to include it in rules:</p>
-<ul>
-<li><code>fix</code></li>
-<li><code>regex-fix</code></li>
-</ul>
-<h2 id=fix>Fix
+</h1><p>There are two ways to include it in rules:</p><ul>
+<li><code>fix</code></li><li><code>regex-fix</code></li></ul><h2 id=fix>Fix
 <a class=header-link href=#fix><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><p>Straightforward feature. Whatever has been caught by the rule will be replaced
-by what you specify.</p>
-<h3 id=python---sysexit>Python - sys.exit
+by what you specify.</p><h3 id=python---sysexit>Python - sys.exit
 <a class=header-link href=#python---sysexit><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h3><p>The example in the documentation is at
 <a href=https://semgrep.dev/s/R6g target=_blank rel="noreferrer noopener">https://semgrep.dev/s/R6g</a> and replaces <code>exit</code> with
 <code>sys.exit</code>. If I click the first <code>Apply fix</code> button, <code>exit(3)</code> is replaced with
-<code>sys.exit(3)</code>.</p>
-<span class=caption-wrapper>
+<code>sys.exit(3)</code>.</p><span class=caption-wrapper>
 <img class=caption src=01-sys-exit.png title="First fix applied" alt="First fix applied">
 <span class=caption-text>First fix applied</span>
 </span>
-<p>Metavariables in <code>fix</code> are replaced by their values. This is very useful.</p>
-<h3 id=java---cbc-padding-oracle>Java - CBC Padding Oracle
+<p>Metavariables in <code>fix</code> are replaced by their values. This is very useful.</p><h3 id=java---cbc-padding-oracle>Java - CBC Padding Oracle
 <a class=header-link href=#java---cbc-padding-oracle><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h3><p><code>fix</code> shines when we are catching and replacing a string. Look at the
 <a href=https://github.com/returntocorp/semgrep-rules/blob/develop/java/lang/security/audit/cbc-padding-oracle.yaml target=_blank rel="noreferrer noopener">java.lang.security.audit.cbc-padding-oracle</a> rule (I have
-modified the rule to make it easier to read).</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#586e75># java-cbc-padding-oracle/cbc-padding-oracle.yaml</span>
-<span style=color:#268bd2>rules</span>:
-  - <span style=color:#268bd2>id</span>: cbc-padding-oracle
-    <span style=color:#268bd2>severity</span>: WARNING
-    <span style=color:#268bd2>message</span>: Match found
-    <span style=color:#268bd2>languages</span>:
-      - java
-    <span style=color:#268bd2>pattern</span>: $CIPHER.getInstance(&#34;=~/.*\/CBC\/PKCS5Padding/&#34;)
-    <span style=color:#268bd2>fix</span>: $CIPHER.getInstance(&#34;AES/GCM/NoPadding&#34;)
-</code></pre></div><p>It looks for anything that looks like <code>object.getInstance("string")</code> and the
-string contains <code>CBC/PKCS5Padding</code>.</p>
-<p>You can see Semgrep's <a href=https://semgrep.dev/docs/writing-rules/pattern-syntax/#string-matching target=_blank rel="noreferrer noopener">string matching</a> in
+modified the rule to make it easier to read).</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># java-cbc-padding-oracle/cbc-padding-oracle.yaml</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#268bd2>id</span>: cbc-padding-oracle
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>severity</span>: WARNING
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>message</span>: Match found
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>languages</span>:
+</span></span><span style=display:flex><span>      - java
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>pattern</span>: $CIPHER.getInstance(&#34;=~/.*\/CBC\/PKCS5Padding/&#34;)
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>fix</span>: $CIPHER.getInstance(&#34;AES/GCM/NoPadding&#34;)
+</span></span></code></pre></div><p>It looks for anything that looks like <code>object.getInstance("string")</code> and the
+string contains <code>CBC/PKCS5Padding</code>.</p><p>You can see Semgrep's <a href=https://semgrep.dev/docs/writing-rules/pattern-syntax/#string-matching target=_blank rel="noreferrer noopener">string matching</a> in
 <code>=~/.*\/CBC\/PKCS5Padding/</code>. It returns a match if the regex matches the
 string parameter of the <code>getInstance</code> method. See it in action at
-<a href=https://semgrep.dev/s/parsiya:java-cbc-padding-oracle target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:java-cbc-padding-oracle</a>.</p>
-<p>After running the rule you can see the fix in the right side and click on
+<a href=https://semgrep.dev/s/parsiya:java-cbc-padding-oracle target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:java-cbc-padding-oracle</a>.</p><p>After running the rule you can see the fix in the right side and click on
 <code>Apply fix</code> to modify the code (if you want to repeat, both the rule and the
-test code support <code>ctrl+z</code>).</p>
-<p>String matching is deprecated. Let's rewrite the rule with
-<a href=https://semgrep.dev/docs/writing-rules/rule-syntax/#metavariable-regex target=_blank rel="noreferrer noopener">metavariable-regex</a>.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#586e75># java-cbc-padding-oracle/cbc-padding-oracle-metavariable-regex.yaml</span>
-<span style=color:#268bd2>rules</span>:
-  - <span style=color:#268bd2>id</span>: cbc-padding-oracle-metavariable-regex
-    <span style=color:#268bd2>message</span>: Match found
-    <span style=color:#268bd2>languages</span>:
-      - java
-    <span style=color:#268bd2>severity</span>: WARNING
-    <span style=color:#268bd2>patterns</span>:
-      - <span style=color:#268bd2>pattern</span>: $CIPHER.getInstance($INS)
-      - <span style=color:#268bd2>metavariable-regex</span>:
-          <span style=color:#268bd2>metavariable</span>: $INS
-          <span style=color:#268bd2>regex</span>: .*\/CBC\/PKCS5Padding
-    <span style=color:#268bd2>fix</span>: $CIPHER.getInstance(&#34;AES/GCM/NoPadding&#34;)
-</code></pre></div><p>The string parameter is now a metavariable and we directly run the regex against
+test code support <code>ctrl+z</code>).</p><p>String matching is deprecated. Let's rewrite the rule with
+<a href=https://semgrep.dev/docs/writing-rules/rule-syntax/#metavariable-regex target=_blank rel="noreferrer noopener">metavariable-regex</a>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># java-cbc-padding-oracle/cbc-padding-oracle-metavariable-regex.yaml</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#268bd2>id</span>: cbc-padding-oracle-metavariable-regex
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>message</span>: Match found
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>languages</span>:
+</span></span><span style=display:flex><span>      - java
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>severity</span>: WARNING
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>patterns</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>pattern</span>: $CIPHER.getInstance($INS)
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>metavariable-regex</span>:
+</span></span><span style=display:flex><span>          <span style=color:#268bd2>metavariable</span>: $INS
+</span></span><span style=display:flex><span>          <span style=color:#268bd2>regex</span>: .*\/CBC\/PKCS5Padding
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>fix</span>: $CIPHER.getInstance(&#34;AES/GCM/NoPadding&#34;)
+</span></span></code></pre></div><p>The string parameter is now a metavariable and we directly run the regex against
 it. Try changing the regex to see what else you can match in
-<a href=https://semgrep.dev/s/parsiya:java-cbc-padding-oracle-metavariable-regex target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:java-cbc-padding-oracle-metavariable-regex</a>.</p>
-<p>It looks like the metavariable-regex version has more "computation." My very
-"scientific" experiment of 50 runs shows they are not that different.</p>
-<pre tabindex=0><code>$ multitime -q -n 50 ./cbc-padding-oracle.sh
+<a href=https://semgrep.dev/s/parsiya:java-cbc-padding-oracle-metavariable-regex target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:java-cbc-padding-oracle-metavariable-regex</a>.</p><p>It looks like the metavariable-regex version has more "computation." My very
+"scientific" experiment of 50 runs shows they are not that different.</p><pre tabindex=0><code>$ multitime -q -n 50 ./cbc-padding-oracle.sh
 ===&gt; multitime results
 1: -q ./cbc-padding-oracle.sh
             Mean        Std.Dev.    Min         Median      Max
@@ -240,58 +163,44 @@ $ multitime -q -n 50 ./cbc-padding-oracle-metavariable-regex.sh
 real        0.788       0.007       0.778       0.786       0.813
 user        0.516       0.047       0.406       0.516       0.609
 sys         0.247       0.048       0.156       0.250       0.359
-</code></pre>
-<h3 id=java---httponly-cookies>Java - HttpOnly Cookies
+</code></pre><h3 id=java---httponly-cookies>Java - HttpOnly Cookies
 <a class=header-link href=#java---httponly-cookies><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h3><p>We want our cookies to have the <code>HttpOnly</code> and <code>Secure</code> attributes. I am going
 to explain the fix for <code>HttpOnly</code> and let you write the ones for <code>Secure</code>
-(almost identical). Summarized rule from the <a href=https://github.com/returntocorp/semgrep-rules/blob/develop/go/lang/security/audit/net/cookie-missing-httponly.go target=_blank rel="noreferrer noopener">semgrep-rules</a> repo:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#586e75># java-httponly/httponly-practice.yaml</span>
-<span style=color:#268bd2>rules</span>:
-- <span style=color:#268bd2>id</span>: cookie-missing-httponly
-  <span style=color:#268bd2>message</span>: Match found
-  <span style=color:#268bd2>severity</span>: WARNING
-  <span style=color:#268bd2>languages</span>: [java]
-  <span style=color:#268bd2>patterns</span>:
-  - <span style=color:#268bd2>pattern-not-inside</span>: $COOKIE.setValue(&#34;&#34;); ...
-  - <span style=color:#268bd2>pattern-either</span>:
-    - <span style=color:#268bd2>pattern</span>: $COOKIE.setHttpOnly(false);
-    - <span style=color:#268bd2>patterns</span>:
-      - <span style=color:#268bd2>pattern-not-inside</span>: $COOKIE.setHttpOnly(...); ...
-      - <span style=color:#268bd2>pattern</span>: $RESPONSE.addCookie($COOKIE);
-</code></pre></div><p>It matches if the code is calling:</p>
-<ol>
-<li><code>$COOKIE.setHttpOnly(false);</code> manually.</li>
-<li><code>$RESPONSE.addCookie($COOKIE);</code> without <code>$COOKIE.setHttpOnly(...)</code>.</li>
-</ol>
-<p>The playground link is
+(almost identical). Summarized rule from the <a href=https://github.com/returntocorp/semgrep-rules/blob/develop/go/lang/security/audit/net/cookie-missing-httponly.go target=_blank rel="noreferrer noopener">semgrep-rules</a> repo:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># java-httponly/httponly-practice.yaml</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>- <span style=color:#268bd2>id</span>: cookie-missing-httponly
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>message</span>: Match found
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>severity</span>: WARNING
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>languages</span>: [java]
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>patterns</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#268bd2>pattern-not-inside</span>: $COOKIE.setValue(&#34;&#34;); ...
+</span></span><span style=display:flex><span>  - <span style=color:#268bd2>pattern-either</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#268bd2>pattern</span>: $COOKIE.setHttpOnly(false);
+</span></span><span style=display:flex><span>    - <span style=color:#268bd2>patterns</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>pattern-not-inside</span>: $COOKIE.setHttpOnly(...); ...
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>pattern</span>: $RESPONSE.addCookie($COOKIE);
+</span></span></code></pre></div><p>It matches if the code is calling:</p><ol>
+<li><code>$COOKIE.setHttpOnly(false);</code> manually.</li><li><code>$RESPONSE.addCookie($COOKIE);</code> without <code>$COOKIE.setHttpOnly(...)</code>.</li></ol><p>The playground link is
 <a href=https://semgrep.dev/s/parsiya:java-httponly-practice target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:java-httponly-practice</a>.
-If you are running locally:</p>
-<pre tabindex=0><code>semgrep -c httponly-practice.yaml httponly.java
-</code></pre><p>The fix is different for each pattern. It should replace:</p>
-<ol>
-<li><code>$COOKIE.setHttpOnly(false);</code> with <code>$COOKIE.setHttpOnly(true);</code>.</li>
-<li><code>$RESPONSE.addCookie($COOKIE);</code> with <code>$COOKIE.setHttpOnly(true); $RESPONSE.addCookie($COOKIE);</code>.</li>
-</ol>
-<p>We cannot create a fix that matches both cases. We can break the rule and create
-separate fixes.</p>
-<h4 id=httponly-pattern-1>HttpOnly Pattern 1
+If you are running locally:</p><pre tabindex=0><code>semgrep -c httponly-practice.yaml httponly.java
+</code></pre><p>The fix is different for each pattern. It should replace:</p><ol>
+<li><code>$COOKIE.setHttpOnly(false);</code> with <code>$COOKIE.setHttpOnly(true);</code>.</li><li><code>$RESPONSE.addCookie($COOKIE);</code> with <code>$COOKIE.setHttpOnly(true); $RESPONSE.addCookie($COOKIE);</code>.</li></ol><p>We cannot create a fix that matches both cases. We can break the rule and create
+separate fixes.</p><h4 id=httponly-pattern-1>HttpOnly Pattern 1
 <a class=header-link href=#httponly-pattern-1><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h4><p>The first pattern only checks <code>$COOKIE.setHttpOnly(false);</code> and we just need to
 replace <code>false</code> with <code>true</code>. Playground link:
-<a href=https://semgrep.dev/s/parsiya:java-httponly-practice-1 target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:java-httponly-practice-1</a>.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#586e75># java-httponly/httponly-practice-1.yaml</span>
-<span style=color:#268bd2>rules</span>:
-- <span style=color:#268bd2>id</span>: cookie-missing-httponly-1
-  <span style=color:#268bd2>message</span>: Match found
-  <span style=color:#268bd2>severity</span>: WARNING
-  <span style=color:#268bd2>languages</span>: [java]
-  <span style=color:#268bd2>patterns</span>:
-  - <span style=color:#268bd2>pattern-not-inside</span>: $COOKIE.setValue(&#34;&#34;); ...
-  - <span style=color:#268bd2>pattern</span>: $COOKIE.setHttpOnly(false);
-  <span style=color:#268bd2>fix</span>: $COOKIE.setHttpOnly(true);
-</code></pre></div>
-<span class=caption-wrapper>
+<a href=https://semgrep.dev/s/parsiya:java-httponly-practice-1 target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:java-httponly-practice-1</a>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># java-httponly/httponly-practice-1.yaml</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>- <span style=color:#268bd2>id</span>: cookie-missing-httponly-1
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>message</span>: Match found
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>severity</span>: WARNING
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>languages</span>: [java]
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>patterns</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#268bd2>pattern-not-inside</span>: $COOKIE.setValue(&#34;&#34;); ...
+</span></span><span style=display:flex><span>  - <span style=color:#268bd2>pattern</span>: $COOKIE.setHttpOnly(false);
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>fix</span>: $COOKIE.setHttpOnly(true);
+</span></span></code></pre></div><span class=caption-wrapper>
 <img class=caption src=02-httponly-1.png title="semgrep -c httponly-practice-1.yaml httponly.java" alt="semgrep -c httponly-practice-1.yaml httponly.java">
 <span class=caption-text>semgrep -c httponly-practice-1.yaml httponly.java</span>
 </span>
@@ -301,206 +210,164 @@ replace <code>false</code> with <code>true</code>. Playground link:
 <code>setHttpOnly</code>. The fix is <code>$COOKIE.setHttpOnly(true);</code> as a new line before the
 match. Playground link is
 <a href=https://semgrep.dev/s/parsiya:java-httponly-practice-2 target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:java-httponly-practice-2</a>
-or use the CLI.</p>
-<pre tabindex=0><code>semgrep -c httponly-pracitce-2.yaml httponly.java
-</code></pre><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#586e75># java-httponly/httponly-practice-2.yaml</span>
-<span style=color:#268bd2>rules</span>:
-  - <span style=color:#268bd2>id</span>: cookie-missing-httponly-2
-    <span style=color:#268bd2>message</span>: Match found
-    <span style=color:#268bd2>severity</span>: WARNING
-    <span style=color:#268bd2>languages</span>:
-      - java
-    <span style=color:#268bd2>patterns</span>:
-      - <span style=color:#268bd2>pattern-not-inside</span>: $COOKIE.setValue(&#34;&#34;); ...
-      - <span style=color:#268bd2>pattern-not-inside</span>: $COOKIE.setHttpOnly(...); ...
-      - <span style=color:#268bd2>pattern</span>: $RESPONSE.addCookie($COOKIE);
-    <span style=color:#268bd2>fix</span>: |<span style=color:#2aa198>
-</span><span style=color:#2aa198>      $COOKIE.setHttpOnly(true);
-</span><span style=color:#2aa198>      $RESPONSE.addCookie($COOKIE);</span>      
-</code></pre></div><p>The fix works but it's not aligned properly.</p>
-<span class=caption-wrapper>
+or use the CLI.</p><pre tabindex=0><code>semgrep -c httponly-pracitce-2.yaml httponly.java
+</code></pre><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># java-httponly/httponly-practice-2.yaml</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#268bd2>id</span>: cookie-missing-httponly-2
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>message</span>: Match found
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>severity</span>: WARNING
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>languages</span>:
+</span></span><span style=display:flex><span>      - java
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>patterns</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>pattern-not-inside</span>: $COOKIE.setValue(&#34;&#34;); ...
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>pattern-not-inside</span>: $COOKIE.setHttpOnly(...); ...
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>pattern</span>: $RESPONSE.addCookie($COOKIE);
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>fix</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>      $COOKIE.setHttpOnly(true);
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>      $RESPONSE.addCookie($COOKIE);</span>      
+</span></span></code></pre></div><p>The fix works but it's not aligned properly.</p><span class=caption-wrapper>
 <img class=caption src=03-httponly-2.png title="httponly-pracitce-2 fix" alt="httponly-pracitce-2 fix">
 <span class=caption-text>httponly-pracitce-2 fix</span>
 </span>
-<p>This is not an issue in Java but we can fix this with <code>fix-regex</code>.</p>
-<h2 id=fix-regex>fix-regex
+<p>This is not an issue in Java but we can fix this with <code>fix-regex</code>.</p><h2 id=fix-regex>fix-regex
 <a class=header-link href=#fix-regex><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><p><code>fix</code> is great for simple replacements (e.g., <code>badFunc</code> to <code>goodFunc</code>). But
 <code>fix-regex</code> has the power of regular expressions. See the docs at
-<a href=https://semgrep.dev/docs/experiments/overview/#autofix-with-regular-expression-replacement target=_blank rel="noreferrer noopener">https://semgrep.dev/docs/experiments/overview/#autofix-with-regular-expression-replacement</a>.</p>
-<p>It has three fields:</p>
-<ul>
-<li><code>regex</code>: Runs a regex on <strong>the text captured by the rule</strong>.</li>
-<li><code>replacement</code>: The replacement to the text captured by the rule.</li>
-<li><code>count</code>: (optional) How many instances of <code>regex</code> are replaced with
-<code>replacement</code>.</li>
-</ul>
-<p><strong>Note:</strong> Currently (2021-10-25), <code>fix-regex</code> does not support metavariables
+<a href=https://semgrep.dev/docs/experiments/overview/#autofix-with-regular-expression-replacement target=_blank rel="noreferrer noopener">https://semgrep.dev/docs/experiments/overview/#autofix-with-regular-expression-replacement</a>.</p><p>It has three fields:</p><ul>
+<li><code>regex</code>: Runs a regex on <strong>the text captured by the rule</strong>.</li><li><code>replacement</code>: The replacement to the text captured by the rule.</li><li><code>count</code>: (optional) How many instances of <code>regex</code> are replaced with
+<code>replacement</code>.</li></ul><p><strong>Note:</strong> Currently (2021-10-25), <code>fix-regex</code> does not support metavariables
 unlike <code>fix</code>. If have metavariables in the <code>replacement</code> section, they will be
 treated as text. You can track this bug at
-<a href=https://github.com/returntocorp/semgrep/issues/3269 target=_blank rel="noreferrer noopener">https://github.com/returntocorp/semgrep/issues/3269</a>.</p>
-<h3 id=java---httponly-cookies-revisited>Java - HttpOnly Cookies Revisited
+<a href=https://github.com/returntocorp/semgrep/issues/3269 target=_blank rel="noreferrer noopener">https://github.com/returntocorp/semgrep/issues/3269</a>.</p><h3 id=java---httponly-cookies-revisited>Java - HttpOnly Cookies Revisited
 <a class=header-link href=#java---httponly-cookies-revisited><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h3><p>Previously, we "fixed" HttpOnly but the alignment was not correct. I am going to
 solve the same problem with <code>fix-regex</code>. The second pattern matched the 4th line
-in the code below:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>  <span style=color:#268bd2>@RequestMapping</span><span style=color:#719e07>(</span>value <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;/cookie1&#34;</span><span style=color:#719e07>,</span> method <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;GET&#34;</span><span style=color:#719e07>)</span>
-  <span style=color:#268bd2>public</span> <span style=color:#dc322f>void</span> <span style=color:#268bd2>setCookie</span><span style=color:#719e07>(</span><span style=color:#268bd2>@RequestParam</span> String value<span style=color:#719e07>,</span> HttpServletResponse response<span style=color:#719e07>)</span> <span style=color:#719e07>{</span>
-      Cookie cookie <span style=color:#719e07>=</span> <span style=color:#719e07>new</span> Cookie<span style=color:#719e07>(</span><span style=color:#2aa198>&#34;cookie&#34;</span><span style=color:#719e07>,</span> value<span style=color:#719e07>);</span>
-      response<span style=color:#719e07>.</span>addCookie<span style=color:#719e07>(</span>cookie<span style=color:#719e07>);</span> <span style=color:#586e75>// &lt;--- This line was matched.
-</span><span style=color:#586e75></span>  <span style=color:#719e07>}</span>
-</code></pre></div><p>Let's experiment with how the capture works (if you want to tag along <a href=https://semgrep.dev/s/parsiya:java-httponly-fix-regex-practice target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:java-httponly-fix-regex-practice</a>).</p>
-<p>To see everything that was matched let's run this rule.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#586e75># java-httponly/httponly-fix-regex-practice.yaml</span>
-<span style=color:#268bd2>rules</span>:
-  - <span style=color:#268bd2>id</span>: cookie-missing-httponly-fix-regex-practice
-    <span style=color:#268bd2>message</span>: Match found
-    <span style=color:#268bd2>severity</span>: WARNING
-    <span style=color:#268bd2>languages</span>:
-      - java
-    <span style=color:#268bd2>patterns</span>:
-      - <span style=color:#268bd2>pattern-not-inside</span>: $COOKIE.setValue(&#34;&#34;); ...
-      - <span style=color:#268bd2>pattern-not-inside</span>: $COOKIE.setHttpOnly(...); ...
-      - <span style=color:#268bd2>pattern</span>: $RESPONSE.addCookie($COOKIE);
-    <span style=color:#268bd2>fix-regex</span>:
-      <span style=color:#268bd2>regex</span>: (.*)
-      <span style=color:#268bd2>replacement</span>: //\1
-</code></pre></div><p>We are creating a capture group in <code>regex</code> and then using it in the <code>replacement</code>
-section with <code>\1</code>.</p>
-<span class=caption-wrapper>
+in the code below:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>  <span style=color:#268bd2>@RequestMapping</span><span style=color:#719e07>(</span>value <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;/cookie1&#34;</span><span style=color:#719e07>,</span> method <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;GET&#34;</span><span style=color:#719e07>)</span>
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>public</span> <span style=color:#dc322f>void</span> <span style=color:#268bd2>setCookie</span><span style=color:#719e07>(</span><span style=color:#268bd2>@RequestParam</span> String value<span style=color:#719e07>,</span> HttpServletResponse response<span style=color:#719e07>)</span> <span style=color:#719e07>{</span>
+</span></span><span style=display:flex><span>      Cookie cookie <span style=color:#719e07>=</span> <span style=color:#719e07>new</span> Cookie<span style=color:#719e07>(</span><span style=color:#2aa198>&#34;cookie&#34;</span><span style=color:#719e07>,</span> value<span style=color:#719e07>);</span>
+</span></span><span style=display:flex><span>      response<span style=color:#719e07>.</span>addCookie<span style=color:#719e07>(</span>cookie<span style=color:#719e07>);</span> <span style=color:#586e75>// &lt;--- This line was matched.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>  <span style=color:#719e07>}</span>
+</span></span></code></pre></div><p>Let's experiment with how the capture works (if you want to tag along <a href=https://semgrep.dev/s/parsiya:java-httponly-fix-regex-practice target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:java-httponly-fix-regex-practice</a>).</p><p>To see everything that was matched let's run this rule.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># java-httponly/httponly-fix-regex-practice.yaml</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#268bd2>id</span>: cookie-missing-httponly-fix-regex-practice
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>message</span>: Match found
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>severity</span>: WARNING
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>languages</span>:
+</span></span><span style=display:flex><span>      - java
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>patterns</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>pattern-not-inside</span>: $COOKIE.setValue(&#34;&#34;); ...
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>pattern-not-inside</span>: $COOKIE.setHttpOnly(...); ...
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>pattern</span>: $RESPONSE.addCookie($COOKIE);
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>fix-regex</span>:
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>regex</span>: (.*)
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>replacement</span>: //\1
+</span></span></code></pre></div><p>We are creating a capture group in <code>regex</code> and then using it in the <code>replacement</code>
+section with <code>\1</code>.</p><span class=caption-wrapper>
 <img class=caption src=04-httponly-fix-regex-1.png title="The result after running the above" alt="The result after running the above">
 <span class=caption-text>The result after running the above</span>
 </span>
 <p>So what happened here? To regex is greedy (the docs mention this). Two different
 matches were captured. Both were prepended with <code>//</code> (we can fix this with
-<code>(.*+)</code> but let's continue).</p>
-<ol>
+<code>(.*+)</code> but let's continue).</p><ol>
 <li>The line and its whitespace.
 <ol>
-<li><code>[8xSpace]response.addCookie(cookie);</code></li>
-</ol>
-</li>
-<li>The "nothing" after the line above.
+<li><code>[8xSpace]response.addCookie(cookie);</code></li></ol></li><li>The "nothing" after the line above.
 <ol>
-<li>At least that's what I think it is.</li>
-</ol>
-</li>
-</ol>
-<p>We can fix this with the <code>count</code> field. We only want to replace the first match
-so we set it to <code>1</code>.</p>
-<span class=caption-wrapper>
+<li>At least that's what I think it is.</li></ol></li></ol><p>We can fix this with the <code>count</code> field. We only want to replace the first match
+so we set it to <code>1</code>.</p><span class=caption-wrapper>
 <img class=caption src=05-httponly-fix-regex-2.png title="Running the rule with count: 1" alt="Running the rule with count: 1">
 <span class=caption-text>Running the rule with count: 1</span>
 </span>
 <p>This is much better. But I have not fixed the alignment. We can capture the
-whitespace with another capture group.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml>    <span style=color:#268bd2>fix-regex</span>:
-      <span style=color:#268bd2>regex</span>: (\s*)(.*)
-      <span style=color:#268bd2>replacement</span>: \1// \2
-      <span style=color:#268bd2>count</span>: <span style=color:#2aa198>1</span>
-</code></pre></div><p>The first capture group is the whitespace and the second is the code.</p>
-<span class=caption-wrapper>
+whitespace with another capture group.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>    <span style=color:#268bd2>fix-regex</span>:
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>regex</span>: (\s*)(.*)
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>replacement</span>: \1// \2
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>count</span>: <span style=color:#2aa198>1</span>
+</span></span></code></pre></div><p>The first capture group is the whitespace and the second is the code.</p><span class=caption-wrapper>
 <img class=caption src=06-httponly-fix-regex-3.png title="Alignment fixed" alt="Alignment fixed">
 <span class=caption-text>Alignment fixed</span>
 </span>
 <p>Now we need to add the new line with the correct whitespace (it's in <code>\1</code>) above
 the captured line. <code>\2</code> is the original <code>addCookie</code> line. If <code>fix-regex</code>
-supported metavariable replacement like <code>fix</code> the rule would look like:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#586e75># java-httponly/httponly-fix-regex-practice-2.yaml</span>
-    <span style=color:#268bd2>fix-regex</span>:
-      <span style=color:#268bd2>regex</span>: (\s*)(.*)
-      <span style=color:#268bd2>replacement</span>: |<span style=color:#2aa198>
-</span><span style=color:#2aa198>        \1$COOKIE.setHttpOnly(true);
-</span><span style=color:#2aa198>        \1\2</span>        
-      <span style=color:#268bd2>count</span>: <span style=color:#2aa198>1</span>
-</code></pre></div><p>This is not implemented, yet. See
-<a href=https://semgrep.dev/s/parsiya:java-httponly-fix-regex-practice-2 target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:java-httponly-fix-regex-practice-2</a>.</p>
-<span class=caption-wrapper>
+supported metavariable replacement like <code>fix</code> the rule would look like:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># java-httponly/httponly-fix-regex-practice-2.yaml</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>fix-regex</span>:
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>regex</span>: (\s*)(.*)
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>replacement</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>        \1$COOKIE.setHttpOnly(true);
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>        \1\2</span>        
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>count</span>: <span style=color:#2aa198>1</span>
+</span></span></code></pre></div><p>This is not implemented, yet. See
+<a href=https://semgrep.dev/s/parsiya:java-httponly-fix-regex-practice-2 target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:java-httponly-fix-regex-practice-2</a>.</p><span class=caption-wrapper>
 <img class=caption src=07-httponly-fix-regex-4.png title="Metavariable in replacement" alt="Metavariable in replacement">
 <span class=caption-text>Metavariable in replacement</span>
 </span>
 <p>We must capture <code>cookie</code> from <code>response.addCookie(cookie);</code> (the match) and
-add <code>.setHttpOnly(true)</code>.</p>
-<p>The new regex is <code>(\s*)(.*addCookie\((.*)\).*)</code>:</p>
-<ol>
-<li><code>(\s*)</code>: The first capture group is still whitespace.</li>
-<li><code>(.*addCookie\((.*)\).*)</code>: The second is <code>response.addCookie(cookie);</code>
-without the whitespace. We will print it as-is in the 2nd line of the fix.</li>
-<li><code>.*addCookie\((.*)\)</code>: This is inside the second group and is trying to
-capture whatever comes after <code>addCookie(</code> and before <code>)</code>.</li>
-</ol>
-<p>We have everything we need to create the fix:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#586e75># java-httponly/httponly-fix-regex-practice-final.yaml</span>
-<span style=color:#268bd2>rules</span>:
-  - <span style=color:#268bd2>id</span>: cookie-missing-httponly-fix-regex-practice-final
-    <span style=color:#268bd2>message</span>: Match found
-    <span style=color:#268bd2>severity</span>: WARNING
-    <span style=color:#268bd2>languages</span>:
-      - java
-    <span style=color:#268bd2>patterns</span>:
-      - <span style=color:#268bd2>pattern-not-inside</span>: $COOKIE.setValue(&#34;&#34;); ...
-      - <span style=color:#268bd2>pattern-not-inside</span>: $COOKIE.setHttpOnly(...); ...
-      - <span style=color:#268bd2>pattern</span>: $RESPONSE.addCookie($COOKIE);
-    <span style=color:#268bd2>fix-regex</span>:
-      <span style=color:#268bd2>regex</span>: (\s*)(.*addCookie\((.*)\).*)
-      <span style=color:#268bd2>replacement</span>: |<span style=color:#2aa198>
-</span><span style=color:#2aa198>        \1\3.setHttpOnly(true);
-</span><span style=color:#2aa198>        \1\2</span>        
-      <span style=color:#268bd2>count</span>: <span style=color:#2aa198>1</span>
-</code></pre></div>
-<span class=caption-wrapper>
+add <code>.setHttpOnly(true)</code>.</p><p>The new regex is <code>(\s*)(.*addCookie\((.*)\).*)</code>:</p><ol>
+<li><code>(\s*)</code>: The first capture group is still whitespace.</li><li><code>(.*addCookie\((.*)\).*)</code>: The second is <code>response.addCookie(cookie);</code>
+without the whitespace. We will print it as-is in the 2nd line of the fix.</li><li><code>.*addCookie\((.*)\)</code>: This is inside the second group and is trying to
+capture whatever comes after <code>addCookie(</code> and before <code>)</code>.</li></ol><p>We have everything we need to create the fix:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># java-httponly/httponly-fix-regex-practice-final.yaml</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#268bd2>id</span>: cookie-missing-httponly-fix-regex-practice-final
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>message</span>: Match found
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>severity</span>: WARNING
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>languages</span>:
+</span></span><span style=display:flex><span>      - java
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>patterns</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>pattern-not-inside</span>: $COOKIE.setValue(&#34;&#34;); ...
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>pattern-not-inside</span>: $COOKIE.setHttpOnly(...); ...
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>pattern</span>: $RESPONSE.addCookie($COOKIE);
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>fix-regex</span>:
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>regex</span>: (\s*)(.*addCookie\((.*)\).*)
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>replacement</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>        \1\3.setHttpOnly(true);
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>        \1\2</span>        
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>count</span>: <span style=color:#2aa198>1</span>
+</span></span></code></pre></div><span class=caption-wrapper>
 <img class=caption src=08-httponly-fix-regex-final.png title="Correct fix with fix-regex" alt="Correct fix with fix-regex">
 <span class=caption-text>Correct fix with fix-regex</span>
 </span>
 <p>Playground link
-<a href=https://semgrep.dev/s/parsiya:java-httponly-fix-regex-practice-final target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:java-httponly-fix-regex-practice-final</a>.</p>
-<h3 id=go---texttemplate>Go - text/template
+<a href=https://semgrep.dev/s/parsiya:java-httponly-fix-regex-practice-final target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:java-httponly-fix-regex-practice-final</a>.</p><h3 id=go---texttemplate>Go - text/template
 <a class=header-link href=#go---texttemplate><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h3><p>In Go you can use <code>text/template</code> and <code>html/template</code>. The latter does some
 output encoding and is safer for web use. It's possible to use <code>text/template</code>
-correctly or in a non-web use case, but it's not usually the case.</p>
-<p>At first glance you would think we can use <code>fix</code> and replace <code>text/template</code>
+correctly or in a non-web use case, but it's not usually the case.</p><p>At first glance you would think we can use <code>fix</code> and replace <code>text/template</code>
 with <code>html/template</code>. To test this theory, add a <code>fix</code> section to the Semgrep's
 <a href=https://github.com/returntocorp/semgrep-rules/blob/develop/go/lang/security/audit/xss/import-text-template.yaml target=_blank rel="noreferrer noopener">import-text-template</a> rule at
-<a href=https://semgrep.dev/s/parsiya:go-import-text-template-fix target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:go-import-text-template-fix</a>.</p>
-<p>The first reaction is to add a fix section like this:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#586e75># go-import-text-template/import-text-template-fix.yaml</span>
-<span style=color:#268bd2>rules</span>:
-- <span style=color:#268bd2>id</span>: import-text-template-fix
-  <span style=color:#268bd2>message</span>: Match found.
-  <span style=color:#268bd2>severity</span>: WARNING
-  <span style=color:#268bd2>pattern</span>: |<span style=color:#2aa198>
-</span><span style=color:#2aa198>    </span>    import &#34;text/template&#34;
-  <span style=color:#268bd2>languages</span>:
-    - go
-  <span style=color:#268bd2>fix</span>: import &#34;html/template&#34;
-</code></pre></div><p>When we ask Semgrep to match <code>import "text/template"</code> it matches everything from
+<a href=https://semgrep.dev/s/parsiya:go-import-text-template-fix target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:go-import-text-template-fix</a>.</p><p>The first reaction is to add a fix section like this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># go-import-text-template/import-text-template-fix.yaml</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>- <span style=color:#268bd2>id</span>: import-text-template-fix
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>message</span>: Match found.
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>severity</span>: WARNING
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>pattern</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>    </span>    import &#34;text/template&#34;
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>languages</span>:
+</span></span><span style=display:flex><span>    - go
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>fix</span>: import &#34;html/template&#34;
+</span></span></code></pre></div><p>When we ask Semgrep to match <code>import "text/template"</code> it matches everything from
 the <code>import</code> keyword until the end of <code>"text/template"</code>. This usually includes
-other imports and our fix will replace other imports.</p>
-<span class=caption-wrapper>
+other imports and our fix will replace other imports.</p><span class=caption-wrapper>
 <img class=caption src=09-import-text-fix.png title="The matched string in the rule above" alt="The matched string in the rule above">
 <span class=caption-text>The matched string in the rule above</span>
 </span>
 <p><code>fix-regex</code> "fixes" this (har har). The <code>regex</code> only looks for <code>text/template</code>
 in the matched text and replaces it with <code>html/template</code> without overwriting
 anything else. <code>count</code> is optional here because there's only one match. It's a
-good habit to include it anyways.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#586e75># go-import-text-template/import-text-template-fix-regex.yaml</span>
-<span style=color:#268bd2>rules</span>:
-- <span style=color:#268bd2>id</span>: import-text-template-fix-regex
-  <span style=color:#268bd2>message</span>: Match found.
-  <span style=color:#268bd2>severity</span>: WARNING
-  <span style=color:#268bd2>pattern</span>: |<span style=color:#2aa198>
-</span><span style=color:#2aa198>    </span>    import &#34;text/template&#34;
-  <span style=color:#268bd2>languages</span>:
-    - go
-  <span style=color:#268bd2>fix-regex</span>:
-    <span style=color:#268bd2>regex</span>: text/template
-    <span style=color:#268bd2>replacement</span>: html/template
-    <span style=color:#268bd2>count</span>: <span style=color:#2aa198>1</span>
-</code></pre></div><p>See the magic at
-<a href=https://semgrep.dev/s/parsiya:import-text-template-fix-regex target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:import-text-template-fix-regex</a>.</p>
-<span class=caption-wrapper>
+good habit to include it anyways.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># go-import-text-template/import-text-template-fix-regex.yaml</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>- <span style=color:#268bd2>id</span>: import-text-template-fix-regex
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>message</span>: Match found.
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>severity</span>: WARNING
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>pattern</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>    </span>    import &#34;text/template&#34;
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>languages</span>:
+</span></span><span style=display:flex><span>    - go
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>fix-regex</span>:
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>regex</span>: text/template
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>replacement</span>: html/template
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>count</span>: <span style=color:#2aa198>1</span>
+</span></span></code></pre></div><p>See the magic at
+<a href=https://semgrep.dev/s/parsiya:import-text-template-fix-regex target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:import-text-template-fix-regex</a>.</p><span class=caption-wrapper>
 <img class=caption src=10-import-text-fix-regex.png title="text/template replaced with html/template" alt="text/template replaced with html/template">
 <span class=caption-text>text/template replaced with html/template</span>
 </span>
@@ -508,104 +375,96 @@ good habit to include it anyways.</p>
 <a class=header-link href=#go---httponly-cookies><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h3><p>Similar to the Java version, we can check if a cookie in Go has the <code>HttpOnly</code>
 attribute. The original rule from the repo is at
-<a href=https://semgrep.dev/s/parsiya:go-httponly-original target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:go-httponly-original</a>.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#586e75># go-httponly/go-httponly-original.yaml</span>
-<span style=color:#268bd2>rules</span>:
-  - <span style=color:#268bd2>id</span>: cookie-missing-httponly
-    <span style=color:#268bd2>patterns</span>:
-      - <span style=color:#268bd2>pattern-not-inside</span>: |<span style=color:#2aa198>
-</span><span style=color:#2aa198>          http.Cookie{
-</span><span style=color:#2aa198>            ...,
-</span><span style=color:#2aa198>            HttpOnly: true,
-</span><span style=color:#2aa198>            ...,
-</span><span style=color:#2aa198>          }</span>          
-      - <span style=color:#268bd2>pattern</span>: |<span style=color:#2aa198>
-</span><span style=color:#2aa198>          http.Cookie{
-</span><span style=color:#2aa198>            ...,
-</span><span style=color:#2aa198>          }</span>          
-    <span style=color:#268bd2>message</span>: Match found
-    <span style=color:#268bd2>fix-regex</span>:
-      <span style=color:#268bd2>regex</span>: (HttpOnly\s*:\s+)false
-      <span style=color:#268bd2>replacement</span>: \1true
-    <span style=color:#268bd2>severity</span>: WARNING
-    <span style=color:#268bd2>languages</span>:
-      - go
-</code></pre></div><p>The rule checks if you have <code>http.Cookie</code> without <code>HttpOnly: true</code>. However, the
+<a href=https://semgrep.dev/s/parsiya:go-httponly-original target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:go-httponly-original</a>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># go-httponly/go-httponly-original.yaml</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#268bd2>id</span>: cookie-missing-httponly
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>patterns</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>pattern-not-inside</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          http.Cookie{
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>            ...,
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>            HttpOnly: true,
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>            ...,
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          }</span>          
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>pattern</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          http.Cookie{
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>            ...,
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          }</span>          
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>message</span>: Match found
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>fix-regex</span>:
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>regex</span>: (HttpOnly\s*:\s+)false
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>replacement</span>: \1true
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>severity</span>: WARNING
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>languages</span>:
+</span></span><span style=display:flex><span>      - go
+</span></span></code></pre></div><p>The rule checks if you have <code>http.Cookie</code> without <code>HttpOnly: true</code>. However, the
 fix section only kicks in if the code has <code>HttpOnly: false</code>. If Go, the default
 value for both <code>Secure</code> and <code>HttpOnly</code> is false so the absence of this attribute
-is still a vulnerability</p>
-<p>We can take a brute force approach and always add <code>HttpOnly: true</code>. This will
+is still a vulnerability</p><p>We can take a brute force approach and always add <code>HttpOnly: true</code>. This will
 create a compiler error if the property already exists. So, I am gonna create a
-new rule to only catch if there is no mention of <code>HttpOnly</code>.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#586e75># go-httponly/go-httponly-1.yaml</span>
-<span style=color:#268bd2>rules</span>:
-  - <span style=color:#268bd2>id</span>: cookie-missing-httponly-1
-    <span style=color:#268bd2>severity</span>: WARNING
-    <span style=color:#268bd2>languages</span>:
-      - go
-    <span style=color:#268bd2>patterns</span>:
-      - <span style=color:#268bd2>pattern-not-inside</span>: |<span style=color:#2aa198>
-</span><span style=color:#2aa198>          http.Cookie{
-</span><span style=color:#2aa198>            ...,
-</span><span style=color:#2aa198>            HttpOnly: ...,
-</span><span style=color:#2aa198>            ...,
-</span><span style=color:#2aa198>          }</span>          
-      - <span style=color:#268bd2>pattern</span>: |<span style=color:#2aa198>
-</span><span style=color:#2aa198>          http.Cookie{
-</span><span style=color:#2aa198>            ...,
-</span><span style=color:#2aa198>          }</span>          
-    <span style=color:#268bd2>message</span>: Match found
-    <span style=color:#268bd2>fix-regex</span>:
-      <span style=color:#268bd2>regex</span>: (?s)(\s+)(.*)
-      <span style=color:#268bd2>replacement</span>: |<span style=color:#2aa198>
-</span><span style=color:#2aa198>        \1\2
-</span><span style=color:#2aa198>        \1    HttpOnly: true,</span>        
-      <span style=color:#268bd2>count</span>: <span style=color:#2aa198>1</span>
-</code></pre></div><p>Playground link
-<a href=https://semgrep.dev/s/parsiya:go-cookie-missing-httponly-1 target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:go-cookie-missing-httponly-1</a>.</p>
-<span class=caption-wrapper>
+new rule to only catch if there is no mention of <code>HttpOnly</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># go-httponly/go-httponly-1.yaml</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#268bd2>id</span>: cookie-missing-httponly-1
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>severity</span>: WARNING
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>languages</span>:
+</span></span><span style=display:flex><span>      - go
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>patterns</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>pattern-not-inside</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          http.Cookie{
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>            ...,
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>            HttpOnly: ...,
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>            ...,
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          }</span>          
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>pattern</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          http.Cookie{
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>            ...,
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          }</span>          
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>message</span>: Match found
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>fix-regex</span>:
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>regex</span>: (?s)(\s+)(.*)
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>replacement</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>        \1\2
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>        \1    HttpOnly: true,</span>        
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>count</span>: <span style=color:#2aa198>1</span>
+</span></span></code></pre></div><p>Playground link
+<a href=https://semgrep.dev/s/parsiya:go-cookie-missing-httponly-1 target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:go-cookie-missing-httponly-1</a>.</p><span class=caption-wrapper>
 <img class=caption src=11-go-httponly-1.png title="Fix with the new rule" alt="Fix with the new rule">
 <span class=caption-text>Fix with the new rule</span>
 </span>
 <p>As an exercise try and figure out how the fix works. It assumes code is
 formatted by <code>gofmt</code> (see the space before <code>HttpOnly</code>). Rob Pike will come and
-flip your work desk if you don't run it anyways.</p>
-<h3 id=adding-comments>Adding Comments
+flip your work desk if you don't run it anyways.</p><h3 id=adding-comments>Adding Comments
 <a class=header-link href=#adding-comments><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h3><p>This has gone long enough, these blogs take up a lot of time. Especially, with
 playground links and local files for each exercise. I am just gonna do another
-one and finish.</p>
-<p>We want to add a comment before the vuln location. Things like remediation
+one and finish.</p><p>We want to add a comment before the vuln location. Things like remediation
 messages or annotations are good candidates. I am gonna use the previous example
 (Go), but most programming languages that do not rely on whitespace and use <code>//</code>
-should be similar.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#586e75># go-comment/go-comment</span>
-<span style=color:#268bd2>rules</span>:
-  - <span style=color:#268bd2>id</span>: cookie-missing-httponly-comment
-    <span style=color:#268bd2>severity</span>: WARNING
-    <span style=color:#268bd2>languages</span>:
-      - go
-    <span style=color:#268bd2>patterns</span>:
-      - <span style=color:#268bd2>pattern-not-inside</span>: |<span style=color:#2aa198>
-</span><span style=color:#2aa198>          http.Cookie{
-</span><span style=color:#2aa198>            ...,
-</span><span style=color:#2aa198>            HttpOnly: ...,
-</span><span style=color:#2aa198>            ...,
-</span><span style=color:#2aa198>          }</span>          
-      - <span style=color:#268bd2>pattern</span>: |<span style=color:#2aa198>
-</span><span style=color:#2aa198>          http.Cookie{
-</span><span style=color:#2aa198>            ...,
-</span><span style=color:#2aa198>          }</span>          
-    <span style=color:#268bd2>message</span>: Match found
-    <span style=color:#268bd2>fix-regex</span>:
-      <span style=color:#268bd2>regex</span>: (?s)(\s+)(.*)
-      <span style=color:#268bd2>replacement</span>: |<span style=color:#2aa198>
-</span><span style=color:#2aa198>        \1// Match found by cookie-missing-httponly-comment.
-</span><span style=color:#2aa198>        \1// HttpOnly must be set to true here.
-</span><span style=color:#2aa198>        \1\2</span>        
-      <span style=color:#268bd2>count</span>: <span style=color:#2aa198>1</span>
-</code></pre></div><p>Playground link <a href=https://semgrep.dev/s/parsiya:go-comment target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:go-comment</a>.</p>
-<span class=caption-wrapper>
+should be similar.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># go-comment/go-comment</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#268bd2>id</span>: cookie-missing-httponly-comment
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>severity</span>: WARNING
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>languages</span>:
+</span></span><span style=display:flex><span>      - go
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>patterns</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>pattern-not-inside</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          http.Cookie{
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>            ...,
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>            HttpOnly: ...,
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>            ...,
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          }</span>          
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>pattern</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          http.Cookie{
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>            ...,
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          }</span>          
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>message</span>: Match found
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>fix-regex</span>:
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>regex</span>: (?s)(\s+)(.*)
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>replacement</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>        \1// Match found by cookie-missing-httponly-comment.
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>        \1// HttpOnly must be set to true here.
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>        \1\2</span>        
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>count</span>: <span style=color:#2aa198>1</span>
+</span></span></code></pre></div><p>Playground link <a href=https://semgrep.dev/s/parsiya:go-comment target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:go-comment</a>.</p><span class=caption-wrapper>
 <img class=caption src=12-go-comment.png title="Comment added to the code" alt="Comment added to the code">
 <span class=caption-text>Comment added to the code</span>
 </span>
@@ -613,89 +472,52 @@ should be similar.</p>
 <a class=header-link href=#what-did-we-learn-here-today><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><p>We learned how to use Semgrep's <code>fix</code> and <code>fix-regex</code> with several "real world"
 examples. Go through the [semgrep-rules] repo on GitHub and see if you can add
-fixes for new rules or optimize/correct existing ones.</p>
-</div>
-<footer>
+fixes for new rules or optimize/correct existing ones.</p></div><footer>
 <p class=meta>
 <span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>Oct 25, 2021</time>
 </span>
-</p>
-<p class=meta>
+</p><p class=meta>
 <a class="basic-alignment left" href=https://parsiya.net/blog/2021-10-11-modify-gitlab-repositories-from-the-ci-pipeline/ title="Modify GitLab Repositories from the CI Pipeline">Modify GitLab Repositories from the CI Pipeline</a>
 <a class="basic-alignment right" href=https://parsiya.net/blog/2021-12-20-rce-in-visual-studio-codes-remote-wsl-for-fun-and-negative-profit/ title="RCE in Visual Studio Code's Remote WSL for Fun and Negative Profit">RCE in Visual Studio Code's Remote WSL for Fun and Negative Profit</a>
-</p>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</div>
-<aside class="sidebar thirds">
+</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer></article></div><aside class="sidebar thirds">
 <section class="first odd">
-<h1>Who am I?</h1>
-<p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
-<p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p>
-<p>Click on <a href=/about/>About Me!</a> to know more.</p>
-</p>
-</section>
-<ul class=sidebar-nav>
+<h1>Who am I?</h1><p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
 <li class=sidebar-nav-item>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li>
-</ul>
-<section class=odd>
-<h1>Collections</h1>
-<li>
+</li></ul><section class=odd>
+<h1>Collections</h1><li>
 <a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li>
-<li>
+</li><li>
 <a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li>
-</section>
-</aside>
-</div>
-</div>
-<footer role=contentinfo>
+</li></section></aside></div></div><footer role=contentinfo>
 <p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>

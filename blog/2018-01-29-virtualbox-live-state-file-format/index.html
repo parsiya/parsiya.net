@@ -3,14 +3,13 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
 <link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>VirtualBox Live State File Format</title>
-<link rel=stylesheet href=/css/hugo-octopress.css>
+<title>VirtualBox Live State File Format</title><link rel=stylesheet href=/css/hugo-octopress.css>
 <link rel=stylesheet href=/css/fork-awesome.min.css>
 <link href=https://parsiya.net/favicon.png rel=icon>
 <meta name=description content>
 <meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
 <meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.92.2">
+<meta name=generator content="Hugo 0.93.0">
 <meta name=twitter:card content="summary">
 <meta name=twitter:title content="VirtualBox Live State File Format">
 <meta name=twitter:description content="In Mounting Live Snapshots of Encrypted VMs in VirtualBox we mounted a live snapshot and logged into the machine. We also got a sneak peek of what kind of information we can extract from the live snapshot (sav file).
@@ -18,37 +17,21 @@ In this post I will talk about parts of the live state file format and show some
 To make it easier, I have uploaded the live state from our previous MysteryVM separately. You can download it from Google Drive (45 MB).">
 <meta name=twitter:domain content="parsiya.net">
 <meta name=twitter:creator content="@CryptoGangsta">
-</head>
-<body>
+</head><body>
 <header role=banner>
 <hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
-<h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2>
-</hgroup></header>
-<nav role=navigation>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
 <fieldset class=mobile-nav>
 <select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset>
-<ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
-<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
-<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
-<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
-<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
-<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
-</ul>
-<ul class=subscription>
+</fieldset><ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
 <a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul>
-<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
 <fieldset role=search>
 <input class=search type=text name=q results=0 placeholder=Search>
 <input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset>
-</form>
-</nav>
-<div id=main>
+</fieldset></form></nav><div id=main>
 <div id=content>
 <div>
 <article class=hentry role=article>
@@ -57,344 +40,245 @@ complete unless it is known by its causes. - Avicenna</h2>
 - 13 minute read
 - <a href=https://parsiya.net/blog/2018-01-29-virtualbox-live-state-file-format/#disqus_thread>Comments</a>
 - <a class=label href=https://parsiya.net/categories/forensics/>Forensics </a>
-</p>
-<h1 class=entry-title>
+</p><h1 class=entry-title>
 VirtualBox Live State File Format
-</h1>
-</header>
-<div class=entry-content>
+</h1></header><div class=entry-content>
 <nav id=TableOfContents>
 <ul>
 <li><a href=#dive-into-sav>Dive into sav</a>
 <ul>
 <li><a href=#sav-file-header---ssmfilhdr>Sav File Header - SSMFILHDR</a>
 <ul>
-<li><a href=#flags>Flags</a></li>
-</ul>
-</li>
-<li><a href=#saved-state-units>Saved State Units</a>
+<li><a href=#flags>Flags</a></li></ul></li><li><a href=#saved-state-units>Saved State Units</a>
 <ul>
 <li><a href=#ssm-data-unit>SSM Data Unit</a>
 <ul>
-<li><a href=#ssm-unit-header---ssmfileunithdrv2>SSM Unit Header - SSMFILEUNITHDRV2</a></li>
-<li><a href=#ssm-unit-data>SSM Unit Data</a></li>
-</ul>
-</li>
-<li><a href=#end-data-unit>End Data Unit</a></li>
-</ul>
-</li>
-<li><a href=#directory>Directory</a>
+<li><a href=#ssm-unit-header---ssmfileunithdrv2>SSM Unit Header - SSMFILEUNITHDRV2</a></li><li><a href=#ssm-unit-data>SSM Unit Data</a></li></ul></li><li><a href=#end-data-unit>End Data Unit</a></li></ul></li><li><a href=#directory>Directory</a>
 <ul>
-<li><a href=#directory-header---ssmfiledir>Directory Header - SSMFILEDIR</a></li>
-</ul>
-</li>
-<li><a href=#directories---ssmfiledirentry>Directories - SSMFILEDIRENTRY</a></li>
-<li><a href=#file-footer---ssmfileftr>File Footer - SSMFILEFTR</a></li>
-</ul>
-</li>
-<li><a href=#conclusion>Conclusion</a></li>
-</ul>
-</nav>
-<p>In <a href=/blog/2018-01-23-mounting-live-snapshots-of-encrypted-vms-in-virtualbox/ title="Mounting Live Snapshots of Encrypted VMs in VirtualBox">Mounting Live Snapshots of Encrypted VMs in VirtualBox</a> we mounted a live snapshot and logged into the machine. We also got a sneak peek of what kind of information we can extract from the live snapshot (<code>sav</code> file).</p>
-<p>In this post I will talk about parts of the live state file format and show some data that can be extracted from these files. The format is not formally documented but we have access to commented source.</p>
-<p>To make it easier, I have uploaded the live state from our previous MysteryVM separately. You can download it from <a href="https://drive.google.com/file/d/1WdlcHsQattvFs8Wu9RdFC5UOaSxqhk0d/view?usp=sharing" target=_blank rel="noreferrer noopener">Google Drive</a> (45 MB).</p>
-<h1 id=dive-into-sav>Dive into sav
+<li><a href=#directory-header---ssmfiledir>Directory Header - SSMFILEDIR</a></li></ul></li><li><a href=#directories---ssmfiledirentry>Directories - SSMFILEDIRENTRY</a></li><li><a href=#file-footer---ssmfileftr>File Footer - SSMFILEFTR</a></li></ul></li><li><a href=#conclusion>Conclusion</a></li></ul></nav><p>In <a href=/blog/2018-01-23-mounting-live-snapshots-of-encrypted-vms-in-virtualbox/ title="Mounting Live Snapshots of Encrypted VMs in VirtualBox">Mounting Live Snapshots of Encrypted VMs in VirtualBox</a> we mounted a live snapshot and logged into the machine. We also got a sneak peek of what kind of information we can extract from the live snapshot (<code>sav</code> file).</p><p>In this post I will talk about parts of the live state file format and show some data that can be extracted from these files. The format is not formally documented but we have access to commented source.</p><p>To make it easier, I have uploaded the live state from our previous MysteryVM separately. You can download it from <a href="https://drive.google.com/file/d/1WdlcHsQattvFs8Wu9RdFC5UOaSxqhk0d/view?usp=sharing" target=_blank rel="noreferrer noopener">Google Drive</a> (45 MB).</p><h1 id=dive-into-sav>Dive into sav
 <a class=header-link href=#dive-into-sav><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>According to <a href=https://www.virtualbox.org/pipermail/vbox-dev/2012-October/010986.html target=_blank rel="noreferrer noopener">this thread</a>:</p>
-<blockquote>
-<p>A .sav file is created using the SSM (saved state manager) code. You find the API in include/VBox/vmm/ssm.h and src/VBox/VMM/VMMR3/SSM.cpp.</p>
-</blockquote>
-<p>These are the relevant files:</p>
-<ul>
-<li><a href=https://www.virtualbox.org/svn/vbox/trunk/include/VBox/vmm/ssm.h target=_blank rel="noreferrer noopener">https://www.virtualbox.org/svn/vbox/trunk/include/VBox/vmm/ssm.h</a></li>
-<li><a href=https://www.virtualbox.org/svn/vbox/trunk/src/VBox/VMM/VMMR3/SSM.cpp target=_blank rel="noreferrer noopener">https://www.virtualbox.org/svn/vbox/trunk/src/VBox/VMM/VMMR3/SSM.cpp</a></li>
-</ul>
-<h2 id=sav-file-header---ssmfilhdr>Sav File Header - SSMFILHDR
+</h1><p>According to <a href=https://www.virtualbox.org/pipermail/vbox-dev/2012-October/010986.html target=_blank rel="noreferrer noopener">this thread</a>:</p><blockquote>
+<p>A .sav file is created using the SSM (saved state manager) code. You find the API in include/VBox/vmm/ssm.h and src/VBox/VMM/VMMR3/SSM.cpp.</p></blockquote><p>These are the relevant files:</p><ul>
+<li><a href=https://www.virtualbox.org/svn/vbox/trunk/include/VBox/vmm/ssm.h target=_blank rel="noreferrer noopener">https://www.virtualbox.org/svn/vbox/trunk/include/VBox/vmm/ssm.h</a></li><li><a href=https://www.virtualbox.org/svn/vbox/trunk/src/VBox/VMM/VMMR3/SSM.cpp target=_blank rel="noreferrer noopener">https://www.virtualbox.org/svn/vbox/trunk/src/VBox/VMM/VMMR3/SSM.cpp</a></li></ul><h2 id=sav-file-header---ssmfilhdr>Sav File Header - SSMFILHDR
 <a class=header-link href=#sav-file-header---ssmfilhdr><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>First 64 bytes are the file header.</p>
-<pre tabindex=0><code>00000000  7f 56 69 72 74 75 61 6c 42 6f 78 20 53 61 76 65  |.VirtualBox Save|
+</h2><p>First 64 bytes are the file header.</p><pre tabindex=0><code>00000000  7f 56 69 72 74 75 61 6c 42 6f 78 20 53 61 76 65  |.VirtualBox Save|
 00000010  64 53 74 61 74 65 20 56 32 2e 30 0a 00 00 00 00  |dState V2.0.....|
 00000020  05 00 01 00 1c 00 00 00 d0 cc 01 00 40 08 08 00  |........ÐÌ..@...|
 00000030  2a 00 00 00 01 00 00 00 00 10 00 00 08 df 3b 9e  |*............ß;.|
-</code></pre><p>Inside <a href=https://www.virtualbox.org/svn/vbox/trunk/src/VBox/VMM/VMMR3/SSM.cpp target=_blank rel="noreferrer noopener">SSM.cpp</a> search for <code>struct SSMFILEHDR</code>:</p>
-<figure class=code>
+</code></pre><p>Inside <a href=https://www.virtualbox.org/svn/vbox/trunk/src/VBox/VMM/VMMR3/SSM.cpp target=_blank rel="noreferrer noopener">SSM.cpp</a> search for <code>struct SSMFILEHDR</code>:</p><figure class=code>
 <figcaption>
 <span>SSMFILEHDR - SSM.cpp</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">29
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">30
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">31
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#719e07>typedef</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>SSMFILEHDR</span>
-{
-    <span style=color:#586e75>/** Magic string which identifies this file as a version of VBox saved state
-</span><span style=color:#586e75>     *  file format (SSMFILEHDR_MAGIC_V2_0). */</span>
-    <span style=color:#dc322f>char</span>            szMagic[<span style=color:#2aa198>32</span>];
-    <span style=color:#586e75>/** The major version number. */</span>
-    <span style=color:#dc322f>uint16_t</span>        u16VerMajor;
-    <span style=color:#586e75>/** The minor version number. */</span>
-    <span style=color:#dc322f>uint16_t</span>        u16VerMinor;
-    <span style=color:#586e75>/** The build number. */</span>
-    <span style=color:#dc322f>uint32_t</span>        u32VerBuild;
-    <span style=color:#586e75>/** The SVN revision. */</span>
-    <span style=color:#dc322f>uint32_t</span>        u32SvnRev;
-    <span style=color:#586e75>/** 32 or 64 depending on the host. */</span>
-    <span style=color:#dc322f>uint8_t</span>         cHostBits;
-    <span style=color:#586e75>/** The size of RTGCPHYS. */</span>
-    <span style=color:#dc322f>uint8_t</span>         cbGCPhys;
-    <span style=color:#586e75>/** The size of RTGCPTR. */</span>
-    <span style=color:#dc322f>uint8_t</span>         cbGCPtr;
-    <span style=color:#586e75>/** Reserved header space - must be zero. */</span>
-    <span style=color:#dc322f>uint8_t</span>         u8Reserved;
-    <span style=color:#586e75>/** The number of units that (may) have stored data in the file. */</span>
-    <span style=color:#dc322f>uint32_t</span>        cUnits;
-    <span style=color:#586e75>/** Flags, see SSMFILEHDR_FLAGS_XXX.  */</span>
-    <span style=color:#dc322f>uint32_t</span>        fFlags;
-    <span style=color:#586e75>/** The maximum size of decompressed data. */</span>
-    <span style=color:#dc322f>uint32_t</span>        cbMaxDecompr;
-    <span style=color:#586e75>/** The checksum of this header.
-</span><span style=color:#586e75>     * This field is set to zero when calculating the checksum. */</span>
-    <span style=color:#dc322f>uint32_t</span>        u32CRC;
-} SSMFILEHDR;</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>First 32 bytes contain the <code>magic string</code>.</p>
-<figure class=code>
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">31
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#719e07>typedef</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>SSMFILEHDR</span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** Magic string which identifies this file as a version of VBox saved state
+</span></span></span><span style=display:flex><span><span style=color:#586e75>     *  file format (SSMFILEHDR_MAGIC_V2_0). */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>char</span>            szMagic[<span style=color:#2aa198>32</span>];
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** The major version number. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint16_t</span>        u16VerMajor;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** The minor version number. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint16_t</span>        u16VerMinor;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** The build number. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint32_t</span>        u32VerBuild;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** The SVN revision. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint32_t</span>        u32SvnRev;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** 32 or 64 depending on the host. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint8_t</span>         cHostBits;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** The size of RTGCPHYS. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint8_t</span>         cbGCPhys;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** The size of RTGCPTR. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint8_t</span>         cbGCPtr;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** Reserved header space - must be zero. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint8_t</span>         u8Reserved;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** The number of units that (may) have stored data in the file. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint32_t</span>        cUnits;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** Flags, see SSMFILEHDR_FLAGS_XXX.  */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint32_t</span>        fFlags;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** The maximum size of decompressed data. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint32_t</span>        cbMaxDecompr;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** The checksum of this header.
+</span></span></span><span style=display:flex><span><span style=color:#586e75>     * This field is set to zero when calculating the checksum. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint32_t</span>        u32CRC;
+</span></span><span style=display:flex><span>} SSMFILEHDR;</span></span></code></pre></td></tr></table></div></div></div></figure><p>First 32 bytes contain the <code>magic string</code>.</p><figure class=code>
 <figcaption>
 <span>SSMFILEHDR_MAGIC_V2_0</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">2
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#586e75>/** Saved state file v2.0 magic. */</span>
-<span style=color:#719e07>#define SSMFILEHDR_MAGIC_V2_0  &#34;\177VirtualBox SavedState V2.0\n\0\0\0&#34;</span></code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p><code>\177</code> is octal (base 8) or <code>0x7F</code>.</p>
-<pre tabindex=0><code>00000020  05 00 01 00 1c 00 00 00 d0 cc 01 00 40 08 08 00  |........ÐÌ..@...|
-</code></pre><p>Then the rest (in little-endian):</p>
-<ul>
-<li><code>05 00</code>: Major version number == <code>5</code>.</li>
-<li><code>10 00</code>: Minor version number == <code>1</code>.</li>
-<li><code>1c 00 00 00</code>: Build number == <code>28</code>.</li>
-<li><code>d0 cc 01 00</code>: SVN revision == <code>117968</code>.</li>
-<li><code>40</code>: Host bits == <code>64</code> (32 bit or 64 bit host).</li>
-<li><code>08</code>: Size of RTGCPHYS (Guest physical memory address) == <code>08</code>.</li>
-<li><code>08</code>: Size of RTGCPTR (Guest context pointer) == <code>08</code>. I have no idea what this does.</li>
-<li><code>00</code>: Reserved header space - must be zero.</li>
-</ul>
-<p>Thanks to the reserved header space, these fields start at a new line:</p>
-<pre tabindex=0><code>00000030  2a 00 00 00 01 00 00 00 00 10 00 00 08 df 3b 9e  |*............ß;.|
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#586e75>/** Saved state file v2.0 magic. */</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>#define SSMFILEHDR_MAGIC_V2_0  &#34;\177VirtualBox SavedState V2.0\n\0\0\0&#34;</span></span></span></code></pre></td></tr></table></div></div></div></figure><p><code>\177</code> is octal (base 8) or <code>0x7F</code>.</p><pre tabindex=0><code>00000020  05 00 01 00 1c 00 00 00 d0 cc 01 00 40 08 08 00  |........ÐÌ..@...|
+</code></pre><p>Then the rest (in little-endian):</p><ul>
+<li><code>05 00</code>: Major version number == <code>5</code>.</li><li><code>10 00</code>: Minor version number == <code>1</code>.</li><li><code>1c 00 00 00</code>: Build number == <code>28</code>.</li><li><code>d0 cc 01 00</code>: SVN revision == <code>117968</code>.</li><li><code>40</code>: Host bits == <code>64</code> (32 bit or 64 bit host).</li><li><code>08</code>: Size of RTGCPHYS (Guest physical memory address) == <code>08</code>.</li><li><code>08</code>: Size of RTGCPTR (Guest context pointer) == <code>08</code>. I have no idea what this does.</li><li><code>00</code>: Reserved header space - must be zero.</li></ul><p>Thanks to the reserved header space, these fields start at a new line:</p><pre tabindex=0><code>00000030  2a 00 00 00 01 00 00 00 00 10 00 00 08 df 3b 9e  |*............ß;.|
 </code></pre><ul>
-<li><code>2a 00 00 00</code>: Number of data units in the file == <code>42</code>.</li>
-<li><code>01 00 00 00</code>: Flags, discussed below. <code>01</code> == it's a live save state file.</li>
-<li><code>00 10 00 00</code>: Maximum size of decompressed data == <code>4096</code>.</li>
-<li><code>08 df 3b 9e</code>: CRC-32 checksum of the header. Set to zero when calculating the checksum.</li>
-</ul>
-<p>You can use the following code snippet to calculate CRC-32 in Go (remember to zero-out the last four bytes first):</p>
-<figure class=code>
+<li><code>2a 00 00 00</code>: Number of data units in the file == <code>42</code>.</li><li><code>01 00 00 00</code>: Flags, discussed below. <code>01</code> == it's a live save state file.</li><li><code>00 10 00 00</code>: Maximum size of decompressed data == <code>4096</code>.</li><li><code>08 df 3b 9e</code>: CRC-32 checksum of the header. Set to zero when calculating the checksum.</li></ul><p>You can use the following code snippet to calculate CRC-32 in Go (remember to zero-out the last four bytes first):</p><figure class=code>
 <figcaption>
 <span>Calculate CRC-32</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#719e07>package</span> main
-
-<span style=color:#719e07>import</span> (
-    <span style=color:#2aa198>&#34;encoding/hex&#34;</span>
-    <span style=color:#2aa198>&#34;fmt&#34;</span>
-    <span style=color:#2aa198>&#34;hash/crc32&#34;</span>
-)
-
-<span style=color:#268bd2>var</span> str1 = <span style=color:#2aa198>&#34;7F5669727475616C426F7820536176656453746174652056322E300A00000000
-</span><span style=color:#2aa198>            050001001C000000D0CC0100400808002A000000010000000010000000000000&#34;</span>
-
-<span style=color:#268bd2>func</span> <span style=color:#268bd2>main</span>() {
-    bytes1, err <span style=color:#719e07>:=</span> hex.<span style=color:#268bd2>DecodeString</span>(str1)
-    <span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
-        <span style=color:#b58900>panic</span>(err)
-    }
-    fmt.<span style=color:#268bd2>Printf</span>(<span style=color:#2aa198>&#34;%x&#34;</span>, crc32.<span style=color:#268bd2>ChecksumIEEE</span>(bytes1))
-}
-
-<span style=color:#586e75>// Returns: 9e3bdf08
-</span></code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>Try it at <a href=https://play.golang.org/p/NHF3WBkUmzN target=_blank rel="noreferrer noopener">play.golang.org</a>.</p>
-<p>For some reason CyberChef does not show the correct CRC-32 checksum while other online calculators do. Some info might be lost when convert hex bytes to chars and calculating the checksum.</p>
-<h3 id=flags>Flags
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#719e07>package</span> main
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>import</span> (
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;encoding/hex&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;fmt&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;hash/crc32&#34;</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>var</span> str1 = <span style=color:#2aa198>&#34;7F5669727475616C426F7820536176656453746174652056322E300A00000000
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>            050001001C000000D0CC0100400808002A000000010000000010000000000000&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>main</span>() {
+</span></span><span style=display:flex><span>    bytes1, err <span style=color:#719e07>:=</span> hex.<span style=color:#268bd2>DecodeString</span>(str1)
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#b58900>panic</span>(err)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    fmt.<span style=color:#268bd2>Printf</span>(<span style=color:#2aa198>&#34;%x&#34;</span>, crc32.<span style=color:#268bd2>ChecksumIEEE</span>(bytes1))
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// Returns: 9e3bdf08
+</span></span></span></code></pre></td></tr></table></div></div></div></figure><p>Try it at <a href=https://play.golang.org/p/NHF3WBkUmzN target=_blank rel="noreferrer noopener">play.golang.org</a>.</p><p>For some reason CyberChef does not show the correct CRC-32 checksum while other online calculators do. Some info might be lost when convert hex bytes to chars and calculating the checksum.</p><h3 id=flags>Flags
 <a class=header-link href=#flags><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>In short, flag is <code>01</code> if it's a live save state (which was in our case) and <code>00</code> if the stream is checksummed up to the footer (not sure what this flag value is used for).</p>
-<p>Flags are defined as follows:</p>
-<figure class=code>
+</h3><p>In short, flag is <code>01</code> if it's a live save state (which was in our case) and <code>00</code> if the stream is checksummed up to the footer (not sure what this flag value is used for).</p><p>Flags are defined as follows:</p><figure class=code>
 <figcaption>
 <span>SSMFILEHDR::fFlags - SSM.cpp</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">7
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#586e75>/** @name SSMFILEHDR::fFlags
-</span><span style=color:#586e75> * @{ */</span>
-<span style=color:#586e75>/** The stream is checksummed up to the footer using CRC-32. */</span>
-<span style=color:#719e07>#define SSMFILEHDR_FLAGS_STREAM_CRC32           RT_BIT_32(0)
-</span><span style=color:#719e07></span><span style=color:#586e75>/** Indicates that the file was produced by a live save. */</span>
-<span style=color:#719e07>#define SSMFILEHDR_FLAGS_STREAM_LIVE_SAVE       RT_BIT_32(1)
-</span><span style=color:#719e07></span><span style=color:#586e75>/** @} */</span></code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<h2 id=saved-state-units>Saved State Units
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">7
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#586e75>/** @name SSMFILEHDR::fFlags
+</span></span></span><span style=display:flex><span><span style=color:#586e75> * @{ */</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>/** The stream is checksummed up to the footer using CRC-32. */</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>#define SSMFILEHDR_FLAGS_STREAM_CRC32           RT_BIT_32(0)
+</span></span></span><span style=display:flex><span><span style=color:#719e07></span><span style=color:#586e75>/** Indicates that the file was produced by a live save. */</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>#define SSMFILEHDR_FLAGS_STREAM_LIVE_SAVE       RT_BIT_32(1)
+</span></span></span><span style=display:flex><span><span style=color:#719e07></span><span style=color:#586e75>/** @} */</span></span></span></code></pre></td></tr></table></div></div></div></figure><h2 id=saved-state-units>Saved State Units
 <a class=header-link href=#saved-state-units><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>After the header we can see a number of saved state units that conveniently start with the text <code>Unit</code>.</p>
-<p>Search for <code>typedef struct SSMUNIT</code> in <a href=https://www.virtualbox.org/svn/vbox/trunk/src/VBox/VMM/include/SSMInternal.h target=_blank rel="noreferrer noopener">SSMInternal.h</a> for more info.</p>
-<p>We're going to look at the SSM unit, but all units have the same structure.</p>
-<h3 id=ssm-data-unit>SSM Data Unit
+</h2><p>After the header we can see a number of saved state units that conveniently start with the text <code>Unit</code>.</p><p>Search for <code>typedef struct SSMUNIT</code> in <a href=https://www.virtualbox.org/svn/vbox/trunk/src/VBox/VMM/include/SSMInternal.h target=_blank rel="noreferrer noopener">SSMInternal.h</a> for more info.</p><p>We're going to look at the SSM unit, but all units have the same structure.</p><h3 id=ssm-data-unit>SSM Data Unit
 <a class=header-link href=#ssm-data-unit><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>First data unit after the file header is the "Saved State" unit or SSM.</p>
-<h4 id=ssm-unit-header---ssmfileunithdrv2>SSM Unit Header - SSMFILEUNITHDRV2
+</h3><p>First data unit after the file header is the "Saved State" unit or SSM.</p><h4 id=ssm-unit-header---ssmfileunithdrv2>SSM Unit Header - SSMFILEUNITHDRV2
 <a class=header-link href=#ssm-unit-header---ssmfileunithdrv2><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h4><p>Each unit has its own header that is defined as follows:</p>
-<figure class=code>
+</h4><p>Each unit has its own header that is defined as follows:</p><figure class=code>
 <figcaption>
 <span>SSMFILEUNITHDRV2 - SSM.cpp</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#719e07>typedef</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>SSMFILEUNITHDRV2</span>
-{
-    <span style=color:#586e75>/** Magic (SSMFILEUNITHDR_MAGIC or SSMFILEUNITHDR_END). */</span>
-    <span style=color:#dc322f>char</span>            szMagic[<span style=color:#2aa198>8</span>];
-    <span style=color:#586e75>/** The offset in the saved state stream of the start of this unit.
-</span><span style=color:#586e75>     * This is mainly intended for sanity checking. */</span>
-    <span style=color:#dc322f>uint64_t</span>        offStream;
-    <span style=color:#586e75>/** The CRC-in-progress value this unit starts at. */</span>
-    <span style=color:#dc322f>uint32_t</span>        u32CurStreamCRC;
-    <span style=color:#586e75>/** The checksum of this structure, including the whole name.
-</span><span style=color:#586e75>     * Calculated with this field set to zero.  */</span>
-    <span style=color:#dc322f>uint32_t</span>        u32CRC;
-    <span style=color:#586e75>/** Data version. */</span>
-    <span style=color:#dc322f>uint32_t</span>        u32Version;
-    <span style=color:#586e75>/** Instance number. */</span>
-    <span style=color:#dc322f>uint32_t</span>        u32Instance;
-    <span style=color:#586e75>/** Data pass number. */</span>
-    <span style=color:#dc322f>uint32_t</span>        u32Pass;
-    <span style=color:#586e75>/** Flags reserved for future extensions. Must be zero. */</span>
-    <span style=color:#dc322f>uint32_t</span>        fFlags;
-    <span style=color:#586e75>/** Size of the data unit name including the terminator. (bytes) */</span>
-    <span style=color:#dc322f>uint32_t</span>        cbName;
-    <span style=color:#586e75>/** Data unit name, variable size. */</span>
-    <span style=color:#dc322f>char</span>            szName[SSM_MAX_NAME_SIZE];
-} SSMFILEUNITHDRV2;</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>THE SSM unit in our file is:</p>
-<pre tabindex=0><code>00000040  0a 55 6e 69 74 0a 00 00 40 00 00 00 00 00 00 00  |.Unit...@.......|
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#719e07>typedef</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>SSMFILEUNITHDRV2</span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** Magic (SSMFILEUNITHDR_MAGIC or SSMFILEUNITHDR_END). */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>char</span>            szMagic[<span style=color:#2aa198>8</span>];
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** The offset in the saved state stream of the start of this unit.
+</span></span></span><span style=display:flex><span><span style=color:#586e75>     * This is mainly intended for sanity checking. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint64_t</span>        offStream;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** The CRC-in-progress value this unit starts at. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint32_t</span>        u32CurStreamCRC;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** The checksum of this structure, including the whole name.
+</span></span></span><span style=display:flex><span><span style=color:#586e75>     * Calculated with this field set to zero.  */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint32_t</span>        u32CRC;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** Data version. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint32_t</span>        u32Version;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** Instance number. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint32_t</span>        u32Instance;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** Data pass number. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint32_t</span>        u32Pass;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** Flags reserved for future extensions. Must be zero. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint32_t</span>        fFlags;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** Size of the data unit name including the terminator. (bytes) */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint32_t</span>        cbName;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** Data unit name, variable size. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>char</span>            szName[SSM_MAX_NAME_SIZE];
+</span></span><span style=display:flex><span>} SSMFILEUNITHDRV2;</span></span></code></pre></td></tr></table></div></div></div></figure><p>THE SSM unit in our file is:</p><pre tabindex=0><code>00000040  0a 55 6e 69 74 0a 00 00 40 00 00 00 00 00 00 00  |.Unit...@.......|
 00000050  91 d4 5f f6 13 12 1d eb 01 00 00 00 00 00 00 00  |.Ô_ö...ë........|
 00000060  ff ff ff ff 00 00 00 00 04 00 00 00 53 53 4d 00  |ÿÿÿÿ........SSM.|
 
@@ -402,314 +286,203 @@ VirtualBox Live State File Format
 00000080  07 00 00 00 72 65 6c 65 61 73 65 07 00 00 00 48  |....release....H|
 00000090  6f 73 74 20 4f 53 09 00 00 00 77 69 6e 2e 61 6d  |ost OS....win.am|
 000000a0  64 36 34 00 00 00 00 00 00 00 00                 |d64........|
-</code></pre><p>First 8 bytes contain the data unit magic header. It can have two values:</p>
-<figure class=code>
+</code></pre><p>First 8 bytes contain the data unit magic header. It can have two values:</p><figure class=code>
 <figcaption>
 <span>Magics - SSM.cpp</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">4
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#586e75>/** Data unit magic. */</span>
-<span style=color:#719e07>#define SSMFILEUNITHDR_MAGIC    &#34;\nUnit\n\0&#34;
-</span><span style=color:#719e07></span><span style=color:#586e75>/** Data end marker magic. */</span>
-<span style=color:#719e07>#define SSMFILEUNITHDR_END      &#34;\nTheEnd&#34;</span></code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p><code>TheEnd</code> appears in the the block after all data units.</p>
-<p>In this data unit we have <code>0a 55 6e 69 74 0a 00 00</code> or <code>\nUnit\n\0</code>.</p>
-<p>Starting from offset <code>0x40</code> we have:</p>
-<ul>
-<li><code>40 00 00 00</code>: Offset of this unit in the stream. For this unit it's <code>0x40</code>. In other words, if we go this offset in the sav file, we will see this data unit.</li>
-<li><code>00 00 00 00</code>: "The CRC-in-progress value this unit starts at." No idea what this is. It could be the default value of the CRC bytes when we are creating the CRC checksum (see above). It has been zero for this data unit in all live states I have seen.</li>
-<li><code>91 d4 5f f6</code>: Checksum of the data unit with the checksum bytes set to zero.</li>
-<li><code>13 12 1d eb</code>: Data version == <code>eb 1d 12 13</code>. (?)</li>
-<li><code>01 00 00 00</code>: Instance number == <code>01</code>. (?)</li>
-<li><code>00 00 00 00</code>: Data pass number == <code>00</code>. (?)</li>
-<li><code>ff ff ff ff</code>: <strong>These 4 bytes do not appear in the spec.</strong> Could be alignment for the data unit header? These appear in every live state.</li>
-<li><code>00 00 00 00</code>: Flags reserved for future extensions. Must be zero.</li>
-<li><code>04 00 00 00</code>: Size of null-terminated data unit name in bytes, <code>4</code> in this data unit. In other words, read this many bytes to get the data unit name with the null terminator.</li>
-<li><code>53 53 4d 00</code>: Data unit name and null terminator, <code>SMM</code>.</li>
-</ul>
-<h4 id=ssm-unit-data>SSM Unit Data
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#586e75>/** Data unit magic. */</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>#define SSMFILEUNITHDR_MAGIC    &#34;\nUnit\n\0&#34;
+</span></span></span><span style=display:flex><span><span style=color:#719e07></span><span style=color:#586e75>/** Data end marker magic. */</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>#define SSMFILEUNITHDR_END      &#34;\nTheEnd&#34;</span></span></span></code></pre></td></tr></table></div></div></div></figure><p><code>TheEnd</code> appears in the the block after all data units.</p><p>In this data unit we have <code>0a 55 6e 69 74 0a 00 00</code> or <code>\nUnit\n\0</code>.</p><p>Starting from offset <code>0x40</code> we have:</p><ul>
+<li><code>40 00 00 00</code>: Offset of this unit in the stream. For this unit it's <code>0x40</code>. In other words, if we go this offset in the sav file, we will see this data unit.</li><li><code>00 00 00 00</code>: "The CRC-in-progress value this unit starts at." No idea what this is. It could be the default value of the CRC bytes when we are creating the CRC checksum (see above). It has been zero for this data unit in all live states I have seen.</li><li><code>91 d4 5f f6</code>: Checksum of the data unit with the checksum bytes set to zero.</li><li><code>13 12 1d eb</code>: Data version == <code>eb 1d 12 13</code>. (?)</li><li><code>01 00 00 00</code>: Instance number == <code>01</code>. (?)</li><li><code>00 00 00 00</code>: Data pass number == <code>00</code>. (?)</li><li><code>ff ff ff ff</code>: <strong>These 4 bytes do not appear in the spec.</strong> Could be alignment for the data unit header? These appear in every live state.</li><li><code>00 00 00 00</code>: Flags reserved for future extensions. Must be zero.</li><li><code>04 00 00 00</code>: Size of null-terminated data unit name in bytes, <code>4</code> in this data unit. In other words, read this many bytes to get the data unit name with the null terminator.</li><li><code>53 53 4d 00</code>: Data unit name and null terminator, <code>SMM</code>.</li></ul><h4 id=ssm-unit-data>SSM Unit Data
 <a class=header-link href=#ssm-unit-data><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h4><p>Going back up the <a href=https://www.virtualbox.org/svn/vbox/trunk/src/VBox/VMM/VMMR3/SSM.cpp target=_blank rel="noreferrer noopener">SSM.cpp</a> file we can see the specifications for the data in this unit:</p>
-<pre tabindex=0><code>00000070  92 39 0a 00 00 00 42 75 69 6c 64 20 54 79 70 65  |.9....Build Type|
+</h4><p>Going back up the <a href=https://www.virtualbox.org/svn/vbox/trunk/src/VBox/VMM/VMMR3/SSM.cpp target=_blank rel="noreferrer noopener">SSM.cpp</a> file we can see the specifications for the data in this unit:</p><pre tabindex=0><code>00000070  92 39 0a 00 00 00 42 75 69 6c 64 20 54 79 70 65  |.9....Build Type|
 00000080  07 00 00 00 72 65 6c 65 61 73 65 07 00 00 00 48  |....release....H|
 00000090  6f 73 74 20 4f 53 09 00 00 00 77 69 6e 2e 61 6d  |ost OS....win.am|
 000000a0  64 36 34 00 00 00 00 00 00 00 00                 |d64........|
 </code></pre><blockquote>
-<p>The first byte in the record header indicates the type and flags.</p>
-</blockquote>
-<p>We have <code>0x92</code> or <code>1001 0010</code>:</p>
-<ul>
-<li>bits 0..3 - Record type <code>0010</code>: type = Raw data record.</li>
-<li>bit 4: <code>1</code> if important and <code>0</code> if it can be skipped. This is an important data unit.</li>
-<li>bits 5, 6: Must be <code>0</code>.</li>
-<li>bit 7: Always <code>1</code>.</li>
-</ul>
-<blockquote>
-<p>Record header byte 2 (optionally thru 7) is the size of the following data encoded in UTF-8 style.</p>
-</blockquote>
-<p>We have <code>0x39</code> or <code>57</code> decimal. So we will read 57 bytes.</p>
-<p>This part is easy. Read a little-endian uint32, that's field length. Then read that many bytes to get the field. This is a typical Pascal style string (as seen in ASN.1 format) which do not have null/string terminators.</p>
-<ul>
-<li><code>0a 00 00 00 - 42 75 69 6c 64 20 54 79 70 65</code>: 10 bytes - <code>Build Type</code>.</li>
-<li><code>07 00 00 00 - 72 65 6c 65 61 73 65</code>: 7 bytes - <code>release</code>.</li>
-<li><code>07 00 00 00 - 48 6f 73 74 20 4f 53</code>: 7 bytes - <code>Host OS</code>.</li>
-<li><code>09 00 00 00 - 77 69 6e 2e 61 6d 64 36 34</code>: 9 bytes - <code>win.amd64</code>.</li>
-<li><code>00 00 00 00 - 00 00 00 00</code>: 0 bytes - empty (?).</li>
-</ul>
-<h3 id=end-data-unit>End Data Unit
+<p>The first byte in the record header indicates the type and flags.</p></blockquote><p>We have <code>0x92</code> or <code>1001 0010</code>:</p><ul>
+<li>bits 0..3 - Record type <code>0010</code>: type = Raw data record.</li><li>bit 4: <code>1</code> if important and <code>0</code> if it can be skipped. This is an important data unit.</li><li>bits 5, 6: Must be <code>0</code>.</li><li>bit 7: Always <code>1</code>.</li></ul><blockquote>
+<p>Record header byte 2 (optionally thru 7) is the size of the following data encoded in UTF-8 style.</p></blockquote><p>We have <code>0x39</code> or <code>57</code> decimal. So we will read 57 bytes.</p><p>This part is easy. Read a little-endian uint32, that's field length. Then read that many bytes to get the field. This is a typical Pascal style string (as seen in ASN.1 format) which do not have null/string terminators.</p><ul>
+<li><code>0a 00 00 00 - 42 75 69 6c 64 20 54 79 70 65</code>: 10 bytes - <code>Build Type</code>.</li><li><code>07 00 00 00 - 72 65 6c 65 61 73 65</code>: 7 bytes - <code>release</code>.</li><li><code>07 00 00 00 - 48 6f 73 74 20 4f 53</code>: 7 bytes - <code>Host OS</code>.</li><li><code>09 00 00 00 - 77 69 6e 2e 61 6d 64 36 34</code>: 9 bytes - <code>win.amd64</code>.</li><li><code>00 00 00 00 - 00 00 00 00</code>: 0 bytes - empty (?).</li></ul><h3 id=end-data-unit>End Data Unit
 <a class=header-link href=#end-data-unit><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>This is the last data unit. It starts with the magic header <code>SSMFILEUNITHDR_END</code>:</p>
-<figure class=code>
+</h3><p>This is the last data unit. It starts with the magic header <code>SSMFILEUNITHDR_END</code>:</p><figure class=code>
 <figcaption>
 <span>SSMFILEUNITHDR_END - SSM.cpp</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">2
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#586e75>/** Data end marker magic. */</span>
-<span style=color:#719e07>#define SSMFILEUNITHDR_END                      &#34;\nTheEnd&#34;</span></code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>We can see it at offset <code>0x4C7A712</code>:</p>
-<span class=caption-wrapper>
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#586e75>/** Data end marker magic. */</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>#define SSMFILEUNITHDR_END                      &#34;\nTheEnd&#34;</span></span></span></code></pre></td></tr></table></div></div></div></figure><p>We can see it at offset <code>0x4C7A712</code>:</p><span class=caption-wrapper>
 <img class=caption src=/images/2018/vbox2/01-end-unit.png title="End data unit" alt="End data unit">
 <span class=caption-text>End data unit</span>
 </span>
 <pre tabindex=0><code>00000000  0a 54 68 65 45 6e 64 00 12 a7 c7 04 00 00 00 00  |.TheEnd..§Ç.....|
 00000010  94 e5 7d 35 47 2b 45 32 00 00 00 00 00 00 00 00  |.å}5G+E2........|
 00000020  ff ff ff ff 00 00 00 00 00 00 00 00              |ÿÿÿÿ........|
-</code></pre><p>End data unit does not have any data, it only has a header and does not have a name. Using the <code>SSMFILEUNITHDRV2</code> struct we can dissect it:</p>
-<ul>
-<li><code>0a 54 68 65 45 6e 64 00</code>: Header <code>"\nTheEnd"</code>.</li>
-<li><code>12 a7 c7 04</code>: Offset of this unit == <code>04 c7 a7 12</code>.</li>
-<li><code>00 00 00 00</code>: CRC-in-progress.</li>
-<li><code>94 e5 7d 35</code>: Checksum of the data unit.</li>
-<li><code>47 2b 45 32</code>: Data version. (?)</li>
-<li><code>00 00 00 00</code>: Instance number.</li>
-<li><code>00 00 00 00</code>: Data pass number.</li>
-<li><code>ff ff ff ff</code>: Not in spec, but appears in every data unit.</li>
-<li><code>00 00 00 00</code>: Flags reserved for future extensions. Must be zero.</li>
-<li><code>00 00 00 00</code>: Size of data unit name in bytes. Zero here.</li>
-</ul>
-<h2 id=directory>Directory
+</code></pre><p>End data unit does not have any data, it only has a header and does not have a name. Using the <code>SSMFILEUNITHDRV2</code> struct we can dissect it:</p><ul>
+<li><code>0a 54 68 65 45 6e 64 00</code>: Header <code>"\nTheEnd"</code>.</li><li><code>12 a7 c7 04</code>: Offset of this unit == <code>04 c7 a7 12</code>.</li><li><code>00 00 00 00</code>: CRC-in-progress.</li><li><code>94 e5 7d 35</code>: Checksum of the data unit.</li><li><code>47 2b 45 32</code>: Data version. (?)</li><li><code>00 00 00 00</code>: Instance number.</li><li><code>00 00 00 00</code>: Data pass number.</li><li><code>ff ff ff ff</code>: Not in spec, but appears in every data unit.</li><li><code>00 00 00 00</code>: Flags reserved for future extensions. Must be zero.</li><li><code>00 00 00 00</code>: Size of data unit name in bytes. Zero here.</li></ul><h2 id=directory>Directory
 <a class=header-link href=#directory><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>In our file, directory is just right after the end unit.</p>
-<span class=caption-wrapper>
+</h2><p>In our file, directory is just right after the end unit.</p><span class=caption-wrapper>
 <img class=caption src=/images/2018/vbox2/02-dir.png title="End data unit" alt="End data unit">
 <span class=caption-text>End data unit</span>
 </span>
-<p>It has a header followed by some directory entries.</p>
-<h3 id=directory-header---ssmfiledir>Directory Header - SSMFILEDIR
+<p>It has a header followed by some directory entries.</p><h3 id=directory-header---ssmfiledir>Directory Header - SSMFILEDIR
 <a class=header-link href=#directory-header---ssmfiledir><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>Inside <a href=https://www.virtualbox.org/svn/vbox/trunk/src/VBox/VMM/VMMR3/SSM.cpp target=_blank rel="noreferrer noopener">SSM.cpp</a> search for <code>SSMFILEDIR</code>:</p>
-<figure class=code>
+</h3><p>Inside <a href=https://www.virtualbox.org/svn/vbox/trunk/src/VBox/VMM/VMMR3/SSM.cpp target=_blank rel="noreferrer noopener">SSM.cpp</a> search for <code>SSMFILEDIR</code>:</p><figure class=code>
 <figcaption>
 <span>SSMFILEDIR - SSM.cpp</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#586e75>/**
-</span><span style=color:#586e75> * Directory for the data units from the final pass.
-</span><span style=color:#586e75> *
-</span><span style=color:#586e75> * This is used to speed up SSMR3Seek (it would have to decompress and parse the
-</span><span style=color:#586e75> * whole stream otherwise).
-</span><span style=color:#586e75> */</span>
-<span style=color:#719e07>typedef</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>SSMFILEDIR</span>
-{
-    <span style=color:#586e75>/** Magic string (SSMFILEDIR_MAGIC). */</span>
-    <span style=color:#dc322f>char</span>            szMagic[<span style=color:#2aa198>8</span>];
-    <span style=color:#586e75>/** The CRC-32 for the whole directory.
-</span><span style=color:#586e75>     * Calculated with this field set to zero. */</span>
-    <span style=color:#dc322f>uint32_t</span>        u32CRC;
-    <span style=color:#586e75>/** The number of directory entries. */</span>
-    <span style=color:#dc322f>uint32_t</span>        cEntries;
-    <span style=color:#586e75>/** The directory entries (variable size). */</span>
-    SSMFILEDIRENTRY aEntries[<span style=color:#2aa198>1</span>];
-} SSMFILEDIR;
-
-<span style=color:#586e75>/** The directory magic. */</span>
-<span style=color:#719e07>#define SSMFILEDIR_MAGIC                        &#34;\nDir\n\0\0&#34;</span></code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<pre tabindex=0><code>00000000  0a 44 69 72 0a 00 00 00 ef 86 a6 b5 22 00 00 00  |.Dir....ï.¦µ&quot;...|
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#586e75>/**
+</span></span></span><span style=display:flex><span><span style=color:#586e75> * Directory for the data units from the final pass.
+</span></span></span><span style=display:flex><span><span style=color:#586e75> *
+</span></span></span><span style=display:flex><span><span style=color:#586e75> * This is used to speed up SSMR3Seek (it would have to decompress and parse the
+</span></span></span><span style=display:flex><span><span style=color:#586e75> * whole stream otherwise).
+</span></span></span><span style=display:flex><span><span style=color:#586e75> */</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>typedef</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>SSMFILEDIR</span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** Magic string (SSMFILEDIR_MAGIC). */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>char</span>            szMagic[<span style=color:#2aa198>8</span>];
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** The CRC-32 for the whole directory.
+</span></span></span><span style=display:flex><span><span style=color:#586e75>     * Calculated with this field set to zero. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint32_t</span>        u32CRC;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** The number of directory entries. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint32_t</span>        cEntries;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** The directory entries (variable size). */</span>
+</span></span><span style=display:flex><span>    SSMFILEDIRENTRY aEntries[<span style=color:#2aa198>1</span>];
+</span></span><span style=display:flex><span>} SSMFILEDIR;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75>/** The directory magic. */</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>#define SSMFILEDIR_MAGIC                        &#34;\nDir\n\0\0&#34;</span></span></span></code></pre></td></tr></table></div></div></div></figure><pre tabindex=0><code>00000000  0a 44 69 72 0a 00 00 00 ef 86 a6 b5 22 00 00 00  |.Dir....ï.¦µ&#34;...|
 </code></pre><ul>
-<li><code>0a 44 69 72 0a 00 00 00</code>: Magic header.</li>
-<li><code>ef 86 a6 b5</code>: CRC-32 of the whole directory.</li>
-<li><code>22 00 00 00</code>: Number of directories <code>0x22</code> == <code>34</code> decimal.</li>
-</ul>
-<p>Then we have 34 directories (each directory is 16 bytes) of type <code>SSMFILEDIRENTRY</code>.</p>
-<h2 id=directories---ssmfiledirentry>Directories - SSMFILEDIRENTRY
+<li><code>0a 44 69 72 0a 00 00 00</code>: Magic header.</li><li><code>ef 86 a6 b5</code>: CRC-32 of the whole directory.</li><li><code>22 00 00 00</code>: Number of directories <code>0x22</code> == <code>34</code> decimal.</li></ul><p>Then we have 34 directories (each directory is 16 bytes) of type <code>SSMFILEDIRENTRY</code>.</p><h2 id=directories---ssmfiledirentry>Directories - SSMFILEDIRENTRY
 <a class=header-link href=#directories---ssmfiledirentry><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>The directories have a simple structure.</p>
-<figure class=code>
+</h2><p>The directories have a simple structure.</p><figure class=code>
 <figcaption>
 <span>SSMFILEDIRENTRY - SSM.cpp</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#586e75>/**
-</span><span style=color:#586e75> * Directory entry.
-</span><span style=color:#586e75> */</span>
-<span style=color:#719e07>typedef</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>SSMFILEDIRENTRY</span>
-{
-    <span style=color:#586e75>/** The offset of the data unit. */</span>
-    <span style=color:#dc322f>uint64_t</span>        off;
-    <span style=color:#586e75>/** The instance number. */</span>
-    <span style=color:#dc322f>uint32_t</span>        u32Instance;
-    <span style=color:#586e75>/** The CRC-32 of the name excluding the terminator. (lazy bird) */</span>
-    <span style=color:#dc322f>uint32_t</span>        u32NameCRC;
-} SSMFILEDIRENTRY;</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>We will look at the first one:</p>
-<pre tabindex=0><code>00000010  40 00 00 00 00 00 00 00 00 00 00 00 41 7a 40 08  |@...........Az@.|
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#586e75>/**
+</span></span></span><span style=display:flex><span><span style=color:#586e75> * Directory entry.
+</span></span></span><span style=display:flex><span><span style=color:#586e75> */</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>typedef</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>SSMFILEDIRENTRY</span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** The offset of the data unit. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint64_t</span>        off;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** The instance number. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint32_t</span>        u32Instance;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** The CRC-32 of the name excluding the terminator. (lazy bird) */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint32_t</span>        u32NameCRC;
+</span></span><span style=display:flex><span>} SSMFILEDIRENTRY;</span></span></code></pre></td></tr></table></div></div></div></figure><p>We will look at the first one:</p><pre tabindex=0><code>00000010  40 00 00 00 00 00 00 00 00 00 00 00 41 7a 40 08  |@...........Az@.|
 </code></pre><ul>
-<li><code>40 00 00 00 00 00 00 00</code>: Data unit offset. We have already seen this data unit. This is the SSM unit.</li>
-<li><code>00 00 00 00</code>: Instance number == <code>0x00</code>.</li>
-<li><code>41 7a 40 08</code>: CRC-32 of the name excluding the terminator.</li>
-</ul>
-<h2 id=file-footer---ssmfileftr>File Footer - SSMFILEFTR
+<li><code>40 00 00 00 00 00 00 00</code>: Data unit offset. We have already seen this data unit. This is the SSM unit.</li><li><code>00 00 00 00</code>: Instance number == <code>0x00</code>.</li><li><code>41 7a 40 08</code>: CRC-32 of the name excluding the terminator.</li></ul><h2 id=file-footer---ssmfileftr>File Footer - SSMFILEFTR
 <a class=header-link href=#file-footer---ssmfileftr><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Finally we have the file footer.</p>
-<figure class=code>
+</h2><p>Finally we have the file footer.</p><figure class=code>
 <figcaption>
 <span>SSMFILEFTR_MAGIC and SSMFILEFTR - SSM.cpp</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=color:#586e75>/** Saved state file v2.0 magic. */</span>
-<span style=color:#719e07>#define SSMFILEFTR_MAGIC                        &#34;\nFooter&#34;
-</span><span style=color:#719e07></span>
-<span style=color:#586e75>/**
-</span><span style=color:#586e75> * Footer structure
-</span><span style=color:#586e75> */</span>
-<span style=color:#719e07>typedef</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>SSMFILEFTR</span>
-{
-    <span style=color:#586e75>/** Magic string (SSMFILEFTR_MAGIC). */</span>
-    <span style=color:#dc322f>char</span>            szMagic[<span style=color:#2aa198>8</span>];
-    <span style=color:#586e75>/** The offset of this record in the stream. */</span>
-    <span style=color:#dc322f>uint64_t</span>        offStream;
-    <span style=color:#586e75>/** The CRC for the stream.
-</span><span style=color:#586e75>     * This is set to zero if SSMFILEHDR_FLAGS_STREAM_CRC32 is clear. */</span>
-    <span style=color:#dc322f>uint32_t</span>        u32StreamCRC;
-    <span style=color:#586e75>/** Number directory entries. */</span>
-    <span style=color:#dc322f>uint32_t</span>        cDirEntries;
-    <span style=color:#586e75>/** Reserved footer space - must be zero. */</span>
-    <span style=color:#dc322f>uint32_t</span>        u32Reserved;
-    <span style=color:#586e75>/** The CRC-32 for this structure.
-</span><span style=color:#586e75>     * Calculated with this field set to zero. */</span>
-    <span style=color:#dc322f>uint32_t</span>        u32CRC;
-} SSMFILEFTR;</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>Which is:</p>
-<pre tabindex=0><code>00000000  0a 46 6f 6f 74 65 72 00 6e a9 c7 04 00 00 00 00  |.Footer.n©Ç.....|
-00000010  c7 2f 92 29 22 00 00 00 00 00 00 00 bc d2 96 8d  |Ç/.)&quot;.......¼Ò..|
-</code></pre><p>Based on the struct we can dissect it:</p>
-<ul>
-<li><code>0a 46 6f 6f 74 65 72 00</code>: <code>SSMFILEFTR_MAGIC</code> == <code>\nFooter</code>.</li>
-<li><code>6e a9 c7 04</code>: Offset of this record in the stream == <code>04 c7 a9 6e</code>.</li>
-<li><code>00 00 00 00</code>: CRC-32 of the stream. It's set to zero.</li>
-<li><code>c7 2f 92 29</code>: <strong>This is not in the struct.</strong></li>
-<li><code>22 00 00 00</code>: Number of directory entries == <code>34</code> decimal.</li>
-<li><code>00 00 00 00</code>: Reserved, must be zero.</li>
-<li><code>bc d2 96 8d</code>: CRC-32 for this structure. Set to zero during calculation.</li>
-</ul>
-<p>There's one extra <code>uint32</code> in the footer. I do not know what <code>29 92 2f c7</code> is.</p>
-<h1 id=conclusion>Conclusion
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#586e75>/** Saved state file v2.0 magic. */</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>#define SSMFILEFTR_MAGIC                        &#34;\nFooter&#34;
+</span></span></span><span style=display:flex><span><span style=color:#719e07></span>
+</span></span><span style=display:flex><span><span style=color:#586e75>/**
+</span></span></span><span style=display:flex><span><span style=color:#586e75> * Footer structure
+</span></span></span><span style=display:flex><span><span style=color:#586e75> */</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>typedef</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>SSMFILEFTR</span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** Magic string (SSMFILEFTR_MAGIC). */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>char</span>            szMagic[<span style=color:#2aa198>8</span>];
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** The offset of this record in the stream. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint64_t</span>        offStream;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** The CRC for the stream.
+</span></span></span><span style=display:flex><span><span style=color:#586e75>     * This is set to zero if SSMFILEHDR_FLAGS_STREAM_CRC32 is clear. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint32_t</span>        u32StreamCRC;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** Number directory entries. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint32_t</span>        cDirEntries;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** Reserved footer space - must be zero. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint32_t</span>        u32Reserved;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>/** The CRC-32 for this structure.
+</span></span></span><span style=display:flex><span><span style=color:#586e75>     * Calculated with this field set to zero. */</span>
+</span></span><span style=display:flex><span>    <span style=color:#dc322f>uint32_t</span>        u32CRC;
+</span></span><span style=display:flex><span>} SSMFILEFTR;</span></span></code></pre></td></tr></table></div></div></div></figure><p>Which is:</p><pre tabindex=0><code>00000000  0a 46 6f 6f 74 65 72 00 6e a9 c7 04 00 00 00 00  |.Footer.n©Ç.....|
+00000010  c7 2f 92 29 22 00 00 00 00 00 00 00 bc d2 96 8d  |Ç/.)&#34;.......¼Ò..|
+</code></pre><p>Based on the struct we can dissect it:</p><ul>
+<li><code>0a 46 6f 6f 74 65 72 00</code>: <code>SSMFILEFTR_MAGIC</code> == <code>\nFooter</code>.</li><li><code>6e a9 c7 04</code>: Offset of this record in the stream == <code>04 c7 a9 6e</code>.</li><li><code>00 00 00 00</code>: CRC-32 of the stream. It's set to zero.</li><li><code>c7 2f 92 29</code>: <strong>This is not in the struct.</strong></li><li><code>22 00 00 00</code>: Number of directory entries == <code>34</code> decimal.</li><li><code>00 00 00 00</code>: Reserved, must be zero.</li><li><code>bc d2 96 8d</code>: CRC-32 for this structure. Set to zero during calculation.</li></ul><p>There's one extra <code>uint32</code> in the footer. I do not know what <code>29 92 2f c7</code> is.</p><h1 id=conclusion>Conclusion
 <a class=header-link href=#conclusion><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>We learned how to extract some information from VBox sav files with a practical example. Although the product is opensource, the format does not have public documentation.</p>
-</div>
-<footer>
+</h1><p>We learned how to extract some information from VBox sav files with a practical example. Although the product is opensource, the format does not have public documentation.</p></div><footer>
 <p class=meta>
 <span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>Jan 29, 2018</time>
@@ -717,82 +490,47 @@ VirtualBox Live State File Format
 Tags:
 <a class=category href=https://parsiya.net/tags/virtualbox>VirtualBox</a>
 </span>
-</p>
-<p class=meta>
+</p><p class=meta>
 <a class="basic-alignment left" href=https://parsiya.net/blog/2018-01-23-mounting-live-snapshots-of-encrypted-vms-in-virtualbox/ title="Mounting Live Snapshots of Encrypted VMs in VirtualBox">Mounting Live Snapshots of Encrypted VMs in VirtualBox</a>
 <a class="basic-alignment right" href=https://parsiya.net/blog/2018-02-08-notes-from-nistir-8202-blockchain-technology-overview-january-2018-draft/ title="Notes from NISTIR 8202 - Blockchain Technology Overview January 2018 Draft">Notes from NISTIR 8202 - Blockchain Technology Overview January 2018 Draft</a>
-</p>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</div>
-<aside class="sidebar thirds">
+</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer></article></div><aside class="sidebar thirds">
 <section class="first odd">
-<h1>Who am I?</h1>
-<p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
-<p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p>
-<p>Click on <a href=/about/>About Me!</a> to know more.</p>
-</p>
-</section>
-<ul class=sidebar-nav>
+<h1>Who am I?</h1><p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
 <li class=sidebar-nav-item>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li>
-</ul>
-<section class=odd>
-<h1>Collections</h1>
-<li>
+</li></ul><section class=odd>
+<h1>Collections</h1><li>
 <a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li>
-<li>
+</li><li>
 <a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li>
-</section>
-</aside>
-</div>
-</div>
-<footer role=contentinfo>
+</li></section></aside></div></div><footer role=contentinfo>
 <p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>

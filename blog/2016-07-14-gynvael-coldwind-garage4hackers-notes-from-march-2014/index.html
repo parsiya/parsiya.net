@@ -3,51 +3,34 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
 <link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>Gynvael Coldwind - Garage4Hackers - Notes from March 2014</title>
-<link rel=stylesheet href=/css/hugo-octopress.css>
+<title>Gynvael Coldwind - Garage4Hackers - Notes from March 2014</title><link rel=stylesheet href=/css/hugo-octopress.css>
 <link rel=stylesheet href=/css/fork-awesome.min.css>
 <link href=https://parsiya.net/favicon.png rel=icon>
 <meta name=description content>
 <meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
 <meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.92.2">
+<meta name=generator content="Hugo 0.93.0">
 <meta name=twitter:card content="summary">
 <meta name=twitter:title content="Gynvael Coldwind - Garage4Hackers - Notes from March 2014">
 <meta name=twitter:description content="Back in March 2014, Garage4Hackers had a live stream with Gynvael Coldwind. His talk was named &#34;Data, data, data! I can't make bricks without clay&#34; or a few practical notes on reverse-engineering. You can see the recording on youtube.
 Here are my notes that I discovered from 2014.">
 <meta name=twitter:domain content="parsiya.net">
 <meta name=twitter:creator content="@CryptoGangsta">
-</head>
-<body>
+</head><body>
 <header role=banner>
 <hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
-<h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2>
-</hgroup></header>
-<nav role=navigation>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
 <fieldset class=mobile-nav>
 <select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset>
-<ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
-<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
-<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
-<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
-<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
-<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
-</ul>
-<ul class=subscription>
+</fieldset><ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
 <a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul>
-<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
 <fieldset role=search>
 <input class=search type=text name=q results=0 placeholder=Search>
 <input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset>
-</form>
-</nav>
-<div id=main>
+</fieldset></form></nav><div id=main>
 <div id=content>
 <div>
 <article class=hentry role=article>
@@ -56,96 +39,53 @@ complete unless it is known by its causes. - Avicenna</h2>
 - 3 minute read
 - <a href=https://parsiya.net/blog/2016-07-14-gynvael-coldwind-garage4hackers-notes-from-march-2014/#disqus_thread>Comments</a>
 - <a class=label href=https://parsiya.net/categories/reverse-engineering/>Reverse Engineering </a>
-</p>
-<h1 class=entry-title>
+</p><h1 class=entry-title>
 Gynvael Coldwind - Garage4Hackers - Notes from March 2014
-</h1>
-</header>
-<div class=entry-content>
-<p>Back in March 2014, Garage4Hackers had a live stream with Gynvael Coldwind. His talk was named <code>"Data, data, data! I can't make bricks without clay"</code> or <code>a few practical notes on reverse-engineering</code>. You can see the recording <a href="https://www.youtube.com/watch?v=Jk5Yad598vs" target=_blank rel="noreferrer noopener">on youtube</a>.</p>
-<p>Here are my notes that I discovered from 2014.</p>
-<h1 id=notes-garage4hackers-re-webinar-by-gynvael-coldwind-google>Notes Garage4Hackers RE webinar by Gynvael Coldwind (Google)
+</h1></header><div class=entry-content>
+<p>Back in March 2014, Garage4Hackers had a live stream with Gynvael Coldwind. His talk was named <code>"Data, data, data! I can't make bricks without clay"</code> or <code>a few practical notes on reverse-engineering</code>. You can see the recording <a href="https://www.youtube.com/watch?v=Jk5Yad598vs" target=_blank rel="noreferrer noopener">on youtube</a>.</p><p>Here are my notes that I discovered from 2014.</p><h1 id=notes-garage4hackers-re-webinar-by-gynvael-coldwind-google>Notes Garage4Hackers RE webinar by Gynvael Coldwind (Google)
 <a class=header-link href=#notes-garage4hackers-re-webinar-by-gynvael-coldwind-google><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>His website: <a href=http://gynvael.coldwind.pl target=_blank rel="noreferrer noopener">http://gynvael.coldwind.pl</a></p>
-<h2 id=if-asm-is-hard-translate-it-to-c-for-yourself>If ASM is hard, translate it to C for yourself.
+</h1><p>His website: <a href=http://gynvael.coldwind.pl target=_blank rel="noreferrer noopener">http://gynvael.coldwind.pl</a></p><h2 id=if-asm-is-hard-translate-it-to-c-for-yourself>If ASM is hard, translate it to C for yourself.
 <a class=header-link href=#if-asm-is-hard-translate-it-to-c-for-yourself><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Read through the manual and try to write your own pseudo-C code to understand it better.</p>
-<h2 id=trace-things>Trace things
+</h2><p>Read through the manual and try to write your own pseudo-C code to understand it better.</p><h2 id=trace-things>Trace things
 <a class=header-link href=#trace-things><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><p>So if there are a lot of jumps with instructions in the middle.<br>
 He wrote a GDB script to just go through the jumps and collect all of the instructions in between to simplify the assembly.<br>
-Some debuggers have tracing as a separate option. E.g. OllyDBG</p>
-<p><a href=http://pelock.com/products/obfuscator target=_blank rel="noreferrer noopener">http://pelock.com/products/obfuscator</a></p>
-<h2 id=twitch-died-and-missed-this-tip-name>Twitch died and missed this tip name.
+Some debuggers have tracing as a separate option. E.g. OllyDBG</p><p><a href=http://pelock.com/products/obfuscator target=_blank rel="noreferrer noopener">http://pelock.com/products/obfuscator</a></p><h2 id=twitch-died-and-missed-this-tip-name>Twitch died and missed this tip name.
 <a class=header-link href=#twitch-died-and-missed-this-tip-name><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><p>If you are working on an strange platform (e.g. IBM S/390), look at the manual and find the op-codes and go through them and translate them for yourself.<br>
-Write a simple script to add instruction descriptions to the disassembled code. So you can have a description of what it does with every instruction and you do not have to go through the manual for each op-code again.</p>
-<h2 id=be-prepared-to-make-your-own-tools>Be prepared to make your own tools
+Write a simple script to add instruction descriptions to the disassembled code. So you can have a description of what it does with every instruction and you do not have to go through the manual for each op-code again.</p><h2 id=be-prepared-to-make-your-own-tools>Be prepared to make your own tools
 <a class=header-link href=#be-prepared-to-make-your-own-tools><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2>
-<h3 id=diassembly-engines>Diassembly Engines
+</h2><h3 id=diassembly-engines>Diassembly Engines
 <a class=header-link href=#diassembly-engines><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h3><p>His favorite is "distorm" hosted on <a href=https://code.google.com/p/distorm/ target=_blank rel="noreferrer noopener">https://code.google.com/p/distorm/</a>.
-You can use it inside Python scripts to disassembler binaries from starting to end addresses.</p>
-<h3 id=debug-apis>Debug APIs
+You can use it inside Python scripts to disassembler binaries from starting to end addresses.</p><h3 id=debug-apis>Debug APIs
 <a class=header-link href=#debug-apis><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>Talked about useful debug APIs. E.g. CreateRemoteThread.</p>
-<p>Twitch went down again.</p>
-<h3 id=cpu-specific-stuff-x86>CPU Specific Stuff (x86)
+</h3><p>Talked about useful debug APIs. E.g. CreateRemoteThread.</p><p>Twitch went down again.</p><h3 id=cpu-specific-stuff-x86>CPU Specific Stuff (x86)
 <a class=header-link href=#cpu-specific-stuff-x86><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h3><ul>
-<li>Software breakpoints (CC aka int3).</li>
-<li>You can run code generator for Linux run on Windows with some changes.</li>
-<li>Change the dependencies, addressing and I/O.</li>
-<li>Goes through an example of a hash function in a Linux binary and then writing C code to allocate memory address at a specific address and then copying the hash function from Linux and putting it on the memory and then calling the function from the C code in windows.</li>
-</ul>
-<h3 id=gdb-is-your-friend-even-if-you-like-others>GDB is your friend even if you like others.
+<li>Software breakpoints (CC aka int3).</li><li>You can run code generator for Linux run on Windows with some changes.</li><li>Change the dependencies, addressing and I/O.</li><li>Goes through an example of a hash function in a Linux binary and then writing C code to allocate memory address at a specific address and then copying the hash function from Linux and putting it on the memory and then calling the function from the C code in windows.</li></ul><h3 id=gdb-is-your-friend-even-if-you-like-others>GDB is your friend even if you like others.
 <a class=header-link href=#gdb-is-your-friend-even-if-you-like-others><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h3><ul>
-<li>It runs on any modern OS.</li>
-<li>Works with various GDB stubs (e.g. QEMU).</li>
-<li>Is scriptable in Python and GDB script.</li>
-<li>Is not well suited for anti-RE tricks.</li>
-</ul>
-<p>Scripting, use Python. WinDbg - Olly - IDA - Immunity and GDB support.</p>
-<h3 id=use-paimei-stalker-or-similar-tools-by-pedram-amini>Use Paimei Stalker or Similar tools (by Pedram Amini)
+<li>It runs on any modern OS.</li><li>Works with various GDB stubs (e.g. QEMU).</li><li>Is scriptable in Python and GDB script.</li><li>Is not well suited for anti-RE tricks.</li></ul><p>Scripting, use Python. WinDbg - Olly - IDA - Immunity and GDB support.</p><h3 id=use-paimei-stalker-or-similar-tools-by-pedram-amini>Use Paimei Stalker or Similar tools (by Pedram Amini)
 <a class=header-link href=#use-paimei-stalker-or-similar-tools-by-pedram-amini><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h3><pre><code>SetBP(Address, function_to_call_when_the_address_is_reached)
-</code></pre>
-<p>Twitch died again :(</p>
-<h3 id=monitor-the-environment>Monitor the environment.
+</code></pre><p>Twitch died again :(</p><h3 id=monitor-the-environment>Monitor the environment.
 <a class=header-link href=#monitor-the-environment><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>Use these tools.</p>
-<ul>
-<li>Linux: strace and ltrace.</li>
-<li>On Windows : Process Monitor.</li>
-</ul>
-<p>Example from a CTF.<br>
-<code>Mixer</code>: It needed a certain library. So you have to install all dependencies. Use "ldd" to check if you have everything.</p>
-<p><code>LD_LIBRARY_PATH</code> environmental variable.<br>
+</h3><p>Use these tools.</p><ul>
+<li>Linux: strace and ltrace.</li><li>On Windows : Process Monitor.</li></ul><p>Example from a CTF.<br>
+<code>Mixer</code>: It needed a certain library. So you have to install all dependencies. Use "ldd" to check if you have everything.</p><p><code>LD_LIBRARY_PATH</code> environmental variable.<br>
 <code>readelf -l binaryname</code><br>
-will show us which loader is needed for this library.</p>
-<p>It loaded the application in GDB but could not debug.<br>
-Two solutions:</p>
-<ol>
-<li>Attach after running, bad idea.</li>
-<li>Manually enter CC CC at EP by ediuting the hex.</li>
-<li>Then run it in GDB.</li>
-</ol>
-<h3 id=you-do-not-need-to-analyze-everything---probably-the-most-important-thing-when-doing-re>You do not need to analyze everything - probably the most important thing when doing RE
+will show us which loader is needed for this library.</p><p>It loaded the application in GDB but could not debug.<br>
+Two solutions:</p><ol>
+<li>Attach after running, bad idea.</li><li>Manually enter CC CC at EP by ediuting the hex.</li><li>Then run it in GDB.</li></ol><h3 id=you-do-not-need-to-analyze-everything---probably-the-most-important-thing-when-doing-re>You do not need to analyze everything - probably the most important thing when doing RE
 <a class=header-link href=#you-do-not-need-to-analyze-everything---probably-the-most-important-thing-when-doing-re><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>If you have a blackbox with a small-ish input/output space, let it run and look at output to find out what it does.</p>
-<h3 id=the-tool-might-be-wrong-check-the-output>The tool might be wrong. Check the output.
+</h3><p>If you have a blackbox with a small-ish input/output space, let it run and look at output to find out what it does.</p><h3 id=the-tool-might-be-wrong-check-the-output>The tool might be wrong. Check the output.
 <a class=header-link href=#the-tool-might-be-wrong-check-the-output><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3>
-<h3 id=entropy-is-a-good-recon-tool>Entropy is a good recon tool.
+</h3><h3 id=entropy-is-a-good-recon-tool>Entropy is a good recon tool.
 <a class=header-link href=#entropy-is-a-good-recon-tool><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3>
-<h3 id=know-crypto-and-other-stuff-and-be-able-to-recognize-it>Know Crypto and other stuff and be able to recognize it.
+</h3><h3 id=know-crypto-and-other-stuff-and-be-able-to-recognize-it>Know Crypto and other stuff and be able to recognize it.
 <a class=header-link href=#know-crypto-and-other-stuff-and-be-able-to-recognize-it><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>I asked him for an alternative to IDA pro for x64 binaries. He didn't have any alternatives as he uses IDA Pro.</p>
-</div>
-<footer>
+</h3><p>I asked him for an alternative to IDA pro for x64 binaries. He didn't have any alternatives as he uses IDA Pro.</p></div><footer>
 <p class=meta>
 <span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>Jul 14, 2016</time>
@@ -153,82 +93,47 @@ Two solutions:</p>
 Tags:
 <a class=category href=https://parsiya.net/tags/notes>Notes</a> <a class=category href=https://parsiya.net/tags/gynvael-coldwind>Gynvael Coldwind</a>
 </span>
-</p>
-<p class=meta>
+</p><p class=meta>
 <a class="basic-alignment left" href=https://parsiya.net/blog/2016-06-07-windows-netsh-interface-portproxy/ title="Windows Netsh Interface Portproxy">Windows Netsh Interface Portproxy</a>
 <a class="basic-alignment right" href=https://parsiya.net/blog/2016-07-28-thick-client-proxying-part-6-how-https-proxies-work/ title="Thick Client Proxying - Part 6: How HTTP(s) Proxies Work">Thick Client Proxying - Part 6: How HTTP(s) Proxies Work</a>
-</p>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</div>
-<aside class="sidebar thirds">
+</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer></article></div><aside class="sidebar thirds">
 <section class="first odd">
-<h1>Who am I?</h1>
-<p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
-<p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p>
-<p>Click on <a href=/about/>About Me!</a> to know more.</p>
-</p>
-</section>
-<ul class=sidebar-nav>
+<h1>Who am I?</h1><p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
 <li class=sidebar-nav-item>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li>
-</ul>
-<section class=odd>
-<h1>Collections</h1>
-<li>
+</li></ul><section class=odd>
+<h1>Collections</h1><li>
 <a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li>
-<li>
+</li><li>
 <a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li>
-</section>
-</aside>
-</div>
-</div>
-<footer role=contentinfo>
+</li></section></aside></div></div><footer role=contentinfo>
 <p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>

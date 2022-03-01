@@ -3,14 +3,13 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
 <link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>Cryptography in Python Burp Extensions</title>
-<link rel=stylesheet href=/css/hugo-octopress.css>
+<title>Cryptography in Python Burp Extensions</title><link rel=stylesheet href=/css/hugo-octopress.css>
 <link rel=stylesheet href=/css/fork-awesome.min.css>
 <link href=https://parsiya.net/favicon.png rel=icon>
 <meta name=description content>
 <meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
 <meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.92.2">
+<meta name=generator content="Hugo 0.93.0">
 <meta name=twitter:card content="summary_large_image">
 <meta name=twitter:image:src content="https://parsiya.net/blog/2018-12-24-cryptography-in-python-burp-extensions/10-v3-action.gif">
 <meta name=twitter:title content="Cryptography in Python Burp Extensions">
@@ -21,37 +20,21 @@ https://github.com/parsiya/Parsia-Code/tree/master/python-burp-crypto
 ">
 <meta name=twitter:domain content="parsiya.net">
 <meta name=twitter:creator content="@CryptoGangsta">
-</head>
-<body>
+</head><body>
 <header role=banner>
 <hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
-<h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2>
-</hgroup></header>
-<nav role=navigation>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
 <fieldset class=mobile-nav>
 <select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset>
-<ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
-<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
-<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
-<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
-<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
-<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
-</ul>
-<ul class=subscription>
+</fieldset><ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
 <a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul>
-<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
 <fieldset role=search>
 <input class=search type=text name=q results=0 placeholder=Search>
 <input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset>
-</form>
-</nav>
-<div id=main>
+</fieldset></form></nav><div id=main>
 <div id=content>
 <div>
 <article class=hentry role=article>
@@ -60,533 +43,370 @@ complete unless it is known by its causes. - Avicenna</h2>
 - 13 minute read
 - <a href=https://parsiya.net/blog/2018-12-24-cryptography-in-python-burp-extensions/#disqus_thread>Comments</a>
 - <a class=label href=https://parsiya.net/categories/burp/>Burp </a><a class=label href=https://parsiya.net/categories/crypto/>Crypto </a><a class=label href=https://parsiya.net/categories/burp-extension/>Burp extension </a>
-</p>
-<h1 class=entry-title>
+</p><h1 class=entry-title>
 Cryptography in Python Burp Extensions
-</h1>
-</header>
-<div class=entry-content>
+</h1></header><div class=entry-content>
 <nav id=TableOfContents>
 <ul>
-<li><a href=#echocrypt>Echocrypt</a></li>
-<li><a href=#setup>Setup</a></li>
-<li><a href=#template>Template</a></li>
-<li><a href=#base64-decoder>Base64 Decoder</a>
+<li><a href=#echocrypt>Echocrypt</a></li><li><a href=#setup>Setup</a></li><li><a href=#template>Template</a></li><li><a href=#base64-decoder>Base64 Decoder</a>
 <ul>
-<li><a href=#librarypy>library.py</a></li>
-<li><a href=#extensionpy>extension.py</a>
+<li><a href=#librarypy>library.py</a></li><li><a href=#extensionpy>extension.py</a>
 <ul>
-<li><a href=#imports>Imports</a></li>
-<li><a href=#burpextender>BurpExtender</a></li>
-<li><a href=#cryptotab>CryptoTab</a>
+<li><a href=#imports>Imports</a></li><li><a href=#burpextender>BurpExtender</a></li><li><a href=#cryptotab>CryptoTab</a>
 <ul>
-<li><a href=#setmessage>setMessage</a></li>
-<li><a href=#getmessage>getMessage</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href=#decoder-in-action>Decoder in Action</a></li>
-</ul>
-</li>
-<li><a href=#python-prototype>Python Prototype</a></li>
-<li><a href=#using-external-programs>Using External Programs</a>
+<li><a href=#setmessage>setMessage</a></li><li><a href=#getmessage>getMessage</a></li></ul></li></ul></li><li><a href=#decoder-in-action>Decoder in Action</a></li></ul></li><li><a href=#python-prototype>Python Prototype</a></li><li><a href=#using-external-programs>Using External Programs</a>
 <ul>
-<li><a href=#librarypy-1>library.py</a></li>
-<li><a href=#extensionpy-1>extension.py</a></li>
-<li><a href=#cryptopy-in-action>crypto.py in Action</a></li>
-<li><a href=#when-should-we-use-the-external-program-technique>When Should We Use The External Program Technique?</a></li>
-</ul>
-</li>
-<li><a href=#using-jython>Using Jython</a>
+<li><a href=#librarypy-1>library.py</a></li><li><a href=#extensionpy-1>extension.py</a></li><li><a href=#cryptopy-in-action>crypto.py in Action</a></li><li><a href=#when-should-we-use-the-external-program-technique>When Should We Use The External Program Technique?</a></li></ul></li><li><a href=#using-jython>Using Jython</a>
 <ul>
 <li><a href=#librarypy-2>library.py</a>
 <ul>
-<li><a href=#base64>Base64</a></li>
-<li><a href=#aescfbnopadding>AES/CFB/NOPADDING</a></li>
-</ul>
-</li>
-<li><a href=#extensionpy-2>extension.py</a></li>
-</ul>
-</li>
-<li><a href=#what-did-we-learn-here-today>What Did We Learn Here Today?</a></li>
-</ul>
-</nav>
-<p>In this post, I will discuss a few tricks for creating Burp extensions in Python that deal with cryptography. Our example is a Burp extension that adds a new tab to decode and decrypt an application's traffic. This allows us to modify payloads on the fly and take advantage of Repeater (and other tabs). I have used similar extensions when testing mobile and thickclient applications.</p>
-<p>The code is at:</p>
-<ul>
-<li><a href=https://github.com/parsiya/Parsia-Code/tree/master/python-burp-crypto target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/python-burp-crypto</a></li>
-</ul>
-<h1 id=echocrypt>Echocrypt
+<li><a href=#base64>Base64</a></li><li><a href=#aescfbnopadding>AES/CFB/NOPADDING</a></li></ul></li><li><a href=#extensionpy-2>extension.py</a></li></ul></li><li><a href=#what-did-we-learn-here-today>What Did We Learn Here Today?</a></li></ul></nav><p>In this post, I will discuss a few tricks for creating Burp extensions in Python that deal with cryptography. Our example is a Burp extension that adds a new tab to decode and decrypt an application's traffic. This allows us to modify payloads on the fly and take advantage of Repeater (and other tabs). I have used similar extensions when testing mobile and thickclient applications.</p><p>The code is at:</p><ul>
+<li><a href=https://github.com/parsiya/Parsia-Code/tree/master/python-burp-crypto target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/python-burp-crypto</a></li></ul><h1 id=echocrypt>Echocrypt
 <a class=header-link href=#echocrypt><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>I have created a simple client/server application in Go. The client encrypts a sample text with a hardcoded key/IV using AES-CFB. AES-CFB converts AES to a stream cipher. Every five seconds, the ciphertext is encoded to base64 and sent to the server in the body of a POST request via a proxy at <code>localhost:8080</code>.</p>
-<p>The echo server is listening on <code>localhost:9090</code> by default (you can change via <code>serverAddr</code> and <code>serverPort</code>). It will attempt to decode and decrypt the payload. If decryption is successful, server returns the payload in response and an error message otherwise.</p>
-<p><code>main.go</code> is at:</p>
-<ul>
-<li><a href=https://github.com/parsiya/Parsia-Code/blob/master/python-burp-crypto/echocrypt/main.go target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/blob/master/python-burp-crypto/echocrypt/main.go</a></li>
-</ul>
-<h1 id=setup>Setup
+</h1><p>I have created a simple client/server application in Go. The client encrypts a sample text with a hardcoded key/IV using AES-CFB. AES-CFB converts AES to a stream cipher. Every five seconds, the ciphertext is encoded to base64 and sent to the server in the body of a POST request via a proxy at <code>localhost:8080</code>.</p><p>The echo server is listening on <code>localhost:9090</code> by default (you can change via <code>serverAddr</code> and <code>serverPort</code>). It will attempt to decode and decrypt the payload. If decryption is successful, server returns the payload in response and an error message otherwise.</p><p><code>main.go</code> is at:</p><ul>
+<li><a href=https://github.com/parsiya/Parsia-Code/blob/master/python-burp-crypto/echocrypt/main.go target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/blob/master/python-burp-crypto/echocrypt/main.go</a></li></ul><h1 id=setup>Setup
 <a class=header-link href=#setup><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>I am inside a Windows 10 VM. But the Go application should be good for any supported platform.</p>
-<ol>
-<li>Run Burp and set a proxy listener at <code>localhost:8080</code>. This is Burp's default listener.</li>
-<li>Reset the filter to <code>Show All</code> in Burp listener to see the traffic.
+</h1><p>I am inside a Windows 10 VM. But the Go application should be good for any supported platform.</p><ol>
+<li>Run Burp and set a proxy listener at <code>localhost:8080</code>. This is Burp's default listener.</li><li>Reset the filter to <code>Show All</code> in Burp listener to see the traffic.
 <span class=caption-wrapper>
 <img class=caption src=01-burp-filter.png title='"Show All" filter' alt='"Show All" filter'>
 <span class=caption-text>"Show All" filter</span>
 </span>
-</li>
-<li>Copy <code>main.go</code> to a path under <code>GOPATH</code> and run it with <code>go run main.go</code>.
+</li><li>Copy <code>main.go</code> to a path under <code>GOPATH</code> and run it with <code>go run main.go</code>.
 <span class=caption-wrapper>
 <img class=caption src=02-main.png title="Running main.go" alt="Running main.go">
 <span class=caption-text>Running main.go</span>
 </span>
-</li>
-<li>Switch to Burp to see the traffic.
+</li><li>Switch to Burp to see the traffic.
 <span class=caption-wrapper>
 <img class=caption src=03-traffic.png title="Traffic in Burp" alt="Traffic in Burp">
 <span class=caption-text>Traffic in Burp</span>
 </span>
-</li>
-<li>Burp Repeater works too.
+</li><li>Burp Repeater works too.
 <span class=caption-wrapper>
 <img class=caption src=04-sample.png title="Sample request response in Burp Repeater" alt="Sample request response in Burp Repeater">
 <span class=caption-text>Sample request response in Burp Repeater</span>
 </span>
-</li>
-</ol>
-<h1 id=template>Template
+</li></ol><h1 id=template>Template
 <a class=header-link href=#template><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>I am using the infamous Burp example <a href=https://github.com/PortSwigger/example-custom-editor-tab target=_blank rel="noreferrer noopener">https://github.com/PortSwigger/example-custom-editor-tab</a> as my starting point. This extension looks for requests with a parameter named <code>data</code>, base64 decodes the value and displays it in a new tab. We are going to do the same but add AES encryption/decryption.</p>
-<p>I have created several versions of the extension and helper module based on the level of progress and the technique used in the extension. Start with <code>0-decoder</code> and then go up as I progress through the sections. My modifications are marked with <code>Parsia:</code>.</p>
-<p>Notes:</p>
-<ul>
-<li>Every time you modify the extension, unload and reload it by using the <code>Loaded</code> checkbox. There's no need to remove and add the extension.</li>
-<li>When switching to an extension in a different step, you have to unload the previous one.</li>
-</ul>
-<h1 id=base64-decoder>Base64 Decoder
+</h1><p>I am using the infamous Burp example <a href=https://github.com/PortSwigger/example-custom-editor-tab target=_blank rel="noreferrer noopener">https://github.com/PortSwigger/example-custom-editor-tab</a> as my starting point. This extension looks for requests with a parameter named <code>data</code>, base64 decodes the value and displays it in a new tab. We are going to do the same but add AES encryption/decryption.</p><p>I have created several versions of the extension and helper module based on the level of progress and the technique used in the extension. Start with <code>0-decoder</code> and then go up as I progress through the sections. My modifications are marked with <code>Parsia:</code>.</p><p>Notes:</p><ul>
+<li>Every time you modify the extension, unload and reload it by using the <code>Loaded</code> checkbox. There's no need to remove and add the extension.</li><li>When switching to an extension in a different step, you have to unload the previous one.</li></ul><h1 id=base64-decoder>Base64 Decoder
 <a class=header-link href=#base64-decoder><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Let's start with a modified custom editor tab that will act as our template. This code just base64 decodes the content and stores it in a new tab named <code>Decrypted</code>. Find these files inside the <code>0-decoder</code> directory.</p>
-<h2 id=librarypy>library.py
+</h1><p>Let's start with a modified custom editor tab that will act as our template. This code just base64 decodes the content and stores it in a new tab named <code>Decrypted</code>. Find these files inside the <code>0-decoder</code> directory.</p><h2 id=librarypy>library.py
 <a class=header-link href=#librarypy><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>I am going to create some helper modules. I explained them in a previous blog post named <a href=/blog/2018-12-19-python-utility-modules-for-burp-extensions/ title="Python Utility Modules for Burp Extensions">Python Utility Modules for Burp Extensions</a>. <a href=https://github.com/securityMB/burp-exceptions target=_blank rel="noreferrer noopener">Burp Exceptions</a> is loaded in <code>Folder for loading modules</code> in Burp (<code>Extender > Options</code>). While you are there, set the <a href=https://support.portswigger.net/customer/portal/articles/1965930-how-to-install-an-extension-in-burp-suite target=_blank rel="noreferrer noopener">path to Jython</a> too.</p>
-<span class=caption-wrapper>
+</h2><p>I am going to create some helper modules. I explained them in a previous blog post named <a href=/blog/2018-12-19-python-utility-modules-for-burp-extensions/ title="Python Utility Modules for Burp Extensions">Python Utility Modules for Burp Extensions</a>. <a href=https://github.com/securityMB/burp-exceptions target=_blank rel="noreferrer noopener">Burp Exceptions</a> is loaded in <code>Folder for loading modules</code> in Burp (<code>Extender > Options</code>). While you are there, set the <a href=https://support.portswigger.net/customer/portal/articles/1965930-how-to-install-an-extension-in-burp-suite target=_blank rel="noreferrer noopener">path to Jython</a> too.</p><span class=caption-wrapper>
 <img class=caption src=05-extender-setup.png title="Extender setup" alt="Extender setup">
 <span class=caption-text>Extender setup</span>
 </span>
-<p>The helper functions are short but useful:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#586e75># 0-decoder/library.py</span>
-
-<span style=color:#586e75># getInfo processes the request/response and returns info</span>
-<span style=color:#719e07>def</span> <span style=color:#268bd2>getInfo</span>(content, isRequest, helpers):
-    <span style=color:#719e07>if</span> isRequest:
-        <span style=color:#719e07>return</span> helpers<span style=color:#719e07>.</span>analyzeRequest(content)
-    <span style=color:#719e07>else</span>:
-        <span style=color:#719e07>return</span> helpers<span style=color:#719e07>.</span>analyzeResponse(content)
-
-<span style=color:#586e75># getBody returns the body of a request/response</span>
-<span style=color:#719e07>def</span> <span style=color:#268bd2>getBody</span>(content, isRequest, helpers):
-    info <span style=color:#719e07>=</span> getInfo(content, isRequest, helpers)
-    <span style=color:#719e07>return</span> content[info<span style=color:#719e07>.</span>getBodyOffset():]
-
-<span style=color:#586e75># setBody replaces the body of request/response with newBody and returns the result</span>
-<span style=color:#586e75># should I check for sizes or does Python automatically increase the array size?</span>
-<span style=color:#719e07>def</span> <span style=color:#268bd2>setBody</span>(newBody, content, isRequest, helpers):
-    info <span style=color:#719e07>=</span> getInfo(content, isRequest, helpers)
-    content[info<span style=color:#719e07>.</span>getBodyOffset():] <span style=color:#719e07>=</span> newBody
-    <span style=color:#719e07>return</span> content
-
-<span style=color:#586e75># decode64 decodes a base64 encoded byte array and returns another byte array</span>
-<span style=color:#719e07>def</span> <span style=color:#268bd2>decode64</span>(encoded, helpers):
-    <span style=color:#719e07>return</span> helpers<span style=color:#719e07>.</span>base64Decode(encoded)
-
-<span style=color:#586e75># encode64 encodes a byte array and returns a base64 encoded byte array</span>
-<span style=color:#719e07>def</span> <span style=color:#268bd2>encode64</span>(plaintext, helpers):
-    <span style=color:#719e07>return</span> helpers<span style=color:#719e07>.</span>base64Encode(plaintext)
-</code></pre></div><p>I am passing <code>helpers</code> as a parameter. This is explained in <a href=/blog/2018-12-19-python-utility-modules-for-burp-extensions/ title="Python Utility Modules for Burp Extensions">modules blog post</a> that I linked above. The only way to get a Burp helper object is through <code>getHelpers()</code>.</p>
-<p>Take a moment to read <code>getBody</code> and <code>setBody</code>. They manipulate the complete body of a POST request. To interact with specific parameters use <code>addParameter</code>, <code>removeParameter</code> and other methods in <a href=iextensionhelpers>IExtensionHelpers</a>.</p>
-<h2 id=extensionpy>extension.py
+<p>The helper functions are short but useful:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#586e75># 0-decoder/library.py</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75># getInfo processes the request/response and returns info</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getInfo</span>(content, isRequest, helpers):
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> isRequest:
+</span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> helpers<span style=color:#719e07>.</span>analyzeRequest(content)
+</span></span><span style=display:flex><span>    <span style=color:#719e07>else</span>:
+</span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> helpers<span style=color:#719e07>.</span>analyzeResponse(content)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75># getBody returns the body of a request/response</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getBody</span>(content, isRequest, helpers):
+</span></span><span style=display:flex><span>    info <span style=color:#719e07>=</span> getInfo(content, isRequest, helpers)
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> content[info<span style=color:#719e07>.</span>getBodyOffset():]
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75># setBody replaces the body of request/response with newBody and returns the result</span>
+</span></span><span style=display:flex><span><span style=color:#586e75># should I check for sizes or does Python automatically increase the array size?</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>setBody</span>(newBody, content, isRequest, helpers):
+</span></span><span style=display:flex><span>    info <span style=color:#719e07>=</span> getInfo(content, isRequest, helpers)
+</span></span><span style=display:flex><span>    content[info<span style=color:#719e07>.</span>getBodyOffset():] <span style=color:#719e07>=</span> newBody
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> content
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75># decode64 decodes a base64 encoded byte array and returns another byte array</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>decode64</span>(encoded, helpers):
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> helpers<span style=color:#719e07>.</span>base64Decode(encoded)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75># encode64 encodes a byte array and returns a base64 encoded byte array</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>encode64</span>(plaintext, helpers):
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> helpers<span style=color:#719e07>.</span>base64Encode(plaintext)
+</span></span></code></pre></div><p>I am passing <code>helpers</code> as a parameter. This is explained in <a href=/blog/2018-12-19-python-utility-modules-for-burp-extensions/ title="Python Utility Modules for Burp Extensions">modules blog post</a> that I linked above. The only way to get a Burp helper object is through <code>getHelpers()</code>.</p><p>Take a moment to read <code>getBody</code> and <code>setBody</code>. They manipulate the complete body of a POST request. To interact with specific parameters use <code>addParameter</code>, <code>removeParameter</code> and other methods in <a href=iextensionhelpers>IExtensionHelpers</a>.</p><h2 id=extensionpy>extension.py
 <a class=header-link href=#extensionpy><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>The extension has only been modified a little it. It uses <a href=https://github.com/securityMB/burp-exceptions target=_blank rel="noreferrer noopener">https://github.com/securityMB/burp-exceptions</a> for debugging and I have removed the code that deals with the <code>data</code> parameter.</p>
-<h3 id=imports>Imports
+</h2><p>The extension has only been modified a little it. It uses <a href=https://github.com/securityMB/burp-exceptions target=_blank rel="noreferrer noopener">https://github.com/securityMB/burp-exceptions</a> for debugging and I have removed the code that deals with the <code>data</code> parameter.</p><h3 id=imports>Imports
 <a class=header-link href=#imports><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>The original four imports are from the template. Then there's support for Burp-Exceptions and finally, I am importing the helper library.</p>
-<p><strong>Note:</strong> Our code runs inside Jython (not quite sure this is the correct verb but you know what I mean) so we can also import Java classes. More on that later.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#586e75># 0-decoder/extension.py</span>
-<span style=color:#719e07>from</span> burp <span style=color:#719e07>import</span> IBurpExtender
-<span style=color:#719e07>from</span> burp <span style=color:#719e07>import</span> IMessageEditorTabFactory
-<span style=color:#719e07>from</span> burp <span style=color:#719e07>import</span> IMessageEditorTab
-<span style=color:#719e07>from</span> burp <span style=color:#719e07>import</span> IParameter
-
-<span style=color:#586e75># Parsia: modified &#34;custom editor tab&#34; https://github.com/PortSwigger/example-custom-editor-tab/.</span>
-
-<span style=color:#586e75># Parsia: for burp-exceptions - see https://github.com/securityMB/burp-exceptions</span>
-<span style=color:#719e07>from</span> exceptions_fix <span style=color:#719e07>import</span> FixBurpExceptions
-<span style=color:#719e07>import</span> sys
-
-<span style=color:#586e75># Parsia: import helpers from library</span>
-<span style=color:#719e07>from</span> library <span style=color:#719e07>import</span> <span style=color:#719e07>*</span>
-</code></pre></div>
-<h3 id=burpextender>BurpExtender
+</h3><p>The original four imports are from the template. Then there's support for Burp-Exceptions and finally, I am importing the helper library.</p><p><strong>Note:</strong> Our code runs inside Jython (not quite sure this is the correct verb but you know what I mean) so we can also import Java classes. More on that later.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#586e75># 0-decoder/extension.py</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>from</span> burp <span style=color:#719e07>import</span> IBurpExtender
+</span></span><span style=display:flex><span><span style=color:#719e07>from</span> burp <span style=color:#719e07>import</span> IMessageEditorTabFactory
+</span></span><span style=display:flex><span><span style=color:#719e07>from</span> burp <span style=color:#719e07>import</span> IMessageEditorTab
+</span></span><span style=display:flex><span><span style=color:#719e07>from</span> burp <span style=color:#719e07>import</span> IParameter
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75># Parsia: modified &#34;custom editor tab&#34; https://github.com/PortSwigger/example-custom-editor-tab/.</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75># Parsia: for burp-exceptions - see https://github.com/securityMB/burp-exceptions</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>from</span> exceptions_fix <span style=color:#719e07>import</span> FixBurpExceptions
+</span></span><span style=display:flex><span><span style=color:#719e07>import</span> sys
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75># Parsia: import helpers from library</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>from</span> library <span style=color:#719e07>import</span> <span style=color:#719e07>*</span>
+</span></span></code></pre></div><h3 id=burpextender>BurpExtender
 <a class=header-link href=#burpextender><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>Here I am creating a <code>BurpExtender</code> class.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>class</span> <span style=color:#268bd2>BurpExtender</span>(IBurpExtender, IMessageEditorTabFactory):
-
-    <span style=color:#586e75>#</span>
-    <span style=color:#586e75># implement IBurpExtender</span>
-    <span style=color:#586e75>#</span>
-
-    <span style=color:#719e07>def</span>	<span style=color:#268bd2>registerExtenderCallbacks</span>(<span style=color:#268bd2>self</span>, callbacks):
-        <span style=color:#586e75># keep a reference to our callbacks object</span>
-        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_callbacks <span style=color:#719e07>=</span> callbacks
-        
-        <span style=color:#586e75># Parsia: obtain an extension helpers object</span>
-        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_helpers <span style=color:#719e07>=</span> callbacks<span style=color:#719e07>.</span>getHelpers()
-        
-        <span style=color:#586e75># set our extension name</span>
-        <span style=color:#586e75># Parsia: changed the extension name</span>
-        callbacks<span style=color:#719e07>.</span>setExtensionName(<span style=color:#2aa198>&#34;Example Crypto(graphy)&#34;</span>)
-
-        <span style=color:#586e75># register ourselves as a message editor tab factory</span>
-        callbacks<span style=color:#719e07>.</span>registerMessageEditorTabFactory(<span style=color:#268bd2>self</span>)
-
-        <span style=color:#586e75># Parsia: for burp-exceptions</span>
-        sys<span style=color:#719e07>.</span>stdout <span style=color:#719e07>=</span> callbacks<span style=color:#719e07>.</span>getStdout()
-
-    <span style=color:#586e75># </span>
-    <span style=color:#586e75># implement IMessageEditorTabFactory</span>
-    <span style=color:#586e75>#</span>
-
-    <span style=color:#719e07>def</span> <span style=color:#268bd2>createNewInstance</span>(<span style=color:#268bd2>self</span>, controller, editable):
-        <span style=color:#586e75># create a new instance of our custom editor tab</span>
-        <span style=color:#719e07>return</span> CryptoTab(<span style=color:#268bd2>self</span>, controller, editable)
-</code></pre></div><p>Changes are:</p>
-<ul>
-<li>Extension name: <code>callbacks.setExtensionName("Example Crypto(graphy)")</code></li>
-<li>Extension class name: <code>CryptoTab</code></li>
-<li>Extension helper: <code>self._helpers = callbacks.getHelpers()</code></li>
-<li>Burp exceptions support: <code>sys.stdout = callbacks.getStdout()</code></li>
-</ul>
-<h3 id=cryptotab>CryptoTab
+</h3><p>Here I am creating a <code>BurpExtender</code> class.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>class</span> <span style=color:#268bd2>BurpExtender</span>(IBurpExtender, IMessageEditorTabFactory):
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75>#</span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75># implement IBurpExtender</span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75>#</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>def</span>	<span style=color:#268bd2>registerExtenderCallbacks</span>(<span style=color:#268bd2>self</span>, callbacks):
+</span></span><span style=display:flex><span>        <span style=color:#586e75># keep a reference to our callbacks object</span>
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_callbacks <span style=color:#719e07>=</span> callbacks
+</span></span><span style=display:flex><span>        
+</span></span><span style=display:flex><span>        <span style=color:#586e75># Parsia: obtain an extension helpers object</span>
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_helpers <span style=color:#719e07>=</span> callbacks<span style=color:#719e07>.</span>getHelpers()
+</span></span><span style=display:flex><span>        
+</span></span><span style=display:flex><span>        <span style=color:#586e75># set our extension name</span>
+</span></span><span style=display:flex><span>        <span style=color:#586e75># Parsia: changed the extension name</span>
+</span></span><span style=display:flex><span>        callbacks<span style=color:#719e07>.</span>setExtensionName(<span style=color:#2aa198>&#34;Example Crypto(graphy)&#34;</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#586e75># register ourselves as a message editor tab factory</span>
+</span></span><span style=display:flex><span>        callbacks<span style=color:#719e07>.</span>registerMessageEditorTabFactory(<span style=color:#268bd2>self</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#586e75># Parsia: for burp-exceptions</span>
+</span></span><span style=display:flex><span>        sys<span style=color:#719e07>.</span>stdout <span style=color:#719e07>=</span> callbacks<span style=color:#719e07>.</span>getStdout()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75># </span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75># implement IMessageEditorTabFactory</span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75>#</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>def</span> <span style=color:#268bd2>createNewInstance</span>(<span style=color:#268bd2>self</span>, controller, editable):
+</span></span><span style=display:flex><span>        <span style=color:#586e75># create a new instance of our custom editor tab</span>
+</span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> CryptoTab(<span style=color:#268bd2>self</span>, controller, editable)
+</span></span></code></pre></div><p>Changes are:</p><ul>
+<li>Extension name: <code>callbacks.setExtensionName("Example Crypto(graphy)")</code></li><li>Extension class name: <code>CryptoTab</code></li><li>Extension helper: <code>self._helpers = callbacks.getHelpers()</code></li><li>Burp exceptions support: <code>sys.stdout = callbacks.getStdout()</code></li></ul><h3 id=cryptotab>CryptoTab
 <a class=header-link href=#cryptotab><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>The new tab is created in the <code>CryptoTab</code> class.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>def</span> __init__(<span style=color:#268bd2>self</span>, extender, controller, editable):
-    <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_extender <span style=color:#719e07>=</span> extender
-    <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_editable <span style=color:#719e07>=</span> editable
-    <span style=color:#586e75># Parsia: Burp helpers object</span>
-    <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>helpers <span style=color:#719e07>=</span> extender<span style=color:#719e07>.</span>_helpers
-
-    <span style=color:#586e75># create an instance of Burp&#39;s text editor to display our decrypted data</span>
-    <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput <span style=color:#719e07>=</span> extender<span style=color:#719e07>.</span>_callbacks<span style=color:#719e07>.</span>createTextEditor()
-    <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>setEditable(editable)
-</code></pre></div><p>I have only created a copy of the helper object and added it as a field to the tab: <code>self.helpers = extender._helpers</code>. This is only a matter of convenience because it can also be accessed through <code>self._extender._helpers</code>.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>def</span> <span style=color:#268bd2>getTabCaption</span>(<span style=color:#268bd2>self</span>):
-    <span style=color:#586e75># Parsia: tab title</span>
-    <span style=color:#719e07>return</span> <span style=color:#2aa198>&#34;Decrypted&#34;</span>
-
-<span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
-    <span style=color:#719e07>return</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>getComponent()
-
-<span style=color:#719e07>def</span> <span style=color:#268bd2>isEnabled</span>(<span style=color:#268bd2>self</span>, content, isRequest):
-    <span style=color:#719e07>return</span> <span style=color:#cb4b16>True</span>
-    
-<span style=color:#719e07>def</span> <span style=color:#268bd2>isModified</span>(<span style=color:#268bd2>self</span>):
-    <span style=color:#719e07>return</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>isTextModified()
-
-<span style=color:#719e07>def</span> <span style=color:#268bd2>getSelectedData</span>(<span style=color:#268bd2>self</span>):
-    <span style=color:#719e07>return</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>getSelectedText()
-</code></pre></div><p>This is mostly unmodified boilerplate. The only modification is tab title.</p>
-<h4 id=setmessage>setMessage
+</h3><p>The new tab is created in the <code>CryptoTab</code> class.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> __init__(<span style=color:#268bd2>self</span>, extender, controller, editable):
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_extender <span style=color:#719e07>=</span> extender
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_editable <span style=color:#719e07>=</span> editable
+</span></span><span style=display:flex><span>    <span style=color:#586e75># Parsia: Burp helpers object</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>helpers <span style=color:#719e07>=</span> extender<span style=color:#719e07>.</span>_helpers
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75># create an instance of Burp&#39;s text editor to display our decrypted data</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput <span style=color:#719e07>=</span> extender<span style=color:#719e07>.</span>_callbacks<span style=color:#719e07>.</span>createTextEditor()
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>setEditable(editable)
+</span></span></code></pre></div><p>I have only created a copy of the helper object and added it as a field to the tab: <code>self.helpers = extender._helpers</code>. This is only a matter of convenience because it can also be accessed through <code>self._extender._helpers</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getTabCaption</span>(<span style=color:#268bd2>self</span>):
+</span></span><span style=display:flex><span>    <span style=color:#586e75># Parsia: tab title</span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> <span style=color:#2aa198>&#34;Decrypted&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>getComponent()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>isEnabled</span>(<span style=color:#268bd2>self</span>, content, isRequest):
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> <span style=color:#cb4b16>True</span>
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>isModified</span>(<span style=color:#268bd2>self</span>):
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>isTextModified()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getSelectedData</span>(<span style=color:#268bd2>self</span>):
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>getSelectedText()
+</span></span></code></pre></div><p>This is mostly unmodified boilerplate. The only modification is tab title.</p><h4 id=setmessage>setMessage
 <a class=header-link href=#setmessage><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h4><p><code>setMessage</code> is the callback for setting the text in the <code>Decrypted</code> tab.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>def</span> <span style=color:#268bd2>setMessage</span>(<span style=color:#268bd2>self</span>, content, isRequest):
-    <span style=color:#719e07>if</span> content <span style=color:#719e07>is</span> <span style=color:#cb4b16>None</span>:
-        <span style=color:#586e75># clear our display</span>
-        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>setText(<span style=color:#cb4b16>None</span>)
-        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>setEditable(<span style=color:#cb4b16>False</span>)
-    
-    <span style=color:#586e75># Parsia: if tab has content</span>
-    <span style=color:#719e07>else</span>:
-        <span style=color:#586e75># get the body</span>
-        body <span style=color:#719e07>=</span> getBody(content, isRequest, <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>helpers)
-        <span style=color:#586e75># base64 decode the body</span>
-        decodedBody <span style=color:#719e07>=</span> decode64(body, <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>helpers)
-        <span style=color:#586e75># set the body as text of message box</span>
-        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>setText(decodedBody)
-        <span style=color:#586e75># this keeps the message box edit value to whatever it was</span>
-        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>setEditable(<span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_editable)
-    
-    <span style=color:#586e75># remember the displayed content</span>
-    <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_currentMessage <span style=color:#719e07>=</span> content
-</code></pre></div><p><code>content</code> is a byte array containing the request or response. If there's no request/response (e.g. empty Repeater tab), <code>content</code> is <code>None</code>, the tab will be empty and not editable.</p>
-<p>If the tab has a request/response:</p>
-<ol>
-<li>Extract the body. I am using my <code>getBody</code> function (I am passing <code>self.helpers</code> to it).</li>
-<li>Decode the body using another function from the module (<code>decode64</code>).</li>
-<li>Set the decoded text in the message box.</li>
-<li>Decide if the message box is editable or not. Here, we are deferring to the value of <code>self._editable</code>. This means, it will not be editable in <code>Proxy > HTTP History</code> but will be in places like Repeater.</li>
-<li>Store the contents of the tab in <code>self._currentMessage</code>. This is used later when we want to update request with modifications done in the tab (e.g. in Repeater).</li>
-</ol>
-<h4 id=getmessage>getMessage
+</h4><p><code>setMessage</code> is the callback for setting the text in the <code>Decrypted</code> tab.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>setMessage</span>(<span style=color:#268bd2>self</span>, content, isRequest):
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> content <span style=color:#719e07>is</span> <span style=color:#cb4b16>None</span>:
+</span></span><span style=display:flex><span>        <span style=color:#586e75># clear our display</span>
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>setText(<span style=color:#cb4b16>None</span>)
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>setEditable(<span style=color:#cb4b16>False</span>)
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#586e75># Parsia: if tab has content</span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>else</span>:
+</span></span><span style=display:flex><span>        <span style=color:#586e75># get the body</span>
+</span></span><span style=display:flex><span>        body <span style=color:#719e07>=</span> getBody(content, isRequest, <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>helpers)
+</span></span><span style=display:flex><span>        <span style=color:#586e75># base64 decode the body</span>
+</span></span><span style=display:flex><span>        decodedBody <span style=color:#719e07>=</span> decode64(body, <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>helpers)
+</span></span><span style=display:flex><span>        <span style=color:#586e75># set the body as text of message box</span>
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>setText(decodedBody)
+</span></span><span style=display:flex><span>        <span style=color:#586e75># this keeps the message box edit value to whatever it was</span>
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>setEditable(<span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_editable)
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#586e75># remember the displayed content</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_currentMessage <span style=color:#719e07>=</span> content
+</span></span></code></pre></div><p><code>content</code> is a byte array containing the request or response. If there's no request/response (e.g. empty Repeater tab), <code>content</code> is <code>None</code>, the tab will be empty and not editable.</p><p>If the tab has a request/response:</p><ol>
+<li>Extract the body. I am using my <code>getBody</code> function (I am passing <code>self.helpers</code> to it).</li><li>Decode the body using another function from the module (<code>decode64</code>).</li><li>Set the decoded text in the message box.</li><li>Decide if the message box is editable or not. Here, we are deferring to the value of <code>self._editable</code>. This means, it will not be editable in <code>Proxy > HTTP History</code> but will be in places like Repeater.</li><li>Store the contents of the tab in <code>self._currentMessage</code>. This is used later when we want to update request with modifications done in the tab (e.g. in Repeater).</li></ol><h4 id=getmessage>getMessage
 <a class=header-link href=#getmessage><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h4><p>When the tab is editable (e.g. Repeater), <code>setMessage</code> is used to update the request. If you modify something in the <code>Decrypted</code> tab and switch back to the <code>Raw</code> tab, it will be updated with this method.</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>def</span> <span style=color:#268bd2>getMessage</span>(<span style=color:#268bd2>self</span>):
-    <span style=color:#586e75># determine whether the user modified the data</span>
-    <span style=color:#719e07>if</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>isTextModified():
-        <span style=color:#586e75># Parsia: if text has changed, encode it and make it the new body of the message</span>
-        modified <span style=color:#719e07>=</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>getText()
-        encodedModified <span style=color:#719e07>=</span> encode64(modified, <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>helpers)
-
-        <span style=color:#586e75># Parsia: create a new message with the new body and return that</span>
-        info <span style=color:#719e07>=</span> getInfo(<span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_currentMessage, <span style=color:#cb4b16>True</span>, <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>helpers)
-        headers <span style=color:#719e07>=</span> info<span style=color:#719e07>.</span>getHeaders()
-        <span style=color:#719e07>return</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>helpers<span style=color:#719e07>.</span>buildHttpMessage(headers, encodedModified)
-    <span style=color:#719e07>else</span>:
-        <span style=color:#586e75># Parsia: if nothing is modified, return the current message so nothing gets updated</span>
-        <span style=color:#719e07>return</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_currentMessage
-</code></pre></div><p>If the text of the tab has been modified, <code>isTextModified()</code> returns true. After that:</p>
-<ol>
-<li>Get the modified contents of the tab: <code>modified = self._txtInput.getText()</code>.</li>
-<li>Base64 decode it: <code>encodedModified = encode64(modified, self.helpers)</code>.</li>
-</ol>
-<p>Next, I create a message with the modified body. <code>self._currentMessage = content</code> is used now. I have the original message in this field so I can get the headers and add them to the new message.</p>
-<ol>
+</h4><p>When the tab is editable (e.g. Repeater), <code>setMessage</code> is used to update the request. If you modify something in the <code>Decrypted</code> tab and switch back to the <code>Raw</code> tab, it will be updated with this method.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getMessage</span>(<span style=color:#268bd2>self</span>):
+</span></span><span style=display:flex><span>    <span style=color:#586e75># determine whether the user modified the data</span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>isTextModified():
+</span></span><span style=display:flex><span>        <span style=color:#586e75># Parsia: if text has changed, encode it and make it the new body of the message</span>
+</span></span><span style=display:flex><span>        modified <span style=color:#719e07>=</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>getText()
+</span></span><span style=display:flex><span>        encodedModified <span style=color:#719e07>=</span> encode64(modified, <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>helpers)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#586e75># Parsia: create a new message with the new body and return that</span>
+</span></span><span style=display:flex><span>        info <span style=color:#719e07>=</span> getInfo(<span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_currentMessage, <span style=color:#cb4b16>True</span>, <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>helpers)
+</span></span><span style=display:flex><span>        headers <span style=color:#719e07>=</span> info<span style=color:#719e07>.</span>getHeaders()
+</span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>helpers<span style=color:#719e07>.</span>buildHttpMessage(headers, encodedModified)
+</span></span><span style=display:flex><span>    <span style=color:#719e07>else</span>:
+</span></span><span style=display:flex><span>        <span style=color:#586e75># Parsia: if nothing is modified, return the current message so nothing gets updated</span>
+</span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_currentMessage
+</span></span></code></pre></div><p>If the text of the tab has been modified, <code>isTextModified()</code> returns true. After that:</p><ol>
+<li>Get the modified contents of the tab: <code>modified = self._txtInput.getText()</code>.</li><li>Base64 decode it: <code>encodedModified = encode64(modified, self.helpers)</code>.</li></ol><p>Next, I create a message with the modified body. <code>self._currentMessage = content</code> is used now. I have the original message in this field so I can get the headers and add them to the new message.</p><ol>
 <li>Get the message info: <code>info = getInfo(self._currentMessage, True, self.helpers)</code>.
 <ul>
-<li>We do not know whether we are in a request or not so we assume we are always in a request. Here it does not really matter because our requests and responses look the same (there are no named parameters and the payload is in the body).</li>
-</ul>
-</li>
-<li>Get the message headers: <code>headers = info.getHeaders()</code>.</li>
-<li>Build a new message with the old headers and new content: <code>self.helpers.buildHttpMessage(headers, encodedModified)</code>.</li>
-</ol>
-<p>Finally, if nothing has changed, return the unmodified message.</p>
-<h2 id=decoder-in-action>Decoder in Action
+<li>We do not know whether we are in a request or not so we assume we are always in a request. Here it does not really matter because our requests and responses look the same (there are no named parameters and the payload is in the body).</li></ul></li><li>Get the message headers: <code>headers = info.getHeaders()</code>.</li><li>Build a new message with the old headers and new content: <code>self.helpers.buildHttpMessage(headers, encodedModified)</code>.</li></ol><p>Finally, if nothing has changed, return the unmodified message.</p><h2 id=decoder-in-action>Decoder in Action
 <a class=header-link href=#decoder-in-action><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>The extension decodes base64. The payload is encrypted so we will see gibberish.</p>
-<span class=caption-wrapper>
+</h2><p>The extension decodes base64. The payload is encrypted so we will see gibberish.</p><span class=caption-wrapper>
 <img class=caption src=06-v0-request.png title='"Decrypted" in HTTP History' alt='"Decrypted" in HTTP History'>
 <span class=caption-text>"Decrypted" in HTTP History</span>
 </span>
-<p>It also works in Repeater:</p>
-<span class=caption-wrapper>
+<p>It also works in Repeater:</p><span class=caption-wrapper>
 <img class=caption src=07-v0-repeater.png title='"Decrypted" in Repeater' alt='"Decrypted" in Repeater'>
 <span class=caption-text>"Decrypted" in Repeater</span>
 </span>
-<p>And if we modify something in the tab, it updates the original message:</p>
-<span class=caption-wrapper>
+<p>And if we modify something in the tab, it updates the original message:</p><span class=caption-wrapper>
 <img class=caption src=08-v0-action.gif title="Base64 decoding/encoding in action" alt="Base64 decoding/encoding in action">
 <span class=caption-text>Base64 decoding/encoding in action</span>
 </span>
-<p>Looks good. Let's move on to decryption.</p>
-<h1 id=python-prototype>Python Prototype
+<p>Looks good. Let's move on to decryption.</p><h1 id=python-prototype>Python Prototype
 <a class=header-link href=#python-prototype><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>In a typical assessment, I usually make a prototype to decrypt sample messages. In this example, I will create a Python prototype instead of Go because we already have seen the Go code. Look for the file in <code>1-prototype</code>.</p>
-<p>Python does not support AES out of the box. You can use any number of libraries out there but most of them seem to be based on OpenSSL or some other C library. <strong>This is key, more about this later.</strong></p>
-<p>In the last blog, post I used PyCrypto. A visitor mentioned that I should be using an updated library. While this is a fair suggestion, it does not fix the main issue. I should not have to install a 3rd party library to get something as fundamental as AES support. I am going to use <a href=https://github.com/pyca/cryptography target=_blank rel="noreferrer noopener">Cryptography.io</a>. We can install it with pip w/o hassle which is nice.</p>
-<p>If you are interested in how AES-CFB and its different segment sizes work, please read:</p>
-<ul>
-<li><a href=/blog/2018-12-22-aes-cfb128-pycrypto-vs.-go/ title="AES-CFB128: PyCrypto vs. Go">AES-CFB128: PyCrypto vs. Go</a></li>
-</ul>
-<p>The Python prototype is very similar to what I created in the post linked above.</p>
-<span class=caption-wrapper>
+</h1><p>In a typical assessment, I usually make a prototype to decrypt sample messages. In this example, I will create a Python prototype instead of Go because we already have seen the Go code. Look for the file in <code>1-prototype</code>.</p><p>Python does not support AES out of the box. You can use any number of libraries out there but most of them seem to be based on OpenSSL or some other C library. <strong>This is key, more about this later.</strong></p><p>In the last blog, post I used PyCrypto. A visitor mentioned that I should be using an updated library. While this is a fair suggestion, it does not fix the main issue. I should not have to install a 3rd party library to get something as fundamental as AES support. I am going to use <a href=https://github.com/pyca/cryptography target=_blank rel="noreferrer noopener">Cryptography.io</a>. We can install it with pip w/o hassle which is nice.</p><p>If you are interested in how AES-CFB and its different segment sizes work, please read:</p><ul>
+<li><a href=/blog/2018-12-22-aes-cfb128-pycrypto-vs.-go/ title="AES-CFB128: PyCrypto vs. Go">AES-CFB128: PyCrypto vs. Go</a></li></ul><p>The Python prototype is very similar to what I created in the post linked above.</p><span class=caption-wrapper>
 <img class=caption src=08-crypto-py.png title="Encryption and decryption using the Python prototype" alt="Encryption and decryption using the Python prototype">
 <span class=caption-text>Encryption and decryption using the Python prototype</span>
 </span>
 <h1 id=using-external-programs>Using External Programs
 <a class=header-link href=#using-external-programs><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Our prototype works and it's time to convert it to a Burp extension. You convert the code to a Burp extension and suddenly your code doesn't work. Burp says it cannot find <code>cryptography</code>. Why?</p>
-<p>Most libraries that depend on OpenSSL or C extensions are not supported in Jython (think of it as being dependent on <code>cgo</code>). For example, <code>cryptography</code> is based on <a href=https://cffi.readthedocs.io/en/latest/ target=_blank rel="noreferrer noopener">CFFI</a> according to this <a href=https://github.com/pyca/cryptography/issues/3926 target=_blank rel="noreferrer noopener">Github issue</a>. PyCrypto has a similar problem.</p>
-<p>While dealing with this problem, I learned a couple of tricks. I learned the first one from Burp extensions that depend on external executables/programs. We will execute our prototype from inside Burp and pass the payloads to it via the command line. Think of it as mini-CGI (CGI == Common Gateway Interface). For a very similar example, please see the following links:</p>
-<ul>
-<li><a href=https://github.com/externalist/aes-encrypt-decrypt-burp-extender-plugin-example target=_blank rel="noreferrer noopener">https://github.com/externalist/aes-encrypt-decrypt-burp-extender-plugin-example</a></li>
-<li><a href=https://externalist.blogspot.com/2015/11/decrypting-modifying-encrypted-web-data.html target=_blank rel="noreferrer noopener">https://externalist.blogspot.com/2015/11/decrypting-modifying-encrypted-web-data.html</a></li>
-</ul>
-<p>Look for the files in the <code>2-external</code> directory.</p>
-<h2 id=librarypy-1>library.py
+</h1><p>Our prototype works and it's time to convert it to a Burp extension. You convert the code to a Burp extension and suddenly your code doesn't work. Burp says it cannot find <code>cryptography</code>. Why?</p><p>Most libraries that depend on OpenSSL or C extensions are not supported in Jython (think of it as being dependent on <code>cgo</code>). For example, <code>cryptography</code> is based on <a href=https://cffi.readthedocs.io/en/latest/ target=_blank rel="noreferrer noopener">CFFI</a> according to this <a href=https://github.com/pyca/cryptography/issues/3926 target=_blank rel="noreferrer noopener">Github issue</a>. PyCrypto has a similar problem.</p><p>While dealing with this problem, I learned a couple of tricks. I learned the first one from Burp extensions that depend on external executables/programs. We will execute our prototype from inside Burp and pass the payloads to it via the command line. Think of it as mini-CGI (CGI == Common Gateway Interface). For a very similar example, please see the following links:</p><ul>
+<li><a href=https://github.com/externalist/aes-encrypt-decrypt-burp-extender-plugin-example target=_blank rel="noreferrer noopener">https://github.com/externalist/aes-encrypt-decrypt-burp-extender-plugin-example</a></li><li><a href=https://externalist.blogspot.com/2015/11/decrypting-modifying-encrypted-web-data.html target=_blank rel="noreferrer noopener">https://externalist.blogspot.com/2015/11/decrypting-modifying-encrypted-web-data.html</a></li></ul><p>Look for the files in the <code>2-external</code> directory.</p><h2 id=librarypy-1>library.py
 <a class=header-link href=#librarypy-1><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>I have added three new functions to the library:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#586e75># runExternal executes an external python script with two arguments and returns the output</span>
-<span style=color:#719e07>def</span> <span style=color:#268bd2>runExternal</span>(script, arg1, arg2):
-    proc <span style=color:#719e07>=</span> Popen([<span style=color:#2aa198>&#34;python&#34;</span>, script, arg1, arg2], stdout<span style=color:#719e07>=</span>PIPE, stderr<span style=color:#719e07>=</span>PIPE)
-    output <span style=color:#719e07>=</span> proc<span style=color:#719e07>.</span>stdout<span style=color:#719e07>.</span>read()
-    proc<span style=color:#719e07>.</span>stdout<span style=color:#719e07>.</span>close()
-    err <span style=color:#719e07>=</span> proc<span style=color:#719e07>.</span>stderr<span style=color:#719e07>.</span>read()
-    proc<span style=color:#719e07>.</span>stderr<span style=color:#719e07>.</span>close()
-    sys<span style=color:#719e07>.</span>stdout<span style=color:#719e07>.</span>write(err)
-    <span style=color:#719e07>return</span> output
-
-<span style=color:#586e75># encrypt uses the external prototype to encrypt the payload</span>
-<span style=color:#719e07>def</span> <span style=color:#268bd2>encrypt</span>(payload):
-    <span style=color:#719e07>return</span> runExternal(<span style=color:#2aa198>&#34;crypto.py&#34;</span>, <span style=color:#2aa198>&#34;encrypt&#34;</span>, payload<span style=color:#719e07>.</span>tostring())
-
-<span style=color:#586e75># decrypt uses the external prototype to decrypt the payload</span>
-<span style=color:#719e07>def</span> <span style=color:#268bd2>decrypt</span>(payload):
-    <span style=color:#719e07>return</span> runExternal(<span style=color:#2aa198>&#34;crypto.py&#34;</span>, <span style=color:#2aa198>&#34;decrypt&#34;</span>, payload<span style=color:#719e07>.</span>tostring())
-</code></pre></div><p>The only complication was passing the <code>payload</code> coming from <code>getBody</code> to <code>Popen</code> as string. <code>getBody</code> returns an <code>array.array</code> of <code>b</code> (signed char). It's converted <code>tostring()</code> before being passed to <code>runExternal</code> and eventually <code>Popen</code>.</p>
-<p>You might ask why I have kept the base64 encoding and decoding in <code>crypto.py</code>. It's just easier to pass base64 encoded values to a command line executable. Less chance of special characters screwing something up<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>.</p>
-<h2 id=extensionpy-1>extension.py
+</h2><p>I have added three new functions to the library:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#586e75># runExternal executes an external python script with two arguments and returns the output</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>runExternal</span>(script, arg1, arg2):
+</span></span><span style=display:flex><span>    proc <span style=color:#719e07>=</span> Popen([<span style=color:#2aa198>&#34;python&#34;</span>, script, arg1, arg2], stdout<span style=color:#719e07>=</span>PIPE, stderr<span style=color:#719e07>=</span>PIPE)
+</span></span><span style=display:flex><span>    output <span style=color:#719e07>=</span> proc<span style=color:#719e07>.</span>stdout<span style=color:#719e07>.</span>read()
+</span></span><span style=display:flex><span>    proc<span style=color:#719e07>.</span>stdout<span style=color:#719e07>.</span>close()
+</span></span><span style=display:flex><span>    err <span style=color:#719e07>=</span> proc<span style=color:#719e07>.</span>stderr<span style=color:#719e07>.</span>read()
+</span></span><span style=display:flex><span>    proc<span style=color:#719e07>.</span>stderr<span style=color:#719e07>.</span>close()
+</span></span><span style=display:flex><span>    sys<span style=color:#719e07>.</span>stdout<span style=color:#719e07>.</span>write(err)
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> output
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75># encrypt uses the external prototype to encrypt the payload</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>encrypt</span>(payload):
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> runExternal(<span style=color:#2aa198>&#34;crypto.py&#34;</span>, <span style=color:#2aa198>&#34;encrypt&#34;</span>, payload<span style=color:#719e07>.</span>tostring())
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75># decrypt uses the external prototype to decrypt the payload</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>decrypt</span>(payload):
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> runExternal(<span style=color:#2aa198>&#34;crypto.py&#34;</span>, <span style=color:#2aa198>&#34;decrypt&#34;</span>, payload<span style=color:#719e07>.</span>tostring())
+</span></span></code></pre></div><p>The only complication was passing the <code>payload</code> coming from <code>getBody</code> to <code>Popen</code> as string. <code>getBody</code> returns an <code>array.array</code> of <code>b</code> (signed char). It's converted <code>tostring()</code> before being passed to <code>runExternal</code> and eventually <code>Popen</code>.</p><p>You might ask why I have kept the base64 encoding and decoding in <code>crypto.py</code>. It's just easier to pass base64 encoded values to a command line executable. Less chance of special characters screwing something up<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>.</p><h2 id=extensionpy-1>extension.py
 <a class=header-link href=#extensionpy-1><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>This version of the extension is a bit different. I am only calling <code>encrypt</code> and <code>decrypt</code> from <code>library.py</code> to do the heavy lifting for me.</p>
-<ul>
-<li>In <code>setMessage</code>: <code>decryptedBody = decrypt(body)</code></li>
-<li>In <code>getMessage</code>: <code>encryptedModified = encrypt(modified)</code></li>
-</ul>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>def</span> <span style=color:#268bd2>setMessage</span>(<span style=color:#268bd2>self</span>, content, isRequest):
-    <span style=color:#719e07>if</span> content <span style=color:#719e07>is</span> <span style=color:#cb4b16>None</span>:
-        <span style=color:#586e75># clear our display</span>
-        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>setText(<span style=color:#cb4b16>None</span>)
-        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>setEditable(<span style=color:#cb4b16>False</span>)
-    
-    <span style=color:#586e75># Parsia: if tab has content</span>
-    <span style=color:#719e07>else</span>:
-        <span style=color:#586e75># get the body</span>
-        body <span style=color:#719e07>=</span> getBody(content, isRequest, <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>helpers)
-        <span style=color:#586e75># decrypt does the base64 decoding so the extension does not have to</span>
-        decryptedBody <span style=color:#719e07>=</span> decrypt(body)
-        <span style=color:#586e75># set the body as text of message box</span>
-        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>setText(decryptedBody)
-        <span style=color:#586e75># this keeps the message box edit value to whatever it was</span>
-        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>setEditable(<span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_editable)
-    
-    <span style=color:#586e75># remember the displayed content</span>
-    <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_currentMessage <span style=color:#719e07>=</span> content
-
-<span style=color:#719e07>def</span> <span style=color:#268bd2>getMessage</span>(<span style=color:#268bd2>self</span>):
-    <span style=color:#586e75># determine whether the user modified the data</span>
-    <span style=color:#719e07>if</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>isTextModified():
-        <span style=color:#586e75># Parsia: if text has changed, encode it and make it the new body of the message</span>
-        modified <span style=color:#719e07>=</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>getText()
-        <span style=color:#586e75># encrypt and decrypt do the base64 transformation</span>
-        encryptedModified <span style=color:#719e07>=</span> encrypt(modified)
-        
-        <span style=color:#586e75># Parsia: create a new message with the new body and return that</span>
-        info <span style=color:#719e07>=</span> getInfo(<span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_currentMessage, <span style=color:#cb4b16>True</span>, <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>helpers)
-        headers <span style=color:#719e07>=</span> info<span style=color:#719e07>.</span>getHeaders()
-        <span style=color:#719e07>return</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>helpers<span style=color:#719e07>.</span>buildHttpMessage(headers, encryptedModified)
-    <span style=color:#719e07>else</span>:
-        <span style=color:#586e75># Parsia: if nothing is modified, return the current message so nothing gets updated</span>
-        <span style=color:#719e07>return</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_currentMessage
-</code></pre></div>
-<h2 id=cryptopy-in-action>crypto.py in Action
+</h2><p>This version of the extension is a bit different. I am only calling <code>encrypt</code> and <code>decrypt</code> from <code>library.py</code> to do the heavy lifting for me.</p><ul>
+<li>In <code>setMessage</code>: <code>decryptedBody = decrypt(body)</code></li><li>In <code>getMessage</code>: <code>encryptedModified = encrypt(modified)</code></li></ul><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>setMessage</span>(<span style=color:#268bd2>self</span>, content, isRequest):
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> content <span style=color:#719e07>is</span> <span style=color:#cb4b16>None</span>:
+</span></span><span style=display:flex><span>        <span style=color:#586e75># clear our display</span>
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>setText(<span style=color:#cb4b16>None</span>)
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>setEditable(<span style=color:#cb4b16>False</span>)
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#586e75># Parsia: if tab has content</span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>else</span>:
+</span></span><span style=display:flex><span>        <span style=color:#586e75># get the body</span>
+</span></span><span style=display:flex><span>        body <span style=color:#719e07>=</span> getBody(content, isRequest, <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>helpers)
+</span></span><span style=display:flex><span>        <span style=color:#586e75># decrypt does the base64 decoding so the extension does not have to</span>
+</span></span><span style=display:flex><span>        decryptedBody <span style=color:#719e07>=</span> decrypt(body)
+</span></span><span style=display:flex><span>        <span style=color:#586e75># set the body as text of message box</span>
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>setText(decryptedBody)
+</span></span><span style=display:flex><span>        <span style=color:#586e75># this keeps the message box edit value to whatever it was</span>
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>setEditable(<span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_editable)
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#586e75># remember the displayed content</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_currentMessage <span style=color:#719e07>=</span> content
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getMessage</span>(<span style=color:#268bd2>self</span>):
+</span></span><span style=display:flex><span>    <span style=color:#586e75># determine whether the user modified the data</span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>isTextModified():
+</span></span><span style=display:flex><span>        <span style=color:#586e75># Parsia: if text has changed, encode it and make it the new body of the message</span>
+</span></span><span style=display:flex><span>        modified <span style=color:#719e07>=</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_txtInput<span style=color:#719e07>.</span>getText()
+</span></span><span style=display:flex><span>        <span style=color:#586e75># encrypt and decrypt do the base64 transformation</span>
+</span></span><span style=display:flex><span>        encryptedModified <span style=color:#719e07>=</span> encrypt(modified)
+</span></span><span style=display:flex><span>        
+</span></span><span style=display:flex><span>        <span style=color:#586e75># Parsia: create a new message with the new body and return that</span>
+</span></span><span style=display:flex><span>        info <span style=color:#719e07>=</span> getInfo(<span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_currentMessage, <span style=color:#cb4b16>True</span>, <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>helpers)
+</span></span><span style=display:flex><span>        headers <span style=color:#719e07>=</span> info<span style=color:#719e07>.</span>getHeaders()
+</span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>helpers<span style=color:#719e07>.</span>buildHttpMessage(headers, encryptedModified)
+</span></span><span style=display:flex><span>    <span style=color:#719e07>else</span>:
+</span></span><span style=display:flex><span>        <span style=color:#586e75># Parsia: if nothing is modified, return the current message so nothing gets updated</span>
+</span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>_currentMessage
+</span></span></code></pre></div><h2 id=cryptopy-in-action>crypto.py in Action
 <a class=header-link href=#cryptopy-in-action><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>If you already have more than a dozen request in history, loading the extension takes a few seconds. Burp calling an external Python script for every request twice. We could probably speed things up a bit by using a native code executable.</p>
-<span class=caption-wrapper>
+</h2><p>If you already have more than a dozen request in history, loading the extension takes a few seconds. Burp calling an external Python script for every request twice. We could probably speed things up a bit by using a native code executable.</p><span class=caption-wrapper>
 <img class=caption src=09-v2-action.gif title="Encrypting and decrypting in Repeater" alt="Encrypting and decrypting in Repeater">
 <span class=caption-text>Encrypting and decrypting in Repeater</span>
 </span>
 <h2 id=when-should-we-use-the-external-program-technique>When Should We Use The External Program Technique?
 <a class=header-link href=#when-should-we-use-the-external-program-technique><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>To be honest, any time you feel like it. I have used it in the following circumstances:</p>
-<ul>
-<li>The extension relies on an external source. E.g., remote web service or local file/database.</li>
-<li>It's easier to use an external executable. E.g., someone has already created a utility that does the decoding/decrypting/parsing. Deserialization is a good example.</li>
-<li>You just want to get the job done and use your prototype. This is especially true in my day job, which is consulting. The Burp extension is a means and not the end. Having a nice extension in the report is nice but findings are more important.</li>
-</ul>
-<h1 id=using-jython>Using Jython
+</h2><p>To be honest, any time you feel like it. I have used it in the following circumstances:</p><ul>
+<li>The extension relies on an external source. E.g., remote web service or local file/database.</li><li>It's easier to use an external executable. E.g., someone has already created a utility that does the decoding/decrypting/parsing. Deserialization is a good example.</li><li>You just want to get the job done and use your prototype. This is especially true in my day job, which is consulting. The Burp extension is a means and not the end. Having a nice extension in the report is nice but findings are more important.</li></ul><h1 id=using-jython>Using Jython
 <a class=header-link href=#using-jython><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>The previous technique was slow. We can do better using Jython. Most people write encryption-related extensions in Java. However, we can just import and use Java classes that are available to any Java extension. Look for files in the <code>3-jython</code> directory.</p>
-<p>I used <code>Chapter 10: Jython and Java Integration</code> learn about Jython and Java:</p>
-<ul>
-<li><a href=https://jython.readthedocs.io/en/latest/chapter10/ target=_blank rel="noreferrer noopener">https://jython.readthedocs.io/en/latest/chapter10/</a></li>
-</ul>
-<h2 id=librarypy-2>library.py
+</h1><p>The previous technique was slow. We can do better using Jython. Most people write encryption-related extensions in Java. However, we can just import and use Java classes that are available to any Java extension. Look for files in the <code>3-jython</code> directory.</p><p>I used <code>Chapter 10: Jython and Java Integration</code> learn about Jython and Java:</p><ul>
+<li><a href=https://jython.readthedocs.io/en/latest/chapter10/ target=_blank rel="noreferrer noopener">https://jython.readthedocs.io/en/latest/chapter10/</a></li></ul><h2 id=librarypy-2>library.py
 <a class=header-link href=#librarypy-2><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>I am adding a few new functions to the library. These do encryption/decryption using Java classes.</p>
-<h3 id=base64>Base64
+</h2><p>I am adding a few new functions to the library. These do encryption/decryption using Java classes.</p><h3 id=base64>Base64
 <a class=header-link href=#base64><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>Base64 encoding and decoding was added in Java 8 in <a href=https://docs.oracle.com/javase/8/docs/api/java/util/Base64.html target=_blank rel="noreferrer noopener">java.util.Base64</a>:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>from</span> java.util <span style=color:#719e07>import</span> Base64
-
-encoded <span style=color:#719e07>=</span> Base64<span style=color:#719e07>.</span>getEncoder()<span style=color:#719e07>.</span>encode(text)
-decoded <span style=color:#719e07>=</span> Base64<span style=color:#719e07>.</span>getDecoder()<span style=color:#719e07>.</span>decode(encoded)
-</code></pre></div>
-<h3 id=aescfbnopadding>AES/CFB/NOPADDING
+</h3><p>Base64 encoding and decoding was added in Java 8 in <a href=https://docs.oracle.com/javase/8/docs/api/java/util/Base64.html target=_blank rel="noreferrer noopener">java.util.Base64</a>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>from</span> java.util <span style=color:#719e07>import</span> Base64
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>encoded <span style=color:#719e07>=</span> Base64<span style=color:#719e07>.</span>getEncoder()<span style=color:#719e07>.</span>encode(text)
+</span></span><span style=display:flex><span>decoded <span style=color:#719e07>=</span> Base64<span style=color:#719e07>.</span>getDecoder()<span style=color:#719e07>.</span>decode(encoded)
+</span></span></code></pre></div><h3 id=aescfbnopadding>AES/CFB/NOPADDING
 <a class=header-link href=#aescfbnopadding><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>To perform encryption/decryption we need to create the following objects:</p>
-<ul>
-<li><a href=https://docs.oracle.com/javase/8/docs/api/javax/crypto/Cipher.html target=_blank rel="noreferrer noopener">java.crypto.Cipher</a> creates the cipher (e.g. AES)</li>
-<li><a href=https://docs.oracle.com/javase/8/docs/api/index.html?javax/crypto/spec/IvParameterSpec.html target=_blank rel="noreferrer noopener">javax.crypto.spec.IvParameterSpec</a> creates the Initialization Vector (IV)</li>
-<li><a href=https://docs.oracle.com/javase/8/docs/api/javax/crypto/spec/SecretKeySpec.html target=_blank rel="noreferrer noopener">javax.crypto.spec.SecretKeySpec</a> creates the key</li>
-</ul>
-<figure class=code>
+</h3><p>To perform encryption/decryption we need to create the following objects:</p><ul>
+<li><a href=https://docs.oracle.com/javase/8/docs/api/javax/crypto/Cipher.html target=_blank rel="noreferrer noopener">java.crypto.Cipher</a> creates the cipher (e.g. AES)</li><li><a href=https://docs.oracle.com/javase/8/docs/api/index.html?javax/crypto/spec/IvParameterSpec.html target=_blank rel="noreferrer noopener">javax.crypto.spec.IvParameterSpec</a> creates the Initialization Vector (IV)</li><li><a href=https://docs.oracle.com/javase/8/docs/api/javax/crypto/spec/SecretKeySpec.html target=_blank rel="noreferrer noopener">javax.crypto.spec.SecretKeySpec</a> creates the key</li></ul><figure class=code>
 <figcaption>
 <span>encrypt and decrypt in Jython</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#586e75># encryptJython uses javax.crypto.Cipher to encrypt payload with key/iv</span>
-<span style=color:#586e75># using AES/CFB/NOPADDING</span>
-<span style=color:#719e07>def</span> <span style=color:#268bd2>encryptJython</span>(payload, key, iv):
-    aesKey <span style=color:#719e07>=</span> SecretKeySpec(key, <span style=color:#2aa198>&#34;AES&#34;</span>)
-    aesIV <span style=color:#719e07>=</span> IvParameterSpec(iv)
-    cipher <span style=color:#719e07>=</span> Cipher<span style=color:#719e07>.</span>getInstance(<span style=color:#2aa198>&#34;AES/CFB/NOPADDING&#34;</span>)
-    cipher<span style=color:#719e07>.</span>init(Cipher<span style=color:#719e07>.</span>ENCRYPT_MODE, aesKey, aesIV)
-    encrypted <span style=color:#719e07>=</span> cipher<span style=color:#719e07>.</span>doFinal(payload)
-    <span style=color:#719e07>return</span> Base64<span style=color:#719e07>.</span>getEncoder()<span style=color:#719e07>.</span>encode(encrypted)
-
-<span style=color:#586e75># decryptJython uses javax.crypto.Cipher to decrypt payload with key/iv</span>
-<span style=color:#586e75># using AES/CFB/NOPADDING</span>
-<span style=color:#719e07>def</span> <span style=color:#268bd2>decryptJython</span>(payload, key, iv):
-    decoded <span style=color:#719e07>=</span> Base64<span style=color:#719e07>.</span>getDecoder()<span style=color:#719e07>.</span>decode(payload)
-    aesKey <span style=color:#719e07>=</span> SecretKeySpec(key, <span style=color:#2aa198>&#34;AES&#34;</span>)
-    aesIV <span style=color:#719e07>=</span> IvParameterSpec(iv)
-    cipher <span style=color:#719e07>=</span> Cipher<span style=color:#719e07>.</span>getInstance(<span style=color:#2aa198>&#34;AES/CFB/NOPADDING&#34;</span>)
-    cipher<span style=color:#719e07>.</span>init(Cipher<span style=color:#719e07>.</span>DECRYPT_MODE, aesKey, aesIV)
-    <span style=color:#719e07>return</span> cipher<span style=color:#719e07>.</span>doFinal(decoded)</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<h2 id=extensionpy-2>extension.py
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#586e75># encryptJython uses javax.crypto.Cipher to encrypt payload with key/iv</span>
+</span></span><span style=display:flex><span><span style=color:#586e75># using AES/CFB/NOPADDING</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>encryptJython</span>(payload, key, iv):
+</span></span><span style=display:flex><span>    aesKey <span style=color:#719e07>=</span> SecretKeySpec(key, <span style=color:#2aa198>&#34;AES&#34;</span>)
+</span></span><span style=display:flex><span>    aesIV <span style=color:#719e07>=</span> IvParameterSpec(iv)
+</span></span><span style=display:flex><span>    cipher <span style=color:#719e07>=</span> Cipher<span style=color:#719e07>.</span>getInstance(<span style=color:#2aa198>&#34;AES/CFB/NOPADDING&#34;</span>)
+</span></span><span style=display:flex><span>    cipher<span style=color:#719e07>.</span>init(Cipher<span style=color:#719e07>.</span>ENCRYPT_MODE, aesKey, aesIV)
+</span></span><span style=display:flex><span>    encrypted <span style=color:#719e07>=</span> cipher<span style=color:#719e07>.</span>doFinal(payload)
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> Base64<span style=color:#719e07>.</span>getEncoder()<span style=color:#719e07>.</span>encode(encrypted)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75># decryptJython uses javax.crypto.Cipher to decrypt payload with key/iv</span>
+</span></span><span style=display:flex><span><span style=color:#586e75># using AES/CFB/NOPADDING</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>decryptJython</span>(payload, key, iv):
+</span></span><span style=display:flex><span>    decoded <span style=color:#719e07>=</span> Base64<span style=color:#719e07>.</span>getDecoder()<span style=color:#719e07>.</span>decode(payload)
+</span></span><span style=display:flex><span>    aesKey <span style=color:#719e07>=</span> SecretKeySpec(key, <span style=color:#2aa198>&#34;AES&#34;</span>)
+</span></span><span style=display:flex><span>    aesIV <span style=color:#719e07>=</span> IvParameterSpec(iv)
+</span></span><span style=display:flex><span>    cipher <span style=color:#719e07>=</span> Cipher<span style=color:#719e07>.</span>getInstance(<span style=color:#2aa198>&#34;AES/CFB/NOPADDING&#34;</span>)
+</span></span><span style=display:flex><span>    cipher<span style=color:#719e07>.</span>init(Cipher<span style=color:#719e07>.</span>DECRYPT_MODE, aesKey, aesIV)
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> cipher<span style=color:#719e07>.</span>doFinal(decoded)</span></span></code></pre></td></tr></table></div></div></div></figure><h2 id=extensionpy-2>extension.py
 <a class=header-link href=#extensionpy-2><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>In this version of the extension, I just swapped the old encrypt/decrypt functions with the functions.</p>
-<p>This version is much faster. <em>mild shock</em></p>
-<span class=caption-wrapper>
+</h2><p>In this version of the extension, I just swapped the old encrypt/decrypt functions with the functions.</p><p>This version is much faster. <em>mild shock</em></p><span class=caption-wrapper>
 <img class=caption src=10-v3-action.gif title="Jython version is much faster" alt="Jython version is much faster">
 <span class=caption-text>Jython version is much faster</span>
 </span>
-<p>Next time you do not have to write your extension in Java. You're welcome.</p>
-<h1 id=what-did-we-learn-here-today>What Did We Learn Here Today?
+<p>Next time you do not have to write your extension in Java. You're welcome.</p><h1 id=what-did-we-learn-here-today>What Did We Learn Here Today?
 <a class=header-link href=#what-did-we-learn-here-today><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><ul>
-<li>You can use external programs/utilities/services in your Burp extension but you will sacrifice some speed.</li>
-<li>Burp extensions allow you to test encrypted/encoded traffic like a "normal" web service.</li>
-<li>You can use all available Java classes on top of Jython's standard library.</li>
-<li>Libraries/Modules do not have to be in the Extender module path, they can be stored beside the original extension.</li>
-<li>If your extension involves cryptography, you do not have to write it in Java.</li>
-</ul>
-<section class=footnotes role=doc-endnotes>
+<li>You can use external programs/utilities/services in your Burp extension but you will sacrifice some speed.</li><li>Burp extensions allow you to test encrypted/encoded traffic like a "normal" web service.</li><li>You can use all available Java classes on top of Jython's standard library.</li><li>Libraries/Modules do not have to be in the Extender module path, they can be stored beside the original extension.</li><li>If your extension involves cryptography, you do not have to write it in Java.</li></ul><section class=footnotes role=doc-endnotes>
 <hr>
 <ol>
 <li id=fn:1 role=doc-endnote>
-<p>I actually do not know what could mess things up but it's better to be safe.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
-</li>
-</ol>
-</section>
-</div>
-<footer>
+<p>I actually do not know what could mess things up but it's better to be safe.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section></div><footer>
 <p class=meta>
 <span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>Dec 24, 2018</time>
@@ -594,82 +414,47 @@ decoded <span style=color:#719e07>=</span> Base64<span style=color:#719e07>.</sp
 Tags:
 <a class=category href=https://parsiya.net/tags/python>Python</a> <a class=category href=https://parsiya.net/tags/aes>AES</a>
 </span>
-</p>
-<p class=meta>
+</p><p class=meta>
 <a class="basic-alignment left" href=https://parsiya.net/blog/2018-12-22-aes-cfb128-pycrypto-vs.-go/ title="AES-CFB128: PyCrypto vs. Go">AES-CFB128: PyCrypto vs. Go</a>
 <a class="basic-alignment right" href=https://parsiya.net/blog/2019-01-03-cloudflare-concise-christmas-cryptography-challenges-2019-solutions/ title="Cloudflare Concise Christmas Cryptography Challenges 2019 Solutions">Cloudflare Concise Christmas Cryptography Challenges 2019 Solutions</a>
-</p>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</div>
-<aside class="sidebar thirds">
+</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer></article></div><aside class="sidebar thirds">
 <section class="first odd">
-<h1>Who am I?</h1>
-<p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
-<p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p>
-<p>Click on <a href=/about/>About Me!</a> to know more.</p>
-</p>
-</section>
-<ul class=sidebar-nav>
+<h1>Who am I?</h1><p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
 <li class=sidebar-nav-item>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li>
-</ul>
-<section class=odd>
-<h1>Collections</h1>
-<li>
+</li></ul><section class=odd>
+<h1>Collections</h1><li>
 <a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li>
-<li>
+</li><li>
 <a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li>
-</section>
-</aside>
-</div>
-</div>
-<footer role=contentinfo>
+</li></section></aside></div></div><footer role=contentinfo>
 <p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>

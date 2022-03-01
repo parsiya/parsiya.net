@@ -3,14 +3,13 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
 <link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>Learning Go-Fuzz 1: iprange</title>
-<link rel=stylesheet href=/css/hugo-octopress.css>
+<title>Learning Go-Fuzz 1: iprange</title><link rel=stylesheet href=/css/hugo-octopress.css>
 <link rel=stylesheet href=/css/fork-awesome.min.css>
 <link href=https://parsiya.net/favicon.png rel=icon>
 <meta name=description content>
 <meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
 <meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.92.2">
+<meta name=generator content="Hugo 0.93.0">
 <meta name=twitter:card content="summary_large_image">
 <meta name=twitter:image:src content="https://parsiya.net/blog/2018-04-29-learning-go-fuzz-1-iprange/03-running.png">
 <meta name=twitter:title content="Learning Go-Fuzz 1: iprange">
@@ -26,37 +25,21 @@ https://github.com/parsiya/Go-Security/tree/master/go-fuzz/iprange
 ">
 <meta name=twitter:domain content="parsiya.net">
 <meta name=twitter:creator content="@CryptoGangsta">
-</head>
-<body>
+</head><body>
 <header role=banner>
 <hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
-<h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2>
-</hgroup></header>
-<nav role=navigation>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
 <fieldset class=mobile-nav>
 <select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset>
-<ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
-<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
-<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
-<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
-<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
-<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
-</ul>
-<ul class=subscription>
+</fieldset><ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
 <a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul>
-<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
 <fieldset role=search>
 <input class=search type=text name=q results=0 placeholder=Search>
 <input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset>
-</form>
-</nav>
-<div id=main>
+</fieldset></form></nav><div id=main>
 <div id=content>
 <div>
 <article class=hentry role=article>
@@ -65,204 +48,112 @@ complete unless it is known by its causes. - Avicenna</h2>
 - 9 minute read
 - <a href=https://parsiya.net/blog/2018-04-29-learning-go-fuzz-1-iprange/#disqus_thread>Comments</a>
 - <a class=label href=https://parsiya.net/categories/go/>Go </a><a class=label href=https://parsiya.net/categories/fuzzing/>Fuzzing </a>
-</p>
-<h1 class=entry-title>
+</p><h1 class=entry-title>
 Learning Go-Fuzz 1: iprange
-</h1>
-</header>
-<div class=entry-content>
+</h1></header><div class=entry-content>
 <nav id=TableOfContents>
 <ul>
-<li><a href=#go-fuzz-quickstart>Go-Fuzz Quickstart</a></li>
-<li><a href=#setup>Setup</a></li>
-<li><a href=#the-fuzz-function>The Fuzz Function</a></li>
-<li><a href=#fuzzing-iprange>Fuzzing iprange</a>
+<li><a href=#go-fuzz-quickstart>Go-Fuzz Quickstart</a></li><li><a href=#setup>Setup</a></li><li><a href=#the-fuzz-function>The Fuzz Function</a></li><li><a href=#fuzzing-iprange>Fuzzing iprange</a>
 <ul>
-<li><a href=#fuzz-function>Fuzz Function</a></li>
-<li><a href=#go-fuzz-build>go-fuzz-build</a></li>
-<li><a href=#corpus>Corpus</a></li>
-<li><a href=#fuzzing>Fuzzing</a></li>
-<li><a href=#fuzzing-results>Fuzzing Results</a></li>
-<li><a href=#analyzing-the-crash>Analyzing the Crash</a>
+<li><a href=#fuzz-function>Fuzz Function</a></li><li><a href=#go-fuzz-build>go-fuzz-build</a></li><li><a href=#corpus>Corpus</a></li><li><a href=#fuzzing>Fuzzing</a></li><li><a href=#fuzzing-results>Fuzzing Results</a></li><li><a href=#analyzing-the-crash>Analyzing the Crash</a>
 <ul>
-<li><a href=#bigendianuint32>bigEndian.Uint32</a></li>
-<li><a href=#parse>Parse</a></li>
-<li><a href=#reproducing-the-crash>Reproducing the Crash</a></li>
-</ul>
-</li>
-<li><a href=#more-crashes>More Crashes?</a></li>
-<li><a href=#solution>Solution</a></li>
-</ul>
-</li>
-<li><a href=#conclusion>Conclusion</a></li>
-</ul>
-</nav>
-<p><a href=https://github.com/dvyukov/go-fuzz target=_blank rel="noreferrer noopener">Go-Fuzz</a> is like AFL but for Go. If you have a Go package that parses some input, you might be able fuzz it with Go-Fuzz (terms and conditions apply). Not everything can be fuzzed very easily. For example Go-Fuzz does not like cycling imports, so if one of your sub-packages imports the main package then you are in trouble (I am looking at your <a href=https://github.com/alecthomas/chroma target=_blank rel="noreferrer noopener">Chroma</a>).</p>
-<p>The rest of the article will show how to use Go-Fuzz to fuzz a Go library named <code>iprange</code> at:</p>
-<ul>
-<li><a href=https://github.com/malfunkt/iprange target=_blank rel="noreferrer noopener">https://github.com/malfunkt/iprange</a></li>
-</ul>
-<p>Code and fuzzing artifacts are at:</p>
-<ul>
-<li><a href=https://github.com/parsiya/Go-Security/tree/master/go-fuzz/iprange target=_blank rel="noreferrer noopener">https://github.com/parsiya/Go-Security/tree/master/go-fuzz/iprange</a></li>
-</ul>
-<h1 id=go-fuzz-quickstart>Go-Fuzz Quickstart
+<li><a href=#bigendianuint32>bigEndian.Uint32</a></li><li><a href=#parse>Parse</a></li><li><a href=#reproducing-the-crash>Reproducing the Crash</a></li></ul></li><li><a href=#more-crashes>More Crashes?</a></li><li><a href=#solution>Solution</a></li></ul></li><li><a href=#conclusion>Conclusion</a></li></ul></nav><p><a href=https://github.com/dvyukov/go-fuzz target=_blank rel="noreferrer noopener">Go-Fuzz</a> is like AFL but for Go. If you have a Go package that parses some input, you might be able fuzz it with Go-Fuzz (terms and conditions apply). Not everything can be fuzzed very easily. For example Go-Fuzz does not like cycling imports, so if one of your sub-packages imports the main package then you are in trouble (I am looking at your <a href=https://github.com/alecthomas/chroma target=_blank rel="noreferrer noopener">Chroma</a>).</p><p>The rest of the article will show how to use Go-Fuzz to fuzz a Go library named <code>iprange</code> at:</p><ul>
+<li><a href=https://github.com/malfunkt/iprange target=_blank rel="noreferrer noopener">https://github.com/malfunkt/iprange</a></li></ul><p>Code and fuzzing artifacts are at:</p><ul>
+<li><a href=https://github.com/parsiya/Go-Security/tree/master/go-fuzz/iprange target=_blank rel="noreferrer noopener">https://github.com/parsiya/Go-Security/tree/master/go-fuzz/iprange</a></li></ul><h1 id=go-fuzz-quickstart>Go-Fuzz Quickstart
 <a class=header-link href=#go-fuzz-quickstart><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>I have written a small quick-start guide for myself in my clone at:</p>
-<ul>
-<li><a href=https://parsiya.io/categories/research/go-fuzz-quick-start/ target=_blank rel="noreferrer noopener">https://parsiya.io/categories/research/go-fuzz-quick-start/</a></li>
-</ul>
-<p>These examples helped me immensely:</p>
-<ul>
-<li><a href=https://medium.com/@dgryski/go-fuzz-github-com-arolek-ase-3c74d5a3150c target=_blank rel="noreferrer noopener">https://medium.com/@dgryski/go-fuzz-github-com-arolek-ase-3c74d5a3150c</a></li>
-<li><a href=https://mijailovic.net/2017/07/29/go-fuzz/ target=_blank rel="noreferrer noopener">https://mijailovic.net/2017/07/29/go-fuzz/</a></li>
-<li><a href=https://blog.cloudflare.com/dns-parser-meet-go-fuzzer/ target=_blank rel="noreferrer noopener">https://blog.cloudflare.com/dns-parser-meet-go-fuzzer/</a></li>
-<li><a href=https://go-talks.appspot.com/github.com/dvyukov/go-fuzz/slides/fuzzing.slide#1 target=_blank rel="noreferrer noopener">https://go-talks.appspot.com/github.com/dvyukov/go-fuzz/slides/fuzzing.slide#1</a></li>
-</ul>
-<h1 id=setup>Setup
+</h1><p>I have written a small quick-start guide for myself in my clone at:</p><ul>
+<li><a href=https://parsiya.io/categories/research/go-fuzz-quick-start/ target=_blank rel="noreferrer noopener">https://parsiya.io/categories/research/go-fuzz-quick-start/</a></li></ul><p>These examples helped me immensely:</p><ul>
+<li><a href=https://medium.com/@dgryski/go-fuzz-github-com-arolek-ase-3c74d5a3150c target=_blank rel="noreferrer noopener">https://medium.com/@dgryski/go-fuzz-github-com-arolek-ase-3c74d5a3150c</a></li><li><a href=https://mijailovic.net/2017/07/29/go-fuzz/ target=_blank rel="noreferrer noopener">https://mijailovic.net/2017/07/29/go-fuzz/</a></li><li><a href=https://blog.cloudflare.com/dns-parser-meet-go-fuzzer/ target=_blank rel="noreferrer noopener">https://blog.cloudflare.com/dns-parser-meet-go-fuzzer/</a></li><li><a href=https://go-talks.appspot.com/github.com/dvyukov/go-fuzz/slides/fuzzing.slide#1 target=_blank rel="noreferrer noopener">https://go-talks.appspot.com/github.com/dvyukov/go-fuzz/slides/fuzzing.slide#1</a></li></ul><h1 id=setup>Setup
 <a class=header-link href=#setup><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>The article assumes you have a working Go installation and have <code>go-fuzz</code> and <code>go-fuzz-build</code> executables in <code>PATH</code>. If not, use the quickstart or any other tutorial to do so and return here when you are done.</p>
-<p>I am using a Windows 10 64-bit VM.</p>
-<h1 id=the-fuzz-function>The Fuzz Function
+</h1><p>The article assumes you have a working Go installation and have <code>go-fuzz</code> and <code>go-fuzz-build</code> executables in <code>PATH</code>. If not, use the quickstart or any other tutorial to do so and return here when you are done.</p><p>I am using a Windows 10 64-bit VM.</p><h1 id=the-fuzz-function>The Fuzz Function
 <a class=header-link href=#the-fuzz-function><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>The <code>Fuzz</code> function is the fuzzer's entry point. It's a function with the following signature:</p>
-<ul>
-<li><code>func Fuzz(data []byte) int</code></li>
-</ul>
-<p>It takes a byte slice coming from the fuzzer and returns an integer. This gives us great flexibility in deciding what we want to fuzz. <code>Fuzz</code> is part of the target package so we can also fuzz internal (unexported) package functions.</p>
-<p>The output of <code>Fuzz</code> is our feedback to the fuzzer. If the input was valid (usually in the correct format), it should return <code>1</code> and <code>0</code> otherwise.</p>
-<p>Having roughly correctly formatted input is important. Usually, we are dealing with formatted data. Just randomly sending byte blobs to the program is not going to do much. We want data that can bypass format checks. We pass the blob to either the target package or another function (e.g. some format converter) and check if it passes the parser check without any errors. If so, <code>Fuzz</code> must return <code>1</code> to tell <code>go-fuzz</code> that our format was good.</p>
-<p>For a good example, look at the <code>PNG</code> fuzz function from the readme file:</p>
-<figure class=code>
+</h1><p>The <code>Fuzz</code> function is the fuzzer's entry point. It's a function with the following signature:</p><ul>
+<li><code>func Fuzz(data []byte) int</code></li></ul><p>It takes a byte slice coming from the fuzzer and returns an integer. This gives us great flexibility in deciding what we want to fuzz. <code>Fuzz</code> is part of the target package so we can also fuzz internal (unexported) package functions.</p><p>The output of <code>Fuzz</code> is our feedback to the fuzzer. If the input was valid (usually in the correct format), it should return <code>1</code> and <code>0</code> otherwise.</p><p>Having roughly correctly formatted input is important. Usually, we are dealing with formatted data. Just randomly sending byte blobs to the program is not going to do much. We want data that can bypass format checks. We pass the blob to either the target package or another function (e.g. some format converter) and check if it passes the parser check without any errors. If so, <code>Fuzz</code> must return <code>1</code> to tell <code>go-fuzz</code> that our format was good.</p><p>For a good example, look at the <code>PNG</code> fuzz function from the readme file:</p><figure class=code>
 <figcaption>
 <span>PNG Fuzz</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#268bd2>func</span> <span style=color:#268bd2>Fuzz</span>(data []<span style=color:#dc322f>byte</span>) <span style=color:#dc322f>int</span> {
-	img, err <span style=color:#719e07>:=</span> png.<span style=color:#268bd2>Decode</span>(bytes.<span style=color:#268bd2>NewReader</span>(data))
-	<span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
-		<span style=color:#719e07>if</span> img <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
-			<span style=color:#b58900>panic</span>(<span style=color:#2aa198>&#34;img != nil on error&#34;</span>)
-		}
-		<span style=color:#719e07>return</span> <span style=color:#2aa198>0</span>
-	}
-	<span style=color:#268bd2>var</span> w bytes.Buffer
-	err = png.<span style=color:#268bd2>Encode</span>(<span style=color:#719e07>&amp;</span>w, img)
-	<span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
-		<span style=color:#b58900>panic</span>(err)
-	}
-	<span style=color:#719e07>return</span> <span style=color:#2aa198>1</span>
-}</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<h1 id=fuzzing-iprange>Fuzzing iprange
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>Fuzz</span>(data []<span style=color:#dc322f>byte</span>) <span style=color:#dc322f>int</span> {
+</span></span><span style=display:flex><span>	img, err <span style=color:#719e07>:=</span> png.<span style=color:#268bd2>Decode</span>(bytes.<span style=color:#268bd2>NewReader</span>(data))
+</span></span><span style=display:flex><span>	<span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+</span></span><span style=display:flex><span>		<span style=color:#719e07>if</span> img <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+</span></span><span style=display:flex><span>			<span style=color:#b58900>panic</span>(<span style=color:#2aa198>&#34;img != nil on error&#34;</span>)
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>		<span style=color:#719e07>return</span> <span style=color:#2aa198>0</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	<span style=color:#268bd2>var</span> w bytes.Buffer
+</span></span><span style=display:flex><span>	err = png.<span style=color:#268bd2>Encode</span>(<span style=color:#719e07>&amp;</span>w, img)
+</span></span><span style=display:flex><span>	<span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+</span></span><span style=display:flex><span>		<span style=color:#b58900>panic</span>(err)
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	<span style=color:#719e07>return</span> <span style=color:#2aa198>1</span>
+</span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><h1 id=fuzzing-iprange>Fuzzing iprange
 <a class=header-link href=#fuzzing-iprange><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>We can use the usage section in the <a href=https://github.com/malfunkt/iprange target=_blank rel="noreferrer noopener">iprange</a> readme to become familiar with the package.</p>
-<p>Then we need to get the package with <code>go get github.com/malfunkt/iprange</code>. This will copy package files to <code>$GOPATH\src\github.com\malfunkt\iprange</code>.</p>
-<p>Note: I am using commit <code>3a31f5ed42d2d8a1fc46f1be91fd693bdef2dd52</code>, if the bug gets fixed we need to <code>git clone</code> the directory instead and then do a <code>hard reset</code>.</p>
-<h2 id=fuzz-function>Fuzz Function
+</h1><p>We can use the usage section in the <a href=https://github.com/malfunkt/iprange target=_blank rel="noreferrer noopener">iprange</a> readme to become familiar with the package.</p><p>Then we need to get the package with <code>go get github.com/malfunkt/iprange</code>. This will copy package files to <code>$GOPATH\src\github.com\malfunkt\iprange</code>.</p><p>Note: I am using commit <code>3a31f5ed42d2d8a1fc46f1be91fd693bdef2dd52</code>, if the bug gets fixed we need to <code>git clone</code> the directory instead and then do a <code>hard reset</code>.</p><h2 id=fuzz-function>Fuzz Function
 <a class=header-link href=#fuzz-function><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Now we create a new file inside the package named <code>Fuzz.go</code> and write our fuzz function:</p>
-<figure class=code>
+</h2><p>Now we create a new file inside the package named <code>Fuzz.go</code> and write our fuzz function:</p><figure class=code>
 <figcaption>
 <span>Fuzz.go</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">9
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#719e07>package</span> iprange
-
-<span style=color:#268bd2>func</span> <span style=color:#268bd2>Fuzz</span>(data []<span style=color:#dc322f>byte</span>) <span style=color:#dc322f>int</span> {
-	_, err <span style=color:#719e07>:=</span> <span style=color:#268bd2>ParseList</span>(<span style=color:#b58900>string</span>(data))
-	<span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
-		<span style=color:#719e07>return</span> <span style=color:#2aa198>0</span>
-	}
-	<span style=color:#719e07>return</span> <span style=color:#2aa198>1</span>
-}</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p><img src=01-fuzz.png alt="Fuzz function" title="Fuzz function"></p>
-<p>We are converting the input from <code>go-fuzz</code> to a string and passing it to <code>ParseList</code>. If the parser returns an error, then it's not good input and we will return <code>0</code>. If it passes the check, we return <code>1</code>. Good input will be added to the original corpus.</p>
-<p>If <code>go-fuzz</code> achieves more code coverage with a specific input, it will be added to corpus even if we return <code>0</code>. But we do not need to care about that.</p>
-<h2 id=go-fuzz-build>go-fuzz-build
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">9
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#719e07>package</span> iprange
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>Fuzz</span>(data []<span style=color:#dc322f>byte</span>) <span style=color:#dc322f>int</span> {
+</span></span><span style=display:flex><span>	_, err <span style=color:#719e07>:=</span> <span style=color:#268bd2>ParseList</span>(<span style=color:#b58900>string</span>(data))
+</span></span><span style=display:flex><span>	<span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+</span></span><span style=display:flex><span>		<span style=color:#719e07>return</span> <span style=color:#2aa198>0</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	<span style=color:#719e07>return</span> <span style=color:#2aa198>1</span>
+</span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p><img src=01-fuzz.png alt="Fuzz function" title="Fuzz function"></p><p>We are converting the input from <code>go-fuzz</code> to a string and passing it to <code>ParseList</code>. If the parser returns an error, then it's not good input and we will return <code>0</code>. If it passes the check, we return <code>1</code>. Good input will be added to the original corpus.</p><p>If <code>go-fuzz</code> achieves more code coverage with a specific input, it will be added to corpus even if we return <code>0</code>. But we do not need to care about that.</p><h2 id=go-fuzz-build>go-fuzz-build
 <a class=header-link href=#go-fuzz-build><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Next step is using <code>go-fuzz-build</code> to make the magic blob. Create a directory (I always use my <code>src</code> directory`) and run this command inside it:</p>
-<ul>
-<li><code>go-fuzz-build github.com/malfunkt/iprange</code></li>
-</ul>
-<p>Note you need to use forward slashes on Windows too. If <code>Fuzz</code> was written correctly we will get a zip file named <code>iprange-fuzz.zip</code>.</p>
-<p>Note: This step usually takes a while. If the command line is not responsive after a few minutes, press enter a couple of times to check if it has finished. Sometimes the file is created but the command line does not display the results.</p>
-<p><img src=02-go-fuzz-build.png alt="Building go-fuzz-build" title="Building go-fuzz-build"></p>
-<h2 id=corpus>Corpus
+</h2><p>Next step is using <code>go-fuzz-build</code> to make the magic blob. Create a directory (I always use my <code>src</code> directory`) and run this command inside it:</p><ul>
+<li><code>go-fuzz-build github.com/malfunkt/iprange</code></li></ul><p>Note you need to use forward slashes on Windows too. If <code>Fuzz</code> was written correctly we will get a zip file named <code>iprange-fuzz.zip</code>.</p><p>Note: This step usually takes a while. If the command line is not responsive after a few minutes, press enter a couple of times to check if it has finished. Sometimes the file is created but the command line does not display the results.</p><p><img src=02-go-fuzz-build.png alt="Building go-fuzz-build" title="Building go-fuzz-build"></p><h2 id=corpus>Corpus
 <a class=header-link href=#corpus><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>To have meaningful fuzzing, we need to provide good/correct samples. This is done by creating a directory named <code>corpus</code> inside our work directory and providing one sample per file.</p>
-<p>Copy the items from <a href=https://github.com/malfunkt/iprange#supported-formats target=_blank rel="noreferrer noopener">supported formats</a> section of <code>iprange</code> readme. Each file will have one item. File name does not matter. I created three files <code>test1/2/3</code>:</p>
-<pre tabindex=0><code>test1: 10.0.0.1, 10.0.0.5-10, 192.168.1.*, 192.168.10.0/24
+</h2><p>To have meaningful fuzzing, we need to provide good/correct samples. This is done by creating a directory named <code>corpus</code> inside our work directory and providing one sample per file.</p><p>Copy the items from <a href=https://github.com/malfunkt/iprange#supported-formats target=_blank rel="noreferrer noopener">supported formats</a> section of <code>iprange</code> readme. Each file will have one item. File name does not matter. I created three files <code>test1/2/3</code>:</p><pre tabindex=0><code>test1: 10.0.0.1, 10.0.0.5-10, 192.168.1.*, 192.168.10.0/24
 
 test2: 10.0.0.1-10,10.0.0.0/24,
 10.0.0.0/24
 
 test3: 10.0.0.*, 192.168.0.*, 192.168.1-256
-</code></pre>
-<h2 id=fuzzing>Fuzzing
+</code></pre><h2 id=fuzzing>Fuzzing
 <a class=header-link href=#fuzzing><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Now we can run <code>go-fuzz</code>.</p>
-<ul>
-<li><code>go-fuzz -bin=iprange-fuzz.zip -workdir=.</code></li>
-</ul>
-<p>Note <code>workdir</code> should point to the path that contains the <code>corpus</code> directory.</p>
-<h2 id=fuzzing-results>Fuzzing Results
+</h2><p>Now we can run <code>go-fuzz</code>.</p><ul>
+<li><code>go-fuzz -bin=iprange-fuzz.zip -workdir=.</code></li></ul><p>Note <code>workdir</code> should point to the path that contains the <code>corpus</code> directory.</p><h2 id=fuzzing-results>Fuzzing Results
 <a class=header-link href=#fuzzing-results><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>We will quickly get a crash and some new files are added to the <code>corpus</code>.</p>
-<p><img src=03-running.png alt="Running go-fuzz" title="Running go-fuzz"></p>
-<h2 id=analyzing-the-crash>Analyzing the Crash
+</h2><p>We will quickly get a crash and some new files are added to the <code>corpus</code>.</p><p><img src=03-running.png alt="Running go-fuzz" title="Running go-fuzz"></p><h2 id=analyzing-the-crash>Analyzing the Crash
 <a class=header-link href=#analyzing-the-crash><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>While we are fuzzing, we can analyze the current crash. <code>go-fuzz</code> has created two other directories besides <code>corpus</code>.</p>
+</h2><p>While we are fuzzing, we can analyze the current crash. <code>go-fuzz</code> has created two other directories besides <code>corpus</code>.</p><ul>
+<li><code>suppressions</code> contains crash logs. This allows <code>go-fuzz</code> to skip input that results in the same exact crash. This means you will not 500 crash test cases that all occur at the same place.</li><li><code>crashers</code> has our loot. Each crash has three files and the file name is <code>SHA-1</code> hash of input. In this crash we have:
 <ul>
-<li><code>suppressions</code> contains crash logs. This allows <code>go-fuzz</code> to skip input that results in the same exact crash. This means you will not 500 crash test cases that all occur at the same place.</li>
-<li><code>crashers</code> has our loot. Each crash has three files and the file name is <code>SHA-1</code> hash of input. In this crash we have:
-<ul>
-<li><code>17ee301be06245aa20945bc3ff3c4838abe13b52</code> contains the input that caused the crash <code>0.0.0.0/40</code>.</li>
-<li><code>17ee301be06245aa20945bc3ff3c4838abe13b52.quoted</code> is the input but quoted as a string.</li>
-<li><code>17ee301be06245aa20945bc3ff3c4838abe13b52.output</code> contains the crash dump.</li>
-</ul>
-</li>
-</ul>
-<pre tabindex=0><code>panic: runtime error: index out of range
+<li><code>17ee301be06245aa20945bc3ff3c4838abe13b52</code> contains the input that caused the crash <code>0.0.0.0/40</code>.</li><li><code>17ee301be06245aa20945bc3ff3c4838abe13b52.quoted</code> is the input but quoted as a string.</li><li><code>17ee301be06245aa20945bc3ff3c4838abe13b52.output</code> contains the crash dump.</li></ul></li></ul><pre tabindex=0><code>panic: runtime error: index out of range
 
 goroutine 1 [running]:
 encoding/binary.binary.bigEndian.Uint32(...)
@@ -280,73 +171,52 @@ go-fuzz-dep.Main(0x5196e0)
 main.main()
 	/Temp/go-fuzz-build049016974/gopath/src/github.com/malfunkt/iprange/go.fuzz.main/main.go:10 +0x34
 exit status 2
-</code></pre>
-<h3 id=bigendianuint32>bigEndian.Uint32
+</code></pre><h3 id=bigendianuint32>bigEndian.Uint32
 <a class=header-link href=#bigendianuint32><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>Our first stop is the Go standard library for <code>encoding/binary.binary.bigEndian.Uint32</code>. The source code for this method is at:</p>
-<ul>
-<li><a href=https://github.com/golang/go/blob/master/src/encoding/binary/binary.go#L110 target=_blank rel="noreferrer noopener">https://github.com/golang/go/blob/master/src/encoding/binary/binary.go#L110</a></li>
-</ul>
-<figure class=code>
+</h3><p>Our first stop is the Go standard library for <code>encoding/binary.binary.bigEndian.Uint32</code>. The source code for this method is at:</p><ul>
+<li><a href=https://github.com/golang/go/blob/master/src/encoding/binary/binary.go#L110 target=_blank rel="noreferrer noopener">https://github.com/golang/go/blob/master/src/encoding/binary/binary.go#L110</a></li></ul><figure class=code>
 <figcaption>
 <span>binary.BigEndian.Uint32</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">4
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#268bd2>func</span> (bigEndian) <span style=color:#268bd2>Uint32</span>(b []<span style=color:#dc322f>byte</span>) <span style=color:#dc322f>uint32</span> {
-	_ = b[<span style=color:#2aa198>3</span>] <span style=color:#586e75>// bounds check hint to compiler; see golang.org/issue/14808
-</span><span style=color:#586e75></span>	<span style=color:#719e07>return</span> <span style=color:#b58900>uint32</span>(b[<span style=color:#2aa198>3</span>]) | <span style=color:#b58900>uint32</span>(b[<span style=color:#2aa198>2</span>])<span style=color:#719e07>&lt;&lt;</span><span style=color:#2aa198>8</span> | <span style=color:#b58900>uint32</span>(b[<span style=color:#2aa198>1</span>])<span style=color:#719e07>&lt;&lt;</span><span style=color:#2aa198>16</span> | <span style=color:#b58900>uint32</span>(b[<span style=color:#2aa198>0</span>])<span style=color:#719e07>&lt;&lt;</span><span style=color:#2aa198>24</span>
-}</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>Going to the issue in the comment, we land at <a href=https://github.com/golang/go/issues/14808 target=_blank rel="noreferrer noopener">https://github.com/golang/go/issues/14808</a>. Looking at the issue we can see what the bounds check is for. It's checking if the input has enough bytes and if not, it will panic before bytes are accessed. So this part of the chain is "working as intended."</p>
-<p>This small piece of code results in a panic:</p>
-<figure class=code>
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>func</span> (bigEndian) <span style=color:#268bd2>Uint32</span>(b []<span style=color:#dc322f>byte</span>) <span style=color:#dc322f>uint32</span> {
+</span></span><span style=display:flex><span>	_ = b[<span style=color:#2aa198>3</span>] <span style=color:#586e75>// bounds check hint to compiler; see golang.org/issue/14808
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>	<span style=color:#719e07>return</span> <span style=color:#b58900>uint32</span>(b[<span style=color:#2aa198>3</span>]) | <span style=color:#b58900>uint32</span>(b[<span style=color:#2aa198>2</span>])<span style=color:#719e07>&lt;&lt;</span><span style=color:#2aa198>8</span> | <span style=color:#b58900>uint32</span>(b[<span style=color:#2aa198>1</span>])<span style=color:#719e07>&lt;&lt;</span><span style=color:#2aa198>16</span> | <span style=color:#b58900>uint32</span>(b[<span style=color:#2aa198>0</span>])<span style=color:#719e07>&lt;&lt;</span><span style=color:#2aa198>24</span>
+</span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>Going to the issue in the comment, we land at <a href=https://github.com/golang/go/issues/14808 target=_blank rel="noreferrer noopener">https://github.com/golang/go/issues/14808</a>. Looking at the issue we can see what the bounds check is for. It's checking if the input has enough bytes and if not, it will panic before bytes are accessed. So this part of the chain is "working as intended."</p><p>This small piece of code results in a panic:</p><figure class=code>
 <figcaption>
 <span>test1.go</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#586e75>// Small program to test panic when calling Uint32(nil).
-</span><span style=color:#586e75></span><span style=color:#719e07>package</span> main
-
-<span style=color:#719e07>import</span> (
-	<span style=color:#2aa198>&#34;encoding/binary&#34;</span>
-)
-
-<span style=color:#268bd2>func</span> <span style=color:#268bd2>main</span>() {
-	_ = binary.BigEndian.<span style=color:#268bd2>Uint32</span>(<span style=color:#cb4b16>nil</span>)
-	<span style=color:#586e75>// _ = binary.BigEndian.Uint32([]byte(nil))
-</span><span style=color:#586e75></span>}</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>And the crash is similar to what we have seen:</p>
-<pre tabindex=0><code>$ go run test1.go
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Small program to test panic when calling Uint32(nil).
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>package</span> main
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>import</span> (
+</span></span><span style=display:flex><span>	<span style=color:#2aa198>&#34;encoding/binary&#34;</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>main</span>() {
+</span></span><span style=display:flex><span>	_ = binary.BigEndian.<span style=color:#268bd2>Uint32</span>(<span style=color:#cb4b16>nil</span>)
+</span></span><span style=display:flex><span>	<span style=color:#586e75>// _ = binary.BigEndian.Uint32([]byte(nil))
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>And the crash is similar to what we have seen:</p><pre tabindex=0><code>$ go run test1.go
 panic: runtime error: index out of range
 
 goroutine 1 [running]:
@@ -355,203 +225,169 @@ encoding/binary.binary.bigEndian.Uint32(...)
 main.main()
         C:/Users/test-user/Go/src/gofuzz-stuff/malfunkt-iprange/test1.go:9 +0x11
 exit status 2
-</code></pre>
-<h3 id=parse>Parse
+</code></pre><h3 id=parse>Parse
 <a class=header-link href=#parse><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>Next item in the chain is at <a href=https://github.com/malfunkt/iprange/blob/master/y.go#L309 target=_blank rel="noreferrer noopener">https://github.com/malfunkt/iprange/blob/master/y.go#L309</a>. It's a huge method but we know the method that was called so we can just search for <code>Uint32</code>. The culprit is inside <a href=https://github.com/malfunkt/iprange/blob/master/y.go#L498 target=_blank rel="noreferrer noopener">case 5</a>.</p>
-<figure class=code>
+</h3><p>Next item in the chain is at <a href=https://github.com/malfunkt/iprange/blob/master/y.go#L309 target=_blank rel="noreferrer noopener">https://github.com/malfunkt/iprange/blob/master/y.go#L309</a>. It's a huge method but we know the method that was called so we can just search for <code>Uint32</code>. The culprit is inside <a href=https://github.com/malfunkt/iprange/blob/master/y.go#L498 target=_blank rel="noreferrer noopener">case 5</a>.</p><figure class=code>
 <figcaption>
 <span>Original y.go case 5</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#719e07>case</span> <span style=color:#2aa198>5</span>:
-    ipDollar = ipS[ippt<span style=color:#719e07>-</span><span style=color:#2aa198>3</span> : ippt<span style=color:#719e07>+</span><span style=color:#2aa198>1</span>]
-    <span style=color:#586e75>//line ip.y:54
-</span><span style=color:#586e75></span>    {
-        mask <span style=color:#719e07>:=</span> net.<span style=color:#268bd2>CIDRMask</span>(<span style=color:#b58900>int</span>(ipDollar[<span style=color:#2aa198>3</span>].num), <span style=color:#2aa198>32</span>)
-        min <span style=color:#719e07>:=</span> ipDollar[<span style=color:#2aa198>1</span>].addrRange.Min.<span style=color:#268bd2>Mask</span>(mask)
-        maxInt <span style=color:#719e07>:=</span> binary.BigEndian.<span style=color:#268bd2>Uint32</span>([]<span style=color:#b58900>byte</span>(min)) <span style=color:#719e07>+</span> <span style=color:#586e75>// &lt;----
-</span><span style=color:#586e75></span>            <span style=color:#2aa198>0xffffffff</span> <span style=color:#719e07>-</span>
-            binary.BigEndian.<span style=color:#268bd2>Uint32</span>([]<span style=color:#b58900>byte</span>(mask)) <span style=color:#586e75>// &lt;----
-</span><span style=color:#586e75></span>        maxBytes <span style=color:#719e07>:=</span> <span style=color:#b58900>make</span>([]<span style=color:#dc322f>byte</span>, <span style=color:#2aa198>4</span>)
-        binary.BigEndian.<span style=color:#268bd2>PutUint32</span>(maxBytes, maxInt)
-        maxBytes = maxBytes[<span style=color:#b58900>len</span>(maxBytes)<span style=color:#719e07>-</span><span style=color:#2aa198>4</span>:]
-        max <span style=color:#719e07>:=</span> net.<span style=color:#268bd2>IP</span>(maxBytes)
-        ipVAL.addrRange = AddressRange{
-            Min: min.<span style=color:#268bd2>To4</span>(),
-            Max: max.<span style=color:#268bd2>To4</span>(),
-        }
-    }</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>We can see two calls. The first is for <code>min</code> and the second is for <code>mask</code>. <code>mask</code> comes from the output of <a href=https://golang.org/pkg/net/#CIDRMask target=_blank rel="noreferrer noopener">net.CIDRMask</a>. Looking at the source code, we can see that it returns <code>nil</code> if mask is not valid:</p>
-<figure class=code>
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#719e07>case</span> <span style=color:#2aa198>5</span>:
+</span></span><span style=display:flex><span>    ipDollar = ipS[ippt<span style=color:#719e07>-</span><span style=color:#2aa198>3</span> : ippt<span style=color:#719e07>+</span><span style=color:#2aa198>1</span>]
+</span></span><span style=display:flex><span>    <span style=color:#586e75>//line ip.y:54
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    {
+</span></span><span style=display:flex><span>        mask <span style=color:#719e07>:=</span> net.<span style=color:#268bd2>CIDRMask</span>(<span style=color:#b58900>int</span>(ipDollar[<span style=color:#2aa198>3</span>].num), <span style=color:#2aa198>32</span>)
+</span></span><span style=display:flex><span>        min <span style=color:#719e07>:=</span> ipDollar[<span style=color:#2aa198>1</span>].addrRange.Min.<span style=color:#268bd2>Mask</span>(mask)
+</span></span><span style=display:flex><span>        maxInt <span style=color:#719e07>:=</span> binary.BigEndian.<span style=color:#268bd2>Uint32</span>([]<span style=color:#b58900>byte</span>(min)) <span style=color:#719e07>+</span> <span style=color:#586e75>// &lt;----
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>            <span style=color:#2aa198>0xffffffff</span> <span style=color:#719e07>-</span>
+</span></span><span style=display:flex><span>            binary.BigEndian.<span style=color:#268bd2>Uint32</span>([]<span style=color:#b58900>byte</span>(mask)) <span style=color:#586e75>// &lt;----
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        maxBytes <span style=color:#719e07>:=</span> <span style=color:#b58900>make</span>([]<span style=color:#dc322f>byte</span>, <span style=color:#2aa198>4</span>)
+</span></span><span style=display:flex><span>        binary.BigEndian.<span style=color:#268bd2>PutUint32</span>(maxBytes, maxInt)
+</span></span><span style=display:flex><span>        maxBytes = maxBytes[<span style=color:#b58900>len</span>(maxBytes)<span style=color:#719e07>-</span><span style=color:#2aa198>4</span>:]
+</span></span><span style=display:flex><span>        max <span style=color:#719e07>:=</span> net.<span style=color:#268bd2>IP</span>(maxBytes)
+</span></span><span style=display:flex><span>        ipVAL.addrRange = AddressRange{
+</span></span><span style=display:flex><span>            Min: min.<span style=color:#268bd2>To4</span>(),
+</span></span><span style=display:flex><span>            Max: max.<span style=color:#268bd2>To4</span>(),
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }</span></span></code></pre></td></tr></table></div></div></div></figure><p>We can see two calls. The first is for <code>min</code> and the second is for <code>mask</code>. <code>mask</code> comes from the output of <a href=https://golang.org/pkg/net/#CIDRMask target=_blank rel="noreferrer noopener">net.CIDRMask</a>. Looking at the source code, we can see that it returns <code>nil</code> if mask is not valid:</p><figure class=code>
 <figcaption>
 <span>net.CIDRMask</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#586e75>// CIDRMask returns an IPMask consisting of `ones&#39; 1 bits
-</span><span style=color:#586e75>// followed by 0s up to a total length of `bits&#39; bits.
-</span><span style=color:#586e75>// For a mask of this form, CIDRMask is the inverse of IPMask.Size.
-</span><span style=color:#586e75></span><span style=color:#268bd2>func</span> <span style=color:#268bd2>CIDRMask</span>(ones, bits <span style=color:#dc322f>int</span>) IPMask {
-	<span style=color:#719e07>if</span> bits <span style=color:#719e07>!=</span> <span style=color:#2aa198>8</span><span style=color:#719e07>*</span>IPv4len <span style=color:#719e07>&amp;&amp;</span> bits <span style=color:#719e07>!=</span> <span style=color:#2aa198>8</span><span style=color:#719e07>*</span>IPv6len {
-		<span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>
-	}
-	<span style=color:#719e07>if</span> ones &lt; <span style=color:#2aa198>0</span> <span style=color:#719e07>||</span> ones &gt; bits {
-		<span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>
-	}
-    <span style=color:#586e75>// removed
-</span><span style=color:#586e75></span>}</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>We can investigate this by modifying the local <code>iprange</code> package code and printing <code>ipDollar[3].num</code> and <code>mask</code>.</p>
-<figure class=code>
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// CIDRMask returns an IPMask consisting of `ones&#39; 1 bits
+</span></span></span><span style=display:flex><span><span style=color:#586e75>// followed by 0s up to a total length of `bits&#39; bits.
+</span></span></span><span style=display:flex><span><span style=color:#586e75>// For a mask of this form, CIDRMask is the inverse of IPMask.Size.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>func</span> <span style=color:#268bd2>CIDRMask</span>(ones, bits <span style=color:#dc322f>int</span>) IPMask {
+</span></span><span style=display:flex><span>	<span style=color:#719e07>if</span> bits <span style=color:#719e07>!=</span> <span style=color:#2aa198>8</span><span style=color:#719e07>*</span>IPv4len <span style=color:#719e07>&amp;&amp;</span> bits <span style=color:#719e07>!=</span> <span style=color:#2aa198>8</span><span style=color:#719e07>*</span>IPv6len {
+</span></span><span style=display:flex><span>		<span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	<span style=color:#719e07>if</span> ones &lt; <span style=color:#2aa198>0</span> <span style=color:#719e07>||</span> ones &gt; bits {
+</span></span><span style=display:flex><span>		<span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// removed
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>We can investigate this by modifying the local <code>iprange</code> package code and printing <code>ipDollar[3].num</code> and <code>mask</code>.</p><figure class=code>
 <figcaption>
 <span>Modified y.go case 5</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#719e07>case</span> <span style=color:#2aa198>5</span>:
-    ipDollar = ipS[ippt<span style=color:#719e07>-</span><span style=color:#2aa198>3</span> : ippt<span style=color:#719e07>+</span><span style=color:#2aa198>1</span>]
-    <span style=color:#586e75>//line ip.y:54
-</span><span style=color:#586e75></span>    {
-        fmt.<span style=color:#268bd2>Printf</span>(<span style=color:#2aa198>&#34;ipdollar[3]: %v\n&#34;</span>, ipDollar[<span style=color:#2aa198>3</span>].num) <span style=color:#586e75>// print ipdollar[3]
-</span><span style=color:#586e75></span>        mask <span style=color:#719e07>:=</span> net.<span style=color:#268bd2>CIDRMask</span>(<span style=color:#b58900>int</span>(ipDollar[<span style=color:#2aa198>3</span>].num), <span style=color:#2aa198>32</span>)
-        fmt.<span style=color:#268bd2>Printf</span>(<span style=color:#2aa198>&#34;mask: %v\n&#34;</span>, mask)                   <span style=color:#586e75>// print mask
-</span><span style=color:#586e75></span>        min <span style=color:#719e07>:=</span> ipDollar[<span style=color:#2aa198>1</span>].addrRange.Min.<span style=color:#268bd2>Mask</span>(mask)
-        fmt.<span style=color:#268bd2>Printf</span>(<span style=color:#2aa198>&#34;min: %v\n&#34;</span>, min)                     <span style=color:#586e75>// print min
-</span><span style=color:#586e75></span>        maxInt <span style=color:#719e07>:=</span> binary.BigEndian.<span style=color:#268bd2>Uint32</span>([]<span style=color:#b58900>byte</span>(min)) <span style=color:#719e07>+</span>
-            <span style=color:#2aa198>0xffffffff</span> <span style=color:#719e07>-</span>
-            binary.BigEndian.<span style=color:#268bd2>Uint32</span>([]<span style=color:#b58900>byte</span>(mask))
-        maxBytes <span style=color:#719e07>:=</span> <span style=color:#b58900>make</span>([]<span style=color:#dc322f>byte</span>, <span style=color:#2aa198>4</span>)
-        binary.BigEndian.<span style=color:#268bd2>PutUint32</span>(maxBytes, maxInt)
-        maxBytes = maxBytes[<span style=color:#b58900>len</span>(maxBytes)<span style=color:#719e07>-</span><span style=color:#2aa198>4</span>:]
-        max <span style=color:#719e07>:=</span> net.<span style=color:#268bd2>IP</span>(maxBytes)
-        ipVAL.addrRange = AddressRange{
-            Min: min.<span style=color:#268bd2>To4</span>(),
-            Max: max.<span style=color:#268bd2>To4</span>(),
-        }
-    }</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<h3 id=reproducing-the-crash>Reproducing the Crash
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#719e07>case</span> <span style=color:#2aa198>5</span>:
+</span></span><span style=display:flex><span>    ipDollar = ipS[ippt<span style=color:#719e07>-</span><span style=color:#2aa198>3</span> : ippt<span style=color:#719e07>+</span><span style=color:#2aa198>1</span>]
+</span></span><span style=display:flex><span>    <span style=color:#586e75>//line ip.y:54
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    {
+</span></span><span style=display:flex><span>        fmt.<span style=color:#268bd2>Printf</span>(<span style=color:#2aa198>&#34;ipdollar[3]: %v\n&#34;</span>, ipDollar[<span style=color:#2aa198>3</span>].num) <span style=color:#586e75>// print ipdollar[3]
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        mask <span style=color:#719e07>:=</span> net.<span style=color:#268bd2>CIDRMask</span>(<span style=color:#b58900>int</span>(ipDollar[<span style=color:#2aa198>3</span>].num), <span style=color:#2aa198>32</span>)
+</span></span><span style=display:flex><span>        fmt.<span style=color:#268bd2>Printf</span>(<span style=color:#2aa198>&#34;mask: %v\n&#34;</span>, mask)                   <span style=color:#586e75>// print mask
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        min <span style=color:#719e07>:=</span> ipDollar[<span style=color:#2aa198>1</span>].addrRange.Min.<span style=color:#268bd2>Mask</span>(mask)
+</span></span><span style=display:flex><span>        fmt.<span style=color:#268bd2>Printf</span>(<span style=color:#2aa198>&#34;min: %v\n&#34;</span>, min)                     <span style=color:#586e75>// print min
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        maxInt <span style=color:#719e07>:=</span> binary.BigEndian.<span style=color:#268bd2>Uint32</span>([]<span style=color:#b58900>byte</span>(min)) <span style=color:#719e07>+</span>
+</span></span><span style=display:flex><span>            <span style=color:#2aa198>0xffffffff</span> <span style=color:#719e07>-</span>
+</span></span><span style=display:flex><span>            binary.BigEndian.<span style=color:#268bd2>Uint32</span>([]<span style=color:#b58900>byte</span>(mask))
+</span></span><span style=display:flex><span>        maxBytes <span style=color:#719e07>:=</span> <span style=color:#b58900>make</span>([]<span style=color:#dc322f>byte</span>, <span style=color:#2aa198>4</span>)
+</span></span><span style=display:flex><span>        binary.BigEndian.<span style=color:#268bd2>PutUint32</span>(maxBytes, maxInt)
+</span></span><span style=display:flex><span>        maxBytes = maxBytes[<span style=color:#b58900>len</span>(maxBytes)<span style=color:#719e07>-</span><span style=color:#2aa198>4</span>:]
+</span></span><span style=display:flex><span>        max <span style=color:#719e07>:=</span> net.<span style=color:#268bd2>IP</span>(maxBytes)
+</span></span><span style=display:flex><span>        ipVAL.addrRange = AddressRange{
+</span></span><span style=display:flex><span>            Min: min.<span style=color:#268bd2>To4</span>(),
+</span></span><span style=display:flex><span>            Max: max.<span style=color:#268bd2>To4</span>(),
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }</span></span></code></pre></td></tr></table></div></div></div></figure><h3 id=reproducing-the-crash>Reproducing the Crash
 <a class=header-link href=#reproducing-the-crash><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>Reproducing the crash is easy, we already have input and can just plug it into a small program using our <code>Fuzz</code> function:</p>
-<figure class=code>
+</h3><p>Reproducing the crash is easy, we already have input and can just plug it into a small program using our <code>Fuzz</code> function:</p><figure class=code>
 <figcaption>
 <span>test2.go</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#586e75>// Small program to investigate a panic in iprange for invalid masks.
-</span><span style=color:#586e75></span><span style=color:#719e07>package</span> main
-
-<span style=color:#719e07>import</span> <span style=color:#2aa198>&#34;github.com/malfunkt/iprange&#34;</span>
-
-<span style=color:#268bd2>func</span> <span style=color:#268bd2>main</span>() {
-	_ = <span style=color:#268bd2>Fuzz</span>([]<span style=color:#b58900>byte</span>(<span style=color:#2aa198>&#34;0.0.0.0/40&#34;</span>))
-}
-
-<span style=color:#268bd2>func</span> <span style=color:#268bd2>Fuzz</span>(data []<span style=color:#dc322f>byte</span>) <span style=color:#dc322f>int</span> {
-	_, err <span style=color:#719e07>:=</span> iprange.<span style=color:#268bd2>ParseList</span>(<span style=color:#b58900>string</span>(data))
-	<span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
-		<span style=color:#719e07>return</span> <span style=color:#2aa198>0</span>
-	}
-	<span style=color:#719e07>return</span> <span style=color:#2aa198>1</span>
-}</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>Note: We could write an easier test but I wanted to keep the <code>Fuzz</code> function intact.</p>
-<pre tabindex=0><code>$ go run test2.go
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Small program to investigate a panic in iprange for invalid masks.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>package</span> main
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>import</span> <span style=color:#2aa198>&#34;github.com/malfunkt/iprange&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>main</span>() {
+</span></span><span style=display:flex><span>	_ = <span style=color:#268bd2>Fuzz</span>([]<span style=color:#b58900>byte</span>(<span style=color:#2aa198>&#34;0.0.0.0/40&#34;</span>))
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>Fuzz</span>(data []<span style=color:#dc322f>byte</span>) <span style=color:#dc322f>int</span> {
+</span></span><span style=display:flex><span>	_, err <span style=color:#719e07>:=</span> iprange.<span style=color:#268bd2>ParseList</span>(<span style=color:#b58900>string</span>(data))
+</span></span><span style=display:flex><span>	<span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+</span></span><span style=display:flex><span>		<span style=color:#719e07>return</span> <span style=color:#2aa198>0</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	<span style=color:#719e07>return</span> <span style=color:#2aa198>1</span>
+</span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>Note: We could write an easier test but I wanted to keep the <code>Fuzz</code> function intact.</p><pre tabindex=0><code>$ go run test2.go
 ipdollar[3]: 40
 mask: &lt;nil&gt;
 min: &lt;nil&gt;
@@ -571,25 +407,14 @@ main.Fuzz(0xc042085f58, 0xa, 0x20, 0xc042085f58)
 main.main()
         C:/Users/test-user/Go/src/gofuzz-stuff/malfunkt-iprange/test1.go:6 +0x69
 exit status 2
-</code></pre><p>We can see <code>40</code> is passed to <code>net.CIDRMask</code> function and the result is <code>nil</code>. That causes the crash. We can see <code>min</code> is also <code>nil</code>.</p>
-<p><strong>Both min and mask are nil and result in a panic.</strong></p>
-<h2 id=more-crashes>More Crashes?
+</code></pre><p>We can see <code>40</code> is passed to <code>net.CIDRMask</code> function and the result is <code>nil</code>. That causes the crash. We can see <code>min</code> is also <code>nil</code>.</p><p><strong>Both min and mask are nil and result in a panic.</strong></p><h2 id=more-crashes>More Crashes?
 <a class=header-link href=#more-crashes><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>I let the fuzzer run for another 20 minutes but it did not find any other crashes. Corpus was up to <code>60</code> items like:</p>
-<ul>
-<li><code>2.8.0.0/4,0.0.0.5/0,2.8.0.0/4,0.0.0.5/0,2.8.0.0/4,0.0.0.5/0</code></li>
-<li><code>0.0.0.0/4,0.0.0.5-0,2.8.1.*,2.8.0.0/2</code></li>
-</ul>
-<h2 id=solution>Solution
+</h2><p>I let the fuzzer run for another 20 minutes but it did not find any other crashes. Corpus was up to <code>60</code> items like:</p><ul>
+<li><code>2.8.0.0/4,0.0.0.5/0,2.8.0.0/4,0.0.0.5/0,2.8.0.0/4,0.0.0.5/0</code></li><li><code>0.0.0.0/4,0.0.0.5-0,2.8.1.*,2.8.0.0/2</code></li></ul><h2 id=solution>Solution
 <a class=header-link href=#solution><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Just pointing out bugs is not useful. Being a security engineer is not just finding vulnerabilities.</p>
-<p>The quick solution is checking the values of <code>min</code> and <code>mask</code> before calling <code>Uint32</code>.</p>
-<p>A better solution is to check the input for validity and good format before processing. For example, for IPv4 masks we can check if they are in in <code>16-30</code>.</p>
-<h1 id=conclusion>Conclusion
+</h2><p>Just pointing out bugs is not useful. Being a security engineer is not just finding vulnerabilities.</p><p>The quick solution is checking the values of <code>min</code> and <code>mask</code> before calling <code>Uint32</code>.</p><p>A better solution is to check the input for validity and good format before processing. For example, for IPv4 masks we can check if they are in in <code>16-30</code>.</p><h1 id=conclusion>Conclusion
 <a class=header-link href=#conclusion><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Well that was it folks! We learned how to use <code>go-fuzz</code> and investigated a simple panic. I think this is a good first tutorial.</p>
-</div>
-<footer>
+</h1><p>Well that was it folks! We learned how to use <code>go-fuzz</code> and investigated a simple panic. I think this is a good first tutorial.</p></div><footer>
 <p class=meta>
 <span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>Apr 29, 2018</time>
@@ -597,82 +422,47 @@ exit status 2
 Tags:
 <a class=category href=https://parsiya.net/tags/go-fuzz>Go-Fuzz</a>
 </span>
-</p>
-<p class=meta>
+</p><p class=meta>
 <a class="basic-alignment left" href=https://parsiya.net/blog/2018-04-24-semi-automated-cloning-pain-free-knowledge-base-creation/ title="Semi-Automated Cloning: Pain-Free Knowledge Base Creation">Semi-Automated Cloning: Pain-Free Knowledge Base Creation</a>
 <a class="basic-alignment right" href=https://parsiya.net/blog/2018-05-05-learning-go-fuzz-2-goexif2/ title="Learning Go-Fuzz 2: goexif2">Learning Go-Fuzz 2: goexif2</a>
-</p>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</div>
-<aside class="sidebar thirds">
+</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer></article></div><aside class="sidebar thirds">
 <section class="first odd">
-<h1>Who am I?</h1>
-<p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
-<p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p>
-<p>Click on <a href=/about/>About Me!</a> to know more.</p>
-</p>
-</section>
-<ul class=sidebar-nav>
+<h1>Who am I?</h1><p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
 <li class=sidebar-nav-item>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li>
-</ul>
-<section class=odd>
-<h1>Collections</h1>
-<li>
+</li></ul><section class=odd>
+<h1>Collections</h1><li>
 <a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li>
-<li>
+</li><li>
 <a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li>
-</section>
-</aside>
-</div>
-</div>
-<footer role=contentinfo>
+</li></section></aside></div></div><footer role=contentinfo>
 <p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>

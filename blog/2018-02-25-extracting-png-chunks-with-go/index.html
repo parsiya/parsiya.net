@@ -3,14 +3,13 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
 <link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>Extracting PNG Chunks with Go</title>
-<link rel=stylesheet href=/css/hugo-octopress.css>
+<title>Extracting PNG Chunks with Go</title><link rel=stylesheet href=/css/hugo-octopress.css>
 <link rel=stylesheet href=/css/fork-awesome.min.css>
 <link href=https://parsiya.net/favicon.png rel=icon>
 <meta name=description content>
 <meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
 <meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.92.2">
+<meta name=generator content="Hugo 0.93.0">
 <meta name=twitter:card content="summary">
 <meta name=twitter:title content="Extracting PNG Chunks with Go">
 <meta name=twitter:description content="Yesterday I had to extract some data from hidden chunks in PNG files. I realized the PNG file format is blissfully simple.
@@ -21,37 +20,21 @@ https://github.com/parsiya/Go-Security/blob/master/png-tests/png-chunk-extractio
 ">
 <meta name=twitter:domain content="parsiya.net">
 <meta name=twitter:creator content="@CryptoGangsta">
-</head>
-<body>
+</head><body>
 <header role=banner>
 <hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
-<h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2>
-</hgroup></header>
-<nav role=navigation>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
 <fieldset class=mobile-nav>
 <select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset>
-<ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
-<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
-<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
-<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
-<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
-<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
-</ul>
-<ul class=subscription>
+</fieldset><ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
 <a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul>
-<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
 <fieldset role=search>
 <input class=search type=text name=q results=0 placeholder=Search>
 <input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset>
-</form>
-</nav>
-<div id=main>
+</fieldset></form></nav><div id=main>
 <div id=content>
 <div>
 <article class=hentry role=article>
@@ -60,41 +43,22 @@ complete unless it is known by its causes. - Avicenna</h2>
 - 9 minute read
 - <a href=https://parsiya.net/blog/2018-02-25-extracting-png-chunks-with-go/#disqus_thread>Comments</a>
 - <a class=label href=https://parsiya.net/categories/go/>Go </a>
-</p>
-<h1 class=entry-title>
+</p><h1 class=entry-title>
 Extracting PNG Chunks with Go
-</h1>
-</header>
-<div class=entry-content>
+</h1></header><div class=entry-content>
 <nav id=TableOfContents>
 <ul>
-<li><a href=#png-header>PNG Header</a></li>
-<li><a href=#png-chunks>PNG Chunks</a>
+<li><a href=#png-header>PNG Header</a></li><li><a href=#png-chunks>PNG Chunks</a>
 <ul>
-<li><a href=#ihdr-chunk>IHDR Chunk</a></li>
-<li><a href=#idat-chunks>IDAT Chunks</a></li>
-</ul>
-</li>
-<li><a href=#tool-operation>Tool Operation</a></li>
-</ul>
-</nav>
-<p>Yesterday I had to extract some data from hidden chunks in PNG files. I realized the PNG file format is blissfully simple.</p>
-<p>I wrote some quick code that parses a PNG file, extracts some information, identifies chunks and finally extracts chunk data. The code has minimal error handling (if chunks are not formatted properly). We also do not care about parsing <code>PLTE</code> and <code>tRNS</code> chunks although we will extract them.</p>
-<p>Code is at:</p>
-<ul>
-<li><a href=https://github.com/parsiya/Go-Security/blob/master/png-tests/png-chunk-extraction.go target=_blank rel="noreferrer noopener">https://github.com/parsiya/Go-Security/blob/master/png-tests/png-chunk-extraction.go</a></li>
-</ul>
-<p>Golang's <a href=https://golang.org/src/image/png/reader.go target=_blank rel="noreferrer noopener">https://golang.org/src/image/png/reader.go</a> does a decent job of explaining the rendering. But we are not interested in rendering.</p>
-<p>Instead we look at <code>libpng</code> documentation at <a href=http://www.libpng.org/pub/png/spec/1.2/PNG-Contents.html target=_blank rel="noreferrer noopener">http://www.libpng.org/pub/png/spec/1.2/PNG-Contents.html</a>. I am going to use a simple example (just a black rectangle which was supposed to be a square lol) to demonstrate:</p>
-<span class=caption-wrapper>
+<li><a href=#ihdr-chunk>IHDR Chunk</a></li><li><a href=#idat-chunks>IDAT Chunks</a></li></ul></li><li><a href=#tool-operation>Tool Operation</a></li></ul></nav><p>Yesterday I had to extract some data from hidden chunks in PNG files. I realized the PNG file format is blissfully simple.</p><p>I wrote some quick code that parses a PNG file, extracts some information, identifies chunks and finally extracts chunk data. The code has minimal error handling (if chunks are not formatted properly). We also do not care about parsing <code>PLTE</code> and <code>tRNS</code> chunks although we will extract them.</p><p>Code is at:</p><ul>
+<li><a href=https://github.com/parsiya/Go-Security/blob/master/png-tests/png-chunk-extraction.go target=_blank rel="noreferrer noopener">https://github.com/parsiya/Go-Security/blob/master/png-tests/png-chunk-extraction.go</a></li></ul><p>Golang's <a href=https://golang.org/src/image/png/reader.go target=_blank rel="noreferrer noopener">https://golang.org/src/image/png/reader.go</a> does a decent job of explaining the rendering. But we are not interested in rendering.</p><p>Instead we look at <code>libpng</code> documentation at <a href=http://www.libpng.org/pub/png/spec/1.2/PNG-Contents.html target=_blank rel="noreferrer noopener">http://www.libpng.org/pub/png/spec/1.2/PNG-Contents.html</a>. I am going to use a simple example (just a black rectangle which was supposed to be a square lol) to demonstrate:</p><span class=caption-wrapper>
 <img class=caption src=/images/2018/png1/01-black-rectangle.png title=Example alt=Example>
 <span class=caption-text>Example</span>
 </span>
 <figure class=code>
 <figcaption>
 <span>Contents of example image</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <pre tabindex=0><code>00000000  89 50 4e 47 0d 0a 1a 0a 00 00 00 0d 49 48 44 52  |.PNG........IHDR|
 00000010  00 00 00 6f 00 00 00 73 08 02 00 00 00 19 b3 cb  |...o...s......³Ë|
 00000020  d7 00 00 00 01 73 52 47 42 00 ae ce 1c e9 00 00  |×....sRGB.®Î.é..|
@@ -105,361 +69,301 @@ Extracting PNG Chunks with Go
 00000070  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
 00000080  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
 00000090  70 ae 06 96 0a 00 01 1e c4 f7 41 00 00 00 00 49  |p®......Ä÷A....I|
-000000a0  45 4e 44 ae 42 60 82                             |END®B`.|</code></pre>
-</div>
-</figure>
-<h1 id=png-header>PNG Header
+000000a0  45 4e 44 ae 42 60 82                             |END®B`.|</code></pre></div></figure><h1 id=png-header>PNG Header
 <a class=header-link href=#png-header><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>PNG starts with an 8-byte magic header:</p>
-<ul>
-<li><code>89 50 4E 47 0D 0A 1A 0A</code></li>
-<li><code>const pngHeader = "\x89PNG\r\n\x1a\n"</code> from <a href=https://golang.org/src/image/png/reader.go target=_blank rel="noreferrer noopener">https://golang.org/src/image/png/reader.go</a>.</li>
-</ul>
-<p>When you open a PNG file, you can see <code>PNG</code> in the signature.</p>
-<p>After the signature, there are a number of chunks.</p>
-<span class=caption-wrapper>
+</h1><p>PNG starts with an 8-byte magic header:</p><ul>
+<li><code>89 50 4E 47 0D 0A 1A 0A</code></li><li><code>const pngHeader = "\x89PNG\r\n\x1a\n"</code> from <a href=https://golang.org/src/image/png/reader.go target=_blank rel="noreferrer noopener">https://golang.org/src/image/png/reader.go</a>.</li></ul><p>When you open a PNG file, you can see <code>PNG</code> in the signature.</p><p>After the signature, there are a number of chunks.</p><span class=caption-wrapper>
 <img class=caption src=/images/2018/png1/02-header.png title="PNG header" alt="PNG header">
 <span class=caption-text>PNG header</span>
 </span>
 <h1 id=png-chunks>PNG Chunks
 <a class=header-link href=#png-chunks><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Each chunk has <a href=http://www.libpng.org/pub/png/spec/1.2/PNG-Structure.html#Chunk-layout target=_blank rel="noreferrer noopener">four fields</a>:</p>
-<ul>
-<li><code>uint32</code> length in big-endian. This is the length of the data field.</li>
-<li>Four-byte chunk type. Chunk type can be anything <sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>.</li>
-<li>Chunk data is a bunch of bytes with a fixed length read before.</li>
-<li>Four-byte CRC-32 of Chunk 2nd and 3rd field (chunk type and chunk data).</li>
-</ul>
-<figure class=code>
+</h1><p>Each chunk has <a href=http://www.libpng.org/pub/png/spec/1.2/PNG-Structure.html#Chunk-layout target=_blank rel="noreferrer noopener">four fields</a>:</p><ul>
+<li><code>uint32</code> length in big-endian. This is the length of the data field.</li><li>Four-byte chunk type. Chunk type can be anything <sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>.</li><li>Chunk data is a bunch of bytes with a fixed length read before.</li><li>Four-byte CRC-32 of Chunk 2nd and 3rd field (chunk type and chunk data).</li></ul><figure class=code>
 <figcaption>
 <span>Chunk struct</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">8
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#586e75>// Each chunk starts with a uint32 length (big endian), then 4 byte name,
-</span><span style=color:#586e75>// then data and finally the CRC32 of the chunk data.
-</span><span style=color:#586e75></span><span style=color:#268bd2>type</span> Chunk <span style=color:#268bd2>struct</span> {
-    Length <span style=color:#dc322f>int</span>    <span style=color:#586e75>// chunk data length
-</span><span style=color:#586e75></span>    CType  <span style=color:#dc322f>string</span> <span style=color:#586e75>// chunk type
-</span><span style=color:#586e75></span>    Data   []<span style=color:#dc322f>byte</span> <span style=color:#586e75>// chunk data
-</span><span style=color:#586e75></span>    Crc32  []<span style=color:#dc322f>byte</span> <span style=color:#586e75>// CRC32 of chunk data
-</span><span style=color:#586e75></span>}</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>First chunk or <code>IHDR</code> looks like this:</p>
-<span class=caption-wrapper>
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">8
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Each chunk starts with a uint32 length (big endian), then 4 byte name,
+</span></span></span><span style=display:flex><span><span style=color:#586e75>// then data and finally the CRC32 of the chunk data.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>type</span> Chunk <span style=color:#268bd2>struct</span> {
+</span></span><span style=display:flex><span>    Length <span style=color:#dc322f>int</span>    <span style=color:#586e75>// chunk data length
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    CType  <span style=color:#dc322f>string</span> <span style=color:#586e75>// chunk type
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    Data   []<span style=color:#dc322f>byte</span> <span style=color:#586e75>// chunk data
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    Crc32  []<span style=color:#dc322f>byte</span> <span style=color:#586e75>// CRC32 of chunk data
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>First chunk or <code>IHDR</code> looks like this:</p><span class=caption-wrapper>
 <img class=caption src=/images/2018/png1/03-ihdr.png title="IHDR chunk" alt="IHDR chunk">
 <span class=caption-text>IHDR chunk</span>
 </span>
-<p>Converting big-endian <code>uint32</code>s to <code>int</code> is straightforward:</p>
-<figure class=code>
+<p>Converting big-endian <code>uint32</code>s to <code>int</code> is straightforward:</p><figure class=code>
 <figcaption>
 <span>uInt32ToInt</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">7
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#586e75>// uInt32ToInt converts a 4 byte big-endian buffer to int.
-</span><span style=color:#586e75></span><span style=color:#268bd2>func</span> <span style=color:#268bd2>uInt32ToInt</span>(buf []<span style=color:#dc322f>byte</span>) (<span style=color:#dc322f>int</span>, <span style=color:#dc322f>error</span>) {
-    <span style=color:#719e07>if</span> <span style=color:#b58900>len</span>(buf) <span style=color:#719e07>==</span> <span style=color:#2aa198>0</span> <span style=color:#719e07>||</span> <span style=color:#b58900>len</span>(buf) &gt; <span style=color:#2aa198>4</span> {
-        <span style=color:#719e07>return</span> <span style=color:#2aa198>0</span>, errors.<span style=color:#268bd2>New</span>(<span style=color:#2aa198>&#34;invalid buffer&#34;</span>)
-    }
-    <span style=color:#719e07>return</span> <span style=color:#b58900>int</span>(binary.BigEndian.<span style=color:#268bd2>Uint32</span>(buf)), <span style=color:#cb4b16>nil</span>
-}</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p><strong>Note (05-Apr-2020):</strong> <code>int</code> is dangerous. On 32-bit systems it's <code>int32</code> and on 64-bit systems it's <code>int64</code>. So on my machine I am converting <code>int64</code> to <code>uint32</code> because I am running a 64-bit OS. On a 32-bit machine (e.g., Go playground) <code>int</code> is <code>int32</code>. In retrospect, I should have probably used <code>int32</code> in the struct or come to think of it <code>uint32</code> could have been a better choice. For more information please see <a href=/blog/2020-04-05-the-golang-int-and-the-overlooked-bug/#int-vs-int title="int vs. int">int vs. int</a>.</p>
-<p><strong>Trick #1</strong>: When reading chunks, I did something I had not done before. I passed in an <code>io.Reader</code>. This let me pass anything that implements that interface to the method. As each chunk is populated, reader pointer moves forward and gets to the start of next chunk. Note this assumes chunks are formatted correctly and does not check the CRC32 hash.</p>
-<figure class=code>
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">7
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// uInt32ToInt converts a 4 byte big-endian buffer to int.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>func</span> <span style=color:#268bd2>uInt32ToInt</span>(buf []<span style=color:#dc322f>byte</span>) (<span style=color:#dc322f>int</span>, <span style=color:#dc322f>error</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> <span style=color:#b58900>len</span>(buf) <span style=color:#719e07>==</span> <span style=color:#2aa198>0</span> <span style=color:#719e07>||</span> <span style=color:#b58900>len</span>(buf) &gt; <span style=color:#2aa198>4</span> {
+</span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> <span style=color:#2aa198>0</span>, errors.<span style=color:#268bd2>New</span>(<span style=color:#2aa198>&#34;invalid buffer&#34;</span>)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> <span style=color:#b58900>int</span>(binary.BigEndian.<span style=color:#268bd2>Uint32</span>(buf)), <span style=color:#cb4b16>nil</span>
+</span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p><strong>Note (05-Apr-2020):</strong> <code>int</code> is dangerous. On 32-bit systems it's <code>int32</code> and on 64-bit systems it's <code>int64</code>. So on my machine I am converting <code>int64</code> to <code>uint32</code> because I am running a 64-bit OS. On a 32-bit machine (e.g., Go playground) <code>int</code> is <code>int32</code>. In retrospect, I should have probably used <code>int32</code> in the struct or come to think of it <code>uint32</code> could have been a better choice. For more information please see <a href=/blog/2020-04-05-the-golang-int-and-the-overlooked-bug/#int-vs-int title="int vs. int">int vs. int</a>.</p><p><strong>Trick #1</strong>: When reading chunks, I did something I had not done before. I passed in an <code>io.Reader</code>. This let me pass anything that implements that interface to the method. As each chunk is populated, reader pointer moves forward and gets to the start of next chunk. Note this assumes chunks are formatted correctly and does not check the CRC32 hash.</p><figure class=code>
 <figcaption>
 <span>Chunk.Populate</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">29
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">30
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">31
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">32
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">33
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">34
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">35
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">36
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">37
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">38
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">39
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">40
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#586e75>// Populate will read bytes from the reader and populate a chunk.
-</span><span style=color:#586e75></span><span style=color:#268bd2>func</span> (c <span style=color:#719e07>*</span>Chunk) <span style=color:#268bd2>Populate</span>(r io.Reader) <span style=color:#dc322f>error</span> {
-
-    <span style=color:#586e75>// Four byte buffer.
-</span><span style=color:#586e75></span>    buf <span style=color:#719e07>:=</span> <span style=color:#b58900>make</span>([]<span style=color:#dc322f>byte</span>, <span style=color:#2aa198>4</span>)
-
-    <span style=color:#586e75>// Read first four bytes == chunk length.
-</span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> _, err <span style=color:#719e07>:=</span> io.<span style=color:#268bd2>ReadFull</span>(r, buf); err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
-        <span style=color:#719e07>return</span> err
-    }
-    <span style=color:#586e75>// Convert bytes to int.
-</span><span style=color:#586e75></span>    <span style=color:#586e75>// c.length = int(binary.BigEndian.Uint32(buf))
-</span><span style=color:#586e75></span>    <span style=color:#268bd2>var</span> err <span style=color:#dc322f>error</span>
-    c.Length, err = <span style=color:#268bd2>uInt32ToInt</span>(buf)
-    <span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
-        <span style=color:#719e07>return</span> errors.<span style=color:#268bd2>New</span>(<span style=color:#2aa198>&#34;cannot convert length to int&#34;</span>)
-    }
-
-    <span style=color:#586e75>// Read second four bytes == chunk type.
-</span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> _, err <span style=color:#719e07>:=</span> io.<span style=color:#268bd2>ReadFull</span>(r, buf); err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
-        <span style=color:#719e07>return</span> err
-    }
-    c.CType = <span style=color:#b58900>string</span>(buf)
-
-    <span style=color:#586e75>// Read chunk data.
-</span><span style=color:#586e75></span>    tmp <span style=color:#719e07>:=</span> <span style=color:#b58900>make</span>([]<span style=color:#dc322f>byte</span>, c.Length)
-    <span style=color:#719e07>if</span> _, err <span style=color:#719e07>:=</span> io.<span style=color:#268bd2>ReadFull</span>(r, tmp); err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
-        <span style=color:#719e07>return</span> err
-    }
-    c.Data = tmp
-
-    <span style=color:#586e75>// Read CRC32 hash
-</span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> _, err <span style=color:#719e07>:=</span> io.<span style=color:#268bd2>ReadFull</span>(r, buf); err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
-        <span style=color:#719e07>return</span> err
-    }
-    <span style=color:#586e75>// We don&#39;t really care about checking the hash.
-</span><span style=color:#586e75></span>    c.Crc32 = buf
-
-    <span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>
-}</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<h2 id=ihdr-chunk>IHDR Chunk
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">31
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">32
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">33
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">34
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">35
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">36
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">37
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">38
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">39
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">40
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Populate will read bytes from the reader and populate a chunk.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>func</span> (c <span style=color:#719e07>*</span>Chunk) <span style=color:#268bd2>Populate</span>(r io.Reader) <span style=color:#dc322f>error</span> {
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Four byte buffer.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    buf <span style=color:#719e07>:=</span> <span style=color:#b58900>make</span>([]<span style=color:#dc322f>byte</span>, <span style=color:#2aa198>4</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Read first four bytes == chunk length.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> _, err <span style=color:#719e07>:=</span> io.<span style=color:#268bd2>ReadFull</span>(r, buf); err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> err
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Convert bytes to int.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#586e75>// c.length = int(binary.BigEndian.Uint32(buf))
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#268bd2>var</span> err <span style=color:#dc322f>error</span>
+</span></span><span style=display:flex><span>    c.Length, err = <span style=color:#268bd2>uInt32ToInt</span>(buf)
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> errors.<span style=color:#268bd2>New</span>(<span style=color:#2aa198>&#34;cannot convert length to int&#34;</span>)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Read second four bytes == chunk type.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> _, err <span style=color:#719e07>:=</span> io.<span style=color:#268bd2>ReadFull</span>(r, buf); err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> err
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    c.CType = <span style=color:#b58900>string</span>(buf)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Read chunk data.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    tmp <span style=color:#719e07>:=</span> <span style=color:#b58900>make</span>([]<span style=color:#dc322f>byte</span>, c.Length)
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> _, err <span style=color:#719e07>:=</span> io.<span style=color:#268bd2>ReadFull</span>(r, tmp); err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> err
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    c.Data = tmp
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Read CRC32 hash
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> _, err <span style=color:#719e07>:=</span> io.<span style=color:#268bd2>ReadFull</span>(r, buf); err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> err
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// We don&#39;t really care about checking the hash.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    c.Crc32 = buf
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>
+</span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><h2 id=ihdr-chunk>IHDR Chunk
 <a class=header-link href=#ihdr-chunk><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>IHDR is a special chunk that contains <a href=http://www.libpng.org/pub/png/spec/1.2/PNG-Chunks.html#C.IHDR target=_blank rel="noreferrer noopener">file information</a>. It's always 13 bytes and has:</p>
-<pre tabindex=0><code>// Width:              4 bytes
+</h2><p>IHDR is a special chunk that contains <a href=http://www.libpng.org/pub/png/spec/1.2/PNG-Chunks.html#C.IHDR target=_blank rel="noreferrer noopener">file information</a>. It's always 13 bytes and has:</p><pre tabindex=0><code>// Width:              4 bytes
 // Height:             4 bytes
 // Bit depth:          1 byte
 // Color type:         1 byte
 // Compression method: 1 byte
 // Filter method:      1 byte
 // Interlace method:   1 byte
-</code></pre><p>These will go directly into the <code>PNG</code> struct:</p>
-<figure class=code>
+</code></pre><p>These will go directly into the <code>PNG</code> struct:</p><figure class=code>
 <figcaption>
 <span>PNG struct</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#268bd2>type</span> PNG <span style=color:#268bd2>struct</span> {
-    Width             <span style=color:#dc322f>int</span>
-    Height            <span style=color:#dc322f>int</span>
-    BitDepth          <span style=color:#dc322f>int</span>
-    ColorType         <span style=color:#dc322f>int</span>
-    CompressionMethod <span style=color:#dc322f>int</span>
-    FilterMethod      <span style=color:#dc322f>int</span>
-    InterlaceMethod   <span style=color:#dc322f>int</span>
-    chunks            []<span style=color:#719e07>*</span>Chunk <span style=color:#586e75>// Not exported == won&#39;t appear in JSON string.
-</span><span style=color:#586e75></span>    NumberOfChunks    <span style=color:#dc322f>int</span>
-}</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p><strong>Trick #2</strong>: <code>chunks</code> does not start with a capital letter. It's not exported, so it is not parsed when we convert the struct to JSON.</p>
-<p>Parsing the header pretty easy:</p>
-<figure class=code>
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>type</span> PNG <span style=color:#268bd2>struct</span> {
+</span></span><span style=display:flex><span>    Width             <span style=color:#dc322f>int</span>
+</span></span><span style=display:flex><span>    Height            <span style=color:#dc322f>int</span>
+</span></span><span style=display:flex><span>    BitDepth          <span style=color:#dc322f>int</span>
+</span></span><span style=display:flex><span>    ColorType         <span style=color:#dc322f>int</span>
+</span></span><span style=display:flex><span>    CompressionMethod <span style=color:#dc322f>int</span>
+</span></span><span style=display:flex><span>    FilterMethod      <span style=color:#dc322f>int</span>
+</span></span><span style=display:flex><span>    InterlaceMethod   <span style=color:#dc322f>int</span>
+</span></span><span style=display:flex><span>    chunks            []<span style=color:#719e07>*</span>Chunk <span style=color:#586e75>// Not exported == won&#39;t appear in JSON string.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    NumberOfChunks    <span style=color:#dc322f>int</span>
+</span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p><strong>Trick #2</strong>: <code>chunks</code> does not start with a capital letter. It's not exported, so it is not parsed when we convert the struct to JSON.</p><p>Parsing the header pretty easy:</p><figure class=code>
 <figcaption>
 <span>parseIHDR</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">29
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">30
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">31
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">32
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">33
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">34
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">35
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">36
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">37
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">38
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">39
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">40
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">41
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">42
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">43
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">44
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">45
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">46
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">47
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">48
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">49
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">50
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">51
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">52
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">53
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#586e75>// Parse IHDR chunk.
-</span><span style=color:#586e75>// https://golang.org/src/image/png/reader.go?#L142 is your friend.
-</span><span style=color:#586e75></span><span style=color:#268bd2>func</span> (png <span style=color:#719e07>*</span>PNG) <span style=color:#268bd2>parseIHDR</span>(iHDR <span style=color:#719e07>*</span>Chunk) <span style=color:#dc322f>error</span> {
-    <span style=color:#719e07>if</span> iHDR.Length <span style=color:#719e07>!=</span> iHDRlength {
-        errString <span style=color:#719e07>:=</span> fmt.<span style=color:#268bd2>Sprintf</span>(<span style=color:#2aa198>&#34;invalid IHDR length: got %d - expected %d&#34;</span>,
-            iHDR.Length, iHDRlength)
-        <span style=color:#719e07>return</span> errors.<span style=color:#268bd2>New</span>(errString)
-    }
-
-    tmp <span style=color:#719e07>:=</span> iHDR.Data
-    <span style=color:#268bd2>var</span> err <span style=color:#dc322f>error</span>
-
-    png.Width, err = <span style=color:#268bd2>uInt32ToInt</span>(tmp[<span style=color:#2aa198>0</span>:<span style=color:#2aa198>4</span>])
-    <span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> <span style=color:#719e07>||</span> png.Width <span style=color:#719e07>&lt;=</span> <span style=color:#2aa198>0</span> {
-        errString <span style=color:#719e07>:=</span> fmt.<span style=color:#268bd2>Sprintf</span>(<span style=color:#2aa198>&#34;invalid width in iHDR - got %x&#34;</span>, tmp[<span style=color:#2aa198>0</span>:<span style=color:#2aa198>4</span>])
-        <span style=color:#719e07>return</span> errors.<span style=color:#268bd2>New</span>(errString)
-    }
-
-    png.Height, err = <span style=color:#268bd2>uInt32ToInt</span>(tmp[<span style=color:#2aa198>4</span>:<span style=color:#2aa198>8</span>])
-    <span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> <span style=color:#719e07>||</span> png.Height <span style=color:#719e07>&lt;=</span> <span style=color:#2aa198>0</span> {
-        errString <span style=color:#719e07>:=</span> fmt.<span style=color:#268bd2>Sprintf</span>(<span style=color:#2aa198>&#34;invalid height in iHDR - got %x&#34;</span>, tmp[<span style=color:#2aa198>4</span>:<span style=color:#2aa198>8</span>])
-        <span style=color:#719e07>return</span> errors.<span style=color:#268bd2>New</span>(errString)
-    }
-
-    png.BitDepth = <span style=color:#b58900>int</span>(tmp[<span style=color:#2aa198>8</span>])
-    png.ColorType = <span style=color:#b58900>int</span>(tmp[<span style=color:#2aa198>9</span>])
-
-    <span style=color:#586e75>// Only compression method 0 is supported
-</span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> <span style=color:#b58900>int</span>(tmp[<span style=color:#2aa198>10</span>]) <span style=color:#719e07>!=</span> <span style=color:#2aa198>0</span> {
-        errString <span style=color:#719e07>:=</span> fmt.<span style=color:#268bd2>Sprintf</span>(<span style=color:#2aa198>&#34;invalid compression method - expected 0 - got %x&#34;</span>,
-            tmp[<span style=color:#2aa198>10</span>])
-        <span style=color:#719e07>return</span> errors.<span style=color:#268bd2>New</span>(errString)
-    }
-    png.CompressionMethod = <span style=color:#b58900>int</span>(tmp[<span style=color:#2aa198>10</span>])
-
-    <span style=color:#586e75>// Only filter method 0 is supported
-</span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> <span style=color:#b58900>int</span>(tmp[<span style=color:#2aa198>11</span>]) <span style=color:#719e07>!=</span> <span style=color:#2aa198>0</span> {
-        errString <span style=color:#719e07>:=</span> fmt.<span style=color:#268bd2>Sprintf</span>(<span style=color:#2aa198>&#34;invalid filter method - expected 0 - got %x&#34;</span>,
-            tmp[<span style=color:#2aa198>11</span>])
-        <span style=color:#719e07>return</span> errors.<span style=color:#268bd2>New</span>(errString)
-    }
-    png.FilterMethod = <span style=color:#b58900>int</span>(tmp[<span style=color:#2aa198>11</span>])
-
-    <span style=color:#586e75>// Only interlace methods 0 and 1 are supported
-</span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> <span style=color:#b58900>int</span>(tmp[<span style=color:#2aa198>12</span>]) <span style=color:#719e07>!=</span> <span style=color:#2aa198>0</span> {
-        errString <span style=color:#719e07>:=</span> fmt.<span style=color:#268bd2>Sprintf</span>(<span style=color:#2aa198>&#34;invalid interlace method - expected 0 or 1 - got %x&#34;</span>,
-            tmp[<span style=color:#2aa198>12</span>])
-        <span style=color:#719e07>return</span> errors.<span style=color:#268bd2>New</span>(errString)
-    }
-    png.InterlaceMethod = <span style=color:#b58900>int</span>(tmp[<span style=color:#2aa198>12</span>])
-
-    <span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>
-}</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>Our example's <code>IHDR</code> is:</p>
-<figure class=code>
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">31
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">32
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">33
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">34
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">35
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">36
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">37
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">38
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">39
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">40
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">41
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">42
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">43
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">44
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">45
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">46
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">47
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">48
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">49
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">50
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">51
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">52
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">53
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Parse IHDR chunk.
+</span></span></span><span style=display:flex><span><span style=color:#586e75>// https://golang.org/src/image/png/reader.go?#L142 is your friend.
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>func</span> (png <span style=color:#719e07>*</span>PNG) <span style=color:#268bd2>parseIHDR</span>(iHDR <span style=color:#719e07>*</span>Chunk) <span style=color:#dc322f>error</span> {
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> iHDR.Length <span style=color:#719e07>!=</span> iHDRlength {
+</span></span><span style=display:flex><span>        errString <span style=color:#719e07>:=</span> fmt.<span style=color:#268bd2>Sprintf</span>(<span style=color:#2aa198>&#34;invalid IHDR length: got %d - expected %d&#34;</span>,
+</span></span><span style=display:flex><span>            iHDR.Length, iHDRlength)
+</span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> errors.<span style=color:#268bd2>New</span>(errString)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    tmp <span style=color:#719e07>:=</span> iHDR.Data
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>var</span> err <span style=color:#dc322f>error</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    png.Width, err = <span style=color:#268bd2>uInt32ToInt</span>(tmp[<span style=color:#2aa198>0</span>:<span style=color:#2aa198>4</span>])
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> <span style=color:#719e07>||</span> png.Width <span style=color:#719e07>&lt;=</span> <span style=color:#2aa198>0</span> {
+</span></span><span style=display:flex><span>        errString <span style=color:#719e07>:=</span> fmt.<span style=color:#268bd2>Sprintf</span>(<span style=color:#2aa198>&#34;invalid width in iHDR - got %x&#34;</span>, tmp[<span style=color:#2aa198>0</span>:<span style=color:#2aa198>4</span>])
+</span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> errors.<span style=color:#268bd2>New</span>(errString)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    png.Height, err = <span style=color:#268bd2>uInt32ToInt</span>(tmp[<span style=color:#2aa198>4</span>:<span style=color:#2aa198>8</span>])
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> <span style=color:#719e07>||</span> png.Height <span style=color:#719e07>&lt;=</span> <span style=color:#2aa198>0</span> {
+</span></span><span style=display:flex><span>        errString <span style=color:#719e07>:=</span> fmt.<span style=color:#268bd2>Sprintf</span>(<span style=color:#2aa198>&#34;invalid height in iHDR - got %x&#34;</span>, tmp[<span style=color:#2aa198>4</span>:<span style=color:#2aa198>8</span>])
+</span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> errors.<span style=color:#268bd2>New</span>(errString)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    png.BitDepth = <span style=color:#b58900>int</span>(tmp[<span style=color:#2aa198>8</span>])
+</span></span><span style=display:flex><span>    png.ColorType = <span style=color:#b58900>int</span>(tmp[<span style=color:#2aa198>9</span>])
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Only compression method 0 is supported
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> <span style=color:#b58900>int</span>(tmp[<span style=color:#2aa198>10</span>]) <span style=color:#719e07>!=</span> <span style=color:#2aa198>0</span> {
+</span></span><span style=display:flex><span>        errString <span style=color:#719e07>:=</span> fmt.<span style=color:#268bd2>Sprintf</span>(<span style=color:#2aa198>&#34;invalid compression method - expected 0 - got %x&#34;</span>,
+</span></span><span style=display:flex><span>            tmp[<span style=color:#2aa198>10</span>])
+</span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> errors.<span style=color:#268bd2>New</span>(errString)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    png.CompressionMethod = <span style=color:#b58900>int</span>(tmp[<span style=color:#2aa198>10</span>])
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Only filter method 0 is supported
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> <span style=color:#b58900>int</span>(tmp[<span style=color:#2aa198>11</span>]) <span style=color:#719e07>!=</span> <span style=color:#2aa198>0</span> {
+</span></span><span style=display:flex><span>        errString <span style=color:#719e07>:=</span> fmt.<span style=color:#268bd2>Sprintf</span>(<span style=color:#2aa198>&#34;invalid filter method - expected 0 - got %x&#34;</span>,
+</span></span><span style=display:flex><span>            tmp[<span style=color:#2aa198>11</span>])
+</span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> errors.<span style=color:#268bd2>New</span>(errString)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    png.FilterMethod = <span style=color:#b58900>int</span>(tmp[<span style=color:#2aa198>11</span>])
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Only interlace methods 0 and 1 are supported
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> <span style=color:#b58900>int</span>(tmp[<span style=color:#2aa198>12</span>]) <span style=color:#719e07>!=</span> <span style=color:#2aa198>0</span> {
+</span></span><span style=display:flex><span>        errString <span style=color:#719e07>:=</span> fmt.<span style=color:#268bd2>Sprintf</span>(<span style=color:#2aa198>&#34;invalid interlace method - expected 0 or 1 - got %x&#34;</span>,
+</span></span><span style=display:flex><span>            tmp[<span style=color:#2aa198>12</span>])
+</span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> errors.<span style=color:#268bd2>New</span>(errString)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    png.InterlaceMethod = <span style=color:#b58900>int</span>(tmp[<span style=color:#2aa198>12</span>])
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>
+</span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>Our example's <code>IHDR</code> is:</p><figure class=code>
 <figcaption>
 <span>Example IHDR</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <pre tabindex=0><code>{
     &#34;Width&#34;: 111,
     &#34;Height&#34;: 115,
@@ -469,23 +373,13 @@ Extracting PNG Chunks with Go
     &#34;FilterMethod&#34;: 0,
     &#34;InterlaceMethod&#34;: 0,
     &#34;NumberOfChunks&#34;: 6
-}</code></pre>
-</div>
-</figure>
-<h2 id=idat-chunks>IDAT Chunks
+}</code></pre></div></figure><h2 id=idat-chunks>IDAT Chunks
 <a class=header-link href=#idat-chunks><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>IDAT chunks contain the image data. They are compressed using <a href=http://www.libpng.org/pub/png/spec/1.2/PNG-Compression.html target=_blank rel="noreferrer noopener">deflate</a>. If you look at the first chunk, you will see the <code>zlib</code> magic header. This <a href=https://stackoverflow.com/a/17176881 target=_blank rel="noreferrer noopener">stackoverflow answer</a> lists them:</p>
-<ul>
-<li><code>78 01</code> - No Compression/low</li>
-<li><code>78 9C</code> - Default Compression</li>
-<li><code>78 DA</code> - Best Compression</li>
-</ul>
-<p><a href=https://stackoverflow.com/a/43170354 target=_blank rel="noreferrer noopener">Another answer</a> has more info:</p>
-<figure class=code>
+</h2><p>IDAT chunks contain the image data. They are compressed using <a href=http://www.libpng.org/pub/png/spec/1.2/PNG-Compression.html target=_blank rel="noreferrer noopener">deflate</a>. If you look at the first chunk, you will see the <code>zlib</code> magic header. This <a href=https://stackoverflow.com/a/17176881 target=_blank rel="noreferrer noopener">stackoverflow answer</a> lists them:</p><ul>
+<li><code>78 01</code> - No Compression/low</li><li><code>78 9C</code> - Default Compression</li><li><code>78 DA</code> - Best Compression</li></ul><p><a href=https://stackoverflow.com/a/43170354 target=_blank rel="noreferrer noopener">Another answer</a> has more info:</p><figure class=code>
 <figcaption>
 <span>zlib/gzip magic headers</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <pre tabindex=0><code>Level | ZLIB  | GZIP 
   1   | 78 01 | 1F 8B 
   2   | 78 5E | 1F 8B 
@@ -495,100 +389,80 @@ Extracting PNG Chunks with Go
   6   | 78 9C | 1F 8B 
   7   | 78 DA | 1F 8B 
   8   | 78 DA | 1F 8B 
-  9   | 78 DA | 1F 8B </code></pre>
-</div>
-</figure>
-<p>I have seen a lot of random looking blobs starting with <code>78 9C</code> when reversing custom protocols at work. I have never seen the other two headers.</p>
-<p>In Go we can <code>inflate</code> the blob (decompress them) with <a href=https://golang.org/pkg/compress/zlib/#NewReader target=_blank rel="noreferrer noopener">zlib.NewReader</a>:</p>
-<figure class=code>
+  9   | 78 DA | 1F 8B </code></pre></div></figure><p>I have seen a lot of random looking blobs starting with <code>78 9C</code> when reversing custom protocols at work. I have never seen the other two headers.</p><p>In Go we can <code>inflate</code> the blob (decompress them) with <a href=https://golang.org/pkg/compress/zlib/#NewReader target=_blank rel="noreferrer noopener">zlib.NewReader</a>:</p><figure class=code>
 <figcaption>
 <span>Decompress deflated file - minimal example</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">29
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#719e07>package</span> main
-
-<span style=color:#719e07>import</span> (
-    <span style=color:#2aa198>&#34;compress/zlib&#34;</span>
-    <span style=color:#2aa198>&#34;io&#34;</span>
-    <span style=color:#2aa198>&#34;os&#34;</span>
-)
-
-<span style=color:#268bd2>func</span> <span style=color:#268bd2>main</span>() {
-    zlibFile, err <span style=color:#719e07>:=</span> os.<span style=color:#268bd2>Open</span>(<span style=color:#2aa198>&#34;test.zlib&#34;</span>)
-    <span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
-        <span style=color:#b58900>panic</span>(err)
-    }
-    <span style=color:#719e07>defer</span> zlibFile.<span style=color:#268bd2>Close</span>()
-
-    r, err <span style=color:#719e07>:=</span> zlib.<span style=color:#268bd2>NewReader</span>(zlibFile)
-    <span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
-        <span style=color:#b58900>panic</span>(err)
-    }
-    <span style=color:#719e07>defer</span> r.<span style=color:#268bd2>Close</span>()
-
-    outFile, err <span style=color:#719e07>:=</span> os.<span style=color:#268bd2>Create</span>(<span style=color:#2aa198>&#34;out-zlib&#34;</span>)
-    <span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
-        <span style=color:#b58900>panic</span>(err)
-    }
-    <span style=color:#719e07>defer</span> outFile.<span style=color:#268bd2>Close</span>()
-
-    io.<span style=color:#268bd2>Copy</span>(outFile, r)
-}</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>Note that each chunk is not compressed individually. All IDAT chunks need to be extracted, concatenated and decompressed together.</p>
-<p>In our case, <code>IDAT</code> chunk has the <code>78 5E</code> header:</p>
-<figure class=code>
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">29
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#719e07>package</span> main
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>import</span> (
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;compress/zlib&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;io&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;os&#34;</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>main</span>() {
+</span></span><span style=display:flex><span>    zlibFile, err <span style=color:#719e07>:=</span> os.<span style=color:#268bd2>Open</span>(<span style=color:#2aa198>&#34;test.zlib&#34;</span>)
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#b58900>panic</span>(err)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#719e07>defer</span> zlibFile.<span style=color:#268bd2>Close</span>()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    r, err <span style=color:#719e07>:=</span> zlib.<span style=color:#268bd2>NewReader</span>(zlibFile)
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#b58900>panic</span>(err)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#719e07>defer</span> r.<span style=color:#268bd2>Close</span>()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    outFile, err <span style=color:#719e07>:=</span> os.<span style=color:#268bd2>Create</span>(<span style=color:#2aa198>&#34;out-zlib&#34;</span>)
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#b58900>panic</span>(err)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#719e07>defer</span> outFile.<span style=color:#268bd2>Close</span>()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    io.<span style=color:#268bd2>Copy</span>(outFile, r)
+</span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>Note that each chunk is not compressed individually. All IDAT chunks need to be extracted, concatenated and decompressed together.</p><p>In our case, <code>IDAT</code> chunk has the <code>78 5E</code> header:</p><figure class=code>
 <figcaption>
 <span>Example IDAT data</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <pre tabindex=0><code>00000000  78 5e ed c1 01 0d 00 00 00 c2 a0 f7 4f 6d 0f 07  |x^íÁ.....Â ÷Om..|
 00000010  04 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
 00000020  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
-00000030  00 00 00 00 00 70 ae 06 96 0a 00 01              |.....p®.....|</code></pre>
-</div>
-</figure>
-<p>Everything else is straightforward after this.</p>
-<h1 id=tool-operation>Tool Operation
+00000030  00 00 00 00 00 70 ae 06 96 0a 00 01              |.....p®.....|</code></pre></div></figure><p>Everything else is straightforward after this.</p><h1 id=tool-operation>Tool Operation
 <a class=header-link href=#tool-operation><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Operation is pretty simple. PNG is passed by <code>-file</code>. Tool will display the PNG info like height and width. <code>-c</code> flag will display the chunks and their first 20 bytes. Chunks can be saved to file individually. Modifying the program to collect, decompress and store the IDAT chunks is also simple.</p>
-<span class=caption-wrapper>
+</h1><p>Operation is pretty simple. PNG is passed by <code>-file</code>. Tool will display the PNG info like height and width. <code>-c</code> flag will display the chunks and their first 20 bytes. Chunks can be saved to file individually. Modifying the program to collect, decompress and store the IDAT chunks is also simple.</p><span class=caption-wrapper>
 <img class=caption src=/images/2018/png1/04-tool-operation.png title="Tool in action" alt="Tool in action">
 <span class=caption-text>Tool in action</span>
 </span>
@@ -596,12 +470,7 @@ Extracting PNG Chunks with Go
 <hr>
 <ol>
 <li id=fn:1 role=doc-endnote>
-<p>We can hide data in random chunks. The hidden chunk must be added before/after IDAT chunks. The standard expects the chain of IDAT chunks to be uninterrupted.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
-</li>
-</ol>
-</section>
-</div>
-<footer>
+<p>We can hide data in random chunks. The hidden chunk must be added before/after IDAT chunks. The standard expects the chain of IDAT chunks to be uninterrupted.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section></div><footer>
 <p class=meta>
 <span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>Feb 25, 2018</time>
@@ -609,82 +478,47 @@ Extracting PNG Chunks with Go
 Tags:
 <a class=category href=https://parsiya.net/tags/png>PNG</a> <a class=category href=https://parsiya.net/tags/file-parsing>File Parsing</a>
 </span>
-</p>
-<p class=meta>
+</p><p class=meta>
 <a class="basic-alignment left" href=https://parsiya.net/blog/2018-02-22-cap-theorem-and-credit-cards/ title="CAP Theorem and Credit Cards">CAP Theorem and Credit Cards</a>
 <a class="basic-alignment right" href=https://parsiya.net/blog/2018-03-01-the-great-hiatus/ title="The Great Hiatus">The Great Hiatus</a>
-</p>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</div>
-<aside class="sidebar thirds">
+</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer></article></div><aside class="sidebar thirds">
 <section class="first odd">
-<h1>Who am I?</h1>
-<p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
-<p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p>
-<p>Click on <a href=/about/>About Me!</a> to know more.</p>
-</p>
-</section>
-<ul class=sidebar-nav>
+<h1>Who am I?</h1><p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
 <li class=sidebar-nav-item>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li>
-</ul>
-<section class=odd>
-<h1>Collections</h1>
-<li>
+</li></ul><section class=odd>
+<h1>Collections</h1><li>
 <a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li>
-<li>
+</li><li>
 <a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li>
-</section>
-</aside>
-</div>
-</div>
-<footer role=contentinfo>
+</li></section></aside></div></div><footer role=contentinfo>
 <p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>

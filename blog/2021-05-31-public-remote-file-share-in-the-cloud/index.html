@@ -3,14 +3,13 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
 <link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>Public Remote File Share in The Cloud</title>
-<link rel=stylesheet href=/css/hugo-octopress.css>
+<title>Public Remote File Share in The Cloud</title><link rel=stylesheet href=/css/hugo-octopress.css>
 <link rel=stylesheet href=/css/fork-awesome.min.css>
 <link href=https://parsiya.net/favicon.png rel=icon>
 <meta name=description content>
 <meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
 <meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.92.2">
+<meta name=generator content="Hugo 0.93.0">
 <meta name=twitter:card content="summary">
 <meta name=twitter:title content="Public Remote File Share in The Cloud">
 <meta name=twitter:description content="In
@@ -63,37 +62,21 @@ I am documenting how I created a share using an EC2 instance. This guide is for
 AWS, but it's a Linux machine running in the cloud. You can easily replicate it.">
 <meta name=twitter:domain content="parsiya.net">
 <meta name=twitter:creator content="@CryptoGangsta">
-</head>
-<body>
+</head><body>
 <header role=banner>
 <hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
-<h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2>
-</hgroup></header>
-<nav role=navigation>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
 <fieldset class=mobile-nav>
 <select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset>
-<ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
-<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
-<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
-<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
-<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
-<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
-</ul>
-<ul class=subscription>
+</fieldset><ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
 <a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul>
-<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
 <fieldset role=search>
 <input class=search type=text name=q results=0 placeholder=Search>
 <input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset>
-</form>
-</nav>
-<div id=main>
+</fieldset></form></nav><div id=main>
 <div id=content>
 <div>
 <article class=hentry role=article>
@@ -102,122 +85,57 @@ complete unless it is known by its causes. - Avicenna</h2>
 - 8 minute read
 - <a href=https://parsiya.net/blog/2021-05-31-public-remote-file-share-in-the-cloud/#disqus_thread>Comments</a>
 - <a class=label href=https://parsiya.net/categories/bug-bounty/>bug bounty </a>
-</p>
-<h1 class=entry-title>
+</p><h1 class=entry-title>
 Public Remote File Share in The Cloud
-</h1>
-</header>
-<div class=entry-content>
+</h1></header><div class=entry-content>
 <nav id=TableOfContents>
 <ul>
-<li><a href=#problem-statement>Problem Statement</a></li>
-<li><a href=#research>Research</a></li>
-<li><a href=#ec2-instance>EC2 Instance</a>
+<li><a href=#problem-statement>Problem Statement</a></li><li><a href=#research>Research</a></li><li><a href=#ec2-instance>EC2 Instance</a>
 <ul>
-<li><a href=#ec2-wizard>EC2 Wizard</a></li>
-<li><a href=#after-instance-launch>After Instance Launch</a></li>
-<li><a href=#setting-up-ssh-access>Setting Up SSH Access</a></li>
-<li><a href=#setting-up-samba-on-the-machine>Setting Up Samba on the Machine</a>
+<li><a href=#ec2-wizard>EC2 Wizard</a></li><li><a href=#after-instance-launch>After Instance Launch</a></li><li><a href=#setting-up-ssh-access>Setting Up SSH Access</a></li><li><a href=#setting-up-samba-on-the-machine>Setting Up Samba on the Machine</a>
 <ul>
-<li><a href=#configuring-the-samba-share>Configuring The Samba Share</a></li>
-</ul>
-</li>
-<li><a href=#automation>Automation</a></li>
-<li><a href=#pricing>Pricing</a></li>
-</ul>
-</li>
-<li><a href=#issues>Issues</a>
+<li><a href=#configuring-the-samba-share>Configuring The Samba Share</a></li></ul></li><li><a href=#automation>Automation</a></li><li><a href=#pricing>Pricing</a></li></ul></li><li><a href=#issues>Issues</a>
 <ul>
-<li><a href=#privacy>Privacy</a></li>
-<li><a href=#credential-prompt-after-accessing-the-share>Credential Prompt After Accessing the Share</a></li>
-</ul>
-</li>
-<li><a href=#failed-attempt-amazon-file-storage-gateway>Failed Attempt: Amazon File Storage Gateway</a></li>
-</ul>
-</nav>
-<p>In
+<li><a href=#privacy>Privacy</a></li><li><a href=#credential-prompt-after-accessing-the-share>Credential Prompt After Accessing the Share</a></li></ul></li><li><a href=#failed-attempt-amazon-file-storage-gateway>Failed Attempt: Amazon File Storage Gateway</a></li></ul></nav><p>In
 <a href=/blog/2021-03-17-attack-surface-analysis-part-2-custom-protocol-handlers/ title="Attack Surface Analysis - Part 2 - Custom Protocol Handlers" rel=nofollow target=_blank>Part 2 of the Attack Surface Analysis series</a>
 I talked about how passing a remote file with a UNC path can lead to unexpected
-results.</p>
-<p>I am documenting how I created a share using an EC2 instance. This guide is for
-AWS, but it's a Linux machine running in the cloud. You can easily replicate it.</p>
-<p>Note about automation: I like automation, but we should "automate as long as it
-makes sense." In my opinion, I don't need more automation.</p>
-<h1 id=problem-statement>Problem Statement
+results.</p><p>I am documenting how I created a share using an EC2 instance. This guide is for
+AWS, but it's a Linux machine running in the cloud. You can easily replicate it.</p><p>Note about automation: I like automation, but we should "automate as long as it
+makes sense." In my opinion, I don't need more automation.</p><h1 id=problem-statement>Problem Statement
 <a class=header-link href=#problem-statement><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><p>We want to pass a remote file as a UNC path (or other ways) to a program. For
-example, we want to pass <code>app.exe -input \\10.20.30.40\myfile.txt</code>.</p>
-<p>We need:</p>
-<ol>
-<li>A public share.</li>
-<li>The ability to upload files.</li>
-<li>Static IP address for a reasonable amount of time (a few days).</li>
-</ol>
-<h1 id=research>Research
+example, we want to pass <code>app.exe -input \\10.20.30.40\myfile.txt</code>.</p><p>We need:</p><ol>
+<li>A public share.</li><li>The ability to upload files.</li><li>Static IP address for a reasonable amount of time (a few days).</li></ol><h1 id=research>Research
 <a class=header-link href=#research><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><p>The obvious solution for me is <code>the cloud</code>. Some people have their own
-infrastructure, but I do not even have a home lab (lol)<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>.</p>
-<p>I had two options:</p>
-<ol>
-<li>Deploying a custom EC2 instance.</li>
-<li>The <a href=https://aws.amazon.com/storagegateway/file/ target=_blank rel="noreferrer noopener">AWS File Gateway</a>.</li>
-</ol>
-<p><strong>Spoiler:</strong> AWS File Gateway is garbage for my use case. EC2 instance is the way
-to go.</p>
-<h1 id=ec2-instance>EC2 Instance
+infrastructure, but I do not even have a home lab (lol)<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>.</p><p>I had two options:</p><ol>
+<li>Deploying a custom EC2 instance.</li><li>The <a href=https://aws.amazon.com/storagegateway/file/ target=_blank rel="noreferrer noopener">AWS File Gateway</a>.</li></ol><p><strong>Spoiler:</strong> AWS File Gateway is garbage for my use case. EC2 instance is the way
+to go.</p><h1 id=ec2-instance>EC2 Instance
 <a class=header-link href=#ec2-instance><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>A Linux EC2 instance checks all the boxes:</p>
-<ol>
-<li>We can create a public share with samba.</li>
-<li>We can upload files via SSH or other means.</li>
-<li>The IPv4 address of the EC2 instance does not change while it is running and
-comes free with the instance.</li>
-<li>Bonus: It can be deployed using the AWS free tier and is less than 5 USD a
-month for other accounts.</li>
-</ol>
-<h2 id=ec2-wizard>EC2 Wizard
+</h1><p>A Linux EC2 instance checks all the boxes:</p><ol>
+<li>We can create a public share with samba.</li><li>We can upload files via SSH or other means.</li><li>The IPv4 address of the EC2 instance does not change while it is running and
+comes free with the instance.</li><li>Bonus: It can be deployed using the AWS free tier and is less than 5 USD a
+month for other accounts.</li></ol><h2 id=ec2-wizard>EC2 Wizard
 <a class=header-link href=#ec2-wizard><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><p>I used the Ubuntu 18.04 LTS image. Originally, I wanted a <code>t4g.nano</code> instance,
 but the <code>t4g.micro</code> ARM instances are free until July 2021 (this was written in
-April 2021 and published a month later). Free is better.</p>
-<p>In the EC2 instance wizard you need to choose some specific options:</p>
-<ul>
+April 2021 and published a month later). Free is better.</p><p>In the EC2 instance wizard you need to choose some specific options:</p><ul>
 <li>Step 3: Configure Instance Details
 <ul>
-<li><code>Auto-assign Public IP: Enable</code></li>
-</ul>
-</li>
-<li>Step 4: Add storage
+<li><code>Auto-assign Public IP: Enable</code></li></ul></li><li>Step 4: Add storage
 <ul>
-<li>The image needs 8 GB, I increased the storage to 10 GB.</li>
-</ul>
-</li>
-<li>Step 6: Configure Security Group
+<li>The image needs 8 GB, I increased the storage to 10 GB.</li></ul></li><li>Step 6: Configure Security Group
 <ul>
-<li>Port 22 should already be open, if not open it.</li>
-<li>Open SMB (port 445). The source should be <code>anywhere</code>.</li>
-</ul>
-</li>
-<li><code>Review and Launch</code> -> <code>Launch</code>.</li>
-<li>Create or reuse an SSH keypair.
+<li>Port 22 should already be open, if not open it.</li><li>Open SMB (port 445). The source should be <code>anywhere</code>.</li></ul></li><li><code>Review and Launch</code> -> <code>Launch</code>.</li><li>Create or reuse an SSH keypair.
 <ul>
-<li>We need it to SSH to the machine.</li>
-</ul>
-</li>
-</ul>
-<h2 id=after-instance-launch>After Instance Launch
+<li>We need it to SSH to the machine.</li></ul></li></ul><h2 id=after-instance-launch>After Instance Launch
 <a class=header-link href=#after-instance-launch><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><ol>
-<li>Click <code>View Instance</code> (bottom right) to go the running instances page.</li>
-<li>Grab the server's public IPv4 address.</li>
-<li>Wait a few minutes for the instance to start running and the status check to
-complete and pass 2/2 checks.</li>
-</ol>
-<h2 id=setting-up-ssh-access>Setting Up SSH Access
+<li>Click <code>View Instance</code> (bottom right) to go the running instances page.</li><li>Grab the server's public IPv4 address.</li><li>Wait a few minutes for the instance to start running and the status check to
+complete and pass 2/2 checks.</li></ol><h2 id=setting-up-ssh-access>Setting Up SSH Access
 <a class=header-link href=#setting-up-ssh-access><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><p>We can set up SSH access while the instance is starting. I used WSL2 but it
-should work everywhere.</p>
-<pre tabindex=0><code># copy the SSH key
+should work everywhere.</p><pre tabindex=0><code># copy the SSH key
 cp smb-ssh-key.pem ~/.ssh/smb-key.pem
 
 # change ACL
@@ -225,17 +143,14 @@ chmod 700 ~/.ssh/smb-key.pem
 
 # add the key to the SSH config file
 nano ~/.ssh/config
-</code></pre><p>This makes it easier to use. Add the following to the config file:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml>Host publicshare <span style=color:#586e75># change this to something you like.</span>
-  User ubuntu    <span style=color:#586e75># change to your image&#39;s username.</span>
-  Hostname 10.20.30.40  <span style=color:#586e75># replace with the instance&#39;s IP address.</span>
-  PreferredAuthentications publickey
-  IdentityFile ~/.ssh/smb-ssh-key.pem <span style=color:#586e75># change if needed.</span>
-</code></pre></div><p>Now, we can SSH into the instance with <code>ssh publicshare</code>.</p>
-<h2 id=setting-up-samba-on-the-machine>Setting Up Samba on the Machine
+</code></pre><p>This makes it easier to use. Add the following to the config file:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>Host publicshare <span style=color:#586e75># change this to something you like.</span>
+</span></span><span style=display:flex><span>  User ubuntu    <span style=color:#586e75># change to your image&#39;s username.</span>
+</span></span><span style=display:flex><span>  Hostname 10.20.30.40  <span style=color:#586e75># replace with the instance&#39;s IP address.</span>
+</span></span><span style=display:flex><span>  PreferredAuthentications publickey
+</span></span><span style=display:flex><span>  IdentityFile ~/.ssh/smb-ssh-key.pem <span style=color:#586e75># change if needed.</span>
+</span></span></code></pre></div><p>Now, we can SSH into the instance with <code>ssh publicshare</code>.</p><h2 id=setting-up-samba-on-the-machine>Setting Up Samba on the Machine
 <a class=header-link href=#setting-up-samba-on-the-machine><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>You should have root access to the machine.</p>
-<pre tabindex=0><code># install samba
+</h2><p>You should have root access to the machine.</p><pre tabindex=0><code># install samba
 sudo apt install samba
 
 # check if the service is running
@@ -252,19 +167,14 @@ sudo chmod 755 /var/samba
 
 # create a random file in the share directory
 sudo touch /var/samba/whatever.txt
-</code></pre>
-<h3 id=configuring-the-samba-share>Configuring The Samba Share
+</code></pre><h3 id=configuring-the-samba-share>Configuring The Samba Share
 <a class=header-link href=#configuring-the-samba-share><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h3><p>We want everyone to connect to this share so we do not want to just bind it to
 localhost or an internal IP address. I used the following as a guide (starting
-from "Create Anonymous Share"):</p>
-<ul>
-<li><a href=https://linuxconfig.org/how-to-configure-samba-server-share-on-ubuntu-18-04-bionic-beaver-linux target=_blank rel="noreferrer noopener">https://linuxconfig.org/how-to-configure-samba-server-share-on-ubuntu-18-04-bionic-beaver-linux</a></li>
-</ul>
-<pre tabindex=0><code># edit the config
+from "Create Anonymous Share"):</p><ul>
+<li><a href=https://linuxconfig.org/how-to-configure-samba-server-share-on-ubuntu-18-04-bionic-beaver-linux target=_blank rel="noreferrer noopener">https://linuxconfig.org/how-to-configure-samba-server-share-on-ubuntu-18-04-bionic-beaver-linux</a></li></ul><pre tabindex=0><code># edit the config
 sudo nano /etc/samba/smb.conf
-</code></pre><p>Add the following to the end of the config file:</p>
-<pre tabindex=0><code>[public]
+</code></pre><p>Add the following to the end of the config file:</p><pre tabindex=0><code>[public]
   comment = public anonymous access
   path = /var/samba/
   browsable = yes
@@ -273,226 +183,117 @@ sudo nano /etc/samba/smb.conf
   writable = no
   guest ok = yes
 </code></pre><p>Restart the samba server with <code>sudo systemctl restart smbd</code> to see your changes.
-Now, we can do <code>\\IP\public\</code> to access the share.</p>
-<h2 id=automation>Automation
+Now, we can do <code>\\IP\public\</code> to access the share.</p><h2 id=automation>Automation
 <a class=header-link href=#automation><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><p>I am not gonna continue because I don't need the automation here. But here's
-some theorycrafting:</p>
+some theorycrafting:</p><ol>
+<li>Store all payloads in a private Github repo.</li><li>After every push, start an action that does these:
 <ol>
-<li>Store all payloads in a private Github repo.</li>
-<li>After every push, start an action that does these:
-<ol>
-<li>Use Terraform to provision and start the VM.</li>
-<li>We will need to get the SSH key and the instance's IP address somehow.</li>
-<li>Upload all the files in the Github repo or files from an S3 bucket to the share.
+<li>Use Terraform to provision and start the VM.</li><li>We will need to get the SSH key and the instance's IP address somehow.</li><li>Upload all the files in the Github repo or files from an S3 bucket to the share.
 <ol>
 <li>We could also use something like <a href=https://github.com/s3fs-fuse/s3fs-fuse target=_blank rel="noreferrer noopener">s3-fuse</a> that
-mounts an S3 bucket as a file system.</li>
-</ol>
-</li>
-</ol>
-</li>
-<li>(optional) A cron job that reads the S3 bucket every X hours and updates the shares.</li>
-</ol>
-<h2 id=pricing>Pricing
+mounts an S3 bucket as a file system.</li></ol></li></ol></li><li>(optional) A cron job that reads the S3 bucket every X hours and updates the shares.</li></ol><h2 id=pricing>Pricing
 <a class=header-link href=#pricing><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><p>AWS pricing is a mystery but I crunched some numbers. In <code>calculator.aws</code> there
 is an EC2 monthly cost and a storage cost. We do not need persistence storage
 instances so I do not know if we need to pay for it, too. But assuming we do,
 10GB is more than enough (an Ubuntu 18 LTS image needs 8GB) and costs <code>1 USD/mo</code>
-on <code>us-east-1</code>.</p>
-<p>Without the free tier and the <code>t4g.micro</code> free promotion, running the EC2
+on <code>us-east-1</code>.</p><p>Without the free tier and the <code>t4g.micro</code> free promotion, running the EC2
 instance for a month will cost a few dollars. I think <code>nano</code> or <code>micro</code>
-instances will be enough for everyone. Their prices are:</p>
-<ul>
-<li><code>t4g.nano</code>: <code>1.90 USD/mo</code></li>
-<li><code>t4g.micro</code>: <code>3.87 USD/mo</code></li>
-</ul>
-<p>So, worst case we will be paying less than <strong>5 dollars a month</strong>. This would
+instances will be enough for everyone. Their prices are:</p><ul>
+<li><code>t4g.nano</code>: <code>1.90 USD/mo</code></li><li><code>t4g.micro</code>: <code>3.87 USD/mo</code></li></ul><p>So, worst case we will be paying less than <strong>5 dollars a month</strong>. This would
 have been a significant sum when I was growing up, but if you are doing the kind
-of bounties that need this kind of shares you should be able to make it.</p>
-<h1 id=issues>Issues
+of bounties that need this kind of shares you should be able to make it.</p><h1 id=issues>Issues
 <a class=header-link href=#issues><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>This approach has two problems:</p>
-<ol>
+</h1><p>This approach has two problems:</p><ol>
 <li>Privacy: Anyone going to <code>\\IP</code> can see all of your different shares and all
-your super secret payloads.</li>
-<li>User/password prompt: One of my Windows 10 VMs was asking for user/pass after
-trying to access <code>\\IP</code>.</li>
-</ol>
-<h2 id=privacy>Privacy
+your super secret payloads.</li><li>User/password prompt: One of my Windows 10 VMs was asking for user/pass after
+trying to access <code>\\IP</code>.</li></ol><h2 id=privacy>Privacy
 <a class=header-link href=#privacy><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><p>This means you should not use the same server to host multiple payloads,
 especially for different proof-of-concepts. Spin up a new instance for each
-program and keep it up for a few days until the bug is triaged.</p>
-<h2 id=credential-prompt-after-accessing-the-share>Credential Prompt After Accessing the Share
+program and keep it up for a few days until the bug is triaged.</p><h2 id=credential-prompt-after-accessing-the-share>Credential Prompt After Accessing the Share
 <a class=header-link href=#credential-prompt-after-accessing-the-share><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><p>I have no idea why it happens. Only one of my Windows VMs (some Win 10 1909) was
 doing it. All my other Win 10 VM (including another 1909 and a 20H2) did not
 have this issue. Maybe, it's a Windows config thing? I cannot reliably replicate
-it. I thought it was "Network Discovery."</p>
-<p>The prompt accepted any user/pass (e.g., user <code>a</code> and no password). For a while,
+it. I thought it was "Network Discovery."</p><p>The prompt accepted any user/pass (e.g., user <code>a</code> and no password). For a while,
 I thought this is because guest SMB 2.0 is disabled in Windows 10, but no. I did
-not get a prompt on a fresh Win10 install from modern.ie.</p>
-<p>If such a prompt pops up in your VM then chances are the app is not going to
-accept the remote file without it and this will interfere with your exploit.</p>
-<h1 id=failed-attempt-amazon-file-storage-gateway>Failed Attempt: Amazon File Storage Gateway
+not get a prompt on a fresh Win10 install from modern.ie.</p><p>If such a prompt pops up in your VM then chances are the app is not going to
+accept the remote file without it and this will interfere with your exploit.</p><h1 id=failed-attempt-amazon-file-storage-gateway>Failed Attempt: Amazon File Storage Gateway
 <a class=header-link href=#failed-attempt-amazon-file-storage-gateway><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><p>AWS has <a href=https://aws.amazon.com/storagegateway/file/ target=_blank rel="noreferrer noopener">a service</a> that does this (of course, they do). In short,
 files are stored in an S3 bucket and a machine acts as a gateway. This machine
 can be an EC2 instance or anywhere else. AWS gives you an image that you can
-download and deploy.</p>
-<p>This service does a lot more than what I want. Furthermore, the EC2 instance
+download and deploy.</p><p>This service does a lot more than what I want. Furthermore, the EC2 instance
 has a set of minimum requirements. If you create an instance that does not meet
-those, it will not be recognized.</p>
-<p>I am going to document my experience setting it up, anyways. It might be useful
-for someone.</p>
+those, it will not be recognized.</p><p>I am going to document my experience setting it up, anyways. It might be useful
+for someone.</p><ol>
+<li>Go to <a href="https://console.aws.amazon.com/storagegateway/home?region=us-east-1" target=_blank rel="noreferrer noopener">https://console.aws.amazon.com/storagegateway/home</a>.</li><li><code>Get Started > File Gateway > Amazon EC2</code>.</li><li>Click on <code>Launch instance</code> to open a new window and the EC2 instance wizard.</li><li>Use <a href=https://docs.aws.amazon.com/storagegateway/latest/userguide/ec2-gateway-file.html target=_blank rel="noreferrer noopener">https://docs.aws.amazon.com/storagegateway/latest/userguide/ec2-gateway-file.html</a>
 <ol>
-<li>Go to <a href="https://console.aws.amazon.com/storagegateway/home?region=us-east-1" target=_blank rel="noreferrer noopener">https://console.aws.amazon.com/storagegateway/home</a>.</li>
-<li><code>Get Started > File Gateway > Amazon EC2</code>.</li>
-<li>Click on <code>Launch instance</code> to open a new window and the EC2 instance wizard.</li>
-<li>Use <a href=https://docs.aws.amazon.com/storagegateway/latest/userguide/ec2-gateway-file.html target=_blank rel="noreferrer noopener">https://docs.aws.amazon.com/storagegateway/latest/userguide/ec2-gateway-file.html</a>
-<ol>
-<li>Minimum instance size is <code>m4.xlarge</code> (comes with an 80GB volume): <code>90.45 + 8 USD/mo</code></li>
-<li>An extra 150GB EBS volume as cache: <code>15 USD/mo</code></li>
-</ol>
-</li>
-</ol>
-<p>In the EC2 wizard, set:</p>
-<ul>
+<li>Minimum instance size is <code>m4.xlarge</code> (comes with an 80GB volume): <code>90.45 + 8 USD/mo</code></li><li>An extra 150GB EBS volume as cache: <code>15 USD/mo</code></li></ol></li></ol><p>In the EC2 wizard, set:</p><ul>
 <li>Step 3: Configure Instance Details
 <ul>
-<li><code>Auto-assign Public IP: Enable</code></li>
-<li>We need the public IP. It does not change while the instance is running.</li>
-</ul>
-</li>
-<li>Step 4: Add storage
+<li><code>Auto-assign Public IP: Enable</code></li><li>We need the public IP. It does not change while the instance is running.</li></ul></li><li>Step 4: Add storage
 <ul>
-<li>80 GB block for the image.</li>
-<li>Extra 150 GB volume as cache.</li>
-</ul>
-</li>
-<li>Step 6: Configure Security Group.
+<li>80 GB block for the image.</li><li>Extra 150 GB volume as cache.</li></ul></li><li>Step 6: Configure Security Group.
 <ul>
 <li>Open the following ports:
 <ul>
-<li>SSH (22 TCP): should already be open, if not open it.</li>
-<li>HTTP (80 TCP)</li>
-<li>HTTPS (443 TCP)</li>
-<li>DNS (53 UDP)</li>
-<li>SMB (445 TCP)</li>
-<li>LDAP (3289 TCP)</li>
-<li>NFS (2049 TCP)</li>
-<li>Custom UDP 123</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Create or reuse an SSH keypair.
+<li>SSH (22 TCP): should already be open, if not open it.</li><li>HTTP (80 TCP)</li><li>HTTPS (443 TCP)</li><li>DNS (53 UDP)</li><li>SMB (445 TCP)</li><li>LDAP (3289 TCP)</li><li>NFS (2049 TCP)</li><li>Custom UDP 123</li></ul></li></ul></li><li>Create or reuse an SSH keypair.
 <ul>
-<li>We will need it to SSH into the machine.</li>
-</ul>
-</li>
-</ul>
-<p>Launch the instance and wait for it to pass the 2/2 checks. Now, we can go back
-to the File Gateway wizard.</p>
-<ul>
-<li>Select <code>Public</code> in <code>Service Endpoint</code> then <code>Next</code>.</li>
-<li>In <code>Connect to gateway</code> enter the IP address of the EC2 instance.</li>
-<li>In <code>Activate Gateway</code> put in the time zone and a name. E.g., <code>my-file-share</code></li>
-<li>Click <code>Activate Gateway</code>.</li>
-</ul>
-<p><strong>If the EC2 instance does not meet the minimum requirements</strong> the <code>Preparing local disk</code> cannot find local disks. <strong>Rage quit</strong></p>
-<section class=footnotes role=doc-endnotes>
+<li>We will need it to SSH into the machine.</li></ul></li></ul><p>Launch the instance and wait for it to pass the 2/2 checks. Now, we can go back
+to the File Gateway wizard.</p><ul>
+<li>Select <code>Public</code> in <code>Service Endpoint</code> then <code>Next</code>.</li><li>In <code>Connect to gateway</code> enter the IP address of the EC2 instance.</li><li>In <code>Activate Gateway</code> put in the time zone and a name. E.g., <code>my-file-share</code></li><li>Click <code>Activate Gateway</code>.</li></ul><p><strong>If the EC2 instance does not meet the minimum requirements</strong> the <code>Preparing local disk</code> cannot find local disks. <strong>Rage quit</strong></p><section class=footnotes role=doc-endnotes>
 <hr>
 <ol>
 <li id=fn:1 role=doc-endnote>
-<p>Infosec is not special, you do not have to study in your free time.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
-</li>
-</ol>
-</section>
-</div>
-<footer>
+<p>Infosec is not special, you do not have to study in your free time.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section></div><footer>
 <p class=meta>
 <span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>May 31, 2021</time>
 </span>
-</p>
-<p class=meta>
+</p><p class=meta>
 <a class="basic-alignment left" href=https://parsiya.net/blog/2021-04-30-testing-extensions-in-chromium-browsers-nordpass/ title="Testing Extensions in Chromium Browsers - Nordpass">Testing Extensions in Chromium Browsers - Nordpass</a>
 <a class="basic-alignment right" href=https://parsiya.net/blog/2021-06-08-the-javascript-bridge-in-modern-desktop-applications/ title="The JavaScript Bridge in Modern Desktop Applications">The JavaScript Bridge in Modern Desktop Applications</a>
-</p>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</div>
-<aside class="sidebar thirds">
+</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer></article></div><aside class="sidebar thirds">
 <section class="first odd">
-<h1>Who am I?</h1>
-<p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
-<p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p>
-<p>Click on <a href=/about/>About Me!</a> to know more.</p>
-</p>
-</section>
-<ul class=sidebar-nav>
+<h1>Who am I?</h1><p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
 <li class=sidebar-nav-item>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li>
-</ul>
-<section class=odd>
-<h1>Collections</h1>
-<li>
+</li></ul><section class=odd>
+<h1>Collections</h1><li>
 <a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li>
-<li>
+</li><li>
 <a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li>
-</section>
-</aside>
-</div>
-</div>
-<footer role=contentinfo>
+</li></section></aside></div></div><footer role=contentinfo>
 <p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>

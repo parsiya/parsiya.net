@@ -3,14 +3,13 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
 <link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>DVTA - Part 1 - Setup</title>
-<link rel=stylesheet href=/css/hugo-octopress.css>
+<title>DVTA - Part 1 - Setup</title><link rel=stylesheet href=/css/hugo-octopress.css>
 <link rel=stylesheet href=/css/fork-awesome.min.css>
 <link href=https://parsiya.net/favicon.png rel=icon>
 <meta name=description content>
 <meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
 <meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.92.2">
+<meta name=generator content="Hugo 0.93.0">
 <meta name=twitter:card content="summary_large_image">
 <meta name=twitter:image:src content="https://parsiya.net/blog/2018-07-15-dvta-part-1-setup/img/22.png">
 <meta name=twitter:title content="DVTA - Part 1 - Setup">
@@ -23,37 +22,21 @@ Neither fork's setup instructions worked for me. As a result, the first part is 
 Thanks to SecVulture for creating the app and maintainers of the second repository for adding protections.">
 <meta name=twitter:domain content="parsiya.net">
 <meta name=twitter:creator content="@CryptoGangsta">
-</head>
-<body>
+</head><body>
 <header role=banner>
 <hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
-<h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2>
-</hgroup></header>
-<nav role=navigation>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
 <fieldset class=mobile-nav>
 <select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset>
-<ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
-<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
-<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
-<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
-<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
-<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
-</ul>
-<ul class=subscription>
+</fieldset><ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
 <a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul>
-<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
 <fieldset role=search>
 <input class=search type=text name=q results=0 placeholder=Search>
 <input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset>
-</form>
-</nav>
-<div id=main>
+</fieldset></form></nav><div id=main>
 <div id=content>
 <div>
 <article class=hentry role=article>
@@ -62,323 +45,204 @@ complete unless it is known by its causes. - Avicenna</h2>
 - 8 minute read
 - <a href=https://parsiya.net/blog/2018-07-15-dvta-part-1-setup/#disqus_thread>Comments</a>
 - <a class=label href=https://parsiya.net/categories/reverse-engineering/>Reverse Engineering </a><a class=label href=https://parsiya.net/categories/dvta/>DVTA </a><a class=label href=https://parsiya.net/categories/writeup/>Writeup </a>
-</p>
-<h1 class=entry-title>
+</p><h1 class=entry-title>
 DVTA - Part 1 - Setup
-</h1>
-</header>
-<div class=entry-content>
+</h1></header><div class=entry-content>
 <nav id=TableOfContents>
 <ul>
-<li><a href=#existing-setup-instructions>Existing Setup Instructions</a></li>
-<li><a href=#setup-instructions-2-electric-boogaloo>Setup Instructions 2: Electric Boogaloo</a>
+<li><a href=#existing-setup-instructions>Existing Setup Instructions</a></li><li><a href=#setup-instructions-2-electric-boogaloo>Setup Instructions 2: Electric Boogaloo</a>
 <ul>
-<li><a href=#0-ingredients-and-price>0. Ingredients and Price</a></li>
-<li><a href=#1-get-the-code-and-binary>1. Get the Code and Binary</a></li>
-<li><a href=#2-install-microsoft-sql-server-2008-express>2. Install Microsoft SQL Server 2008 Express</a></li>
-<li><a href=#3-install-microsoft-sql-server-2008-management-studio-express>3. Install Microsoft SQL Server 2008 Management Studio Express</a></li>
-<li><a href=#4-create-the-dvta-database>4. Create the DVTA Database</a></li>
-<li><a href=#5-setup-the-ftp-server>5. Setup the FTP Server</a></li>
-<li><a href=#6-modify-dvta-to-connect-to-our-local-sql-server>6. Modify DVTA to Connect to Our Local SQL Server</a></li>
-<li><a href=#7-fix-the-ftp-connectivity>7. Fix the FTP Connectivity</a>
+<li><a href=#0-ingredients-and-price>0. Ingredients and Price</a></li><li><a href=#1-get-the-code-and-binary>1. Get the Code and Binary</a></li><li><a href=#2-install-microsoft-sql-server-2008-express>2. Install Microsoft SQL Server 2008 Express</a></li><li><a href=#3-install-microsoft-sql-server-2008-management-studio-express>3. Install Microsoft SQL Server 2008 Management Studio Express</a></li><li><a href=#4-create-the-dvta-database>4. Create the DVTA Database</a></li><li><a href=#5-setup-the-ftp-server>5. Setup the FTP Server</a></li><li><a href=#6-modify-dvta-to-connect-to-our-local-sql-server>6. Modify DVTA to Connect to Our Local SQL Server</a></li><li><a href=#7-fix-the-ftp-connectivity>7. Fix the FTP Connectivity</a>
 <ul>
 <li><a href=#71-use-dnspy-to-modify-the-hardcoded-ftp-address>7.1 Use dnSpy to Modify the Hardcoded FTP Address</a>
 <ul>
-<li><a href=#discover-the-ftp-address>Discover the FTP Address</a></li>
-<li><a href=#modify-the-address-in-binary>Modify the Address in Binary</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href=#conclusion>Conclusion</a></li>
-</ul>
-</nav>
-<p>I have written a lot about thick clients. However, I have not done more than a few practical examples that I can show my co-workers or anyone else asking questions. Recently, I came across the Damn Vulnerable Thick Client Application by SecVulture at <a href=https://github.com/secvulture/dvta target=_blank rel="noreferrer noopener">https://github.com/secvulture/dvta</a>.</p>
-<p>I am not going to use the original version of the application. Someone has created a fork and added more protections. We will use this fork instead:</p>
-<ul>
-<li><a href=https://github.com/nddmars/dvta target=_blank rel="noreferrer noopener">https://github.com/nddmars/dvta</a></li>
-</ul>
-<p>Neither fork's setup instructions worked for me. As a result, the first part is actually setting up the application and the necessary back-end in only one VM. But don't worry, we will do a bit of reverse engineering with dnSpy to fix an issue.</p>
-<p><strong>Thanks to SecVulture for creating the app and maintainers of the second repository for adding protections.</strong></p>
-<h1 id=existing-setup-instructions>Existing Setup Instructions
+<li><a href=#discover-the-ftp-address>Discover the FTP Address</a></li><li><a href=#modify-the-address-in-binary>Modify the Address in Binary</a></li></ul></li></ul></li></ul></li><li><a href=#conclusion>Conclusion</a></li></ul></nav><p>I have written a lot about thick clients. However, I have not done more than a few practical examples that I can show my co-workers or anyone else asking questions. Recently, I came across the Damn Vulnerable Thick Client Application by SecVulture at <a href=https://github.com/secvulture/dvta target=_blank rel="noreferrer noopener">https://github.com/secvulture/dvta</a>.</p><p>I am not going to use the original version of the application. Someone has created a fork and added more protections. We will use this fork instead:</p><ul>
+<li><a href=https://github.com/nddmars/dvta target=_blank rel="noreferrer noopener">https://github.com/nddmars/dvta</a></li></ul><p>Neither fork's setup instructions worked for me. As a result, the first part is actually setting up the application and the necessary back-end in only one VM. But don't worry, we will do a bit of reverse engineering with dnSpy to fix an issue.</p><p><strong>Thanks to SecVulture for creating the app and maintainers of the second repository for adding protections.</strong></p><h1 id=existing-setup-instructions>Existing Setup Instructions
 <a class=header-link href=#existing-setup-instructions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>There are no instructions in the original repository at:</p>
-<ul>
-<li><a href=https://github.com/secvulture/dvta target=_blank rel="noreferrer noopener">https://github.com/secvulture/dvta</a></li>
-</ul>
-<p>But author's has some post on Infosec Institute with setup and solutions at<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>:</p>
-<ul>
-<li><a href=https://resources.infosecinstitute.com/practical-thick-client-application-penetration-testing-using-damn-vulnerable-thick-client-app-part-1 target=_blank rel="noreferrer noopener">https://resources.infosecinstitute.com/practical-thick-client-application-penetration-testing-using-damn-vulnerable-thick-client-app-part-1</a></li>
-</ul>
-<p><a href=https://github.com/nddmars/dvta target=_blank rel="noreferrer noopener">The fork</a> has a Word document file with pictures and setup instructions. I still could not make it work.</p>
-<h1 id=setup-instructions-2-electric-boogaloo>Setup Instructions 2: Electric Boogaloo
+</h1><p>There are no instructions in the original repository at:</p><ul>
+<li><a href=https://github.com/secvulture/dvta target=_blank rel="noreferrer noopener">https://github.com/secvulture/dvta</a></li></ul><p>But author's has some post on Infosec Institute with setup and solutions at<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>:</p><ul>
+<li><a href=https://resources.infosecinstitute.com/practical-thick-client-application-penetration-testing-using-damn-vulnerable-thick-client-app-part-1 target=_blank rel="noreferrer noopener">https://resources.infosecinstitute.com/practical-thick-client-application-penetration-testing-using-damn-vulnerable-thick-client-app-part-1</a></li></ul><p><a href=https://github.com/nddmars/dvta target=_blank rel="noreferrer noopener">The fork</a> has a Word document file with pictures and setup instructions. I still could not make it work.</p><h1 id=setup-instructions-2-electric-boogaloo>Setup Instructions 2: Electric Boogaloo
 <a class=header-link href=#setup-instructions-2-electric-boogaloo><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>I know setup is boring and you want to "hack." But this is necessary to have fun later.</p>
-<h2 id=0-ingredients-and-price>0. Ingredients and Price
+</h1><p>I know setup is boring and you want to "hack." But this is necessary to have fun later.</p><h2 id=0-ingredients-and-price>0. Ingredients and Price
 <a class=header-link href=#0-ingredients-and-price><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Hint: Everything is free.</p>
-<ol>
-<li>Windows 7 (or 10) VM. I used a 32-bit Windows 7 VM from <a href=https://modern.ie target=_blank rel="noreferrer noopener">https://modern.ie</a>: Free.</li>
-<li>Microsoft SQL Server 2008 Express: Free.</li>
-<li>Microsoft SQL Server 2008 Management Studio Express: Free.</li>
-<li>FileZilla FTP Server: Free.</li>
-<li>Microsoft Sysinternals Suite: Free.</li>
-<li>dnSpy: Free.</li>
-</ol>
-<h2 id=1-get-the-code-and-binary>1. Get the Code and Binary
+</h2><p>Hint: Everything is free.</p><ol>
+<li>Windows 7 (or 10) VM. I used a 32-bit Windows 7 VM from <a href=https://modern.ie target=_blank rel="noreferrer noopener">https://modern.ie</a>: Free.</li><li>Microsoft SQL Server 2008 Express: Free.</li><li>Microsoft SQL Server 2008 Management Studio Express: Free.</li><li>FileZilla FTP Server: Free.</li><li>Microsoft Sysinternals Suite: Free.</li><li>dnSpy: Free.</li></ol><h2 id=1-get-the-code-and-binary>1. Get the Code and Binary
 <a class=header-link href=#1-get-the-code-and-binary><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Download the whole repository as a zip file (because you don't want to install git on a disposable VM like me) from:</p>
-<ul>
-<li><a href=https://github.com/nddmars/dvta target=_blank rel="noreferrer noopener">https://github.com/nddmars/dvta</a></li>
-</ul>
-<p>Extract it to a location of your choice. I named mine <code>dvta-master</code>.</p>
-<h2 id=2-install-microsoft-sql-server-2008-express>2. Install Microsoft SQL Server 2008 Express
+</h2><p>Download the whole repository as a zip file (because you don't want to install git on a disposable VM like me) from:</p><ul>
+<li><a href=https://github.com/nddmars/dvta target=_blank rel="noreferrer noopener">https://github.com/nddmars/dvta</a></li></ul><p>Extract it to a location of your choice. I named mine <code>dvta-master</code>.</p><h2 id=2-install-microsoft-sql-server-2008-express>2. Install Microsoft SQL Server 2008 Express
 <a class=header-link href=#2-install-microsoft-sql-server-2008-express><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h2><ul>
-<li>Download it from <a href="https://www.microsoft.com/en-us/download/confirmation.aspx?id=1695" target=_blank rel="noreferrer noopener">https://www.microsoft.com/en-us/download/confirmation.aspx?id=1695</a>.</li>
-<li>Click on <code>Installation</code> to the left and select <code>New SQL Server stand-alone ...</code>.
+<li>Download it from <a href="https://www.microsoft.com/en-us/download/confirmation.aspx?id=1695" target=_blank rel="noreferrer noopener">https://www.microsoft.com/en-us/download/confirmation.aspx?id=1695</a>.</li><li>Click on <code>Installation</code> to the left and select <code>New SQL Server stand-alone ...</code>.
 <span class=caption-wrapper>
 <img class=caption src=img/01.png title="Select New SQL Server stand-alone" alt="Select New SQL Server stand-alone">
 <span class=caption-text>Select New SQL Server stand-alone</span>
 </span>
-</li>
-<li><code>Setup Support Rules</code>: <code>OK</code>.
+</li><li><code>Setup Support Rules</code>: <code>OK</code>.
 <span class=caption-wrapper>
 <img class=caption src=img/02.png title="Support Rules will Run" alt="Support Rules will Run">
 <span class=caption-text>Support Rules will Run</span>
 </span>
-</li>
-<li><code>Setup Support Files</code>: <code>Install</code>.
+</li><li><code>Setup Support Files</code>: <code>Install</code>.
 <span class=caption-wrapper>
 <img class=caption src=img/03.png title="Select install to get setup support files" alt="Select install to get setup support files">
 <span class=caption-text>Select install to get setup support files</span>
 </span>
-</li>
-<li>Again in <code>Setup Support Files</code>: <code>Next</code>.
+</li><li>Again in <code>Setup Support Files</code>: <code>Next</code>.
 <span class=caption-wrapper>
 <img class=caption src=img/04.png title="Ignore the Firewall warning, our back-end is local" alt="Ignore the Firewall warning, our back-end is local">
 <span class=caption-text>Ignore the Firewall warning, our back-end is local</span>
 </span>
-</li>
-<li><code>Product Key</code>: Continue with free edition.</li>
-<li><code>License Terms</code>: <code>Accept</code>.</li>
-<li><code>Feature Selection</code>: Under <code>Instance Features</code> select <code>Database Engine Services</code>.
+</li><li><code>Product Key</code>: Continue with free edition.</li><li><code>License Terms</code>: <code>Accept</code>.</li><li><code>Feature Selection</code>: Under <code>Instance Features</code> select <code>Database Engine Services</code>.
 <span class=caption-wrapper>
 <img class=caption src=img/05.png title="We do not need the SDK" alt="We do not need the SDK">
 <span class=caption-text>We do not need the SDK</span>
 </span>
-</li>
-<li><code>Instance Configuration</code>: Keep the default instance name <code>SQLExpress</code>.
+</li><li><code>Instance Configuration</code>: Keep the default instance name <code>SQLExpress</code>.
 <span class=caption-wrapper>
 <img class=caption src=img/06.png title="If you change the default instance name, replace it in the rest of the instructions." alt="If you change the default instance name, replace it in the rest of the instructions.">
 <span class=caption-text>If you change the default instance name, replace it in the rest of the instructions.</span>
 </span>
-</li>
-<li><code>Disk Space Requirements</code> <code>Next</code>.</li>
-<li><code>Server Configuration</code>: I selected the <code>SYSTEM</code> account for <code>SQL Server Database Engine</code>. Change <code>SQL Server Browser</code> to <code>Automatic</code>.
+</li><li><code>Disk Space Requirements</code> <code>Next</code>.</li><li><code>Server Configuration</code>: I selected the <code>SYSTEM</code> account for <code>SQL Server Database Engine</code>. Change <code>SQL Server Browser</code> to <code>Automatic</code>.
 <span class=caption-wrapper>
 <img class=caption src=img/07.png title="Doesn't really matter if we use a privileged account in a VM" alt="Doesn't really matter if we use a privileged account in a VM">
 <span class=caption-text>Doesn't really matter if we use a privileged account in a VM</span>
 </span>
-</li>
-<li><code>Database Engine Configuration</code>: Under <code>Authentication Mode</code> select <code>Mixed Mode ...</code> and enter <code>p@ssw0rd</code> as password. Then <code>Add Current User</code>.
+</li><li><code>Database Engine Configuration</code>: Under <code>Authentication Mode</code> select <code>Mixed Mode ...</code> and enter <code>p@ssw0rd</code> as password. Then <code>Add Current User</code>.
 <span class=caption-wrapper>
 <img class=caption src=img/08.png title="It appears adding another user is mandatory during setup" alt="It appears adding another user is mandatory during setup">
 <span class=caption-text>It appears adding another user is mandatory during setup</span>
 </span>
-</li>
-<li><code>Error and Usage Reporting</code>: Keep boxes unchecked or don't.</li>
-<li><code>Installation Rules</code>: <code>Next</code>.</li>
-<li><code>Ready to Install</code>: <code>Install</code>.</li>
-<li>Finally <code>Close</code>.</li>
-</ul>
-<h2 id=3-install-microsoft-sql-server-2008-management-studio-express>3. Install Microsoft SQL Server 2008 Management Studio Express
+</li><li><code>Error and Usage Reporting</code>: Keep boxes unchecked or don't.</li><li><code>Installation Rules</code>: <code>Next</code>.</li><li><code>Ready to Install</code>: <code>Install</code>.</li><li>Finally <code>Close</code>.</li></ul><h2 id=3-install-microsoft-sql-server-2008-management-studio-express>3. Install Microsoft SQL Server 2008 Management Studio Express
 <a class=header-link href=#3-install-microsoft-sql-server-2008-management-studio-express><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>We need management studio to set up our database and tables.</p>
-<ul>
-<li>Download from: <a href="https://www.microsoft.com/en-us/download/details.aspx?id=7593" target=_blank rel="noreferrer noopener">https://www.microsoft.com/en-us/download/details.aspx?id=7593</a>.</li>
-<li>Ignore the error about Service Pack.</li>
-<li>Click on <code>Installation</code> to the left and select <code>New SQL Server stand-alone ...</code> (this looks very similar to last wizard).</li>
-<li><code>Installation Type</code>: Select <code>Perform a new installation ...</code>, otherwise the management tools will not show up.
+</h2><p>We need management studio to set up our database and tables.</p><ul>
+<li>Download from: <a href="https://www.microsoft.com/en-us/download/details.aspx?id=7593" target=_blank rel="noreferrer noopener">https://www.microsoft.com/en-us/download/details.aspx?id=7593</a>.</li><li>Ignore the error about Service Pack.</li><li>Click on <code>Installation</code> to the left and select <code>New SQL Server stand-alone ...</code> (this looks very similar to last wizard).</li><li><code>Installation Type</code>: Select <code>Perform a new installation ...</code>, otherwise the management tools will not show up.
 <span class=caption-wrapper>
 <img class=caption src=img/09.png title="Don't worry, it will not install a new instance" alt="Don't worry, it will not install a new instance">
 <span class=caption-text>Don't worry, it will not install a new instance</span>
 </span>
-</li>
-<li><code>Feature Selection</code> and select <code>Management Tools - Basic</code> under <code>Shared Features</code>.
+</li><li><code>Feature Selection</code> and select <code>Management Tools - Basic</code> under <code>Shared Features</code>.
 <span class=caption-wrapper>
 <img class=caption src=img/10.png title="Add Management Studio here" alt="Add Management Studio here">
 <span class=caption-text>Add Management Studio here</span>
 </span>
-</li>
-<li>Complete the installation.</li>
-</ul>
-<h2 id=4-create-the-dvta-database>4. Create the DVTA Database
+</li><li>Complete the installation.</li></ul><h2 id=4-create-the-dvta-database>4. Create the DVTA Database
 <a class=header-link href=#4-create-the-dvta-database><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Now we can use the management studio to create the database and populate it.</p>
-<ul>
-<li>Start <code>SQL Server Management Studio</code> and connect to the <code>SQLExpress</code> instance.</li>
-<li>Right-click on <code>Databases</code> to the left and select <code>New Database</code>.</li>
-<li>Enter <code>DVTA</code> in the database name and press <code>OK</code>. Don't change anything else.
+</h2><p>Now we can use the management studio to create the database and populate it.</p><ul>
+<li>Start <code>SQL Server Management Studio</code> and connect to the <code>SQLExpress</code> instance.</li><li>Right-click on <code>Databases</code> to the left and select <code>New Database</code>.</li><li>Enter <code>DVTA</code> in the database name and press <code>OK</code>. Don't change anything else.
 <span class=caption-wrapper>
 <img class=caption src=img/11.png title="Only change the database name" alt="Only change the database name">
 <span class=caption-text>Only change the database name</span>
 </span>
-</li>
-<li>Right-click on <code>DVTA</code> under <code>Databases</code> and select <code>New Query</code>.</li>
-<li>To create the <code>users</code> table, enter this query and select <code>Execute</code> (note this is different from the original instructions, we are setting the <code>id</code> column to auto-increment by <code>1</code> starting from <code>0</code>). Without auto-increment, registration will not work:
+</li><li>Right-click on <code>DVTA</code> under <code>Databases</code> and select <code>New Query</code>.</li><li>To create the <code>users</code> table, enter this query and select <code>Execute</code> (note this is different from the original instructions, we are setting the <code>id</code> column to auto-increment by <code>1</code> starting from <code>0</code>). Without auto-increment, registration will not work:
 <figure class=code>
 <figcaption>
 <span>Creating the users table</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">8
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=color:#719e07>CREATE</span> <span style=color:#719e07>TABLE</span> <span style=color:#2aa198>&#34;users&#34;</span> (
-    <span style=color:#2aa198>&#34;id&#34;</span> <span style=color:#b58900>INT</span> <span style=color:#719e07>IDENTITY</span>(<span style=color:#2aa198>0</span>,<span style=color:#2aa198>1</span>) <span style=color:#719e07>NOT</span> <span style=color:#719e07>NULL</span>,
-    <span style=color:#2aa198>&#34;username&#34;</span> <span style=color:#b58900>VARCHAR</span>(<span style=color:#2aa198>100</span>) <span style=color:#719e07>NOT</span> <span style=color:#719e07>NULL</span>,
-    <span style=color:#2aa198>&#34;password&#34;</span> <span style=color:#b58900>VARCHAR</span>(<span style=color:#2aa198>100</span>) <span style=color:#719e07>NOT</span> <span style=color:#719e07>NULL</span>,
-    <span style=color:#2aa198>&#34;email&#34;</span> <span style=color:#b58900>VARCHAR</span>(<span style=color:#2aa198>100</span>) <span style=color:#719e07>NULL</span> <span style=color:#719e07>DEFAULT</span> <span style=color:#719e07>NULL</span>,
-    <span style=color:#2aa198>&#34;isadmin&#34;</span> <span style=color:#b58900>INT</span> <span style=color:#719e07>NULL</span> <span style=color:#719e07>DEFAULT</span> <span style=color:#2aa198>&#39;0&#39;</span>,
-    <span style=color:#719e07>PRIMARY</span> <span style=color:#719e07>KEY</span> (<span style=color:#2aa198>&#34;id&#34;</span>)
-)</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<span class=caption-wrapper>
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">8
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span><span style=color:#719e07>CREATE</span> <span style=color:#719e07>TABLE</span> <span style=color:#2aa198>&#34;users&#34;</span> (
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;id&#34;</span> <span style=color:#b58900>INT</span> <span style=color:#719e07>IDENTITY</span>(<span style=color:#2aa198>0</span>,<span style=color:#2aa198>1</span>) <span style=color:#719e07>NOT</span> <span style=color:#719e07>NULL</span>,
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;username&#34;</span> <span style=color:#b58900>VARCHAR</span>(<span style=color:#2aa198>100</span>) <span style=color:#719e07>NOT</span> <span style=color:#719e07>NULL</span>,
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;password&#34;</span> <span style=color:#b58900>VARCHAR</span>(<span style=color:#2aa198>100</span>) <span style=color:#719e07>NOT</span> <span style=color:#719e07>NULL</span>,
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;email&#34;</span> <span style=color:#b58900>VARCHAR</span>(<span style=color:#2aa198>100</span>) <span style=color:#719e07>NULL</span> <span style=color:#719e07>DEFAULT</span> <span style=color:#719e07>NULL</span>,
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;isadmin&#34;</span> <span style=color:#b58900>INT</span> <span style=color:#719e07>NULL</span> <span style=color:#719e07>DEFAULT</span> <span style=color:#2aa198>&#39;0&#39;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#719e07>PRIMARY</span> <span style=color:#719e07>KEY</span> (<span style=color:#2aa198>&#34;id&#34;</span>)
+</span></span><span style=display:flex><span>)</span></span></code></pre></td></tr></table></div></div></div></figure><span class=caption-wrapper>
 <img class=caption src=img/12.png title="Execute button is a bit hard to find" alt="Execute button is a bit hard to find">
 <span class=caption-text>Execute button is a bit hard to find</span>
 </span>
-</li>
-<li>Next create the <code>expenses</code> table (I have set the <code>id</code> column to auto-increment):
+</li><li>Next create the <code>expenses</code> table (I have set the <code>id</code> column to auto-increment):
 <figure class=code>
 <figcaption>
 <span>Creating the expenses table</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">9
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=color:#719e07>CREATE</span> <span style=color:#719e07>TABLE</span> <span style=color:#2aa198>&#34;expenses&#34;</span> (
-    <span style=color:#2aa198>&#34;id&#34;</span> <span style=color:#b58900>INT</span> <span style=color:#719e07>IDENTITY</span>(<span style=color:#2aa198>0</span>,<span style=color:#2aa198>1</span>) <span style=color:#719e07>NOT</span> <span style=color:#719e07>NULL</span>,
-    <span style=color:#2aa198>&#34;email&#34;</span> <span style=color:#b58900>VARCHAR</span>(<span style=color:#2aa198>100</span>) <span style=color:#719e07>NOT</span> <span style=color:#719e07>NULL</span>,
-    <span style=color:#2aa198>&#34;item&#34;</span> <span style=color:#b58900>VARCHAR</span>(<span style=color:#2aa198>100</span>) <span style=color:#719e07>NOT</span> <span style=color:#719e07>NULL</span>,
-    <span style=color:#2aa198>&#34;price&#34;</span> <span style=color:#b58900>VARCHAR</span>(<span style=color:#2aa198>100</span>) <span style=color:#719e07>NOT</span> <span style=color:#719e07>NULL</span>,
-    <span style=color:#2aa198>&#34;date&#34;</span> <span style=color:#b58900>VARCHAR</span>(<span style=color:#2aa198>100</span>) <span style=color:#719e07>NOT</span> <span style=color:#719e07>NULL</span>,
-    <span style=color:#2aa198>&#34;time&#34;</span> <span style=color:#b58900>VARCHAR</span>(<span style=color:#2aa198>100</span>) <span style=color:#719e07>NULL</span> <span style=color:#719e07>DEFAULT</span> <span style=color:#719e07>NULL</span>,
-    <span style=color:#719e07>PRIMARY</span> <span style=color:#719e07>KEY</span> (<span style=color:#2aa198>&#34;id&#34;</span>)
-)</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure></li>
-<li>Populate the users table with some test data. The non-admin users can be added through the application later but admin needs to be setup manually.
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">9
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span><span style=color:#719e07>CREATE</span> <span style=color:#719e07>TABLE</span> <span style=color:#2aa198>&#34;expenses&#34;</span> (
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;id&#34;</span> <span style=color:#b58900>INT</span> <span style=color:#719e07>IDENTITY</span>(<span style=color:#2aa198>0</span>,<span style=color:#2aa198>1</span>) <span style=color:#719e07>NOT</span> <span style=color:#719e07>NULL</span>,
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;email&#34;</span> <span style=color:#b58900>VARCHAR</span>(<span style=color:#2aa198>100</span>) <span style=color:#719e07>NOT</span> <span style=color:#719e07>NULL</span>,
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;item&#34;</span> <span style=color:#b58900>VARCHAR</span>(<span style=color:#2aa198>100</span>) <span style=color:#719e07>NOT</span> <span style=color:#719e07>NULL</span>,
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;price&#34;</span> <span style=color:#b58900>VARCHAR</span>(<span style=color:#2aa198>100</span>) <span style=color:#719e07>NOT</span> <span style=color:#719e07>NULL</span>,
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;date&#34;</span> <span style=color:#b58900>VARCHAR</span>(<span style=color:#2aa198>100</span>) <span style=color:#719e07>NOT</span> <span style=color:#719e07>NULL</span>,
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;time&#34;</span> <span style=color:#b58900>VARCHAR</span>(<span style=color:#2aa198>100</span>) <span style=color:#719e07>NULL</span> <span style=color:#719e07>DEFAULT</span> <span style=color:#719e07>NULL</span>,
+</span></span><span style=display:flex><span>    <span style=color:#719e07>PRIMARY</span> <span style=color:#719e07>KEY</span> (<span style=color:#2aa198>&#34;id&#34;</span>)
+</span></span><span style=display:flex><span>)</span></span></code></pre></td></tr></table></div></div></div></figure></li><li>Populate the users table with some test data. The non-admin users can be added through the application later but admin needs to be setup manually.
 <figure class=code>
 <figcaption>
 <span>Adding test users</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">5
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=color:#719e07>INSERT</span> <span style=color:#719e07>INTO</span> dbo.users (username, password, email, isadmin)
-<span style=color:#719e07>VALUES</span>
-(<span style=color:#2aa198>&#39;admin&#39;</span>,<span style=color:#2aa198>&#39;admin123&#39;</span>,<span style=color:#2aa198>&#39;admin@damnvulnerablethickclientapp.com&#39;</span>,<span style=color:#2aa198>1</span>),
-(<span style=color:#2aa198>&#39;rebecca&#39;</span>,<span style=color:#2aa198>&#39;rebecca&#39;</span>,<span style=color:#2aa198>&#39;rebecca@test.com&#39;</span>,<span style=color:#2aa198>0</span>),
-(<span style=color:#2aa198>&#39;raymond&#39;</span>,<span style=color:#2aa198>&#39;raymond&#39;</span>,<span style=color:#2aa198>&#39;raymond@test.com&#39;</span>,<span style=color:#2aa198>0</span>);</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<span class=caption-wrapper>
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span><span style=color:#719e07>INSERT</span> <span style=color:#719e07>INTO</span> dbo.users (username, password, email, isadmin)
+</span></span><span style=display:flex><span><span style=color:#719e07>VALUES</span>
+</span></span><span style=display:flex><span>(<span style=color:#2aa198>&#39;admin&#39;</span>,<span style=color:#2aa198>&#39;admin123&#39;</span>,<span style=color:#2aa198>&#39;admin@damnvulnerablethickclientapp.com&#39;</span>,<span style=color:#2aa198>1</span>),
+</span></span><span style=display:flex><span>(<span style=color:#2aa198>&#39;rebecca&#39;</span>,<span style=color:#2aa198>&#39;rebecca&#39;</span>,<span style=color:#2aa198>&#39;rebecca@test.com&#39;</span>,<span style=color:#2aa198>0</span>),
+</span></span><span style=display:flex><span>(<span style=color:#2aa198>&#39;raymond&#39;</span>,<span style=color:#2aa198>&#39;raymond&#39;</span>,<span style=color:#2aa198>&#39;raymond@test.com&#39;</span>,<span style=color:#2aa198>0</span>);</span></span></code></pre></td></tr></table></div></div></div></figure><span class=caption-wrapper>
 <img class=caption src=img/13.png title="Three test users added" alt="Three test users added">
 <span class=caption-text>Three test users added</span>
 </span>
-</li>
-<li>Now we can right click on <code>dbo.users</code> and select <code>Select Top 1000 Rows</code> to see the test data.
+</li><li>Now we can right click on <code>dbo.users</code> and select <code>Select Top 1000 Rows</code> to see the test data.
 <span class=caption-wrapper>
 <img class=caption src=img/14.png title="Test users in the database" alt="Test users in the database">
 <span class=caption-text>Test users in the database</span>
 </span>
-</li>
-<li>Open <code>SQL Server Configuration Manager</code> and click on <code>SQL Server Network Configuration > Protocols for SQLEXPRESS</code>
+</li><li>Open <code>SQL Server Configuration Manager</code> and click on <code>SQL Server Network Configuration > Protocols for SQLEXPRESS</code>
 <ul>
 <li>Enable <code>TCP/IP</code>.
 <span class=caption-wrapper>
 <img class=caption src=img/17.png title="TCP/IP enabled" alt="TCP/IP enabled">
 <span class=caption-text>TCP/IP enabled</span>
 </span>
-</li>
-<li>After enabling <code>TCP/IP</code>, you need to restart the <code>SQL Server (SQLEXPRESS)</code> service under <code>SQL Server Services</code>.
+</li><li>After enabling <code>TCP/IP</code>, you need to restart the <code>SQL Server (SQLEXPRESS)</code> service under <code>SQL Server Services</code>.
 <span class=caption-wrapper>
 <img class=caption src=img/18.png title="Restarting the service" alt="Restarting the service">
 <span class=caption-text>Restarting the service</span>
 </span>
-</li>
-</ul>
-</li>
-</ul>
-<h2 id=5-setup-the-ftp-server>5. Setup the FTP Server
+</li></ul></li></ul><h2 id=5-setup-the-ftp-server>5. Setup the FTP Server
 <a class=header-link href=#5-setup-the-ftp-server><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>There's no need to install XAMPP. Manually install and use FileZilla FTP server.</p>
+</h2><p>There's no need to install XAMPP. Manually install and use FileZilla FTP server.</p><ul>
+<li>Create a directory (this will be the FTP root directory), I named it <code>dvta-ftp</code> and put in on desktop.</li><li>Download and install the Filezilla FTP server (or any other server of your choice).
 <ul>
-<li>Create a directory (this will be the FTP root directory), I named it <code>dvta-ftp</code> and put in on desktop.</li>
-<li>Download and install the Filezilla FTP server (or any other server of your choice).
-<ul>
-<li><a href="https://filezilla-project.org/download.php?type=server0" target=_blank rel="noreferrer noopener">https://filezilla-project.org/download.php?type=server0</a></li>
-</ul>
-</li>
-<li>Use <code>Edit (menu) > Users</code>
+<li><a href="https://filezilla-project.org/download.php?type=server0" target=_blank rel="noreferrer noopener">https://filezilla-project.org/download.php?type=server0</a></li></ul></li><li>Use <code>Edit (menu) > Users</code>
 <ul>
 <li>Under <code>General</code>, create a new user called <code>dvta</code> (no need to add it to a group). Then check the password checkbox and enter <code>p@ssw0rd</code>.
 <span class=caption-wrapper>
 <img class=caption src=img/15.png title='Creating the "dvta" user' alt='Creating the "dvta" user'>
 <span class=caption-text>Creating the "dvta" user</span>
 </span>
-</li>
-<li>Click on <code>Shared folders</code>, add the FTP directory from before (<code>dvta-ftp</code>), and select ACL.
+</li><li>Click on <code>Shared folders</code>, add the FTP directory from before (<code>dvta-ftp</code>), and select ACL.
 <span class=caption-wrapper>
 <img class=caption src=img/16.png title="Giving access to the FTP user" alt="Giving access to the FTP user">
 <span class=caption-text>Giving access to the FTP user</span>
 </span>
-</li>
-</ul>
-</li>
-</ul>
-<p>Now our FTP server is ready and runs as a Windows service.</p>
-<h2 id=6-modify-dvta-to-connect-to-our-local-sql-server>6. Modify DVTA to Connect to Our Local SQL Server
+</li></ul></li></ul><p>Now our FTP server is ready and runs as a Windows service.</p><h2 id=6-modify-dvta-to-connect-to-our-local-sql-server>6. Modify DVTA to Connect to Our Local SQL Server
 <a class=header-link href=#6-modify-dvta-to-connect-to-our-local-sql-server><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>The binary is configured to look for the SQL and FTP servers at a hardcoded IP address. The SQL Server address is in the .NET config file (which is just an XML file).</p>
-<ul>
+</h2><p>The binary is configured to look for the SQL and FTP servers at a hardcoded IP address. The SQL Server address is in the .NET config file (which is just an XML file).</p><ul>
 <li>Open <code>dvta-master\DVTA\DVTA\bin\Debug\DVTA.exe.config</code> (by default extensions are hidden on Windows so the extension might not be visible).
 <ul>
 <li>Under <code>appSettings</code> change value of <code>DBSERVER</code> to <code>127.0.0.1\SQLEXPRESS</code>.
@@ -386,120 +250,63 @@ DVTA - Part 1 - Setup
 <img class=caption src=img/19.png title="Modified config file" alt="Modified config file">
 <span class=caption-text>Modified config file</span>
 </span>
-</li>
-<li>Note: The <code>Release</code> version in this fork has extra protections (the login button is disabled by default). We will use the <code>Debug</code> version for testing the connection to our SQL Server. Be sure to do the same for the <code>Release</code> build later.</li>
-</ul>
-</li>
-<li>Now we can login with any of the test users and also register new users.</li>
-<li>Notes:
+</li><li>Note: The <code>Release</code> version in this fork has extra protections (the login button is disabled by default). We will use the <code>Debug</code> version for testing the connection to our SQL Server. Be sure to do the same for the <code>Release</code> build later.</li></ul></li><li>Now we can login with any of the test users and also register new users.</li><li>Notes:
 <ul>
-<li>The <code>Fetch Time</code> button will return an error regardless. I think it is the cert pinning protection that we need to bypass later.</li>
-</ul>
-</li>
-</ul>
-<h2 id=7-fix-the-ftp-connectivity>7. Fix the FTP Connectivity
+<li>The <code>Fetch Time</code> button will return an error regardless. I think it is the cert pinning protection that we need to bypass later.</li></ul></li></ul><h2 id=7-fix-the-ftp-connectivity>7. Fix the FTP Connectivity
 <a class=header-link href=#7-fix-the-ftp-connectivity><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Admin can backup server files to an FTP server. But the FTP's address is hardcoded. It's <code>192.168.56.110</code>. We can see this in the source code at <code>\dvta-master\DVTA\DVTA\Admin.cs</code> (search for <code>Upload("ftp://192.168.56.110", "dvta", "p@ssw0rd", @pathtodownload+"admin.csv");</code>). We want to change it to localhost.</p>
-<ul>
+</h2><p>Admin can backup server files to an FTP server. But the FTP's address is hardcoded. It's <code>192.168.56.110</code>. We can see this in the source code at <code>\dvta-master\DVTA\DVTA\Admin.cs</code> (search for <code>Upload("ftp://192.168.56.110", "dvta", "p@ssw0rd", @pathtodownload+"admin.csv");</code>). We want to change it to localhost.</p><ul>
 <li>We can fix it in different ways:
 <ol>
-<li>Modify the source code and recompile the app. That involves installing Visual Studio and I don't wanna do that.</li>
-<li>Modify the binary with dnSpy.</li>
-<li>This is not the case here but if the application used a hostname, we could redirect using the <code>hosts</code> file. This is a common approach with real world software.</li>
-</ol>
-</li>
-</ul>
-<h3 id=71-use-dnspy-to-modify-the-hardcoded-ftp-address>7.1 Use dnSpy to Modify the Hardcoded FTP Address
+<li>Modify the source code and recompile the app. That involves installing Visual Studio and I don't wanna do that.</li><li>Modify the binary with dnSpy.</li><li>This is not the case here but if the application used a hostname, we could redirect using the <code>hosts</code> file. This is a common approach with real world software.</li></ol></li></ul><h3 id=71-use-dnspy-to-modify-the-hardcoded-ftp-address>7.1 Use dnSpy to Modify the Hardcoded FTP Address
 <a class=header-link href=#71-use-dnspy-to-modify-the-hardcoded-ftp-address><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>Let's assume we do not know the FTP address. That means we need to:</p>
-<ol>
-<li>Discover the address.</li>
-<li>Change the address in binary.</li>
-</ol>
-<h4 id=discover-the-ftp-address>Discover the FTP Address
+</h3><p>Let's assume we do not know the FTP address. That means we need to:</p><ol>
+<li>Discover the address.</li><li>Change the address in binary.</li></ol><h4 id=discover-the-ftp-address>Discover the FTP Address
 <a class=header-link href=#discover-the-ftp-address><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h4><p>Use whatever method you are comfortable with. I used Procmon.</p>
-<ol>
+</h4><p>Use whatever method you are comfortable with. I used Procmon.</p><ol>
 <li>
-<p>Start Procmon.</p>
-</li>
-<li>
-<p>Run the application, login as admin and try to use the backup functionality.</p>
-</li>
-<li>
-<p>Wait until you get the error message.</p>
-</li>
-<li>
-<p>Set this filter in Procmon <code>Process Name is DVTA.exe</code>.</p>
-</li>
-<li>
+<p>Start Procmon.</p></li><li>
+<p>Run the application, login as admin and try to use the backup functionality.</p></li><li>
+<p>Wait until you get the error message.</p></li><li>
+<p>Set this filter in Procmon <code>Process Name is DVTA.exe</code>.</p></li><li>
 <p>Remove all activities other than network by clicking on the buttons in the picture. Only keep the middle button enabled to display network activity.
 <span class=caption-wrapper>
 <img class=caption src=img/20.png title="Hover over each button to see what it does" alt="Hover over each button to see what it does">
 <span class=caption-text>Hover over each button to see what it does</span>
 </span>
-</p>
-</li>
-<li>
-<p>???</p>
-</li>
-<li>
-<p>Profit<sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup>.</p>
-<span class=caption-wrapper>
+</p></li><li>
+<p>???</p></li><li>
+<p>Profit<sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup>.</p><span class=caption-wrapper>
 <img class=caption src=img/21.png title="FTP address discovered" alt="FTP address discovered">
 <span class=caption-text>FTP address discovered</span>
 </span>
-</li>
-</ol>
-<h4 id=modify-the-address-in-binary>Modify the Address in Binary
+</li></ol><h4 id=modify-the-address-in-binary>Modify the Address in Binary
 <a class=header-link href=#modify-the-address-in-binary><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h4><p>Now we can use dnSpy to modify this address in the application.</p>
-<ul>
-<li>Create a backup of the original <code>dvta.exe</code>.</li>
-<li>Start dnSpy.</li>
-<li>Select <code>Edit (menu) > Search Assembly</code> and search for <code>192.168.56.110</code>. Choose <code>Number/String</code> for the <code>Search For</code> combo box. <code>All of the Above</code> does not search for text (unfortunately).</li>
-<li>Click on the search result and Voila! We have our FTP address (and password).
+</h4><p>Now we can use dnSpy to modify this address in the application.</p><ul>
+<li>Create a backup of the original <code>dvta.exe</code>.</li><li>Start dnSpy.</li><li>Select <code>Edit (menu) > Search Assembly</code> and search for <code>192.168.56.110</code>. Choose <code>Number/String</code> for the <code>Search For</code> combo box. <code>All of the Above</code> does not search for text (unfortunately).</li><li>Click on the search result and Voila! We have our FTP address (and password).
 <span class=caption-wrapper>
 <img class=caption src=img/22.png title="FTP address in code" alt="FTP address in code">
 <span class=caption-text>FTP address in code</span>
 </span>
-</li>
-<li>Right-click and select <code>Edit Method</code>. Now we can edit the C# source code.
+</li><li>Right-click and select <code>Edit Method</code>. Now we can edit the C# source code.
 <ul>
-<li>Now listen kids. Back in my day we didn't have such nice things, we had to hand-craft CIL instructions walking uphill in the snow.</li>
-</ul>
-</li>
-<li>Modify <code>192.168.56.110</code> to <code>127.0.0.1</code>.
+<li>Now listen kids. Back in my day we didn't have such nice things, we had to hand-craft CIL instructions walking uphill in the snow.</li></ul></li><li>Modify <code>192.168.56.110</code> to <code>127.0.0.1</code>.
 <span class=caption-wrapper>
 <img class=caption src=img/23.png title="Modified FTP address" alt="Modified FTP address">
 <span class=caption-text>Modified FTP address</span>
 </span>
-</li>
-<li>Click on <code>Compile</code> and now the code has changed <strong>but it's not saved to any file yet.</strong></li>
-<li>Select <code>File(menu) > Save Module</code> to save the executable.</li>
-<li>Now you can run the patched binary and use the FTP functionality.
+</li><li>Click on <code>Compile</code> and now the code has changed <strong>but it's not saved to any file yet.</strong></li><li>Select <code>File(menu) > Save Module</code> to save the executable.</li><li>Now you can run the patched binary and use the FTP functionality.
 <span class=caption-wrapper>
 <img class=caption src=img/24.png title="FTP works!" alt="FTP works!">
 <span class=caption-text>FTP works!</span>
 </span>
-</li>
-</ul>
-<h1 id=conclusion>Conclusion
+</li></ul><h1 id=conclusion>Conclusion
 <a class=header-link href=#conclusion><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>We setup DVTA in a VM and patched it to connect to our local FTP server. Now things are ready to go and we can start hacking the application. In the next post I will start working on the application.</p>
-<section class=footnotes role=doc-endnotes>
+</h1><p>We setup DVTA in a VM and patched it to connect to our local FTP server. Now things are ready to go and we can start hacking the application. In the next post I will start working on the application.</p><section class=footnotes role=doc-endnotes>
 <hr>
 <ol>
 <li id=fn:1 role=doc-endnote>
-<p>I did not read the solution because I wanted to do things my own way and learn.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
-</li>
-<li id=fn:2 role=doc-endnote>
-<p>I am not sure why the application is trying to do reconnect instead of normal <code>TCP Connect</code>.&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
-</li>
-</ol>
-</section>
-</div>
-<footer>
+<p>I did not read the solution because I wanted to do things my own way and learn.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:2 role=doc-endnote>
+<p>I am not sure why the application is trying to do reconnect instead of normal <code>TCP Connect</code>.&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section></div><footer>
 <p class=meta>
 <span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>Jul 15, 2018</time>
@@ -507,82 +314,47 @@ DVTA - Part 1 - Setup
 Tags:
 <a class=category href=https://parsiya.net/tags/dnspy>dnSpy</a>
 </span>
-</p>
-<p class=meta>
+</p><p class=meta>
 <a class="basic-alignment left" href=https://parsiya.net/blog/2018-07-04-istanbul-tips-and-tricks/ title="Istanbul Tips and Tricks">Istanbul Tips and Tricks</a>
 <a class="basic-alignment right" href=https://parsiya.net/blog/2018-07-21-dvta-part-2-cert-pinning-and-login-button/ title="DVTA - Part 2 - Cert Pinning and Login Button">DVTA - Part 2 - Cert Pinning and Login Button</a>
-</p>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</div>
-<aside class="sidebar thirds">
+</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer></article></div><aside class="sidebar thirds">
 <section class="first odd">
-<h1>Who am I?</h1>
-<p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
-<p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p>
-<p>Click on <a href=/about/>About Me!</a> to know more.</p>
-</p>
-</section>
-<ul class=sidebar-nav>
+<h1>Who am I?</h1><p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
 <li class=sidebar-nav-item>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li>
-</ul>
-<section class=odd>
-<h1>Collections</h1>
-<li>
+</li></ul><section class=odd>
+<h1>Collections</h1><li>
 <a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li>
-<li>
+</li><li>
 <a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li>
-</section>
-</aside>
-</div>
-</div>
-<footer role=contentinfo>
+</li></section></aside></div></div><footer role=contentinfo>
 <p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>

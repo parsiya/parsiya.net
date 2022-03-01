@@ -3,14 +3,13 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
 <link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>DVTA - Part 3 - Network Recon</title>
-<link rel=stylesheet href=/css/hugo-octopress.css>
+<title>DVTA - Part 3 - Network Recon</title><link rel=stylesheet href=/css/hugo-octopress.css>
 <link rel=stylesheet href=/css/fork-awesome.min.css>
 <link href=https://parsiya.net/favicon.png rel=icon>
 <meta name=description content>
 <meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
 <meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.92.2">
+<meta name=generator content="Hugo 0.93.0">
 <meta name=twitter:card content="summary_large_image">
 <meta name=twitter:image:src content="https://parsiya.net/blog/2018-07-30-dvta-part-3-network-recon/10.png">
 <meta name=twitter:title content="DVTA - Part 3 - Network Recon">
@@ -22,37 +21,21 @@ DVTA - Part 2 - Cert Pinning and Login Button
 ">
 <meta name=twitter:domain content="parsiya.net">
 <meta name=twitter:creator content="@CryptoGangsta">
-</head>
-<body>
+</head><body>
 <header role=banner>
 <hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
-<h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2>
-</hgroup></header>
-<nav role=navigation>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
 <fieldset class=mobile-nav>
 <select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset>
-<ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
-<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
-<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
-<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
-<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
-<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
-</ul>
-<ul class=subscription>
+</fieldset><ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
 <a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul>
-<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
 <fieldset role=search>
 <input class=search type=text name=q results=0 placeholder=Search>
 <input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset>
-</form>
-</nav>
-<div id=main>
+</fieldset></form></nav><div id=main>
 <div id=content>
 <div>
 <article class=hentry role=article>
@@ -61,170 +44,95 @@ complete unless it is known by its causes. - Avicenna</h2>
 - 5 minute read
 - <a href=https://parsiya.net/blog/2018-07-30-dvta-part-3-network-recon/#disqus_thread>Comments</a>
 - <a class=label href=https://parsiya.net/categories/reverse-engineering/>Reverse Engineering </a><a class=label href=https://parsiya.net/categories/dvta/>DVTA </a><a class=label href=https://parsiya.net/categories/writeup/>Writeup </a>
-</p>
-<h1 class=entry-title>
+</p><h1 class=entry-title>
 DVTA - Part 3 - Network Recon
-</h1>
-</header>
-<div class=entry-content>
+</h1></header><div class=entry-content>
 <nav id=TableOfContents>
 <ul>
 <li><a href=#discovering-the-endpoints>Discovering the Endpoints</a>
 <ul>
-<li><a href=#capturing-loopback-traffic-on-windows-with-wireshark>Capturing Loopback Traffic on Windows with Wireshark</a></li>
-<li><a href=#recon-with-wireshark>Recon with Wireshark</a>
+<li><a href=#capturing-loopback-traffic-on-windows-with-wireshark>Capturing Loopback Traffic on Windows with Wireshark</a></li><li><a href=#recon-with-wireshark>Recon with Wireshark</a>
 <ul>
-<li><a href=#fetch-login-token>Fetch Login Token</a></li>
-<li><a href=#normal-user-login>Normal User Login</a></li>
-<li><a href=#admin-login>Admin Login</a></li>
-<li><a href=#register-functionality>Register Functionality</a></li>
-</ul>
-</li>
-<li><a href=#recon-with-procmon>Recon with Procmon</a></li>
-</ul>
-</li>
-<li><a href=#conclusion>Conclusion</a></li>
-</ul>
-</nav>
-<p>In this part, we will focus on network traffic. More often than not, thick client applications have some sort of network connectivity. They talk to some server(s) to do things.</p>
-<p>Previous parts are:</p>
-<ul>
-<li><a href=/blog/2018-07-15-dvta-part-1-setup/ title="DVTA - Part 1 - Setup">DVTA - Part 1 - Setup</a></li>
-<li><a href=/blog/2018-07-21-dvta-part-2-cert-pinning-and-login-button/ title="DVTA - Part 2 - Cert Pinning and Login Button">DVTA - Part 2 - Cert Pinning and Login Button</a></li>
-</ul>
-<h1 id=discovering-the-endpoints>Discovering the Endpoints
+<li><a href=#fetch-login-token>Fetch Login Token</a></li><li><a href=#normal-user-login>Normal User Login</a></li><li><a href=#admin-login>Admin Login</a></li><li><a href=#register-functionality>Register Functionality</a></li></ul></li><li><a href=#recon-with-procmon>Recon with Procmon</a></li></ul></li><li><a href=#conclusion>Conclusion</a></li></ul></nav><p>In this part, we will focus on network traffic. More often than not, thick client applications have some sort of network connectivity. They talk to some server(s) to do things.</p><p>Previous parts are:</p><ul>
+<li><a href=/blog/2018-07-15-dvta-part-1-setup/ title="DVTA - Part 1 - Setup">DVTA - Part 1 - Setup</a></li><li><a href=/blog/2018-07-21-dvta-part-2-cert-pinning-and-login-button/ title="DVTA - Part 2 - Cert Pinning and Login Button">DVTA - Part 2 - Cert Pinning and Login Button</a></li></ul><h1 id=discovering-the-endpoints>Discovering the Endpoints
 <a class=header-link href=#discovering-the-endpoints><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>In part 1 we did some network discovering with Procmon. Now we will do more using both Wireshark and Procmon. IRL use whatever tool you are comfortable with.</p>
-<p>We do this because we need to figure out where the application talks to and using what protocol. At your day job, this step is probably the best bang for your buck in terms of the number of vulnerabilities found. Thick client applications are notorious for having inadequate server-side controls and trusting the client too much.</p>
-<h2 id=capturing-loopback-traffic-on-windows-with-wireshark>Capturing Loopback Traffic on Windows with Wireshark
+</h1><p>In part 1 we did some network discovering with Procmon. Now we will do more using both Wireshark and Procmon. IRL use whatever tool you are comfortable with.</p><p>We do this because we need to figure out where the application talks to and using what protocol. At your day job, this step is probably the best bang for your buck in terms of the number of vulnerabilities found. Thick client applications are notorious for having inadequate server-side controls and trusting the client too much.</p><h2 id=capturing-loopback-traffic-on-windows-with-wireshark>Capturing Loopback Traffic on Windows with Wireshark
 <a class=header-link href=#capturing-loopback-traffic-on-windows-with-wireshark><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Since we have deployed our FTP and MSSQL servers locally, we need to be able to capture local traffic. Windows does not have a real loopback adapter so WinPcap driver (used by Wireshark) cannot do it. The fix is using the npcap driver instead. For more information read <a href=https://wiki.wireshark.org/CaptureSetup/Loopback target=_blank rel="noreferrer noopener">https://wiki.wireshark.org/CaptureSetup/Loopback</a>.</p>
-<p>Download and install npcap from <a href=https://github.com/nmap/npcap/releases target=_blank rel="noreferrer noopener">https://github.com/nmap/npcap/releases</a> and then install Wireshark.</p>
-<h2 id=recon-with-wireshark>Recon with Wireshark
+</h2><p>Since we have deployed our FTP and MSSQL servers locally, we need to be able to capture local traffic. Windows does not have a real loopback adapter so WinPcap driver (used by Wireshark) cannot do it. The fix is using the npcap driver instead. For more information read <a href=https://wiki.wireshark.org/CaptureSetup/Loopback target=_blank rel="noreferrer noopener">https://wiki.wireshark.org/CaptureSetup/Loopback</a>.</p><p>Download and install npcap from <a href=https://github.com/nmap/npcap/releases target=_blank rel="noreferrer noopener">https://github.com/nmap/npcap/releases</a> and then install Wireshark.</p><h2 id=recon-with-wireshark>Recon with Wireshark
 <a class=header-link href=#recon-with-wireshark><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Run Wireshark, choose <code>Npcap Loopback Adapter</code>, and the VM's LAN. Then start capturing traffic.</p>
-<span class=caption-wrapper>
+</h2><p>Run Wireshark, choose <code>Npcap Loopback Adapter</code>, and the VM's LAN. Then start capturing traffic.</p><span class=caption-wrapper>
 <img class=caption src=img/01.png title="Setting up Wireshark to capture traffic" alt="Setting up Wireshark to capture traffic">
 <span class=caption-text>Setting up Wireshark to capture traffic</span>
 </span>
-<p>Run the patched application from the previous post but don't do anything.</p>
-<h3 id=fetch-login-token>Fetch Login Token
+<p>Run the patched application from the previous post but don't do anything.</p><h3 id=fetch-login-token>Fetch Login Token
 <a class=header-link href=#fetch-login-token><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>Click on the <code>Fetch Login Token</code> button. We already know where it goes, but let's inspect it with Wireshark.</p>
-<span class=caption-wrapper>
+</h3><p>Click on the <code>Fetch Login Token</code> button. We already know where it goes, but let's inspect it with Wireshark.</p><span class=caption-wrapper>
 <img class=caption src=img/02.png title="Captured traffic to time.is in Wireshark" alt="Captured traffic to time.is in Wireshark">
 <span class=caption-text>Captured traffic to time.is in Wireshark</span>
 </span>
-<p>Looking at the capture, it's clear what the application is doing.</p>
-<ul>
-<li>Red: DNS lookup for <code>time.is</code></li>
-<li>Green: TCP connection to <code>time.is</code> (<code>204.62.12.123</code>). We can see the handshake <code>SYN-SYNACK-ACK</code>.</li>
-<li>Orange: TLS handshake with <code>time.is</code>. <code>ClientHello</code>, <code>ServerHello</code>, and the rest.</li>
-</ul>
-<h3 id=normal-user-login>Normal User Login
+<p>Looking at the capture, it's clear what the application is doing.</p><ul>
+<li>Red: DNS lookup for <code>time.is</code></li><li>Green: TCP connection to <code>time.is</code> (<code>204.62.12.123</code>). We can see the handshake <code>SYN-SYNACK-ACK</code>.</li><li>Orange: TLS handshake with <code>time.is</code>. <code>ClientHello</code>, <code>ServerHello</code>, and the rest.</li></ul><h3 id=normal-user-login>Normal User Login
 <a class=header-link href=#normal-user-login><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>Clear the capture and this time login with a valid set of non-admin credentials (e.g. <code>rebecca:rebecca</code>).</p>
-<span class=caption-wrapper>
+</h3><p>Clear the capture and this time login with a valid set of non-admin credentials (e.g. <code>rebecca:rebecca</code>).</p><span class=caption-wrapper>
 <img class=caption src=img/03.png title="MSSQL traffic captured in Wireshark" alt="MSSQL traffic captured in Wireshark">
 <span class=caption-text>MSSQL traffic captured in Wireshark</span>
 </span>
-<p>First, we see the TCP connection and then the login traffic to port <code>49622</code>. To decode the traffic with Wireshark, right-click on any outgoing packet and select <code>Decode As...</code>. Then select <code>TDS</code> for the combo box under <code>Current</code>. This tells Wireshark to decode all traffic to that port using the <code>TDS</code> dissector.</p>
-<span class=caption-wrapper>
+<p>First, we see the TCP connection and then the login traffic to port <code>49622</code>. To decode the traffic with Wireshark, right-click on any outgoing packet and select <code>Decode As...</code>. Then select <code>TDS</code> for the combo box under <code>Current</code>. This tells Wireshark to decode all traffic to that port using the <code>TDS</code> dissector.</p><span class=caption-wrapper>
 <img class=caption src=img/04.png title="Choosing the TDS dissector for MSSQL traffic" alt="Choosing the TDS dissector for MSSQL traffic">
 <span class=caption-text>Choosing the TDS dissector for MSSQL traffic</span>
 </span>
-<p>And now packets are annotated.</p>
-<span class=caption-wrapper>
+<p>And now packets are annotated.</p><span class=caption-wrapper>
 <img class=caption src=img/05.png title="Annotated MSSQL traffic in Wireshark" alt="Annotated MSSQL traffic in Wireshark">
 <span class=caption-text>Annotated MSSQL traffic in Wireshark</span>
 </span>
-<p>Some observations:</p>
-<ol>
-<li>TLS is not enabled. That's bad.</li>
-<li>SQL queries are created on the client and sent outside. This is ripe for exploitation.</li>
-</ol>
-<p>Going through the packets, select the one that says <code>SQL batch</code> and see the SQL query is created client-side and sent out. Any time you see client-side queries, you should be concerned.</p>
-<span class=caption-wrapper>
+<p>Some observations:</p><ol>
+<li>TLS is not enabled. That's bad.</li><li>SQL queries are created on the client and sent outside. This is ripe for exploitation.</li></ol><p>Going through the packets, select the one that says <code>SQL batch</code> and see the SQL query is created client-side and sent out. Any time you see client-side queries, you should be concerned.</p><span class=caption-wrapper>
 <img class=caption src=img/06.png title="Client querying MSSQL server" alt="Client querying MSSQL server">
 <span class=caption-text>Client querying MSSQL server</span>
 </span>
-<p>The following query is executed (later we will come back and play with this):</p>
-<ul>
-<li><code>SELECT * FROM users where username='rebecca' and password='rebecca</code></li>
-</ul>
-<p>The response contains the query results which leaks the structure of the <code>users</code> table:</p>
-<span class=caption-wrapper>
+<p>The following query is executed (later we will come back and play with this):</p><ul>
+<li><code>SELECT * FROM users where username='rebecca' and password='rebecca</code></li></ul><p>The response contains the query results which leaks the structure of the <code>users</code> table:</p><span class=caption-wrapper>
 <img class=caption src=img/13.png title="Login query response" alt="Login query response">
 <span class=caption-text>Login query response</span>
 </span>
 <h3 id=admin-login>Admin Login
 <a class=header-link href=#admin-login><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>We know administrators can login to the application and backup data to an FTP server. We want to observe this traffic with Wireshark.</p>
-<p>Logout and login with <code>admin:admin123</code>. Note admin interface has only one button, <code>Backup Data to FTP Server</code>. This should give us the clue that FTP credentials are hardcoded.</p>
-<p>Looking at Wireshark, we will see two different streams of traffic:</p>
-<ol>
-<li>Connection to the MSSQL server.</li>
-<li>Connection to the FTP server.</li>
-</ol>
-<p>The connection to the MSSQL server is similar to what we have seen before (port <code>49622</code>).</p>
-<span class=caption-wrapper>
+</h3><p>We know administrators can login to the application and backup data to an FTP server. We want to observe this traffic with Wireshark.</p><p>Logout and login with <code>admin:admin123</code>. Note admin interface has only one button, <code>Backup Data to FTP Server</code>. This should give us the clue that FTP credentials are hardcoded.</p><p>Looking at Wireshark, we will see two different streams of traffic:</p><ol>
+<li>Connection to the MSSQL server.</li><li>Connection to the FTP server.</li></ol><p>The connection to the MSSQL server is similar to what we have seen before (port <code>49622</code>).</p><span class=caption-wrapper>
 <img class=caption src=img/07.png title="Backup traffic to MSSQL server" alt="Backup traffic to MSSQL server">
 <span class=caption-text>Backup traffic to MSSQL server</span>
 </span>
-<p>The application connects and runs the following query:</p>
-<ul>
-<li><code>select * from expenses</code></li>
-</ul>
-<p>Next is the FTP connection to <code>localhost:21</code>. We can see it's in cleartext and user/pass is visible.</p>
-<span class=caption-wrapper>
+<p>The application connects and runs the following query:</p><ul>
+<li><code>select * from expenses</code></li></ul><p>Next is the FTP connection to <code>localhost:21</code>. We can see it's in cleartext and user/pass is visible.</p><span class=caption-wrapper>
 <img class=caption src=img/08.png title="FTP traffic and password displayed in Wireshark" alt="FTP traffic and password displayed in Wireshark">
 <span class=caption-text>FTP traffic and password displayed in Wireshark</span>
 </span>
-<p>For easier visualization, right-click on any packet in the stream and select <code>Follow > TCP Stream</code>.</p>
-<span class=caption-wrapper>
+<p>For easier visualization, right-click on any packet in the stream and select <code>Follow > TCP Stream</code>.</p><span class=caption-wrapper>
 <img class=caption src=img/09.png title="Following the TCP stream in Wireshark" alt="Following the TCP stream in Wireshark">
 <span class=caption-text>Following the TCP stream in Wireshark</span>
 </span>
-<p>Application logins with <code>dvta:p@ssw0rd</code> and then stores <code>admin.csv</code> on the FTP server (which we can assume contains information from the <code>expenses</code> table).</p>
-<span class=caption-wrapper>
+<p>Application logins with <code>dvta:p@ssw0rd</code> and then stores <code>admin.csv</code> on the FTP server (which we can assume contains information from the <code>expenses</code> table).</p><span class=caption-wrapper>
 <img class=caption src=img/10.png title="All FTP traffic in stream displayed in Wireshark" alt="All FTP traffic in stream displayed in Wireshark">
 <span class=caption-text>All FTP traffic in stream displayed in Wireshark</span>
 </span>
 <h3 id=register-functionality>Register Functionality
 <a class=header-link href=#register-functionality><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>We can also register new users. Users will not be administrators. Let's look at that traffic too.</p>
-<span class=caption-wrapper>
+</h3><p>We can also register new users. Users will not be administrators. Let's look at that traffic too.</p><span class=caption-wrapper>
 <img class=caption src=img/12.png title="SQL statement to register a new user" alt="SQL statement to register a new user">
 <span class=caption-text>SQL statement to register a new user</span>
 </span>
-<p>As we can see, traffic is similar to the previous parts. This time we are sending an <code>insert</code> query:</p>
-<ul>
-<li><code>insert into users values('test1','password','test1@example.com','0')</code></li>
-</ul>
-<p>Note the <code>0</code> in the end. It's setting the <code>isadmin</code> column that we observed earlier.</p>
-<h2 id=recon-with-procmon>Recon with Procmon
+<p>As we can see, traffic is similar to the previous parts. This time we are sending an <code>insert</code> query:</p><ul>
+<li><code>insert into users values('test1','password','test1@example.com','0')</code></li></ul><p>Note the <code>0</code> in the end. It's setting the <code>isadmin</code> column that we observed earlier.</p><h2 id=recon-with-procmon>Recon with Procmon
 <a class=header-link href=#recon-with-procmon><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>We can do the same with Sysinternals Procmon. We can see the traffic but we can identify the endpoints. For the record, Procmon does a lot more than what we are using it for.</p>
-<p>Quit the application, run it again, login as admin and backup the data. Then run Procmon and set the following filters similar to what we did in part 1 to identify the FTP endpoint:</p>
-<ul>
-<li><code>Process Name contains dvta</code>. I have set this to <code>contains</code> because I have versioned patched executables from part 2.</li>
-<li><code>Operation is TCP Connect</code>. Or you could only enable network activity like part 1 (<a href=/blog/2018-07-15-dvta-part-1-setup/#discover-the-ftp-address title="DVTA - Part 1 - Setup - Discover the FTP Address">DVTA - Part 1 - Setup - Discover the FTP Address</a>).</li>
-</ul>
-<span class=caption-wrapper>
+</h2><p>We can do the same with Sysinternals Procmon. We can see the traffic but we can identify the endpoints. For the record, Procmon does a lot more than what we are using it for.</p><p>Quit the application, run it again, login as admin and backup the data. Then run Procmon and set the following filters similar to what we did in part 1 to identify the FTP endpoint:</p><ul>
+<li><code>Process Name contains dvta</code>. I have set this to <code>contains</code> because I have versioned patched executables from part 2.</li><li><code>Operation is TCP Connect</code>. Or you could only enable network activity like part 1 (<a href=/blog/2018-07-15-dvta-part-1-setup/#discover-the-ftp-address title="DVTA - Part 1 - Setup - Discover the FTP Address">DVTA - Part 1 - Setup - Discover the FTP Address</a>).</li></ul><span class=caption-wrapper>
 <img class=caption src=img/11.png title="Application endpoints displayed in Procmon" alt="Application endpoints displayed in Procmon">
 <span class=caption-text>Application endpoints displayed in Procmon</span>
 </span>
-<p>We can see connections to:</p>
-<ul>
-<li>Fetching login token from <code>time.is:443</code>.</li>
-<li>MSSQL server at <code>localhost:49622</code>.</li>
-<li>FTP at <code>localhost:21</code> and <code>54823</code> (ephemeral port for actual <code>STOR</code> action).</li>
-</ul>
-<h1 id=conclusion>Conclusion
+<p>We can see connections to:</p><ul>
+<li>Fetching login token from <code>time.is:443</code>.</li><li>MSSQL server at <code>localhost:49622</code>.</li><li>FTP at <code>localhost:21</code> and <code>54823</code> (ephemeral port for actual <code>STOR</code> action).</li></ul><h1 id=conclusion>Conclusion
 <a class=header-link href=#conclusion><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>We learned how to identify network endpoints using two tools. We did some limited traffic analysis. In the next part, we will learn how to manipulate traffic in different ways.</p>
-</div>
-<footer>
+</h1><p>We learned how to identify network endpoints using two tools. We did some limited traffic analysis. In the next part, we will learn how to manipulate traffic in different ways.</p></div><footer>
 <p class=meta>
 <span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>Jul 30, 2018</time>
@@ -232,82 +140,47 @@ DVTA - Part 3 - Network Recon
 Tags:
 <a class=category href=https://parsiya.net/tags/wireshark>Wireshark</a> <a class=category href=https://parsiya.net/tags/procmon>Procmon</a>
 </span>
-</p>
-<p class=meta>
+</p><p class=meta>
 <a class="basic-alignment left" href=https://parsiya.net/blog/2018-07-21-dvta-part-2-cert-pinning-and-login-button/ title="DVTA - Part 2 - Cert Pinning and Login Button">DVTA - Part 2 - Cert Pinning and Login Button</a>
 <a class="basic-alignment right" href=https://parsiya.net/blog/2018-08-02-dvta-part-4-traffic-tampering-with-dnspy/ title="DVTA - Part 4 - Traffic Tampering with dnSpy">DVTA - Part 4 - Traffic Tampering with dnSpy</a>
-</p>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</div>
-<aside class="sidebar thirds">
+</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer></article></div><aside class="sidebar thirds">
 <section class="first odd">
-<h1>Who am I?</h1>
-<p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
-<p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p>
-<p>Click on <a href=/about/>About Me!</a> to know more.</p>
-</p>
-</section>
-<ul class=sidebar-nav>
+<h1>Who am I?</h1><p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
 <li class=sidebar-nav-item>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li>
-</ul>
-<section class=odd>
-<h1>Collections</h1>
-<li>
+</li></ul><section class=odd>
+<h1>Collections</h1><li>
 <a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li>
-<li>
+</li><li>
 <a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li>
-</section>
-</aside>
-</div>
-</div>
-<footer role=contentinfo>
+</li></section></aside></div></div><footer role=contentinfo>
 <p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>

@@ -3,14 +3,13 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
 <link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>WinAppDbg - Part 1 - Basics</title>
-<link rel=stylesheet href=/css/hugo-octopress.css>
+<title>WinAppDbg - Part 1 - Basics</title><link rel=stylesheet href=/css/hugo-octopress.css>
 <link rel=stylesheet href=/css/fork-awesome.min.css>
 <link href=https://parsiya.net/favicon.png rel=icon>
 <meta name=description content>
 <meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
 <meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.92.2">
+<meta name=generator content="Hugo 0.93.0">
 <meta name=twitter:card content="summary">
 <meta name=twitter:title content="WinAppDbg - Part 1 - Basics">
 <meta name=twitter:description content="WinAppDbg by Mario Vilas is perhaps one of the most underrated instrumentation frameworks for Windows. In this day and age where everyone write JavaScript code to hook functions (I am looking at you Frida), writing Python code feels great. Just kidding, Frida is pretty cool too.
@@ -22,37 +21,21 @@ https://github.com/parsiya/Parsia-Code/tree/master/winappdbg
 ">
 <meta name=twitter:domain content="parsiya.net">
 <meta name=twitter:creator content="@CryptoGangsta">
-</head>
-<body>
+</head><body>
 <header role=banner>
 <hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1>
-<h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2>
-</hgroup></header>
-<nav role=navigation>
+<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
 <fieldset class=mobile-nav>
 <select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset>
-<ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li>
-<li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li>
-<li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li>
-<li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li>
-<li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li>
-<li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li>
-</ul>
-<ul class=subscription>
+</fieldset><ul class=main-navigation>
+<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
 <a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul>
-<form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
+</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
 <fieldset role=search>
 <input class=search type=text name=q results=0 placeholder=Search>
 <input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset>
-</form>
-</nav>
-<div id=main>
+</fieldset></form></nav><div id=main>
 <div id=content>
 <div>
 <article class=hentry role=article>
@@ -61,476 +44,339 @@ complete unless it is known by its causes. - Avicenna</h2>
 - 12 minute read
 - <a href=https://parsiya.net/blog/2017-11-09-winappdbg-part-1-basics/#disqus_thread>Comments</a>
 - <a class=label href=https://parsiya.net/categories/winappdbg/>winappdbg </a><a class=label href=https://parsiya.net/categories/reverse-engineering/>reverse engineering </a>
-</p>
-<h1 class=entry-title>
+</p><h1 class=entry-title>
 WinAppDbg - Part 1 - Basics
-</h1>
-</header>
-<div class=entry-content>
+</h1></header><div class=entry-content>
 <nav id=TableOfContents>
 <ul>
-<li><a href=#prerequisites>Prerequisites</a></li>
-<li><a href=#when-i-was-stuck>When I was Stuck</a></li>
-<li><a href=#installation>Installation</a></li>
-<li><a href=#examples>Examples</a>
+<li><a href=#prerequisites>Prerequisites</a></li><li><a href=#when-i-was-stuck>When I was Stuck</a></li><li><a href=#installation>Installation</a></li><li><a href=#examples>Examples</a>
 <ul>
 <li><a href=#01---running-applications>01 - Running Applications</a>
 <ul>
-<li><a href=#argparse>Argparse</a></li>
-<li><a href=#windows-api-wrappers>Windows API Wrappers</a></li>
-<li><a href=#starting-a-new-application>Starting a New Application</a></li>
-<li><a href=#process>Process</a></li>
-<li><a href=#debugging>Debugging</a></li>
-</ul>
-</li>
-<li><a href=#02---running-applications-with-arguments>02 - Running Applications with Arguments</a></li>
-<li><a href=#03---some-system-information>03 - Some System Information</a>
+<li><a href=#argparse>Argparse</a></li><li><a href=#windows-api-wrappers>Windows API Wrappers</a></li><li><a href=#starting-a-new-application>Starting a New Application</a></li><li><a href=#process>Process</a></li><li><a href=#debugging>Debugging</a></li></ul></li><li><a href=#02---running-applications-with-arguments>02 - Running Applications with Arguments</a></li><li><a href=#03---some-system-information>03 - Some System Information</a>
 <ul>
-<li><a href=#built-in-table>Built-in Table</a></li>
-</ul>
-</li>
-<li><a href=#04---list-running-processes>04 - List Running Processes</a></li>
-<li><a href=#05---attach-to-process-by-pid>05 - Attach to Process by pid</a>
+<li><a href=#built-in-table>Built-in Table</a></li></ul></li><li><a href=#04---list-running-processes>04 - List Running Processes</a></li><li><a href=#05---attach-to-process-by-pid>05 - Attach to Process by pid</a>
 <ul>
-<li><a href=#mutually-exclusive-argparse-groups>Mutually Exclusive Argparse Groups</a></li>
-</ul>
-</li>
-<li><a href=#06---attach-to-process-by-name>06 - Attach to Process by Name</a></li>
-<li><a href=#07---logging>07 - Logging</a></li>
-</ul>
-</li>
-<li><a href=#conclusion>Conclusion</a></li>
-</ul>
-</nav>
-<p><a href=https://github.com/MarioVilas/winappdbg title="WinAppDbg repository on Github" target=_blank rel="noreferrer noopener">WinAppDbg</a> by <a href=https://twitter.com/Mario_Vilas title="Mario Vilas Twitter account" target=_blank rel="noreferrer noopener">Mario Vilas</a> is perhaps one of the most underrated instrumentation frameworks for Windows. In this day and age where everyone write JavaScript code to hook functions (I am looking at you Frida), writing Python code feels great. Just kidding, Frida is pretty cool too.</p>
-<p>Going around the web searching for tutorials did not give me many results. <a href=https://winappdbg.readthedocs.io/en/latest/ title="WinAppDbg documentation on readthedocs" target=_blank rel="noreferrer noopener">The docs</a> are great, they are some of the most practical docs I have seen. But apart from that, I could not find much. There are some random code here and there where people have documented using it but there were no guides to get me started apart from the docs.</p>
-<p>Here's the result of my learning. I am sharing it to fill the gap that I encountered while getting started with the tool. We're going to learn as we go using real-world applications and will write code. We will start from the basics, expanding our code-base as we learn more.</p>
-<p>Code is in my clone at:</p>
-<ul>
-<li><a href=https://github.com/parsiya/Parsia-Code/tree/master/winappdbg title="WinAppDbg code in Parsia-Code" target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/winappdbg</a></li>
-</ul>
-<p>Let's get started.</p>
-<h1 id=prerequisites>Prerequisites
+<li><a href=#mutually-exclusive-argparse-groups>Mutually Exclusive Argparse Groups</a></li></ul></li><li><a href=#06---attach-to-process-by-name>06 - Attach to Process by Name</a></li><li><a href=#07---logging>07 - Logging</a></li></ul></li><li><a href=#conclusion>Conclusion</a></li></ul></nav><p><a href=https://github.com/MarioVilas/winappdbg title="WinAppDbg repository on Github" target=_blank rel="noreferrer noopener">WinAppDbg</a> by <a href=https://twitter.com/Mario_Vilas title="Mario Vilas Twitter account" target=_blank rel="noreferrer noopener">Mario Vilas</a> is perhaps one of the most underrated instrumentation frameworks for Windows. In this day and age where everyone write JavaScript code to hook functions (I am looking at you Frida), writing Python code feels great. Just kidding, Frida is pretty cool too.</p><p>Going around the web searching for tutorials did not give me many results. <a href=https://winappdbg.readthedocs.io/en/latest/ title="WinAppDbg documentation on readthedocs" target=_blank rel="noreferrer noopener">The docs</a> are great, they are some of the most practical docs I have seen. But apart from that, I could not find much. There are some random code here and there where people have documented using it but there were no guides to get me started apart from the docs.</p><p>Here's the result of my learning. I am sharing it to fill the gap that I encountered while getting started with the tool. We're going to learn as we go using real-world applications and will write code. We will start from the basics, expanding our code-base as we learn more.</p><p>Code is in my clone at:</p><ul>
+<li><a href=https://github.com/parsiya/Parsia-Code/tree/master/winappdbg title="WinAppDbg code in Parsia-Code" target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/winappdbg</a></li></ul><p>Let's get started.</p><h1 id=prerequisites>Prerequisites
 <a class=header-link href=#prerequisites><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><ul>
-<li>Windows Virtual Machine. I used a 32-bit Windows 7 VM from <a href=https://developer.microsoft.com/en-us/microsoft-edge/tools/vms/ title="Modern.ie Windows Virtual Machines" target=_blank rel="noreferrer noopener">modern.ie</a>: FREE</li>
-<li>Python 2.7 32-bit: FREE</li>
-<li>WinAppDbg 1.6: FREE
+<li>Windows Virtual Machine. I used a 32-bit Windows 7 VM from <a href=https://developer.microsoft.com/en-us/microsoft-edge/tools/vms/ title="Modern.ie Windows Virtual Machines" target=_blank rel="noreferrer noopener">modern.ie</a>: FREE</li><li>Python 2.7 32-bit: FREE</li><li>WinAppDbg 1.6: FREE
 <ul>
-<li>See below for installation steps/tips</li>
-</ul>
-</li>
-<li>Basic knowledge of the following (hopefully FREE too):
+<li>See below for installation steps/tips</li></ul></li><li>Basic knowledge of the following (hopefully FREE too):
 <ul>
-<li>Python: Hopefully</li>
-<li>x86/x86_64 Assembly</li>
-<li>Windows APIs</li>
-</ul>
-</li>
-</ul>
-<h1 id=when-i-was-stuck>When I was Stuck
+<li>Python: Hopefully</li><li>x86/x86_64 Assembly</li><li>Windows APIs</li></ul></li></ul><h1 id=when-i-was-stuck>When I was Stuck
 <a class=header-link href=#when-i-was-stuck><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><ol>
 <li>Read the docs:
 <ul>
-<li><a href=https://winappdbg.readthedocs.io/en/latest/ target=_blank rel="noreferrer noopener">https://winappdbg.readthedocs.io/en/latest/</a></li>
-</ul>
-</li>
-<li>Read the source code on Github. For example methods for a <code>process</code> objects are at <a href=https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/process.py#L89-L153 target=_blank rel="noreferrer noopener">process.py</a>.
+<li><a href=https://winappdbg.readthedocs.io/en/latest/ target=_blank rel="noreferrer noopener">https://winappdbg.readthedocs.io/en/latest/</a></li></ul></li><li>Read the source code on Github. For example methods for a <code>process</code> objects are at <a href=https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/process.py#L89-L153 target=_blank rel="noreferrer noopener">process.py</a>.
 <ul>
-<li><a href=https://github.com/MarioVilas/winappdbg target=_blank rel="noreferrer noopener">https://github.com/MarioVilas/winappdbg</a></li>
-</ul>
-</li>
-<li>Looked around the internet.
+<li><a href=https://github.com/MarioVilas/winappdbg target=_blank rel="noreferrer noopener">https://github.com/MarioVilas/winappdbg</a></li></ul></li><li>Looked around the internet.
 <ul>
-<li>There are bits and pieces about WinAppDbg in blog posts/presentations/git repos.</li>
-</ul>
-</li>
-</ol>
-<h1 id=installation>Installation
+<li>There are bits and pieces about WinAppDbg in blog posts/presentations/git repos.</li></ul></li></ol><h1 id=installation>Installation
 <a class=header-link href=#installation><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
 </h1><ul>
-<li><strong>Install Python 2.7, not 3.</strong></li>
-<li>Install Python 32-bit to instrument 32-bit applications and vice versa.
+<li><strong>Install Python 2.7, not 3.</strong></li><li>Install Python 32-bit to instrument 32-bit applications and vice versa.
 <ul>
-<li>Instrumenting 32-bit applications on 64-bit Windows works but Python arch must match.</li>
-</ul>
-</li>
-<li><strong>Don't use pip to install WinAppDbg</strong>, it installs an older version that will not work. Pip for other packages is fine.</li>
-<li>Clone the <a href=https://github.com/MarioVilas/winappdbg title="WinAppDbg repository on Github" target=_blank rel="noreferrer noopener">WinAppDbg github</a> repository, and run <code>install.bat</code> (optionally in an admin command prompt).</li>
-<li>Install some additional software:
+<li>Instrumenting 32-bit applications on 64-bit Windows works but Python arch must match.</li></ul></li><li><strong>Don't use pip to install WinAppDbg</strong>, it installs an older version that will not work. Pip for other packages is fine.</li><li>Clone the <a href=https://github.com/MarioVilas/winappdbg title="WinAppDbg repository on Github" target=_blank rel="noreferrer noopener">WinAppDbg github</a> repository, and run <code>install.bat</code> (optionally in an admin command prompt).</li><li>Install some additional software:
 <ul>
-<li>Capstone: <code>python -m pip install capstone-windows</code>.</li>
-<li>distorm3: Download binaries from <a href=https://github.com/gdabah/distorm/releases target=_blank rel="noreferrer noopener">Github release page</a>.</li>
-<li><a href=https://breakingcode.wordpress.com/2012/04/08/quickpost-installer-for-beaenginepython/ title="Installers for BeaEnginePython, Pymsasid, PyDasm and Libdisassemble - BreakingCode.blogspot.com" target=_blank rel="noreferrer noopener">More installers</a> from Mario's blog at <a href=https://breakingcode.wordpress.com target=_blank rel="noreferrer noopener">https://breakingcode.wordpress.com</a>.</li>
-</ul>
-</li>
-</ul>
-<h1 id=examples>Examples
+<li>Capstone: <code>python -m pip install capstone-windows</code>.</li><li>distorm3: Download binaries from <a href=https://github.com/gdabah/distorm/releases target=_blank rel="noreferrer noopener">Github release page</a>.</li><li><a href=https://breakingcode.wordpress.com/2012/04/08/quickpost-installer-for-beaenginepython/ title="Installers for BeaEnginePython, Pymsasid, PyDasm and Libdisassemble - BreakingCode.blogspot.com" target=_blank rel="noreferrer noopener">More installers</a> from Mario's blog at <a href=https://breakingcode.wordpress.com target=_blank rel="noreferrer noopener">https://breakingcode.wordpress.com</a>.</li></ul></li></ul><h1 id=examples>Examples
 <a class=header-link href=#examples><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Now that our environment is ready, we can start learning.</p>
-<h2 id=01---running-applications>01 - Running Applications
+</h1><p>Now that our environment is ready, we can start learning.</p><h2 id=01---running-applications>01 - Running Applications
 <a class=header-link href=#01---running-applications><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>As we can see, We are starting with a working Python script.</p>
-<figure class=code>
+</h2><p>As we can see, We are starting with a working Python script.</p><figure class=code>
 <figcaption>
 <span>01-Run.py</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">29
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">30
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">31
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">32
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">33
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">34
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">35
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">36
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">37
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">38
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">39
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">40
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">41
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">42
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">43
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">44
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>import</span> winappdbg
-<span style=color:#719e07>import</span> argparse
-<span style=color:#719e07>from</span> winappdbg <span style=color:#719e07>import</span> win32
-
-<span style=color:#586e75># Debug an app passed by -r</span>
-<span style=color:#586e75># e.g. python 01-debug1.py -r c:\windows\system32\notepad.exe</span>
-
-
-<span style=color:#719e07>def</span> <span style=color:#268bd2>main</span>():
-    parser <span style=color:#719e07>=</span> argparse<span style=color:#719e07>.</span>ArgumentParser(description<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;WinAppDbg stuff.&#34;</span>)
-    parser<span style=color:#719e07>.</span>add_argument(<span style=color:#2aa198>&#34;-r&#34;</span>, <span style=color:#2aa198>&#34;--run&#34;</span>, help<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;path to application&#34;</span>)
-
-    args <span style=color:#719e07>=</span> parser<span style=color:#719e07>.</span>parse_args()
-
-    <span style=color:#586e75># Use Win32 API functions provided by WinAppDbg</span>
-    <span style=color:#719e07>if</span> win32<span style=color:#719e07>.</span>PathFileExists(args<span style=color:#719e07>.</span>run) <span style=color:#719e07>is</span> <span style=color:#cb4b16>True</span>:
-        <span style=color:#586e75># File exists</span>
-
-        <span style=color:#586e75># Create a Debug object</span>
-        debug <span style=color:#719e07>=</span> winappdbg<span style=color:#719e07>.</span>Debug()
-
-        <span style=color:#719e07>try</span>:
-            <span style=color:#586e75># Debug the app</span>
-            <span style=color:#586e75># First item is program and the rest are arguments</span>
-            <span style=color:#586e75># execv: https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/debug.py#L274</span>
-            my_process <span style=color:#719e07>=</span> debug<span style=color:#719e07>.</span>execv([args<span style=color:#719e07>.</span>run])
-
-            <span style=color:#b58900>print</span> <span style=color:#2aa198>&#34;Attached to </span><span style=color:#2aa198>%d</span><span style=color:#2aa198> - </span><span style=color:#2aa198>%s</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> (my_process<span style=color:#719e07>.</span>get_pid(),
-                                           my_process<span style=color:#719e07>.</span>get_filename())
-
-            <span style=color:#586e75># Keep debugging until the debugger stops</span>
-            debug<span style=color:#719e07>.</span>loop()
-
-        <span style=color:#719e07>finally</span>:
-            <span style=color:#586e75># Stop the debugger</span>
-            debug<span style=color:#719e07>.</span>stop()
-            <span style=color:#b58900>print</span> <span style=color:#2aa198>&#34;Debugger stopped.&#34;</span>
-
-    <span style=color:#719e07>else</span>:
-        <span style=color:#b58900>print</span> <span style=color:#2aa198>&#34;</span><span style=color:#2aa198>%s</span><span style=color:#2aa198> not found.&#34;</span> <span style=color:#719e07>%</span> (args<span style=color:#719e07>.</span>run)
-
-
-<span style=color:#719e07>if</span> __name__ <span style=color:#719e07>==</span> <span style=color:#2aa198>&#34;__main__&#34;</span>:
-    main()</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>We can run it as follows, the debugger will stop when we close notepad.</p>
-<pre tabindex=0><code>$ python 01-Run.py -r c:\windows\system32\notepad.exe
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">31
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">32
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">33
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">34
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">35
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">36
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">37
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">38
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">39
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">40
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">41
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">42
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">43
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">44
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>import</span> winappdbg
+</span></span><span style=display:flex><span><span style=color:#719e07>import</span> argparse
+</span></span><span style=display:flex><span><span style=color:#719e07>from</span> winappdbg <span style=color:#719e07>import</span> win32
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75># Debug an app passed by -r</span>
+</span></span><span style=display:flex><span><span style=color:#586e75># e.g. python 01-debug1.py -r c:\windows\system32\notepad.exe</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>main</span>():
+</span></span><span style=display:flex><span>    parser <span style=color:#719e07>=</span> argparse<span style=color:#719e07>.</span>ArgumentParser(description<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;WinAppDbg stuff.&#34;</span>)
+</span></span><span style=display:flex><span>    parser<span style=color:#719e07>.</span>add_argument(<span style=color:#2aa198>&#34;-r&#34;</span>, <span style=color:#2aa198>&#34;--run&#34;</span>, help<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;path to application&#34;</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    args <span style=color:#719e07>=</span> parser<span style=color:#719e07>.</span>parse_args()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75># Use Win32 API functions provided by WinAppDbg</span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> win32<span style=color:#719e07>.</span>PathFileExists(args<span style=color:#719e07>.</span>run) <span style=color:#719e07>is</span> <span style=color:#cb4b16>True</span>:
+</span></span><span style=display:flex><span>        <span style=color:#586e75># File exists</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#586e75># Create a Debug object</span>
+</span></span><span style=display:flex><span>        debug <span style=color:#719e07>=</span> winappdbg<span style=color:#719e07>.</span>Debug()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#719e07>try</span>:
+</span></span><span style=display:flex><span>            <span style=color:#586e75># Debug the app</span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># First item is program and the rest are arguments</span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># execv: https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/debug.py#L274</span>
+</span></span><span style=display:flex><span>            my_process <span style=color:#719e07>=</span> debug<span style=color:#719e07>.</span>execv([args<span style=color:#719e07>.</span>run])
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#b58900>print</span> <span style=color:#2aa198>&#34;Attached to </span><span style=color:#2aa198>%d</span><span style=color:#2aa198> - </span><span style=color:#2aa198>%s</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> (my_process<span style=color:#719e07>.</span>get_pid(),
+</span></span><span style=display:flex><span>                                           my_process<span style=color:#719e07>.</span>get_filename())
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># Keep debugging until the debugger stops</span>
+</span></span><span style=display:flex><span>            debug<span style=color:#719e07>.</span>loop()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#719e07>finally</span>:
+</span></span><span style=display:flex><span>            <span style=color:#586e75># Stop the debugger</span>
+</span></span><span style=display:flex><span>            debug<span style=color:#719e07>.</span>stop()
+</span></span><span style=display:flex><span>            <span style=color:#b58900>print</span> <span style=color:#2aa198>&#34;Debugger stopped.&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>else</span>:
+</span></span><span style=display:flex><span>        <span style=color:#b58900>print</span> <span style=color:#2aa198>&#34;</span><span style=color:#2aa198>%s</span><span style=color:#2aa198> not found.&#34;</span> <span style=color:#719e07>%</span> (args<span style=color:#719e07>.</span>run)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>if</span> __name__ <span style=color:#719e07>==</span> <span style=color:#2aa198>&#34;__main__&#34;</span>:
+</span></span><span style=display:flex><span>    main()</span></span></code></pre></td></tr></table></div></div></div></figure><p>We can run it as follows, the debugger will stop when we close notepad.</p><pre tabindex=0><code>$ python 01-Run.py -r c:\windows\system32\notepad.exe
 Attached to 1936 - C:\Windows\System32\notepad.exe
 Debugger stopped.
-</code></pre>
-<h3 id=argparse>Argparse
+</code></pre><h3 id=argparse>Argparse
 <a class=header-link href=#argparse><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p><a href=https://docs.python.org/2.7/library/argparse.html title="Argparse Python 2.7 docs" target=_blank rel="noreferrer noopener">Argparse module</a> is easy to use. We can see basic usage in the first three lines.</p>
-<ul>
-<li>Create an ArgumentParser.</li>
-<li>add_arguments to it.</li>
-<li>Parse the arguments.</li>
-</ul>
-<p>The output of <code>argparse.run</code> is a list of strings. In this case, it contains the path to the executable.</p>
-<h3 id=windows-api-wrappers>Windows API Wrappers
+</h3><p><a href=https://docs.python.org/2.7/library/argparse.html title="Argparse Python 2.7 docs" target=_blank rel="noreferrer noopener">Argparse module</a> is easy to use. We can see basic usage in the first three lines.</p><ul>
+<li>Create an ArgumentParser.</li><li>add_arguments to it.</li><li>Parse the arguments.</li></ul><p>The output of <code>argparse.run</code> is a list of strings. In this case, it contains the path to the executable.</p><h3 id=windows-api-wrappers>Windows API Wrappers
 <a class=header-link href=#windows-api-wrappers><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>WinAppDbg also comes with support for calling a lot of Windows APIs from Python. In this case we are calling <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/bb773584%28v=vs.85%29.aspx" title="PathFileExists - MSDN" target=_blank rel="noreferrer noopener">PathFileExists</a> instead of <code>os.path</code>. Our program checks if the input passed by <code>r/run</code> is valid (e.g. file exists) before running it. Note that this means we need to supply the full path to the executable.</p>
-<p>More info:</p>
-<ul>
-<li><a href=https://winappdbg.readthedocs.io/en/latest/Win32APIWrappers.html title="The Win32 API wrappers - WinAppDbg documentation" target=_blank rel="noreferrer noopener">Win32 API wrappers documentation</a></li>
-<li><a href=https://github.com/MarioVilas/winappdbg/tree/master/winappdbg/win32 target=_blank rel="noreferrer noopener">Win32 API wrappers source code</a></li>
-</ul>
-<h3 id=starting-a-new-application>Starting a New Application
+</h3><p>WinAppDbg also comes with support for calling a lot of Windows APIs from Python. In this case we are calling <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/bb773584%28v=vs.85%29.aspx" title="PathFileExists - MSDN" target=_blank rel="noreferrer noopener">PathFileExists</a> instead of <code>os.path</code>. Our program checks if the input passed by <code>r/run</code> is valid (e.g. file exists) before running it. Note that this means we need to supply the full path to the executable.</p><p>More info:</p><ul>
+<li><a href=https://winappdbg.readthedocs.io/en/latest/Win32APIWrappers.html title="The Win32 API wrappers - WinAppDbg documentation" target=_blank rel="noreferrer noopener">Win32 API wrappers documentation</a></li><li><a href=https://github.com/MarioVilas/winappdbg/tree/master/winappdbg/win32 target=_blank rel="noreferrer noopener">Win32 API wrappers source code</a></li></ul><h3 id=starting-a-new-application>Starting a New Application
 <a class=header-link href=#starting-a-new-application><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>To start an application and debug, first we must create a <code>winappdbg.Debug</code> object and then call <code>execv</code> or <code>execl</code>.</p>
-<p>There are two ways to run applications:</p>
-<ul>
+</h3><p>To start an application and debug, first we must create a <code>winappdbg.Debug</code> object and then call <code>execv</code> or <code>execl</code>.</p><p>There are two ways to run applications:</p><ul>
 <li><code>execv</code>: Accepts a list of strings. First item in the list is the program (including path). Every subsequent item is a command line parameter. We can pass the output of argparse.run directly.
 <ul>
-<li>For example <code>['c:\windows\system32\notepad.exe', 'c:\textfile.txt']</code>.</li>
-<li>Internally it uses <code>execl</code>.</li>
-<li><a href=https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/debug.py#L274 target=_blank rel="noreferrer noopener">execv source</a></li>
-</ul>
-</li>
-<li><code>execl</code>: Accepts a string containing the command line. This string is the exact input that we type to run the program (including arguments).
+<li>For example <code>['c:\windows\system32\notepad.exe', 'c:\textfile.txt']</code>.</li><li>Internally it uses <code>execl</code>.</li><li><a href=https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/debug.py#L274 target=_blank rel="noreferrer noopener">execv source</a></li></ul></li><li><code>execl</code>: Accepts a string containing the command line. This string is the exact input that we type to run the program (including arguments).
 <ul>
-<li><a href=https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/debug.py#L358 target=_blank rel="noreferrer noopener">execl source</a></li>
-</ul>
-</li>
-</ul>
-<h3 id=process>Process
+<li><a href=https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/debug.py#L358 target=_blank rel="noreferrer noopener">execl source</a></li></ul></li></ul><h3 id=process>Process
 <a class=header-link href=#process><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>The result of both methods is a <code>winappdbg.process</code>. Later we will see what we can do with the process.</p>
-<p>For now we are calling two obvious methods to get the process ID and the executable name. All <code>process</code> methods are <a href=https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/process.py#L89-L153 target=_blank rel="noreferrer noopener">here</a>.</p>
-<h3 id=debugging>Debugging
+</h3><p>The result of both methods is a <code>winappdbg.process</code>. Later we will see what we can do with the process.</p><p>For now we are calling two obvious methods to get the process ID and the executable name. All <code>process</code> methods are <a href=https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/process.py#L89-L153 target=_blank rel="noreferrer noopener">here</a>.</p><h3 id=debugging>Debugging
 <a class=header-link href=#debugging><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>To debug newly created application, call <code>debug.loop()</code> otherwise it will stay suspended. This will instrument the application until it's terminated (or exits).</p>
-<p><code>debug.stop()</code> will terminate the process.</p>
-<h2 id=02---running-applications-with-arguments>02 - Running Applications with Arguments
+</h3><p>To debug newly created application, call <code>debug.loop()</code> otherwise it will stay suspended. This will instrument the application until it's terminated (or exits).</p><p><code>debug.stop()</code> will terminate the process.</p><h2 id=02---running-applications-with-arguments>02 - Running Applications with Arguments
 <a class=header-link href=#02---running-applications-with-arguments><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Just running an application is not usually useful. Most times we want to pass arguments.</p>
-<figure class=code>
+</h2><p>Just running an application is not usually useful. Most times we want to pass arguments.</p><figure class=code>
 <figcaption>
 <span>02-RunWithArgs.py</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">29
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">30
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">31
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">32
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">33
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">34
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">35
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">36
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">37
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">38
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">39
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">40
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">41
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">42
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">43
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">44
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">45
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">46
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">47
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">48
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>import</span> winappdbg
-<span style=color:#719e07>import</span> argparse
-<span style=color:#719e07>from</span> winappdbg <span style=color:#719e07>import</span> win32
-
-<span style=color:#586e75># Debug an app with parameters passed by -r</span>
-<span style=color:#586e75># e.g. python 02-RunWithArgs.py -r c:\windows\system32\notepad.exe c:\textfile.txt</span>
-
-
-<span style=color:#719e07>def</span> <span style=color:#268bd2>main</span>():
-    parser <span style=color:#719e07>=</span> argparse<span style=color:#719e07>.</span>ArgumentParser(description<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;WinAppDbg stuff.&#34;</span>)
-    parser<span style=color:#719e07>.</span>add_argument(<span style=color:#2aa198>&#34;-r&#34;</span>, <span style=color:#2aa198>&#34;--run&#34;</span>, nargs<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;+&#34;</span>,
-                        help<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;path to application followed by parameters&#34;</span>)
-
-    args <span style=color:#719e07>=</span> parser<span style=color:#719e07>.</span>parse_args()
-
-    <span style=color:#719e07>if</span> (args<span style=color:#719e07>.</span>run):
-        <span style=color:#586e75># Concat all arguments into a string</span>
-        myargs <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34; &#34;</span><span style=color:#719e07>.</span>join(args<span style=color:#719e07>.</span>run)
-
-        <span style=color:#586e75># Use Win32 API functions provided by WinAppDbg</span>
-        <span style=color:#719e07>if</span> win32<span style=color:#719e07>.</span>PathFileExists(args<span style=color:#719e07>.</span>run[<span style=color:#2aa198>0</span>]) <span style=color:#719e07>is</span> <span style=color:#cb4b16>True</span>:
-            <span style=color:#586e75># File exists</span>
-
-            <span style=color:#586e75># Create a Debug object</span>
-            debug <span style=color:#719e07>=</span> winappdbg<span style=color:#719e07>.</span>Debug()
-
-            <span style=color:#719e07>try</span>:
-                <span style=color:#586e75># Debug the app</span>
-                <span style=color:#586e75># Debug.execv([args.app])</span>
-                <span style=color:#586e75># execl: https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/debug.py#L358</span>
-                my_process <span style=color:#719e07>=</span> debug<span style=color:#719e07>.</span>execl(myargs)
-
-                <span style=color:#b58900>print</span> <span style=color:#2aa198>&#34;Started </span><span style=color:#2aa198>%d</span><span style=color:#2aa198> - </span><span style=color:#2aa198>%s</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> (my_process<span style=color:#719e07>.</span>get_pid(),
-                                           my_process<span style=color:#719e07>.</span>get_filename())
-
-                <span style=color:#586e75># Keep debugging until the debugger stops</span>
-                debug<span style=color:#719e07>.</span>loop()
-
-            <span style=color:#719e07>finally</span>:
-                <span style=color:#586e75># Stop the debugger</span>
-                debug<span style=color:#719e07>.</span>stop()
-                <span style=color:#b58900>print</span> <span style=color:#2aa198>&#34;Debugger stopped.&#34;</span>
-
-        <span style=color:#719e07>else</span>:
-            <span style=color:#b58900>print</span> <span style=color:#2aa198>&#34;</span><span style=color:#2aa198>%s</span><span style=color:#2aa198> not found.&#34;</span> <span style=color:#719e07>%</span> (args<span style=color:#719e07>.</span>run[<span style=color:#2aa198>0</span>])
-
-<span style=color:#719e07>if</span> __name__ <span style=color:#719e07>==</span> <span style=color:#2aa198>&#34;__main__&#34;</span>:
-    main()</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>There are only two changes but the functionality is the same:</p>
-<ul>
-<li>Line 17: We are re-creating the command line string by joining the output from <code>argparse.run</code>.</li>
-<li>Line 31: Command line is passed to <code>execl</code> instead of <code>execv</code>.</li>
-</ul>
-<p>After running the script, it will attempt to create <code>c:\textfile.txt</code> if it does not exist. Manually close notepad to stop the debugger.</p>
-<pre tabindex=0><code>$ python 02-RunWithArgs.py -r c:\windows\system32\notepad.exe c:\textfile.txt
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">31
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">32
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">33
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">34
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">35
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">36
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">37
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">38
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">39
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">40
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">41
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">42
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">43
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">44
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">45
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">46
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">47
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">48
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>import</span> winappdbg
+</span></span><span style=display:flex><span><span style=color:#719e07>import</span> argparse
+</span></span><span style=display:flex><span><span style=color:#719e07>from</span> winappdbg <span style=color:#719e07>import</span> win32
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75># Debug an app with parameters passed by -r</span>
+</span></span><span style=display:flex><span><span style=color:#586e75># e.g. python 02-RunWithArgs.py -r c:\windows\system32\notepad.exe c:\textfile.txt</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>main</span>():
+</span></span><span style=display:flex><span>    parser <span style=color:#719e07>=</span> argparse<span style=color:#719e07>.</span>ArgumentParser(description<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;WinAppDbg stuff.&#34;</span>)
+</span></span><span style=display:flex><span>    parser<span style=color:#719e07>.</span>add_argument(<span style=color:#2aa198>&#34;-r&#34;</span>, <span style=color:#2aa198>&#34;--run&#34;</span>, nargs<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;+&#34;</span>,
+</span></span><span style=display:flex><span>                        help<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;path to application followed by parameters&#34;</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    args <span style=color:#719e07>=</span> parser<span style=color:#719e07>.</span>parse_args()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> (args<span style=color:#719e07>.</span>run):
+</span></span><span style=display:flex><span>        <span style=color:#586e75># Concat all arguments into a string</span>
+</span></span><span style=display:flex><span>        myargs <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34; &#34;</span><span style=color:#719e07>.</span>join(args<span style=color:#719e07>.</span>run)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#586e75># Use Win32 API functions provided by WinAppDbg</span>
+</span></span><span style=display:flex><span>        <span style=color:#719e07>if</span> win32<span style=color:#719e07>.</span>PathFileExists(args<span style=color:#719e07>.</span>run[<span style=color:#2aa198>0</span>]) <span style=color:#719e07>is</span> <span style=color:#cb4b16>True</span>:
+</span></span><span style=display:flex><span>            <span style=color:#586e75># File exists</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># Create a Debug object</span>
+</span></span><span style=display:flex><span>            debug <span style=color:#719e07>=</span> winappdbg<span style=color:#719e07>.</span>Debug()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#719e07>try</span>:
+</span></span><span style=display:flex><span>                <span style=color:#586e75># Debug the app</span>
+</span></span><span style=display:flex><span>                <span style=color:#586e75># Debug.execv([args.app])</span>
+</span></span><span style=display:flex><span>                <span style=color:#586e75># execl: https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/debug.py#L358</span>
+</span></span><span style=display:flex><span>                my_process <span style=color:#719e07>=</span> debug<span style=color:#719e07>.</span>execl(myargs)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>                <span style=color:#b58900>print</span> <span style=color:#2aa198>&#34;Started </span><span style=color:#2aa198>%d</span><span style=color:#2aa198> - </span><span style=color:#2aa198>%s</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> (my_process<span style=color:#719e07>.</span>get_pid(),
+</span></span><span style=display:flex><span>                                           my_process<span style=color:#719e07>.</span>get_filename())
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>                <span style=color:#586e75># Keep debugging until the debugger stops</span>
+</span></span><span style=display:flex><span>                debug<span style=color:#719e07>.</span>loop()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#719e07>finally</span>:
+</span></span><span style=display:flex><span>                <span style=color:#586e75># Stop the debugger</span>
+</span></span><span style=display:flex><span>                debug<span style=color:#719e07>.</span>stop()
+</span></span><span style=display:flex><span>                <span style=color:#b58900>print</span> <span style=color:#2aa198>&#34;Debugger stopped.&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#719e07>else</span>:
+</span></span><span style=display:flex><span>            <span style=color:#b58900>print</span> <span style=color:#2aa198>&#34;</span><span style=color:#2aa198>%s</span><span style=color:#2aa198> not found.&#34;</span> <span style=color:#719e07>%</span> (args<span style=color:#719e07>.</span>run[<span style=color:#2aa198>0</span>])
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>if</span> __name__ <span style=color:#719e07>==</span> <span style=color:#2aa198>&#34;__main__&#34;</span>:
+</span></span><span style=display:flex><span>    main()</span></span></code></pre></td></tr></table></div></div></div></figure><p>There are only two changes but the functionality is the same:</p><ul>
+<li>Line 17: We are re-creating the command line string by joining the output from <code>argparse.run</code>.</li><li>Line 31: Command line is passed to <code>execl</code> instead of <code>execv</code>.</li></ul><p>After running the script, it will attempt to create <code>c:\textfile.txt</code> if it does not exist. Manually close notepad to stop the debugger.</p><pre tabindex=0><code>$ python 02-RunWithArgs.py -r c:\windows\system32\notepad.exe c:\textfile.txt
 Started 1416 - C:\Windows\System32\notepad.exe
 Debugger stopped.
-</code></pre>
-<h2 id=03---some-system-information>03 - Some System Information
+</code></pre><h2 id=03---some-system-information>03 - Some System Information
 <a class=header-link href=#03---some-system-information><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>WinAppDbg comes with some helpful utilities. One of them is the <a href=https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/system.py#L124 target=_blank rel="noreferrer noopener"><code>System</code></a> object. System has a lot more to offer than what we will be using in this part.</p>
-<p>Moving forward I will just show the modified parts of the scripts. The complete scrips are in the Github clone.</p>
-<p>We will add another switch to our script to print some system information.</p>
-<figure class=code>
+</h2><p>WinAppDbg comes with some helpful utilities. One of them is the <a href=https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/system.py#L124 target=_blank rel="noreferrer noopener"><code>System</code></a> object. System has a lot more to offer than what we will be using in this part.</p><p>Moving forward I will just show the modified parts of the scripts. The complete scrips are in the Github clone.</p><p>We will add another switch to our script to print some system information.</p><figure class=code>
 <figcaption>
 <span>03-SystemInfo.py</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">29
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>if</span>(args<span style=color:#719e07>.</span>sysinfo):
-    <span style=color:#586e75># Create a System object</span>
-    <span style=color:#586e75># https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/system.py#L66</span>
-    system <span style=color:#719e07>=</span> winappdbg<span style=color:#719e07>.</span>System()
-
-    <span style=color:#586e75># Use the built-in WinAppDbg table</span>
-    <span style=color:#586e75># https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/textio.py#L1094</span>
-    table <span style=color:#719e07>=</span> winappdbg<span style=color:#719e07>.</span>Table(<span style=color:#2aa198>&#34;</span><span style=color:#cb4b16>\t</span><span style=color:#2aa198>&#34;</span>)
-
-    <span style=color:#586e75># New line</span>
-    table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;&#34;</span>, <span style=color:#2aa198>&#34;&#34;</span>)
-
-    <span style=color:#586e75># Header</span>
-    title <span style=color:#719e07>=</span> (<span style=color:#2aa198>&#34;System Information&#34;</span>, <span style=color:#2aa198>&#34;&#34;</span>)
-    table<span style=color:#719e07>.</span>addRow(<span style=color:#719e07>*</span>title)
-
-    <span style=color:#586e75># Add system information</span>
-    table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;------------------&#34;</span>)
-    table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;Bits&#34;</span>, system<span style=color:#719e07>.</span>bits)
-    table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;OS&#34;</span>, system<span style=color:#719e07>.</span>os)
-    table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;Architecture&#34;</span>, system<span style=color:#719e07>.</span>arch)
-    table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;32-bit Emulation&#34;</span>, system<span style=color:#719e07>.</span>wow64)
-    table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;Admin&#34;</span>, system<span style=color:#719e07>.</span>is_admin())
-    table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;WinAppDbg&#34;</span>, winappdbg<span style=color:#719e07>.</span>version)
-    table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;Process Count&#34;</span>, system<span style=color:#719e07>.</span>get_process_count())
-
-    <span style=color:#b58900>print</span> table<span style=color:#719e07>.</span>getOutput()
-
-    exit()</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>The most important ones are:</p>
-<ul>
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">29
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>if</span>(args<span style=color:#719e07>.</span>sysinfo):
+</span></span><span style=display:flex><span>    <span style=color:#586e75># Create a System object</span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75># https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/system.py#L66</span>
+</span></span><span style=display:flex><span>    system <span style=color:#719e07>=</span> winappdbg<span style=color:#719e07>.</span>System()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75># Use the built-in WinAppDbg table</span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75># https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/textio.py#L1094</span>
+</span></span><span style=display:flex><span>    table <span style=color:#719e07>=</span> winappdbg<span style=color:#719e07>.</span>Table(<span style=color:#2aa198>&#34;</span><span style=color:#cb4b16>\t</span><span style=color:#2aa198>&#34;</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75># New line</span>
+</span></span><span style=display:flex><span>    table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;&#34;</span>, <span style=color:#2aa198>&#34;&#34;</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75># Header</span>
+</span></span><span style=display:flex><span>    title <span style=color:#719e07>=</span> (<span style=color:#2aa198>&#34;System Information&#34;</span>, <span style=color:#2aa198>&#34;&#34;</span>)
+</span></span><span style=display:flex><span>    table<span style=color:#719e07>.</span>addRow(<span style=color:#719e07>*</span>title)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75># Add system information</span>
+</span></span><span style=display:flex><span>    table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;------------------&#34;</span>)
+</span></span><span style=display:flex><span>    table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;Bits&#34;</span>, system<span style=color:#719e07>.</span>bits)
+</span></span><span style=display:flex><span>    table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;OS&#34;</span>, system<span style=color:#719e07>.</span>os)
+</span></span><span style=display:flex><span>    table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;Architecture&#34;</span>, system<span style=color:#719e07>.</span>arch)
+</span></span><span style=display:flex><span>    table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;32-bit Emulation&#34;</span>, system<span style=color:#719e07>.</span>wow64)
+</span></span><span style=display:flex><span>    table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;Admin&#34;</span>, system<span style=color:#719e07>.</span>is_admin())
+</span></span><span style=display:flex><span>    table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;WinAppDbg&#34;</span>, winappdbg<span style=color:#719e07>.</span>version)
+</span></span><span style=display:flex><span>    table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;Process Count&#34;</span>, system<span style=color:#719e07>.</span>get_process_count())
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#b58900>print</span> table<span style=color:#719e07>.</span>getOutput()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    exit()</span></span></code></pre></td></tr></table></div></div></div></figure><p>The most important ones are:</p><ul>
 <li><code>system.bits</code>: This will return <code>32</code> or <code>64</code> based on the architecture of the current OS. This will come in handy later when we want to modify function parameters and need to adhere to the respective Application Binary Interface (ABI) (e.g. are functions pushed to stack or are stored in registers). Do not worry about it for now.
 <ul>
-<li><strong>This is different from the application being instrumented.</strong> For example the output of <code>bits</code> while debugging a 32-bit app on 64-bit Windows will be <code>64</code>. In that case we need to check <code>system.wow64</code> output.</li>
-</ul>
-</li>
-<li><code>system.wow64</code>: Returns <code>True</code> if we are running a 32-bit application in emulation mode on a 64-bit Windows and <code>False</code> otherwise. Returns <code>False</code> on 32-bit operating systems.</li>
-<li><code>system.is_admin()</code>: Returns <code>True</code> if we are running as admin.</li>
-</ul>
-<p>Result in my VM:</p>
-<pre tabindex=0><code>$ python 03-SystemInfo.py -i
+<li><strong>This is different from the application being instrumented.</strong> For example the output of <code>bits</code> while debugging a 32-bit app on 64-bit Windows will be <code>64</code>. In that case we need to check <code>system.wow64</code> output.</li></ul></li><li><code>system.wow64</code>: Returns <code>True</code> if we are running a 32-bit application in emulation mode on a 64-bit Windows and <code>False</code> otherwise. Returns <code>False</code> on 32-bit operating systems.</li><li><code>system.is_admin()</code>: Returns <code>True</code> if we are running as admin.</li></ul><p>Result in my VM:</p><pre tabindex=0><code>$ python 03-SystemInfo.py -i
 
 System Information
 ------------------
@@ -541,107 +387,77 @@ Architecture            i386
 Admin                   False
 WinAppDbg               Version 1.6
 Process Count           49
-</code></pre>
-<h3 id=built-in-table>Built-in Table
+</code></pre><h3 id=built-in-table>Built-in Table
 <a class=header-link href=#built-in-table><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>WinAppDbg comes with a built-in table. It's pretty easy to use.</p>
-<ol>
+</h3><p>WinAppDbg comes with a built-in table. It's pretty easy to use.</p><ol>
 <li>
-<p>Create a table object with <code>table = winappdbg.Table()</code>. Constructor supports an optional delimiter between rows. For example <code>\t</code> will insert a tab between rows.</p>
-</li>
-<li>
-<p>Add rows with <code>table.addRow("col1", "col2", "col3")</code>.</p>
-</li>
-<li>
-<p>Justify columns with <code>table.Justify(0, 1, 1)</code> where <code>0</code> is justify right and <code>1</code> is justify left.</p>
-</li>
-<li>
-<p><code>table.Show()</code> will print the table.</p>
-</li>
-<li>
-<p><code>table.getOutput()</code> returns a string that can be printed.</p>
-</li>
-<li>
-<p>One good way of separating headers from the rest of rows with a separator is in <a href=http://winappdbg.readthedocs.io/en/latest/MoreExamples.html#show-processes-dep-settings target=_blank rel="noreferrer noopener">code from more examples-4</a>:</p>
-<div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>header <span style=color:#719e07>=</span> (<span style=color:#2aa198>&#34;column1&#34;</span>, <span style=color:#2aa198>&#34;column2&#34;</span>, <span style=color:#2aa198>&#34;column3&#34;</span>)
-separator <span style=color:#719e07>=</span> [ <span style=color:#2aa198>&#34;-&#34;</span> <span style=color:#719e07>*</span> <span style=color:#b58900>len</span>(x) <span style=color:#719e07>for</span> x <span style=color:#719e07>in</span> header ]
-table<span style=color:#719e07>.</span>addRow(<span style=color:#719e07>*</span>header)
-table<span style=color:#719e07>.</span>addRow(<span style=color:#719e07>*</span>separator)
-</code></pre></div></li>
-</ol>
-<p>More info:</p>
-<ul>
-<li><a href=https://winappdbg.readthedocs.io/en/latest/Helpers.html#text-output-in-tables title="Text output in tables - WinAppDbg documentation" target=_blank rel="noreferrer noopener">Table documentation</a></li>
-<li><a href=https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/textio.py#L1094 target=_blank rel="noreferrer noopener">Table source code</a></li>
-</ul>
-<h2 id=04---list-running-processes>04 - List Running Processes
+<p>Create a table object with <code>table = winappdbg.Table()</code>. Constructor supports an optional delimiter between rows. For example <code>\t</code> will insert a tab between rows.</p></li><li>
+<p>Add rows with <code>table.addRow("col1", "col2", "col3")</code>.</p></li><li>
+<p>Justify columns with <code>table.Justify(0, 1, 1)</code> where <code>0</code> is justify right and <code>1</code> is justify left.</p></li><li>
+<p><code>table.Show()</code> will print the table.</p></li><li>
+<p><code>table.getOutput()</code> returns a string that can be printed.</p></li><li>
+<p>One good way of separating headers from the rest of rows with a separator is in <a href=http://winappdbg.readthedocs.io/en/latest/MoreExamples.html#show-processes-dep-settings target=_blank rel="noreferrer noopener">code from more examples-4</a>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span>header <span style=color:#719e07>=</span> (<span style=color:#2aa198>&#34;column1&#34;</span>, <span style=color:#2aa198>&#34;column2&#34;</span>, <span style=color:#2aa198>&#34;column3&#34;</span>)
+</span></span><span style=display:flex><span>separator <span style=color:#719e07>=</span> [ <span style=color:#2aa198>&#34;-&#34;</span> <span style=color:#719e07>*</span> <span style=color:#b58900>len</span>(x) <span style=color:#719e07>for</span> x <span style=color:#719e07>in</span> header ]
+</span></span><span style=display:flex><span>table<span style=color:#719e07>.</span>addRow(<span style=color:#719e07>*</span>header)
+</span></span><span style=display:flex><span>table<span style=color:#719e07>.</span>addRow(<span style=color:#719e07>*</span>separator)
+</span></span></code></pre></div></li></ol><p>More info:</p><ul>
+<li><a href=https://winappdbg.readthedocs.io/en/latest/Helpers.html#text-output-in-tables title="Text output in tables - WinAppDbg documentation" target=_blank rel="noreferrer noopener">Table documentation</a></li><li><a href=https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/textio.py#L1094 target=_blank rel="noreferrer noopener">Table source code</a></li></ul><h2 id=04---list-running-processes>04 - List Running Processes
 <a class=header-link href=#04---list-running-processes><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>We are adding a new functionality to our script. If no argument is passed, print a list of running processes with their pid and filename sorted by pid. This will come in handy later.</p>
-<p>We can accomplish this by creating a <code>System</code> object and then iterating through the processes.</p>
-<figure class=code>
+</h2><p>We are adding a new functionality to our script. If no argument is passed, print a list of running processes with their pid and filename sorted by pid. This will come in handy later.</p><p>We can accomplish this by creating a <code>System</code> object and then iterating through the processes.</p><figure class=code>
 <figcaption>
 <span>04-Processes.py</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#586e75># If no arguments, print running processes</span>
-system <span style=color:#719e07>=</span> winappdbg<span style=color:#719e07>.</span>System()
-
-<span style=color:#586e75># We can reuse example 02 from the docs</span>
-<span style=color:#586e75># https://winappdbg.readthedocs.io/en/latest/Instrumentation.html#example-2-enumerating-running-processes</span>
-table <span style=color:#719e07>=</span> winappdbg<span style=color:#719e07>.</span>Table(<span style=color:#2aa198>&#34;</span><span style=color:#cb4b16>\t</span><span style=color:#2aa198>&#34;</span>)
-table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;&#34;</span>, <span style=color:#2aa198>&#34;&#34;</span>)
-
-header <span style=color:#719e07>=</span> (<span style=color:#2aa198>&#34;pid&#34;</span>, <span style=color:#2aa198>&#34;process&#34;</span>)
-table<span style=color:#719e07>.</span>addRow(<span style=color:#719e07>*</span>header)
-
-table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;----&#34;</span>, <span style=color:#2aa198>&#34;----------&#34;</span>)
-
-processes <span style=color:#719e07>=</span> {}
-
-<span style=color:#586e75># Add all processes to a dictionary then sort them by pid</span>
-<span style=color:#719e07>for</span> process <span style=color:#719e07>in</span> system:
-    processes[process<span style=color:#719e07>.</span>get_pid()] <span style=color:#719e07>=</span> process<span style=color:#719e07>.</span>get_filename()
-
-<span style=color:#586e75># Iterate through processes sorted by pid</span>
-<span style=color:#719e07>for</span> key <span style=color:#719e07>in</span> <span style=color:#b58900>sorted</span>(processes<span style=color:#719e07>.</span>iterkeys()):
-    table<span style=color:#719e07>.</span>addRow(key, processes[key])
-
-<span style=color:#b58900>print</span> table<span style=color:#719e07>.</span>getOutput()</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>We are using the built-in <code>Table</code> again.</p>
-<p>Partial output in my VM:</p>
-<pre tabindex=0><code>$ python 04-Processes.py
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#586e75># If no arguments, print running processes</span>
+</span></span><span style=display:flex><span>system <span style=color:#719e07>=</span> winappdbg<span style=color:#719e07>.</span>System()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75># We can reuse example 02 from the docs</span>
+</span></span><span style=display:flex><span><span style=color:#586e75># https://winappdbg.readthedocs.io/en/latest/Instrumentation.html#example-2-enumerating-running-processes</span>
+</span></span><span style=display:flex><span>table <span style=color:#719e07>=</span> winappdbg<span style=color:#719e07>.</span>Table(<span style=color:#2aa198>&#34;</span><span style=color:#cb4b16>\t</span><span style=color:#2aa198>&#34;</span>)
+</span></span><span style=display:flex><span>table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;&#34;</span>, <span style=color:#2aa198>&#34;&#34;</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>header <span style=color:#719e07>=</span> (<span style=color:#2aa198>&#34;pid&#34;</span>, <span style=color:#2aa198>&#34;process&#34;</span>)
+</span></span><span style=display:flex><span>table<span style=color:#719e07>.</span>addRow(<span style=color:#719e07>*</span>header)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>table<span style=color:#719e07>.</span>addRow(<span style=color:#2aa198>&#34;----&#34;</span>, <span style=color:#2aa198>&#34;----------&#34;</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>processes <span style=color:#719e07>=</span> {}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75># Add all processes to a dictionary then sort them by pid</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>for</span> process <span style=color:#719e07>in</span> system:
+</span></span><span style=display:flex><span>    processes[process<span style=color:#719e07>.</span>get_pid()] <span style=color:#719e07>=</span> process<span style=color:#719e07>.</span>get_filename()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75># Iterate through processes sorted by pid</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>for</span> key <span style=color:#719e07>in</span> <span style=color:#b58900>sorted</span>(processes<span style=color:#719e07>.</span>iterkeys()):
+</span></span><span style=display:flex><span>    table<span style=color:#719e07>.</span>addRow(key, processes[key])
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#b58900>print</span> table<span style=color:#719e07>.</span>getOutput()</span></span></code></pre></td></tr></table></div></div></div></figure><p>We are using the built-in <code>Table</code> again.</p><p>Partial output in my VM:</p><pre tabindex=0><code>$ python 04-Processes.py
 
 pid     process
 ----    ----------
@@ -662,131 +478,111 @@ pid     process
 1748    C:\Program Files\Google\Chrome\Application\chrome.exe
 1888    C:\Windows\system32\cmd.exe
 1944    C:\Program Files\Google\Chrome\Application\chrome.exe
-</code></pre>
-<h2 id=05---attach-to-process-by-pid>05 - Attach to Process by pid
+</code></pre><h2 id=05---attach-to-process-by-pid>05 - Attach to Process by pid
 <a class=header-link href=#05---attach-to-process-by-pid><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Starting applications is fun but usually we want to attach to a running process. Let's add a <code>pid</code> switch to our script.</p>
-<p>The <code>Debug.attach(pid)</code> method does what we want. The rest of the code checks if the pid exists before attempting to attach to it.</p>
-<figure class=code>
+</h2><p>Starting applications is fun but usually we want to attach to a running process. Let's add a <code>pid</code> switch to our script.</p><p>The <code>Debug.attach(pid)</code> method does what we want. The rest of the code checks if the pid exists before attempting to attach to it.</p><figure class=code>
 <figcaption>
 <span>05-Attach.py</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">25
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">26
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">27
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">28
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">29
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">30
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">31
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">32
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#719e07>if</span> (args<span style=color:#719e07>.</span>pid):
-    system <span style=color:#719e07>=</span> winappdbg<span style=color:#719e07>.</span>System()
-
-    <span style=color:#586e75># Get all pids</span>
-    pids <span style=color:#719e07>=</span> system<span style=color:#719e07>.</span>get_process_ids()
-
-    <span style=color:#719e07>if</span> args<span style=color:#719e07>.</span>pid <span style=color:#719e07>in</span> pids:
-        <span style=color:#586e75># pid exists</span>
-
-        <span style=color:#586e75># Create a Debug object</span>
-        debug <span style=color:#719e07>=</span> winappdbg<span style=color:#719e07>.</span>Debug()
-
-        <span style=color:#719e07>try</span>:
-            <span style=color:#586e75># Attach to pid</span>
-            <span style=color:#586e75># attach: https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/debug.py#L219</span>
-            my_process <span style=color:#719e07>=</span> debug<span style=color:#719e07>.</span>attach(args<span style=color:#719e07>.</span>pid)
-
-            <span style=color:#b58900>print</span> <span style=color:#2aa198>&#34;Attached to </span><span style=color:#2aa198>%d</span><span style=color:#2aa198> - </span><span style=color:#2aa198>%s</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> (my_process<span style=color:#719e07>.</span>get_pid(),
-                                           my_process<span style=color:#719e07>.</span>get_filename())
-
-            <span style=color:#586e75># Keep debugging until the debugger stops</span>
-            debug<span style=color:#719e07>.</span>loop()
-
-        <span style=color:#719e07>finally</span>:
-            <span style=color:#586e75># Stop the debugger</span>
-            debug<span style=color:#719e07>.</span>stop()
-            <span style=color:#b58900>print</span> <span style=color:#2aa198>&#34;Debugger stopped.&#34;</span>
-
-    <span style=color:#719e07>else</span>:
-        <span style=color:#b58900>print</span> <span style=color:#2aa198>&#34;pid </span><span style=color:#2aa198>%d</span><span style=color:#2aa198> not found.&#34;</span> <span style=color:#719e07>%</span> (args<span style=color:#719e07>.</span>pid)
-
-    exit()</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<h3 id=mutually-exclusive-argparse-groups>Mutually Exclusive Argparse Groups
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">31
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">32
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>if</span> (args<span style=color:#719e07>.</span>pid):
+</span></span><span style=display:flex><span>    system <span style=color:#719e07>=</span> winappdbg<span style=color:#719e07>.</span>System()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75># Get all pids</span>
+</span></span><span style=display:flex><span>    pids <span style=color:#719e07>=</span> system<span style=color:#719e07>.</span>get_process_ids()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> args<span style=color:#719e07>.</span>pid <span style=color:#719e07>in</span> pids:
+</span></span><span style=display:flex><span>        <span style=color:#586e75># pid exists</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#586e75># Create a Debug object</span>
+</span></span><span style=display:flex><span>        debug <span style=color:#719e07>=</span> winappdbg<span style=color:#719e07>.</span>Debug()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#719e07>try</span>:
+</span></span><span style=display:flex><span>            <span style=color:#586e75># Attach to pid</span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># attach: https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/debug.py#L219</span>
+</span></span><span style=display:flex><span>            my_process <span style=color:#719e07>=</span> debug<span style=color:#719e07>.</span>attach(args<span style=color:#719e07>.</span>pid)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#b58900>print</span> <span style=color:#2aa198>&#34;Attached to </span><span style=color:#2aa198>%d</span><span style=color:#2aa198> - </span><span style=color:#2aa198>%s</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> (my_process<span style=color:#719e07>.</span>get_pid(),
+</span></span><span style=display:flex><span>                                           my_process<span style=color:#719e07>.</span>get_filename())
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#586e75># Keep debugging until the debugger stops</span>
+</span></span><span style=display:flex><span>            debug<span style=color:#719e07>.</span>loop()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#719e07>finally</span>:
+</span></span><span style=display:flex><span>            <span style=color:#586e75># Stop the debugger</span>
+</span></span><span style=display:flex><span>            debug<span style=color:#719e07>.</span>stop()
+</span></span><span style=display:flex><span>            <span style=color:#b58900>print</span> <span style=color:#2aa198>&#34;Debugger stopped.&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>else</span>:
+</span></span><span style=display:flex><span>        <span style=color:#b58900>print</span> <span style=color:#2aa198>&#34;pid </span><span style=color:#2aa198>%d</span><span style=color:#2aa198> not found.&#34;</span> <span style=color:#719e07>%</span> (args<span style=color:#719e07>.</span>pid)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    exit()</span></span></code></pre></td></tr></table></div></div></div></figure><h3 id=mutually-exclusive-argparse-groups>Mutually Exclusive Argparse Groups
 <a class=header-link href=#mutually-exclusive-argparse-groups><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>Adding the new <code>pid</code> switch will conflict with our old <code>run</code> switch. We do not want to do both of them at the same time. This is done in <code>argparse</code> by creating a mutually exclusive group and adding arguments to it. These arguments cannot be passed together.</p>
-<p>Other argument can be added normally via <code>add_argument</code> to the original parser object.</p>
-<figure class=code>
+</h3><p>Adding the new <code>pid</code> switch will conflict with our old <code>run</code> switch. We do not want to do both of them at the same time. This is done in <code>argparse</code> by creating a mutually exclusive group and adding arguments to it. These arguments cannot be passed together.</p><p>Other argument can be added normally via <code>add_argument</code> to the original parser object.</p><figure class=code>
 <figcaption>
 <span>Mutually exclusive Argparse groups</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>parser <span style=color:#719e07>=</span> argparse<span style=color:#719e07>.</span>ArgumentParser(description<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;WinAppDbg stuff.&#34;</span>)
-<span style=color:#586e75># Make -r and -pid mutually exclusive</span>
-group <span style=color:#719e07>=</span> parser<span style=color:#719e07>.</span>add_mutually_exclusive_group()
-group<span style=color:#719e07>.</span>add_argument(<span style=color:#2aa198>&#34;-r&#34;</span>, <span style=color:#2aa198>&#34;--run&#34;</span>, nargs<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;+&#34;</span>,
-                   help<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;path to application followed by parameters&#34;</span>)
-group<span style=color:#719e07>.</span>add_argument(<span style=color:#2aa198>&#34;-pid&#34;</span>, <span style=color:#2aa198>&#34;--attach-pid&#34;</span>, <span style=color:#b58900>type</span><span style=color:#719e07>=</span><span style=color:#b58900>int</span>, dest<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;pid&#34;</span>,
-                   help<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;pid of process to attach and instrument&#34;</span>)
-
-parser<span style=color:#719e07>.</span>add_argument(<span style=color:#2aa198>&#34;-i&#34;</span>, <span style=color:#2aa198>&#34;--sysinfo&#34;</span>, action<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;store_true&#34;</span>,
-                    help<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;print system information&#34;</span>)
-
-args <span style=color:#719e07>=</span> parser<span style=color:#719e07>.</span>parse_args()</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>Now we can run notepad (or any other application), run the script without any arguments to get a list running processes and then attach to notepad using the pid.</p>
-<pre tabindex=0><code>$ notepad.exe
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span>parser <span style=color:#719e07>=</span> argparse<span style=color:#719e07>.</span>ArgumentParser(description<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;WinAppDbg stuff.&#34;</span>)
+</span></span><span style=display:flex><span><span style=color:#586e75># Make -r and -pid mutually exclusive</span>
+</span></span><span style=display:flex><span>group <span style=color:#719e07>=</span> parser<span style=color:#719e07>.</span>add_mutually_exclusive_group()
+</span></span><span style=display:flex><span>group<span style=color:#719e07>.</span>add_argument(<span style=color:#2aa198>&#34;-r&#34;</span>, <span style=color:#2aa198>&#34;--run&#34;</span>, nargs<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;+&#34;</span>,
+</span></span><span style=display:flex><span>                   help<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;path to application followed by parameters&#34;</span>)
+</span></span><span style=display:flex><span>group<span style=color:#719e07>.</span>add_argument(<span style=color:#2aa198>&#34;-pid&#34;</span>, <span style=color:#2aa198>&#34;--attach-pid&#34;</span>, <span style=color:#b58900>type</span><span style=color:#719e07>=</span><span style=color:#b58900>int</span>, dest<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;pid&#34;</span>,
+</span></span><span style=display:flex><span>                   help<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;pid of process to attach and instrument&#34;</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>parser<span style=color:#719e07>.</span>add_argument(<span style=color:#2aa198>&#34;-i&#34;</span>, <span style=color:#2aa198>&#34;--sysinfo&#34;</span>, action<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;store_true&#34;</span>,
+</span></span><span style=display:flex><span>                    help<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;print system information&#34;</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>args <span style=color:#719e07>=</span> parser<span style=color:#719e07>.</span>parse_args()</span></span></code></pre></td></tr></table></div></div></div></figure><p>Now we can run notepad (or any other application), run the script without any arguments to get a list running processes and then attach to notepad using the pid.</p><pre tabindex=0><code>$ notepad.exe
 
 $ python 05-Attach.py | findstr notepad
 2924    C:\Windows\system32\notepad.exe
@@ -794,74 +590,63 @@ $ python 05-Attach.py | findstr notepad
 $ python 05-Attach.py -pid 2924
 Attached to 2924 - C:\Windows\system32\notepad.exe
 Debugger stopped.
-</code></pre>
-<h2 id=06---attach-to-process-by-name>06 - Attach to Process by Name
+</code></pre><h2 id=06---attach-to-process-by-name>06 - Attach to Process by Name
 <a class=header-link href=#06---attach-to-process-by-name><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>We can attach to a process by name with <code>debug.system.find_processes_by_filename</code>.</p>
-<p>We also need to add the new <code>-pname</code> argument to the mutually exclusive group.</p>
-<figure class=code>
+</h2><p>We can attach to a process by name with <code>debug.system.find_processes_by_filename</code>.</p><p>We also need to add the new <code>-pname</code> argument to the mutually exclusive group.</p><figure class=code>
 <figcaption>
 <span>06.AttachByName.py</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">23
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">24
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#586e75># Find a process by name and attach to it</span>
-<span style=color:#719e07>if</span> (args<span style=color:#719e07>.</span>pname):
-    debug <span style=color:#719e07>=</span> winappdbg<span style=color:#719e07>.</span>Debug()
-
-    <span style=color:#586e75># example 3:</span>
-    <span style=color:#586e75># https://winappdbg.readthedocs.io/en/latest/_downloads/03_find_and_attach.py</span>
-
-    <span style=color:#719e07>try</span>:
-        debug<span style=color:#719e07>.</span>system<span style=color:#719e07>.</span>scan()
-        <span style=color:#719e07>for</span> (process, name) <span style=color:#719e07>in</span> debug<span style=color:#719e07>.</span>system<span style=color:#719e07>.</span>find_processes_by_filename(args<span style=color:#719e07>.</span>pname):
-            <span style=color:#b58900>print</span> <span style=color:#2aa198>&#34;Found </span><span style=color:#2aa198>%d</span><span style=color:#2aa198>, </span><span style=color:#2aa198>%s</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> (process<span style=color:#719e07>.</span>get_pid(),
-                                    process<span style=color:#719e07>.</span>get_filename())
-
-            debug<span style=color:#719e07>.</span>attach(process<span style=color:#719e07>.</span>get_pid())
-
-            <span style=color:#b58900>print</span> <span style=color:#2aa198>&#34;Attached to </span><span style=color:#2aa198>%d</span><span style=color:#2aa198>-</span><span style=color:#2aa198>%s</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> (process<span style=color:#719e07>.</span>get_pid(),
-                                         process<span style=color:#719e07>.</span>get_filename())
-
-        debug<span style=color:#719e07>.</span>loop()
-
-    <span style=color:#719e07>finally</span>:
-        debug<span style=color:#719e07>.</span>stop()
-
-    exit()</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>Usage is similar:</p>
-<pre tabindex=0><code>$ notepad.exe
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#586e75># Find a process by name and attach to it</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>if</span> (args<span style=color:#719e07>.</span>pname):
+</span></span><span style=display:flex><span>    debug <span style=color:#719e07>=</span> winappdbg<span style=color:#719e07>.</span>Debug()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75># example 3:</span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75># https://winappdbg.readthedocs.io/en/latest/_downloads/03_find_and_attach.py</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>try</span>:
+</span></span><span style=display:flex><span>        debug<span style=color:#719e07>.</span>system<span style=color:#719e07>.</span>scan()
+</span></span><span style=display:flex><span>        <span style=color:#719e07>for</span> (process, name) <span style=color:#719e07>in</span> debug<span style=color:#719e07>.</span>system<span style=color:#719e07>.</span>find_processes_by_filename(args<span style=color:#719e07>.</span>pname):
+</span></span><span style=display:flex><span>            <span style=color:#b58900>print</span> <span style=color:#2aa198>&#34;Found </span><span style=color:#2aa198>%d</span><span style=color:#2aa198>, </span><span style=color:#2aa198>%s</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> (process<span style=color:#719e07>.</span>get_pid(),
+</span></span><span style=display:flex><span>                                    process<span style=color:#719e07>.</span>get_filename())
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            debug<span style=color:#719e07>.</span>attach(process<span style=color:#719e07>.</span>get_pid())
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#b58900>print</span> <span style=color:#2aa198>&#34;Attached to </span><span style=color:#2aa198>%d</span><span style=color:#2aa198>-</span><span style=color:#2aa198>%s</span><span style=color:#2aa198>&#34;</span> <span style=color:#719e07>%</span> (process<span style=color:#719e07>.</span>get_pid(),
+</span></span><span style=display:flex><span>                                         process<span style=color:#719e07>.</span>get_filename())
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        debug<span style=color:#719e07>.</span>loop()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>finally</span>:
+</span></span><span style=display:flex><span>        debug<span style=color:#719e07>.</span>stop()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    exit()</span></span></code></pre></td></tr></table></div></div></div></figure><p>Usage is similar:</p><pre tabindex=0><code>$ notepad.exe
 
 $ python 06-AttachByName.py | findstr notepad
 3596    C:\Windows\system32\notepad.exe
@@ -869,56 +654,38 @@ $ python 06-AttachByName.py | findstr notepad
 $ python 06-AttachByName.py -pname notepad
 Found 3596, C:\Windows\system32\notepad.exe
 Attached to 3596-C:\Windows\system32\notepad.exe
-</code></pre>
-<h2 id=07---logging>07 - Logging
+</code></pre><h2 id=07---logging>07 - Logging
 <a class=header-link href=#07---logging><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Up until now we have used <code>print</code> statements to display information which is barbaric at best (lol). WinAppDbg has a built-in logger. We can also use our own logger but the built-in logger has some extra utilities. However, I wish the built-in logger could disable timestamps.</p>
-<p>We will add logging functionality to our script with <code>-o</code> and use the built-in logger. With <code>-o</code> we can pass a file to store the logs.</p>
-<p>winappdbg.Logger can be created using two arguments. First one is a filename and second one is <code>verbose</code>. If <code>verbose</code> is set to <code>True</code>, output will be logged to stdout.</p>
-<figure class=code>
+</h2><p>Up until now we have used <code>print</code> statements to display information which is barbaric at best (lol). WinAppDbg has a built-in logger. We can also use our own logger but the built-in logger has some extra utilities. However, I wish the built-in logger could disable timestamps.</p><p>We will add logging functionality to our script with <code>-o</code> and use the built-in logger. With <code>-o</code> we can pass a file to store the logs.</p><p>winappdbg.Logger can be created using two arguments. First one is a filename and second one is <code>verbose</code>. If <code>verbose</code> is set to <code>True</code>, output will be logged to stdout.</p><figure class=code>
 <figcaption>
 <span>07-Logging.py</span>
-</figcaption>
-<div class=codewrapper>
+</figcaption><div class=codewrapper>
 <div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#495050">10
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#586e75># Setup logging</span>
-<span style=color:#586e75># https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/textio.py#L1766</span>
-<span style=color:#586e75># Log to file</span>
-
-<span style=color:#719e07>global</span> logger
-<span style=color:#719e07>if</span> args<span style=color:#719e07>.</span>output:
-    <span style=color:#586e75># verbose=False disables printing to stdout</span>
-    logger <span style=color:#719e07>=</span> winappdbg<span style=color:#719e07>.</span>Logger(args<span style=color:#719e07>.</span>output, verbose<span style=color:#719e07>=</span><span style=color:#cb4b16>False</span>)
-<span style=color:#719e07>else</span>:
-    logger <span style=color:#719e07>=</span> winappdbg<span style=color:#719e07>.</span>Logger()</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-</figure>
-<p>Now we can use <code>logger.log_text(str)</code> to log any string. Just note that we need to pass a string to it (otherwise it will raise an exception), so wrap everything in <code>str</code>.</p>
-<p>More info:</p>
-<ul>
-<li><a href=https://winappdbg.readthedocs.io/en/latest/Helpers.html#logging title="Logging - WinAppDbg documentation" target=_blank rel="noreferrer noopener">Logger documentation</a></li>
-<li><a href=https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/textio.py#L1766 target=_blank rel="noreferrer noopener">Logger source code</a></li>
-</ul>
-<h1 id=conclusion>Conclusion
+<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#586e75># Setup logging</span>
+</span></span><span style=display:flex><span><span style=color:#586e75># https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/textio.py#L1766</span>
+</span></span><span style=display:flex><span><span style=color:#586e75># Log to file</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>global</span> logger
+</span></span><span style=display:flex><span><span style=color:#719e07>if</span> args<span style=color:#719e07>.</span>output:
+</span></span><span style=display:flex><span>    <span style=color:#586e75># verbose=False disables printing to stdout</span>
+</span></span><span style=display:flex><span>    logger <span style=color:#719e07>=</span> winappdbg<span style=color:#719e07>.</span>Logger(args<span style=color:#719e07>.</span>output, verbose<span style=color:#719e07>=</span><span style=color:#cb4b16>False</span>)
+</span></span><span style=display:flex><span><span style=color:#719e07>else</span>:
+</span></span><span style=display:flex><span>    logger <span style=color:#719e07>=</span> winappdbg<span style=color:#719e07>.</span>Logger()</span></span></code></pre></td></tr></table></div></div></div></figure><p>Now we can use <code>logger.log_text(str)</code> to log any string. Just note that we need to pass a string to it (otherwise it will raise an exception), so wrap everything in <code>str</code>.</p><p>More info:</p><ul>
+<li><a href=https://winappdbg.readthedocs.io/en/latest/Helpers.html#logging title="Logging - WinAppDbg documentation" target=_blank rel="noreferrer noopener">Logger documentation</a></li><li><a href=https://github.com/MarioVilas/winappdbg/blob/master/winappdbg/textio.py#L1766 target=_blank rel="noreferrer noopener">Logger source code</a></li></ul><h1 id=conclusion>Conclusion
 <a class=header-link href=#conclusion><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>We learned a bunch of basic building blocks. In next part I will introduce my helper code and we will tackle more advanced subjects like function hooking and manipulation. For now, go out and start experimenting with WinAppDbg. As usual, if you have any feedback, please let me know.</p>
-</div>
-<footer>
+</h1><p>We learned a bunch of basic building blocks. In next part I will introduce my helper code and we will tackle more advanced subjects like function hooking and manipulation. For now, go out and start experimenting with WinAppDbg. As usual, if you have any feedback, please let me know.</p></div><footer>
 <p class=meta>
 <span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>Nov 9, 2017</time>
@@ -926,82 +693,47 @@ Attached to 3596-C:\Windows\system32\notepad.exe
 Tags:
 <a class=category href=https://parsiya.net/tags/python>python</a>
 </span>
-</p>
-<p class=meta>
+</p><p class=meta>
 <a class="basic-alignment left" href=https://parsiya.net/blog/2017-10-26-silly-attack-using-run-line/ title="Silly Attack Using Run Line">Silly Attack Using Run Line</a>
 <a class="basic-alignment right" href=https://parsiya.net/blog/2017-11-11-winappdbg-part-2-function-hooking-and-others/ title="WinAppDbg - Part 2 - Function Hooking and Others">WinAppDbg - Part 2 - Function Hooking and Others</a>
-</p>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//parsiya.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</div>
-<aside class="sidebar thirds">
+</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer></article></div><aside class="sidebar thirds">
 <section class="first odd">
-<h1>Who am I?</h1>
-<p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security>Electronic Arts</a>.</p>
-<p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p>
-<p>Click on <a href=/about/>About Me!</a> to know more.</p>
-</p>
-</section>
-<ul class=sidebar-nav>
+<h1>Who am I?</h1><p>
+<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
 <li class=sidebar-nav-item>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li>
-</ul>
-<section class=odd>
-<h1>Collections</h1>
-<li>
+</li></ul><section class=odd>
+<h1>Collections</h1><li>
 <a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li>
-<li>
+</li><li>
 <a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li>
-<li>
+</li><li>
 <a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li>
-</section>
-</aside>
-</div>
-</div>
-<footer role=contentinfo>
+</li></section></aside></div></div><footer role=contentinfo>
 <p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>
