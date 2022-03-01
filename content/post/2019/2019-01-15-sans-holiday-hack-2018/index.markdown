@@ -14,7 +14,7 @@ categories:
 
 SANS Holiday hack challenge 2018 was fun. It was also the first one I tried. I liked the talks and that the challenges were accessible to most skill levels. I mean [RCE through the -0 bug in v8 is great and all](https://abiondo.me/2019/01/02/exploiting-math-expm1-v8/) but I want people to be able to have fun and learn new skills.
 
-If being a security consultant has taught me anything, it's that no one has time to read your 100 page report. So here are some quick solutions. I will post my notes from the Youtube videos in different posts.
+If being a security consultant has taught me anything, it's that no one has time to read your 100 page report. So here are some quick solutions. I will post my notes from the YouTube videos in different posts.
 
 <!--more-->
 
@@ -927,7 +927,7 @@ We have already seen the domain in Wireshark, it's `erohetfanu.com`.
 
 ### Dropper Analysis
 **Update 2022-02-07**: Windows Defender keeps deleting this file because it
-detects a trojan. This is likely because this dropper code. I am tired of
+detects a trojan. This is likely because of this dropper code. I am tired of
 reverting this. So I am gonna remove parts of this section to figure out which
 part is the culprit. The cleaned up PowerShell script is on GitHub.
 
@@ -952,11 +952,6 @@ I use this simple trick at work to find domains with dynamic analysis:
 7. Profit
 
 After downloading the `docm` file, Windows defender goes haywire.
-
-```
-Trojan:Win32/Occamy.C
-file: C:\...\CHOCOLATE_CHIP_COOKIE_RECIPE.docm->word/vbaProject.bin
-```
 
 We can run `olevba` on it to get the macro. Seems like there are two macros with the same content.
 
@@ -1199,22 +1194,7 @@ What is the AES key used for? It's used to encrypt `elfdb` files as seen in `Enc
 
 ``` powershell
 function EncryptDecryptFile ($key,$File,$enc_it) {
-    [byte[]]$key = $key
-    $Suffix = "`.wannacookie"
-    [System.Reflection.Assembly]::LoadWithPartialName('System.Security.Cryptography')
-    [System.Int32]$KeySize = $key.Length * 8
-    $AESP = New-Object 'System.Security.Cryptography.AesManaged'
-    $AESP.Mode = [System.Security.Cryptography.CipherMode]::CBC
-    $AESP.BlockSize = 128
-    $AESP.KeySize = $KeySize
-    $AESP.Key = $key
-    $FileSR = New-Object System.IO.FileStream ($File,[System.IO.FileMode]::Open)
-    if ($enc_it) {
-        $DestFile = $File + $Suffix 
-    } else {
-        $DestFile = ($File -replace $Suffix) 
-    }
-    $FileSW = New-Object System.IO.FileStream ($DestFile,[System.IO.FileMode]::Create)
+    # removed
     if ($enc_it) {
         # generate IV - 16 bytes
         $AESP.GenerateIV()
@@ -1224,7 +1204,7 @@ function EncryptDecryptFile ($key,$File,$enc_it) {
         $FileSW.Write($AESP.IV,0,$AESP.IV.Length)
         $Transform = $AESP.CreateEncryptor() 
     } else {
-    // removed
+    # removed
 }
 ```
 
