@@ -17,9 +17,9 @@ I ported the [Octopress][octopress] classic theme to Hugo.
   1. `ctrl+shift+b` in VS Code starts a task that runs the Hugo watch server and
      opens it in a browser. See [.vscode/tasks.json](.vscode/tasks.json).
 3. Push to Github.
-4. Github action takes over and builds the site.
+4. Github action takes over and builds the site and deploys it to GitHub pages.
     * See the "Deploying" section below for more information.
-5. [s3deploy][s3deploy] uploads the results to AWS.
+5. ~~[s3deploy][s3deploy] uploads the results to AWS.~~
 6. ???
 7. Profit. The website is now updated. Add CI/CD to your resume.
 
@@ -36,8 +36,8 @@ certificate). GitHub pages are also popular (and free). See my blog post
 ## Deploying
 I use a custom GitHub action. See [deploy.yml](.github/workflows/deploy.yml).
 
-### s3deploy
-I use [s3deploy][s3deploy] to deploy the blog to AWS. The configuration is
+### s3deploy - Not Used Anymore
+I used [s3deploy][s3deploy] to deploy the blog to AWS. The configuration is
 inside [.s3deploy.yml](.s3deploy.yml). [This example][s3deploy-config] is
 suitable (with a bit of modification) for most static websites.
 
