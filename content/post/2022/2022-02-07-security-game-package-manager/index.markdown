@@ -183,8 +183,8 @@ I know! There's no good way to fix it. Additionally:
    am sure other game companies see a similar pattern.
 2. For old games, compatibility trumps security. Users just want a seamless
    experience (buy > download > play).
-3. `Insecure system is insecure`. If you install games (or Origin/EA App) at an
-   insecure location there's not much we can do.
+3. `An intentionally insecure system is insecure`. If you install a game in an
+   insecure path there's not much we can do.
 
 Actually, the 3rd one is a lie. There are some things we can do. We store the
 binaries associated with Windows services at
