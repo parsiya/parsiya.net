@@ -45,7 +45,8 @@ rules and stores them under <code>security/audit</code>. You can run them all wi
 SQL strings), we recommend appending audit to your namespace. This distinguishes
 it from a security rule that is specifically aiming to detect a vulnerability.</p><footer><strong></strong></footer></blockquote><h3 id=audit-shouldnt-be-under-security-in-the-semgrep-rules-repository>Audit Shouldn't be Under Security in the Semgrep Rules Repository
 <a class=header-link href=#audit-shouldnt-be-under-security-in-the-semgrep-rules-repository><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p><strong>Semgrep bashing ahead.</strong></p><blockquote><p>Et tu, Parsia?</p><footer><strong>- r2c folks (OK! They actually didn't say this)</strong></footer></blockquote><p>TL;DR: Running rules under <code>security</code> will also run the noisier <code>audit</code>.
-<code>security</code> and <code>audit</code> should be separate categories.</p><p>Semgrep can use local rules with <code>--config /path/to/rules/</code>. It will run every
+<code>security</code> and <code>audit</code> should be separate categories in my opinion. You can
+avoid this issue by using policies but it's still a problem with local rules.</p><p>Semgrep can use local rules with <code>--config /path/to/rules/</code>. It will run every
 rule in the path and any subdirectories. So,
 <code>--config semgrep-rules/python/lang/security</code> will also run the rules in
 <code>python/lang/security/audit</code></p><p>We can directly use the registry without downloading the rules.
