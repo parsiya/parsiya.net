@@ -1,160 +1,63 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
-<link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>The Encrypted Logz - Some Simple Reverse Engineering</title><link rel=stylesheet href=/css/hugo-octopress.css>
-<link rel=stylesheet href=/css/fork-awesome.min.css>
-<link href=https://parsiya.net/favicon.png rel=icon>
-<meta name=description content>
-<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
-<meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.93.0">
-<meta name=twitter:card content="summary_large_image">
-<meta name=twitter:image:src content="https://parsiya.net/blog/2020-04-17-the-encrypted-logz-some-simple-reverse-engineering/19-generate.png">
-<meta name=twitter:title content="The Encrypted Logz - Some Simple Reverse Engineering">
-<meta name=twitter:description content="I was looking at an application (not related to my day job) and I decided to
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>The Encrypted Logz - Some Simple Reverse Engineering</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.96.0"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2020-04-17-the-encrypted-logz-some-simple-reverse-engineering/19-generate.png"><meta name=twitter:title content="The Encrypted Logz - Some Simple Reverse Engineering"><meta name=twitter:description content="I was looking at an application (not related to my day job) and I decided to
 reverse engineer how it creates logs. I cannot name the app (yet) but hopefully,
-this is useful.">
-<meta name=twitter:domain content="parsiya.net">
-<meta name=twitter:creator content="@CryptoGangsta">
-</head><body>
-<header role=banner>
-<hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
-<fieldset class=mobile-nav>
-<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset><ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
-<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
-<fieldset role=search>
-<input class=search type=text name=q results=0 placeholder=Search>
-<input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset></form></nav><div id=main>
-<div id=content>
-<div>
-<article class=hentry role=article>
-<header>
-<p class=meta>Apr 17, 2020
+this is useful."><meta name=twitter:domain content="parsiya.net"><meta name=twitter:creator content="@CryptoGangsta"></head><body><header role=banner><hgroup><h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation><fieldset class=mobile-nav><select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select></fieldset><ul class=main-navigation><li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription><a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a></ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer"><fieldset role=search><input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/></fieldset></form></nav><div id=main><div id=content><div><article class=hentry role=article><header><p class=meta>Apr 17, 2020
 - 19 minute read
 - <a href=https://parsiya.net/blog/2020-04-17-the-encrypted-logz-some-simple-reverse-engineering/#disqus_thread>Comments</a>
-- <a class=label href=https://parsiya.net/categories/reverse-engineering/>reverse engineering </a><a class=label href=https://parsiya.net/categories/crypto/>crypto </a>
-</p><h1 class=entry-title>
-The Encrypted Logz - Some Simple Reverse Engineering
-</h1></header><div class=entry-content>
-<nav id=TableOfContents>
-<ul>
-<li><a href=#what-does-it-look-like>What does it Look Like?</a></li><li><a href=#symbols>Symbols</a>
-<ul>
-<li><a href=#qt5-symbols>Qt5 Symbols</a>
-<ul>
-<li><a href=#ghidra-pdb-issues>Ghidra PDB Issues</a></li></ul></li><li><a href=#importing-from-ida-to-ghidra>Importing from IDA to Ghidra</a></li></ul></li><li><a href=#analysis>Analysis</a>
-<ul>
-<li><a href=#just-guess-until-you-find-something>Just Guess Until You Find Something</a>
-<ul>
-<li><a href=#the-encryption-algorithm>The Encryption Algorithm</a></li><li><a href=#min-and-max-values>Min and Max Values</a></li></ul></li><li><a href=#the-bad-route>The Bad Route</a>
-<ul>
-<li><a href=#debug-mode>Debug mode</a></li><li><a href=#back-to-hunting-for-encryption>Back to Hunting for Encryption</a></li><li><a href=#rage-quit>Rage Quit</a></li></ul></li></ul></li><li><a href=#decryptlog-code>DecryptLog Code</a></li><li><a href=#what-did-we-learn-here-today>What Did We Learn Here Today?</a></li></ul></nav><p>I was looking at an application (not related to my day job) and I decided to
+- <a class=label href=https://parsiya.net/categories/reverse-engineering/>reverse engineering </a><a class=label href=https://parsiya.net/categories/crypto/>crypto</a></p><h1 class=entry-title>The Encrypted Logz - Some Simple Reverse Engineering</h1></header><div class=entry-content><nav id=TableOfContents><ul><li><a href=#what-does-it-look-like>What does it Look Like?</a></li><li><a href=#symbols>Symbols</a><ul><li><a href=#qt5-symbols>Qt5 Symbols</a><ul><li><a href=#ghidra-pdb-issues>Ghidra PDB Issues</a></li></ul></li><li><a href=#importing-from-ida-to-ghidra>Importing from IDA to Ghidra</a></li></ul></li><li><a href=#analysis>Analysis</a><ul><li><a href=#just-guess-until-you-find-something>Just Guess Until You Find Something</a><ul><li><a href=#the-encryption-algorithm>The Encryption Algorithm</a></li><li><a href=#min-and-max-values>Min and Max Values</a></li></ul></li><li><a href=#the-bad-route>The Bad Route</a><ul><li><a href=#debug-mode>Debug mode</a></li><li><a href=#back-to-hunting-for-encryption>Back to Hunting for Encryption</a></li><li><a href=#rage-quit>Rage Quit</a></li></ul></li></ul></li><li><a href=#decryptlog-code>DecryptLog Code</a></li><li><a href=#what-did-we-learn-here-today>What Did We Learn Here Today?</a></li></ul></nav><p>I was looking at an application (not related to my day job) and I decided to
 reverse engineer how it creates logs. I cannot name the app (yet) but hopefully,
 this is useful.</p><h1 id=what-does-it-look-like>What does it Look Like?
-<a class=header-link href=#what-does-it-look-like><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>I executed the app and saw events in procmon creating logs in.</p><ul>
-<li><code>C:\Users\Parsia\AppData\Local\[brand]\[app-suite-name]\Logs</code>.</li></ul><p>Opened a log file and it looked encrypted. Why encrypted? Look at all the jumble
+<a class=header-link href=#what-does-it-look-like><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>I executed the app and saw events in procmon creating logs in.</p><ul><li><code>C:\Users\Parsia\AppData\Local\[brand]\[app-suite-name]\Logs</code>.</li></ul><p>Opened a log file and it looked encrypted. Why encrypted? Look at all the jumble
 of data with high entropy. These kinds of files usually either compressed files
 or encrypted data.</p><p>How do we know it's encrypted? Compressed files usually have large headers. So
 the start of the file does not have high entropy. This one has a tiny header and
-we can see the word <code>LOGZ</code>.</p><span class=caption-wrapper>
-<img class=caption src=01-encrypted-log.png title="Encrypted log" alt="Encrypted log">
-<span class=caption-text>Encrypted log</span>
-</span>
-<p>How do we figure out who writes to it? Procmon.</p><ol>
-<li>Run procmon.</li><li>Set filter.<code>Path</code> - <code>begins with</code> - <code>path/to/log/directory</code>.</li><li>Run the app.</li><li>See who edits the log.</li></ol><span class=caption-wrapper>
-<img class=caption src=02-procmon-filter.png title="procmon filter" alt="procmon filter">
-<span class=caption-text>procmon filter</span>
-</span>
-<p>We can see the file access events. It's the main <code>app.exe</code>.</p><span class=caption-wrapper>
-<img class=caption src=03-procmon-events.png title="Log write events in procmon" alt="Log write events in procmon">
-<span class=caption-text>Log write events in procmon</span>
-</span>
-<p>Double-click on an event and select the <code>Stack</code> tab. It's using <code>Qt5Core.dll 5.9.2.0</code>.</p><span class=caption-wrapper>
-<img class=caption src=04-event-stack.png title="Log write stack" alt="Log write stack">
-<span class=caption-text>Log write stack</span>
-</span>
-<h1 id=symbols>Symbols
-<a class=header-link href=#symbols><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Having symbols is nice. Qt5 is an open source project and we can download its
+we can see the word <code>LOGZ</code>.</p><span class=caption-wrapper><img class=caption src=01-encrypted-log.png title="Encrypted log" alt="Encrypted log">
+<span class=caption-text>Encrypted log</span></span><p>How do we figure out who writes to it? Procmon.</p><ol><li>Run procmon.</li><li>Set filter.<code>Path</code> - <code>begins with</code> - <code>path/to/log/directory</code>.</li><li>Run the app.</li><li>See who edits the log.</li></ol><span class=caption-wrapper><img class=caption src=02-procmon-filter.png title="procmon filter" alt="procmon filter">
+<span class=caption-text>procmon filter</span></span><p>We can see the file access events. It's the main <code>app.exe</code>.</p><span class=caption-wrapper><img class=caption src=03-procmon-events.png title="Log write events in procmon" alt="Log write events in procmon">
+<span class=caption-text>Log write events in procmon</span></span><p>Double-click on an event and select the <code>Stack</code> tab. It's using <code>Qt5Core.dll 5.9.2.0</code>.</p><span class=caption-wrapper><img class=caption src=04-event-stack.png title="Log write stack" alt="Log write stack">
+<span class=caption-text>Log write stack</span></span><h1 id=symbols>Symbols
+<a class=header-link href=#symbols><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Having symbols is nice. Qt5 is an open source project and we can download its
 symbols.</p><h2 id=qt5-symbols>Qt5 Symbols
-<a class=header-link href=#qt5-symbols><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>You can find the symbols for version <code>5.9.2.0</code> at:</p><ul>
-<li><a href=https://download.qt.io/archive/qt/5.9/5.9.2/ target=_blank rel="noreferrer noopener">https://download.qt.io/archive/qt/5.9/5.9.2/</a></li></ul><p>Because we are running an x86 app (32-bit) and it's a desktop version (not UWP),
+<a class=header-link href=#qt5-symbols><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>You can find the symbols for version <code>5.9.2.0</code> at:</p><ul><li><a href=https://download.qt.io/archive/qt/5.9/5.9.2/ target=_blank rel="noreferrer noopener">https://download.qt.io/archive/qt/5.9/5.9.2/</a></li></ul><p>Because we are running an x86 app (32-bit) and it's a desktop version (not UWP),
 we are looking for this file
 <code>qt-opensource-windows-x86-pdb-files-desktop-5.9.2.zip</code> on the page above.</p><p>Inside the archive, there are a bunch of Windows 8.1 and Windows 10 files. We do
-not need the Windows 8.1 files.</p><p>Windows 10 files come in four flavors:</p><ul>
-<li>x86 vs. x64: We will choose 32-bit.</li><li>MSVC 2015 vs. MSVC 2017: How do we figure this out?</li></ul><span class=caption-wrapper>
-<img class=caption src=05-qt-pdb.png title="Qt PDBs" alt="Qt PDBs">
-<span class=caption-text>Qt PDBs</span>
-</span>
-<p>Looking inside the app directory we can see all the Qt5 DLLs.</p><span class=caption-wrapper>
-<img class=caption src=06-qt-dlls.png title="Qt DLLs" alt="Qt DLLs">
-<span class=caption-text>Qt DLLs</span>
-</span>
-<p>We already know it's a 32-bit DLL. Scroll back up and look at the <code>Address</code>
+not need the Windows 8.1 files.</p><p>Windows 10 files come in four flavors:</p><ul><li>x86 vs. x64: We will choose 32-bit.</li><li>MSVC 2015 vs. MSVC 2017: How do we figure this out?</li></ul><span class=caption-wrapper><img class=caption src=05-qt-pdb.png title="Qt PDBs" alt="Qt PDBs">
+<span class=caption-text>Qt PDBs</span></span><p>Looking inside the app directory we can see all the Qt5 DLLs.</p><span class=caption-wrapper><img class=caption src=06-qt-dlls.png title="Qt DLLs" alt="Qt DLLs">
+<span class=caption-text>Qt DLLs</span></span><p>We already know it's a 32-bit DLL. Scroll back up and look at the <code>Address</code>
 column in the procmon event stack image. It has only 4 bytes or 32-bits.</p><p>To detect the MSVC version we must discover the linker info.</p><p><a href=https://github.com/horsicq/Detect-It-Easy target=_blank rel="noreferrer noopener">Detect It Easy</a> does the job and
-tells us it's linker version 14 or MSVC 2015 <sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>.</p><span class=caption-wrapper>
-<img class=caption src=07-detect-it-ez.png title="'Detect It Easy' results" alt="'Detect It Easy' results">
-<span class=caption-text>'Detect It Easy' results</span>
-</span>
-<p>We can discard the unneeded symbols. Let's put the correct PDBs inside
+tells us it's linker version 14 or MSVC 2015 <sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>.</p><span class=caption-wrapper><img class=caption src=07-detect-it-ez.png title="'Detect It Easy' results" alt="'Detect It Easy' results">
+<span class=caption-text>'Detect It Easy' results</span></span><p>We can discard the unneeded symbols. Let's put the correct PDBs inside
 <code>C:\Symbols\@MySymbols</code>. The symbol lookup is alphabetical so you put all of
 your symbols further up in the chain to make it faster (is this still a thing?).</p><h3 id=ghidra-pdb-issues>Ghidra PDB Issues
-<a class=header-link href=#ghidra-pdb-issues><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>As an example, I dropped <code>Qt5Core.dll</code> in Ghidra and loaded the PDB via
+<a class=header-link href=#ghidra-pdb-issues><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>As an example, I dropped <code>Qt5Core.dll</code> in Ghidra and loaded the PDB via
 <code>File (menu) > Load PDB File</code>. I got a bunch of errors</p><pre tabindex=0><code>PDB&gt; Unable to create stack variable buffer at offset -4 in ?createNativeFile@QTemporaryFile@@SAPAV1@AAVQFile@@@Z
 PDB&gt; Unable to create stack variable dt at offset -4 in ?toDateTime@QLocale@@QBE?AVQDateTime@@ABVQString@@0@Z
 PDB&gt; Unable to create stack variable indices at offset -4 in ?replace@QByteArray@@QAEAAV1@PBDH0H@Z
 PDB&gt; Unable to create stack variable buf at offset -4 in ?processNameByPid@QLockFilePrivate@@SA?AVQString@@_J@Z
 PDB&gt; Unable to create stack variable tzi at offset -4 in getRegistryTzi
 </code></pre><p>Unfortunately, Ghidra's PDB import is not that great. To troubleshoot we can
-also, generate the XML file via the <code>pdb.exe</code> command.</p><ul>
-<li><code>ghidra_9.1.2_PUBLIC\Ghidra\Features\PDB\os\win64\pdb.exe c:\path\to\pdb -fulloutput > somefile.pdb.xml</code></li></ul><p>This resulting xml can be imported in Ghidra instead of the PDB file. This is not going
+also, generate the XML file via the <code>pdb.exe</code> command.</p><ul><li><code>ghidra_9.1.2_PUBLIC\Ghidra\Features\PDB\os\win64\pdb.exe c:\path\to\pdb -fulloutput > somefile.pdb.xml</code></li></ul><p>This resulting xml can be imported in Ghidra instead of the PDB file. This is not going
 to help us here but it can show us where the issue is. It's also useful for
 <a href=https://dannyquist.github.io/windows-symbols-ghidra/ target=_blank rel="noreferrer noopener">creating for Ghidra usage in non-Windows operating systems</a>.</p><p>The tool creates a 100MB file for <code>Qt5Core.dll</code>. Navigating to the file we can
-see that it's cut-off somewhere.</p><span class=caption-wrapper>
-<img class=caption src=08-symbol-xml.png title="PDB xml for Qt5Core.dll" alt="PDB xml for Qt5Core.dll">
-<span class=caption-text>PDB xml for Qt5Core.dll</span>
-</span>
-<p>There were also issues with the <code>2000</code> character limit for symbols. This is a
+see that it's cut-off somewhere.</p><span class=caption-wrapper><img class=caption src=08-symbol-xml.png title="PDB xml for Qt5Core.dll" alt="PDB xml for Qt5Core.dll">
+<span class=caption-text>PDB xml for Qt5Core.dll</span></span><p>There were also issues with the <code>2000</code> character limit for symbols. This is a
 <a href=https://github.com/NationalSecurityAgency/ghidra/issues/94#issuecomment-512855100 target=_blank rel="noreferrer noopener">known problem</a>.</p><h2 id=importing-from-ida-to-ghidra>Importing from IDA to Ghidra
-<a class=header-link href=#importing-from-ida-to-ghidra><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>I also tried importing the PDB in IDA Freeware 7.0 and it worked perfectly.</p><span class=caption-wrapper>
-<img class=caption src=09-ida-freeware.png title="PDB loaded in IDA Freeware 7.0" alt="PDB loaded in IDA Freeware 7.0">
-<span class=caption-text>PDB loaded in IDA Freeware 7.0</span>
-</span>
-<p>In these situations, one option is to import the symbols in IDA and then use the
+<a class=header-link href=#importing-from-ida-to-ghidra><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>I also tried importing the PDB in IDA Freeware 7.0 and it worked perfectly.</p><span class=caption-wrapper><img class=caption src=09-ida-freeware.png title="PDB loaded in IDA Freeware 7.0" alt="PDB loaded in IDA Freeware 7.0">
+<span class=caption-text>PDB loaded in IDA Freeware 7.0</span></span><p>In these situations, one option is to import the symbols in IDA and then use the
 Ghidra plugin to export the project. You can import it in Ghidra. This needs
 IDAPython which is not available in IDA Freeware.</p><p>At this point, I had enough to get started on decrypting the logs.</p><h1 id=analysis>Analysis
-<a class=header-link href=#analysis><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Now we can get into the main executable. Fortunately, (for me) the installer
-includes the PDB files for the main executables. This is great news.</p><span class=caption-wrapper>
-<img class=caption src=22-pdbs.png title="PDBs included with the installer" alt="PDBs included with the installer">
-<span class=caption-text>PDBs included with the installer</span>
-</span>
-<p>Dropping the main <code>exe</code> into Ghidra and the PDB resulted in a lot of errors. Similar
+<a class=header-link href=#analysis><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Now we can get into the main executable. Fortunately, (for me) the installer
+includes the PDB files for the main executables. This is great news.</p><span class=caption-wrapper><img class=caption src=22-pdbs.png title="PDBs included with the installer" alt="PDBs included with the installer">
+<span class=caption-text>PDBs included with the installer</span></span><p>Dropping the main <code>exe</code> into Ghidra and the PDB resulted in a lot of errors. Similar
 to the errors above but it does not stop us. Then we can do <code>Auto Analysis</code> to
-continue. The result is not as great as IDA but it's great for paying 0 dollars.</p><p>How do we proceed from here? We can:</p><ol>
-<li>Randomly search for things.</li><li>Trace the writes to log files.</li></ol><h2 id=just-guess-until-you-find-something>Just Guess Until You Find Something
-<a class=header-link href=#just-guess-until-you-find-something><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>When you encrypt a file, you have to be able to decrypt it too. Having symbols
+continue. The result is not as great as IDA but it's great for paying 0 dollars.</p><p>How do we proceed from here? We can:</p><ol><li>Randomly search for things.</li><li>Trace the writes to log files.</li></ol><h2 id=just-guess-until-you-find-something>Just Guess Until You Find Something
+<a class=header-link href=#just-guess-until-you-find-something><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>When you encrypt a file, you have to be able to decrypt it too. Having symbols
 means we can search for <code>decrypt</code> (or <code>encrypt</code>). Decrypt is probably easier to
 trace because the log files are encrypted as the messages come but decryption
 usually happens in one go so everything might be in one place.</p><p>I searched for <code>Decrypt</code> and found the function that decrypts a log file named,
-well, <code>DecryptLogFile</code>.</p><span class=caption-wrapper>
-<img class=caption src=21-decryptlogfile.png title="DecryptLogFile function" alt="DecryptLogFile function">
-<span class=caption-text>DecryptLogFile function</span>
-</span>
-<p><code>DecryptLogFile</code> appears to be a wrapper for <code>FUN_008f6100</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=display:flex><span>string <span style=color:#268bd2>__cdecl</span> <span style=color:#268bd2>DecryptLogFile</span>(path <span style=color:#719e07>*</span>param_1, path <span style=color:#719e07>*</span>param_2)
+well, <code>DecryptLogFile</code>.</p><span class=caption-wrapper><img class=caption src=21-decryptlogfile.png title="DecryptLogFile function" alt="DecryptLogFile function">
+<span class=caption-text>DecryptLogFile function</span></span><p><code>DecryptLogFile</code> appears to be a wrapper for <code>FUN_008f6100</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=display:flex><span>string <span style=color:#268bd2>__cdecl</span> <span style=color:#268bd2>DecryptLogFile</span>(path <span style=color:#719e07>*</span>param_1, path <span style=color:#719e07>*</span>param_2)
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  FUN_008f6100(param_1,param_2);
 </span></span><span style=display:flex><span>  <span style=color:#719e07>return</span> param_1;
@@ -203,8 +106,7 @@ function? I am not sure where <code>param_1</code> comes from? Maybe it's a fiel
 </span></span><span style=display:flex><span>            }
 </span></span><span style=display:flex><span>    <span style=color:#719e07>return</span>;
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>This function does some sanity checks.</p><ol>
-<li>Checks if the input file exists and can be opened.</li><li>Reads the first four bytes and compares them with <code>LOGZ</code>. If not prints <code>Bad Header</code>.</li><li>Reads the second four bytes and compares them with <code>0x2010ab01</code>. If not prints <code>Bad Version</code>.</li><li>Creates the output file.</li></ol><p>We have already seen the header and version bytes in the encrypted log file
+</span></span></code></pre></div><p>This function does some sanity checks.</p><ol><li>Checks if the input file exists and can be opened.</li><li>Reads the first four bytes and compares them with <code>LOGZ</code>. If not prints <code>Bad Header</code>.</li><li>Reads the second four bytes and compares them with <code>0x2010ab01</code>. If not prints <code>Bad Version</code>.</li><li>Creates the output file.</li></ol><p>We have already seen the header and version bytes in the encrypted log file
 above. They appear at the start of every encrypted log file, too.</p><p>Our next destination is <code>FUN_008f6bd0(param_1, inputDataStream, outputFileStream)</code>
 where the main decryption happens.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#dc322f>void</span> <span style=color:#268bd2>FUN_008f6bd0</span>(std<span style=color:#719e07>::</span>string param_1, QDataStream<span style=color:#719e07>::</span>QDataStream inputData, QDataStream<span style=color:#719e07>::</span>QDataStream outputData)
 </span></span><span style=display:flex><span>{
@@ -233,8 +135,7 @@ where the main decryption happens.</p><div class=highlight><pre tabindex=0 style
 </span></span><span style=display:flex><span>        <span style=color:#719e07>if</span> (numberOfBytesRead <span style=color:#719e07>&lt;</span> <span style=color:#2aa198>1</span>) <span style=color:#719e07>break</span>;
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// removed
-</span></span></span></code></pre></div><p><code>mersenne_twister_engine&lt;unsigned_int, ...</code> is a PRNG.</p><ul>
-<li><a href=http://www.cplusplus.com/reference/random/mt19937/ target=_blank rel="noreferrer noopener">http://www.cplusplus.com/reference/random/mt19937/</a></li></ul><p>It's not cryptographically secure but we are encrypting some random local log
+</span></span></span></code></pre></div><p><code>mersenne_twister_engine&lt;unsigned_int, ...</code> is a PRNG.</p><ul><li><a href=http://www.cplusplus.com/reference/random/mt19937/ target=_blank rel="noreferrer noopener">http://www.cplusplus.com/reference/random/mt19937/</a></li></ul><p>It's not cryptographically secure but we are encrypting some random local log
 files. It's seeded twice. First one is the <code>default_seed</code> followed by
 <code>0x25082011</code>. The default seed is <code>0x1571</code> and the constructor does it
 automatically.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#719e07>#include</span> <span style=color:#719e07>&lt;random&gt;</span><span style=color:#719e07>
@@ -246,22 +147,13 @@ This function is a wrapper for <code>FUN_008f6370</code>:</p><div class=highligh
 </span></span><span style=display:flex><span>  FUN_008f5d90(inputBuffer, outputBuffer, numberOfBytesRead);
 </span></span><span style=display:flex><span>  <span style=color:#719e07>return</span> param_1;
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p><code>FUN_008f5d90</code> is the most interesting function. We see our twister again.</p><span class=caption-wrapper>
-<img class=caption src=17-local80.png title="Mersenne Twister Engine" alt="Mersenne Twister Engine">
-<span class=caption-text>Mersenne Twister Engine</span>
-</span>
-<p>Further down we see references to
+</span></span></code></pre></div><p><code>FUN_008f5d90</code> is the most interesting function. We see our twister again.</p><span class=caption-wrapper><img class=caption src=17-local80.png title="Mersenne Twister Engine" alt="Mersenne Twister Engine">
+<span class=caption-text>Mersenne Twister Engine</span></span><p>Further down we see references to
 <code>..\\..\\..\\src\\RcLogV2\\Output\\LogEncFileOutputV2.cpp</code> and some classes that
-look interesting thanks to <code>assert</code> statements.</p><span class=caption-wrapper>
-<img class=caption src=18-assert.png title="Assert statements" alt="Assert statements">
-<span class=caption-text>Assert statements</span>
-</span>
-<p>If we search for <code>local_80</code> in the decompiled code, we see this interesting
-function <code>boost::random::mersenne_twister_engine::generate_uniform_int</code>.</p><span class=caption-wrapper>
-<img class=caption src=19-generate.png title=generate_uniform_int alt=generate_uniform_int>
-<span class=caption-text>generate_uniform_int</span>
-</span>
-<p>Surprisingly, I could not find it in the docs but managed to find it in the
+look interesting thanks to <code>assert</code> statements.</p><span class=caption-wrapper><img class=caption src=18-assert.png title="Assert statements" alt="Assert statements">
+<span class=caption-text>Assert statements</span></span><p>If we search for <code>local_80</code> in the decompiled code, we see this interesting
+function <code>boost::random::mersenne_twister_engine::generate_uniform_int</code>.</p><span class=caption-wrapper><img class=caption src=19-generate.png title=generate_uniform_int alt=generate_uniform_int>
+<span class=caption-text>generate_uniform_int</span></span><p>Surprisingly, I could not find it in the docs but managed to find it in the
 <code>hpp</code> files.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=display:flex><span>emplate<span style=color:#719e07>&lt;</span><span style=color:#719e07>class</span> <span style=color:#268bd2>Engine</span>, <span style=color:#719e07>class</span> <span style=color:#268bd2>T</span><span style=color:#719e07>&gt;</span>
 </span></span><span style=display:flex><span>T generate_uniform_int(
 </span></span><span style=display:flex><span>    Engine<span style=color:#719e07>&amp;</span> eng, T min_value, T max_value,
@@ -302,8 +194,7 @@ probably the plaintext, <code>param_3</code> is the size of ciphertext/plaintext
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Decompiled code here is `ciphertext[i] = plaintext[i] XOR (byte)key;` which is wrong
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span>}
 </span></span></code></pre></div><h3 id=the-encryption-algorithm>The Encryption Algorithm
-<a class=header-link href=#the-encryption-algorithm><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>The XOR is tricky here. We are XOR-ing <code>AL</code> with the plaintext. The decompiled
+<a class=header-link href=#the-encryption-algorithm><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>The XOR is tricky here. We are XOR-ing <code>AL</code> with the plaintext. The decompiled
 code in Ghidra is <code>ciphertext[i] = plaintext[i] XOR (byte)key;</code> which is wrong.</p><p>If we go by decompiled code and cast the <code>uint32</code> to <code>byte</code> we get the least
 significant byte. However, when numbers are stored in a register like eax <code>AL</code>
 will point to the most significant byte so <code>(key & 0xFF000000) >> 24</code> does the
@@ -318,43 +209,26 @@ job.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-colo
 </span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> ciphertext;
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><h3 id=min-and-max-values>Min and Max Values
-<a class=header-link href=#min-and-max-values><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>The <code>generate_uniform_int</code> function call has two parameters <code>min</code> and <code>max</code>.
+<a class=header-link href=#min-and-max-values><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>The <code>generate_uniform_int</code> function call has two parameters <code>min</code> and <code>max</code>.
 These point to the minimum and maximum values for the generated numbers. For
 <code>std::mersenne_twister_engine</code> these are <code>0</code> and <code>2^32 - 1</code> (for int32 version
 of the function).</p><p>These cannot be set for <code>std::mersenne_twister_engine</code> according to the docs. In
-the docs for <a href=http://www.cplusplus.com/reference/random/mersenne_twister_engine/min/ target=_blank rel="noreferrer noopener">std::mersenne_twister_engine::min</a> we read:</p><blockquote>
-<p>Minimum value: Returns the minimum value potentially returned by member
-operator(), which for mersenne_twister_engine is always zero.</p></blockquote><p>Similar for and <a href=http://www.cplusplus.com/reference/random/mersenne_twister_engine/max/ target=_blank rel="noreferrer noopener">max</a>:</p><blockquote>
-<p>Returns the maximum value potentially returned by member operator(), which for
+the docs for <a href=http://www.cplusplus.com/reference/random/mersenne_twister_engine/min/ target=_blank rel="noreferrer noopener">std::mersenne_twister_engine::min</a> we read:</p><blockquote><p>Minimum value: Returns the minimum value potentially returned by member
+operator(), which for mersenne_twister_engine is always zero.</p></blockquote><p>Similar for and <a href=http://www.cplusplus.com/reference/random/mersenne_twister_engine/max/ target=_blank rel="noreferrer noopener">max</a>:</p><blockquote><p>Returns the maximum value potentially returned by member operator(), which for
 mersenne_twister_engine is 2^w-1 (where w is the word size specified as the
 second class template parameter).</p></blockquote><p>It seems like it's pointing to object fields (?) or methods (?). That means we
-do not need to define min and max values in our code.</p><hr>
-<h2 id=the-bad-route>The Bad Route
-<a class=header-link href=#the-bad-route><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>I initially started writing this route for this write-up. I was ashamed that I
+do not need to define min and max values in our code.</p><hr><h2 id=the-bad-route>The Bad Route
+<a class=header-link href=#the-bad-route><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>I initially started writing this route for this write-up. I was ashamed that I
 had found the original solution by searching for a function name. Then I
 realized why not?</p><p>This is the long route and not fun BUT I discovered some valuable info here.We
 will see how debug mode is detected and how console access is enabled.</p><p>For the long route, I started with the event I saw in procmon.</p><p><code>Qt5Core.dll > QFSFileEngine::write + 0x29</code>. Searching for it in Ghidra or in
 the exports for <code>Qt5Core.dll</code> returns nothing. Searching online we can find
-references to it in the v4.8 docs.</p><ul>
-<li><a href=https://doc.qt.io/archives/qt-4.8/qfsfileengine.html target=_blank rel="noreferrer noopener">https://doc.qt.io/archives/qt-4.8/qfsfileengine.html</a></li></ul><p>Note: I do not know why it's not in the symbols. So I decided to do some dynamic
-analysis:</p><ol>
-<li>Run the app via x64dbg.</li><li>Go to the address for the procmon event.
-<ol>
-<li>The new address in that run was <code>0x6f87b6b9</code>.</li></ol></li><li>Go a bit up to see the call to <code>?write@QFSFileEngine@@UAE_JPBD_J@Z</code>.</li><li>Put a breakpoint and rerun the app.</li><li>Go to the <code>Call Stack</code> tab in x64dbg after the breakpoint is reached.</li></ol><span class=caption-wrapper>
-<img class=caption src=10-x64dbg-trace.png title="Call to write in x64dbg" alt="Call to write in x64dbg">
-<span class=caption-text>Call to write in x64dbg</span>
-</span>
-<span class=caption-wrapper>
-<img class=caption src=11-call-stack.png title="Call stack in x64dbg" alt="Call stack in x64dbg">
-<span class=caption-text>Call stack in x64dbg</span>
-</span>
-<p>Now we can search for <code>LogFileOutputBase</code> in Ghidra.</p><span class=caption-wrapper>
-<img class=caption src=12-logfileoutputbase.png title=LogFileOutputBase alt=LogFileOutputBase>
-<span class=caption-text>LogFileOutputBase</span>
-</span>
-<p>This is a method that writes the data passed in the parameter to the log file. I
+references to it in the v4.8 docs.</p><ul><li><a href=https://doc.qt.io/archives/qt-4.8/qfsfileengine.html target=_blank rel="noreferrer noopener">https://doc.qt.io/archives/qt-4.8/qfsfileengine.html</a></li></ul><p>Note: I do not know why it's not in the symbols. So I decided to do some dynamic
+analysis:</p><ol><li>Run the app via x64dbg.</li><li>Go to the address for the procmon event.<ol><li>The new address in that run was <code>0x6f87b6b9</code>.</li></ol></li><li>Go a bit up to see the call to <code>?write@QFSFileEngine@@UAE_JPBD_J@Z</code>.</li><li>Put a breakpoint and rerun the app.</li><li>Go to the <code>Call Stack</code> tab in x64dbg after the breakpoint is reached.</li></ol><span class=caption-wrapper><img class=caption src=10-x64dbg-trace.png title="Call to write in x64dbg" alt="Call to write in x64dbg">
+<span class=caption-text>Call to write in x64dbg</span></span>
+<span class=caption-wrapper><img class=caption src=11-call-stack.png title="Call stack in x64dbg" alt="Call stack in x64dbg">
+<span class=caption-text>Call stack in x64dbg</span></span><p>Now we can search for <code>LogFileOutputBase</code> in Ghidra.</p><span class=caption-wrapper><img class=caption src=12-logfileoutputbase.png title=LogFileOutputBase alt=LogFileOutputBase>
+<span class=caption-text>LogFileOutputBase</span></span><p>This is a method that writes the data passed in the parameter to the log file. I
 did not see any encryption in the source code. Meaning the parent class might
 handle it.</p><p>Looking at the incoming references (bottom left in Ghidra), we can see:</p><pre tabindex=0><code>Incoming References - LogFileOutputBase
     FUN_008f5720 &lt;-- This references LogFileOutputBase
@@ -379,11 +253,8 @@ encryption.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;backgrou
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>return</span> FVar1;
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>It looks like <code>FUN_008f5720</code> creates and returns the filehandle. We see some
-interesting stuff in it.</p><span class=caption-wrapper>
-<img class=caption src=13-mt19937.png title=FUN_008f5720 alt=FUN_008f5720>
-<span class=caption-text>FUN_008f5720</span>
-</span>
-<p>We have already seen <code>mersenne_twister_engine&lt;unsigned_int, ...</code> so I will skip
+interesting stuff in it.</p><span class=caption-wrapper><img class=caption src=13-mt19937.png title=FUN_008f5720 alt=FUN_008f5720>
+<span class=caption-text>FUN_008f5720</span></span><p>We have already seen <code>mersenne_twister_engine&lt;unsigned_int, ...</code> so I will skip
 explaining it this time. An educated guess tells us that the PRNG is used to
 create a key to encrypt the file. But we do not know how, yet. A pointer to this
 object is stored in <code>local_60</code>.</p><p>After checking that it can create or open the file, we get to this code. The
@@ -489,8 +360,7 @@ unnecessary parts.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;b
 </span></span></code></pre></div><p>Seems like it creates a log file based on whether we have debug mode enabled or
 not. Let's rename it to <code>CreateLogFile</code>. There is not much in the rest of the
 function. As a detour let's check the debug mode.</p><h3 id=debug-mode>Debug mode
-<a class=header-link href=#debug-mode><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>Click on the <code>ModanoDebugMode@ModanoUtils</code> function.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#dc322f>bool</span> __thiscall <span style=color:#719e07>?</span>ModanoDebugMode@ModanoUtils@@YA_NXZ(<span style=color:#dc322f>void</span> <span style=color:#719e07>*</span><span style=color:#719e07>this</span>)
+<a class=header-link href=#debug-mode><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>Click on the <code>ModanoDebugMode@ModanoUtils</code> function.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#dc322f>bool</span> __thiscall <span style=color:#719e07>?</span>ModanoDebugMode@ModanoUtils@@YA_NXZ(<span style=color:#dc322f>void</span> <span style=color:#719e07>*</span><span style=color:#719e07>this</span>)
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#719e07>if</span> ((g_debugEnabled <span style=color:#719e07>==</span> (optional<span style=color:#719e07>&lt;</span><span style=color:#dc322f>bool</span><span style=color:#719e07>&gt;</span>)<span style=color:#2aa198>0x0</span>) <span style=color:#719e07>&amp;&amp;</span>
 </span></span><span style=display:flex><span>     (DAT_03b34bfd <span style=color:#719e07>=</span> (<span style=color:#dc322f>bool</span>)FUN_0132a220(), g_debugEnabled <span style=color:#719e07>==</span> (optional<span style=color:#719e07>&lt;</span><span style=color:#dc322f>bool</span><span style=color:#719e07>&gt;</span>)<span style=color:#2aa198>0x0</span>)) {
@@ -552,13 +422,9 @@ debug mode enabled you will see messages printed to the console:</p><div class=h
 </span></span><span style=display:flex><span>    <span style=color:#719e07>return</span>;
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>The debug mode is used in many places. Incoming references for the
-<code>ModanoDebugMode@ModanoUtils</code> are:</p><span class=caption-wrapper>
-<img class=caption src=14-debug-references.png title="Functions that check for debug mode" alt="Functions that check for debug mode">
-<span class=caption-text>Functions that check for debug mode</span>
-</span>
-<h3 id=back-to-hunting-for-encryption>Back to Hunting for Encryption
-<a class=header-link href=#back-to-hunting-for-encryption><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>After our little side-quest, we are back here. We know <code>CreateLogEncFileOutput</code>
+<code>ModanoDebugMode@ModanoUtils</code> are:</p><span class=caption-wrapper><img class=caption src=14-debug-references.png title="Functions that check for debug mode" alt="Functions that check for debug mode">
+<span class=caption-text>Functions that check for debug mode</span></span><h3 id=back-to-hunting-for-encryption>Back to Hunting for Encryption
+<a class=header-link href=#back-to-hunting-for-encryption><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>After our little side-quest, we are back here. We know <code>CreateLogEncFileOutput</code>
 creates an encrypted log file and returns a <code>FileResult</code> handle. It's referenced
 in <code>FUN_013697c0/CreateLogFile</code> which we saw it checked for debug mode and
 returned a log file accordingly (plaintext vs. encrypted).</p><p>Now we need to figure out what happens to the <code>FileResult</code> and how it's handled.
@@ -568,90 +434,31 @@ wrapper. We can rename it to <code>CreateLogFileWrapper</code>.</p><div class=hi
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Removed
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>return</span> CreateLogFile(param_1,param_2,param_3,param_4);
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>This is in turn called by <code>FUN_01368870</code>.</p><span class=caption-wrapper>
-<img class=caption src=15-wrapper-call.png title="Call stack" alt="Call stack">
-<span class=caption-text>Call stack</span>
-</span>
-<h3 id=rage-quit>Rage Quit
-<a class=header-link href=#rage-quit><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>I went down the rabbit hole and wasted a few hours trying to trace
+</span></span></code></pre></div><p>This is in turn called by <code>FUN_01368870</code>.</p><span class=caption-wrapper><img class=caption src=15-wrapper-call.png title="Call stack" alt="Call stack">
+<span class=caption-text>Call stack</span></span><h3 id=rage-quit>Rage Quit
+<a class=header-link href=#rage-quit><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>I went down the rabbit hole and wasted a few hours trying to trace
 the calls with nothing to show. The only nice thing was finding how to
 enable the debug mode.</p><p>Then I realized there is an easier way of doing what I have been trying to do.
 We know we are using a <code>mersenne_twister_engine</code> and it's a somewhat unique
 string. Why not search for it in the binary?</p><p>I selected an instance that I saw above then did <code>Right-click > References > find uses of</code>.</p><p>The result has 135 locations but most of them are probably internal. We should
 start with the ones with <code>FUN_00</code> labels because they are the most "fun"
-(dadjoke.png).</p><span class=caption-wrapper>
-<img class=caption src=16-uses-of-mersenne.png title="Mersenne uses" alt="Mersenne uses">
-<span class=caption-text>Mersenne uses</span>
-</span>
-<p>And we find it in <code>FUN_008f5d90</code>. <code>local_80</code> is the <code>mt19937</code> variable. We have
+(dadjoke.png).</p><span class=caption-wrapper><img class=caption src=16-uses-of-mersenne.png title="Mersenne uses" alt="Mersenne uses">
+<span class=caption-text>Mersenne uses</span></span><p>And we find it in <code>FUN_008f5d90</code>. <code>local_80</code> is the <code>mt19937</code> variable. We have
 seen this function before above. But this time it's in the context of decrypting
 the logs. XOR is transitive so encryption and decryption do the same.</p><h1 id=decryptlog-code>DecryptLog Code
-<a class=header-link href=#decryptlog-code><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Now we can write code. I could not find implementations of mt19937 32-bit in Go.
+<a class=header-link href=#decryptlog-code><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Now we can write code. I could not find implementations of mt19937 32-bit in Go.
 Python supposedly uses the same engine to generate <code>random</code> output but I did not
 get the result I wanted either. So I had to write C++ code.</p><p>Not having written C++ I spent a lot of time creating useless functions to warm
 up and get used to vectors. I have used the <code>std::byte</code> type in the code so you
-need to use the instructions in the code to use C++17.</p><p>The final code is at:</p><ul>
-<li><a href=https://github.com/parsiya/Parsia-Code/tree/master/decrypt-log target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/decrypt-log</a></li></ul><span class=caption-wrapper>
-<img class=caption src=20-decrypted-log.png title="Decrypted log" alt="Decrypted log">
-<span class=caption-text>Decrypted log</span>
-</span>
-<h1 id=what-did-we-learn-here-today>What Did We Learn Here Today?
-<a class=header-link href=#what-did-we-learn-here-today><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><ol>
-<li>Installers might include symbols with the main executable.</li><li>Symbols are fun.</li><li>Ghidra's PDB processing has some issues.</li><li>The Mersenne Twister Engine is part of the C++ standard library.</li><li>Debug mode can be set with some silly methods (e.g., having a file named
+need to use the instructions in the code to use C++17.</p><p>The final code is at:</p><ul><li><a href=https://github.com/parsiya/Parsia-Code/tree/master/decrypt-log target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/decrypt-log</a></li></ul><span class=caption-wrapper><img class=caption src=20-decrypted-log.png title="Decrypted log" alt="Decrypted log">
+<span class=caption-text>Decrypted log</span></span><h1 id=what-did-we-learn-here-today>What Did We Learn Here Today?
+<a class=header-link href=#what-did-we-learn-here-today><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><ol><li>Installers might include symbols with the main executable.</li><li>Symbols are fun.</li><li>Ghidra's PDB processing has some issues.</li><li>The Mersenne Twister Engine is part of the C++ standard library.</li><li>Debug mode can be set with some silly methods (e.g., having a file named
 <code>debug</code>).</li><li>Ghidra's decompiler is sometimes misleading so be sure to check the
-disassembly and not trust it blindly.</li></ol><section class=footnotes role=doc-endnotes>
-<hr>
-<ol>
-<li id=fn:1 role=doc-endnote>
-<p>PEID also detects the linker version but its signatures are out of date to figure out the name of the compiler.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section></div><footer>
-<p class=meta>
-<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
-<time>Apr 17, 2020</time>
-</span>
-</p><p class=meta>
-<a class="basic-alignment left" href=https://parsiya.net/blog/2020-04-05-the-golang-int-and-the-overlooked-bug/ title="The Golang int and the Overlooked Bug">The Golang int and the Overlooked Bug</a>
-<a class="basic-alignment right" href=https://parsiya.net/blog/2020-05-01-towards-a-quieter-burp-history/ title="Towards a Quieter Burp History">Towards a Quieter Burp History</a>
-</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer></article></div><aside class="sidebar thirds">
-<section class="first odd">
-<h1>Who am I?</h1><p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
-<li class=sidebar-nav-item>
-<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+disassembly and not trust it blindly.</li></ol><section class=footnotes role=doc-endnotes><hr><ol><li id=fn:1 role=doc-endnote><p>PEID also detects the linker version but its signatures are out of date to figure out the name of the compiler.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section></div><footer><p class=meta><span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Apr 17, 2020</time></span></p><p class=meta><a class="basic-alignment left" href=https://parsiya.net/blog/2020-04-05-the-golang-int-and-the-overlooked-bug/ title="The Golang int and the Overlooked Bug">The Golang int and the Overlooked Bug</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2020-05-01-towards-a-quieter-burp-history/ title="Towards a Quieter Burp History">Towards a Quieter Burp History</a></p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></footer></article></div><aside class="sidebar thirds"><section class="first odd"><h1>Who am I?</h1><p><p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
-<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li></ul><section class=odd>
-<h1>Collections</h1><li>
-<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li><li>
-<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li><li>
-<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li><li>
-<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li><li>
-<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li><li>
-<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li><li>
-<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li><li>
-<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li><li>
-<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li><li>
-<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li><li>
-<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li><li>
-<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li></section></aside></div></div><footer role=contentinfo>
-<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
-<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p></footer></body></html>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a></li><li><a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a></li><li><a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.</p></footer></body></html>

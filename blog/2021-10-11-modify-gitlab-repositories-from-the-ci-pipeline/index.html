@@ -1,119 +1,44 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
-<link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>Modify GitLab Repositories from the CI Pipeline</title><link rel=stylesheet href=/css/hugo-octopress.css>
-<link rel=stylesheet href=/css/fork-awesome.min.css>
-<link href=https://parsiya.net/favicon.png rel=icon>
-<meta name=description content>
-<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
-<meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.93.0">
-<meta name=twitter:card content="summary_large_image">
-<meta name=twitter:image:src content="https://parsiya.net/blog/2021-10-11-modify-gitlab-repositories-from-the-ci-pipeline/04-the-commit.png">
-<meta name=twitter:title content="Modify GitLab Repositories from the CI Pipeline">
-<meta name=twitter:description content="You would think modifying a GitLab repository from its CI job should be
-straightforward. Well, it's not. Here's how I did it.">
-<meta name=twitter:domain content="parsiya.net">
-<meta name=twitter:creator content="@CryptoGangsta">
-</head><body>
-<header role=banner>
-<hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
-<fieldset class=mobile-nav>
-<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset><ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
-<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
-<fieldset role=search>
-<input class=search type=text name=q results=0 placeholder=Search>
-<input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset></form></nav><div id=main>
-<div id=content>
-<div>
-<article class=hentry role=article>
-<header>
-<p class=meta>Oct 11, 2021
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Modify GitLab Repositories from the CI Pipeline</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.96.0"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2021-10-11-modify-gitlab-repositories-from-the-ci-pipeline/04-the-commit.png"><meta name=twitter:title content="Modify GitLab Repositories from the CI Pipeline"><meta name=twitter:description content="You would think modifying a GitLab repository from its CI job should be
+straightforward. Well, it's not. Here's how I did it."><meta name=twitter:domain content="parsiya.net"><meta name=twitter:creator content="@CryptoGangsta"></head><body><header role=banner><hgroup><h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation><fieldset class=mobile-nav><select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select></fieldset><ul class=main-navigation><li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription><a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a></ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer"><fieldset role=search><input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/></fieldset></form></nav><div id=main><div id=content><div><article class=hentry role=article><header><p class=meta>Oct 11, 2021
 - 8 minute read
 - <a href=https://parsiya.net/blog/2021-10-11-modify-gitlab-repositories-from-the-ci-pipeline/#disqus_thread>Comments</a>
-- <a class=label href=https://parsiya.net/categories/automation/>Automation </a>
-</p><h1 class=entry-title>
-Modify GitLab Repositories from the CI Pipeline
-</h1></header><div class=entry-content>
-<nav id=TableOfContents>
-<ul>
-<li><a href=#quickstart>Quickstart</a></li><li><a href=#building-a-simple-example>Building a Simple Example</a>
-<ul>
-<li><a href=#authentication-tokens>Authentication Tokens</a>
-<ul>
-<li><a href=#creating-a-personal-access-token>Creating a Personal Access Token</a></li><li><a href=#creating-a-project-access-token>Creating a Project Access Token</a></li><li><a href=#alternate-git-authentication-with-ssh-keys>Alternate Git Authentication with SSH Keys</a></li></ul></li><li><a href=#using-secrets-in-the-pipeline>Using Secrets in the Pipeline</a></li><li><a href=#using-the-access-tokens>Using the Access Tokens</a></li><li><a href=#test-run>Test Run</a>
-<ul>
-<li><a href=#the-objective>The Objective</a></li><li><a href=#setting-up-the-repository>Setting Up the Repository</a></li><li><a href=#creating-the-pipeline>Creating the Pipeline</a></li><li><a href=#checking-job-executions>Checking Job Executions</a></li><li><a href=#a-bug-in-the-code>A Bug in the Code</a></li></ul></li><li><a href=#troubleshooting>Troubleshooting</a></li></ul></li><li><a href=#what-did-we-learn-here-today>What did We Learn Here Today?</a></li><li><a href=#future-work>Future Work</a></li></ul></nav><p>You would think modifying a GitLab repository from its CI job should be
+- <a class=label href=https://parsiya.net/categories/automation/>Automation</a></p><h1 class=entry-title>Modify GitLab Repositories from the CI Pipeline</h1></header><div class=entry-content><nav id=TableOfContents><ul><li><a href=#quickstart>Quickstart</a></li><li><a href=#building-a-simple-example>Building a Simple Example</a><ul><li><a href=#authentication-tokens>Authentication Tokens</a><ul><li><a href=#creating-a-personal-access-token>Creating a Personal Access Token</a></li><li><a href=#creating-a-project-access-token>Creating a Project Access Token</a></li><li><a href=#alternate-git-authentication-with-ssh-keys>Alternate Git Authentication with SSH Keys</a></li></ul></li><li><a href=#using-secrets-in-the-pipeline>Using Secrets in the Pipeline</a></li><li><a href=#using-the-access-tokens>Using the Access Tokens</a></li><li><a href=#test-run>Test Run</a><ul><li><a href=#the-objective>The Objective</a></li><li><a href=#setting-up-the-repository>Setting Up the Repository</a></li><li><a href=#creating-the-pipeline>Creating the Pipeline</a></li><li><a href=#checking-job-executions>Checking Job Executions</a></li><li><a href=#a-bug-in-the-code>A Bug in the Code</a></li></ul></li><li><a href=#troubleshooting>Troubleshooting</a></li></ul></li><li><a href=#what-did-we-learn-here-today>What did We Learn Here Today?</a></li><li><a href=#future-work>Future Work</a></li></ul></nav><p>You would think modifying a GitLab repository from its CI job should be
 straightforward. Well, it's not. Here's how I did it.</p><h1 id=quickstart>Quickstart
-<a class=header-link href=#quickstart><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><ol>
-<li>Create a personal or project access token with <code>write_repository</code> access.</li><li>Add it as a <code>masked</code> variable (<code>GIT_PUSH_TOKEN</code>) in the project's CI/CD
+<a class=header-link href=#quickstart><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><ol><li>Create a personal or project access token with <code>write_repository</code> access.</li><li>Add it as a <code>masked</code> variable (<code>GIT_PUSH_TOKEN</code>) in the project's CI/CD
 pipeline.</li><li>Modify the repository, preferably in a separate branch (<code>BRANCH_NAME</code>).</li><li>Use the token to push your changes.</li></ol><pre tabindex=0><code>
 git push -o ci.skip &#34;https://whatever:${GIT_PUSH_TOKEN}@${CI_REPOSITORY_URL#*@}&#34; $BRANCH_NAME
 </code></pre><p>Fork this repository and push something to the <code>main</code> branch. Then look at the
-<code>test</code> branch to see a new file.</p><ul>
-<li><a href=https://gitlab.com/parsiya/gitlab-job-modify target=_blank rel="noreferrer noopener">https://gitlab.com/parsiya/gitlab-job-modify</a></li></ul><p>I learned from these two examples:</p><ul>
-<li><a href=https://gitlab.com/taleodor/sample-helm-cd/-/blob/master/.gitlab-ci.yml target=_blank rel="noreferrer noopener">https://gitlab.com/taleodor/sample-helm-cd/-/blob/master/.gitlab-ci.yml</a></li><li><a href=https://gitlab.com/guided-explorations/gitlab-ci-yml-tips-tricks-and-hacks/commit-to-repos-during-ci/commit-to-repos-during-ci/-/blob/master/.gitlab-ci.yml target=_blank rel="noreferrer noopener">https://gitlab.com/guided-explorations/gitlab-ci-yml-tips-tricks-and-hacks/commit-to-repos-during-ci/commit-to-repos-during-ci/-/blob/master/.gitlab-ci.yml</a></li></ul><h1 id=building-a-simple-example>Building a Simple Example
-<a class=header-link href=#building-a-simple-example><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>I will create some new files and add them to a different branch. Create an empty
+<code>test</code> branch to see a new file.</p><ul><li><a href=https://gitlab.com/parsiya/gitlab-job-modify target=_blank rel="noreferrer noopener">https://gitlab.com/parsiya/gitlab-job-modify</a></li></ul><p>I learned from these two examples:</p><ul><li><a href=https://gitlab.com/taleodor/sample-helm-cd/-/blob/master/.gitlab-ci.yml target=_blank rel="noreferrer noopener">https://gitlab.com/taleodor/sample-helm-cd/-/blob/master/.gitlab-ci.yml</a></li><li><a href=https://gitlab.com/guided-explorations/gitlab-ci-yml-tips-tricks-and-hacks/commit-to-repos-during-ci/commit-to-repos-during-ci/-/blob/master/.gitlab-ci.yml target=_blank rel="noreferrer noopener">https://gitlab.com/guided-explorations/gitlab-ci-yml-tips-tricks-and-hacks/commit-to-repos-during-ci/commit-to-repos-during-ci/-/blob/master/.gitlab-ci.yml</a></li></ul><h1 id=building-a-simple-example>Building a Simple Example
+<a class=header-link href=#building-a-simple-example><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>I will create some new files and add them to a different branch. Create an empty
 repository in GitLab (free tier is fine).</p><p>This blog assumes you have a basic understanding of GitLab jobs. Otherwise,
 please start at <a href=https://docs.gitlab.com/ee/ci/index.html target=_blank rel="noreferrer noopener">https://docs.gitlab.com/ee/ci/index.html</a>.</p><h2 id=authentication-tokens>Authentication Tokens
-<a class=header-link href=#authentication-tokens><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Jobs have auto-generated tokens but these tokens do not have write access to
+<a class=header-link href=#authentication-tokens><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Jobs have auto-generated tokens but these tokens do not have write access to
 the parent repository. We can access them via <code>CI_JOB_TOKEN</code>. While
 <a href=https://docs.gitlab.com/ee/ci/jobs/ci_job_token.html target=_blank rel="noreferrer noopener">the documentation</a> mentions it "has the same permissions to
 access the API as the user that executes the job", they cannot modify the repo.</p><p>We need to create a new <code>access token</code>. There are multiple types of access
 tokens depending on your GitLab installation. In the GitLab free tier, we can
 create personal access tokens but it's also possible to create them for a group.
 If you can, create project access tokens. These are tied to a specific project.</p><h3 id=creating-a-personal-access-token>Creating a Personal Access Token
-<a class=header-link href=#creating-a-personal-access-token><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><ol>
-<li>Go to
+<a class=header-link href=#creating-a-personal-access-token><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><ol><li>Go to
 <a href=https://gitlab.com/-/profile/personal_access_tokens target=_blank rel="noreferrer noopener">https://gitlab.com/-/profile/personal_access_tokens</a>
 and create a new token.</li><li><code>Token name</code>: I chose <code>gitlab-job-access-token</code>.</li><li><code>Expiration date</code>: Choose an expiration date or leave it empty.</li><li><code>Select a role</code>: Select a role that can modify the repository like
-<code>developer</code> or <code>maintainer</code>.</li><li><code>Select scopes</code>: <code>write_repository</code>.
-<ol>
-<li>Make sure it's not <code>write_registry</code>.</li></ol></li><li>Click <code>Create project access token</code>.</li><li>Copy the access token.</li></ol><ul>
-<li><a href=https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html target=_blank rel="noreferrer noopener">https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html</a>.</li></ul><h3 id=creating-a-project-access-token>Creating a Project Access Token
-<a class=header-link href=#creating-a-project-access-token><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>Project access tokens are better but not available in the free tier. To create
+<code>developer</code> or <code>maintainer</code>.</li><li><code>Select scopes</code>: <code>write_repository</code>.<ol><li>Make sure it's not <code>write_registry</code>.</li></ol></li><li>Click <code>Create project access token</code>.</li><li>Copy the access token.</li></ol><ul><li><a href=https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html target=_blank rel="noreferrer noopener">https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html</a>.</li></ul><h3 id=creating-a-project-access-token>Creating a Project Access Token
+<a class=header-link href=#creating-a-project-access-token><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>Project access tokens are better but not available in the free tier. To create
 them go to the project on GitLab.com and then <code>Access Tokens</code>. Then,
-follow the rest of the steps in the previous section.</p><ul>
-<li><a href=https://docs.gitlab.com/ee/user/project/settings/project_access_tokens.html target=_blank rel="noreferrer noopener">https://docs.gitlab.com/ee/user/project/settings/project_access_tokens.html</a>.</li></ul><p>As we can see in the docs, creating a project access token will create and add a
+follow the rest of the steps in the previous section.</p><ul><li><a href=https://docs.gitlab.com/ee/user/project/settings/project_access_tokens.html target=_blank rel="noreferrer noopener">https://docs.gitlab.com/ee/user/project/settings/project_access_tokens.html</a>.</li></ul><p>As we can see in the docs, creating a project access token will create and add a
 service account to the project. Don't worry if you pay per seat, you will not get billed for it.</p><h3 id=alternate-git-authentication-with-ssh-keys>Alternate Git Authentication with SSH Keys
-<a class=header-link href=#alternate-git-authentication-with-ssh-keys><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>We can also interact with the repository with SSH.The workflow is very similar
-to a normal command-line push.</p><ol>
-<li>Create an SSH key pair.</li><li>Add the public key to the target repository.
-<ol>
-<li>On GitLab.com it's at <code>Project > Settings > Repository > Deploy Keys</code>.</li></ol></li><li>Add the private to the project as a CI/CD variable. E.g., <code>SSH_PRIVATE_KEY</code>.
-<ol>
-<li><strong>Check <code>Mask variable</code></strong>.</li></ol></li><li>Now you can use <code>$SSH_PRIVATE_KEY</code> in your runner.</li></ol><p>A good example that uses this method to modify the current repository:</p><ul>
-<li><a href=https://marcosschroh.github.io/posts/autobumping-with-gitlab/ target=_blank rel="noreferrer noopener">https://marcosschroh.github.io/posts/autobumping-with-gitlab/</a>.</li></ul><h2 id=using-secrets-in-the-pipeline>Using Secrets in the Pipeline
-<a class=header-link href=#using-secrets-in-the-pipeline><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>These tokens should not be hardcoded in the repository (and mainly
+<a class=header-link href=#alternate-git-authentication-with-ssh-keys><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>We can also interact with the repository with SSH.The workflow is very similar
+to a normal command-line push.</p><ol><li>Create an SSH key pair.</li><li>Add the public key to the target repository.<ol><li>On GitLab.com it's at <code>Project > Settings > Repository > Deploy Keys</code>.</li></ol></li><li>Add the private to the project as a CI/CD variable. E.g., <code>SSH_PRIVATE_KEY</code>.<ol><li><strong>Check <code>Mask variable</code></strong>.</li></ol></li><li>Now you can use <code>$SSH_PRIVATE_KEY</code> in your runner.</li></ol><p>A good example that uses this method to modify the current repository:</p><ul><li><a href=https://marcosschroh.github.io/posts/autobumping-with-gitlab/ target=_blank rel="noreferrer noopener">https://marcosschroh.github.io/posts/autobumping-with-gitlab/</a>.</li></ul><h2 id=using-secrets-in-the-pipeline>Using Secrets in the Pipeline
+<a class=header-link href=#using-secrets-in-the-pipeline><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>These tokens should not be hardcoded in the repository (and mainly
 <code>.gitlab-ci.yml</code> file) for obvious reasons. I am going to use them as a CI/CD
 variable. We also have other options like
 <a href=https://docs.gitlab.com/ee/ci/secrets/index.html target=_blank rel="noreferrer noopener">pulling them from a "secrets vault"</a>
 (e.g., <a href=https://docs.gitlab.com/ee/ci/examples/authenticating-with-hashicorp-vault/ target=_blank rel="noreferrer noopener">Hashicorp Vault</a>).</p><p>In the project (this is also possible for groups), go to <code>Settings > CI/CD</code>,
-then expand the <code>Variables</code> section. Add a new variable.</p><ul>
-<li>Key: <code>GIT_PUSH_TOKEN</code></li><li>Value: Paste the access token.</li><li>Flags: Only check <code>Mask variable</code>.
-<ul>
-<li><strong>This is important. We do not want the token to appear in the logs.</strong></li></ul></li></ul><p>Docs: <a href=https://docs.gitlab.com/ee/ci/variables/index.html#add-a-cicd-variable-to-a-project target=_blank rel="noreferrer noopener">https://docs.gitlab.com/ee/ci/variables/index.html#add-a-cicd-variable-to-a-project</a>.</p><span class=caption-wrapper>
-<img class=caption src=01-add-cicd-var.png title="Adding a new CI/CD variable to the project" alt="Adding a new CI/CD variable to the project">
-<span class=caption-text>Adding a new CI/CD variable to the project</span>
-</span>
-<h2 id=using-the-access-tokens>Using the Access Tokens
-<a class=header-link href=#using-the-access-tokens><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>We can interact with the GitLab API with this access token (see more in the end)
+then expand the <code>Variables</code> section. Add a new variable.</p><ul><li>Key: <code>GIT_PUSH_TOKEN</code></li><li>Value: Paste the access token.</li><li>Flags: Only check <code>Mask variable</code>.<ul><li><strong>This is important. We do not want the token to appear in the logs.</strong></li></ul></li></ul><p>Docs: <a href=https://docs.gitlab.com/ee/ci/variables/index.html#add-a-cicd-variable-to-a-project target=_blank rel="noreferrer noopener">https://docs.gitlab.com/ee/ci/variables/index.html#add-a-cicd-variable-to-a-project</a>.</p><span class=caption-wrapper><img class=caption src=01-add-cicd-var.png title="Adding a new CI/CD variable to the project" alt="Adding a new CI/CD variable to the project">
+<span class=caption-text>Adding a new CI/CD variable to the project</span></span><h2 id=using-the-access-tokens>Using the Access Tokens
+<a class=header-link href=#using-the-access-tokens><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>We can interact with the GitLab API with this access token (see more in the end)
 or use it directly in git commands (used here).</p><p>The following command uses the access token to modify the repository. Note the
 access token (<code>GIT_PUSH_TOKEN</code>) and other environment variables.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>
 </span></span><span style=display:flex><span>git push -o ci.skip <span style=color:#2aa198>&#34;https://whatever:</span><span style=color:#2aa198>${</span><span style=color:#268bd2>GIT_PUSH_TOKEN</span><span style=color:#2aa198>}</span><span style=color:#2aa198>@</span><span style=color:#2aa198>${</span><span style=color:#268bd2>CI_REPOSITORY_URL</span>#*@<span style=color:#2aa198>}</span><span style=color:#2aa198>&#34;</span> <span style=color:#268bd2>$BRANCH_NAME</span>
@@ -123,22 +48,16 @@ access token (<code>GIT_PUSH_TOKEN</code>) and other environment variables.</p><
 (<a href=https://git-scm.com/docs/git-push#Documentation/git-push.txt--oltoptiongt target=_blank rel="noreferrer noopener">git -o documentation</a>). We do not want to start an infinite series
 of jobs.</p><p>The <code>whatever</code> string in the URL can be anything. The username is not checked.
 This is intended behavior for project access tokens according to the
-<a href=https://docs.gitlab.com/ee/user/project/settings/project_access_tokens.html target=_blank rel="noreferrer noopener">documentation</a>:</p><blockquote>
-<p>If you are asked for a username when authenticating over HTTPS, you can use
+<a href=https://docs.gitlab.com/ee/user/project/settings/project_access_tokens.html target=_blank rel="noreferrer noopener">documentation</a>:</p><blockquote><p>If you are asked for a username when authenticating over HTTPS, you can use
 any non-empty value because only the token is needed.</p></blockquote><p>Currently, personal access tokens do not need the username either, but
-<a href=https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html target=_blank rel="noreferrer noopener">it's a bug</a>:</p><blockquote>
-<p>Though required, GitLab usernames are ignored when authenticating with a
+<a href=https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html target=_blank rel="noreferrer noopener">it's a bug</a>:</p><blockquote><p>Though required, GitLab usernames are ignored when authenticating with a
 personal access token. There is an issue for tracking to make GitLab use the
-username.</p></blockquote><ul>
-<li>More information: <a href=https://docs.gitlab.com/ee/ci/variables/ target=_blank rel="noreferrer noopener">https://docs.gitlab.com/ee/ci/variables/</a></li><li>Predefined CI/CD variables available in the pipeline:
+username.</p></blockquote><ul><li>More information: <a href=https://docs.gitlab.com/ee/ci/variables/ target=_blank rel="noreferrer noopener">https://docs.gitlab.com/ee/ci/variables/</a></li><li>Predefined CI/CD variables available in the pipeline:
 <a href=https://docs.gitlab.com/ee/ci/variables/predefined_variables.html target=_blank rel="noreferrer noopener">https://docs.gitlab.com/ee/ci/variables/predefined_variables.html</a></li></ul><h2 id=test-run>Test Run
-<a class=header-link href=#test-run><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>We have created the access token and learned how to use it. It's time to try it
+<a class=header-link href=#test-run><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>We have created the access token and learned how to use it. It's time to try it
 out.</p><h3 id=the-objective>The Objective
-<a class=header-link href=#the-objective><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>I want to create a new file in the pipeline and commit it to the <code>test</code> branch.</p><h3 id=setting-up-the-repository>Setting Up the Repository
-<a class=header-link href=#setting-up-the-repository><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>Create an empty repository in GitLab. Create a local branch named <code>test</code> and
+<a class=header-link href=#the-objective><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>I want to create a new file in the pipeline and commit it to the <code>test</code> branch.</p><h3 id=setting-up-the-repository>Setting Up the Repository
+<a class=header-link href=#setting-up-the-repository><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>Create an empty repository in GitLab. Create a local branch named <code>test</code> and
 push it.</p><pre tabindex=0><code>gitlab-job-modify$ ls
 README.md
 
@@ -156,8 +75,7 @@ gitlab-job-modify$ git commit -m &#34;remove README&#34;
 
 gitlab-job-modify$ git push origin test
 </code></pre><h3 id=creating-the-pipeline>Creating the Pipeline
-<a class=header-link href=#creating-the-pipeline><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>The GitLab CI/CD jobs are defined in <code>.gitlab-ci.yml</code> in the root
+<a class=header-link href=#creating-the-pipeline><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>The GitLab CI/CD jobs are defined in <code>.gitlab-ci.yml</code> in the root
 of the repository. Switch back to the <code>main</code> branch and create this file.</p><p>First, some extra variables.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>variables</span>:
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>GIT_DEPTH</span>: <span style=color:#2aa198>1</span>                               <span style=color:#586e75># Create a shallow copy</span>
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>BRANCH_NAME</span>: <span style=color:#2aa198>&#34;test&#34;</span>                        <span style=color:#586e75># Name of the branch to modify</span>
@@ -198,51 +116,33 @@ pushes the changes to the <code>test</code> branch.</p><div class=highlight><pre
 </span></span></code></pre></div><p>Note that I have not set any conditions for this job. It will run for every
 change.
 <a href=https://docs.gitlab.com/ee/ci/jobs/job_control.html target=_blank rel="noreferrer noopener">https://docs.gitlab.com/ee/ci/jobs/job_control.html</a>.</p><p>Let's commit this file and see what happens.</p><h3 id=checking-job-executions>Checking Job Executions
-<a class=header-link href=#checking-job-executions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>This creates a new job. We can see it at
+<a class=header-link href=#checking-job-executions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>This creates a new job. We can see it at
 <a href=https://gitlab.com/parsiya/gitlab-job-modify/-/jobs/ target=_blank rel="noreferrer noopener">https://gitlab.com/parsiya/gitlab-job-modify/-/jobs/</a> or
-<code>project on GitLab.com > CI/CD (side bar) > Jobs</code>.</p><span class=caption-wrapper>
-<img class=caption src=02-new-job.png title="New job created" alt="New job created">
-<span class=caption-text>New job created</span>
-</span>
-<p>Click on <code>Running</code> (or <code>passed</code>/<code>failed</code>) to see the logs.</p><span class=caption-wrapper>
-<img class=caption src=03-job-log.png title="Execution logs" alt="Execution logs">
-<span class=caption-text>Execution logs</span>
-</span>
-<p>The <code>test</code> branch should have the new file. Also, see how the bot's name appears
+<code>project on GitLab.com > CI/CD (side bar) > Jobs</code>.</p><span class=caption-wrapper><img class=caption src=02-new-job.png title="New job created" alt="New job created">
+<span class=caption-text>New job created</span></span><p>Click on <code>Running</code> (or <code>passed</code>/<code>failed</code>) to see the logs.</p><span class=caption-wrapper><img class=caption src=03-job-log.png title="Execution logs" alt="Execution logs">
+<span class=caption-text>Execution logs</span></span><p>The <code>test</code> branch should have the new file. Also, see how the bot's name appears
 in the commit. If we had a project access token we could have used the
-associated bot account here and link the commit to a real GitLab account.</p><span class=caption-wrapper>
-<img class=caption src=04-the-commit.png title="The commit" alt="The commit">
-<span class=caption-text>The commit</span>
-</span>
-<h3 id=a-bug-in-the-code>A Bug in the Code
-<a class=header-link href=#a-bug-in-the-code><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>We can re-run a job using the website (or APIs) to discover a bug in our
-code. I decided to keep it to discuss it as one of the pitfalls.</p><span class=caption-wrapper>
-<img class=caption src=05-new-job.png title="New job" alt="New job">
-<span class=caption-text>New job</span>
-</span>
-<p>Running the job via the website without modifying <code>main</code> overwrites the
+associated bot account here and link the commit to a real GitLab account.</p><span class=caption-wrapper><img class=caption src=04-the-commit.png title="The commit" alt="The commit">
+<span class=caption-text>The commit</span></span><h3 id=a-bug-in-the-code>A Bug in the Code
+<a class=header-link href=#a-bug-in-the-code><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>We can re-run a job using the website (or APIs) to discover a bug in our
+code. I decided to keep it to discuss it as one of the pitfalls.</p><span class=caption-wrapper><img class=caption src=05-new-job.png title="New job" alt="New job">
+<span class=caption-text>New job</span></span><p>Running the job via the website without modifying <code>main</code> overwrites the
 file. The <code>modify</code> script uses the last commit's SHA to name the file. We are
 running the pipeline in the <code>main</code> branch which has not changed.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># create a file named after the last commit&#39;s hash.</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>.modify</span>: <span style=color:#719e07>&amp;modify</span> |<span style=color:#2aa198>
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>  </span>  echo &#34;CI_JOB_ID: ${CI_JOB_ID}&#34; &gt; $CI_COMMIT_SHA.txt
 </span></span></code></pre></div><p>We can name the file after <code>CI_JOB_ID</code> because it will be different in every
 run or any other unique value.</p><h2 id=troubleshooting>Troubleshooting
-<a class=header-link href=#troubleshooting><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>I spent a few hours trying to get this to work. Writing down the issues so you
-save some time:</p><ol>
-<li>The access token's role should be <code>Developer</code> or <code>Maintainer</code> (or a custom
+<a class=header-link href=#troubleshooting><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>I spent a few hours trying to get this to work. Writing down the issues so you
+save some time:</p><ol><li>The access token's role should be <code>Developer</code> or <code>Maintainer</code> (or a custom
 role that can modify the repository). It doesn't matter if your token has
 write access, it will fail if you are using a role like <code>Guest</code>.</li><li>Don't push to a protected channel like <code>main</code>. Choose a separate branch.</li><li>Use <code>-o ci.skip</code> in the <code>git push</code> command to prevent the job from running
 itself again, forever.</li><li>It doesn't matter what name you are using in the <code>git push</code> command instead
 of <code>${BOT_NAME}</code>. This will appear in the commit.</li><li>Do a <code>git fetch</code> before <code>git checkout</code>.</li><li>Make sure the access token has <code>write_repository</code> and not <code>write_registry</code>.</li></ol><h1 id=what-did-we-learn-here-today>What did We Learn Here Today?
-<a class=header-link href=#what-did-we-learn-here-today><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>We can modify a repository from its job. This is a good building block for a
+<a class=header-link href=#what-did-we-learn-here-today><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>We can modify a repository from its job. This is a good building block for a
 couple of (hopefully) great projects in my pipeline. This is also useful for
 interaction with other repositories.</p><h1 id=future-work>Future Work
-<a class=header-link href=#future-work><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>This example is a proof of concept. In the real world, I want to do some fancy
+<a class=header-link href=#future-work><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>This example is a proof of concept. In the real world, I want to do some fancy
 analysis in the <code>modify</code> script with a proper programming
 language (e.g., Go or Python). We can use the GitLab
 API to make changes instead of the <code>git push</code> and/or use a git library to modify
@@ -251,52 +151,11 @@ the repository instead of naked git commands.</p><p>For example, we can use the 
 <a href=https://docs.gitlab.com/ee/api/index.html#personalproject-access-tokens target=_blank rel="noreferrer noopener">https://docs.gitlab.com/ee/api/index.html</a>.</p><p>We can also use a REST API to create files or modify a repository. The API is
 also useful if you want to modify a separate GitLab repository from without
 dealing with SSH keys.</p><p>For more information see
-<a href=https://docs.gitlab.com/ee/api/repository_files.html#create-new-file-in-repository target=_blank rel="noreferrer noopener">https://docs.gitlab.com/ee/api/repository_files.html#create-new-file-in-repository</a>.</p></div><footer>
-<p class=meta>
-<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
-<time>Oct 11, 2021</time>
-</span>
-</p><p class=meta>
-<a class="basic-alignment left" href=https://parsiya.net/blog/2021-09-26-attack-surface-analysis-part-3-resurrected-code-execution/ title="Attack Surface Analysis - Part 3 - Resurrected Code Execution">Attack Surface Analysis - Part 3 - Resurrected Code Execution</a>
-<a class="basic-alignment right" href=https://parsiya.net/blog/2021-10-25-a-hands-on-intro-to-semgreps-autofix/ title="A Hands-On Intro to Semgrep's Autofix">A Hands-On Intro to Semgrep's Autofix</a>
-</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer></article></div><aside class="sidebar thirds">
-<section class="first odd">
-<h1>Who am I?</h1><p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
-<li class=sidebar-nav-item>
-<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a href=https://docs.gitlab.com/ee/api/repository_files.html#create-new-file-in-repository target=_blank rel="noreferrer noopener">https://docs.gitlab.com/ee/api/repository_files.html#create-new-file-in-repository</a>.</p></div><footer><p class=meta><span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Oct 11, 2021</time></span></p><p class=meta><a class="basic-alignment left" href=https://parsiya.net/blog/2021-09-26-attack-surface-analysis-part-3-resurrected-code-execution/ title="Attack Surface Analysis - Part 3 - Resurrected Code Execution">Attack Surface Analysis - Part 3 - Resurrected Code Execution</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2021-10-25-a-hands-on-intro-to-semgreps-autofix/ title="A Hands-On Intro to Semgrep's Autofix">A Hands-On Intro to Semgrep's Autofix</a></p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></footer></article></div><aside class="sidebar thirds"><section class="first odd"><h1>Who am I?</h1><p><p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
-<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li></ul><section class=odd>
-<h1>Collections</h1><li>
-<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li><li>
-<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li><li>
-<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li><li>
-<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li><li>
-<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li><li>
-<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li><li>
-<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li><li>
-<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li><li>
-<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li><li>
-<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li><li>
-<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li><li>
-<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li></section></aside></div></div><footer role=contentinfo>
-<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
-<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p></footer></body></html>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a></li><li><a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a></li><li><a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.</p></footer></body></html>

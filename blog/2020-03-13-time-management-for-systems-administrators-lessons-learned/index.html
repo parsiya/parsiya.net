@@ -1,19 +1,4 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
-<link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>Time Management For Systems Administrators - Lessons Learned</title><link rel=stylesheet href=/css/hugo-octopress.css>
-<link rel=stylesheet href=/css/fork-awesome.min.css>
-<link href=https://parsiya.net/favicon.png rel=icon>
-<meta name=description content>
-<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
-<meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.93.0">
-<meta name=twitter:card content="summary_large_image">
-<meta name=twitter:image:src content="https://parsiya.net/blog/2020-03-13-time-management-for-systems-administrators-lessons-learned/JFO-skilltree.jpg">
-<meta name=twitter:title content="Time Management For Systems Administrators - Lessons Learned">
-<meta name=twitter:description content="A while ago I read Time Management for System Administrators by
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Time Management For Systems Administrators - Lessons Learned</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.96.0"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2020-03-13-time-management-for-systems-administrators-lessons-learned/JFO-skilltree.jpg"><meta name=twitter:title content="Time Management For Systems Administrators - Lessons Learned"><meta name=twitter:description content="A while ago I read Time Management for System Administrators by
 Tom Limoncelli. This blog is my reviewed notes.
 You can find my raw notes in my clone at:
 
@@ -25,279 +10,67 @@ I have written about it:
 
 Reflections on 'Manual Work is a Bug'
 The Dark Side of 'Manual Work is a Bug'
-">
-<meta name=twitter:domain content="parsiya.net">
-<meta name=twitter:creator content="@CryptoGangsta">
-</head><body>
-<header role=banner>
-<hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
-<fieldset class=mobile-nav>
-<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset><ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
-<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
-<fieldset role=search>
-<input class=search type=text name=q results=0 placeholder=Search>
-<input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset></form></nav><div id=main>
-<div id=content>
-<div>
-<article class=hentry role=article>
-<header>
-<p class=meta>Mar 13, 2020
+"><meta name=twitter:domain content="parsiya.net"><meta name=twitter:creator content="@CryptoGangsta"></head><body><header role=banner><hgroup><h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation><fieldset class=mobile-nav><select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select></fieldset><ul class=main-navigation><li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription><a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a></ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer"><fieldset role=search><input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/></fieldset></form></nav><div id=main><div id=content><div><article class=hentry role=article><header><p class=meta>Mar 13, 2020
 - 9 minute read
 - <a href=https://parsiya.net/blog/2020-03-13-time-management-for-systems-administrators-lessons-learned/#disqus_thread>Comments</a>
-- <a class=label href=https://parsiya.net/categories/automation/>Automation </a><a class=label href=https://parsiya.net/categories/not-security/>Not Security </a>
-</p><h1 class=entry-title>
-Time Management For Systems Administrators - Lessons Learned
-</h1></header><div class=entry-content>
-<p>A while ago I read <a href=https://everythingsysadmin.com/books.html target=_blank rel="noreferrer noopener">Time Management for System Administrators</a> by
-<a href=https://twitter.com/yesthattom target=_blank rel="noreferrer noopener">Tom Limoncelli</a>. This blog is my reviewed notes.</p><p>You can find my raw notes in my clone at:</p><ul>
-<li><a href=https://parsiya.io/automation/time-management-sysadmins-notes/ target=_blank rel="noreferrer noopener">https://parsiya.io/automation/time-management-sysadmins-notes/</a></li></ul><p>Tom is also the author of one of my favorite articles
-<a href="https://queue.acm.org/detail.cfm?id=3197520" target=_blank rel="noreferrer noopener">Manual Work is a Bug</a>.</p><p>I have written about it:</p><ul>
-<li><a href=/blog/2018-10-03-reflections-on-manual-work-is-a-bug/ title="Reflections on 'Manual Work is a Bug'">Reflections on 'Manual Work is a Bug'</a></li><li><a href=/blog/2019-04-17-the-dark-side-of-manual-work-is-a-bug/ title="The Dark Side of 'Manual Work is a Bug'">The Dark Side of 'Manual Work is a Bug'</a></li></ul><h2 id=table-of-contents----omit-in-toc--->Table of Contents
-<a class=header-link href=#table-of-contents----omit-in-toc---><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><ul>
-<li><a href=#the-cycle>The Cycle</a></li><li><a href=#where-do-tasks-come-from>Where Do Tasks Come From?</a>
-<ul>
-<li><a href=#delegate-record-or-do>Delegate, Record, or Do</a></li><li><a href=#record-everything>Record Everything</a></li></ul></li><li><a href=#how-to-prioritize>How To Prioritize?</a>
-<ul>
-<li><a href=#project-priorities>Project Priorities</a></li><li><a href=#when-tasks-cannot-be-finished-in-one-day>When Tasks Cannot be Finished in One Day</a></li><li><a href=#which-tasks-first>Which Tasks First?</a></li><li><a href=#big-taskslong-term-projects>Big Tasks/Long-Term Projects</a></li><li><a href=#how-to-deal-with-interruptions>How to Deal With Interruptions?</a></li><li><a href=#when-to-do-each-task>When To Do Each Task?</a></li></ul></li><li><a href=#managing-your-boss>Managing Your Boss</a></li><li><a href=#email-management>Email Management</a></li><li><a href=#routines>Routines</a>
-<ul>
-<li><a href=#develop-your-own-routines>Develop Your Own Routines</a></li><li><a href=#delete-old-routines>Delete Old Routines</a></li></ul></li><li><a href=#goal-management>Goal Management</a>
-<ul>
-<li><a href=#goal-planning-sheet>Goal Planning Sheet</a></li></ul></li></ul><span class=caption-wrapper>
-<img class=caption src=JFO-skilltree.jpg title="Time Management for Jedis" alt="Time Management for Jedis">
-<span class=caption-text>Time Management for Jedis</span>
-</span>
-<h2 id=the-cycle>The Cycle
-<a class=header-link href=#the-cycle><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Every morning go somewhere quiet and do these for 10 minutes. It's OK to take
-more time especially when starting.</p><ol>
-<li>Write down all tasks you need to do that day.</li><li>For each task assign the following:
-<ol>
-<li>Priority:
-<ol>
-<li>A: Due today.</li><li>B: Due soon.</li><li>C: Due sometime in the future.</li></ol></li><li>Expected time: Always overestimate.</li></ol></li><li>Block out any meetings or other obligations.</li><li>Calculate the number of remaining hours.
+- <a class=label href=https://parsiya.net/categories/automation/>Automation </a><a class=label href=https://parsiya.net/categories/not-security/>Not Security</a></p><h1 class=entry-title>Time Management For Systems Administrators - Lessons Learned</h1></header><div class=entry-content><p>A while ago I read <a href=https://everythingsysadmin.com/books.html target=_blank rel="noreferrer noopener">Time Management for System Administrators</a> by
+<a href=https://twitter.com/yesthattom target=_blank rel="noreferrer noopener">Tom Limoncelli</a>. This blog is my reviewed notes.</p><p>You can find my raw notes in my clone at:</p><ul><li><a href=https://parsiya.io/automation/time-management-sysadmins-notes/ target=_blank rel="noreferrer noopener">https://parsiya.io/automation/time-management-sysadmins-notes/</a></li></ul><p>Tom is also the author of one of my favorite articles
+<a href="https://queue.acm.org/detail.cfm?id=3197520" target=_blank rel="noreferrer noopener">Manual Work is a Bug</a>.</p><p>I have written about it:</p><ul><li><a href=/blog/2018-10-03-reflections-on-manual-work-is-a-bug/ title="Reflections on 'Manual Work is a Bug'">Reflections on 'Manual Work is a Bug'</a></li><li><a href=/blog/2019-04-17-the-dark-side-of-manual-work-is-a-bug/ title="The Dark Side of 'Manual Work is a Bug'">The Dark Side of 'Manual Work is a Bug'</a></li></ul><h2 id=table-of-contents----omit-in-toc--->Table of Contents
+<a class=header-link href=#table-of-contents----omit-in-toc---><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><ul><li><a href=#the-cycle>The Cycle</a></li><li><a href=#where-do-tasks-come-from>Where Do Tasks Come From?</a><ul><li><a href=#delegate-record-or-do>Delegate, Record, or Do</a></li><li><a href=#record-everything>Record Everything</a></li></ul></li><li><a href=#how-to-prioritize>How To Prioritize?</a><ul><li><a href=#project-priorities>Project Priorities</a></li><li><a href=#when-tasks-cannot-be-finished-in-one-day>When Tasks Cannot be Finished in One Day</a></li><li><a href=#which-tasks-first>Which Tasks First?</a></li><li><a href=#big-taskslong-term-projects>Big Tasks/Long-Term Projects</a></li><li><a href=#how-to-deal-with-interruptions>How to Deal With Interruptions?</a></li><li><a href=#when-to-do-each-task>When To Do Each Task?</a></li></ul></li><li><a href=#managing-your-boss>Managing Your Boss</a></li><li><a href=#email-management>Email Management</a></li><li><a href=#routines>Routines</a><ul><li><a href=#develop-your-own-routines>Develop Your Own Routines</a></li><li><a href=#delete-old-routines>Delete Old Routines</a></li></ul></li><li><a href=#goal-management>Goal Management</a><ul><li><a href=#goal-planning-sheet>Goal Planning Sheet</a></li></ul></li></ul><span class=caption-wrapper><img class=caption src=JFO-skilltree.jpg title="Time Management for Jedis" alt="Time Management for Jedis">
+<span class=caption-text>Time Management for Jedis</span></span><h2 id=the-cycle>The Cycle
+<a class=header-link href=#the-cycle><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Every morning go somewhere quiet and do these for 10 minutes. It's OK to take
+more time especially when starting.</p><ol><li>Write down all tasks you need to do that day.</li><li>For each task assign the following:<ol><li>Priority:<ol><li>A: Due today.</li><li>B: Due soon.</li><li>C: Due sometime in the future.</li></ol></li><li>Expected time: Always overestimate.</li></ol></li><li>Block out any meetings or other obligations.</li><li>Calculate the number of remaining hours.
 3. This will be the number of hours that you have for your tasks today.</li><li>Do the tasks. Do not get distracted.</li><li>30 minutes or 1 hour before the end of the day.
 4. See what tasks were not done and were due today.
 4. Contact the parties waiting for the task and inform them. Agree on a
 different due date.</li><li>At the end of the day:
 5. Move all unfinished tasks to next day. Note them with a hyphen.</li><li>Leave the office.
 6. All tasks were not done but they were all accounted for.</li><li>Repeat.</li></ol><h2 id=where-do-tasks-come-from>Where Do Tasks Come From?
-<a class=header-link href=#where-do-tasks-come-from><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><ol>
-<li>Previous days.</li><li>Tickets.</li><li>Meetings.</li><li>Emails.</li><li>Phone calls.</li><li>Projects.</li><li>Your boss.</li></ol><h3 id=delegate-record-or-do>Delegate, Record, or Do
-<a class=header-link href=#delegate-record-or-do><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>When you get a new task. You can do one of the following:</p><ul>
-<li><strong>Delegate</strong>: If someone else can do it, delegate it to them.</li><li><strong>Record</strong>: If only you can do the request, but it isn't urgent, record the
-request and read the summary to the person with the task (your customer).
-<ul>
-<li>Record it for later action in a place where it won't get lost.</li><li>Make sure that the customer sees you taking action.</li><li>Ask "Anything else I should capture?"</li></ul></li><li><strong>Do</strong>: If the request is truly urgent, drop what you are working on and do it.
-<ul>
-<li>Take a moment to record where you left off.</li></ul></li></ul><h3 id=record-everything>Record Everything
-<a class=header-link href=#record-everything><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><ul>
-<li>Every time a task is assigned to you, record it. This frees up your mind.</li><li>Before accepting any meeting or project check your calendar.</li></ul><h2 id=how-to-prioritize>How To Prioritize?
-<a class=header-link href=#how-to-prioritize><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>What tasks are more urgent?</p><ul>
-<li>Tasks that are due today.</li><li>Tasks from your boss.
-<ul>
-<li>Your boss decides your next raise/promotion.</li><li>If your boss asks you to do something, and it's a quick task (not a major
+<a class=header-link href=#where-do-tasks-come-from><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><ol><li>Previous days.</li><li>Tickets.</li><li>Meetings.</li><li>Emails.</li><li>Phone calls.</li><li>Projects.</li><li>Your boss.</li></ol><h3 id=delegate-record-or-do>Delegate, Record, or Do
+<a class=header-link href=#delegate-record-or-do><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>When you get a new task. You can do one of the following:</p><ul><li><strong>Delegate</strong>: If someone else can do it, delegate it to them.</li><li><strong>Record</strong>: If only you can do the request, but it isn't urgent, record the
+request and read the summary to the person with the task (your customer).<ul><li>Record it for later action in a place where it won't get lost.</li><li>Make sure that the customer sees you taking action.</li><li>Ask "Anything else I should capture?"</li></ul></li><li><strong>Do</strong>: If the request is truly urgent, drop what you are working on and do it.<ul><li>Take a moment to record where you left off.</li></ul></li></ul><h3 id=record-everything>Record Everything
+<a class=header-link href=#record-everything><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><ul><li>Every time a task is assigned to you, record it. This frees up your mind.</li><li>Before accepting any meeting or project check your calendar.</li></ul><h2 id=how-to-prioritize>How To Prioritize?
+<a class=header-link href=#how-to-prioritize><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>What tasks are more urgent?</p><ul><li>Tasks that are due today.</li><li>Tasks from your boss.<ul><li>Your boss decides your next raise/promotion.</li><li>If your boss asks you to do something, and it's a quick task (not a major
 project), do it right away.</li></ul></li><li>Tasks that will block another person's work (e.g., resetting a password).</li><li>"Hurry up and wait" tasks: These tasks start a lengthy process. E.g., ordering
 a part.</li><li>Ask your boss to help prioritize them.</li></ul><h3 id=project-priorities>Project Priorities
-<a class=header-link href=#project-priorities><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><ul>
-<li>Prioritize for impact!
-<ul>
-<li>Choose projects on a "biggest impact first" basis.</li><li>Find the projects that will have the biggest positive impact in your
+<a class=header-link href=#project-priorities><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><ul><li>Prioritize for impact!<ul><li>Choose projects on a "biggest impact first" basis.</li><li>Find the projects that will have the biggest positive impact in your
 organization.</li></ul></li></ul><h3 id=when-tasks-cannot-be-finished-in-one-day>When Tasks Cannot be Finished in One Day
-<a class=header-link href=#when-tasks-cannot-be-finished-in-one-day><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><ul>
-<li>Shift Cs and some Bs to the next day.</li><li>Bite off today's chunk.
-<ul>
-<li>Do a manageable chunk today.</li><li>Mark it as complete.</li><li>Move the rest to the next day.</li></ul></li><li>Shorten the task (reduce the scope of the task).</li><li>Change the time estimate.</li><li>Delegate it to someone else.</li><li>Don't work late unless it's absolutely necessary.</li></ul><h3 id=which-tasks-first>Which Tasks First?
-<a class=header-link href=#which-tasks-first><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><ul>
-<li>Start with priority A, then B, and finally C.</li><li>Send B and C priorities to next day if there is no time.</li><li>Find your peak time and do important tasks then.</li></ul><h3 id=big-taskslong-term-projects>Big Tasks/Long-Term Projects
-<a class=header-link href=#big-taskslong-term-projects><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><ul>
-<li>Break them into smaller steps or milestones.</li><li>Split each step into individual tasks and add them to your list on different
+<a class=header-link href=#when-tasks-cannot-be-finished-in-one-day><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><ul><li>Shift Cs and some Bs to the next day.</li><li>Bite off today's chunk.<ul><li>Do a manageable chunk today.</li><li>Mark it as complete.</li><li>Move the rest to the next day.</li></ul></li><li>Shorten the task (reduce the scope of the task).</li><li>Change the time estimate.</li><li>Delegate it to someone else.</li><li>Don't work late unless it's absolutely necessary.</li></ul><h3 id=which-tasks-first>Which Tasks First?
+<a class=header-link href=#which-tasks-first><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><ul><li>Start with priority A, then B, and finally C.</li><li>Send B and C priorities to next day if there is no time.</li><li>Find your peak time and do important tasks then.</li></ul><h3 id=big-taskslong-term-projects>Big Tasks/Long-Term Projects
+<a class=header-link href=#big-taskslong-term-projects><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><ul><li>Break them into smaller steps or milestones.</li><li>Split each step into individual tasks and add them to your list on different
 days.</li></ul><h3 id=how-to-deal-with-interruptions>How to Deal With Interruptions?
-<a class=header-link href=#how-to-deal-with-interruptions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><ul>
-<li>Find a "Mutual Interruption Shield" Partner.
-<ul>
-<li>For example, a colleague to handle interruptions for you during your
-projects.
-<ul>
-<li>Be sure to do the same for them.</li></ul></li><li>If you are solo, block your calendar and tell people to come to you during
-another time.</li></ul></li><li>If you need to deal with tickets
-<ul>
-<li>Everyday, add a task named tickets for X hours.</li><li>Add each ticket to the TODO list as they come in.</li><li>If the ticket is handled by the shield, note it.</li><li>If dealing with a ticket generates new action items, add them to the TODO
+<a class=header-link href=#how-to-deal-with-interruptions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><ul><li>Find a "Mutual Interruption Shield" Partner.<ul><li>For example, a colleague to handle interruptions for you during your
+projects.<ul><li>Be sure to do the same for them.</li></ul></li><li>If you are solo, block your calendar and tell people to come to you during
+another time.</li></ul></li><li>If you need to deal with tickets<ul><li>Everyday, add a task named tickets for X hours.</li><li>Add each ticket to the TODO list as they come in.</li><li>If the ticket is handled by the shield, note it.</li><li>If dealing with a ticket generates new action items, add them to the TODO
 list.</li><li>If a ticket involves doing something and then waiting for something to be
-done, add it as a task.</li></ul></li><li>When a new priority task is added to your day
-<ul>
-<li>See if you can finish it with your other tasks.
-<ul>
-<li>If not, move Bs and Cs to next day.</li><li>If there isn't enough time for As, talk with the people expecting
+done, add it as a task.</li></ul></li><li>When a new priority task is added to your day<ul><li>See if you can finish it with your other tasks.<ul><li>If not, move Bs and Cs to next day.</li><li>If there isn't enough time for As, talk with the people expecting
 those tasks to be completed.</li></ul></li></ul></li></ul><h3 id=when-to-do-each-task>When To Do Each Task?
-<a class=header-link href=#when-to-do-each-task><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><ul>
-<li>Find your high energy time.
-<ul>
-<li>Do important tasks then.</li><li>Do shorter tasks between meetings.</li><li>Block your high energy time on your calendar.</li></ul></li><li>If a task has to be done every day, do it early in the day.
-<ul>
-<li>Feels good to accomplish things right off the bat.</li></ul></li></ul><h2 id=managing-your-boss>Managing Your Boss
-<a class=header-link href=#managing-your-boss><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><ul>
-<li>Use your manager to help advance your career.
-<ul>
-<li>Make sure your boss knows your career goals. YMMV.</li></ul></li><li>Know when to use upward delegation.
-<ul>
-<li>Upward delegation means giving an action item to your boss.</li><li>Upward delegate only when it leverages your boss's authority.</li></ul></li><li>Understand and contribute to their goals.
-<ul>
-<li>Understand and help accomplish your boss's goals.</li><li>When you visibly contribute to making your boss a success, it opens many
+<a class=header-link href=#when-to-do-each-task><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><ul><li>Find your high energy time.<ul><li>Do important tasks then.</li><li>Do shorter tasks between meetings.</li><li>Block your high energy time on your calendar.</li></ul></li><li>If a task has to be done every day, do it early in the day.<ul><li>Feels good to accomplish things right off the bat.</li></ul></li></ul><h2 id=managing-your-boss>Managing Your Boss
+<a class=header-link href=#managing-your-boss><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><ul><li>Use your manager to help advance your career.<ul><li>Make sure your boss knows your career goals. YMMV.</li></ul></li><li>Know when to use upward delegation.<ul><li>Upward delegation means giving an action item to your boss.</li><li>Upward delegate only when it leverages your boss's authority.</li></ul></li><li>Understand and contribute to their goals.<ul><li>Understand and help accomplish your boss's goals.</li><li>When you visibly contribute to making your boss a success, it opens many
 doors</li></ul></li></ul><h2 id=email-management>Email Management
-<a class=header-link href=#email-management><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><ul>
-<li>Do not check your email often if you are not on call.
-<ul>
-<li>This reduces your focus.</li></ul></li><li>Use email filters to redirect incoming emails to different directories.</li><li>Every time you read an email, you should take action on it.
-<ul>
-<li>Delete Unread
-<ul>
-<li>Send things you do not need to read to other folders.
-<ul>
-<li>E.g., corp patch cycle emails, office building newsletters (paths
-are blocked etc), ticketing system update emails.</li></ul></li><li>Mailing lists
-<ul>
-<li>Review your mailing lists every month and unsubscribe from the
-ones you do not read.</li><li>If you aren't sure if an email list is useful, it isn't.</li></ul></li><li>Ticketing system automated messages.</li></ul></li><li>Read and
-<ul>
-<li>Delete: Things that require no action from you.
-<ul>
-<li>If these are frequent, consider adding them to the "Delete Unread"
-filters.</li></ul></li><li>File: Put them in a specific folder.
-<ul>
-<li>Expenses/Receipts. These are needed to file expenses.
-<ul>
-<li>Emails about the corporate credit card.</li></ul></li><li>Onboarding
-<ul>
-<li>All the emails from systems during onboarding.
-<ul>
-<li>Later used to create an onboarding checklist on the
-knowledge base.</li></ul></li></ul></li><li>Save
-<ul>
-<li>Anything that needs to be saved</li></ul></li><li>Feathers
-<ul>
-<li>Good feedback. Used during annual review.</li></ul></li></ul></li><li>Add to task
-<ul>
-<li>If it becomes a task, it can be added to tasks.</li><li>Reply to acknowledge receiving the task (if applicable) and the
-due date.</li></ul></li><li>Reply
-<ul>
-<li>If the email needs to be replied to.</li></ul></li><li>Delegate: If someone else needs to do the task.
-<ul>
-<li>Forward the email to the other person.</li><li>Create a task if you need to review the result.</li><li>Delete the email.</li></ul></li><li>Do now: If needs to be done now.
-<ul>
-<li>Do it.</li><li>Respond that it has been done.</li><li>Delete the email.</li></ul></li></ul></li></ul></li></ul><h2 id=routines>Routines
-<a class=header-link href=#routines><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><ul>
-<li>Routines give us a way to think once, do many.</li><li>The more routines we develop, the less brain power we have to put into small
-matters.</li><li>Good routines
-<ul>
-<li>Save work and reduce the amount of time you spend making decisions.</li><li>With enough practice you start doing them without having to think.</li></ul></li></ul><h3 id=develop-your-own-routines>Develop Your Own Routines
-<a class=header-link href=#develop-your-own-routines><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>Look for:</p><ul>
-<li>Repeated events that aren't scheduled.</li><li>Maintenance tasks.</li><li>Relationships and career networking:
-<ul>
-<li>E.g., 1:1 with your boss, peers and mentors.</li></ul></li><li>When procrastinating takes longer than action.</li><li>Things you forget often</li><li>Inconsequential or low-priority tasks that can be skipped occasionally but
-shouldn't be
-<ul>
-<li>You can skip them a few times but after that something bad happens.</li></ul></li><li>Developing new skills.</li><li>Keeping up-to-date.</li></ul><h3 id=delete-old-routines>Delete Old Routines
-<a class=header-link href=#delete-old-routines><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><ul>
-<li>Update your routines every once in a while.</li><li>Routines delete themselves by becoming obsolete.</li><li>Routines evolve as time goes by.</li></ul><h2 id=goal-management>Goal Management
-<a class=header-link href=#goal-management><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Write down your goals:</p><ul>
-<li>Goals are not as fleshed out as you think when they are in your head.</li><li>Writing them down forces you to make them concrete.</li><li>Written goals can be shared with others.</li><li>Make a goal significantly more concrete by answering these questions:
-<ul>
-<li><em>What</em> do I want to achieve?</li><li><em>When</em> do I want to have achieved it?</li></ul></li><li>Goals must be measurable. Someone else should be able to measure your goal.</li><li>Consult with other people about your goals. E.g., partner, boss, mentor, etc.</li></ul><h3 id=goal-planning-sheet>Goal Planning Sheet
-<a class=header-link href=#goal-planning-sheet><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p><strong>Step 1: Write down your goals.</strong></p><table>
-<thead>
-<tr>
-<th></th><th>Professional</th><th>Personal</th></tr></thead><tbody>
-<tr>
-<td>1 Month</td><td>Typically smaller projects on your mind.</td><td></td></tr><tr>
-<td>1 Year</td><td>Bigger projects. Have milestones.</td><td>Get into shape.</td></tr><tr>
-<td>5 Years</td><td>Life-changing goals.</td><td>Marriage. Having children.</td></tr><tr>
-<td>Lifetime goals</td><td></td><td>Retirement.</td></tr></tbody></table><p><strong>Step 2: Make sure each goal is measurable.</strong></p><ul>
-<li>Could another person decide if a goal has been met?</li><li>Goals need a tangible result or numeric measurement.</li></ul><p><strong>Step 3: Assign a priority to each goal.</strong></p><ul>
-<li>A: Absolutely must do.</li><li>B: Next most important.</li><li>C: Good ideas or "would be nice" items that are low priority.</li></ul><p><strong>Step 4: Determine the steps to achieve each goal.</strong></p><ol>
-<li>Decide when the goal deadline is.</li><li>Break each goal down to specific tasks.</li><li>Break tasks into steps.
-<ul>
-<li>Don't worry about writing the steps in chronological order. This can be
-changed.</li></ul></li><li>Write down all tasks and steps.</li><li>Schedule the tasks in your calendar according to the deadline.
-<ul>
-<li>Do not schedule any single item too far in advance, it gets lost.</li><li>Mark your next steps in your calendar like an appointment.</li></ul></li></ol><p><strong>Step 5: Revisit your goals regularly.</strong>
-On the first day of each month, take a moment to plan your goals.</p><ul>
-<li>Digital: Set a repeated event in your calendar called "Goal and Next Step
+<a class=header-link href=#email-management><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><ul><li>Do not check your email often if you are not on call.<ul><li>This reduces your focus.</li></ul></li><li>Use email filters to redirect incoming emails to different directories.</li><li>Every time you read an email, you should take action on it.<ul><li>Delete Unread<ul><li>Send things you do not need to read to other folders.<ul><li>E.g., corp patch cycle emails, office building newsletters (paths
+are blocked etc), ticketing system update emails.</li></ul></li><li>Mailing lists<ul><li>Review your mailing lists every month and unsubscribe from the
+ones you do not read.</li><li>If you aren't sure if an email list is useful, it isn't.</li></ul></li><li>Ticketing system automated messages.</li></ul></li><li>Read and<ul><li>Delete: Things that require no action from you.<ul><li>If these are frequent, consider adding them to the "Delete Unread"
+filters.</li></ul></li><li>File: Put them in a specific folder.<ul><li>Expenses/Receipts. These are needed to file expenses.<ul><li>Emails about the corporate credit card.</li></ul></li><li>Onboarding<ul><li>All the emails from systems during onboarding.<ul><li>Later used to create an onboarding checklist on the
+knowledge base.</li></ul></li></ul></li><li>Save<ul><li>Anything that needs to be saved</li></ul></li><li>Feathers<ul><li>Good feedback. Used during annual review.</li></ul></li></ul></li><li>Add to task<ul><li>If it becomes a task, it can be added to tasks.</li><li>Reply to acknowledge receiving the task (if applicable) and the
+due date.</li></ul></li><li>Reply<ul><li>If the email needs to be replied to.</li></ul></li><li>Delegate: If someone else needs to do the task.<ul><li>Forward the email to the other person.</li><li>Create a task if you need to review the result.</li><li>Delete the email.</li></ul></li><li>Do now: If needs to be done now.<ul><li>Do it.</li><li>Respond that it has been done.</li><li>Delete the email.</li></ul></li></ul></li></ul></li></ul><h2 id=routines>Routines
+<a class=header-link href=#routines><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><ul><li>Routines give us a way to think once, do many.</li><li>The more routines we develop, the less brain power we have to put into small
+matters.</li><li>Good routines<ul><li>Save work and reduce the amount of time you spend making decisions.</li><li>With enough practice you start doing them without having to think.</li></ul></li></ul><h3 id=develop-your-own-routines>Develop Your Own Routines
+<a class=header-link href=#develop-your-own-routines><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>Look for:</p><ul><li>Repeated events that aren't scheduled.</li><li>Maintenance tasks.</li><li>Relationships and career networking:<ul><li>E.g., 1:1 with your boss, peers and mentors.</li></ul></li><li>When procrastinating takes longer than action.</li><li>Things you forget often</li><li>Inconsequential or low-priority tasks that can be skipped occasionally but
+shouldn't be<ul><li>You can skip them a few times but after that something bad happens.</li></ul></li><li>Developing new skills.</li><li>Keeping up-to-date.</li></ul><h3 id=delete-old-routines>Delete Old Routines
+<a class=header-link href=#delete-old-routines><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><ul><li>Update your routines every once in a while.</li><li>Routines delete themselves by becoming obsolete.</li><li>Routines evolve as time goes by.</li></ul><h2 id=goal-management>Goal Management
+<a class=header-link href=#goal-management><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Write down your goals:</p><ul><li>Goals are not as fleshed out as you think when they are in your head.</li><li>Writing them down forces you to make them concrete.</li><li>Written goals can be shared with others.</li><li>Make a goal significantly more concrete by answering these questions:<ul><li><em>What</em> do I want to achieve?</li><li><em>When</em> do I want to have achieved it?</li></ul></li><li>Goals must be measurable. Someone else should be able to measure your goal.</li><li>Consult with other people about your goals. E.g., partner, boss, mentor, etc.</li></ul><h3 id=goal-planning-sheet>Goal Planning Sheet
+<a class=header-link href=#goal-planning-sheet><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p><strong>Step 1: Write down your goals.</strong></p><table><thead><tr><th></th><th>Professional</th><th>Personal</th></tr></thead><tbody><tr><td>1 Month</td><td>Typically smaller projects on your mind.</td><td></td></tr><tr><td>1 Year</td><td>Bigger projects. Have milestones.</td><td>Get into shape.</td></tr><tr><td>5 Years</td><td>Life-changing goals.</td><td>Marriage. Having children.</td></tr><tr><td>Lifetime goals</td><td></td><td>Retirement.</td></tr></tbody></table><p><strong>Step 2: Make sure each goal is measurable.</strong></p><ul><li>Could another person decide if a goal has been met?</li><li>Goals need a tangible result or numeric measurement.</li></ul><p><strong>Step 3: Assign a priority to each goal.</strong></p><ul><li>A: Absolutely must do.</li><li>B: Next most important.</li><li>C: Good ideas or "would be nice" items that are low priority.</li></ul><p><strong>Step 4: Determine the steps to achieve each goal.</strong></p><ol><li>Decide when the goal deadline is.</li><li>Break each goal down to specific tasks.</li><li>Break tasks into steps.<ul><li>Don't worry about writing the steps in chronological order. This can be
+changed.</li></ul></li><li>Write down all tasks and steps.</li><li>Schedule the tasks in your calendar according to the deadline.<ul><li>Do not schedule any single item too far in advance, it gets lost.</li><li>Mark your next steps in your calendar like an appointment.</li></ul></li></ol><p><strong>Step 5: Revisit your goals regularly.</strong>
+On the first day of each month, take a moment to plan your goals.</p><ul><li>Digital: Set a repeated event in your calendar called "Goal and Next Step
 Review."</li><li>Paper: Set up a sheet of "repeating events" that is reviewed at the start of
-each month.</li></ul><ol>
-<li>Goal review: Review and update your goal list.
-<ol>
-<li>Cross-out completed goals.</li><li>Decide if new goals are worthy.</li><li>Prioritize all new and old goals.</li></ol></li><li>Step review. Review and update your next steps list.
-<ol>
-<li>As steps are marked "done," schedule later steps into your TODO lists.</li></ol></li></ol></div><footer>
-<p class=meta>
-<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
-<time>Mar 13, 2020</time>
-</span>
-</p><p class=meta>
-<a class="basic-alignment left" href=https://parsiya.net/blog/2020-02-09-old-contextis-challenge-solutions/ title="Old ContextIS Challenge Solutions">Old ContextIS Challenge Solutions</a>
-<a class="basic-alignment right" href=https://parsiya.net/blog/2020-04-05-the-golang-int-and-the-overlooked-bug/ title="The Golang int and the Overlooked Bug">The Golang int and the Overlooked Bug</a>
-</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer></article></div><aside class="sidebar thirds">
-<section class="first odd">
-<h1>Who am I?</h1><p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
-<li class=sidebar-nav-item>
-<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+each month.</li></ul><ol><li>Goal review: Review and update your goal list.<ol><li>Cross-out completed goals.</li><li>Decide if new goals are worthy.</li><li>Prioritize all new and old goals.</li></ol></li><li>Step review. Review and update your next steps list.<ol><li>As steps are marked "done," schedule later steps into your TODO lists.</li></ol></li></ol></div><footer><p class=meta><span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Mar 13, 2020</time></span></p><p class=meta><a class="basic-alignment left" href=https://parsiya.net/blog/2020-02-09-old-contextis-challenge-solutions/ title="Old ContextIS Challenge Solutions">Old ContextIS Challenge Solutions</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2020-04-05-the-golang-int-and-the-overlooked-bug/ title="The Golang int and the Overlooked Bug">The Golang int and the Overlooked Bug</a></p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></footer></article></div><aside class="sidebar thirds"><section class="first odd"><h1>Who am I?</h1><p><p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
-<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li></ul><section class=odd>
-<h1>Collections</h1><li>
-<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li><li>
-<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li><li>
-<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li><li>
-<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li><li>
-<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li><li>
-<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li><li>
-<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li><li>
-<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li><li>
-<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li><li>
-<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li><li>
-<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li><li>
-<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li></section></aside></div></div><footer role=contentinfo>
-<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
-<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p></footer></body></html>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a></li><li><a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a></li><li><a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.</p></footer></body></html>

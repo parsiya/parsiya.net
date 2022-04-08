@@ -1,19 +1,4 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
-<link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>Learning Go-Fuzz 2: goexif2</title><link rel=stylesheet href=/css/hugo-octopress.css>
-<link rel=stylesheet href=/css/fork-awesome.min.css>
-<link href=https://parsiya.net/favicon.png rel=icon>
-<meta name=description content>
-<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
-<meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.93.0">
-<meta name=twitter:card content="summary_large_image">
-<meta name=twitter:image:src content="https://parsiya.net/blog/2018-05-05-learning-go-fuzz-2-goexif2/02-fuzzer-crash.png">
-<meta name=twitter:title content="Learning Go-Fuzz 2: goexif2">
-<meta name=twitter:description content="Previously on Learning Go-Fuzz:
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Learning Go-Fuzz 2: goexif2</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.96.0"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2018-05-05-learning-go-fuzz-2-goexif2/02-fuzzer-crash.png"><meta name=twitter:title content="Learning Go-Fuzz 2: goexif2"><meta name=twitter:description content="Previously on Learning Go-Fuzz:
 
 &#34;Learning Go-Fuzz 1: iprange&#34;
 
@@ -22,55 +7,14 @@ Code and fuzzing artifacts are at:
 
 https://github.com/parsiya/Go-Security/tree/master/go-fuzz/goexif2
 
-">
-<meta name=twitter:domain content="parsiya.net">
-<meta name=twitter:creator content="@CryptoGangsta">
-</head><body>
-<header role=banner>
-<hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
-<fieldset class=mobile-nav>
-<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset><ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
-<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
-<fieldset role=search>
-<input class=search type=text name=q results=0 placeholder=Search>
-<input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset></form></nav><div id=main>
-<div id=content>
-<div>
-<article class=hentry role=article>
-<header>
-<p class=meta>May 5, 2018
+"><meta name=twitter:domain content="parsiya.net"><meta name=twitter:creator content="@CryptoGangsta"></head><body><header role=banner><hgroup><h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation><fieldset class=mobile-nav><select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select></fieldset><ul class=main-navigation><li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription><a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a></ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer"><fieldset role=search><input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/></fieldset></form></nav><div id=main><div id=content><div><article class=hentry role=article><header><p class=meta>May 5, 2018
 - 13 minute read
 - <a href=https://parsiya.net/blog/2018-05-05-learning-go-fuzz-2-goexif2/#disqus_thread>Comments</a>
-- <a class=label href=https://parsiya.net/categories/go/>Go </a><a class=label href=https://parsiya.net/categories/fuzzing/>Fuzzing </a>
-</p><h1 class=entry-title>
-Learning Go-Fuzz 2: goexif2
-</h1></header><div class=entry-content>
-<nav id=TableOfContents>
-<ul>
-<li><a href=#tldr>TL;DR</a></li><li><a href=#fuzz>Fuzz</a></li><li><a href=#samples>Samples</a></li><li><a href=#running-out-of-memory>Running Out of Memory</a></li><li><a href=#analyzing-crashes>Analyzing Crashes</a>
-<ul>
-<li><a href=#reproducing-crashes>Reproducing Crashes</a></li><li><a href=#a5-and-3f-crashes>A5 and 3F Crashes</a>
-<ul>
-<li><a href=#bonus-int-overflow-and-go-playgrounds-operating-system>Bonus: int Overflow and Go Playground's Operating System</a></li><li><a href=#makeslice-len-out-of-range>makeslice: len out of range</a></li><li><a href=#tcounts-origin>t.Count's Origin</a></li><li><a href=#fix-a5-and-3f-crashes>Fix A5 and 3F Crashes</a></li></ul></li><li><a href=#49-crash>49 Crash</a>
-<ul>
-<li><a href=#fix-49-crash>Fix 49 Crash</a></li></ul></li></ul></li><li><a href=#adding-crashes-to-tests>Adding Crashes to Tests</a></li><li><a href=#conclusion>Conclusion</a>
-<ul>
-<li><a href=#lessons-learned>Lessons Learned</a></li></ul></li></ul></nav><p>Previously on <code>Learning Go-Fuzz</code>:</p><ul>
-<li><a href=/blog/2018-04-29-learning-go-fuzz-1-iprange/ title="Learning Go-Fuzz 1: iprange">"Learning Go-Fuzz 1: iprange"</a></li></ul><p>This time I am looking at a different package. This is a package called <code>goexif</code> at <a href=https://github.com/rwcarlsen/goexif target=_blank rel="noreferrer noopener">https://github.com/rwcarlsen/goexif</a>. Being a file parser, it's a prime target for <code>Go-Fuzz</code>. Unfortunately it has not been updated for a while. Instead, we will be looking at a fork at <a href=https://github.com/xor-gate/goexif2 target=_blank rel="noreferrer noopener">https://github.com/xor-gate/goexif2</a>.</p><p>Code and fuzzing artifacts are at:</p><ul>
-<li><a href=https://github.com/parsiya/Go-Security/tree/master/go-fuzz/goexif2 target=_blank rel="noreferrer noopener">https://github.com/parsiya/Go-Security/tree/master/go-fuzz/goexif2</a></li></ul><h1 id=tldr>TL;DR
-<a class=header-link href=#tldr><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Steps are similar to the previous part.</p><ol>
-<li><code>go get github.com/xor-gate/goexif2/exif</code></li><li><code>go get github.com/xor-gate/goexif2/tiff</code></li><li>Create <code>Fuzz.go</code>.</li><li>Build with <code>go-fuzz-build</code>.
-<ul>
-<li><code>go-fuzz-build github.com/xor-gate/goexif2/exif</code></li></ul></li><li>Fuzz</li><li>???</li><li>Crashes!</li></ol><p>If panics have been fixed, you can clone the commit <code>e5a111b2b4bd00d5214b1030deb301780110358d</code>.</p><h1 id=fuzz>Fuzz
-<a class=header-link href=#fuzz><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>The <code>Fuzz</code> function is easy straight forward:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// +build gofuzz
+- <a class=label href=https://parsiya.net/categories/go/>Go </a><a class=label href=https://parsiya.net/categories/fuzzing/>Fuzzing</a></p><h1 class=entry-title>Learning Go-Fuzz 2: goexif2</h1></header><div class=entry-content><nav id=TableOfContents><ul><li><a href=#tldr>TL;DR</a></li><li><a href=#fuzz>Fuzz</a></li><li><a href=#samples>Samples</a></li><li><a href=#running-out-of-memory>Running Out of Memory</a></li><li><a href=#analyzing-crashes>Analyzing Crashes</a><ul><li><a href=#reproducing-crashes>Reproducing Crashes</a></li><li><a href=#a5-and-3f-crashes>A5 and 3F Crashes</a><ul><li><a href=#bonus-int-overflow-and-go-playgrounds-operating-system>Bonus: int Overflow and Go Playground's Operating System</a></li><li><a href=#makeslice-len-out-of-range>makeslice: len out of range</a></li><li><a href=#tcounts-origin>t.Count's Origin</a></li><li><a href=#fix-a5-and-3f-crashes>Fix A5 and 3F Crashes</a></li></ul></li><li><a href=#49-crash>49 Crash</a><ul><li><a href=#fix-49-crash>Fix 49 Crash</a></li></ul></li></ul></li><li><a href=#adding-crashes-to-tests>Adding Crashes to Tests</a></li><li><a href=#conclusion>Conclusion</a><ul><li><a href=#lessons-learned>Lessons Learned</a></li></ul></li></ul></nav><p>Previously on <code>Learning Go-Fuzz</code>:</p><ul><li><a href=/blog/2018-04-29-learning-go-fuzz-1-iprange/ title="Learning Go-Fuzz 1: iprange">"Learning Go-Fuzz 1: iprange"</a></li></ul><p>This time I am looking at a different package. This is a package called <code>goexif</code> at <a href=https://github.com/rwcarlsen/goexif target=_blank rel="noreferrer noopener">https://github.com/rwcarlsen/goexif</a>. Being a file parser, it's a prime target for <code>Go-Fuzz</code>. Unfortunately it has not been updated for a while. Instead, we will be looking at a fork at <a href=https://github.com/xor-gate/goexif2 target=_blank rel="noreferrer noopener">https://github.com/xor-gate/goexif2</a>.</p><p>Code and fuzzing artifacts are at:</p><ul><li><a href=https://github.com/parsiya/Go-Security/tree/master/go-fuzz/goexif2 target=_blank rel="noreferrer noopener">https://github.com/parsiya/Go-Security/tree/master/go-fuzz/goexif2</a></li></ul><h1 id=tldr>TL;DR
+<a class=header-link href=#tldr><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Steps are similar to the previous part.</p><ol><li><code>go get github.com/xor-gate/goexif2/exif</code></li><li><code>go get github.com/xor-gate/goexif2/tiff</code></li><li>Create <code>Fuzz.go</code>.</li><li>Build with <code>go-fuzz-build</code>.<ul><li><code>go-fuzz-build github.com/xor-gate/goexif2/exif</code></li></ul></li><li>Fuzz</li><li>???</li><li>Crashes!</li></ol><p>If panics have been fixed, you can clone the commit <code>e5a111b2b4bd00d5214b1030deb301780110358d</code>.</p><h1 id=fuzz>Fuzz
+<a class=header-link href=#fuzz><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>The <code>Fuzz</code> function is easy straight forward:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// +build gofuzz
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span>
 </span></span><span style=display:flex><span><span style=color:#719e07>package</span> exif
 </span></span><span style=display:flex><span>
@@ -84,19 +28,10 @@ Learning Go-Fuzz 2: goexif2
 </span></span><span style=display:flex><span>	<span style=color:#719e07>return</span> <span style=color:#2aa198>1</span>
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><h1 id=samples>Samples
-<a class=header-link href=#samples><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>For samples, we need some pictures that contain exif data. The package comes with some samples inside the <code>samples</code> directory but I used samples at the following repository minus <code>corrupted.jpg</code>:</p><ul>
-<li><a href=https://github.com/ianare/exif-samples/tree/master/jpg target=_blank rel="noreferrer noopener">https://github.com/ianare/exif-samples/tree/master/jpg</a></li></ul><h1 id=running-out-of-memory>Running Out of Memory
-<a class=header-link href=#running-out-of-memory><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>During fuzzing I got a lot of crashes that were caused by lack of memory. This usually happens when random bytes are read as field sizes and the size is not evaluated, thus the package will allocate very large chunks of memory.</p><p>We are instrumenting the application around 10000 times a second, this adds up and the garbage collector cannot keep up. Soon we need to <code>download more RAM</code>. You can see memory usage in the following picture:</p><span class=caption-wrapper>
-<img class=caption src=01-ram.png title="Go's GC hard at work" alt="Go's GC hard at work">
-<span class=caption-text>Go's GC hard at work</span>
-</span>
-<p>Looking at the fuzzer, we can see our <code>restarts</code> ratio is crap. This is the ratio of restarts to executions. We want it to be around <code>1/10000</code> but we have fallen to <code>1/1500</code>. This means we are crashing a lot. After a while, <code>Go-Fuzz</code> might even stop working (see stagnating total number of execs in the picture below).</p><span class=caption-wrapper>
-<img class=caption src=02-fuzzer-crash.png title="Go-Fuzz stops" alt="Go-Fuzz stops">
-<span class=caption-text>Go-Fuzz stops</span>
-</span>
-<p>Looking inside crash dumps, we see most of them are about running out of memory:</p><pre tabindex=0><code>runtime: out of memory: cannot allocate 25769803776-byte block (25832882176 in use)
+<a class=header-link href=#samples><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>For samples, we need some pictures that contain exif data. The package comes with some samples inside the <code>samples</code> directory but I used samples at the following repository minus <code>corrupted.jpg</code>:</p><ul><li><a href=https://github.com/ianare/exif-samples/tree/master/jpg target=_blank rel="noreferrer noopener">https://github.com/ianare/exif-samples/tree/master/jpg</a></li></ul><h1 id=running-out-of-memory>Running Out of Memory
+<a class=header-link href=#running-out-of-memory><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>During fuzzing I got a lot of crashes that were caused by lack of memory. This usually happens when random bytes are read as field sizes and the size is not evaluated, thus the package will allocate very large chunks of memory.</p><p>We are instrumenting the application around 10000 times a second, this adds up and the garbage collector cannot keep up. Soon we need to <code>download more RAM</code>. You can see memory usage in the following picture:</p><span class=caption-wrapper><img class=caption src=01-ram.png title="Go's GC hard at work" alt="Go's GC hard at work">
+<span class=caption-text>Go's GC hard at work</span></span><p>Looking at the fuzzer, we can see our <code>restarts</code> ratio is crap. This is the ratio of restarts to executions. We want it to be around <code>1/10000</code> but we have fallen to <code>1/1500</code>. This means we are crashing a lot. After a while, <code>Go-Fuzz</code> might even stop working (see stagnating total number of execs in the picture below).</p><span class=caption-wrapper><img class=caption src=02-fuzzer-crash.png title="Go-Fuzz stops" alt="Go-Fuzz stops">
+<span class=caption-text>Go-Fuzz stops</span></span><p>Looking inside crash dumps, we see most of them are about running out of memory:</p><pre tabindex=0><code>runtime: out of memory: cannot allocate 25769803776-byte block (25832882176 in use)
 fatal error: out of memory
 
 runtime stack:
@@ -110,10 +45,8 @@ runtime.systemstack(0x0)
 	/go-fuzz-build214414686/goroot/src/runtime/asm_amd64.s:409 +0x7e
 runtime.mstart()
 	/go-fuzz-build214414686/goroot/src/runtime/proc.go:1175
-</code></pre><p>This means we are running out of memory and it's not a legitimate crash. Before continuing we need to go and investigate the root cause.</p><p><strong>Lesson #0:</strong> Fix <code>Go-Fuzz</code> running out of memory:</p><ul>
-<li>Fix bugs that result in the allocation of large chunks of memory.</li><li>Run fewer workers with <code>-procs</code>. By default <code>Go-Fuzz</code> uses all of your CPU cores (including virtual).</li></ul><h1 id=analyzing-crashes>Analyzing Crashes
-<a class=header-link href=#analyzing-crashes><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Let's look at our crashes.</p><pre tabindex=0><code>05/03/2018  12:16 AM               365 171e8e5ca3e3d609322376915dcfa3dd56938845
+</code></pre><p>This means we are running out of memory and it's not a legitimate crash. Before continuing we need to go and investigate the root cause.</p><p><strong>Lesson #0:</strong> Fix <code>Go-Fuzz</code> running out of memory:</p><ul><li>Fix bugs that result in the allocation of large chunks of memory.</li><li>Run fewer workers with <code>-procs</code>. By default <code>Go-Fuzz</code> uses all of your CPU cores (including virtual).</li></ul><h1 id=analyzing-crashes>Analyzing Crashes
+<a class=header-link href=#analyzing-crashes><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Let's look at our crashes.</p><pre tabindex=0><code>05/03/2018  12:16 AM               365 171e8e5ca3e3d609322376915dcfa3dd56938845
 05/03/2018  12:16 AM             3,651 171e8e5ca3e3d609322376915dcfa3dd56938845.output
 05/03/2018  12:16 AM               912 171e8e5ca3e3d609322376915dcfa3dd56938845.quoted
 05/01/2018  11:53 PM               186 3f5b7d448a0791f5739fa0a2371bb2492b64f835
@@ -126,14 +59,7 @@ runtime.mstart()
 05/01/2018  11:26 PM             1,677 a59a2ad5701156b88c6a132e1340fe006f67280c.output
 05/01/2018  11:26 PM                63 a59a2ad5701156b88c6a132e1340fe006f67280c.quoted
 </code></pre><h2 id=reproducing-crashes>Reproducing Crashes
-<a class=header-link href=#reproducing-crashes><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>As we know <code>Go-Fuzz</code> conveniently stores the inputs in files. We can use the following code snippet to reproduce crashes:</p><figure class=code>
-<figcaption>
-<span>test-crash-a5.go</span>
-</figcaption><div class=codewrapper>
-<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+<a class=header-link href=#reproducing-crashes><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>As we know <code>Go-Fuzz</code> conveniently stores the inputs in files. We can use the following code snippet to reproduce crashes:</p><figure class=code><figcaption><span>test-crash-a5.go</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
@@ -157,8 +83,7 @@ runtime.mstart()
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Sample app to test crash a5 for xor-gate/goexif2.
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Sample app to test crash a5 for xor-gate/goexif2.
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>package</span> main
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#719e07>import</span> (
@@ -182,8 +107,7 @@ runtime.mstart()
 </span></span><span style=display:flex><span>	}
 </span></span><span style=display:flex><span>	fmt.<span style=color:#268bd2>Println</span>(<span style=color:#2aa198>&#34;no err&#34;</span>)
 </span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><h2 id=a5-and-3f-crashes>A5 and 3F Crashes
-<a class=header-link href=#a5-and-3f-crashes><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>These two panics are similar:</p><pre tabindex=0><code>panic: runtime error: makeslice: len out of range
+<a class=header-link href=#a5-and-3f-crashes><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>These two panics are similar:</p><pre tabindex=0><code>panic: runtime error: makeslice: len out of range
 
 goroutine 1 [running]:
 github.com/xor-gate/goexif2/tiff.(*Tag).convertVals(0xc04205a280, 0xc042080480, 0xc04200e090)
@@ -195,30 +119,16 @@ github.com/xor-gate/goexif2/tiff.DecodeDir(0x30a0000, 0xc042080480, 0x5605c0, 0x
 // removed
 </code></pre><p><code>A5</code> crash payload is:</p><pre tabindex=0><code>00000000  49 49 2a 00 08 00 00 00 30 30 30 30 05 00 00 00  |II*.....0000....|
 00000010  00 a0 30 30 30 30                                |. 0000|
-</code></pre><p>The panic is happening at <a href=https://github.com/xor-gate/goexif2/blob/develop/tiff/tag.go#L258 target=_blank rel="noreferrer noopener">https://github.com/xor-gate/goexif2/blob/develop/tiff/tag.go#L258</a>:</p><figure class=code>
-<figcaption>
-<span>tiff/tag.go line 258</span>
-</figcaption><div class=codewrapper>
-<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</code></pre><p>The panic is happening at <a href=https://github.com/xor-gate/goexif2/blob/develop/tiff/tag.go#L258 target=_blank rel="noreferrer noopener">https://github.com/xor-gate/goexif2/blob/develop/tiff/tag.go#L258</a>:</p><figure class=code><figcaption><span>tiff/tag.go line 258</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#719e07>case</span> DTRational:
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#719e07>case</span> DTRational:
 </span></span><span style=display:flex><span>	t.ratVals = <span style=color:#b58900>make</span>([][]<span style=color:#dc322f>int64</span>, <span style=color:#b58900>int</span>(t.Count))
-</span></span><span style=display:flex><span>	<span style=color:#719e07>for</span> i <span style=color:#719e07>:=</span> <span style=color:#719e07>range</span> t.ratVals {</span></span></code></pre></td></tr></table></div></div></div></figure><p>We can add some print statements to the local copy the package and investigate it:</p><figure class=code>
-<figcaption>
-<span>tiff/tag.go line 258</span>
-</figcaption><div class=codewrapper>
-<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span></span><span style=display:flex><span>	<span style=color:#719e07>for</span> i <span style=color:#719e07>:=</span> <span style=color:#719e07>range</span> t.ratVals {</span></span></code></pre></td></tr></table></div></div></div></figure><p>We can add some print statements to the local copy the package and investigate it:</p><figure class=code><figcaption><span>tiff/tag.go line 258</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#719e07>case</span> DTRational:
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#719e07>case</span> DTRational:
 </span></span><span style=display:flex><span>	fmt.<span style=color:#268bd2>Println</span>(<span style=color:#2aa198>&#34;t.count: &#34;</span>, t.Count)
 </span></span><span style=display:flex><span>	t.ratVals = <span style=color:#b58900>make</span>([][]<span style=color:#dc322f>int64</span>, <span style=color:#b58900>int</span>(t.Count))
 </span></span><span style=display:flex><span>	<span style=color:#719e07>for</span> i <span style=color:#719e07>:=</span> <span style=color:#719e07>range</span> t.ratVals {</span></span></code></pre></td></tr></table></div></div></div></figure><p>Running <code>test-crash-a5.go</code> we get the value:</p><pre tabindex=0><code>$ go run test-crash-a5.go
@@ -228,14 +138,7 @@ panic: runtime error: makeslice: len out of range
 goroutine 1 [running]:
 github.com/xor-gate/goexif2/tiff.(*Tag).convertVals(0xc04205a1e0, 0xc042082018, 0xc042062110)
 </code></pre><h3 id=bonus-int-overflow-and-go-playgrounds-operating-system>Bonus: int Overflow and Go Playground's Operating System
-<a class=header-link href=#bonus-int-overflow-and-go-playgrounds-operating-system><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>As you have noticed, the constant <code>2684354560</code> is more than the maximum of signed int32 (<code>2147483647</code>). However, when trying to cast this value locally in Windows 10 64-bit VM or on the Go playground we get different results.</p><p>Consider this mini-example:</p><figure class=code>
-<figcaption>
-<span>int-overflow-test.go</span>
-</figcaption><div class=codewrapper>
-<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+<a class=header-link href=#bonus-int-overflow-and-go-playgrounds-operating-system><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>As you have noticed, the constant <code>2684354560</code> is more than the maximum of signed int32 (<code>2147483647</code>). However, when trying to cast this value locally in Windows 10 64-bit VM or on the Go playground we get different results.</p><p>Consider this mini-example:</p><figure class=code><figcaption><span>int-overflow-test.go</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
@@ -244,8 +147,7 @@ github.com/xor-gate/goexif2/tiff.(*Tag).convertVals(0xc04205a1e0, 0xc042082018, 
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">7
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">8
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">9
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Testing overflow on int.
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Testing overflow on int.
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>package</span> main
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#719e07>import</span> <span style=color:#2aa198>&#34;fmt&#34;</span>
@@ -253,13 +155,7 @@ github.com/xor-gate/goexif2/tiff.(*Tag).convertVals(0xc04205a1e0, 0xc042082018, 
 </span></span><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>main</span>() {
 </span></span><span style=display:flex><span>	i <span style=color:#719e07>:=</span> <span style=color:#b58900>int</span>(<span style=color:#2aa198>2684354560</span>)
 </span></span><span style=display:flex><span>	fmt.<span style=color:#268bd2>Println</span>(i)
-</span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>Running this in the Windows 10 64-bit VM, does not return an error. While running the same program in Go playground returns this error <code>prog.go:8:11: constant 2684354560 overflows int32</code>.</p><p>This means the playground is using 32 bit <code>int</code>s and locally we are using 64 bit ones. Local is obvious because we are in a 64 bit OS. To get the OS of the Go playground we can use this other small program:</p><figure class=code>
-<figcaption>
-<span>goos-goarch.go</span>
-</figcaption><div class=codewrapper>
-<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>Running this in the Windows 10 64-bit VM, does not return an error. While running the same program in Go playground returns this error <code>prog.go:8:11: constant 2684354560 overflows int32</code>.</p><p>This means the playground is using 32 bit <code>int</code>s and locally we are using 64 bit ones. Local is obvious because we are in a 64 bit OS. To get the OS of the Go playground we can use this other small program:</p><figure class=code><figcaption><span>goos-goarch.go</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
@@ -271,8 +167,7 @@ github.com/xor-gate/goexif2/tiff.(*Tag).convertVals(0xc04205a1e0, 0xc042082018, 
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Get OS and architecture.
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Get OS and architecture.
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>package</span> main
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#719e07>import</span> (
@@ -285,13 +180,7 @@ github.com/xor-gate/goexif2/tiff.(*Tag).convertVals(0xc04205a1e0, 0xc042082018, 
 </span></span><span style=display:flex><span>	fmt.<span style=color:#268bd2>Println</span>(runtime.GOARCH)
 </span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>And we get:</p><pre tabindex=0><code>nacl
 amd64p32
-</code></pre><p><code>amd64p32</code> means it's a 64-bit OS using 32-bit pointers and <code>int</code>s. We can use <code>unsafe.Sizeof</code> to see this.</p><figure class=code>
-<figcaption>
-<span>int-pointer-size.go</span>
-</figcaption><div class=codewrapper>
-<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</code></pre><p><code>amd64p32</code> means it's a 64-bit OS using 32-bit pointers and <code>int</code>s. We can use <code>unsafe.Sizeof</code> to see this.</p><figure class=code><figcaption><span>int-pointer-size.go</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
@@ -308,8 +197,7 @@ amd64p32
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Get int and pointer size.
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Get int and pointer size.
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>package</span> main
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#719e07>import</span> (
@@ -333,14 +221,7 @@ Size of int : 8
 Size of int*: 8
 Size of *float32 : 8
 </code></pre><p><strong>Note:</strong> Pointers are just memory addresses. It does not matter what they are pointing to. As you can see<code>*float32</code> has the same size as a <code>*int32</code> or <code>*int64</code>.</p><p><strong>Lesson #1:</strong> <code>int</code> is OS dependent. It's better to use data types with explicit lengths like <code>int32</code> and <code>int64</code>. Also if you do not need negative numbers, use unsigned versions (but be careful of underflows).</p><h3 id=makeslice-len-out-of-range>makeslice: len out of range
-<a class=header-link href=#makeslice-len-out-of-range><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>Now let's get back to the crash. We are trying to create a large slice and the result is an error. We can trace back this error to <a href=https://golang.org/src/runtime/slice.go#L24 target=_blank rel="noreferrer noopener">slice.go</a> in Go source:</p><figure class=code>
-<figcaption>
-<span>slice.go-makeslice</span>
-</figcaption><div class=codewrapper>
-<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+<a class=header-link href=#makeslice-len-out-of-range><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>Now let's get back to the crash. We are trying to create a large slice and the result is an error. We can trace back this error to <a href=https://golang.org/src/runtime/slice.go#L24 target=_blank rel="noreferrer noopener">slice.go</a> in Go source:</p><figure class=code><figcaption><span>slice.go-makeslice</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
@@ -367,8 +248,7 @@ Size of *float32 : 8
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>makeslice</span>(et <span style=color:#719e07>*</span>_type, len, cap <span style=color:#dc322f>int</span>) slice {
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>makeslice</span>(et <span style=color:#719e07>*</span>_type, len, cap <span style=color:#dc322f>int</span>) slice {
 </span></span><span style=display:flex><span>	<span style=color:#586e75>// NOTE: The len &gt; maxElements check here is not strictly necessary,
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span>	<span style=color:#586e75>// but it produces a &#39;len out of range&#39; error instead of a &#39;cap out of range&#39; error
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span>	<span style=color:#586e75>// when someone does make([]T, bignumber). &#39;cap out of range&#39; is true too,
@@ -395,14 +275,7 @@ Size of *float32 : 8
 </span></span><span style=display:flex><span>	}
 </span></span><span style=display:flex><span>	<span style=color:#719e07>return</span> _MaxMem <span style=color:#719e07>/</span> elemsize
 </span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p><code>_MaxMem</code> is calculated in <a href=https://golang.org/src/runtime/malloc.go#L137 target=_blank rel="noreferrer noopener">malloc.go</a> and it dictates how much memory can be allocated. On Windows 64-bit it seems to be 32GB or 35 bits.</p><p><strong>Root cause analysis:</strong> We are allocating too much memory.</p><p><strong>Lesson #2:</strong> Amount of memory available for malloc is OS dependent and somewhat arbitrary.</p><p><strong>Lesson #3:</strong> Manually check size before allocating memory for slices.</p><p>But <code>t.Count</code> has to come from somewhere.</p><h3 id=tcounts-origin>t.Count's Origin
-<a class=header-link href=#tcounts-origin><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p><code>t.Count</code> is calculated a bit further up at <a href=https://github.com/xor-gate/goexif2/blob/develop/tiff/tag.go#L133 target=_blank rel="noreferrer noopener">line 133</a>.</p><figure class=code>
-<figcaption>
-<span>Populating t.Count</span>
-</figcaption><div class=codewrapper>
-<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+<a class=header-link href=#tcounts-origin><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p><code>t.Count</code> is calculated a bit further up at <a href=https://github.com/xor-gate/goexif2/blob/develop/tiff/tag.go#L133 target=_blank rel="noreferrer noopener">line 133</a>.</p><figure class=code><figcaption><span>Populating t.Count</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
@@ -412,8 +285,7 @@ Size of *float32 : 8
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>err = binary.<span style=color:#268bd2>Read</span>(r, order, <span style=color:#719e07>&amp;</span>t.Count)
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>err = binary.<span style=color:#268bd2>Read</span>(r, order, <span style=color:#719e07>&amp;</span>t.Count)
 </span></span><span style=display:flex><span><span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
 </span></span><span style=display:flex><span>	<span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>, <span style=color:#268bd2>newTiffError</span>(<span style=color:#2aa198>&#34;tag component count read failed&#34;</span>, err)
 </span></span><span style=display:flex><span>}
@@ -422,25 +294,16 @@ Size of *float32 : 8
 </span></span></span><span style=display:flex><span><span style=color:#586e75>// MaxUint32. This is probably not a valid value, so return early.
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>if</span> t.Count <span style=color:#719e07>==</span> <span style=color:#2aa198>1</span><span style=color:#719e07>&lt;&lt;</span><span style=color:#2aa198>32</span><span style=color:#719e07>-</span><span style=color:#2aa198>1</span> {
 </span></span><span style=display:flex><span>	<span style=color:#719e07>return</span> t, <span style=color:#268bd2>newTiffError</span>(<span style=color:#2aa198>&#34;invalid Count offset in tag&#34;</span>, <span style=color:#cb4b16>nil</span>)
-</span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>We are reading 4 bytes (<code>Count</code> is <code>uint32</code>) and populating <code>t.Count</code>. According to <a href=https://tools.ietf.org/html/rfc2306 target=_blank rel="noreferrer noopener">RFC2306 - Tag Image File Format (TIFF) - F Profile for Facsimile</a>:</p><blockquote>
-<p>TIFF fields (also called entries) contain a tag, its type (e.g. short, long, rational, etc.), a count (which indicates the number of values/offsets) and a value/offset.</p></blockquote><p>So we get <code>2684354560</code> when we read <code>A0 00 00 00</code> from our payload in little-endian:</p><pre tabindex=0><code>00000000  49 49 2a 00 08 00 00 00 30 30 30 30 05 00 00 00  |II*.....0000....|
+</span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>We are reading 4 bytes (<code>Count</code> is <code>uint32</code>) and populating <code>t.Count</code>. According to <a href=https://tools.ietf.org/html/rfc2306 target=_blank rel="noreferrer noopener">RFC2306 - Tag Image File Format (TIFF) - F Profile for Facsimile</a>:</p><blockquote><p>TIFF fields (also called entries) contain a tag, its type (e.g. short, long, rational, etc.), a count (which indicates the number of values/offsets) and a value/offset.</p></blockquote><p>So we get <code>2684354560</code> when we read <code>A0 00 00 00</code> from our payload in little-endian:</p><pre tabindex=0><code>00000000  49 49 2a 00 08 00 00 00 30 30 30 30 05 00 00 00  |II*.....0000....|
 00000010  00 a0 30 30 30 30                                |. 0000|
 </code></pre><p><strong>Lesson #4:</strong> After reading data, check them for validity. This is more important for field lengths.</p><h3 id=fix-a5-and-3f-crashes>Fix A5 and 3F Crashes
-<a class=header-link href=#fix-a5-and-3f-crashes><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>I could not find anything about the maximum number of types in a tag in the RFC. But it's a <code>dword</code> (4 bytes) so it can contain values that cause the panic in <code>makeslice</code>. We can choose a large enough value that does not cause the panic. I think <code>2147483647</code> or <code>1&lt;&lt;31-1</code> is a good compromise.</p><p>We can add our new check to the current check:</p><figure class=code>
-<figcaption>
-<span>Checking t.Count</span>
-</figcaption><div class=codewrapper>
-<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+<a class=header-link href=#fix-a5-and-3f-crashes><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>I could not find anything about the maximum number of types in a tag in the RFC. But it's a <code>dword</code> (4 bytes) so it can contain values that cause the panic in <code>makeslice</code>. We can choose a large enough value that does not cause the panic. I think <code>2147483647</code> or <code>1&lt;&lt;31-1</code> is a good compromise.</p><p>We can add our new check to the current check:</p><figure class=code><figcaption><span>Checking t.Count</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// There seems to be a relatively common corrupt tag which has a Count of
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// There seems to be a relatively common corrupt tag which has a Count of
 </span></span></span><span style=display:flex><span><span style=color:#586e75>// MaxUint32. This is probably not a valid value, so return early.
 </span></span></span><span style=display:flex><span><span style=color:#586e75>// Also check for invalid count values.
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>if</span> t.Count <span style=color:#719e07>==</span> <span style=color:#2aa198>1</span><span style=color:#719e07>&lt;&lt;</span><span style=color:#2aa198>32</span><span style=color:#719e07>-</span><span style=color:#2aa198>1</span> <span style=color:#719e07>||</span> t.Count <span style=color:#719e07>&gt;=</span> <span style=color:#2aa198>1</span><span style=color:#719e07>&lt;&lt;</span><span style=color:#2aa198>31</span><span style=color:#719e07>-</span><span style=color:#2aa198>1</span> {
@@ -451,8 +314,7 @@ err: exif: decode failed (tiff: invalid Count offset in tag)
 $ go run test-crash-3f.go
 err: loading EXIF sub-IFD: exif: sub-IFD ExifIFDPointer decode failed: tiff: invalid Count offset in tag
 </code></pre><h2 id=49-crash>49 Crash
-<a class=header-link href=#49-crash><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>This crash payload is:</p><pre tabindex=0><code>00000000  4d 4d 00 2a 00 00 00 08 00 07 30 30 30 30 30 30  |MM.*......000000|
+<a class=header-link href=#49-crash><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>This crash payload is:</p><pre tabindex=0><code>00000000  4d 4d 00 2a 00 00 00 08 00 07 30 30 30 30 30 30  |MM.*......000000|
 00000010  30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30  |0000000000000000|
 00000020  30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30  |0000000000000000|
 00000030  30 30 30 30 30 30 30 30 30 30 87 69 00 04 00 00  |0000000000.i....|
@@ -478,13 +340,7 @@ go-fuzz-dep.Main(0x550580)
 main.main()
 	go-fuzz-build214414686/gopath/src/github.com/xor-gate/goexif2/exif/go.fuzz.main/main.go:10 +0x34
 exit status 2
-</code></pre><p>This can be reproduced by running <code>test-crash-49.go</code>. At this point we know the drill. Looking at <a href=https://github.com/xor-gate/goexif2/blob/develop/tiff/tag.go#L357 target=_blank rel="noreferrer noopener">tag.go:363</a>:</p><figure class=code>
-<figcaption>
-<span>tag.Int64</span>
-</figcaption><div class=codewrapper>
-<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</code></pre><p>This can be reproduced by running <code>test-crash-49.go</code>. At this point we know the drill. Looking at <a href=https://github.com/xor-gate/goexif2/blob/develop/tiff/tag.go#L357 target=_blank rel="noreferrer noopener">tag.go:363</a>:</p><figure class=code><figcaption><span>tag.Int64</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
@@ -492,8 +348,7 @@ exit status 2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">7
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">8
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Int64 returns the tag&#39;s i&#39;th value as an integer. It returns an error if the
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Int64 returns the tag&#39;s i&#39;th value as an integer. It returns an error if the
 </span></span></span><span style=display:flex><span><span style=color:#586e75>// tag&#39;s Format is not IntVal. It panics if i is out of range.
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>func</span> (t <span style=color:#719e07>*</span>Tag) <span style=color:#268bd2>Int64</span>(i <span style=color:#dc322f>int</span>) (<span style=color:#dc322f>int64</span>, <span style=color:#dc322f>error</span>) {
 </span></span><span style=display:flex><span>	<span style=color:#719e07>if</span> t.format <span style=color:#719e07>!=</span> IntVal {
@@ -501,14 +356,7 @@ exit status 2
 </span></span><span style=display:flex><span>	}
 </span></span><span style=display:flex><span>	<span style=color:#719e07>return</span> t.intVals[i], <span style=color:#cb4b16>nil</span>
 </span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>It's known that this method can panic. We need to modify it (and the other similar ones) to return an error instead.</p><h3 id=fix-49-crash>Fix 49 Crash
-<a class=header-link href=#fix-49-crash><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>The fix is straightforward. Before accessing <code>t.intVals[i]</code> we need to check if the index is valid. This can be accomplished by checking it against <code>len(t.intVals[i])</code>.</p><figure class=code>
-<figcaption>
-<span>Modified tag.Int64</span>
-</figcaption><div class=codewrapper>
-<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+<a class=header-link href=#fix-49-crash><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>The fix is straightforward. Before accessing <code>t.intVals[i]</code> we need to check if the index is valid. This can be accomplished by checking it against <code>len(t.intVals[i])</code>.</p><figure class=code><figcaption><span>Modified tag.Int64</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
@@ -519,8 +367,7 @@ exit status 2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Int64 returns the tag&#39;s i&#39;th value as an integer. It returns an error if the
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Int64 returns the tag&#39;s i&#39;th value as an integer. It returns an error if the
 </span></span></span><span style=display:flex><span><span style=color:#586e75>// tag&#39;s Format is not IntVal. It panics if i is out of range.
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>func</span> (t <span style=color:#719e07>*</span>Tag) <span style=color:#268bd2>Int64</span>(i <span style=color:#dc322f>int</span>) (<span style=color:#dc322f>int64</span>, <span style=color:#dc322f>error</span>) {
 </span></span><span style=display:flex><span>	<span style=color:#719e07>if</span> t.format <span style=color:#719e07>!=</span> IntVal {
@@ -530,13 +377,7 @@ exit status 2
 </span></span><span style=display:flex><span>		<span style=color:#719e07>return</span> <span style=color:#2aa198>0</span>, <span style=color:#268bd2>newTiffError</span>(<span style=color:#2aa198>&#34;index out of range in intVals&#34;</span>, <span style=color:#cb4b16>nil</span>)
 </span></span><span style=display:flex><span>	}
 </span></span><span style=display:flex><span>	<span style=color:#719e07>return</span> t.intVals[i], <span style=color:#cb4b16>nil</span>
-</span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p><strong>Lesson #5:</strong> Check index against array length before access.</p><p>Now we do not panic but there's no error because it's suppressed at <a href=https://github.com/xor-gate/goexif2/blob/develop/exif/exif.go#L211 target=_blank rel="noreferrer noopener">exif.go:211</a>:</p><figure class=code>
-<figcaption>
-<span>exif.go:211</span>
-</figcaption><div class=codewrapper>
-<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p><strong>Lesson #5:</strong> Check index against array length before access.</p><p>Now we do not panic but there's no error because it's suppressed at <a href=https://github.com/xor-gate/goexif2/blob/develop/exif/exif.go#L211 target=_blank rel="noreferrer noopener">exif.go:211</a>:</p><figure class=code><figcaption><span>exif.go:211</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
@@ -546,8 +387,7 @@ exit status 2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>loadSubDir</span>(x <span style=color:#719e07>*</span>Exif, ptr FieldName, fieldMap <span style=color:#268bd2>map</span>[<span style=color:#dc322f>uint16</span>]FieldName) <span style=color:#dc322f>error</span> {
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>loadSubDir</span>(x <span style=color:#719e07>*</span>Exif, ptr FieldName, fieldMap <span style=color:#268bd2>map</span>[<span style=color:#dc322f>uint16</span>]FieldName) <span style=color:#dc322f>error</span> {
 </span></span><span style=display:flex><span>	tag, err <span style=color:#719e07>:=</span> x.<span style=color:#268bd2>Get</span>(ptr)
 </span></span><span style=display:flex><span>	<span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
 </span></span><span style=display:flex><span>		<span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>
@@ -557,14 +397,7 @@ exit status 2
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span>		<span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>
 </span></span><span style=display:flex><span>	}
 </span></span><span style=display:flex><span>	<span style=color:#586e75>// removed
-</span></span></span></code></pre></td></tr></table></div></div></div></figure><p>The new error check needs to be added to these methods:</p><ul>
-<li><code>Rat2</code></li><li><code>Int64</code></li><li><code>Int</code></li><li><code>Float</code></li></ul><p>A bit further down inside the <code>MarshalJSON</code> method we can see errors being ignored:</p><figure class=code>
-<figcaption>
-<span>MarshalJSON snippet</span>
-</figcaption><div class=codewrapper>
-<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span></span></span></code></pre></td></tr></table></div></div></div></figure><p>The new error check needs to be added to these methods:</p><ul><li><code>Rat2</code></li><li><code>Int64</code></li><li><code>Int</code></li><li><code>Float</code></li></ul><p>A bit further down inside the <code>MarshalJSON</code> method we can see errors being ignored:</p><figure class=code><figcaption><span>MarshalJSON snippet</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
@@ -579,8 +412,7 @@ exit status 2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// removed
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// removed
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>for</span> i <span style=color:#719e07>:=</span> <span style=color:#2aa198>0</span>; i &lt; <span style=color:#b58900>int</span>(t.Count); i<span style=color:#719e07>++</span> {
 </span></span><span style=display:flex><span>	<span style=color:#719e07>switch</span> t.format {
 </span></span><span style=display:flex><span>	<span style=color:#719e07>case</span> RatVal:
@@ -596,14 +428,7 @@ exit status 2
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span><span style=color:#586e75>// removed
 </span></span></span></code></pre></td></tr></table></div></div></div></figure><p>Looking at the function we can see by ignoring the errors, we will have garbage data in the JSON. However, I don't think we need to return errors here but I could be wrong.</p><h1 id=adding-crashes-to-tests>Adding Crashes to Tests
-<a class=header-link href=#adding-crashes-to-tests><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>After things are fixed, we need to add the crashes to tests. This will discover if these bug regress in the future. Unfortunately, the package uses <code>go generate</code> to generate tests and I have no clue how to use it. But I know how to write normal Go test using the <a href=https://golang.org/pkg/testing/ target=_blank rel="noreferrer noopener">testing</a> package. Our payloads are pretty small so we will embed them in the test file instead of adding extra files to the package.</p><figure class=code>
-<figcaption>
-<span>gofuzz_test.go</span>
-</figcaption><div class=codewrapper>
-<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+<a class=header-link href=#adding-crashes-to-tests><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>After things are fixed, we need to add the crashes to tests. This will discover if these bug regress in the future. Unfortunately, the package uses <code>go generate</code> to generate tests and I have no clue how to use it. But I know how to write normal Go test using the <a href=https://golang.org/pkg/testing/ target=_blank rel="noreferrer noopener">testing</a> package. Our payloads are pretty small so we will embed them in the test file instead of adding extra files to the package.</p><figure class=code><figcaption><span>gofuzz_test.go</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
@@ -654,8 +479,7 @@ exit status 2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">49
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">50
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">51
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#719e07>package</span> exif
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#719e07>package</span> exif
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#719e07>import</span> (
 </span></span><span style=display:flex><span>	<span style=color:#2aa198>&#34;bytes&#34;</span>
@@ -706,59 +530,14 @@ exit status 2
 </span></span><span style=display:flex><span>	ret <span style=color:#719e07>:=</span> m.<span style=color:#268bd2>Run</span>()
 </span></span><span style=display:flex><span>	os.<span style=color:#268bd2>Exit</span>(ret)
 </span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p><strong>Lesson #6:</strong> Add <code>Go-Fuzz</code> crashes to unit tests. This is useful for regression testing.</p><h1 id=conclusion>Conclusion
-<a class=header-link href=#conclusion><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>We used our newly acquired knowledge of <code>Go-Fuzz</code> on an image parser.</p><h2 id=lessons-learned>Lessons Learned
-<a class=header-link href=#lessons-learned><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><ul>
-<li><code>Go-Fuzz</code> can crash when running out of memory and return false positives. We can throttle it or fix memory allocation bugs before resuming.</li><li>Use data types with explicit lengths such as <code>int32</code> and <code>int64</code> instead of OS dependent ones like <code>int</code>.</li><li>Amount of memory available for malloc is OS dependent and somewhat arbitrary.</li><li>Manually check the size before allocating memory for slices.</li><li>Check data (esp. field lengths) for validity after reading them.</li><li>Check index against array length before access.</li><li>Add <code>Go-Fuzz</code> crashes to unit tests.</li></ul><p>Thanks for reading and please let me know if you have feedback/tips/critiques.</p></div><footer>
-<p class=meta>
-<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<a class=header-link href=#conclusion><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>We used our newly acquired knowledge of <code>Go-Fuzz</code> on an image parser.</p><h2 id=lessons-learned>Lessons Learned
+<a class=header-link href=#lessons-learned><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><ul><li><code>Go-Fuzz</code> can crash when running out of memory and return false positives. We can throttle it or fix memory allocation bugs before resuming.</li><li>Use data types with explicit lengths such as <code>int32</code> and <code>int64</code> instead of OS dependent ones like <code>int</code>.</li><li>Amount of memory available for malloc is OS dependent and somewhat arbitrary.</li><li>Manually check the size before allocating memory for slices.</li><li>Check data (esp. field lengths) for validity after reading them.</li><li>Check index against array length before access.</li><li>Add <code>Go-Fuzz</code> crashes to unit tests.</li></ul><p>Thanks for reading and please let me know if you have feedback/tips/critiques.</p></div><footer><p class=meta><span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>May 5, 2018</time>
-<span class=categories>
-Tags:
-<a class=category href=https://parsiya.net/tags/go-fuzz>Go-Fuzz</a>
-</span>
-</p><p class=meta>
-<a class="basic-alignment left" href=https://parsiya.net/blog/2018-04-29-learning-go-fuzz-1-iprange/ title="Learning Go-Fuzz 1: iprange">Learning Go-Fuzz 1: iprange</a>
-<a class="basic-alignment right" href=https://parsiya.net/blog/2018-05-26-on-username-enumeration/ title="On Username Enumeration">On Username Enumeration</a>
-</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer></article></div><aside class="sidebar thirds">
-<section class="first odd">
-<h1>Who am I?</h1><p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
-<li class=sidebar-nav-item>
-<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<span class=categories>Tags:
+<a class=category href=https://parsiya.net/tags/go-fuzz>Go-Fuzz</a></span></p><p class=meta><a class="basic-alignment left" href=https://parsiya.net/blog/2018-04-29-learning-go-fuzz-1-iprange/ title="Learning Go-Fuzz 1: iprange">Learning Go-Fuzz 1: iprange</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2018-05-26-on-username-enumeration/ title="On Username Enumeration">On Username Enumeration</a></p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></footer></article></div><aside class="sidebar thirds"><section class="first odd"><h1>Who am I?</h1><p><p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
-<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li></ul><section class=odd>
-<h1>Collections</h1><li>
-<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li><li>
-<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li><li>
-<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li><li>
-<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li><li>
-<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li><li>
-<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li><li>
-<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li><li>
-<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li><li>
-<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li><li>
-<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li><li>
-<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li><li>
-<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li></section></aside></div></div><footer role=contentinfo>
-<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
-<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p></footer></body></html>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a></li><li><a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a></li><li><a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.</p></footer></body></html>

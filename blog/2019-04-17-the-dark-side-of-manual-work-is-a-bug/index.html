@@ -1,61 +1,17 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
-<link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>The Dark Side of "Manual Work is a Bug"</title><link rel=stylesheet href=/css/hugo-octopress.css>
-<link rel=stylesheet href=/css/fork-awesome.min.css>
-<link href=https://parsiya.net/favicon.png rel=icon>
-<meta name=description content>
-<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
-<meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.93.0">
-<meta name=twitter:card content="summary_large_image">
-<meta name=twitter:image:src content="https://parsiya.net/blog/2019-04-17-the-dark-side-of-manual-work-is-a-bug/jedi-fallen-order.jpg">
-<meta name=twitter:title content="The Dark Side of &#34;Manual Work is a Bug&#34;">
-<meta name=twitter:description content="This is a revisit of Manual Work is a Bug
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>The Dark Side of "Manual Work is a Bug"</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.96.0"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2019-04-17-the-dark-side-of-manual-work-is-a-bug/jedi-fallen-order.jpg"><meta name=twitter:title content="The Dark Side of &#34;Manual Work is a Bug&#34;"><meta name=twitter:description content="This is a revisit of Manual Work is a Bug
 during my ramp up at my new job.
 I will discuss my experience doing some automation at my previous job and the
-flip side to the utopia painted by the article.">
-<meta name=twitter:domain content="parsiya.net">
-<meta name=twitter:creator content="@CryptoGangsta">
-</head><body>
-<header role=banner>
-<hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
-<fieldset class=mobile-nav>
-<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset><ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
-<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
-<fieldset role=search>
-<input class=search type=text name=q results=0 placeholder=Search>
-<input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset></form></nav><div id=main>
-<div id=content>
-<div>
-<article class=hentry role=article>
-<header>
-<p class=meta>Apr 17, 2019
+flip side to the utopia painted by the article."><meta name=twitter:domain content="parsiya.net"><meta name=twitter:creator content="@CryptoGangsta"></head><body><header role=banner><hgroup><h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation><fieldset class=mobile-nav><select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select></fieldset><ul class=main-navigation><li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription><a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a></ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer"><fieldset role=search><input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/></fieldset></form></nav><div id=main><div id=content><div><article class=hentry role=article><header><p class=meta>Apr 17, 2019
 - 4 minute read
 - <a href=https://parsiya.net/blog/2019-04-17-the-dark-side-of-manual-work-is-a-bug/#disqus_thread>Comments</a>
-- <a class=label href=https://parsiya.net/categories/not-security/>Not Security </a><a class=label href=https://parsiya.net/categories/clone/>Clone </a><a class=label href=https://parsiya.net/categories/automation/>Automation </a>
-</p><h1 class=entry-title>
-The Dark Side of "Manual Work is a Bug"
-</h1></header><div class=entry-content>
-<p>This is a revisit of <a href="https://queue.acm.org/detail.cfm?id=3197520" target=_blank rel="noreferrer noopener">Manual Work is a Bug</a>
+- <a class=label href=https://parsiya.net/categories/not-security/>Not Security </a><a class=label href=https://parsiya.net/categories/clone/>Clone </a><a class=label href=https://parsiya.net/categories/automation/>Automation</a></p><h1 class=entry-title>The Dark Side of "Manual Work is a Bug"</h1></header><div class=entry-content><p>This is a revisit of <a href="https://queue.acm.org/detail.cfm?id=3197520" target=_blank rel="noreferrer noopener">Manual Work is a Bug</a>
 during my ramp up at my <a href=https://twitter.com/CryptoGangsta/status/1109185306295746563 target=_blank rel="noreferrer noopener">new job</a>.
 I will discuss my experience doing some automation at my previous job and the
-flip side to the utopia painted by the article.</p><span class=caption-wrapper>
-<img class=caption src=jedi-fallen-order.jpg title="Your technical debt" alt="Your technical debt">
-<span class=caption-text>Your technical debt</span>
-</span>
-<ul>
-<li><a href=#why-the-revisit>Why The Revisit?</a></li><li><a href=#time-it-needs-time-to-win-back-your-love-again>Time, It Needs Time, To Win Back Your Love Again</a></li><li><a href=#but-automation-gives-you-time>But Automation Gives You Time</a></li><li><a href=#should-everyone-automate>Should Everyone Automate?</a></li><li><a href=#what-did-we-learn-here-today>What Did We Learn Here Today?</a></li></ul><h2 id=why-the-revisit>Why The Revisit?
-<a class=header-link href=#why-the-revisit><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>I discovered the article last year. I love it. You can read my initial observations in
+flip side to the utopia painted by the article.</p><span class=caption-wrapper><img class=caption src=jedi-fallen-order.jpg title="Your technical debt" alt="Your technical debt">
+<span class=caption-text>Your technical debt</span></span><ul><li><a href=#why-the-revisit>Why The Revisit?</a></li><li><a href=#time-it-needs-time-to-win-back-your-love-again>Time, It Needs Time, To Win Back Your Love Again</a></li><li><a href=#but-automation-gives-you-time>But Automation Gives You Time</a></li><li><a href=#should-everyone-automate>Should Everyone Automate?</a></li><li><a href=#what-did-we-learn-here-today>What Did We Learn Here Today?</a></li></ul><h2 id=why-the-revisit>Why The Revisit?
+<a class=header-link href=#why-the-revisit><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>I discovered the article last year. I love it. You can read my initial observations in
 <a href=/blog/2018-10-03-reflections-on-manual-work-is-a-bug/ title='Reflections on \"Manual Work is a Bug\"'>Reflections on "Manual Work is a Bug"</a>.</p><p>Recently, I left my job after almost six years (70 months to be exact).
 By the end, I had automated some of my weekly routines and had this huge
 knowledge on the internal network called <code>Parsia-Clone</code> (it dwarfs my external one).
@@ -63,93 +19,33 @@ We had this running joke that the clone will become sentient one day and do my j
 doing things a certain way.</p><p>Most importantly, I had forgotten the pains. I was in the happy phase of the
 process where my automation had given me free time. About one day every two
 weeks (sometimes every week) I sat down, documented what I had learned and
-performed maintenance.</p><p>With a clean slate:</p><ul>
-<li>I can do some things better this time.</li><li>I can adapt my routine to our processes here.</li><li>I can think about why I made some decisions.</li><li>I have time to do stuff.</li></ul><h2 id=time-it-needs-time-to-win-back-your-love-again>Time, It Needs Time, To Win Back Your Love Again
-<a class=header-link href=#time-it-needs-time-to-win-back-your-love-again><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Having time. That's kind of important. And that is my biggest issue with the
+performed maintenance.</p><p>With a clean slate:</p><ul><li>I can do some things better this time.</li><li>I can adapt my routine to our processes here.</li><li>I can think about why I made some decisions.</li><li>I have time to do stuff.</li></ul><h2 id=time-it-needs-time-to-win-back-your-love-again>Time, It Needs Time, To Win Back Your Love Again
+<a class=header-link href=#time-it-needs-time-to-win-back-your-love-again><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Having time. That's kind of important. And that is my biggest issue with the
 original article. It tells the tale of two sysadmins. Both are busy, intelligent
-and can write code.</p><blockquote>
-<p>Let me tell you about two systems administrators I know. Both were overloaded,
-busy IT engineers.</p></blockquote><p>But they do things differently</p><blockquote>
-<p>The successful person had the same pressures but somehow managed to write a lot of code.</p></blockquote><p><strong>Stop! Hammertime!</strong></p><p>Both sysadmins are overworked and under pressure but one (let's call them The Automator)
-manages to write a lot of code/documentation.</p><ul>
-<li>How does The Automator find the time?</li><li>Can they even manage to finish assigned work?</li></ul><p>Remember both sysadmins are already overloaded.</p><p>Writing documentation/steps/code takes time. A lot of time. Especially when you
+and can write code.</p><blockquote><p>Let me tell you about two systems administrators I know. Both were overloaded,
+busy IT engineers.</p></blockquote><p>But they do things differently</p><blockquote><p>The successful person had the same pressures but somehow managed to write a lot of code.</p></blockquote><p><strong>Stop! Hammertime!</strong></p><p>Both sysadmins are overworked and under pressure but one (let's call them The Automator)
+manages to write a lot of code/documentation.</p><ul><li>How does The Automator find the time?</li><li>Can they even manage to finish assigned work?</li></ul><p>Remember both sysadmins are already overloaded.</p><p>Writing documentation/steps/code takes time. A lot of time. Especially when you
 are just starting and getting into the mindset. Even format and medium is a huge
-timesink. Hint: Your corporation probably has something like Confluence.</p><p>The time has to come from somewhere.</p><ul>
-<li>Work time: You are likely overloaded, you do other stuff instead of your job.</li><li>Personal time: RIP work/life balance.</li></ul><p>So The Automator most likely:</p><ul>
-<li>Got fired because they wrote documentation instead of closing tickets.</li><li>Burned out because they worked after hours.</li></ul><p>I was the second person. I worked long hours and almost burned out. People with
+timesink. Hint: Your corporation probably has something like Confluence.</p><p>The time has to come from somewhere.</p><ul><li>Work time: You are likely overloaded, you do other stuff instead of your job.</li><li>Personal time: RIP work/life balance.</li></ul><p>So The Automator most likely:</p><ul><li>Got fired because they wrote documentation instead of closing tickets.</li><li>Burned out because they worked after hours.</li></ul><p>I was the second person. I worked long hours and almost burned out. People with
 family and obligations cannot do this and let's be honest, no one should.</p><p><strong>Even the mythical Russian build engineer had this problem.</strong> \
 The myth started in <a href=https://bash.im/quote/436725 target=_blank rel="noreferrer noopener">bash.im</a>. Read the translation at <a href=https://www.jitbit.com/alexblog/249-now-thats-what-i-call-a-hacker/ target=_blank rel="noreferrer noopener">jitbit</a>.
 It's about this legendary Russian build engineer who had <a href=https://github.com/NARKOZ/hacker-scripts target=_blank rel="noreferrer noopener">scripts</a>
-for everything. For example, one:</p><blockquote>
-<p>sends a text message "late at work" to his wife (apparently). [...]
+for everything. For example, one:</p><blockquote><p>sends a text message "late at work" to his wife (apparently). [...]
 The job fires if there are active SSH-sessions on the server after 9pm with his login.</p></blockquote><p>Seems like even automation legends overwork. Our ideal person is someone who has
 automated his excuses for working long hours. SAD!</p><h2 id=but-automation-gives-you-time>But Automation Gives You Time
-<a class=header-link href=#but-automation-gives-you-time><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Sure it does, it's most likely a net benefit in the long run. Automation will
+<a class=header-link href=#but-automation-gives-you-time><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Sure it does, it's most likely a net benefit in the long run. Automation will
 give you some free time to do more automation (well, hopefully).</p><p>But The Automator probably had no life for a while (assuming not fired).</p><h2 id=should-everyone-automate>Should Everyone Automate?
-<a class=header-link href=#should-everyone-automate><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Each person needs to figure out if it's worth the time and energy.</p><p>Ask yourself the following questions:</p><ul>
-<li>Can things be automated?
-<ul>
-<li>This is important, not everything can/needs to be automated.</li></ul></li><li>Do you have the extra time?</li><li>Do you like doing it?
-<ul>
-<li>It shouldn't be a hassle and a second job.</li></ul></li><li>What do you get out of it?
-<ul>
-<li>Does corporate care?</li><li>Does it help you and other people?</li></ul></li></ul><p>There's also the option of automating your job but not sharing it. See the
-following urban legends:</p><ul>
-<li><a href=https://workplace.stackexchange.com/questions/93696/is-it-unethical-for-me-to-not-tell-my-employer-i-ve-automated-my-job target=_blank rel="noreferrer noopener">Is it unethical for me to not tell my employer I've automated my job?</a></li><li><a href=http://archive.is/uW2OK#selection-1779.0-1779.27 target=_blank rel="noreferrer noopener">Finally fired after 6 years - reddit</a></li></ul><h2 id=what-did-we-learn-here-today>What Did We Learn Here Today?
-<a class=header-link href=#what-did-we-learn-here-today><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>The original article is nice but it glossed over a very important part of the
+<a class=header-link href=#should-everyone-automate><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Each person needs to figure out if it's worth the time and energy.</p><p>Ask yourself the following questions:</p><ul><li>Can things be automated?<ul><li>This is important, not everything can/needs to be automated.</li></ul></li><li>Do you have the extra time?</li><li>Do you like doing it?<ul><li>It shouldn't be a hassle and a second job.</li></ul></li><li>What do you get out of it?<ul><li>Does corporate care?</li><li>Does it help you and other people?</li></ul></li></ul><p>There's also the option of automating your job but not sharing it. See the
+following urban legends:</p><ul><li><a href=https://workplace.stackexchange.com/questions/93696/is-it-unethical-for-me-to-not-tell-my-employer-i-ve-automated-my-job target=_blank rel="noreferrer noopener">Is it unethical for me to not tell my employer I've automated my job?</a></li><li><a href=http://archive.is/uW2OK#selection-1779.0-1779.27 target=_blank rel="noreferrer noopener">Finally fired after 6 years - reddit</a></li></ul><h2 id=what-did-we-learn-here-today>What Did We Learn Here Today?
+<a class=header-link href=#what-did-we-learn-here-today><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>The original article is nice but it glossed over a very important part of the
 process and let's say its Achilles' heel.</p><p>Starting and continuing automation has a very significant time investment. This
 time has to come from somewhere. Either you get it through your corporation
 (congrats, you and me are some of the very few lucky ones) or it comes out of
-your time.</p></div><footer>
-<p class=meta>
-<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
-<time>Apr 17, 2019</time>
-</span>
-</p><p class=meta>
-<a class="basic-alignment left" href=https://parsiya.net/blog/2019-04-06-hiding-options-an-adventure-in-dealing-with-burp-proxy-in-an-extension/ title="Hiding OPTIONS - An Adventure in Dealing with Burp Proxy in an Extension">Hiding OPTIONS - An Adventure in Dealing with Burp Proxy in an Extension</a>
-<a class="basic-alignment right" href=https://parsiya.net/blog/2019-04-21-disabling-burps-update-screen-part-1-analysis-and-failures/ title="Disabling Burp's Update Screen - Part 1 - Analysis and Failures">Disabling Burp's Update Screen - Part 1 - Analysis and Failures</a>
-</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer></article></div><aside class="sidebar thirds">
-<section class="first odd">
-<h1>Who am I?</h1><p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
-<li class=sidebar-nav-item>
-<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+your time.</p></div><footer><p class=meta><span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Apr 17, 2019</time></span></p><p class=meta><a class="basic-alignment left" href=https://parsiya.net/blog/2019-04-06-hiding-options-an-adventure-in-dealing-with-burp-proxy-in-an-extension/ title="Hiding OPTIONS - An Adventure in Dealing with Burp Proxy in an Extension">Hiding OPTIONS - An Adventure in Dealing with Burp Proxy in an Extension</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2019-04-21-disabling-burps-update-screen-part-1-analysis-and-failures/ title="Disabling Burp's Update Screen - Part 1 - Analysis and Failures">Disabling Burp's Update Screen - Part 1 - Analysis and Failures</a></p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></footer></article></div><aside class="sidebar thirds"><section class="first odd"><h1>Who am I?</h1><p><p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
-<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li></ul><section class=odd>
-<h1>Collections</h1><li>
-<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li><li>
-<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li><li>
-<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li><li>
-<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li><li>
-<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li><li>
-<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li><li>
-<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li><li>
-<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li><li>
-<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li><li>
-<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li><li>
-<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li><li>
-<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li></section></aside></div></div><footer role=contentinfo>
-<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
-<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p></footer></body></html>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a></li><li><a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a></li><li><a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.</p></footer></body></html>

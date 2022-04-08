@@ -1,97 +1,36 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
-<link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>Go Slices and Their Oddities</title><link rel=stylesheet href=/css/hugo-octopress.css>
-<link rel=stylesheet href=/css/fork-awesome.min.css>
-<link href=https://parsiya.net/favicon.png rel=icon>
-<meta name=description content>
-<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
-<meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.93.0">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Go Slices and Their Oddities">
-<meta name=twitter:description content="A friend pointed me to this Go quiz about slices by
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Go Slices and Their Oddities</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.96.0"><meta name=twitter:card content="summary"><meta name=twitter:title content="Go Slices and Their Oddities"><meta name=twitter:description content="A friend pointed me to this Go quiz about slices by
 Serge Gotsuliak. It's an interesting exercise and points out the
 intricacies of Go slices. I decided to explore it in detail. These oddities
-might have security implications.">
-<meta name=twitter:domain content="parsiya.net">
-<meta name=twitter:creator content="@CryptoGangsta">
-</head><body>
-<header role=banner>
-<hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
-<fieldset class=mobile-nav>
-<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset><ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
-<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
-<fieldset role=search>
-<input class=search type=text name=q results=0 placeholder=Search>
-<input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset></form></nav><div id=main>
-<div id=content>
-<div>
-<article class=hentry role=article>
-<header>
-<p class=meta>May 17, 2020
+might have security implications."><meta name=twitter:domain content="parsiya.net"><meta name=twitter:creator content="@CryptoGangsta"></head><body><header role=banner><hgroup><h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation><fieldset class=mobile-nav><select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select></fieldset><ul class=main-navigation><li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription><a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a></ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer"><fieldset role=search><input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/></fieldset></form></nav><div id=main><div id=content><div><article class=hentry role=article><header><p class=meta>May 17, 2020
 - 10 minute read
 - <a href=https://parsiya.net/blog/2020-05-17-go-slices-and-their-oddities/#disqus_thread>Comments</a>
-- <a class=label href=https://parsiya.net/categories/go/>Go </a>
-</p><h1 class=entry-title>
-Go Slices and Their Oddities
-</h1></header><div class=entry-content>
-<nav id=TableOfContents>
-<ul>
-<li><a href=#slices>Slices</a>
-<ul>
-<li><a href=#slice-has-an-underlying-array>Slice has an Underlying Array</a>
-<ul>
-<li><a href=#a-slice-is-a-header>A Slice is a Header</a></li></ul></li></ul></li><li><a href=#questions>Questions</a>
-<ul>
-<li><a href=#quiz-1>Quiz 1</a>
-<ul>
-<li><a href=#slices-can-be-modified-in-functions>Slices Can Be Modified in Functions</a></li></ul></li><li><a href=#quiz-2>Quiz 2</a>
-<ul>
-<li><a href=#append-might-create-a-new-slice>Append Might Create a New Slice</a></li></ul></li><li><a href=#quiz-3>Quiz 3</a></li><li><a href=#quiz-4>Quiz 4</a>
-<ul>
-<li><a href=#length-and-capacity-are-not-modified-inside-functions>Length And Capacity Are Not Modified Inside Functions</a></li></ul></li></ul></li><li><a href=#what-did-we-learn-here-today>What Did We Learn Here Today?</a></li></ul></nav><p>A friend pointed me to this <a href=https://medium.com/@gotzmann/so-you-think-you-know-go-c5164b0d0511 target=_blank rel="noreferrer noopener">Go quiz about slices</a> by
+- <a class=label href=https://parsiya.net/categories/go/>Go</a></p><h1 class=entry-title>Go Slices and Their Oddities</h1></header><div class=entry-content><nav id=TableOfContents><ul><li><a href=#slices>Slices</a><ul><li><a href=#slice-has-an-underlying-array>Slice has an Underlying Array</a><ul><li><a href=#a-slice-is-a-header>A Slice is a Header</a></li></ul></li></ul></li><li><a href=#questions>Questions</a><ul><li><a href=#quiz-1>Quiz 1</a><ul><li><a href=#slices-can-be-modified-in-functions>Slices Can Be Modified in Functions</a></li></ul></li><li><a href=#quiz-2>Quiz 2</a><ul><li><a href=#append-might-create-a-new-slice>Append Might Create a New Slice</a></li></ul></li><li><a href=#quiz-3>Quiz 3</a></li><li><a href=#quiz-4>Quiz 4</a><ul><li><a href=#length-and-capacity-are-not-modified-inside-functions>Length And Capacity Are Not Modified Inside Functions</a></li></ul></li></ul></li><li><a href=#what-did-we-learn-here-today>What Did We Learn Here Today?</a></li></ul></nav><p>A friend pointed me to this <a href=https://medium.com/@gotzmann/so-you-think-you-know-go-c5164b0d0511 target=_blank rel="noreferrer noopener">Go quiz about slices</a> by
 <a href=https://github.com/gotzmann target=_blank rel="noreferrer noopener">Serge Gotsuliak</a>. It's an interesting exercise and points out the
 intricacies of Go slices. I decided to explore it in detail. These oddities
 might have security implications.</p><p><strong>TL;DR</strong>: If you want to modify a slice in the function, return it. Do not
 expect any changes to be reflected in the original variable.</p><h1 id=slices>Slices
-<a class=header-link href=#slices><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>The Golang blog has two great posts about slices:</p><ul>
-<li><a href=https://blog.golang.org/slices target=_blank rel="noreferrer noopener">Arrays, slices (and strings): The mechanics of 'append'</a></li><li><a href=https://blog.golang.org/slices-intro target=_blank rel="noreferrer noopener">Go Slices: usage and internals</a></li></ul><p>They have everything we need to know to answer the questions.</p><h2 id=slice-has-an-underlying-array>Slice has an Underlying Array
-<a class=header-link href=#slice-has-an-underlying-array><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>A slices in Go points to an underlying array. That array is like any other Go
+<a class=header-link href=#slices><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>The Golang blog has two great posts about slices:</p><ul><li><a href=https://blog.golang.org/slices target=_blank rel="noreferrer noopener">Arrays, slices (and strings): The mechanics of 'append'</a></li><li><a href=https://blog.golang.org/slices-intro target=_blank rel="noreferrer noopener">Go Slices: usage and internals</a></li></ul><p>They have everything we need to know to answer the questions.</p><h2 id=slice-has-an-underlying-array>Slice has an Underlying Array
+<a class=header-link href=#slice-has-an-underlying-array><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>A slices in Go points to an underlying array. That array is like any other Go
 array, it has a length and a capacity. We will call it the slice capacity and
-length.</p><ul>
-<li>Length: Number of items in the slice.</li><li>Capacity: Number of items the slice can hold.</li></ul><h3 id=a-slice-is-a-header>A Slice is a Header
-<a class=header-link href=#a-slice-is-a-header><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>A <code>slice</code> is defined as:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>type</span> slice <span style=color:#268bd2>struct</span> {
+length.</p><ul><li>Length: Number of items in the slice.</li><li>Capacity: Number of items the slice can hold.</li></ul><h3 id=a-slice-is-a-header>A Slice is a Header
+<a class=header-link href=#a-slice-is-a-header><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>A <code>slice</code> is defined as:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>type</span> slice <span style=color:#268bd2>struct</span> {
 </span></span><span style=display:flex><span>	array unsafe.Pointer
 </span></span><span style=display:flex><span>	len   <span style=color:#dc322f>int</span>
 </span></span><span style=display:flex><span>	cap   <span style=color:#dc322f>int</span>
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>It's a struct and <code>array</code> points to the underlying array for that slice. Read
-the rest of the source code file to see how the underlying array is created:</p><ul>
-<li><a href=https://golang.org/src/runtime/slice.go target=_blank rel="noreferrer noopener">https://golang.org/src/runtime/slice.go</a></li></ul><p>If we print the pointer to the slice, it will print the address to the array.
+the rest of the source code file to see how the underlying array is created:</p><ul><li><a href=https://golang.org/src/runtime/slice.go target=_blank rel="noreferrer noopener">https://golang.org/src/runtime/slice.go</a></li></ul><p>If we print the pointer to the slice, it will print the address to the array.
 E.g., <code>fmt.Printf("%p", slice1)</code>. Note, if you pass <code>&slice</code> you will print a
 pointer to the slice and not the array.</p><p>I wrote a small function that helps with understanding what is happening. It
 prints some info about an int slice. Note the <code>%p</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>printSlice</span>(s <span style=color:#dc322f>string</span>, a []<span style=color:#dc322f>int</span>) {
 </span></span><span style=display:flex><span>	fmt.<span style=color:#268bd2>Printf</span>(<span style=color:#2aa198>&#34;%p - %v\tlen:%d\tcap:%d\t%s\n&#34;</span>, a, a, <span style=color:#b58900>len</span>(a), <span style=color:#b58900>cap</span>(a), s)
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><h1 id=questions>Questions
-<a class=header-link href=#questions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Now we get to the <a href=https://medium.com/@gotzmann/so-you-think-you-know-go-c5164b0d0511 target=_blank rel="noreferrer noopener">questions</a>. It had links to the Go playground to run
-them. I modified them and added my own function to see what happens.</p><p>If you want to run the code locally please use:</p><ul>
-<li><a href=https://github.com/parsiya/Go-Security/tree/master/slice-oddities target=_blank rel="noreferrer noopener">https://github.com/parsiya/Go-Security/tree/master/slice-oddities</a></li></ul><h2 id=quiz-1>Quiz 1
-<a class=header-link href=#quiz-1><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p><code>surprise</code> gets a slice and then assigns <code>5</code> to all of its members. My modified
+<a class=header-link href=#questions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Now we get to the <a href=https://medium.com/@gotzmann/so-you-think-you-know-go-c5164b0d0511 target=_blank rel="noreferrer noopener">questions</a>. It had links to the Go playground to run
+them. I modified them and added my own function to see what happens.</p><p>If you want to run the code locally please use:</p><ul><li><a href=https://github.com/parsiya/Go-Security/tree/master/slice-oddities target=_blank rel="noreferrer noopener">https://github.com/parsiya/Go-Security/tree/master/slice-oddities</a></li></ul><h2 id=quiz-1>Quiz 1
+<a class=header-link href=#quiz-1><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p><code>surprise</code> gets a slice and then assigns <code>5</code> to all of its members. My modified
 code is:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#719e07>package</span> main
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#719e07>import</span> <span style=color:#2aa198>&#34;fmt&#34;</span>
@@ -114,8 +53,7 @@ code is:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>surprise</span>(a)
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>printSlice</span>(<span style=color:#2aa198>&#34;Inside main, after surprise&#34;</span>, a)
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><ul>
-<li><a href=https://play.golang.org/p/oXjDcyrxnRw target=_blank rel="noreferrer noopener">https://play.golang.org/p/oXjDcyrxnRw</a></li></ul><p>Because in Go everything is passed by value, you would expect the slice in
+</span></span></code></pre></div><ul><li><a href=https://play.golang.org/p/oXjDcyrxnRw target=_blank rel="noreferrer noopener">https://play.golang.org/p/oXjDcyrxnRw</a></li></ul><p>Because in Go everything is passed by value, you would expect the slice in
 <code>main</code> to remain untouched by the modifications inside the function. But it does
 not:</p><pre tabindex=0><code>0xc000014020 - [1 2 3 4]	len:4	cap:4	Inside main, before surprise
 0xc000014020 - [1 2 3 4]	len:4	cap:4	Inside surprise, before assignment
@@ -123,21 +61,17 @@ not:</p><pre tabindex=0><code>0xc000014020 - [1 2 3 4]	len:4	cap:4	Inside main, 
 0xc000014020 - [5 5 5 5]	len:4	cap:4	Inside main, after surprise
 </code></pre><p>We can see the address to the array does not change before, inside, and after
 the function. This means we are operating on the same array.</p><h3 id=slices-can-be-modified-in-functions>Slices Can Be Modified in Functions
-<a class=header-link href=#slices-can-be-modified-in-functions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p><a href=https://dave.cheney.net/2017/04/29/there-is-no-pass-by-reference-in-go target=_blank rel="noreferrer noopener">There is no pass-by-reference in Go</a> by Dave Cheney explains
+<a class=header-link href=#slices-can-be-modified-in-functions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p><a href=https://dave.cheney.net/2017/04/29/there-is-no-pass-by-reference-in-go target=_blank rel="noreferrer noopener">There is no pass-by-reference in Go</a> by Dave Cheney explains
 that in Go every parameter is passed by value. We can pass pointers and modify
 what the pointer points to but the pointers are also passed by their value
 (which is a memory address).</p><p>"But Parsia, a slice is not a pointer." Yes, but it's a header and contains a
 pointer to the underlying array. When the slice is modified inside the function,
 the underlying array is also modified. <strong>On a side note, if we change <code>len</code> and
-<code>cap</code> inside the function, the changes will not reflect outside.</strong></p><p>The following link from the <code>slices</code> blog post describes it with an example:</p><blockquote>
-<p>the contents of a slice argument can be modified by a function, but its header
-cannot.</p></blockquote><ul>
-<li><a href=https://blog.golang.org/slices#TOC_4. target=_blank rel="noreferrer noopener">https://blog.golang.org/slices#TOC_4.</a></li></ul><p>Note: maps and channels can also be modified inside functions. They are actually
+<code>cap</code> inside the function, the changes will not reflect outside.</strong></p><p>The following link from the <code>slices</code> blog post describes it with an example:</p><blockquote><p>the contents of a slice argument can be modified by a function, but its header
+cannot.</p></blockquote><ul><li><a href=https://blog.golang.org/slices#TOC_4. target=_blank rel="noreferrer noopener">https://blog.golang.org/slices#TOC_4.</a></li></ul><p>Note: maps and channels can also be modified inside functions. They are actually
 pointers but we treat them like normal variables. Read more about this
 in <a href=https://dave.cheney.net/2017/04/30/if-a-map-isnt-a-reference-variable-what-is-it target=_blank rel="noreferrer noopener">If a map isn’t a reference variable, what is it?</a>.</p><h2 id=quiz-2>Quiz 2
-<a class=header-link href=#quiz-2><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>In quiz 2 there is an <code>append(a, 5)</code> inside <code>surprise</code>. A new value is added to
+<a class=header-link href=#quiz-2><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>In quiz 2 there is an <code>append(a, 5)</code> inside <code>surprise</code>. A new value is added to
 the slice. We also expect that slice after <code>surprise</code> to be the same because we
 can change slices inside functions.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#719e07>package</span> main
 </span></span><span style=display:flex><span>
@@ -165,8 +99,7 @@ can change slices inside functions.</p><div class=highlight><pre tabindex=0 styl
 </span></span><span style=display:flex><span>	<span style=color:#268bd2>surprise</span>(a)
 </span></span><span style=display:flex><span>	<span style=color:#268bd2>printSlice</span>(<span style=color:#2aa198>&#34;Inside main, after surprise&#34;</span>, a)
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><ul>
-<li><a href=https://play.golang.org/p/ixiIKZ6_pWx target=_blank rel="noreferrer noopener">https://play.golang.org/p/ixiIKZ6_pWx</a></li></ul><p>But it does not happen. The slice outside is not modified.</p><p>Let's look at the addresses. The address of the array in the original slice is
+</span></span></code></pre></div><ul><li><a href=https://play.golang.org/p/ixiIKZ6_pWx target=_blank rel="noreferrer noopener">https://play.golang.org/p/ixiIKZ6_pWx</a></li></ul><p>But it does not happen. The slice outside is not modified.</p><p>Let's look at the addresses. The address of the array in the original slice is
 <code>0xc000014020</code>. It's passed to the function but it's modified after the
 <code>append</code>. When return to <code>main</code> we work with the original address again.</p><pre tabindex=0><code>0xc000014020 - [1 2 3 4]	len:4	cap:4	Inside main, before surprise
 0xc000014020 - [1 2 3 4]	len:4	cap:4	Inside surprise, before append
@@ -177,13 +110,11 @@ can change slices inside functions.</p><div class=highlight><pre tabindex=0 styl
 // Back in main, using the old slice
 0xc000014020 - [1 2 3 4]	len:4	cap:4	Inside main, after surprise
 </code></pre><h3 id=append-might-create-a-new-slice>Append Might Create a New Slice
-<a class=header-link href=#append-might-create-a-new-slice><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>"But Parsia, slices are like dynamic arrays. I can add items to them with
+<a class=header-link href=#append-might-create-a-new-slice><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>"But Parsia, slices are like dynamic arrays. I can add items to them with
 <code>append</code> and it will grow big like <a href=https://en.wikipedia.org/wiki/Clifford_the_Big_Red_Dog target=_blank rel="noreferrer noopener">Clifford the big red dog</a>."
 YES!</p><p>The <a href=https://golang.org/pkg/builtin/#append target=_blank rel="noreferrer noopener">append</a> function appends an item (or a set of items) to an
 slice and returns a new slice. The <a href=https://blog.golang.org/slices-intro target=_blank rel="noreferrer noopener">Go Slices: usage and internals</a>
-blog post explains how the append function works by writing code</p><p>The following block from the <a href=https://golang.org/ref/spec#Appending_and_copying_slices target=_blank rel="noreferrer noopener">Go specification</a> has the answer:</p><blockquote>
-<p>If the capacity of [the underlying array] is not large enough to fit the
+blog post explains how the append function works by writing code</p><p>The following block from the <a href=https://golang.org/ref/spec#Appending_and_copying_slices target=_blank rel="noreferrer noopener">Go specification</a> has the answer:</p><blockquote><p>If the capacity of [the underlying array] is not large enough to fit the
 additional values, append allocates a new, sufficiently large underlying array
 that fits both the existing slice elements and the additional values.
 Otherwise, append re-uses the underlying array.</p></blockquote><p>Because we initialized the slice, the capacity of the original slice was the
@@ -192,8 +123,7 @@ the function, we are exceeding the capacity so it creates a new slice with a new
 underlying array that is larger (capacity is <code>8</code> for the new slice). The
 assignment is done on this new slice.</p><p>Outside <code>surprise</code> we are still dealing with the old slice which only has the
 original four members so nothing was modified.</p><h2 id=quiz-3>Quiz 3
-<a class=header-link href=#quiz-3><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Quiz 3 adds a new <code>append</code> inside <code>main</code>. We can already guess the printed
+<a class=header-link href=#quiz-3><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Quiz 3 adds a new <code>append</code> inside <code>main</code>. We can already guess the printed
 values will not be the same because the <code>append</code> in <code>main</code> is done on the
 unmodified slice.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#719e07>package</span> main
 </span></span><span style=display:flex><span>
@@ -224,8 +154,7 @@ unmodified slice.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;ba
 </span></span><span style=display:flex><span>	a = <span style=color:#b58900>append</span>(a, <span style=color:#2aa198>5</span>)
 </span></span><span style=display:flex><span>	<span style=color:#268bd2>printSlice</span>(<span style=color:#2aa198>&#34;Inside main, after append&#34;</span>, a)
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><ul>
-<li><a href=https://play.golang.org/p/fCJ_cMXU8dM target=_blank rel="noreferrer noopener">https://play.golang.org/p/fCJ_cMXU8dM</a></li></ul><p>And our guess is correct. There is nothing new to learn here.</p><pre tabindex=0><code>0xc000014020 - [1 2 3 4]	len:4	cap:4	Inside main, before surprise
+</span></span></code></pre></div><ul><li><a href=https://play.golang.org/p/fCJ_cMXU8dM target=_blank rel="noreferrer noopener">https://play.golang.org/p/fCJ_cMXU8dM</a></li></ul><p>And our guess is correct. There is nothing new to learn here.</p><pre tabindex=0><code>0xc000014020 - [1 2 3 4]	len:4	cap:4	Inside main, before surprise
 0xc000014020 - [1 2 3 4]	len:4	cap:4	Inside surprise, before append
 // Address, len and cap change after append
 0xc00007c040 - [1 2 3 4 5]	len:5	cap:8	Inside surprise, after append
@@ -238,8 +167,7 @@ unmodified slice.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;ba
 0xc00007c080 - [1 2 3 4 5]	len:5	cap:8	Inside main, after append
 </code></pre><p>Note: How the capacity and the address of the array has changed for both slices
 after <code>append</code>.</p><h2 id=quiz-4>Quiz 4
-<a class=header-link href=#quiz-4><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Quiz 4 does the <code>append</code> in <code>main</code> before calling <code>surprise</code>. This is tricky and
+<a class=header-link href=#quiz-4><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Quiz 4 does the <code>append</code> in <code>main</code> before calling <code>surprise</code>. This is tricky and
 I was baffled even after using my helper function to print the slice fields.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#719e07>package</span> main
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#719e07>import</span> <span style=color:#2aa198>&#34;fmt&#34;</span>
@@ -269,9 +197,7 @@ I was baffled even after using my helper function to print the slice fields.</p>
 </span></span><span style=display:flex><span>	<span style=color:#268bd2>surprise</span>(a)
 </span></span><span style=display:flex><span>	<span style=color:#268bd2>printSlice</span>(<span style=color:#2aa198>&#34;Inside main, after surprise&#34;</span>, a)
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><ul>
-<li><a href=https://play.golang.org/p/gnfZ7W1pDG3 target=_blank rel="noreferrer noopener">https://play.golang.org/p/gnfZ7W1pDG3</a></li></ul><p>We expect the modified slice to have six members. We know:</p><ol>
-<li>We added a member the slice inside the function.</li><li>We know we can modify slices in functions.</li><li>The append inside the function does not create a new slice because the slice has enough capacity</li></ol><p>BUT the slice back in main only has five members again.</p><pre tabindex=0><code>// Initialized slice
+</span></span></code></pre></div><ul><li><a href=https://play.golang.org/p/gnfZ7W1pDG3 target=_blank rel="noreferrer noopener">https://play.golang.org/p/gnfZ7W1pDG3</a></li></ul><p>We expect the modified slice to have six members. We know:</p><ol><li>We added a member the slice inside the function.</li><li>We know we can modify slices in functions.</li><li>The append inside the function does not create a new slice because the slice has enough capacity</li></ol><p>BUT the slice back in main only has five members again.</p><pre tabindex=0><code>// Initialized slice
 0xc00010c000 - [1 2 3 4]	len:4	cap:4	Inside main, before append
 
 // New slice after append in main because capacity
@@ -286,12 +212,10 @@ I was baffled even after using my helper function to print the slice fields.</p>
 
 // Slice back in main has the same address but different length
 0xc000114040 - [5 5 5 5 5]	len:5	cap:8	Inside main, after surprise
-</code></pre><p>So what happened here?</p><ol>
-<li>The initial slice had a capacity of 4.</li><li>Appending <code>5</code> to it creates a new slice with a capacity of 8.</li><li>Inside surprise, we append another member to it, the slice does not change
+</code></pre><p>So what happened here?</p><ol><li>The initial slice had a capacity of 4.</li><li>Appending <code>5</code> to it creates a new slice with a capacity of 8.</li><li>Inside surprise, we append another member to it, the slice does not change
 because it has a capacity of 8.</li><li><strong>Back in main, we get the modified slice but len and cap were passed as
 values so they do not retain their modified value from inside surprise.</strong></li><li>This means the slice only has 5 members and not 6.</li></ol><h3 id=length-and-capacity-are-not-modified-inside-functions>Length And Capacity Are Not Modified Inside Functions
-<a class=header-link href=#length-and-capacity-are-not-modified-inside-functions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>The last point is important. Let's look at the slice struct from before:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>type</span> slice <span style=color:#268bd2>struct</span> {
+<a class=header-link href=#length-and-capacity-are-not-modified-inside-functions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>The last point is important. Let's look at the slice struct from before:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>type</span> slice <span style=color:#268bd2>struct</span> {
 </span></span><span style=display:flex><span>	array unsafe.Pointer
 </span></span><span style=display:flex><span>	len   <span style=color:#dc322f>int</span>
 </span></span><span style=display:flex><span>	cap   <span style=color:#dc322f>int</span>
@@ -302,55 +226,13 @@ a COPY of them inside <code>surprise</code></strong>. When we return we will sti
 <code>len</code>.</p><p>But as far as the program is concerned, the slice only has 5 members. But I am
 willing to bet that if we look at the memory for the array, we will see the
 extra member there.</p><h1 id=what-did-we-learn-here-today>What Did We Learn Here Today?
-<a class=header-link href=#what-did-we-learn-here-today><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>If you want to change a slice in a function, return the modified slice. Do not
+<a class=header-link href=#what-did-we-learn-here-today><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>If you want to change a slice in a function, return the modified slice. Do not
 pass it as a parameter in order to reuse the original copy. The original copy
-might contain the changes.</p></div><footer>
-<p class=meta>
-<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
-<time>May 17, 2020</time>
-</span>
-</p><p class=meta>
-<a class="basic-alignment left" href=https://parsiya.net/blog/2020-05-09-thick-client-proxying-part-10-the-hosts-file/ title="Thick Client Proxying - Part 10 - The hosts File">Thick Client Proxying - Part 10 - The hosts File</a>
-<a class="basic-alignment right" href=https://parsiya.net/blog/2020-06-22-thick-client-proxying-part-11-gog-galaxy-and-extract-sni/ title="Thick Client Proxying - Part 11 - GOG Galaxy and Extract-SNI">Thick Client Proxying - Part 11 - GOG Galaxy and Extract-SNI</a>
-</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer></article></div><aside class="sidebar thirds">
-<section class="first odd">
-<h1>Who am I?</h1><p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
-<li class=sidebar-nav-item>
-<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+might contain the changes.</p></div><footer><p class=meta><span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>May 17, 2020</time></span></p><p class=meta><a class="basic-alignment left" href=https://parsiya.net/blog/2020-05-09-thick-client-proxying-part-10-the-hosts-file/ title="Thick Client Proxying - Part 10 - The hosts File">Thick Client Proxying - Part 10 - The hosts File</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2020-06-22-thick-client-proxying-part-11-gog-galaxy-and-extract-sni/ title="Thick Client Proxying - Part 11 - GOG Galaxy and Extract-SNI">Thick Client Proxying - Part 11 - GOG Galaxy and Extract-SNI</a></p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></footer></article></div><aside class="sidebar thirds"><section class="first odd"><h1>Who am I?</h1><p><p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
-<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li></ul><section class=odd>
-<h1>Collections</h1><li>
-<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li><li>
-<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li><li>
-<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li><li>
-<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li><li>
-<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li><li>
-<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li><li>
-<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li><li>
-<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li><li>
-<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li><li>
-<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li><li>
-<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li><li>
-<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li></section></aside></div></div><footer role=contentinfo>
-<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
-<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p></footer></body></html>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a></li><li><a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a></li><li><a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.</p></footer></body></html>

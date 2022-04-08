@@ -1,19 +1,4 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
-<link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>RCE in Visual Studio Code's Remote WSL for Fun and Negative Profit</title><link rel=stylesheet href=/css/hugo-octopress.css>
-<link rel=stylesheet href=/css/fork-awesome.min.css>
-<link href=https://parsiya.net/favicon.png rel=icon>
-<meta name=description content>
-<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
-<meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.93.0">
-<meta name=twitter:card content="summary_large_image">
-<meta name=twitter:image:src content="https://parsiya.net/blog/2021-12-20-rce-in-visual-studio-codes-remote-wsl-for-fun-and-negative-profit/10-thumbnail.png">
-<meta name=twitter:title content="RCE in Visual Studio Code's Remote WSL for Fun and Negative Profit">
-<meta name=twitter:description content="The Visual Studio Code server in Windows Subsystem for Linux uses a local
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>RCE in Visual Studio Code's Remote WSL for Fun and Negative Profit</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.96.0"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2021-12-20-rce-in-visual-studio-codes-remote-wsl-for-fun-and-negative-profit/10-thumbnail.png"><meta name=twitter:title content="RCE in Visual Studio Code's Remote WSL for Fun and Negative Profit"><meta name=twitter:description content="The Visual Studio Code server in Windows Subsystem for Linux uses a local
 WebSocket WebSocket connection to communicate with the Remote WSL extension.
 JavaScript in websites can connect to this server and execute arbitrary commands
 on the target system. Assigned CVE-2021-43907 and zero bounty. I paid 5
@@ -33,56 +18,12 @@ The vuln is not in VS Code. MSFT says it's in the Remote WSL extension
 but I think it's in the way VS Code Server works with the remote
 development extensions.
 
-HackerNews link: https://news.ycombinator.com/item?id=29635300.">
-<meta name=twitter:domain content="parsiya.net">
-<meta name=twitter:creator content="@CryptoGangsta">
-</head><body>
-<header role=banner>
-<hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
-<fieldset class=mobile-nav>
-<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset><ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
-<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
-<fieldset role=search>
-<input class=search type=text name=q results=0 placeholder=Search>
-<input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset></form></nav><div id=main>
-<div id=content>
-<div>
-<article class=hentry role=article>
-<header>
-<p class=meta>Dec 20, 2021
+HackerNews link: https://news.ycombinator.com/item?id=29635300."><meta name=twitter:domain content="parsiya.net"><meta name=twitter:creator content="@CryptoGangsta"></head><body><header role=banner><hgroup><h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation><fieldset class=mobile-nav><select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select></fieldset><ul class=main-navigation><li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription><a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a></ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer"><fieldset role=search><input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/></fieldset></form></nav><div id=main><div id=content><div><article class=hentry role=article><header><p class=meta>Dec 20, 2021
 - 31 minute read
 - <a href=https://parsiya.net/blog/2021-12-20-rce-in-visual-studio-codes-remote-wsl-for-fun-and-negative-profit/#disqus_thread>Comments</a>
-- <a class=label href=https://parsiya.net/categories/writeup/>Writeup </a><a class=label href=https://parsiya.net/categories/bug-bounty/>Bug Bounty </a>
-</p><h1 class=entry-title>
-RCE in Visual Studio Code's Remote WSL for Fun and Negative Profit
-</h1></header><div class=entry-content>
-<nav id=TableOfContents>
-<ul>
-<li><a href=#summary>Summary</a></li><li><a href=#what-are-we-gonna-learn-here-today>What Are We Gonna Learn Here Today?</a></li><li><a href=#pre-requisites>Pre-Requisites</a>
-<ul>
-<li><a href=#note-about-source-code>Note About Source Code</a></li></ul></li><li><a href=#intro>Intro</a>
-<ul>
-<li><a href=#chasing-the-firewall-dialog>Chasing the Firewall Dialog</a></li><li><a href=#why-is-it-listening-on-all-interfaces>Why is it Listening on All Interfaces?</a></li><li><a href=#the-local-websocket-server>The Local WebSocket Server</a>
-<ul>
-<li><a href=#but-the-same-origin-policy>But the Same-Origin Policy!</a></li><li><a href=#testing-local-websocket-servers>Testing Local WebSocket Servers</a></li></ul></li></ul></li><li><a href=#reverse-engineering-the-protocol>Reverse Engineering the Protocol</a>
-<ul>
-<li><a href=#help-from-the-future>Help From the Future</a></li><li><a href=#the-protocol-handshake>The Protocol Handshake</a>
-<ul>
-<li><a href=#your-editor-has-drm>Your Editor has DRM</a></li><li><a href=#light-drm-reversing>Light DRM Reversing</a></li><li><a href=#the-finishing-move>The Finishing Move</a></li><li><a href=#what-else-can-we-do>What Else Can We Do?</a></li></ul></li></ul></li><li><a href=#exploitation>Exploitation</a>
-<ul>
-<li><a href=#the-node-inspector-instance>The Node Inspector Instance</a>
-<ul>
-<li><a href=#what-is-node-inspector>What is Node Inspector?</a></li></ul></li><li><a href=#emulate-the-code-client>Emulate the Code Client</a></li></ul></li><li><a href=#recap>Recap</a>
-<ul>
-<li><a href=#limitations>Limitations</a></li><li><a href=#so-how-do-we-fix-this>So How Do We Fix This?</a></li><li><a href=#what-was-actually-fixed>What Was Actually Fixed?</a></li><li><a href=#remediation-timeline>Remediation Timeline</a></li></ul></li><li><a href=#what-i-tried-and-didnt-work>What I Tried and Didn't Work</a>
-<ul>
-<li><a href=#injecting-environment-variables>Injecting Environment Variables</a></li><li><a href=#command-injection>Command Injection</a></li><li><a href=#the-local-web-server>The Local Web Server</a></li><li><a href=#the-vscode-protocol-handler>The vscode Protocol Handler</a></li></ul></li></ul></nav><p>The Visual Studio Code server in Windows Subsystem for Linux uses a local
+- <a class=label href=https://parsiya.net/categories/writeup/>Writeup </a><a class=label href=https://parsiya.net/categories/bug-bounty/>Bug Bounty</a></p><h1 class=entry-title>RCE in Visual Studio Code's Remote WSL for Fun and Negative Profit</h1></header><div class=entry-content><nav id=TableOfContents><ul><li><a href=#summary>Summary</a></li><li><a href=#what-are-we-gonna-learn-here-today>What Are We Gonna Learn Here Today?</a></li><li><a href=#pre-requisites>Pre-Requisites</a><ul><li><a href=#note-about-source-code>Note About Source Code</a></li></ul></li><li><a href=#intro>Intro</a><ul><li><a href=#chasing-the-firewall-dialog>Chasing the Firewall Dialog</a></li><li><a href=#why-is-it-listening-on-all-interfaces>Why is it Listening on All Interfaces?</a></li><li><a href=#the-local-websocket-server>The Local WebSocket Server</a><ul><li><a href=#but-the-same-origin-policy>But the Same-Origin Policy!</a></li><li><a href=#testing-local-websocket-servers>Testing Local WebSocket Servers</a></li></ul></li></ul></li><li><a href=#reverse-engineering-the-protocol>Reverse Engineering the Protocol</a><ul><li><a href=#help-from-the-future>Help From the Future</a></li><li><a href=#the-protocol-handshake>The Protocol Handshake</a><ul><li><a href=#your-editor-has-drm>Your Editor has DRM</a></li><li><a href=#light-drm-reversing>Light DRM Reversing</a></li><li><a href=#the-finishing-move>The Finishing Move</a></li><li><a href=#what-else-can-we-do>What Else Can We Do?</a></li></ul></li></ul></li><li><a href=#exploitation>Exploitation</a><ul><li><a href=#the-node-inspector-instance>The Node Inspector Instance</a><ul><li><a href=#what-is-node-inspector>What is Node Inspector?</a></li></ul></li><li><a href=#emulate-the-code-client>Emulate the Code Client</a></li></ul></li><li><a href=#recap>Recap</a><ul><li><a href=#limitations>Limitations</a></li><li><a href=#so-how-do-we-fix-this>So How Do We Fix This?</a></li><li><a href=#what-was-actually-fixed>What Was Actually Fixed?</a></li><li><a href=#remediation-timeline>Remediation Timeline</a></li></ul></li><li><a href=#what-i-tried-and-didnt-work>What I Tried and Didn't Work</a><ul><li><a href=#injecting-environment-variables>Injecting Environment Variables</a></li><li><a href=#command-injection>Command Injection</a></li><li><a href=#the-local-web-server>The Local Web Server</a></li><li><a href=#the-vscode-protocol-handler>The vscode Protocol Handler</a></li></ul></li></ul></nav><p>The Visual Studio Code server in Windows Subsystem for Linux uses a local
 WebSocket WebSocket connection to communicate with the <code>Remote WSL</code> extension.
 JavaScript in websites can connect to this server and execute arbitrary commands
 on the target system. Assigned <a href=https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2021-43907 target=_blank rel="noreferrer noopener">CVE-2021-43907</a> and zero bounty. I paid 5
@@ -91,87 +32,54 @@ with 2.2 million subscribers (it was out of scope in their program, too), but
 MSFT doesn't pay for an official extension with more than 10 million installs
 (obviously, not every install is unique) for one of their most popular products.
 But you are not here to listen to my rants. So, read on.</p><p>This post's target audience was <code>Desktop Application Security People</code> niche. I
-want to clarify some issues because more people have read it (edit on 2021-12-21):</p><ol>
-<li>I didn't get 5 dollars. I paid 5 dollars out of pocket, so it's -5.</li><li>"I am not angry, I am just disappointed." I knew it was out-of-scope. This
+want to clarify some issues because more people have read it (edit on 2021-12-21):</p><ol><li>I didn't get 5 dollars. I paid 5 dollars out of pocket, so it's -5.</li><li>"I am not angry, I am just disappointed." I knew it was out-of-scope. This
 wasn't some bait-and-switch by Microsoft. I am not angry</li><li>The vuln is <strong>not</strong> in VS Code. MSFT says it's in the <code>Remote WSL</code> extension
 but I think it's in the way <code>VS Code Server</code> works with the remote
 development extensions.</li></ol><p>HackerNews link: <a href="https://news.ycombinator.com/item?id=29635300" target=_blank rel="noreferrer noopener">https://news.ycombinator.com/item?id=29635300</a>.</p><h1 id=summary>Summary
-<a class=header-link href=#summary><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>These bugs can be chained:</p><ol>
-<li>The local WebSocket server is listening on all interfaces. If allowed through
+<a class=header-link href=#summary><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>These bugs can be chained:</p><ol><li>The local WebSocket server is listening on all interfaces. If allowed through
 the Windows firewall, outside applications may connect to this server.</li><li>The local WebSocket server does not check the <code>Origin</code> header in the
 WebSocket handshakes or have any mode of authentication. The JavaScript in
 the browser can connect to this server. This is true even if the server is
 listening on localhost.</li><li>We can spawn a Node inspector instance on a specific
 port. It's also listening on all interfaces. External applications can
 connect to it.</li><li>If an outside app or a local website can connect to either of these servers,
-they can run arbitrary code on the target machine.</li></ol><p>Here's a funky proof-of-concept.</p><span class=caption-wrapper>
-<img class=caption src=09-poc1.gif title="Popping calc from a website" alt="Popping calc from a website">
-<span class=caption-text>Popping calc from a website</span>
-</span>
-<p>See the <a href=#limitations title=Limitations>Limitations</a>
+they can run arbitrary code on the target machine.</li></ol><p>Here's a funky proof-of-concept.</p><span class=caption-wrapper><img class=caption src=09-poc1.gif title="Popping calc from a website" alt="Popping calc from a website">
+<span class=caption-text>Popping calc from a website</span></span><p>See the <a href=#limitations title=Limitations>Limitations</a>
 section for assumptions in this proof of concept.</p><h1 id=what-are-we-gonna-learn-here-today>What Are We Gonna Learn Here Today?
-<a class=header-link href=#what-are-we-gonna-learn-here-today><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>This helps you decide if you want to spend time reading this blog or just stop
-after the summary.</p><ol>
-<li>Yet another open local WebSocket server.</li><li>What VS Code Server is.
-<ol>
-<li>How <code>Remote WSL</code> works.</li></ol></li><li>The difference between Visual Studio Code and <code>Code - OSS</code>.
-<ol>
-<li>VS Code DRM.</li></ol></li><li>Reverse Engineering a custom binary protocol with source code access.
-<ol>
-<li>Navigating a TypeScript code base with Visual Studio Code.</li></ol></li><li>Exploiting exposed Node Inspector instances.</li><li>Exploiting Node processes by injecting environment variables.</li><li>The <code>vscode</code> protocol handler.</li><li><a href=http://web.archive.org/web/20110324044023/http://trailofbits.com/2009/03/22/no-more-free-bugs/ target=_blank rel="noreferrer noopener">No More Free Bugs</a><sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>.</li></ol><h1 id=pre-requisites>Pre-Requisites
-<a class=header-link href=#pre-requisites><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>The blog assumes you</p><ol>
-<li>can read some JavaScript and TypeScript.</li><li>are familiar with concepts like Same-Origin Policy (SOP), WebSockets and have
+<a class=header-link href=#what-are-we-gonna-learn-here-today><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>This helps you decide if you want to spend time reading this blog or just stop
+after the summary.</p><ol><li>Yet another open local WebSocket server.</li><li>What VS Code Server is.<ol><li>How <code>Remote WSL</code> works.</li></ol></li><li>The difference between Visual Studio Code and <code>Code - OSS</code>.<ol><li>VS Code DRM.</li></ol></li><li>Reverse Engineering a custom binary protocol with source code access.<ol><li>Navigating a TypeScript code base with Visual Studio Code.</li></ol></li><li>Exploiting exposed Node Inspector instances.</li><li>Exploiting Node processes by injecting environment variables.</li><li>The <code>vscode</code> protocol handler.</li><li><a href=http://web.archive.org/web/20110324044023/http://trailofbits.com/2009/03/22/no-more-free-bugs/ target=_blank rel="noreferrer noopener">No More Free Bugs</a><sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>.</li></ol><h1 id=pre-requisites>Pre-Requisites
+<a class=header-link href=#pre-requisites><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>The blog assumes you</p><ol><li>can read some JavaScript and TypeScript.</li><li>are familiar with concepts like Same-Origin Policy (SOP), WebSockets and have
 some knowledge about the browser security model.</li><li>are somewhat familiar with the <a href=https://docs.microsoft.com/en-us/windows/wsl/about target=_blank rel="noreferrer noopener">Windows Subsystem for Linux or WSL</a>.</li></ol><h2 id=note-about-source-code>Note About Source Code
-<a class=header-link href=#note-about-source-code><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>The Visual Studio Code repository is constantly updated. I will use a specific commit
+<a class=header-link href=#note-about-source-code><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>The Visual Studio Code repository is constantly updated. I will use a specific commit
 (<code>b3318bc0524af3d74034b8bb8a64df0ccf35549a</code>).</p><p>To follow along:</p><pre tabindex=0><code>$ git clone https://github.com/microsoft/vscode
 $ git reset --hard b3318bc0524af3d74034b8bb8a64df0ccf35549a
 </code></pre><p>We can use Code (lol) to navigate the source code. In fact, I created the
 proof-of-concept for this vulnerability in WSL with the same extension.</p><p>We won't look at the extension code in this blog. The extension is not open
 source, but you can extract the <code>vsix</code> file and access the minified and
 transpiled JavaScript code.</p><h1 id=intro>Intro
-<a class=header-link href=#intro><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>The <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-wsl" target=_blank rel="noreferrer noopener">Remote WSL</a> extension is magic. You can use it to
+<a class=header-link href=#intro><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>The <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-wsl" target=_blank rel="noreferrer noopener">Remote WSL</a> extension is magic. You can use it to
 develop in "Linux" (WSL) from Windows without using a Virtual Machine. At the
 time of writing it has been installed 10.5 million times.</p><p>Visual Studio Code (<code>Code</code> moving forward) runs in server mode inside WSL and
 talks to a Code instance on Windows (I am calling it the <code>Code client</code>). This
 allows us to edit files and run applications in WSL without running everything
-there.</p><span class=caption-wrapper>
-<img class=caption src=00-architecture.png title="Remote Development Architecture - Credit: https://code.visualstudio.com/docs/remote/faq " alt="Remote Development Architecture - Credit: https://code.visualstudio.com/docs/remote/faq ">
-<span class=caption-text>Remote Development Architecture - Credit: https://code.visualstudio.com/docs/remote/faq </span>
-</span>
-<p>It's possible to do remote development on remote machines via <a href=https://code.visualstudio.com/docs/remote/ssh target=_blank rel="noreferrer noopener">SSH</a>
+there.</p><span class=caption-wrapper><img class=caption src=00-architecture.png title="Remote Development Architecture - Credit: https://code.visualstudio.com/docs/remote/faq " alt="Remote Development Architecture - Credit: https://code.visualstudio.com/docs/remote/faq ">
+<span class=caption-text>Remote Development Architecture - Credit: https://code.visualstudio.com/docs/remote/faq</span></span><p>It's possible to do remote development on remote machines via <a href=https://code.visualstudio.com/docs/remote/ssh target=_blank rel="noreferrer noopener">SSH</a>
 and in <a href=https://code.visualstudio.com/docs/remote/containers target=_blank rel="noreferrer noopener">containers</a>. <a href=https://docs.github.com/en/codespaces target=_blank rel="noreferrer noopener">GitHub Codespaces</a> uses the
-same technology (most likely via containers).</p><p>How to use it on Windows:</p><ol>
-<li>Open a WSL terminal instance. You should have the <code>Remote WSL</code> extension in
+same technology (most likely via containers).</p><p>How to use it on Windows:</p><ol><li>Open a WSL terminal instance. You should have the <code>Remote WSL</code> extension in
 Code on Windows.</li><li>Run <code>code /path/to/something</code> in WSL.</li><li>If the Code server is not installed (or is outdated) it's downloaded.</li><li>VS Code on Windows runs.</li><li>You might get a Windows Firewall popup for an executable like this:</li></ol><pre tabindex=0><code>C:\users\parsia\appdata\local\packages\
 canonicalgrouplimited.ubuntu18.04onwindows_79rhkp1fndgsc\
 localstate\rootfs\home\parsia\.vscode-server\bin\b3318bc0524af3d74034b8bb8a64df0ccf35549a\node
-</code></pre><span class=caption-wrapper>
-<img class=caption src=01-server-firewall-dialog.png title="Server's firewall dialog" alt="Server's firewall dialog">
-<span class=caption-text>Server's firewall dialog</span>
-</span>
-<p>See how it works:
+</code></pre><span class=caption-wrapper><img class=caption src=01-server-firewall-dialog.png title="Server's firewall dialog" alt="Server's firewall dialog">
+<span class=caption-text>Server's firewall dialog</span></span><p>See how it works:
 <a href=https://code.visualstudio.com/docs/remote/faq#_how-do-the-remote-development-extensions-work target=_blank rel="noreferrer noopener">https://code.visualstudio.com/docs/remote/faq#_how-do-the-remote-development-extensions-work</a>.</p><h2 id=chasing-the-firewall-dialog>Chasing the Firewall Dialog
-<a class=header-link href=#chasing-the-firewall-dialog><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>This firewall dialog was the reason why I went down the rabbit hole. The
-dialog appears because VS Code server wants to listen on all interfaces (bound do <code>0.0.0.0</code>).</p><p>I started with my trusty Process Monitor:</p><ol>
-<li>Ran process monitor.</li><li>Ran <code>code .</code> in WSL.</li><li><code>Tools > Process Tree</code>.</li><li><code>Add process and children to Include filter</code> under the terminal instance where I
-ran code (e.g., <code>Windows Terminal.exe</code>).</li></ol><span class=caption-wrapper>
-<img class=caption src=02-procmon-tree.png title="Procmon's process tree" alt="Procmon's process tree">
-<span class=caption-text>Procmon's process tree</span>
-</span>
-<p>This gave me some info, but not a lot. After some digging, I found out about the
+<a class=header-link href=#chasing-the-firewall-dialog><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>This firewall dialog was the reason why I went down the rabbit hole. The
+dialog appears because VS Code server wants to listen on all interfaces (bound do <code>0.0.0.0</code>).</p><p>I started with my trusty Process Monitor:</p><ol><li>Ran process monitor.</li><li>Ran <code>code .</code> in WSL.</li><li><code>Tools > Process Tree</code>.</li><li><code>Add process and children to Include filter</code> under the terminal instance where I
+ran code (e.g., <code>Windows Terminal.exe</code>).</li></ol><span class=caption-wrapper><img class=caption src=02-procmon-tree.png title="Procmon's process tree" alt="Procmon's process tree">
+<span class=caption-text>Procmon's process tree</span></span><p>This gave me some info, but not a lot. After some digging, I found out about the
 <code>VSCODE_WSL_DEBUG_INFO</code> environment variable. I simply added
 <code>export VSCODE_WSL_DEBUG_INFO=true</code> to <code>~/.profile</code> in WSL. We get extra info
-after running the server.</p><span class=caption-wrapper>
-<img class=caption src=03-vscode-debug.png title="VSCODE_WSL_DEBUG_INFO=true" alt="VSCODE_WSL_DEBUG_INFO=true">
-<span class=caption-text>VSCODE_WSL_DEBUG_INFO=true</span>
-</span>
-<p>The output is cleaned up and the comments are mine.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ code
+after running the server.</p><span class=caption-wrapper><img class=caption src=03-vscode-debug.png title="VSCODE_WSL_DEBUG_INFO=true" alt="VSCODE_WSL_DEBUG_INFO=true">
+<span class=caption-text>VSCODE_WSL_DEBUG_INFO=true</span></span><p>The output is cleaned up and the comments are mine.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ code
 </span></span><span style=display:flex><span>+ <span style=color:#268bd2>IN_WSL</span><span style=color:#719e07>=</span><span style=color:#b58900>true</span>
 </span></span><span style=display:flex><span><span style=color:#586e75># Converts a WSL path to its Windows equivalent</span>
 </span></span><span style=display:flex><span><span style=color:#586e75># Note: This is not pure text processing, if the path does not exist we will get an error</span>
@@ -208,17 +116,11 @@ sh /home/parsia/.vscode-server/bin/b3318bc0524af3d74034b8bb8a64df0ccf35549a/serv
    --port=0 --use-host-proxy --without-browser-env-var --disable-websocket-compression
    --print-ip-address --enable-remote-auto-shutdown --disable-telemetry
 </code></pre><p>I saw the magic word <code>WebSocket</code> and was suddenly interested.</p><p>Ran Wireshark and captured the traffic on the loopback interface. Then I ran
-Code in WSL again. I could see two WebSocket handshakes.</p><span class=caption-wrapper>
-<img class=caption src=05-websocket-wireshark.png title="WebSocket connections captured in Wireshark" alt="WebSocket connections captured in Wireshark">
-<span class=caption-text>WebSocket connections captured in Wireshark</span>
-</span>
-<p>The server port in that run was <code>63574</code>. We can also see this in the logs. Open
+Code in WSL again. I could see two WebSocket handshakes.</p><span class=caption-wrapper><img class=caption src=05-websocket-wireshark.png title="WebSocket connections captured in Wireshark" alt="WebSocket connections captured in Wireshark">
+<span class=caption-text>WebSocket connections captured in Wireshark</span></span><p>The server port in that run was <code>63574</code>. We can also see this in the logs. Open
 the command palette (<code>ctrl+shift+p</code>) in the Code client on Windows and run
-<code>> Remote-WSL: Show Log</code>.</p><span class=caption-wrapper>
-<img class=caption src=06-remote-wsl-log.png title="Remote-WSL: Show Log" alt="Remote-WSL: Show Log">
-<span class=caption-text>Remote-WSL: Show Log</span>
-</span>
-<p>The last line has the port: <code>open a local browser on http://127.0.0.1:63574/version</code>.
+<code>> Remote-WSL: Show Log</code>.</p><span class=caption-wrapper><img class=caption src=06-remote-wsl-log.png title="Remote-WSL: Show Log" alt="Remote-WSL: Show Log">
+<span class=caption-text>Remote-WSL: Show Log</span></span><p>The last line has the port: <code>open a local browser on http://127.0.0.1:63574/version</code>.
 We can also see the two separate WebSocket connections from the Code client on
 Windows to the server.</p><pre tabindex=0><code>C:\&gt; netstat -an | findstr &#34;63574&#34;
   TCP    0.0.0.0:63574          0.0.0.0:0              LISTENING
@@ -228,8 +130,7 @@ Windows to the server.</p><pre tabindex=0><code>C:\&gt; netstat -an | findstr &#
   TCP    127.0.0.1:64725        127.0.0.1:63574        ESTABLISHED
   TCP    [::]:63574             [::]:0                 LISTENING
 </code></pre><h2 id=why-is-it-listening-on-all-interfaces>Why is it Listening on All Interfaces?
-<a class=header-link href=#why-is-it-listening-on-all-interfaces><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>The server is an instance of <code>RemoteExtensionHostAgentServer</code> at
+<a class=header-link href=#why-is-it-listening-on-all-interfaces><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>The server is an instance of <code>RemoteExtensionHostAgentServer</code> at
 <a href=https://github.com/microsoft/vscode/blob/b3318bc0524af3d74034b8bb8a64df0ccf35549a/src/vs/server/remoteExtensionHostAgentServer.ts#L207 target=_blank rel="noreferrer noopener">/src/vs/server/remoteExtensionHostAgentServer.ts#L207</a>.</p><p>It's used by <code>createServer</code> (in the same file). We can use Code (lol) to find
 its references and trace it to <a href=https://github.com/microsoft/vscode/blob/b3318bc0524af3d74034b8bb8a64df0ccf35549a/src/vs/server/remoteExtensionHostAgent.ts#L62 target=_blank rel="noreferrer noopener">remoteExtensionHostAgent.ts</a> (same
 directory).</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=display:flex><span><span style=color:#586e75>// /src/vs/server/remoteExtensionHostAgent.ts
@@ -294,50 +195,28 @@ from parameters passed to <code>main.js</code>.</p><div class=highlight><pre tab
 listening on all interesting. <code>port=0</code> probably tells the server to use an
 ephemeral port. if you are curious, this info comes from <code>wslServer.sh</code> in the
 same directory.</p><h2 id=the-local-websocket-server>The Local WebSocket Server
-<a class=header-link href=#the-local-websocket-server><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Every time you see a local WebSocket server, you should check <strong>WHO</strong> can
-connect to it.</p><blockquote>
-<p>WebSocket connections are not bound by the Same-Origin Policy and JavaScript
-in the browser can connect to local servers.</p><footer>
-<strong></strong>
-<cite>
-TL;DR WebSockets</a>
-</cite>
-</footer></blockquote><p>WebSockets start with a handshake. It is always a "<a href=https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#simple_requests target=_blank rel="noreferrer noopener">simple</a>" (in
+<a class=header-link href=#the-local-websocket-server><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Every time you see a local WebSocket server, you should check <strong>WHO</strong> can
+connect to it.</p><blockquote><p>WebSocket connections are not bound by the Same-Origin Policy and JavaScript
+in the browser can connect to local servers.</p><footer><strong></strong>
+<cite>TL;DR WebSockets</a></cite></footer></blockquote><p>WebSockets start with a handshake. It is always a "<a href=https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#simple_requests target=_blank rel="noreferrer noopener">simple</a>" (in
 the context of Cross-Origin Resource Sharing or CORS) GET request so the browser
 sends it without a preflight request.</p><h3 id=but-the-same-origin-policy>But the Same-Origin Policy!
-<a class=header-link href=#but-the-same-origin-policy><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>"But the request cannot see the response without the
+<a class=header-link href=#but-the-same-origin-policy><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>"But the request cannot see the response without the
 <code>Access-Control-Allow-Origin</code> header." YES! Your JavaScript is not sending the
 GET handshake request. The browser does and can see the response.
 <code>HTTP/1.1 101 Switching Protocols</code> in the response tells the browser to continue.</p><p>I have learned most of what I know in this niche from Tavis and Eric and you
-should, too.</p><ul>
-<li>[Tavis Ormandy] has found <a href="https://bugs.chromium.org/p/project-zero/issues/list?q=owner%3Ataviso%40google.com%20localhost&can=1" target=_blank rel="noreferrer noopener">many similar bugs</a>.</li><li><a href=https://twitter.com/ericlaw target=_blank rel="noreferrer noopener">Eric Lawrence</a> has a great overview of browser to desktop communications.
-<ul>
-<li><a href=https://textslashplain.com/2019/08/28/browser-architecture-web-to-app-communication-overview/ target=_blank rel="noreferrer noopener">Browser Architecture: Web-to-App Communication Overview</a></li></ul></li></ul><p>But wait, there's more! Yours truly has also created content!</p><ul>
-<li><a href=https://hackerone.com/reports/873614 target=_blank rel="noreferrer noopener">Websites Can Run Arbitrary Code on Machines Running the 'PlayStation Now' Application</a>
-<ul>
-<li>Similar bug in <code>PlayStation Now</code>.</li></ul></li><li>
-<a href=/blog/2020-08-13-localghost-escaping-the-browser-sandbox-without-0-days/ title="localghost: Escaping the Browser Sandbox Without 0-Days" rel=nofollow target=_blank>localghost: Escaping the Browser Sandbox Without 0-Days</a>
-<ul>
-<li>My 2020 presentation about similar bugs. The PlayStation Now bug was not
-disclosed at that time, but I discuss other bugs.</li></ul></li><li>
-<a href=/blog/2021-04-30-testing-extensions-in-chromium-browsers-nordpass/#the-old-new-thing---yet-another-local-websocket-server title="Nordpass password manager desktop app has a local WebSocket server" rel=nofollow target=_blank>Nordpass password manager desktop app has a local WebSocket server</a></li></ul><h3 id=testing-local-websocket-servers>Testing Local WebSocket Servers
-<a class=header-link href=#testing-local-websocket-servers><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>Testing for this issue is very quick. Create a test page that tries to connect
+should, too.</p><ul><li>[Tavis Ormandy] has found <a href="https://bugs.chromium.org/p/project-zero/issues/list?q=owner%3Ataviso%40google.com%20localhost&can=1" target=_blank rel="noreferrer noopener">many similar bugs</a>.</li><li><a href=https://twitter.com/ericlaw target=_blank rel="noreferrer noopener">Eric Lawrence</a> has a great overview of browser to desktop communications.<ul><li><a href=https://textslashplain.com/2019/08/28/browser-architecture-web-to-app-communication-overview/ target=_blank rel="noreferrer noopener">Browser Architecture: Web-to-App Communication Overview</a></li></ul></li></ul><p>But wait, there's more! Yours truly has also created content!</p><ul><li><a href=https://hackerone.com/reports/873614 target=_blank rel="noreferrer noopener">Websites Can Run Arbitrary Code on Machines Running the 'PlayStation Now' Application</a><ul><li>Similar bug in <code>PlayStation Now</code>.</li></ul></li><li><a href=/blog/2020-08-13-localghost-escaping-the-browser-sandbox-without-0-days/ title="localghost: Escaping the Browser Sandbox Without 0-Days" rel=nofollow target=_blank>localghost: Escaping the Browser Sandbox Without 0-Days</a><ul><li>My 2020 presentation about similar bugs. The PlayStation Now bug was not
+disclosed at that time, but I discuss other bugs.</li></ul></li><li><a href=/blog/2021-04-30-testing-extensions-in-chromium-browsers-nordpass/#the-old-new-thing---yet-another-local-websocket-server title="Nordpass password manager desktop app has a local WebSocket server" rel=nofollow target=_blank>Nordpass password manager desktop app has a local WebSocket server</a></li></ul><h3 id=testing-local-websocket-servers>Testing Local WebSocket Servers
+<a class=header-link href=#testing-local-websocket-servers><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>Testing for this issue is very quick. Create a test page that tries to connect
 to a local WebSocket server on a specific port. Host it somewhere remote (e.g.,
 S3 bucket) and open it on the machine. If the connection is successful we are in
 business.</p><p>I also check in Burp. Create the WebSocket handshake in Burp Repeater. Modify
 the <code>Origin</code> header to <code>https://example.net</code>. If the response has
-<code>HTTP/1.1 101 Switching Protocols</code>, you are good to go!</p><span class=caption-wrapper>
-<img class=caption src=07-local-websocket.png title="Testing in Burp" alt="Testing in Burp">
-<span class=caption-text>Testing in Burp</span>
-</span>
-<p><strong>Note:</strong> This only matters for localhost servers. The server here is also
+<code>HTTP/1.1 101 Switching Protocols</code>, you are good to go!</p><span class=caption-wrapper><img class=caption src=07-local-websocket.png title="Testing in Burp" alt="Testing in Burp">
+<span class=caption-text>Testing in Burp</span></span><p><strong>Note:</strong> This only matters for localhost servers. The server here is also
 externally exposed (it's bound to <code>0.0.0.0</code>). Attackers are not bound by the
 browser. They can connect directly to the server and supply any <code>Origin</code> header.</p><h1 id=reverse-engineering-the-protocol>Reverse Engineering the Protocol
-<a class=header-link href=#reverse-engineering-the-protocol><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>The next item on the agenda is looking at the traffic in Wireshark. Right-click
+<a class=header-link href=#reverse-engineering-the-protocol><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>The next item on the agenda is looking at the traffic in Wireshark. Right-click
 on one of the WebSocket handshake <code>GET</code> requests from before and select
 <code>Follow > TCP Stream</code>. This will show us a screen with some readable text. Close
 it and see only the packets for this stream. This allows us to just follow this
@@ -350,8 +229,7 @@ will see server messages in plaintext while client messages are masked and
 gibberish. Wireshark unmasks the payload if you click on individual messages,
 but it would be awesome if we could view all of them here and search in
 messages, too.</p><h2 id=help-from-the-future>Help From the Future
-<a class=header-link href=#help-from-the-future><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>I spent a few days reverse engineering the protocol. Later, I realized I can
+<a class=header-link href=#help-from-the-future><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>I spent a few days reverse engineering the protocol. Later, I realized I can
 just see the protocol's source code in
 <a href=https://github.com/microsoft/vscode/blob/b3318bc0524af3d74034b8bb8a64df0ccf35549a/src/vs/base/parts/ipc/common/ipc.net.ts#L387 target=_blank rel="noreferrer noopener">/src/vs/base/parts/ipc/common/ipc.net.ts</a>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=display:flex><span><span style=color:#586e75>/**
 </span></span></span><span style=display:flex><span><span style=color:#586e75> * A message has the following format:
@@ -371,8 +249,7 @@ just see the protocol's source code in
 </span></span></span><span style=display:flex><span><span style=color:#586e75> * Only Regular messages are counted, other messages are not counted, nor acknowledged.
 </span></span></span><span style=display:flex><span><span style=color:#586e75> */</span>
 </span></span></code></pre></div><h2 id=the-protocol-handshake>The Protocol Handshake
-<a class=header-link href=#the-protocol-handshake><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>The first message from the server is a <code>KeepAlive</code> message.</p><pre tabindex=0><code>00000000  04 00 00 00 00 00 00 00 00 00 00 00 00           |.............|
+<a class=header-link href=#the-protocol-handshake><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>The first message from the server is a <code>KeepAlive</code> message.</p><pre tabindex=0><code>00000000  04 00 00 00 00 00 00 00 00 00 00 00 00           |.............|
 </code></pre><p>In the <a href=https://github.com/microsoft/vscode/blob/b3318bc0524af3d74034b8bb8a64df0ccf35549a/src/vs/base/parts/ipc/common/ipc.net.ts#L387 target=_blank rel="noreferrer noopener">protocol definition</a> we can see the different message types.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=display:flex><span><span style=color:#268bd2>const</span> <span style=color:#268bd2>enum</span> ProtocolMessageType {
 </span></span><span style=display:flex><span>   None <span style=color:#719e07>=</span> <span style=color:#2aa198>0</span>,
 </span></span><span style=display:flex><span>   Regular <span style=color:#719e07>=</span> <span style=color:#2aa198>1</span>,
@@ -465,8 +342,7 @@ can simply skip this when we create our client.</p><div class=highlight><pre tab
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>There's some funky validation going on here. Signing and stuff usually means
 DRM. I know, I work with videogames!</p><h3 id=your-editor-has-drm>Your Editor has DRM
-<a class=header-link href=#your-editor-has-drm><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>I chased the <code>options.signService.validate</code> method in the code for an hour and
+<a class=header-link href=#your-editor-has-drm><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>I chased the <code>options.signService.validate</code> method in the code for an hour and
 I got to <a href=https://github.com/microsoft/vscode/blob/b3318bc0524af3d74034b8bb8a64df0ccf35549a/src/vs/platform/sign/node/signService.ts target=_blank rel="noreferrer noopener">/src/vs/platform/sign/node/signService.ts</a>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=display:flex><span><span style=color:#268bd2>export</span> <span style=color:#268bd2>class</span> SignService <span style=color:#268bd2>implements</span> ISignService {
 </span></span><span style=display:flex><span>   <span style=color:#268bd2>declare</span> <span style=color:#268bd2>readonly</span> _serviceBrand: <span style=color:#dc322f>undefined</span>;
 </span></span><span style=display:flex><span>
@@ -481,26 +357,17 @@ I got to <a href=https://github.com/microsoft/vscode/blob/b3318bc0524af3d74034b8
 </span></span></span></code></pre></div><p><code>vsda</code> is a Node native addon written in C++. Think of
 <a href=https://nodejs.org/api/addons.html target=_blank rel="noreferrer noopener">Node native addons</a> as a shared library or DLL. This addon is in
 a private repository at <a href=https://github.com/microsoft/vsda target=_blank rel="noreferrer noopener">https://github.com/microsoft/vsda</a> and was an NPM package
-until around 2019 according to <a href=https://libraries.io/npm/vsda/ target=_blank rel="noreferrer noopener">https://libraries.io/npm/vsda/</a>.</p><p>It's bundled with VS Code client and server:</p><ul>
-<li>Windows: <code>C:\Program Files\Microsoft VS Code\resources\app\node_modules.asar.unpacked\vsda\build\Release\vsda.node</code>.</li><li>Server (WSL): <code>~/.vscode-server/bin/{commit}/node_modules/vsda/build/Release/vsda.node</code>.
-<ul>
-<li>As of today (2021-11-09)<sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup> the Linux version has symbols and it's pretty
+until around 2019 according to <a href=https://libraries.io/npm/vsda/ target=_blank rel="noreferrer noopener">https://libraries.io/npm/vsda/</a>.</p><p>It's bundled with VS Code client and server:</p><ul><li>Windows: <code>C:\Program Files\Microsoft VS Code\resources\app\node_modules.asar.unpacked\vsda\build\Release\vsda.node</code>.</li><li>Server (WSL): <code>~/.vscode-server/bin/{commit}/node_modules/vsda/build/Release/vsda.node</code>.<ul><li>As of today (2021-11-09)<sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup> the Linux version has symbols and it's pretty
 small. Should be a quick reversing exercise.</li></ul></li></ul><p>So, what is it? It's DRM<sup id=fnref:3><a href=#fn:3 class=footnote-ref role=doc-noteref>3</a></sup>. But yeah your editor has DRM!</p><p><code>Code OSS</code> (open source), and the build from Microsoft are different according to
-<a href=https://github.com/microsoft/vscode/wiki/Differences-between-the-repository-and-Visual-Studio-Code target=_blank rel="noreferrer noopener">https://github.com/microsoft/vscode/wiki/Differences-between-the-repository-and-Visual-Studio-Code</a>.</p><blockquote>
-<p><p>Why?</p><p>Portions of the Remote Development extensions are used in developer services
+<a href=https://github.com/microsoft/vscode/wiki/Differences-between-the-repository-and-Visual-Studio-Code target=_blank rel="noreferrer noopener">https://github.com/microsoft/vscode/wiki/Differences-between-the-repository-and-Visual-Studio-Code</a>.</p><blockquote><p><p>Why?</p><p>Portions of the Remote Development extensions are used in developer services
 that are run under a proprietary license. While these extensions do not require
 these services to work, there is enough code reuse that the extensions are also
 under a proprietary license. While the bulk of the code is in the extensions and
 in the Code - OSS repository, a handful of small changes are in the Visual
 Studio Code distribution.</p><p>How?</p><p>Parts of the code to negotiate a connection to the Visual Studio Code server are
-proprietary.</p></p><footer>
-<strong>Microsoft</strong>
-<cite>
-<a href=https://github.com/microsoft/vscode/wiki/Differences-between-the-repository-and-Visual-Studio-Code title=https://github.com/microsoft/vscode/wiki/Differences-between-the-repository-and-Visual-Studio-Code>Remote Development</a>
-</cite>
-</footer></blockquote><p>I found <a href=https://github.com/kieferrm/vsda-example target=_blank rel="noreferrer noopener">https://github.com/kieferrm/vsda-example</a> and figured out
-how to use it to create and sign messages after some experiments.</p><ol>
-<li>Create a new message with <code>msg1 = validator.createNewMessage("1234")</code>. The
+proprietary.</p></p><footer><strong>Microsoft</strong>
+<cite><a href=https://github.com/microsoft/vscode/wiki/Differences-between-the-repository-and-Visual-Studio-Code title=https://github.com/microsoft/vscode/wiki/Differences-between-the-repository-and-Visual-Studio-Code>Remote Development</a></cite></footer></blockquote><p>I found <a href=https://github.com/kieferrm/vsda-example target=_blank rel="noreferrer noopener">https://github.com/kieferrm/vsda-example</a> and figured out
+how to use it to create and sign messages after some experiments.</p><ol><li>Create a new message with <code>msg1 = validator.createNewMessage("1234")</code>. The
 input needs to be at least 4 characters.</li><li>Sign it with <code>signed1 = signer.sign(msg1)</code>.</li><li>Validate it with <code>validator.validate(signed1)</code> and the response
 is <code>"ok"</code>.</li></ol><p>There's a big caveat. If you create a new message, you cannot validate old
 messages anymore. In the source code, each message has its own validator.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=display:flex><span><span style=color:#586e75>// In a Node REPL.
@@ -540,13 +407,9 @@ messages anymore. In the source code, each message has its own validator.</p><di
 </span></span><span style=display:flex><span><span style=color:#719e07>&gt;</span> v1.validate(signed2);
 </span></span><span style=display:flex><span><span style=color:#2aa198>&#39;ok&#39;</span>
 </span></span></code></pre></div><h3 id=light-drm-reversing>Light DRM Reversing
-<a class=header-link href=#light-drm-reversing><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>The Linux version has symbols and is around 40 KBs. Drop it into IDA/Ghidra and
+<a class=header-link href=#light-drm-reversing><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>The Linux version has symbols and is around 40 KBs. Drop it into IDA/Ghidra and
 you should be good to go.</p><p>I spent some time on it and came up with this pseudo-code. <strong>This is probably not correct</strong>
-but gives you the general idea of how this <code>signing</code> works.</p><ol>
-<li>Initialize <code>srand</code> with the current time + 2*(msg[0]).
-<ol>
-<li>It will only create random numbers between 0 and 9 (inclusive).</li></ol></li><li>Append two random chars from the license array.</li><li>Append one random char from the salt array.</li><li>SHA256.</li><li>Base64.</li><li>???</li><li>Profit</li></ol><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=display:flex><span><span style=color:#586e75>// assume</span>
+but gives you the general idea of how this <code>signing</code> works.</p><ol><li>Initialize <code>srand</code> with the current time + 2*(msg[0]).<ol><li>It will only create random numbers between 0 and 9 (inclusive).</li></ol></li><li>Append two random chars from the license array.</li><li>Append one random char from the salt array.</li><li>SHA256.</li><li>Base64.</li><li>???</li><li>Profit</li></ol><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=display:flex><span><span style=color:#586e75>// assume</span>
 </span></span><span style=display:flex><span>msg = input_string;
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#586e75>// Check if input is more than 4 characters.</span>
@@ -578,8 +441,7 @@ test your applications.
 </code></pre><p>I never actually checked if my analysis is correct or not. It's probably not.
 But I did not need to know that. I knew how to sign messages using the addon and
 that was enough.</p><h3 id=the-finishing-move>The Finishing Move
-<a class=header-link href=#the-finishing-move><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>Next, the client needs to <code>sign</code> the <code>data</code> from the server and send it back to show that it's a "legit" Code client.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=display:flex><span><span style=color:#586e75>// [Parsia]: Client code.
+<a class=header-link href=#the-finishing-move><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>Next, the client needs to <code>sign</code> the <code>data</code> from the server and send it back to show that it's a "legit" Code client.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=display:flex><span><span style=color:#586e75>// [Parsia]: Client code.
 </span></span></span><span style=display:flex><span><span style=color:#586e75>// [Parsia]: sign the data sent by server.
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>const</span> signed <span style=color:#719e07>=</span> <span style=color:#719e07>await</span> raceWithTimeoutCancellation(options.signService.sign(msg.data), timeoutCancellationToken);
 </span></span><span style=display:flex><span>
@@ -616,26 +478,21 @@ checks if the client and server are on the same version. It's also available at
 <code>http://localhost:{port}/version</code>. Your browser JavaScript might not be able to
 see it (muh SOP), but external clients have no such restrictions.</p><p><code>signedData</code> is the result of signing the data we got from the server in the
 previous message.</p><p><code>args</code> is the most important part of this message. It can tell the server to
-start a Node Inspector instance on a specific port.</p><ul>
-<li><code>break</code>: Break after starting the Inspector instance.</li><li><code>port</code>: The port for the inspector instance.</li><li><code>env</code>: A list of environment variables and their values that are passed to
+start a Node Inspector instance on a specific port.</p><ul><li><code>break</code>: Break after starting the Inspector instance.</li><li><code>port</code>: The port for the inspector instance.</li><li><code>env</code>: A list of environment variables and their values that are passed to
 the inspector instance process.</li></ul><p>A <a href=https://nodejs.org/en/docs/guides/debugging-getting-started/ target=_blank rel="noreferrer noopener">Node Inspector</a> instance can be used to debug the Node
 application. If an attacker can connect to such an instance on your machine then
 it's game over. In 2019, Tavis found
 <a href="https://bugs.chromium.org/p/project-zero/issues/detail?id=1944" target=_blank rel="noreferrer noopener">VS Code enabled the remote debugger by default</a>.</p><p>This is pretty nifty, neh?!</p><h3 id=what-else-can-we-do>What Else Can We Do?
-<a class=header-link href=#what-else-can-we-do><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>Before we get excited about this Node Inspector instance, let's take a step back
+<a class=header-link href=#what-else-can-we-do><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>Before we get excited about this Node Inspector instance, let's take a step back
 and discover other possibilities. Think about the use case. This whole setup is
 designed to allow the Code client on Windows to develop remotely in WSL,
 containers, or on GitHub Codespaces. This means it can do everything it wants on
 the remote machine.</p><p>So, if a website can connect to your local WebSocket server and bypass the DRM
 (which is not a secret), it can emulate a Code client. It has remote code
 execution on your system and doesn't need the Node Inspector instance.</p><h1 id=exploitation>Exploitation
-<a class=header-link href=#exploitation><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>So far we have found two ways to exploit the system:</p><ol>
-<li>Spawn and connect to the Node Inspector instance.</li><li>Emulate the Code client and interact with the remote machine using the custom
+<a class=header-link href=#exploitation><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>So far we have found two ways to exploit the system:</p><ol><li>Spawn and connect to the Node Inspector instance.</li><li>Emulate the Code client and interact with the remote machine using the custom
 protocol.</li></ol><h2 id=the-node-inspector-instance>The Node Inspector Instance
-<a class=header-link href=#the-node-inspector-instance><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Let's look at the <code>args</code> from the previous message.
+<a class=header-link href=#the-node-inspector-instance><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Let's look at the <code>args</code> from the previous message.
 <a href=https://github.com/microsoft/vscode/blob/b3318bc0524af3d74034b8bb8a64df0ccf35549a/src/vs/server/remoteExtensionHostAgentServer.ts#L726 target=_blank rel="noreferrer noopener">/src/vs/server/remoteExtensionHostAgentServer.ts</a> processes them on
 the server.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=display:flex><span>} <span style=color:#719e07>else</span> <span style=color:#719e07>if</span> (msg.desiredConnectionType <span style=color:#719e07>===</span> ConnectionType.ExtensionHost) {
 </span></span><span style=display:flex><span>
@@ -712,61 +569,44 @@ next 10 ports. The final free port is stored in <code>startParams.port</code>.</
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>     <span style=color:#586e75>// [Parsia]: Removed.
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span>}
-</span></span></code></pre></div><p>This looks complicated. Let's break it down:</p><ol>
-<li>The Node Inspector instance will listen on <code>0.0.0.0:debugPort</code>.
-<ol>
-<li>This is bad. If the user accepts the Windows firewall dialog, it will be
+</span></span></code></pre></div><p>This looks complicated. Let's break it down:</p><ol><li>The Node Inspector instance will listen on <code>0.0.0.0:debugPort</code>.<ol><li>This is bad. If the user accepts the Windows firewall dialog, it will be
 externally available.</li></ol></li><li>We can also inject into the Inspector's environment variables.</li><li>The <a href=https://github.com/microsoft/vscode/blob/b3318bc0524af3d74034b8bb8a64df0ccf35549a/src/vs/base/node/processes.ts#L90 target=_blank rel="noreferrer noopener">removeDangerousEnvVariables</a> method is not a security filter
 and just removes <code>DEBUG</code>, <code>DYLD_LIBRARY_PATH</code>, and <code>LD_PRELOAD</code> environment
 variables if they exist to prevent crashes.</li></ol><h3 id=what-is-node-inspector>What is Node Inspector?
-<a class=header-link href=#what-is-node-inspector><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h3><p>It can be used to debug Node processes. There are clients and libraries that
+<a class=header-link href=#what-is-node-inspector><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>It can be used to debug Node processes. There are clients and libraries that
 support this but usually, I use Chromium's built-in
 <code>dedicated DevTools for Node</code> (<code>chrome|edge://inspect</code>).</p><p>After connecting to the Inspector instance we can open up the console and run
 <code>require('child_process').exec('calc.exe');</code>. It works although we are
 in WSL.</p><p>The JavaScript in the browser cannot connect to the Inspector instance. The
 client talks to the instance with another WebSocket connection. However, we need
 to know the debugger session ID. It is available at
-<code>http://localhost:{debugPort}/json/list</code>.</p><span class=caption-wrapper>
-<img class=caption src=08-json-list.png title=/json/list alt=/json/list>
-<span class=caption-text>/json/list</span>
-</span>
-<p>The JavaScript in the browser can send this GET request but cannot see the
+<code>http://localhost:{debugPort}/json/list</code>.</p><span class=caption-wrapper><img class=caption src=08-json-list.png title=/json/list alt=/json/list>
+<span class=caption-text>/json/list</span></span><p>The JavaScript in the browser can send this GET request but cannot see the
 response because of the SOP (the response doesn't have the
 <code>Access-Control-Allow-Origin</code> header). Other clients do not have this
 limitation and because the inspector is available externally, we can connect to
-it from outside.</p><p>I created a simple proof-of-concept:</p><ol>
-<li>Open a website and enter the port (we can scan for it but it's faster to enter it manually).</li><li>The JavaScript in the website completes the handshake.
-<ol>
-<li>I created a Node app (in WSL with Code, lol) with a <code>/sign</code> API to use
+it from outside.</p><p>I created a simple proof-of-concept:</p><ol><li>Open a website and enter the port (we can scan for it but it's faster to enter it manually).</li><li>The JavaScript in the website completes the handshake.<ol><li>I created a Node app (in WSL with Code, lol) with a <code>/sign</code> API to use
 the <code>vsda</code> addon.</li></ol></li><li>As soon as the Node Inspector instance is spawned, a second API was called
 with the <code>debugPort</code>.</li><li>A Node app using the <a href=https://github.com/cyrus-and/chrome-remote-interface target=_blank rel="noreferrer noopener">chrome-remote-interface</a> library connects to
-the Inspector instance and runs calc.</li></ol><p>The source code is at:</p><ul>
-<li><a href=https://github.com/parsiya/code-wsl-rce target=_blank rel="noreferrer noopener">https://github.com/parsiya/code-wsl-rce</a></li><li><a href=https://github.com/parsiya/Parsia-Code/tree/master/code-wsl-rce target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/code-wsl-rce</a></li></ul><h2 id=emulate-the-code-client>Emulate the Code Client
-<a class=header-link href=#emulate-the-code-client><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>I did not go this route but I spent some time looking at the traffic. It uses
+the Inspector instance and runs calc.</li></ol><p>The source code is at:</p><ul><li><a href=https://github.com/parsiya/code-wsl-rce target=_blank rel="noreferrer noopener">https://github.com/parsiya/code-wsl-rce</a></li><li><a href=https://github.com/parsiya/Parsia-Code/tree/master/code-wsl-rce target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/code-wsl-rce</a></li></ul><h2 id=emulate-the-code-client>Emulate the Code Client
+<a class=header-link href=#emulate-the-code-client><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>I did not go this route but I spent some time looking at the traffic. It uses
 the same protocol that we saw in the handshake messages. It's completely
 possible to do everything if you can figure out the correct messages and their
 formats.</p><p>The code to create a client and connect to the server with the protocol is in
 the VS Code GitHub repository. It's going to be a lot of copy/paste and
 resolving. I did not spend more than a few hours on it.</p><h1 id=recap>Recap
-<a class=header-link href=#recap><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Let's do a recap. We can:</p><ol>
-<li>Connect to the local WebSocket server from a web page or externally.</li><li>Complete the handshake and tell the server to start a Node inspector instance
+<a class=header-link href=#recap><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Let's do a recap. We can:</p><ol><li>Connect to the local WebSocket server from a web page or externally.</li><li>Complete the handshake and tell the server to start a Node inspector instance
 on a specific port.</li><li>The VS Code server creates the instance and listens on all interfaces (again).</li><li>The VS Code server returns the port for the inspector instance.</li><li>If the machine is accessible we can connect to the Node inspector service
 from outside.</li><li>???</li><li>Remote code execution.</li></ol><p>I created a quick proof-of-concept in ironically WSL remote (lol) using Node.
-This makes some assumptions:</p><ol>
-<li>We have found the local WebSocket port.</li><li>We can connect to the Node inspector instance from outside.</li></ol><p>It's also possible to do initial steps but mimic the Code client and do whatever
+This makes some assumptions:</p><ol><li>We have found the local WebSocket port.</li><li>We can connect to the Node inspector instance from outside.</li></ol><p>It's also possible to do initial steps but mimic the Code client and do whatever
 we want.</p><h2 id=limitations>Limitations
-<a class=header-link href=#limitations><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Finding the local WebSocket port is not hard. It just takes a while. Scanning
+<a class=header-link href=#limitations><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Finding the local WebSocket port is not hard. It just takes a while. Scanning
 for local servers from the browser is not a novel thing. The server is also
 available externally so we're not bound by the browser there.</p><p><a href=https://snyk.io/blog/visual-studio-code-extension-security-vulnerabilities-deep-dive/ target=_blank rel="noreferrer noopener">Deep dive into Visual Studio Code extension security vulnerabilities</a>
 is a good resource that talks about similar bugs in VS Code extensions.</p><p>It talks about scanning local WebSocket ports. Chrome throttling has no effect
 because the WebSocket server needs a webserver to handle the handshake. I am
 also curious if the WebSocket throttling is a Chrome specific protection or is
-part of Chromium (e.g., does Edge have it?).</p><blockquote>
-<p>Interestingly, Chrome browser has a protection mechanism which prevents a
+part of Chromium (e.g., does Edge have it?).</p><blockquote><p>Interestingly, Chrome browser has a protection mechanism which prevents a
 malicious actor from brute forcing WebSocket ports — it starts throttling
 after the 10th attempt. Unfortunately, this protection can be easily bypassed
 because both the HTTP and WebSocket servers of the extension are started on
@@ -781,9 +621,7 @@ have a better chance.</p><p>The second exploitation method (emulating the Code c
 limitations because the browser can talk to the local server and perform all
 actions. It just needs us to reverse engineer the protocol and figure out the
 correct messages to send.</p><h2 id=so-how-do-we-fix-this>So How Do We Fix This?
-<a class=header-link href=#so-how-do-we-fix-this><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>I have Security Engineer in my title so I should know how to fix this! RIGHT?!</p><ol>
-<li>Don't listen on <code>0.0.0.0</code>!</li><li>When you get a WebSocket upgrade request, check the <code>Origin</code> header against
+<a class=header-link href=#so-how-do-we-fix-this><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>I have Security Engineer in my title so I should know how to fix this! RIGHT?!</p><ol><li>Don't listen on <code>0.0.0.0</code>!</li><li>When you get a WebSocket upgrade request, check the <code>Origin</code> header against
 an allowlist. The Code client sends <code>vscode-file://vscode-app</code> in that header
 so we can use this to get started.</li></ol><p>Fixing one without the other will not work. Well, kinda!</p><p>Fixing #2 will prevent websites from connecting to the WebSocket server because
 browsers set the <code>Origin</code> header on every cross-origin request (at least they
@@ -791,13 +629,11 @@ should, if they do not you should nod disappointingly at the Chromium team).
 But, if the server is exposed externally, then it fixes nothing.</p><p>If you fix #1 and not #2, it's better. But websites can still connect to the
 server and mess with the dev environment. Chances are we can do RCE through the
 environment variables.</p><h2 id=what-was-actually-fixed>What Was Actually Fixed?
-<a class=header-link href=#what-was-actually-fixed><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>My suggestions were to modify the VS Code Server. Honestly, I think they are
+<a class=header-link href=#what-was-actually-fixed><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>My suggestions were to modify the VS Code Server. Honestly, I think they are
 better suggestions.</p><p>Instead, the <code>Remote WSL</code> extension was modified. Now we cannot send a bunch of
 zeros in the <code>auth</code> request and we need to have a connection token. I did not
 dig a lot but seems like now the <code>wslDaemon.js</code> file in the extension creates a
-random int and passes it as the connection token.</p><p><code>const p = String(a.randomInt(0xffffffffff))</code>.</p><ol>
-<li>Does it fix the issues? Yes.</li><li>Do I think there are other security issues here and we can bypass this? Also,
+random int and passes it as the connection token.</p><p><code>const p = String(a.randomInt(0xffffffffff))</code>.</p><ol><li>Does it fix the issues? Yes.</li><li>Do I think there are other security issues here and we can bypass this? Also,
 yes.</li><li>Do I want to spend more time doing free work for a company with a 2.5
 TRILLION market cap? Hell, no.</li></ol><p>Case in point, the default <code>connection-token</code> for the web browser mode in remote
 server is <code>00000</code>. See <a href=https://github.com/microsoft/vscode/blob/807bf598bea406dcb272a9fced54697986e87768/resources/server/bin-dev/code-web.js#L64 target=_blank rel="noreferrer noopener">/resources/server/bin-dev</a>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=display:flex><span><span style=color:#586e75>// Connection Token
@@ -807,32 +643,18 @@ server is <code>00000</code>. See <a href=https://github.com/microsoft/vscode/bl
 <a href=#the-local-web-server title="The Local Web Server">The Local Web Server</a>
 section below to see how to use it with the <code>/vscode-remote-resource</code> route to
 read local resources.</p><h2 id=remediation-timeline>Remediation Timeline
-<a class=header-link href=#remediation-timeline><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>I sat on this bug for a month because I wanted to reverse engineer the protocol
-completely. I am glad I did not.</p><table>
-<thead>
-<tr>
-<th>Date</th><th>What Happened</th></tr></thead><tbody>
-<tr>
-<td>2021-11-22</td><td>Reported to MSRC</td></tr><tr>
-<td>2021-12-1</td><td>Case created</td></tr><tr>
-<td>2021-12-10</td><td>Triaged</td></tr><tr>
-<td>2021-12-13</td><td>Notification: Out-of-scope for bounty</td></tr><tr>
-<td>2021-12-15</td><td>Fix released. CVE-2021-43907 assigned</td></tr><tr>
-<td>2021-12-20</td><td>Blog published</td></tr></tbody></table><h1 id=what-i-tried-and-didnt-work>What I Tried and Didn't Work
-<a class=header-link href=#what-i-tried-and-didnt-work><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>I think this is a useful section. Failed experiments might work in other
+<a class=header-link href=#remediation-timeline><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>I sat on this bug for a month because I wanted to reverse engineer the protocol
+completely. I am glad I did not.</p><table><thead><tr><th>Date</th><th>What Happened</th></tr></thead><tbody><tr><td>2021-11-22</td><td>Reported to MSRC</td></tr><tr><td>2021-12-1</td><td>Case created</td></tr><tr><td>2021-12-10</td><td>Triaged</td></tr><tr><td>2021-12-13</td><td>Notification: Out-of-scope for bounty</td></tr><tr><td>2021-12-15</td><td>Fix released. CVE-2021-43907 assigned</td></tr><tr><td>2021-12-20</td><td>Blog published</td></tr></tbody></table><h1 id=what-i-tried-and-didnt-work>What I Tried and Didn't Work
+<a class=header-link href=#what-i-tried-and-didnt-work><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>I think this is a useful section. Failed experiments might work in other
 situations. I can also add include extra information that did not make it to the
 main sections.</p><h2 id=injecting-environment-variables>Injecting Environment Variables
-<a class=header-link href=#injecting-environment-variables><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>I could inject environment variables (abbreviated to <code>env var</code> in the rest of
+<a class=header-link href=#injecting-environment-variables><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>I could inject environment variables (abbreviated to <code>env var</code> in the rest of
 this section) in the Node Inspector process. I tried to get RCE that way.</p><p>I found <a href=https://research.securitum.com/prototype-pollution-rce-kibana-cve-2019-7609/ target=_blank rel="noreferrer noopener">this awesome writeup</a> by Michał Bentkowski or
 <a href=https://twitter.com/SecurityMB target=_blank rel="noreferrer noopener">@SecurityMB</a> about CVE-2019-7609. He could inject env vars into
 a Node process through prototype pollution.</p><p>A Node process looks up the value of the <code>NODE_OPTIONS</code> env var. By passing
 <code>--require ./file.js</code> to this env var, the Node process executes the file if
 it's valid JavaScript. But that means we have to write to a file on the remote machine.</p><p>On Linux, the processes' env vars can be accessed with <code>/proc/self/environ</code> or
-<code>/proc/{pid}/environ</code>. Everything is a file! He created two env vars:</p><ol>
-<li><code>AAA</code>: <code>console.log(123)//</code>.</li><li><code>NODE_OPTIONS</code>: <code>--require /proc/self/environ</code>.</li></ol><p><code>AAA</code> went to the top of the <code>environ</code> file and made it valid JavaScript. So the
+<code>/proc/{pid}/environ</code>. Everything is a file! He created two env vars:</p><ol><li><code>AAA</code>: <code>console.log(123)//</code>.</li><li><code>NODE_OPTIONS</code>: <code>--require /proc/self/environ</code>.</li></ol><p><code>AAA</code> went to the top of the <code>environ</code> file and made it valid JavaScript. So the
 process executed it. This is a big limitation. Our injected env var must be at
 the top of that file otherwise the file is not valid JavaScript.</p><p>I went this route but it did not work. I would get an error that says
 <code>USER=parsia</code> is not valid. Turns out my injected env vars are added to the end.
@@ -858,12 +680,10 @@ USER=parsia
 VSCODE_WSL_EXT_LOCATION=/mnt/c/Users/Parsia/.vscode/extensions/ms-vscode-remote.remote-wsl-0.58.5
 SHLVL=2
 </code></pre><p>I also searched for <code>VSCODE_</code> in the source code to see if I could use any other
-env vars for RCE. Some of these looked promising but ultimately none worked:</p><ul>
-<li><code>NODE_PATH</code></li><li><code>VSCODE_WSL_EXT_LOCATION</code></li><li><code>VSCODE_CLIENT_COMMAND</code>: This is set to the WSL path of <code>code.exe</code> on the
+env vars for RCE. Some of these looked promising but ultimately none worked:</p><ul><li><code>NODE_PATH</code></li><li><code>VSCODE_WSL_EXT_LOCATION</code></li><li><code>VSCODE_CLIENT_COMMAND</code>: This is set to the WSL path of <code>code.exe</code> on the
 Windows side.</li><li><code>VSCODE_DEV</code>: I think it spawns a Code process with fewer security features
 but I could not use anything there.</li><li><code>VSCODE_BROWSER</code></li></ul><p>You might have a better chance.</p><h2 id=command-injection>Command Injection
-<a class=header-link href=#command-injection><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>I tried injecting commands in the <code>execArgv</code> variable. I control
+<a class=header-link href=#command-injection><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>I tried injecting commands in the <code>execArgv</code> variable. I control
 <code>startParams.break</code> and <code>startParams.port</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=display:flex><span><span style=color:#268bd2>let</span> execArgv: <span style=color:#dc322f>string</span>[] <span style=color:#719e07>=</span> [];
 </span></span><span style=display:flex><span><span style=color:#719e07>if</span> (startParams.port <span style=color:#719e07>&amp;&amp;</span> <span style=color:#719e07>!</span>(&lt;<span style=color:#268bd2>any</span>&gt;process).pkg) {
 </span></span><span style=display:flex><span>   <span style=color:#586e75>// [Parsia]: Listen on `0.0.0.0:debugPort`.
@@ -893,15 +713,11 @@ I think the protocol parser is doing it. I did not investigate further.</p><div 
 </span></span><span style=display:flex><span>        <span style=color:#719e07>this</span>._logService.trace(<span style=color:#586e75>`</span><span style=color:#2aa198>${</span>logPrefix<span style=color:#2aa198>}</span><span style=color:#586e75> - startParams debug port </span><span style=color:#2aa198>${</span>startParams.port<span style=color:#2aa198>}</span><span style=color:#586e75>`</span>);
 </span></span><span style=display:flex><span>    }
 </span></span></code></pre></div><h2 id=the-local-web-server>The Local Web Server
-<a class=header-link href=#the-local-web-server><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>The Code server runs a local web server that manages the WebSocket handshake.
+<a class=header-link href=#the-local-web-server><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>The Code server runs a local web server that manages the WebSocket handshake.
 This server has some routes:</p><p><code>vscode/src/vs/server/remoteExtensionHostAgentServer.ts</code> has a method named
 <code>handleRequest</code>.</p><p>Supports only <code>GET</code>. While we may not be able to see the response, these GET
-requests are "simple" and sent anyways.</p><ul>
-<li><code>/version</code> returns the commit hash.</li><li><code>/delay-shutdown</code> supposedly delays a shutdown?! Can we delay the server
-shutdown by sending a request to this endpoint?</li><li><code>/vscode-remote-resource</code>: Need the connection token to see local resources.
-<ul>
-<li>needs two params <code>path</code> and <code>tkn</code>.</li><li><code>tkn</code> should match the connection token otherwise this does not work.</li><li><code>path</code> is the local resource path.</li></ul></li></ul><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=display:flex><span><span style=color:#586e75>// /vscode-remote-resource
+requests are "simple" and sent anyways.</p><ul><li><code>/version</code> returns the commit hash.</li><li><code>/delay-shutdown</code> supposedly delays a shutdown?! Can we delay the server
+shutdown by sending a request to this endpoint?</li><li><code>/vscode-remote-resource</code>: Need the connection token to see local resources.<ul><li>needs two params <code>path</code> and <code>tkn</code>.</li><li><code>tkn</code> should match the connection token otherwise this does not work.</li><li><code>path</code> is the local resource path.</li></ul></li></ul><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=display:flex><span><span style=color:#586e75>// /vscode-remote-resource
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>if</span> (pathname <span style=color:#719e07>===</span> <span style=color:#2aa198>&#39;/vscode-remote-resource&#39;</span>) {
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Handle HTTP requests for resources rendered in the rich client (images, fonts, etc.)
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#586e75>// These resources could be files shipped with extensions or even workspace files.
@@ -918,66 +734,18 @@ sending GET requests to <code>http://locahost:port/delay-shutdown</code>. We can
 response but they are sent anyways.</p><p>This server is also externally available so we don't care about CORS. However,
 we need to know the connection token to get local resources. Try <code>00000</code> as
 token. It might work 😏.</p><h2 id=the-vscode-protocol-handler>The vscode Protocol Handler
-<a class=header-link href=#the-vscode-protocol-handler><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>VS Code also has a protocol handler: <code>vscode://</code>. It "lets other applications
+<a class=header-link href=#the-vscode-protocol-handler><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>VS Code also has a protocol handler: <code>vscode://</code>. It "lets other applications
 send URIs to specific extensions." See <a href=https://code.visualstudio.com/updates/v1_23#_protocol-handler-api target=_blank rel="noreferrer noopener">Protocol Handler API</a>.</p><p>This means we can do things like <code>vscode://vscode.git/clone?url=foobar</code> to talk
 to the <code>vscode.git</code> extension. This has been used to get RCE in the <code>Remote SSH</code>
 extension. See <a href=https://www.shielder.it/advisories/remote-command-execution-in-visual-studio-code-remote-development-extension/ target=_blank rel="noreferrer noopener">CVE-2020-17148</a>.</p><p>If someone is not currently running WSL we might be able to run the extension
 directly through the protocol handler? I did not look inside the extension code
 to see what can be done. The protocol handler must look like
 <code>vscode://ms-vscode-remote.remote-wsl/path?param=value</code>.</p><p>Thanks for reading and happy holidays! If you have any feedback you know where
-to find me!</p><section class=footnotes role=doc-endnotes>
-<hr>
-<ol>
-<li id=fn:1 role=doc-endnote>
-<p>I know my employer also doesn't have a paid bounty program, but that was not my decision.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:2 role=doc-endnote>
-<p>The date is not a typo. The initial draft was written then.&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:3 role=doc-endnote>
-<p>Yes, I know it's hypocritical of someone working for the <em>evil</em> Electronic Arts to talk about DRM 🙄.&#160;<a href=#fnref:3 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section></div><footer>
-<p class=meta>
-<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
-<time>Dec 20, 2021</time>
-</span>
-</p><p class=meta>
-<a class="basic-alignment left" href=https://parsiya.net/blog/2021-10-25-a-hands-on-intro-to-semgreps-autofix/ title="A Hands-On Intro to Semgrep's Autofix">A Hands-On Intro to Semgrep's Autofix</a>
-<a class="basic-alignment right" href=https://parsiya.net/blog/2022-01-21-some-sans-holiday-hack-2021-solutions/ title="Some SANS Holiday Hack 2021 Solutions">Some SANS Holiday Hack 2021 Solutions</a>
-</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer></article></div><aside class="sidebar thirds">
-<section class="first odd">
-<h1>Who am I?</h1><p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
-<li class=sidebar-nav-item>
-<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+to find me!</p><section class=footnotes role=doc-endnotes><hr><ol><li id=fn:1 role=doc-endnote><p>I know my employer also doesn't have a paid bounty program, but that was not my decision.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:2 role=doc-endnote><p>The date is not a typo. The initial draft was written then.&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:3 role=doc-endnote><p>Yes, I know it's hypocritical of someone working for the <em>evil</em> Electronic Arts to talk about DRM 🙄.&#160;<a href=#fnref:3 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section></div><footer><p class=meta><span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Dec 20, 2021</time></span></p><p class=meta><a class="basic-alignment left" href=https://parsiya.net/blog/2021-10-25-a-hands-on-intro-to-semgreps-autofix/ title="A Hands-On Intro to Semgrep's Autofix">A Hands-On Intro to Semgrep's Autofix</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2022-01-21-some-sans-holiday-hack-2021-solutions/ title="Some SANS Holiday Hack 2021 Solutions">Some SANS Holiday Hack 2021 Solutions</a></p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></footer></article></div><aside class="sidebar thirds"><section class="first odd"><h1>Who am I?</h1><p><p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
-<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li></ul><section class=odd>
-<h1>Collections</h1><li>
-<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li><li>
-<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li><li>
-<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li><li>
-<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li><li>
-<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li><li>
-<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li><li>
-<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li><li>
-<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li><li>
-<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li><li>
-<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li><li>
-<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li><li>
-<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li></section></aside></div></div><footer role=contentinfo>
-<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
-<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p></footer></body></html>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a></li><li><a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a></li><li><a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.</p></footer></body></html>

@@ -1,149 +1,74 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
-<link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>The Same-Origin Policy Gone Wild</title><link rel=stylesheet href=/css/hugo-octopress.css>
-<link rel=stylesheet href=/css/fork-awesome.min.css>
-<link href=https://parsiya.net/favicon.png rel=icon>
-<meta name=description content>
-<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
-<meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.93.0">
-<meta name=twitter:card content="summary_large_image">
-<meta name=twitter:image:src content="https://parsiya.net/blog/2020-11-01-the-same-origin-policy-gone-wild/01-json-tweet.png">
-<meta name=twitter:title content="The Same-Origin Policy Gone Wild">
-<meta name=twitter:description content="I will talk about some edge cases of the Same-Origin Policy (SOP). It affects
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>The Same-Origin Policy Gone Wild</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.96.0"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2020-11-01-the-same-origin-policy-gone-wild/01-json-tweet.png"><meta name=twitter:title content="The Same-Origin Policy Gone Wild"><meta name=twitter:description content="I will talk about some edge cases of the Same-Origin Policy (SOP). It affects
 browser based thickclient platforms so it's not just for web application
 security. This is a more detailed dive into this topic that I touched briefly in
-the localghost talk.">
-<meta name=twitter:domain content="parsiya.net">
-<meta name=twitter:creator content="@CryptoGangsta">
-</head><body>
-<header role=banner>
-<hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
-<fieldset class=mobile-nav>
-<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset><ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
-<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
-<fieldset role=search>
-<input class=search type=text name=q results=0 placeholder=Search>
-<input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset></form></nav><div id=main>
-<div id=content>
-<div>
-<article class=hentry role=article>
-<header>
-<p class=meta>Nov 1, 2020
+the localghost talk."><meta name=twitter:domain content="parsiya.net"><meta name=twitter:creator content="@CryptoGangsta"></head><body><header role=banner><hgroup><h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation><fieldset class=mobile-nav><select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select></fieldset><ul class=main-navigation><li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription><a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a></ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer"><fieldset role=search><input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/></fieldset></form></nav><div id=main><div id=content><div><article class=hentry role=article><header><p class=meta>Nov 1, 2020
 - 6 minute read
 - <a href=https://parsiya.net/blog/2020-11-01-the-same-origin-policy-gone-wild/#disqus_thread>Comments</a>
-- <a class=label href=https://parsiya.net/categories/websec/>Websec </a>
-</p><h1 class=entry-title>
-The Same-Origin Policy Gone Wild
-</h1></header><div class=entry-content>
-<nav id=TableOfContents>
-<ul>
-<li><a href=#foundations>Foundations</a>
-<ul>
-<li><a href=#the-origin-header>The Origin Header</a></li><li><a href=#forbidden-headers>Forbidden Headers</a></li><li><a href=#same-origin-policy-simplified>Same-Origin Policy Simplified</a></li><li><a href=#cross-origin-resource-sharing-cors>Cross-Origin Resource Sharing (CORS)</a></li><li><a href=#simple-requests>Simple Requests</a></li><li><a href=#preflighted-requests>Preflighted Requests</a></li></ul></li><li><a href=#sop-gone-wild>SOP Gone Wild</a>
-<ul>
-<li><a href=#origin-does-not-always-have-three-items>Origin Does Not Always Have Three Items</a></li><li><a href=#if-the-port-is-missing-from-the-origin-then-the-default-port-is-implied>If The Port Is Missing From the Origin Then the Default Port Is Implied</a></li><li><a href=#websockets-are-not-bound-by-the-sop>WebSockets Are Not Bound By The SOP</a></li><li><a href=#the-origin-header-is-not-always-set>The Origin Header Is Not Always Set</a></li><li><a href=#cross-origin-simple-requests-are-sent-without-checks>Cross-Origin Simple Requests Are Sent Without Checks</a></li></ul></li></ul></nav><p>I will talk about some edge cases of the Same-Origin Policy (SOP). It affects
+- <a class=label href=https://parsiya.net/categories/websec/>Websec</a></p><h1 class=entry-title>The Same-Origin Policy Gone Wild</h1></header><div class=entry-content><nav id=TableOfContents><ul><li><a href=#foundations>Foundations</a><ul><li><a href=#the-origin-header>The Origin Header</a></li><li><a href=#forbidden-headers>Forbidden Headers</a></li><li><a href=#same-origin-policy-simplified>Same-Origin Policy Simplified</a></li><li><a href=#cross-origin-resource-sharing-cors>Cross-Origin Resource Sharing (CORS)</a></li><li><a href=#simple-requests>Simple Requests</a></li><li><a href=#preflighted-requests>Preflighted Requests</a></li></ul></li><li><a href=#sop-gone-wild>SOP Gone Wild</a><ul><li><a href=#origin-does-not-always-have-three-items>Origin Does Not Always Have Three Items</a></li><li><a href=#if-the-port-is-missing-from-the-origin-then-the-default-port-is-implied>If The Port Is Missing From the Origin Then the Default Port Is Implied</a></li><li><a href=#websockets-are-not-bound-by-the-sop>WebSockets Are Not Bound By The SOP</a></li><li><a href=#the-origin-header-is-not-always-set>The Origin Header Is Not Always Set</a></li><li><a href=#cross-origin-simple-requests-are-sent-without-checks>Cross-Origin Simple Requests Are Sent Without Checks</a></li></ul></li></ul></nav><p>I will talk about some edge cases of the Same-Origin Policy (SOP). It affects
 browser based thickclient platforms so it's not just for web application
 security. This is a more detailed dive into this topic that I touched briefly in
 the <a href="https://youtu.be/Cgl51ZcACLg?t=90" target=_blank rel="noreferrer noopener">localghost</a> talk.</p><p>If you know the foundations please jump directly to the
 <a href=#sop-gone-wild>SOP Gone Wild</a> section below.</p><h1 id=foundations>Foundations
-<a class=header-link href=#foundations><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>These definitions are not exactly correct and I have omitted some exceptions.
+<a class=header-link href=#foundations><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>These definitions are not exactly correct and I have omitted some exceptions.
 SOP is one of the most well-studied topics in the browser security model so
 there is ample reading material.</p><h2 id=the-origin-header>The Origin Header
-<a class=header-link href=#the-origin-header><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>The <code>origin</code> header is set by the browser for cross-origin requests. It contains
-the origin of the request. An origin has three parts:</p><ul>
-<li>Protocol or scheme: Usually <code>http</code> or <code>https</code>.</li><li>Domain: E.g., <code>whatever.example.net</code>. Domain does not include the path.</li><li>Port: Usually omitted. Assume the default port not present. E.g., 443 for <code>https</code>.
+<a class=header-link href=#the-origin-header><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>The <code>origin</code> header is set by the browser for cross-origin requests. It contains
+the origin of the request. An origin has three parts:</p><ul><li>Protocol or scheme: Usually <code>http</code> or <code>https</code>.</li><li>Domain: E.g., <code>whatever.example.net</code>. Domain does not include the path.</li><li>Port: Usually omitted. Assume the default port not present. E.g., 443 for <code>https</code>.
 Internet Explorer does not care about port.</li></ul><h2 id=forbidden-headers>Forbidden Headers
-<a class=header-link href=#forbidden-headers><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p><code>Origin</code> is a forbidden header. Forbidden headers are set by browsers and cannot
-be altered by JavaScript.</p><ul>
-<li><a href=https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_header_name target=_blank rel="noreferrer noopener">https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_header_name</a></li></ul><h2 id=same-origin-policy-simplified>Same-Origin Policy Simplified
-<a class=header-link href=#same-origin-policy-simplified><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>SOP means a script from one origin cannot send most requests to another origin
+<a class=header-link href=#forbidden-headers><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p><code>Origin</code> is a forbidden header. Forbidden headers are set by browsers and cannot
+be altered by JavaScript.</p><ul><li><a href=https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_header_name target=_blank rel="noreferrer noopener">https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_header_name</a></li></ul><h2 id=same-origin-policy-simplified>Same-Origin Policy Simplified
+<a class=header-link href=#same-origin-policy-simplified><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>SOP means a script from one origin cannot send most requests to another origin
 or read the responses to cross-origin requests that were sent absent any other
-mechanism (e.g., CORS). For more information please read:</p><ul>
-<li><a href=https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy target=_blank rel="noreferrer noopener">https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy</a></li><li><a href=https://portswigger.net/web-security/cors/same-origin-policy target=_blank rel="noreferrer noopener">https://portswigger.net/web-security/cors/same-origin-policy</a></li></ul><h2 id=cross-origin-resource-sharing-cors>Cross-Origin Resource Sharing (CORS)
-<a class=header-link href=#cross-origin-resource-sharing-cors><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>CORS allows a script from an origin to bypass the SOP and interact with another
+mechanism (e.g., CORS). For more information please read:</p><ul><li><a href=https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy target=_blank rel="noreferrer noopener">https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy</a></li><li><a href=https://portswigger.net/web-security/cors/same-origin-policy target=_blank rel="noreferrer noopener">https://portswigger.net/web-security/cors/same-origin-policy</a></li></ul><h2 id=cross-origin-resource-sharing-cors>Cross-Origin Resource Sharing (CORS)
+<a class=header-link href=#cross-origin-resource-sharing-cors><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>CORS allows a script from an origin to bypass the SOP and interact with another
 origin. This usually happens when the server on the other side adds a bunch of
 headers to the response. The most important header is
 <code>Access-Control-Allow-Origin</code><sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>. If this header contains the value of the
 sender's origin then the browser allows the sender to see the response or in
 some cases actually send a request to the other side.</p><p>If this header is missing then CORS is not enabled. The value of this header can
-be:</p><ul>
-<li>An exact origin (or number of origins) like <code>whatever.example.net</code>.</li><li><code>*</code> that matches everything.</li></ul><p>In practice, the remote server looks at the <code>Origin</code> header in the incoming
+be:</p><ul><li>An exact origin (or number of origins) like <code>whatever.example.net</code>.</li><li><code>*</code> that matches everything.</li></ul><p>In practice, the remote server looks at the <code>Origin</code> header in the incoming
 request. If it's in the allowlist then the response will contain the exact
 origin in the value of the <code>Access-Control-Allow-Origin</code> header in the response.</p><p>Burp's scanner has a simple check for this. It sets the <code>Origin</code> header to some
 arbitrary value. If the response contains that value or the <code>*</code> wild card then
 it creates and issue.</p><h2 id=simple-requests>Simple Requests
-<a class=header-link href=#simple-requests><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>The browser allows an origin to send "simple" requests to another origin without
+<a class=header-link href=#simple-requests><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>The browser allows an origin to send "simple" requests to another origin without
 any checks<sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup>. The request goes through but in the absence of CORS headers the
-browser might not let the sender see the response.</p><p>A simple request is:</p><ul>
-<li>Only has one of these three methods:
-<ul>
-<li><code>GET</code></li><li><code>HEAD</code></li><li><code>POST</code></li></ul></li><li>Only has certain headers that are not set by the browser. The only important
-header for this discussion is <code>Content-Type</code>. It can only contain these values:
-<ul>
-<li><code>application/x-www-form-urlencoded</code></li><li><code>multipart/form-data</code></li><li><code>text/plain</code></li></ul></li></ul><p>There are more requirements but they are not important here. More information:</p><ul>
-<li><a href=https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Simple_requests target=_blank rel="noreferrer noopener">https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Simple_requests</a></li></ul><h2 id=preflighted-requests>Preflighted Requests
-<a class=header-link href=#preflighted-requests><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Other requests are not sent without checks. The browser sends an <code>OPTIONS</code>
+browser might not let the sender see the response.</p><p>A simple request is:</p><ul><li>Only has one of these three methods:<ul><li><code>GET</code></li><li><code>HEAD</code></li><li><code>POST</code></li></ul></li><li>Only has certain headers that are not set by the browser. The only important
+header for this discussion is <code>Content-Type</code>. It can only contain these values:<ul><li><code>application/x-www-form-urlencoded</code></li><li><code>multipart/form-data</code></li><li><code>text/plain</code></li></ul></li></ul><p>There are more requirements but they are not important here. More information:</p><ul><li><a href=https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Simple_requests target=_blank rel="noreferrer noopener">https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Simple_requests</a></li></ul><h2 id=preflighted-requests>Preflighted Requests
+<a class=header-link href=#preflighted-requests><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Other requests are not sent without checks. The browser sends an <code>OPTIONS</code>
 request with some headers to the endpoint and reads the response headers. If
 these headers allow CORS then the browser sends the actual request.</p><p>This can become an unintentional CSRF protection. If your webapp uses POST
 requests with JSON payloads. The requests will have <code>Content-Type: application/json</code>.
 This means without CORS these POST requests are not vulnerable to CSRF. Because
 when phished users click on links in a typical CSRF scenario, the browser sends
-the preflight request which fails and the actual CSRF request is never sent.</p><p>For more information please see:</p><ul>
-<li><a href=https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request target=_blank rel="noreferrer noopener">https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request</a></li></ul><p>A couple of quick tricks:</p><ol>
-<li>Change the <code>Content-Type</code> to <code>text/plain</code> (or remove the header completely)
+the preflight request which fails and the actual CSRF request is never sent.</p><p>For more information please see:</p><ul><li><a href=https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request target=_blank rel="noreferrer noopener">https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request</a></li></ul><p>A couple of quick tricks:</p><ol><li>Change the <code>Content-Type</code> to <code>text/plain</code> (or remove the header completely)
 to make it a simple request.</li><li>Change the verb of the request to <code>HEAD</code>.</li><li>Change the payload from JSON to <code>url-encoded</code>. E.g.,
 <code>{"param1":"val1","param2":val2}</code> becomes <code>param1=val1&param2=val2</code>. This
 works only occasionally and nested JSON objects do not work. But it's worth a
 try.</li></ol><h1 id=sop-gone-wild>SOP Gone Wild
-<a class=header-link href=#sop-gone-wild><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>Let's talk about the edge cases.</p><h2 id=origin-does-not-always-have-three-items>Origin Does Not Always Have Three Items
-<a class=header-link href=#origin-does-not-always-have-three-items><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Origin consists of protocol, domain, and port.
+<a class=header-link href=#sop-gone-wild><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Let's talk about the edge cases.</p><h2 id=origin-does-not-always-have-three-items>Origin Does Not Always Have Three Items
+<a class=header-link href=#origin-does-not-always-have-three-items><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Origin consists of protocol, domain, and port.
 <strong>Internet Explorer does not care about port.</strong></p><p>In addition, Internet Explorer does not care about SOP when dealing with <code>Highly Trusted Zones</code>. In most corporate environments the internal domains are added to
 this zone.</p><h2 id=if-the-port-is-missing-from-the-origin-then-the-default-port-is-implied>If The Port Is Missing From the Origin Then the Default Port Is Implied
-<a class=header-link href=#if-the-port-is-missing-from-the-origin-then-the-default-port-is-implied><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p><code>https://example.net:443</code> and <code>https://example.net</code> are the same.</p><h2 id=websockets-are-not-bound-by-the-sop>WebSockets Are Not Bound By The SOP
-<a class=header-link href=#websockets-are-not-bound-by-the-sop><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>This is a common issue and the most important item in this blog. Websockets
+<a class=header-link href=#if-the-port-is-missing-from-the-origin-then-the-default-port-is-implied><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p><code>https://example.net:443</code> and <code>https://example.net</code> are the same.</p><h2 id=websockets-are-not-bound-by-the-sop>WebSockets Are Not Bound By The SOP
+<a class=header-link href=#websockets-are-not-bound-by-the-sop><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>This is a common issue and the most important item in this blog. Websockets
 start with a handshake. The handshake is a GET request which satisfies the
 <code>simple request</code> criteria. So it's sent cross-origin.</p><p>If the request is cross-origin and no CORS policy is defined, the sender cannot
 see the response of the handshake. But it really does not matter. The browser
 does it for us.</p><p>For more information please read the following article by Independent Security
-Evaluators:</p><ul>
-<li><a href=https://blog.securityevaluators.com/websockets-not-bound-by-cors-does-this-mean-2e7819374acc#e8bc target=_blank rel="noreferrer noopener">https://blog.securityevaluators.com/websockets-not-bound-by-cors-does-this-mean-2e7819374acc#e8bc</a></li></ul><p>A couple of tricks:</p><ol>
-<li>The <code>Sec-WebSocket-Key</code> in the handshake request has nothing to do with
+Evaluators:</p><ul><li><a href=https://blog.securityevaluators.com/websockets-not-bound-by-cors-does-this-mean-2e7819374acc#e8bc target=_blank rel="noreferrer noopener">https://blog.securityevaluators.com/websockets-not-bound-by-cors-does-this-mean-2e7819374acc#e8bc</a></li></ul><p>A couple of tricks:</p><ol><li>The <code>Sec-WebSocket-Key</code> in the handshake request has nothing to do with
 security.</li><li>One of the headers in the request is <code>Sec-Websocket-Protocol</code>. Sometimes you
 can change the protocol of the websocket with this header. An application was
 using protobuf. I noticed the value of this header in the request is also set
 to <code>protobuf</code> so I changed this value to <code>json</code> and it switched to neatly
-formatted JSON.</li></ol><span class=caption-wrapper>
-<img class=caption src=01-json-tweet.png title="WebSocket magic or something" alt="WebSocket magic or something">
-<span class=caption-text>WebSocket magic or something</span>
-</span>
-<h2 id=the-origin-header-is-not-always-set>The Origin Header Is Not Always Set
-<a class=header-link href=#the-origin-header-is-not-always-set><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>The browsers only set the <code>origin</code> header for some requests. Generally, the
+formatted JSON.</li></ol><span class=caption-wrapper><img class=caption src=01-json-tweet.png title="WebSocket magic or something" alt="WebSocket magic or something">
+<span class=caption-text>WebSocket magic or something</span></span><h2 id=the-origin-header-is-not-always-set>The Origin Header Is Not Always Set
+<a class=header-link href=#the-origin-header-is-not-always-set><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>The browsers only set the <code>origin</code> header for some requests. Generally, the
 header is only set for cross-origin requests. This is not completely correct but
 going into the details will just complicate things.</p><h2 id=cross-origin-simple-requests-are-sent-without-checks>Cross-Origin Simple Requests Are Sent Without Checks
-<a class=header-link href=#cross-origin-simple-requests-are-sent-without-checks><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>We usually do not think the request is sent because the browser does not allow
+<a class=header-link href=#cross-origin-simple-requests-are-sent-without-checks><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>We usually do not think the request is sent because the browser does not allow
 access to the response. GET requests and some POST requests are sent anyways. We
 might not be able to see the response but the action is probably already
 executed. Hence, why CSRF exists even if there is no CORS because the POST
@@ -155,57 +80,11 @@ You will not be able to see the response but the code is already executed and
 you got remote code execution.</p><p>A similar issue happened in my
 <a href=/blog/2019-06-18-chaining-three-bugs-to-get-rce-in-microsoft-attacksurfaceanalyzer/#xss-root-cause-analysis title="Attack Surface Analyzer RCE" rel=nofollow target=_blank>Attack Surface Analyzer RCE</a>
 A "simple" GET request was used to inject the XSS to RCE payload in an Electron
-app.</p><section class=footnotes role=doc-endnotes>
-<hr>
-<ol>
-<li id=fn:1 role=doc-endnote>
-<p>There are more CORS headers but they are not important for this discussion.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:2 role=doc-endnote>
-<p>This is why CSRF exists.&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section></div><footer>
-<p class=meta>
-<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
-<time>Nov 1, 2020</time>
-</span>
-</p><p class=meta>
-<a class="basic-alignment left" href=https://parsiya.net/blog/2020-08-13-localghost-escaping-the-browser-sandbox-without-0-days/ title="localghost: Escaping the Browser Sandbox Without 0-Days">localghost: Escaping the Browser Sandbox Without 0-Days</a>
-<a class="basic-alignment right" href=https://parsiya.net/blog/2020-11-15-customizing-pythons-simplehttpserver/ title="Customizing Python's SimpleHTTPServer">Customizing Python's SimpleHTTPServer</a>
-</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer></article></div><aside class="sidebar thirds">
-<section class="first odd">
-<h1>Who am I?</h1><p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
-<li class=sidebar-nav-item>
-<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+app.</p><section class=footnotes role=doc-endnotes><hr><ol><li id=fn:1 role=doc-endnote><p>There are more CORS headers but they are not important for this discussion.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:2 role=doc-endnote><p>This is why CSRF exists.&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section></div><footer><p class=meta><span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Nov 1, 2020</time></span></p><p class=meta><a class="basic-alignment left" href=https://parsiya.net/blog/2020-08-13-localghost-escaping-the-browser-sandbox-without-0-days/ title="localghost: Escaping the Browser Sandbox Without 0-Days">localghost: Escaping the Browser Sandbox Without 0-Days</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2020-11-15-customizing-pythons-simplehttpserver/ title="Customizing Python's SimpleHTTPServer">Customizing Python's SimpleHTTPServer</a></p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></footer></article></div><aside class="sidebar thirds"><section class="first odd"><h1>Who am I?</h1><p><p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
-<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li></ul><section class=odd>
-<h1>Collections</h1><li>
-<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li><li>
-<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li><li>
-<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li><li>
-<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li><li>
-<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li><li>
-<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li><li>
-<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li><li>
-<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li><li>
-<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li><li>
-<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li><li>
-<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li><li>
-<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li></section></aside></div></div><footer role=contentinfo>
-<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
-<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p></footer></body></html>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a></li><li><a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a></li><li><a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.</p></footer></body></html>

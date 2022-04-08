@@ -1,91 +1,30 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1">
-<link href=/css/fonts.css rel=stylesheet type=text/css>
-<title>Swing in Python Burp Extensions - Part 1</title><link rel=stylesheet href=/css/hugo-octopress.css>
-<link rel=stylesheet href=/css/fork-awesome.min.css>
-<link href=https://parsiya.net/favicon.png rel=icon>
-<meta name=description content>
-<meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]">
-<meta name=author content="Parsia">
-<meta name=generator content="Hugo 0.93.0">
-<meta name=twitter:card content="summary_large_image">
-<meta name=twitter:image:src content="https://parsiya.net/blog/2019-11-04-swing-in-python-burp-extensions-part-1/11-jeditorpane.png">
-<meta name=twitter:title content="Swing in Python Burp Extensions - Part 1">
-<meta name=twitter:description content="TL;DR: What I learned from creating handcrafted GUIs for Python Burp
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Swing in Python Burp Extensions - Part 1</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.96.0"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2019-11-04-swing-in-python-burp-extensions-part-1/11-jeditorpane.png"><meta name=twitter:title content="Swing in Python Burp Extensions - Part 1"><meta name=twitter:description content="TL;DR: What I learned from creating handcrafted GUIs for Python Burp
 extensions using Swing. Code is at:
 
 https://github.com/parsiya/Parsia-Code/tree/master/jython-swing-1
-">
-<meta name=twitter:domain content="parsiya.net">
-<meta name=twitter:creator content="@CryptoGangsta">
-</head><body>
-<header role=banner>
-<hgroup>
-<h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
-complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation>
-<fieldset class=mobile-nav>
-<select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select>
-</fieldset><ul class=main-navigation>
-<li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription>
-<a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a>
-</ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer">
-<fieldset role=search>
-<input class=search type=text name=q results=0 placeholder=Search>
-<input type=hidden name=q value=site:https://parsiya.net/>
-</fieldset></form></nav><div id=main>
-<div id=content>
-<div>
-<article class=hentry role=article>
-<header>
-<p class=meta>Nov 4, 2019
+"><meta name=twitter:domain content="parsiya.net"><meta name=twitter:creator content="@CryptoGangsta"></head><body><header role=banner><hgroup><h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation><fieldset class=mobile-nav><select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select></fieldset><ul class=main-navigation><li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription><a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a></ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer"><fieldset role=search><input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/></fieldset></form></nav><div id=main><div id=content><div><article class=hentry role=article><header><p class=meta>Nov 4, 2019
 - 12 minute read
 - <a href=https://parsiya.net/blog/2019-11-04-swing-in-python-burp-extensions-part-1/#disqus_thread>Comments</a>
-- <a class=label href=https://parsiya.net/categories/burp/>Burp </a><a class=label href=https://parsiya.net/categories/burp-extension/>Burp extension </a>
-</p><h1 class=entry-title>
-Swing in Python Burp Extensions - Part 1
-</h1></header><div class=entry-content>
-<nav id=TableOfContents>
-<ul>
-<li><a href=#the-state-of-the-gui>The State of the GUI</a></li><li><a href=#prerequisites>Prerequisites</a></li><li><a href=#jython-swing-experiments>Jython Swing Experiments</a>
-<ul>
-<li><a href=#basic-tab>Basic Tab</a></li><li><a href=#jbutton>JButton</a></li><li><a href=#jsplitpane>JSplitPane</a></li><li><a href=#jscrollpane>JScrollPane</a></li><li><a href=#jlist-actions>JList Actions</a></li><li><a href=#jtabbedpane>JTabbedPane</a></li><li><a href=#styleddocument>StyledDocument</a></li><li><a href=#custom-styles-in-styleddocument>Custom Styles in StyledDocument</a></li></ul></li><li><a href=#what-did-we-learn-here-today>What Did We Learn Here Today</a></li></ul></nav><p><strong>TL;DR:</strong> What I learned from creating handcrafted GUIs for Python Burp
-extensions using Swing. Code is at:</p><ul>
-<li><a href=https://github.com/parsiya/Parsia-Code/tree/master/jython-swing-1 target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/jython-swing-1</a></li></ul><h1 id=the-state-of-the-gui>The State of the GUI
-<a class=header-link href=#the-state-of-the-gui><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>In April 2019, I had just joined <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a> and I wanted
+- <a class=label href=https://parsiya.net/categories/burp/>Burp </a><a class=label href=https://parsiya.net/categories/burp-extension/>Burp extension</a></p><h1 class=entry-title>Swing in Python Burp Extensions - Part 1</h1></header><div class=entry-content><nav id=TableOfContents><ul><li><a href=#the-state-of-the-gui>The State of the GUI</a></li><li><a href=#prerequisites>Prerequisites</a></li><li><a href=#jython-swing-experiments>Jython Swing Experiments</a><ul><li><a href=#basic-tab>Basic Tab</a></li><li><a href=#jbutton>JButton</a></li><li><a href=#jsplitpane>JSplitPane</a></li><li><a href=#jscrollpane>JScrollPane</a></li><li><a href=#jlist-actions>JList Actions</a></li><li><a href=#jtabbedpane>JTabbedPane</a></li><li><a href=#styleddocument>StyledDocument</a></li><li><a href=#custom-styles-in-styleddocument>Custom Styles in StyledDocument</a></li></ul></li><li><a href=#what-did-we-learn-here-today>What Did We Learn Here Today</a></li></ul></nav><p><strong>TL;DR:</strong> What I learned from creating handcrafted GUIs for Python Burp
+extensions using Swing. Code is at:</p><ul><li><a href=https://github.com/parsiya/Parsia-Code/tree/master/jython-swing-1 target=_blank rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/jython-swing-1</a></li></ul><h1 id=the-state-of-the-gui>The State of the GUI
+<a class=header-link href=#the-state-of-the-gui><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>In April 2019, I had just joined <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a> and I wanted
 to make a Burp extension. I saw only tutorials on creating a GUI in Jython.</p><p><img src=00-tweet.png alt></p><p>Looks like everyone is either using Java or handcrafted Jython Swing GUIs. I
 mostly learned it by reading the source of extensions and found this tutorial by
-<a href=https://twitter.com/LaconicWolf target=_blank rel="noreferrer noopener">Jake Miller</a> A.K.A. <a href=https://laconicwolf.com/ target=_blank rel="noreferrer noopener">Laconic Wolf</a>:</p><ul>
-<li><a href=https://laconicwolf.com/2019/02/07/burp-extension-python-tutorial-encode-decode-hash/ target=_blank rel="noreferrer noopener">https://laconicwolf.com/2019/02/07/burp-extension-python-tutorial-encode-decode-hash/</a>
-<ul>
-<li>Search for <code>Onto the code:</code> to get to the part with Swing.</li></ul></li></ul><p>This training by <a href=https://github.com/doyensec/burpdeveltraining target=_blank rel="noreferrer noopener">Doyensec</a> is good but not for what I wanted
+<a href=https://twitter.com/LaconicWolf target=_blank rel="noreferrer noopener">Jake Miller</a> A.K.A. <a href=https://laconicwolf.com/ target=_blank rel="noreferrer noopener">Laconic Wolf</a>:</p><ul><li><a href=https://laconicwolf.com/2019/02/07/burp-extension-python-tutorial-encode-decode-hash/ target=_blank rel="noreferrer noopener">https://laconicwolf.com/2019/02/07/burp-extension-python-tutorial-encode-decode-hash/</a><ul><li>Search for <code>Onto the code:</code> to get to the part with Swing.</li></ul></li></ul><p>This training by <a href=https://github.com/doyensec/burpdeveltraining target=_blank rel="noreferrer noopener">Doyensec</a> is good but not for what I wanted
 to learn (GUI design). As I mentioned in the tweets, the Python GUI is just
-modified from a NetBeans generated GUI:</p><ul>
-<li><a href=https://github.com/doyensec/burpdeveltraining/blob/master/SiteLogger/Python/Final/BurpExtender.py#L49 target=_blank rel="noreferrer noopener">https://github.com/doyensec/burpdeveltraining/blob/master/SiteLogger/Python/Final/BurpExtender.py#L49</a></li></ul><p>This is something I want to explore later. But to be able to translate the code
+modified from a NetBeans generated GUI:</p><ul><li><a href=https://github.com/doyensec/burpdeveltraining/blob/master/SiteLogger/Python/Final/BurpExtender.py#L49 target=_blank rel="noreferrer noopener">https://github.com/doyensec/burpdeveltraining/blob/master/SiteLogger/Python/Final/BurpExtender.py#L49</a></li></ul><p>This is something I want to explore later. But to be able to translate the code
 and do modifications, I needed to figure out how things work internally.</p><p>In my blog post [Cryptography in Python Burp Extensions]
 (/blog/2018-12-24-cryptography-in-python-burp-extensions/#using-jython
 "Cryptography in Python Burp Extensions"), I started using Jython classes in my
 Burp extensions and realized I can do the same with Swing (which is what
 everyone does).</p><p>I am documenting what I learned first for my future-self and then for everyone
 else who wants to take the same path.</p><h1 id=prerequisites>Prerequisites
-<a class=header-link href=#prerequisites><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>This tutorial assumes you know:</p><ol>
-<li>How to search.
-<ol>
-<li>When in doubt, search for Java and Jython Swing tutorials.</li></ol></li><li>How to setup Jython in Burp.</li><li>How to use Jython classes.</li><li>How to program in Python.</li><li>How to setup <a href=https://github.com/securityMB/burp-exceptions target=_blank rel="noreferrer noopener">https://github.com/securityMB/burp-exceptions</a>.</li></ol><h1 id=jython-swing-experiments>Jython Swing Experiments
-<a class=header-link href=#jython-swing-experiments><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><h2 id=basic-tab>Basic Tab
-<a class=header-link href=#basic-tab><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>To add a tab to Burp, we need to extend and implement the
-<a href=https://portswigger.net/burp/extender/api/burp/ITab.html target=_blank rel="noreferrer noopener">ITab interface</a>.</p><figure class=code>
-<figcaption>
-<span>01-tab-skeleton.py</span>
-</figcaption><div class=codewrapper>
-<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+<a class=header-link href=#prerequisites><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>This tutorial assumes you know:</p><ol><li>How to search.<ol><li>When in doubt, search for Java and Jython Swing tutorials.</li></ol></li><li>How to setup Jython in Burp.</li><li>How to use Jython classes.</li><li>How to program in Python.</li><li>How to setup <a href=https://github.com/securityMB/burp-exceptions target=_blank rel="noreferrer noopener">https://github.com/securityMB/burp-exceptions</a>.</li></ol><h1 id=jython-swing-experiments>Jython Swing Experiments
+<a class=header-link href=#jython-swing-experiments><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><h2 id=basic-tab>Basic Tab
+<a class=header-link href=#basic-tab><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>To add a tab to Burp, we need to extend and implement the
+<a href=https://portswigger.net/burp/extender/api/burp/ITab.html target=_blank rel="noreferrer noopener">ITab interface</a>.</p><figure class=code><figcaption><span>01-tab-skeleton.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
@@ -101,8 +40,7 @@ else who wants to take the same path.</p><h1 id=prerequisites>Prerequisites
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#586e75># implement ITab</span>
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#586e75># implement ITab</span>
 </span></span><span style=display:flex><span><span style=color:#586e75># https://portswigger.net/burp/extender/api/burp/ITab.html</span>
 </span></span><span style=display:flex><span><span style=color:#586e75># two methods must be implemented.</span>
 </span></span><span style=display:flex><span>
@@ -117,44 +55,23 @@ else who wants to take the same path.</p><h1 id=prerequisites>Prerequisites
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>    the contents of the custom tab when it is displayed.
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>    Returns a awt.Component.
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>    &#34;&#34;&#34;</span>
-</span></span><span style=display:flex><span>    <span style=color:#586e75># GUI happens here</span></span></span></code></pre></td></tr></table></div></div></div></figure><ul>
-<li><code>getTabCaption</code> just returns the name of the tab.</li><li><code>getUiComponent</code> returns the new tab.</li></ul><p>This extension will not work because <code>getUiComponent</code> is returning nothing and
+</span></span><span style=display:flex><span>    <span style=color:#586e75># GUI happens here</span></span></span></code></pre></td></tr></table></div></div></div></figure><ul><li><code>getTabCaption</code> just returns the name of the tab.</li><li><code>getUiComponent</code> returns the new tab.</li></ul><p>This extension will not work because <code>getUiComponent</code> is returning nothing and
 we get a <code>NullPointerException</code> error. Edit the skeleton then <code>ctrl+click</code> on
 the checkbox in front of the extension in Burp's extender tab to reload it.</p><p>We start by creating a JPanel. JPanel is a container and can use layout
-managers. We will use the <code>BorderLayout</code>.</p><ul>
-<li>BorderLayout tutorial: <a href=https://docs.oracle.com/javase/tutorial/uiswing/layout/border.html target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/tutorial/uiswing/layout/border.html</a></li><li>A Visual Guide to Layout Managers: <a href=https://docs.oracle.com/javase/tutorial/uiswing/layout/visual.html target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/tutorial/uiswing/layout/visual.html</a></li></ul><figure class=code>
-<figcaption>
-<span>Empty tab</span>
-</figcaption><div class=codewrapper>
-<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+managers. We will use the <code>BorderLayout</code>.</p><ul><li>BorderLayout tutorial: <a href=https://docs.oracle.com/javase/tutorial/uiswing/layout/border.html target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/tutorial/uiswing/layout/border.html</a></li><li>A Visual Guide to Layout Managers: <a href=https://docs.oracle.com/javase/tutorial/uiswing/layout/visual.html target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/tutorial/uiswing/layout/visual.html</a></li></ul><figure class=code><figcaption><span>Empty tab</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> javax.swing <span style=color:#719e07>import</span> JPanel
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> java.awt <span style=color:#719e07>import</span> BorderLayout
 </span></span><span style=display:flex><span>    panel <span style=color:#719e07>=</span> JPanel(BorderLayout())
-</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> panel</span></span></code></pre></td></tr></table></div></div></div></figure><p>We have an empty tab.</p><span class=caption-wrapper>
-<img class=caption src=01-empty-tab.png title="Empty tab" alt="Empty tab">
-<span class=caption-text>Empty tab</span>
-</span>
-<p>Using the BorderLayout, we can assign positions to components in the panel.
-These positions are:</p><ul>
-<li><code>PAGE_START</code> - <code>PAGE_END</code> - <code>LINE_START</code> - <code>LINE_END</code> - <code>CENTER</code></li></ul><h2 id=jbutton>JButton
-<a class=header-link href=#jbutton><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Adding some buttons that do nothing to show off different positions. A button is
-made from the class <code>JButton</code>:</p><ul>
-<li><a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JButton.html target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/8/docs/api/javax/swing/JButton.html</a></li></ul><figure class=code>
-<figcaption>
-<span>Three buttons</span>
-</figcaption><div class=codewrapper>
-<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> panel</span></span></code></pre></td></tr></table></div></div></div></figure><p>We have an empty tab.</p><span class=caption-wrapper><img class=caption src=01-empty-tab.png title="Empty tab" alt="Empty tab">
+<span class=caption-text>Empty tab</span></span><p>Using the BorderLayout, we can assign positions to components in the panel.
+These positions are:</p><ul><li><code>PAGE_START</code> - <code>PAGE_END</code> - <code>LINE_START</code> - <code>LINE_END</code> - <code>CENTER</code></li></ul><h2 id=jbutton>JButton
+<a class=header-link href=#jbutton><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Adding some buttons that do nothing to show off different positions. A button is
+made from the class <code>JButton</code>:</p><ul><li><a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JButton.html target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/8/docs/api/javax/swing/JButton.html</a></li></ul><figure class=code><figcaption><span>Three buttons</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
@@ -170,8 +87,7 @@ made from the class <code>JButton</code>:</p><ul>
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> javax.swing <span style=color:#719e07>import</span> JPanel, JButton
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> java.awt <span style=color:#719e07>import</span> BorderLayout
 </span></span><span style=display:flex><span>    panel <span style=color:#719e07>=</span> JPanel(BorderLayout())
@@ -186,20 +102,11 @@ made from the class <code>JButton</code>:</p><ul>
 </span></span><span style=display:flex><span>    panel<span style=color:#719e07>.</span>add(btn2, BorderLayout<span style=color:#719e07>.</span>CENTER)
 </span></span><span style=display:flex><span>    panel<span style=color:#719e07>.</span>add(btn3, BorderLayout<span style=color:#719e07>.</span>PAGE_END)
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> panel</span></span></code></pre></td></tr></table></div></div></div></figure><span class=caption-wrapper>
-<img class=caption src=02-buttons.png title="Now we have three buttons" alt="Now we have three buttons">
-<span class=caption-text>Now we have three buttons</span>
-</span>
-<p>We used the second constructor for <code>JButton</code> to set the label. We can also set
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> panel</span></span></code></pre></td></tr></table></div></div></div></figure><span class=caption-wrapper><img class=caption src=02-buttons.png title="Now we have three buttons" alt="Now we have three buttons">
+<span class=caption-text>Now we have three buttons</span></span><p>We used the second constructor for <code>JButton</code> to set the label. We can also set
 the fields here. The inherited <a href=https://docs.oracle.com/javase/8/docs/api/java/awt/event/ActionListener.html target=_blank rel="noreferrer noopener">actionListener field</a> allows
 us to do something when the button is clicked. To implement this interface we
-need to create and assign the <code>actionPerformed(ActionEvent e)</code> method.</p><p>See this tutorial at <a href=https://jython.readthedocs.io/en/latest/chapter16/ target=_blank rel="noreferrer noopener">https://jython.readthedocs.io/en/latest/chapter16/</a>.</p><figure class=code>
-<figcaption>
-<span>Click button action</span>
-</figcaption><div class=codewrapper>
-<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+need to create and assign the <code>actionPerformed(ActionEvent e)</code> method.</p><p>See this tutorial at <a href=https://jython.readthedocs.io/en/latest/chapter16/ target=_blank rel="noreferrer noopener">https://jython.readthedocs.io/en/latest/chapter16/</a>.</p><figure class=code><figcaption><span>Click button action</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
@@ -218,8 +125,7 @@ need to create and assign the <code>actionPerformed(ActionEvent e)</code> method
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> javax.swing <span style=color:#719e07>import</span> JPanel, JButton
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> java.awt <span style=color:#719e07>import</span> BorderLayout
 </span></span><span style=display:flex><span>    panel <span style=color:#719e07>=</span> JPanel(BorderLayout())
@@ -237,30 +143,15 @@ need to create and assign the <code>actionPerformed(ActionEvent e)</code> method
 </span></span><span style=display:flex><span>    <span style=color:#586e75># add buttons to the panel</span>
 </span></span><span style=display:flex><span>    panel<span style=color:#719e07>.</span>add(btn1, BorderLayout<span style=color:#719e07>.</span>PAGE_START)
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> panel</span></span></code></pre></td></tr></table></div></div></div></figure><span class=caption-wrapper>
-<img class=caption src=03-button-clicked.png title="Button clicked" alt="Button clicked">
-<span class=caption-text>Button clicked</span>
-</span>
-<p>Passing an anonymous method like what we did is quick and works if the interface
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> panel</span></span></code></pre></td></tr></table></div></div></div></figure><span class=caption-wrapper><img class=caption src=03-button-clicked.png title="Button clicked" alt="Button clicked">
+<span class=caption-text>Button clicked</span></span><p>Passing an anonymous method like what we did is quick and works if the interface
 is simple. We can create a separate module for our GUI and then create and pass
 an object to <code>getUiComponent</code>.</p><p>See the Twitter client example in
 <a href=https://jython.readthedocs.io/en/latest/chapter16/ target=_blank rel="noreferrer noopener">https://jython.readthedocs.io/en/latest/chapter16/</a> to see how it can be done
 better.</p><h2 id=jsplitpane>JSplitPane
-<a class=header-link href=#jsplitpane><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>I want to create something like the screenshot in this blog post from 2012 in a
-framework for creating Python Burp extensions:</p><ul>
-<li><a href=http://burpextensions.blogspot.com/2012/08/adding-gui-features-to-extension.html target=_blank rel="noreferrer noopener">http://burpextensions.blogspot.com/2012/08/adding-gui-features-to-extension.html</a></li></ul><span class=caption-wrapper>
-<img class=caption src=04.png title="Reference screenshot" alt="Reference screenshot">
-<span class=caption-text>Reference screenshot</span>
-</span>
-<p>To create the left-right split (and also the top-down), we can use a <code>JSplitPane</code>.</p><ul>
-<li><a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JSplitPane.html target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/8/docs/api/javax/swing/JSplitPane.html</a></li></ul><figure class=code>
-<figcaption>
-<span>Basic JSplitPane</span>
-</figcaption><div class=codewrapper>
-<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+<a class=header-link href=#jsplitpane><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>I want to create something like the screenshot in this blog post from 2012 in a
+framework for creating Python Burp extensions:</p><ul><li><a href=http://burpextensions.blogspot.com/2012/08/adding-gui-features-to-extension.html target=_blank rel="noreferrer noopener">http://burpextensions.blogspot.com/2012/08/adding-gui-features-to-extension.html</a></li></ul><span class=caption-wrapper><img class=caption src=04.png title="Reference screenshot" alt="Reference screenshot">
+<span class=caption-text>Reference screenshot</span></span><p>To create the left-right split (and also the top-down), we can use a <code>JSplitPane</code>.</p><ul><li><a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JSplitPane.html target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/8/docs/api/javax/swing/JSplitPane.html</a></li></ul><figure class=code><figcaption><span>Basic JSplitPane</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
@@ -278,8 +169,7 @@ framework for creating Python Burp extensions:</p><ul>
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> javax.swing <span style=color:#719e07>import</span> JPanel, JSplitPane, JLabel
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> java.awt <span style=color:#719e07>import</span> BorderLayout
 </span></span><span style=display:flex><span>    panel <span style=color:#719e07>=</span> JPanel(BorderLayout())
@@ -297,29 +187,18 @@ framework for creating Python Burp extensions:</p><ul>
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    panel<span style=color:#719e07>.</span>add(spl)
 </span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> panel</span></span></code></pre></td></tr></table></div></div></div></figure><p>The divider automagically resizes based on the items in the panes. In this case,
-we have added two <a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JLabel.html target=_blank rel="noreferrer noopener">JLabels</a>. We can move the divider manually.</p><span class=caption-wrapper>
-<img class=caption src=05-splitpane.png title="Basic JSplitPane" alt="Basic JSplitPane">
-<span class=caption-text>Basic JSplitPane</span>
-</span>
-<p><strong>Update 11 Oct 2019:</strong> JSplitPane has a method name <code>setDividerLocation</code>. This
+we have added two <a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JLabel.html target=_blank rel="noreferrer noopener">JLabels</a>. We can move the divider manually.</p><span class=caption-wrapper><img class=caption src=05-splitpane.png title="Basic JSplitPane" alt="Basic JSplitPane">
+<span class=caption-text>Basic JSplitPane</span></span><p><strong>Update 11 Oct 2019:</strong> JSplitPane has a method name <code>setDividerLocation</code>. This
 method sets the divider. There are two variants of the method. One accepts an
 <a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JSplitPane.html#setDividerLocation-int- target=_blank rel="noreferrer noopener">int parameter</a> which is the size of divider in pixels. This
 can be set before the component is painted. The other one accepts a
 <a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JSplitPane.html#setDividerLocation-double- target=_blank rel="noreferrer noopener">double parameter</a> and sets a percentage. This does not
 work before the component is painted. If you set it, it has not effect.</p><h2 id=jscrollpane>JScrollPane
-<a class=header-link href=#jscrollpane><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>We want the left pane to display a list of items. This is accomplished by adding
-a <code>JScrollPane</code> to it.</p><ul>
-<li><a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JScrollPane.html target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/8/docs/api/javax/swing/JScrollPane.html</a></li></ul><p>The documentation (the link above) has a lot of text about a viewport and looks
+<a class=header-link href=#jscrollpane><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>We want the left pane to display a list of items. This is accomplished by adding
+a <code>JScrollPane</code> to it.</p><ul><li><a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JScrollPane.html target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/8/docs/api/javax/swing/JScrollPane.html</a></li></ul><p>The documentation (the link above) has a lot of text about a viewport and looks
 complicated. But we just want to display a list of text in it. First, we add the
 items to a <a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JList.html target=_blank rel="noreferrer noopener">JList</a>. Then we pass it to the <code>JScrollPane's</code>
-constructor: <code>JScrollPane(Component view)</code>.</p><figure class=code>
-<figcaption>
-<span>03-splitpane.py</span>
-</figcaption><div class=codewrapper>
-<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+constructor: <code>JScrollPane(Component view)</code>.</p><figure class=code><figcaption><span>03-splitpane.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
@@ -339,8 +218,7 @@ constructor: <code>JScrollPane(Component view)</code>.</p><figure class=code>
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> javax.swing <span style=color:#719e07>import</span> (JPanel, JSplitPane, JLabel, JList,
 </span></span><span style=display:flex><span>        JScrollPane, ListSelectionModel)
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> java.awt <span style=color:#719e07>import</span> BorderLayout
@@ -360,21 +238,11 @@ constructor: <code>JScrollPane(Component view)</code>.</p><figure class=code>
 </span></span><span style=display:flex><span>    
 </span></span><span style=display:flex><span>    panel<span style=color:#719e07>.</span>add(spl)
 </span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> panel</span></span></code></pre></td></tr></table></div></div></div></figure><h2 id=jlist-actions>JList Actions
-<a class=header-link href=#jlist-actions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>We can do call a method after each item is selected in the scroll pane. Let's
+<a class=header-link href=#jlist-actions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>We can do call a method after each item is selected in the scroll pane. Let's
 add the selected item to the label in the right pane. We can do it by assigning
-a method to the <code>valueChanged</code> method for the JList.</p><p>In the <a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JList.html target=_blank rel="noreferrer noopener">JList docs</a> we read:</p><blockquote>
-<p>The preferred way to listen for changes in list selection is to add
+a method to the <code>valueChanged</code> method for the JList.</p><p>In the <a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JList.html target=_blank rel="noreferrer noopener">JList docs</a> we read:</p><blockquote><p>The preferred way to listen for changes in list selection is to add
 ListSelectionListeners directly to the JList. JList then takes care of
-listening to the selection model and notifying your listeners of change.</p></blockquote><p>See this tutorial for more info:</p><ul>
-<li><a href=https://docs.oracle.com/javase/tutorial/uiswing/events/listselectionlistener.html target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/tutorial/uiswing/events/listselectionlistener.html</a></li></ul><p>The <code>ListSelectionListener</code> has one method:</p><ul>
-<li><a href=https://docs.oracle.com/javase/tutorial/uiswing/events/listselectionlistener.html#api target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/tutorial/uiswing/events/listselectionlistener.html#api</a></li><li><code>valueChanged(ListSelectionEvent): Called in response to selection changes</code></li></ul><p>Similar to the button action, we define an anonymous method and assign it.</p><figure class=code>
-<figcaption>
-<span>04-scrollpane-list.py</span>
-</figcaption><div class=codewrapper>
-<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+listening to the selection model and notifying your listeners of change.</p></blockquote><p>See this tutorial for more info:</p><ul><li><a href=https://docs.oracle.com/javase/tutorial/uiswing/events/listselectionlistener.html target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/tutorial/uiswing/events/listselectionlistener.html</a></li></ul><p>The <code>ListSelectionListener</code> has one method:</p><ul><li><a href=https://docs.oracle.com/javase/tutorial/uiswing/events/listselectionlistener.html#api target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/tutorial/uiswing/events/listselectionlistener.html#api</a></li><li><code>valueChanged(ListSelectionEvent): Called in response to selection changes</code></li></ul><p>Similar to the button action, we define an anonymous method and assign it.</p><figure class=code><figcaption><span>04-scrollpane-list.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
@@ -399,8 +267,7 @@ listening to the selection model and notifying your listeners of change.</p></bl
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> javax.swing <span style=color:#719e07>import</span> (JPanel, JSplitPane, JLabel, JList,
 </span></span><span style=display:flex><span>        JScrollPane, ListSelectionModel)
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> java.awt <span style=color:#719e07>import</span> BorderLayout
@@ -425,51 +292,29 @@ listening to the selection model and notifying your listeners of change.</p></bl
 </span></span><span style=display:flex><span>    
 </span></span><span style=display:flex><span>    panel<span style=color:#719e07>.</span>add(spl)
 </span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> panel</span></span></code></pre></td></tr></table></div></div></div></figure><p>You might wonder why we are adding the selected item to the label instead of
-modifying the label. It demonstrates the following gotcha.</p><span class=caption-wrapper>
-<img class=caption src=07-scrollpane-label.png title="Items is added to the label twice" alt="Items is added to the label twice">
-<span class=caption-text>Items is added to the label twice</span>
-</span>
-<p>Each selected item is added to the label twice. This means that <code>valueChanged</code>
+modifying the label. It demonstrates the following gotcha.</p><span class=caption-wrapper><img class=caption src=07-scrollpane-label.png title="Items is added to the label twice" alt="Items is added to the label twice">
+<span class=caption-text>Items is added to the label twice</span></span><p>Each selected item is added to the label twice. This means that <code>valueChanged</code>
 is called twice. I found the answer on <a href=https://stackoverflow.com/a/25448679 target=_blank rel="noreferrer noopener">stackoverflow</a>.
 Long story short, when listening to the events, we need to check if
 <code>valueIsAdjusting</code> is set to <code>False</code>. Java sets this to <code>True</code> when we are in a
-series of changes that are considered part of a single change. More info:</p><ul>
-<li><a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/ListSelectionModel.html#setValueIsAdjusting-boolean- target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/8/docs/api/javax/swing/ListSelectionModel.html#setValueIsAdjusting-boolean-</a></li></ul><p>We can change the the <code>listSelect</code> method as follows:</p><figure class=code>
-<figcaption>
-<span>listSelect in 05-scrollpane-list-fixed.py</span>
-</figcaption><div class=codewrapper>
-<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+series of changes that are considered part of a single change. More info:</p><ul><li><a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/ListSelectionModel.html#setValueIsAdjusting-boolean- target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/8/docs/api/javax/swing/ListSelectionModel.html#setValueIsAdjusting-boolean-</a></li></ul><p>We can change the the <code>listSelect</code> method as follows:</p><figure class=code><figcaption><span>listSelect in 05-scrollpane-list-fixed.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">7
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>listSelect</span>(event):
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>listSelect</span>(event):
 </span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;&#34;&#34;Add the selected index to the label. Called twice when
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>    selecting the list item by mouse. So we need to use
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>    getValueIsAdjusting inside.
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>    &#34;&#34;&#34;</span>
 </span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> <span style=color:#719e07>not</span> event<span style=color:#719e07>.</span>getValueIsAdjusting():
-</span></span><span style=display:flex><span>        label1<span style=color:#719e07>.</span>text <span style=color:#719e07>+=</span> <span style=color:#2aa198>&#34;-&#34;</span> <span style=color:#719e07>+</span> colors[list1<span style=color:#719e07>.</span>selectedIndex]</span></span></code></pre></td></tr></table></div></div></div></figure><span class=caption-wrapper>
-<img class=caption src=08-scollpane-label-fixed.png title="Double add fixed" alt="Double add fixed">
-<span class=caption-text>Double add fixed</span>
-</span>
-<h2 id=jtabbedpane>JTabbedPane
-<a class=header-link href=#jtabbedpane><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Instead of a label, we want to add two tabs to the right panel and reflect the
+</span></span><span style=display:flex><span>        label1<span style=color:#719e07>.</span>text <span style=color:#719e07>+=</span> <span style=color:#2aa198>&#34;-&#34;</span> <span style=color:#719e07>+</span> colors[list1<span style=color:#719e07>.</span>selectedIndex]</span></span></code></pre></td></tr></table></div></div></div></figure><span class=caption-wrapper><img class=caption src=08-scollpane-label-fixed.png title="Double add fixed" alt="Double add fixed">
+<span class=caption-text>Double add fixed</span></span><h2 id=jtabbedpane>JTabbedPane
+<a class=header-link href=#jtabbedpane><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Instead of a label, we want to add two tabs to the right panel and reflect the
 results to one of them. The main frame in Burp is also a type of
-<a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JTabbedPane.html target=_blank rel="noreferrer noopener">JTabbedPane</a>. We are going to:</p><ol>
-<li>Create a JTabbedPane.</li><li>Create two JLabels.</li><li>Add the labels to the tabbed pane from step 1.</li><li>Assign the tabbed pane to the split pane.</li></ol><figure class=code>
-<figcaption>
-<span>06-tabbedpane.py</span>
-</figcaption><div class=codewrapper>
-<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+<a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JTabbedPane.html target=_blank rel="noreferrer noopener">JTabbedPane</a>. We are going to:</p><ol><li>Create a JTabbedPane.</li><li>Create two JLabels.</li><li>Add the labels to the tabbed pane from step 1.</li><li>Assign the tabbed pane to the split pane.</li></ol><figure class=code><figcaption><span>06-tabbedpane.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
@@ -502,8 +347,7 @@ results to one of them. The main frame in Burp is also a type of
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">31
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">32
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">33
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> javax.swing <span style=color:#719e07>import</span> (JPanel, JSplitPane, JList,
 </span></span><span style=display:flex><span>        JScrollPane, ListSelectionModel, JLabel, JTabbedPane)
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> java.awt <span style=color:#719e07>import</span> BorderLayout
@@ -535,24 +379,14 @@ results to one of them. The main frame in Burp is also a type of
 </span></span><span style=display:flex><span>        tabs)
 </span></span><span style=display:flex><span>    
 </span></span><span style=display:flex><span>    panel<span style=color:#719e07>.</span>add(spl)
-</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> panel</span></span></code></pre></td></tr></table></div></div></div></figure><span class=caption-wrapper>
-<img class=caption src=09-jtabbedpane.png title="JTabbedPane in action" alt="JTabbedPane in action">
-<span class=caption-text>JTabbedPane in action</span>
-</span>
-<h2 id=styleddocument>StyledDocument
-<a class=header-link href=#styleddocument><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>Instead of using a label, we can use a <a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JTextPane.html target=_blank rel="noreferrer noopener">JTextPane</a> and load a
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> panel</span></span></code></pre></td></tr></table></div></div></div></figure><span class=caption-wrapper><img class=caption src=09-jtabbedpane.png title="JTabbedPane in action" alt="JTabbedPane in action">
+<span class=caption-text>JTabbedPane in action</span></span><h2 id=styleddocument>StyledDocument
+<a class=header-link href=#styleddocument><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Instead of using a label, we can use a <a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JTextPane.html target=_blank rel="noreferrer noopener">JTextPane</a> and load a
 <a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/text/StyledDocument.html target=_blank rel="noreferrer noopener">StyledDocument</a> in it. We can add text (or other things
 like images) with specific styles to the document.</p><p>The other tab will be a <a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JEditorPane.html target=_blank rel="noreferrer noopener">JEditorPane</a> with <a href=https://example.net target=_blank rel="noreferrer noopener">https://example.net</a>
 loaded. We need to change the <code>listSelect</code> method and add items to the
 StyledDocument. This can be done with <code>insertString</code> (there are other methods
-for different content).</p><figure class=code>
-<figcaption>
-<span>07-styleddocument.py</span>
-</figcaption><div class=codewrapper>
-<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+for different content).</p><figure class=code><figcaption><span>07-styleddocument.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
@@ -591,8 +425,7 @@ for different content).</p><figure class=code>
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">37
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">38
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">39
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> javax.swing <span style=color:#719e07>import</span> (JPanel, JSplitPane, JList, JTextPane,
 </span></span><span style=display:flex><span>        JScrollPane, ListSelectionModel, JLabel, JTabbedPane, JEditorPane)
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> java.awt <span style=color:#719e07>import</span> BorderLayout
@@ -630,29 +463,16 @@ for different content).</p><figure class=code>
 </span></span><span style=display:flex><span>        tabs)
 </span></span><span style=display:flex><span>    
 </span></span><span style=display:flex><span>    panel<span style=color:#719e07>.</span>add(spl)
-</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> panel</span></span></code></pre></td></tr></table></div></div></div></figure><p>The text is added to tab 1. We are inserting new text to the beginning.</p><span class=caption-wrapper>
-<img class=caption src=10-jtextpane.png title="Text added to the JEditorPane" alt="Text added to the JEditorPane">
-<span class=caption-text>Text added to the JEditorPane</span>
-</span>
-<p>The other tab shows <code>example.net</code>:</p><span class=caption-wrapper>
-<img class=caption src=11-jeditorpane.png title="example.net in JEditorPane" alt="example.net in JEditorPane">
-<span class=caption-text>example.net in JEditorPane</span>
-</span>
-<p>Both tabs allow us to edit. To disable editing do <code>tab2.editable = False</code> (or
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> panel</span></span></code></pre></td></tr></table></div></div></div></figure><p>The text is added to tab 1. We are inserting new text to the beginning.</p><span class=caption-wrapper><img class=caption src=10-jtextpane.png title="Text added to the JEditorPane" alt="Text added to the JEditorPane">
+<span class=caption-text>Text added to the JEditorPane</span></span><p>The other tab shows <code>example.net</code>:</p><span class=caption-wrapper><img class=caption src=11-jeditorpane.png title="example.net in JEditorPane" alt="example.net in JEditorPane">
+<span class=caption-text>example.net in JEditorPane</span></span><p>Both tabs allow us to edit. To disable editing do <code>tab2.editable = False</code> (or
 use <code>tab2.setEditable(False)</code> which is not Pythonic).</p><h2 id=custom-styles-in-styleddocument>Custom Styles in StyledDocument
-<a class=header-link href=#custom-styles-in-styleddocument><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h2><p>StyledDocument allows us to create new <a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/text/Style.html target=_blank rel="noreferrer noopener">Styles</a> and add
+<a class=header-link href=#custom-styles-in-styleddocument><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>StyledDocument allows us to create new <a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/text/Style.html target=_blank rel="noreferrer noopener">Styles</a> and add
 text/graphics/etc as we see fit. This works for a small amount of data.</p><p>Styles appear to be in a hierarchy where items further down in the styles tree
 inherit items from their parents. Everything is a child of the
 <a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/text/StyleContext.html#DEFAULT_STYLE target=_blank rel="noreferrer noopener">default style</a> <sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>.</p><p>Styles are added to the document with <a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/text/DefaultStyledDocument.html#addStyle-java.lang.String-javax.swing.text.Style- target=_blank rel="noreferrer noopener">addStyle</a>. The first
 parameter is the name and the second is the parent style. Items are added with
-<code>insertString</code> (or other inserts).</p><figure class=code>
-<figcaption>
-<span>08-custom-style.py</span>
-</figcaption><div class=codewrapper>
-<div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+<code>insertString</code> (or other inserts).</p><figure class=code><figcaption><span>08-custom-style.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
@@ -714,8 +534,7 @@ parameter is the name and the second is the parent style. Items are added with
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">60
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">61
 </span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">62
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> javax.swing <span style=color:#719e07>import</span> (JPanel, JSplitPane, JList, JTextPane,
 </span></span><span style=display:flex><span>        JScrollPane, ListSelectionModel, JLabel, JTabbedPane, JEditorPane)
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> java.awt <span style=color:#719e07>import</span> BorderLayout
@@ -776,70 +595,20 @@ parameter is the name and the second is the parent style. Items are added with
 </span></span><span style=display:flex><span>        tabs)
 </span></span><span style=display:flex><span>    
 </span></span><span style=display:flex><span>    panel<span style=color:#719e07>.</span>add(spl)
-</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> panel</span></span></code></pre></td></tr></table></div></div></div></figure><span class=caption-wrapper>
-<img class=caption src=12-custom-styles.png title="Custom styles" alt="Custom styles">
-<span class=caption-text>Custom styles</span>
-</span>
-<h1 id=what-did-we-learn-here-today>What Did We Learn Here Today
-<a class=header-link href=#what-did-we-learn-here-today><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a>
-</h1><p>We learned how to make Jython Swing GUIs by hand. There are things we did not
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> panel</span></span></code></pre></td></tr></table></div></div></div></figure><span class=caption-wrapper><img class=caption src=12-custom-styles.png title="Custom styles" alt="Custom styles">
+<span class=caption-text>Custom styles</span></span><h1 id=what-did-we-learn-here-today>What Did We Learn Here Today
+<a class=header-link href=#what-did-we-learn-here-today><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>We learned how to make Jython Swing GUIs by hand. There are things we did not
 discuss like checkboxes and radio buttons but the same principle applies.</p><p>In the next part, we will see how we can leverage NetBeans (or other GUI
 designers) to create interfaces. Then we will "translate" the code from Java to
 Jython using the knowledge we acquired in this post. Knowing how things work
 allows us to customize the controls to some extent and troubleshoot when things
-go wrong.</p><section class=footnotes role=doc-endnotes>
-<hr>
-<ol>
-<li id=fn:1 role=doc-endnote>
-<p>I could be wrong about this but all examples do the same.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section></div><footer>
-<p class=meta>
-<span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+go wrong.</p><section class=footnotes role=doc-endnotes><hr><ol><li id=fn:1 role=doc-endnote><p>I could be wrong about this but all examples do the same.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section></div><footer><p class=meta><span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>Nov 4, 2019</time>
-<span class=categories>
-Tags:
-<a class=category href=https://parsiya.net/tags/python>Python</a>
-</span>
-</p><p class=meta>
-<a class="basic-alignment left" href=https://parsiya.net/blog/2019-10-13-quality-of-life-tips-and-tricks-burp-suite/ title="Quality of Life Tips and Tricks - Burp Suite">Quality of Life Tips and Tricks - Burp Suite</a>
-<a class="basic-alignment right" href=https://parsiya.net/blog/2019-11-11-swing-in-python-burp-extensions-part-2-netbeans-and-tablemodels/ title="Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels">Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels</a>
-</p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer></article></div><aside class="sidebar thirds">
-<section class="first odd">
-<h1>Who am I?</h1><p>
-<p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
-Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav>
-<li class=sidebar-nav-item>
-<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<span class=categories>Tags:
+<a class=category href=https://parsiya.net/tags/python>Python</a></span></p><p class=meta><a class="basic-alignment left" href=https://parsiya.net/blog/2019-10-13-quality-of-life-tips-and-tricks-burp-suite/ title="Quality of Life Tips and Tricks - Burp Suite">Quality of Life Tips and Tricks - Burp Suite</a>
+<a class="basic-alignment right" href=https://parsiya.net/blog/2019-11-11-swing-in-python-burp-extensions-part-2-netbeans-and-tablemodels/ title="Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels">Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels</a></p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></footer></article></div><aside class="sidebar thirds"><section class="first odd"><h1>Who am I?</h1><p><p>I am Parsia, a senior security engineer at <a href=https://www.ea.com/security target=_blank rel="noreferrer noopener">Electronic Arts</a>.</p><p>I write about application security, reverse engineering,
+Go, cryptography, and (obviously) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://keybase.io/parsiya/ title=https://keybase.io/parsiya/><i class="fa fa-keybase fa-3x"></i></a>
-<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a>
-</li></ul><section class=odd>
-<h1>Collections</h1><li>
-<a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a>
-</li><li>
-<a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a>
-</li><li>
-<a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a>
-</li><li>
-<a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a>
-</li><li>
-<a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a>
-</li><li>
-<a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a>
-</li><li>
-<a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a>
-</li><li>
-<a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a>
-</li><li>
-<a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a>
-</li><li>
-<a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a>
-</li><li>
-<a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a>
-</li><li>
-<a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a>
-</li></section></aside></div></div><footer role=contentinfo>
-<p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
-<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.
-</p></footer></body></html>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a></li><li><a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a></li><li><a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.</p></footer></body></html>
