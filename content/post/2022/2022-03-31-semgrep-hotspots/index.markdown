@@ -89,7 +89,8 @@ Et tu, Parsia?
 {{< /blockquote >}}
 
 TL;DR: Running rules under `security` will also run the noisier `audit`.
-`security` and `audit` should be separate categories.
+`security` and `audit` should be separate categories in my opinion. You can
+avoid this issue by using policies but it's still a problem with local rules.
 
 Semgrep can use local rules with `--config /path/to/rules/`. It will run every
 rule in the path and any subdirectories. So,
