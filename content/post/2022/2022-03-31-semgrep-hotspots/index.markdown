@@ -364,6 +364,15 @@ cases for review:
 [openssl_decrypt-php]: https://www.php.net/manual/en/function.openssl-decrypt.php
 [openssl_decrypt-semgrep]: https://semgrep.dev/playground?registry=php.lang.security.audit.openssl-decrypt-validate.openssl-decrypt-validate
 
+### Hardcoded Secrets
+Let's say you are storing the AES keys in the source code or in a config file.
+This is a dangerous pattern. AES is secure and not a dangerous function but you
+have weakned it because everyone with access to the code is now able to break
+your encryption.
+
+Using a static salt in your password hashing scheme is the same. You have
+weakened your (hopefully) secure algorithm.
+
 ## 4. Interesting Keywords
 **Look for specific variable/method/class names, and comments**. These are not
 language keywords but rather contextual concepts (wut?!).
