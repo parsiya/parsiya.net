@@ -1,10 +1,12 @@
 ---
-title: "Introducing Code Review Hotspots with Semgrep"
+title: "Code Review Hotspots with Semgrep"
 date: 2022-04-07T12:51:57-07:00
 draft: false
 toc: true
 comments: true
 twitterImage: 07-encode-decode.png
+aliases:
+- /blog/2022-04-07-introducing-code-review-hotspots-with-semgrep/
 categories:
 - semgrep
 - automation
@@ -147,8 +149,8 @@ discuss examples.
 
 1. **Insecure Configurations**: A (usually 3rd party) component with a vulnerable configuration.
 2. **Dangerous Functions**: Using these functions is usually a security problem.
-3. Dangerous Patterns: Safe methods and constructs that are used insecurely.
-4. Interesting Keywords: Specific terms in variable/class/method names and comments.
+3. **Dangerous Patterns**: Safe methods and constructs that are used insecurely.
+4. **Interesting Keywords**: Specific terms in variable/class/method names and comments.
 
 ## 1. Insecure Configurations
 **The framework, library, or infrastructure's configuration is insecure.** We
