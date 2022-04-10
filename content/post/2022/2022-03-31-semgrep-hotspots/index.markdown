@@ -166,6 +166,7 @@ even automagically
 {{< xref path="/post/2021/2021-10-24-semgrep-autofix" text="fix them" >}}.
 
 [^sslv3]: Deprecated in Go 1.14.
+
 [tlsv1-gh]: https://github.com/golang/go/blob/01c83be7932e7f51333c813460752f09f78ec2c4/src/crypto/tls/common.go#L29
 
 {{< imgcap title="Detecting TLSv1 support with Semgrep" src="01-tlsv1.png" >}}
