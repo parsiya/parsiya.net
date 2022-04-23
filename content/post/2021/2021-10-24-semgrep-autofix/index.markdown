@@ -192,7 +192,7 @@ We want our cookies to have the `HttpOnly` and `Secure` attributes. I am going
 to explain the fix for `HttpOnly` and let you write the ones for `Secure`
 (almost identical). Summarized rule from the [semgrep-rules][rule-url] repo:
 
-[rule-url]: https://github.com/returntocorp/semgrep-rules/blob/develop/go/lang/security/audit/net/cookie-missing-httponly.go
+[rule-url]: https://github.com/returntocorp/semgrep-rules/blob/develop/java/lang/security/audit/cookie-missing-httponly.yaml
 
 ```yaml
 # java-httponly/httponly-practice.yaml
@@ -387,12 +387,12 @@ supported metavariable replacement like `fix` the rule would look like:
 
 ```yaml
 # java-httponly/httponly-fix-regex-practice-2.yaml
-    fix-regex:
-      regex: (\s*)(.*)
-      replacement: |
-        \1$COOKIE.setHttpOnly(true);
-        \1\2
-      count: 1
+fix-regex:
+  regex: (\s*)(.*)
+  replacement: |
+    \1$COOKIE.setHttpOnly(true);
+    \1\2
+  count: 1
 ```
 
 This is not implemented, yet. See 
