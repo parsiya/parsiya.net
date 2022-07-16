@@ -1221,19 +1221,53 @@ Then, we can download that format code (or best):
 * 247: `youtube-dl -f 247 https://www.youtube.com/watch?v=xKYIde5jh_8`
 * 22 or best: `youtube-dl -f best https://www.youtube.com/watch?v=xKYIde5jh_8`
 
-### Print Envelopes with the Brother DW2280 printer and LibreOffice
-I gave away the printer when I moved to Canada but I am keeping the instructions
-just in case. Before printing, get to printer physically and use the following
-instructions:
+### Print Envelopes with Brother printers and LibreOffice
+I gave away the DW2280 printer when I moved to Canada but I am keeping the
+instructions just in case. Before printing, get to printer physically and use
+the following instructions:
 
-- http://support.brother.com/g/b/faqend.aspx?c=gb&lang=en&prod=hl2170w_all&faqid=faq00000063_025
+- DW2280: http://support.brother.com/g/b/faqend.aspx?c=gb&lang=en&prod=hl2170w_all&faqid=faq00000063_025
+- DCP-7030: https://www.youtube.com/watch?v=6JEZYM5aLY8
 
 1. Open the back.
 2. Press the two green handles down.
+    1. Don't need to do this for the DCP-7030 printer.
 3. Open manual feed in front.
 4. Adjust the paper guide and put the envelope in.
-5. Put the envelope face up (the side that has the addresses should be up).
+5. Envelope orientation:
+    1. The side that will be printed should be up.
+    2. The opening slot should be to the left.
 6. Insert it until the printer says `Please Wait` and grabs the paper.
+
+```
+this side goes into the printer
+addresse side should be up
+opening is to the left and under the envelope
+
+        +----------------+
+        |x               |
+under   | x              |
+ <------+- x             |
+        |   x            |
+        |   x            |
+        |   x            |
+        |   x            |
+        |   x            |
+        |   x            |
+        |   x            |
+        |   x            |
+        |   x            |
+        |   x            |
+        |   x            |
+        |   x            |
+        |   x            |
+        |   x            |
+        |   x            |
+        |  x             |
+        | x              |
+        |x               |
+        +----------------+
+```
 
 Now open LibreOffice and use these instructions:
 
@@ -1246,11 +1280,14 @@ Now open LibreOffice and use these instructions:
 5. Select `Printer` tab.
 6. Select printer and press `Setup`.
 7. Select the Brother printer and press `Properties`.
-8. Select the following options:
-    * Paper Size: `Com-10`.
-    * Media Type: `Envelopes`.
-    * Paper Source > First Page: `Manual`.
-9. Print
+8. Click on the `Advanced` button.
+    1. Paper Size: `Com-10` or `Envelope #10`.
+    2. Click OK and go back to properties.
+9. Select the `Paper/Quality` (tab)
+    1. Media Type: `Envelope`.
+    2. Paper Source > First Page: `Manual`.
+10. Press the `Insert` button.
+11. Save the document and print. Note the envelope orientation above.
 
 ### Tab Size 4 in the Github Web Interface
 Add `?ts=4` to end of the file URL.
