@@ -1240,10 +1240,13 @@ the following instructions:
 6. Insert it until the printer says `Please Wait` and grabs the paper.
 
 ```
-this side goes into the printer
-addresse side should be up
-opening is to the left and under the envelope
+addressee side should be up
+opening is to the left and under
 
+this side goes into the printer
+                ^
+                |
+                |
         +----------------+
         |x               |
 under   | x              |
@@ -1289,7 +1292,7 @@ Now open LibreOffice and use these instructions:
 10. Press the `Insert` button.
 11. Save the document and print. Note the envelope orientation above.
 
-### Tab Size 4 in the Github Web Interface
+### Tab Size 4 in the GitHub Web Interface
 Add `?ts=4` to end of the file URL.
 
 ### ffmpeg
