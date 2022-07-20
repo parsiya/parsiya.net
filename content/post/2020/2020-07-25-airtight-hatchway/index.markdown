@@ -9,10 +9,11 @@ categories:
 - soapbox
 ---
 
-An intentionally insecure system is insecure. As [Raymond Chen says]
-(https://devblogs.microsoft.com/oldnewthing/?p=18593), "You can't make up for
-the absence of any actual vulnerability by piling on style points and cranking
-up the degree of difficulty."
+An intentionally insecure system is insecure. As [Raymond Chen says][ray], "You
+can't make up for the absence of any actual vulnerability by piling on style
+points and cranking up the degree of difficulty."
+
+[ray]: https://devblogs.microsoft.com/oldnewthing/?p=18593
 
 <!--more-->
 
@@ -70,7 +71,7 @@ The following are not issues:
 
 But this is an issue:
 
-1. A less-privileged user can inject code into a more-privileged process.
+1. A user can inject code into a more-privileged process.
 
 This could be a remote attacker running code on the machine or Remote Code
 Execution (RCE).
@@ -117,8 +118,9 @@ ACLs. It's a minor issue and you are not getting a CVE for that.
 
 Yes, I just quoted myself, lol.
 
-**Update 2021-06-03:** I was proven wrong. Someone actually [got a CVE for
-that][CVE-2020-15261]. Not dissing the finder, but this is not a vulnerability.
+**Update 2021-06-03:** I was proven wrong. Someone actually
+[got a CVE for that][CVE-2020-15261]. Not dissing the finder, but this is not a
+vulnerability.
 
 [CVE-2020-15261]: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-15261
 
@@ -126,21 +128,20 @@ that][CVE-2020-15261]. Not dissing the finder, but this is not a vulnerability.
 > allowing locally authenticated users with administrative privileges to run
 > malicious executables with LocalSystem privileges.
 
-Local admin to SYSTEM is intended. 
+Local admin users can become SYSTEM! This is intended behavior.
 
 ## DLL Hijacking
 Reading assignment:
 
 * https://itm4n.github.io/windows-dll-hijacking-clarified/
 
-In simple words means the OS will search for a missing DLL in certain paths. You
-might be able to plant your own malicious DLL in one of those and get code
-execution.
+The OS will search for a missing DLL in certain paths. You might be able to
+plant your own DLL in one of those and get code execution.
 
 A [good chunk of DLL Hijacking CVEs][dll-python] happen when there's a DLL
 missing and people use `C:\python27` to plant their DLL. Well, no shit. I bet
-the overwhelming majority of Windows users do not have that directory, I don't
-and I am a power user. I don't have Python on my host OS.
+the majority of Windows users do not have that directory, I don't and I am a
+power user. I don't have Python on my host OS.
 
 [dll-python]: https://www.bing.com/search?q=%22C%3A%5Cpython27%22+DLL+hijacking
 

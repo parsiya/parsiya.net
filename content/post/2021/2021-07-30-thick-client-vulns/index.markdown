@@ -30,8 +30,8 @@ Funnily, I have talked about several of these in a separate blog post named
 <!--more-->
 
 # 1. DLL Hijacking - Usually Not a Vuln
-It's only a vulnerability if the application set bad ACLs on the vulnerable path
-then it's not an issue. More discussion in my
+It's only a vulnerability if the application set bad ACLs for the vulnerable path
+. More discussion in my
 {{< xref path="/post/2020/2020-07-25-airtight-hatchway/index.markdown"
     text="previous blog post" anchor="dll-hijacking" 
     title="No, You Are Not Getting a CVE for That - DLL Hijacking" >}}.
@@ -39,7 +39,7 @@ then it's not an issue. More discussion in my
 # 2. Unquoted Service Path - Rarely a Vuln
 You don't quote a Windows service path, Windows tries to run `C:\program.exe`
 and so on. Almost never a vulnerability because Standard users cannot write in
-the root of the C drive and if they can, then your ACLs are wrong, not the app.
+the root of the C drive and if they can, then _your_ ACLs are wrong, not the app.
 More discussion in my
 {{< xref path="/post/2020/2020-07-25-airtight-hatchway/index.markdown"
     text="previous blog post" anchor="unquoted-service-paths" 
