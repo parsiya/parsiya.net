@@ -51,8 +51,9 @@ JavaScript from a file, beautifies it, and stores it in another file.
 
 ## Adding Rhino to The Java Application
 Let's start with a skeleton project. This is not a Burp extension but we can use
-the instructions from [Developing and Debugging Java Burp Extensions with VisualStudio Code]
-({{< relref "post/2019/2019-12-02-java-burp-1/index.markdown" >}} "Developing and Debugging Java Burp Extensions with VisualStudio Code").
+the instructions from
+[Developing and Debugging Java Burp Extensions with VisualStudio Code]({{< relref "post/2019/2019-12-02-java-burp-1/index.markdown" >}}
+"Developing and Debugging Java Burp Extensions with VisualStudio Code").
 
 Our `build.gradle` is different this time because we are making a standalone
 application. The most important parts are:
