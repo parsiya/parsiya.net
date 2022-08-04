@@ -7,8 +7,11 @@ comments: false
 type: about
 ---
 
-I am Parsia, a Senior Security Engineer at [Electronic Arts][ea-security]. I
-work on every product (mostly videogames) and services that we release. 
+I am Parsia, an application Security Engineer currently taking a sabbatical.
+
+**2019-2022**: Senior Security Engineer at [Electronic Arts][ea-security]. I
+worked on every released internal and external product (mostly videogames) and
+services.
 [Realistic video of me hacking videogames at work][game-testers-youtube].
 
 [ea-security]: https://www.ea.com/security
@@ -57,18 +60,18 @@ yourself (if you have the time). It's worth it.
 **Goals in Progress:**
 
 - **Bug bounties**: I started the bug bounty game really late and mostly only
-  work the ocassional Windows desktop application.
+  work the occasional Windows desktop application.
     - My first and highest bounty to date: [$15,000 from PlayStation][psnow]
     - Hacker One profile: https://hackerone.com/parsiya
-    - Bugcrowd profile (I have one bug there lol): https://bugcrowd.com/Parsiya
-    - If you have Windows desktop applications in your program, invite me.
-      Unless they are videogames, I cannot touch videogames :)
+    - Bugcrowd profile (I have one bug there lol): https://bugcrowd.com/parsiya
+    - If you have Windows desktop applications and especially videogames in your
+      program, please invite me.
 - **Go in security**: I have replaced Python with Go in my workflow.
     - https://github.com/parsiya/Hacking-with-Go
     - https://github.com/parsiya/Go-Security
     - https://github.com/parsiya/Parsia-Code
     - [https://parsiya.net/categories/go/](/categories/go/ "https://parsiya.net/categories/go/") 
-- **Automation**:
+- **Automation** (never done):
     - [https://parsiya.net/categories/automation/](/categories/automation/ "https://parsiya.net/categories/automation/") 
     - Borrowed Time: My project and note management app
         - https://github.com/parsiya/borrowedtime/
