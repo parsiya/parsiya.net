@@ -8,6 +8,8 @@ twitterImage: 10-thumbnail.png
 categories:
 - Writeup
 - Bug Bounty
+aliases:
+- "/blog/2021-vscode-wsl-rce/"
 ---
 
 The Visual Studio Code server in Windows Subsystem for Linux uses a local
