@@ -7,6 +7,7 @@ comments: true
 twitterImage: 07-encode-decode.png
 aliases:
 - /blog/2022-04-07-introducing-code-review-hotspots-with-semgrep/
+- /blog/semgrep-hotspot/
 categories:
 - semgrep
 - automation
