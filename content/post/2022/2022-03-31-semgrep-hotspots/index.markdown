@@ -1,5 +1,5 @@
 ---
-title: "Code Review Hotspots with Semgrep"
+title: "Code Review Hot Spots with Semgrep"
 date: 2022-04-07T12:51:57-07:00
 draft: false
 toc: true
@@ -8,21 +8,22 @@ twitterImage: 07-encode-decode.png
 aliases:
 - /blog/2022-04-07-introducing-code-review-hotspots-with-semgrep/
 - /blog/semgrep-hotspot/
+- /blog/2022-04-07-code-review-hotspots-with-semgrep/
 categories:
 - semgrep
 - automation
 ---
 
-I will discuss the (not novel) concept of code review hotspots. Hotspots are
+I will discuss the (not novel) concept of code review hot spots. Hot spots are
 parts of the code that might contain vulnerabilities. They are not suitable for
 automatic reporting, so security engineers should review them manually. I will
-define what I call a hotspot; I'll find some examples with Semgrep; and finally,
+define what I call a hot spot; I'll find some examples with Semgrep; and finally,
 I'll show how I collect these rules.
 
 <!--more-->
 
-# What is a Hotspot?
-In this context, hotspots are parts of code that *might* contain security
+# What is a Hot Spot?
+In this context, hot spots are parts of code that *might* contain security
 vulnerabilities. You are not "always" looking for a specific problem, but rather
 bad practices, common mistakes, insecure configurations, and in short, places
 where bad things usually happen.
@@ -47,15 +48,15 @@ with confidence and have faith that I will not waste their time. If not, they
 will stop trusting me and throw away (or circumvent) the application security
 apparatus. I would do the same.
 
-## Hotspot Rules
-`Hotspots` are for me. I want to find error-prone parts of the code. I can
+## Hot Spot Rules
+`hotspots` are for me. I want to find error-prone parts of the code. I can
 usually discard false positives with a quick review. These rules should be very
 noisy, but don't spend too much time reducing the noise.
 
 # Review of Existing Literature
 I am not proposing a novel idea. I have learned from others.
 
-## Everyone has a Hotspot List
+## Everyone has a Hot Spot List
 Every security engineer has a personal (mental or written) list of keywords
 accumulated over time.
 [.NET Interesting Keywords to Find Deserialization Issues][net-keywords] by
@@ -66,7 +67,7 @@ quick search. Collecting these are fun.
 [net-keywords]: https://gist.github.com/irsdl/9315521bab79fe972859874b5f2185af
 
 ## Hardcoded Secret Detectors
-Hardcoded secrets are hotspots. There are a gazillion products and regular
+Hardcoded secrets are hot spots. There are a gazillion products and regular
 expressions to find API keys, passwords, and encryption keys. The results
 usually have high false positives and require manual review.
 
@@ -144,8 +145,8 @@ Thanks, Felix, Jonathan, and Jordy!
 [weggli-gh]: https://github.com/googleprojectzero/weggli
 [tree-sitter]: https://tree-sitter.github.io/tree-sitter/
 
-# Different Types of Hotspots
-I have created a simple category for hotspots. I will define each one and
+# Different Types of Hot Spots
+I have created a simple category for hot spots. I will define each one and
 discuss examples.
 
 1. **Insecure Configurations**: A (usually 3rd party) component with a vulnerable configuration.
@@ -162,7 +163,7 @@ files (d'oh).
 ### TLSv1 Support in Go
 Look for [VersionTLS10][tlsv1-gh] and `VersionSSL30`[^sslv3] in Go code to see
 support for TLSv1.0 or SSLv3. Use this simple Semgrep rule
-(https://semgrep.dev/s/parsiya:blog-2022-03-go-tlsv1) to find these hotspots and
+(https://semgrep.dev/s/parsiya:blog-2022-03-go-tlsv1) to find these hot spots and
 even automagically
 {{< xref path="/post/2021/2021-10-24-semgrep-autofix" text="fix them" >}}.
 
@@ -208,7 +209,7 @@ XML parsing libraries do not have secure defaults. We use hardcoded strings and
 language constants to look for them. For example, `DocumentBuilderFactory`.
 
 The existing Semgrep rules do a decent job of eliminating false positives, but
-it's impossible to find everything. A hotspot rule has an easier time and can
+it's impossible to find everything. A hot spot rule has an easier time and can
 flag all of them for manual review. I used the
 [OWASP XML External Entity Prevention Cheat Sheet][xxe-java] to compose a list
 (warning: lots of noise): https://semgrep.dev/s/parsiya:blog-2022-03-java-xxe.
@@ -220,7 +221,7 @@ flag all of them for manual review. I used the
 ### Security Issues in Dockerfiles
 dockerfiles are essentially configuration files. Containers are versatile. We
 can shoot ourselves in the foot (lookout C++! a new contender is here). Our
-hotspot rules can look for things like
+hot spot rules can look for things like
 [is it running as root?][docker-root-registry] or
 [source is not pinned][docker-src-not-pinned].
 
@@ -332,7 +333,7 @@ use `unsafe` via [Go's unsafe package][go-unsafe] and
 [go-unsafe]: https://pkg.go.dev/unsafe
 [rust-unsafe]: https://doc.rust-lang.org/std/keyword.unsafe.html
 
-Should we flag all unsafes? Depends on the industry. I don't. Fame devs love to
+Should we flag all unsafes? Depends on the industry. I don't. Game devs love to
 use clever hacks. Finding these instances are easy. Look for `import "unsafe"`
 in Go and `unsafe` in Rust. A sample rule for Go (Semgrep doesn't support Rust,
 but Rust is already secure :p):
@@ -369,7 +370,7 @@ cases for review:
 ### Hardcoded Secrets
 Let's say you are storing the AES keys in the source code or in a config file.
 This is a dangerous pattern. AES is secure and not a dangerous function but you
-have weakned it because everyone with access to the code is now able to break
+have weakened it because everyone with access to the code is now able to break
 your encryption.
 
 Using a static salt in your password hashing scheme is the same. You have
@@ -380,7 +381,7 @@ weakened your (hopefully) secure algorithm.
 language keywords but rather contextual concepts (wut?!).
 
 Have you ever searched for `password` in a codebase to discover how passwords
-are handled? They are probably stored in variables named `password, `passwrd`,
+are handled? They are probably stored in variables named `password`, `passwrd`,
 or another variation. What about searching for `TODO` or `security` in the code
 comments?
 
@@ -452,7 +453,7 @@ just saw XXE in Java, but it also happens in other languages. Search for
 `xml + other-language` and see what you can find.
 
 The keywords in [Microsoft Application Inspector][appinspector-gh] and
-[DevSkim][devskim-gh] rules are usefuls.
+[DevSkim][devskim-gh] rules are useful.
 
 ## 2. Coding Standards
 Programming languages and development teams usually have their own coding
@@ -478,7 +479,7 @@ A good example (thanks to my friend [Tim Michaud][tim-twitter]) is PHP's
 [tim-twitter]: https://twitter.com/TimGMichaud
 [php-unserialize]: https://www.php.net/manual/en/function.unserialize.php
 
-At some point, the developers stop trying to play Whac-A-Mole with bugs and say
+At some point, developers stop trying to play Whac-A-Mole with bugs and say
 something similar. Others don't give in and try to block patterns (e.g.,
 [Jackson serialization gadgets][jackson-gadgets]). Personally, I think it's a
 losing battle:
@@ -491,7 +492,7 @@ insecure path there's not much we can do.
 {{< /blockquote >}}
 
 Every **cloud provider, library, framework, and operating system** has official
-and unofficial security guidances. Read them and add items to your list.
+and unofficial security guides. Read them and add items to your list.
 
 [**OWASP security checklists and cheat sheets**][owasp-cheatsheet-series] are
 also good resources. The Java XXE rule above was compiled from the OWASP XXE
@@ -508,7 +509,7 @@ more secure?" are good questions.
 **Study bugs**. Very few public bugs are accompanied by source code, but
 **opensource pull/merge requests** are great. Identify the vulnerable patterns
 and create rules. Don't spend a lot of time trying to weed out false positives.
-Our objective is to find hotspots. Sometimes just flagging a specific function
+Our objective is to find hot spots. Sometimes just flagging a specific function
 is more than enough.
 
 Read internal security bugs written by other engineers. Review bugs disclosed to
@@ -535,12 +536,12 @@ are great choices. We already saw the
 Look for these lists.
 
 # What Did We Learn Here Today?
-I introduced the concept of `hotspots in source code`. These are locations that
+I introduced the concept of `hot spots in source code`. These are locations that
 might contain vulnerabilities but should be reviewed manually. The results are
-noisy, so hotspot rules are not suitable for CI/CD pipelines and automatic
+noisy, so hot spot rules are not suitable for CI/CD pipelines and automatic
 alerts.
 
-The main audience for hotspots is security engineers. We have to rely on static
+The main audience for hot spots is security engineers. We have to rely on static
 analysis tools to review millions of lines of code. Our approach here is not
 scientific, but holistic. We rely on our gut feelings and manual analysis. This
 is usually not something a machine can do (I am sure Semmle folks disagree).
@@ -548,6 +549,6 @@ is usually not something a machine can do (I am sure Semmle folks disagree).
 I went through existing instances of this concept and tried to create a
 lightweight classification. We discussed examples and Semgrep rules for each
 category. The last section explained how I collect ideas and samples to find
-more hotspots.
+more hot spots.
 
-If you have any feedback, you know where to find me. I am here all week.
+If you have any feedback, you know where to find me. I am here every week.
