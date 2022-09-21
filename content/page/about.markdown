@@ -45,7 +45,7 @@ with a Nintendo Power Glove like me.
 "I trust him, he has a power glove."
 {{< /blockquote >}}
 
-{{< imgcap title="I actually have a working Nintendo Power Glove." src="power.jpg" >}}
+{{< imgcap title="I actually have a working Nintendo Power Glove." src="/images/power.jpg" >}}
 
 **What is This Website?**
 
