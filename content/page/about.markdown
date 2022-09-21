@@ -34,11 +34,18 @@ acquisition.
 **Who is Hackerman?**
 
 *Hackerman* is a character from the movie [Kung Fury][kungfury-youtube]. He is
-the greatest hacker of all time and can hack people through time.
+the greatest hacker of all time and can hack people through time. He also hacks
+with a Nintendo Power Glove like me.
 [His cheesy hacking tutorial][hackerman-hacking-tutorial].
 
 [kungfury-youtube]: https://www.youtube.com/watch?v=bS5P_LAqiVg
 [hackerman-hacking-tutorial]: https://www.youtube.com/watch?v=KEkrWRHCDQU
+
+{{< blockquote author="Anonymous EA Vancouver Employee" >}}
+"I trust him, he has a power glove."
+{{< /blockquote >}}
+
+{{< imgcap title="I actually have a working Nintendo Power Glove." src="power.jpg" >}}
 
 **What is This Website?**
 
