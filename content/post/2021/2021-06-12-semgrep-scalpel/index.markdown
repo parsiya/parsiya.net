@@ -126,8 +126,8 @@ teams but not us. Asking devs to learn this new language to use our expensive
 and fancy tool is a recipe for disaster.
 
 This also allows us to create secure defaults. Clint explains it a lot better
-than me in [Embrace Secure Defaults, Block Anti-patterns, and Kill Bug
-Classes with Semgrep][enable-secure-defaults].
+than me in
+[Embrace Secure Defaults, Block Anti-patterns, and Kill Bug Classes with Semgrep][enable-secure-defaults].
 
 [enable-secure-defaults]: https://www.youtube.com/watch?v=GoeONtFx0bA
 

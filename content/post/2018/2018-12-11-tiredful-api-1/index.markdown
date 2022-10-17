@@ -75,7 +75,7 @@ In order to accomplish number two, we need to use an extension. Burp vanilla doe
 {{< imgcap title="Session validation rule - 2" src="06-session-rule-2.png" >}}
 8. Under `Define behavior dependent on session validity` check `If session is invalid, perform the action below`, check `Run a macro` and select the login macro.
 9. Uncheck both `Update current request` boxes (doesn't matter in this example, we are not using cookies or parameters).
-10. And finally, check `After running the macro, invoke a Burp extension action handler:` and select `Add Custom Header`. Response of the last request in the macro is passed to `Add Custom Header`. The extension extract sthe token using the regex (remember the match group) and adds it as a header to the request.
+10. And finally, check `After running the macro, invoke a Burp extension action handler:` and select `Add Custom Header`. Response of the last request in the macro is passed to `Add Custom Header`. The extension extracts the token using the regex (remember the match group) and adds it as a header to the request.
 {{< imgcap title="Session validation rule - 3" src="07-session-rule-3.png" >}}
 11. Press `Ok` and we're back at the first screen. Now we need to select the scope.
 12. Click the `scope` tab and select any tool that needs this rule under `Tools Scope`. We will go with the default.

@@ -1174,7 +1174,7 @@ completely. I am glad I did not.
 
 # What I Tried and Didn't Work
 I think this is a useful section. Failed experiments might work in other
-situations. I can also add include extra information that did not make it to the
+situations. I can also include extra information that did not make it to the
 main sections.
 
 ## Injecting Environment Variables
@@ -1249,6 +1249,12 @@ env vars for RCE. Some of these looked promising but ultimately none worked:
 * `VSCODE_BROWSER`
 
 You might have a better chance.
+
+Update October 2022: [Daniel Santos][dan-twitter] suggested that
+[I could have overridden the `USER` env var][dan-tweet].
+
+[dan-twitter]: https://twitter.com/bananabr
+[dan-tweet]: https://twitter.com/bananabr/status/1488654978910769155
 
 ## Command Injection
 I tried injecting commands in the `execArgv` variable. I control

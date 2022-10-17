@@ -303,6 +303,19 @@ https://semgrep.dev/s/parsiya:blog-2022-03-sizeof-ptr.
 
 {{< imgcap title="sizeof(pointer) Semgrep rule" src="03-sizeof.png" >}}
 
+It's also possible to ditch regex and just use a pattern like this:
+
+``` yaml
+rules:
+- id: blog-2022-03-sizeof-ptr
+  pattern: sizeof($OBJ*)
+  message: Using sizeof($OBJ*) is wrong, did you mean sizeof($OBJ)?
+  languages:
+    - c
+    - cpp
+  severity: WARNING
+```
+
 ### text/template in Go
 Go's standard library offers two template packages.
 [html/template][html-template] does some output encoding while

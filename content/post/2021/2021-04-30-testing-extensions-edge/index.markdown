@@ -207,11 +207,16 @@ let's enumerate their options for deploying a TLS server with a valid
 certificate.
 
 1. Generate a self-signed certificate and add it to the OS key store.
-    1. No one like this, see [Superfish][superfish].
+    1. No one likes this, see [Superfish][superfish].
 2. Use a valid certificate for `localhost`. Assuming you can convince someone to sign it.
     1. Boo! You just gave everyone a valid cert for localhost.
 
 [superfish]: https://support.lenovo.com/ca/en/product_security/ps500035-superfish-vulnerability
+
+For more information, please read Eric Lawrence's notes about
+[Local Web Server- Challenges with HTTPS][eric-local].
+
+[eric-local]: https://textslashplain.com/2019/08/28/browser-architecture-web-to-app-communication-overview/#local-web-server-challenges-with-https
 
 ## The Messaging Protocol
 Each message is a JSON object.
