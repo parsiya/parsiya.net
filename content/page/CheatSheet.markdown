@@ -1174,9 +1174,16 @@ log4j.appender.R.layout.ConversionPattern=%p %t %c - %m%n
 
 ------
 
+# Angular
+
+## Find the Version of Angular on a Website with DevTools
+Run in the console `getAllAngularRootElements()[0].attributes["ng-version"];`.
+
+------
+
 ## Misc
 
-### Download Youtube Videos with Substitles with youtube-dl
+### Download Youtube Videos with Subtitles with youtube-dl
 I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The
 following [youtube-dl](https://github.com/ytdl-org/youtube-dl) command will
 download the 56 episode HQ quality Chinese TV series called `Xiao Ao Jiang Hu`
