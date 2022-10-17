@@ -156,7 +156,15 @@ based on a different type &#39;char *&#39;
 This will also search comments. We can reduce the false positives with
 <code>pattern-not-regex</code>. Try extending
 <a href=https://semgrep.dev/s/parsiya:blog-2022-03-sizeof-ptr target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:blog-2022-03-sizeof-ptr</a>.</p><span class=caption-wrapper><img class=caption src=03-sizeof.png title="sizeof(pointer) Semgrep rule" alt="sizeof(pointer) Semgrep rule">
-<span class=caption-text>sizeof(pointer) Semgrep rule</span></span><h3 id=texttemplate-in-go>text/template in Go
+<span class=caption-text>sizeof(pointer) Semgrep rule</span></span><p>It's also possible to ditch regex and just use a pattern like this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>- <span style=color:#268bd2>id</span>: blog-2022-03-sizeof-ptr
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>pattern</span>: sizeof($OBJ*)
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>message</span>: Using sizeof($OBJ*) is wrong, did you mean sizeof($OBJ)?
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>languages</span>:
+</span></span><span style=display:flex><span>    - c
+</span></span><span style=display:flex><span>    - cpp
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>severity</span>: WARNING
+</span></span></code></pre></div><h3 id=texttemplate-in-go>text/template in Go
 <a class=header-link href=#texttemplate-in-go><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>Go's standard library offers two template packages.
 <a href=https://pkg.go.dev/html/template target=_blank rel="noreferrer noopener">html/template</a> does some output encoding while
 <a href=https://pkg.go.dev/text/template target=_blank rel="noreferrer noopener">text/template</a> does none. Using <code>text/template</code> in a web
