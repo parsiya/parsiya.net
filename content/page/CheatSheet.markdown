@@ -486,18 +486,60 @@ and look under the `ProfileImagePath` key to see which user it is.
 [mattt-twitter]: https://twitter.com/mattt_cyber
 
 ### WSL
-See current distributions and their version: `wsl --list --verbose` or `wsl -l
--v`.
+See current distributions and their version: `wsl -l -v`.
 
-Set the default version to 2 for all new distributions: `wsl --set-default-version 2`
+Set the default version to 2 for all new distributions:
+`wsl --set-default-version 2`
 
-Convert a distro (e.g., `Ubuntu-18.04`) to version 2: `wsl --set-version
-Ubuntu-18.04 2`
+Convert a distro (e.g., `Ubuntu-18.04`) to version 2:
+`wsl --set-version Ubuntu-18.04 2`
 
 Moving to WSL2 will prevent your machine from talking to the internet with some
-VPN software and if you are connected to the VPN. I think it's because WSL2 uses
-Hyper-V and Hyper-V VMs have the same problem (on VPN they do not have network
-connectivity).
+VPN software and if you are connected to the VPN. WSL2 uses Hyper-V. Hyper-V VMs
+do not have network connectivity on VPN.
+
+#### File locations:
+
+* `%LocalAppData%/packages/{full-distro-name}/LocalState` where
+  `full-distro-name` is:
+    * Ubuntu 18: `CanonicalGroupLimited.Ubuntu18.04onWindows_79rhkp1fndgsc`
+    * Debian: `TheDebianProject.DebianGNULinux_76v4gfsz19hv4`
+
+#### Access WSL2 Files
+In WSL1, everything is a file. In WSL2 we have a `ext4.vhdx` file. WSL 2 uses a
+fully managed VM. Hence, why WSL1 has better performance on Windows files.
+
+Individual files on WSL2 are at `\\wsl$\{distro}` where `distro` comes from
+`wsl -l -v`. E.g., `Debian`.
+
+#### Import and Export
+If working with `Debian`.
+
+```
+# run all on Windows
+
+# stop the distro
+$ wsl --terminate Debian
+
+# export 
+wsl --export Debian C:/path/to/debian.tar
+```
+
+Now, we can import it as another distro. This way we can have multiple instances
+of the same distro:
+
+```
+wsl --import NewDebian C:/path/to/newdebian/ C:/path/to/debian.tar
+```
+
+Note: If you import a distro like this, the `ext4.vhdx` file be located inside
+`newdebian` and will not be in
+`%LocalAppData%/packages/{full-distro-name}/LocalState`.
+
+#### Hugo Server doesn't see File Notifications Events in WSL2
+Solution: Move the files to the Linux filesystem from Windows.
+
+More info: https://parsiya.io/random/wsl2-hugo-watch/
 
 ------
 
