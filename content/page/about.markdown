@@ -41,8 +41,8 @@ with a Nintendo Power Glove like me.
 [kungfury-youtube]: https://www.youtube.com/watch?v=bS5P_LAqiVg
 [hackerman-hacking-tutorial]: https://www.youtube.com/watch?v=KEkrWRHCDQU
 
-{{< blockquote author="Anonymous EA Vancouver Employee" >}}
-"I trust him, he has a power glove."
+{{< blockquote author="Anonymous Electronic Arts Vancouver Employee" >}}
+"I trust this man, he has a power glove."
 {{< /blockquote >}}
 
 {{< imgcap title="I actually have a working Nintendo Power Glove." src="/images/power.jpg" >}}
