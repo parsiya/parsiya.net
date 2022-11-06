@@ -7,11 +7,11 @@ comments: false
 type: about
 ---
 
-I am Parsia, an application Security Engineer currently taking a sabbatical.
+I am Parsia, I try to do application Security Engineer. I am currently taking a
+sabbatical.
 
 **2019-2022**: Senior Security Engineer at [Electronic Arts][ea-security]. I
-worked on every released internal and external product (mostly videogames) and
-services.
+worked on many internal and external product (mostly videogames) and services.
 [Realistic video of me hacking videogames at work][game-testers-youtube].
 
 [ea-security]: https://www.ea.com/security
