@@ -17,23 +17,23 @@ search for keywords.
 
 ------
 
-## Tar
+# Tar
 Insert [XKCD 1168](https://xkcd.com/1168/), hur dur!
 
-### Compress a Directory Using tar
+## Compress a Directory Using tar
 `tar -zcvf target_tar.tar.gz directory_to_be_compressed`
 
-### Decompress a tar.gz file
+## Decompress a tar.gz file
 `tar -zxvf target_tar.tar.gz -C path/to/decompress/`
 
 ------
 
-## OpenSSL
+# OpenSSL
 
-### Dump The TLS Certificate of a Domain with OpenSSL
+## Dump The TLS Certificate of a Domain with OpenSSL
 `echo | openssl s_client -connect HOST:PORT 2>/dev/null | openssl x509 -text -noout`
 
-### TLS Connection with a Specific Ciphersuite with OpenSSL
+## TLS Connection with a Specific Ciphersuite with OpenSSL
 `openssl s_client -connect HOST:PORT -cipher cipher-name -brief`
 
 * `-brief`: reduced output
@@ -41,9 +41,9 @@ Insert [XKCD 1168](https://xkcd.com/1168/), hur dur!
 
 ------
 
-## AWS
+# AWS
 
-### How to Use s3deploy
+## How to Use s3deploy
 I have switched to s3deploy from s3cmd: https://github.com/bep/s3deploy. 
 
 Create a file named `.s3deploy.yaml` (note the period) in the root of website. I
@@ -84,7 +84,7 @@ aws_access_key_id=
 aws_secret_access_key=
 ```
 
-### Sync a Directory with an Amazon S3 bucket with s3cmd
+## Sync a Directory with an Amazon S3 bucket with s3cmd
 These might be updated because I do not use s3cmd anymore.
 
 `python s3cmd sync --acl-public --delete-removed --rr directory-to-sync/ s3://bucket-name`
@@ -95,7 +95,7 @@ E.g., uploading the Hugo generated public directory to my website:\\
 * `--acl-public`: Anyone can only read.
 * `--delete-removed`: Delete objects with no corresponding local files.
 
-### Change the MIME-Type of the CSS file After Upload to Fix CSS not Displaying Correctly
+## Change the MIME-Type of the CSS file After Upload to Fix CSS not Displaying Correctly
 `python s3cmd --acl-public --no-preserve --mime-type="text/css" put public/css/hugo-octopress.css s3://parsiya.net/css/hugo-octopress.css`
 
 {{< codecaption title="My runme.bat to upload my Hugo blog to the S3 bucket" lang="powershell"\\>}}
@@ -110,7 +110,7 @@ python s3cmd --acl-public --no-preserve --cf-invalidate --add-header="Expires: S
 rd /q /s public
 {{< /codecaption >}}
 
-### Set the Website Index to a Non-Root file in a Static Website on S3
+## Set the Website Index to a Non-Root file in a Static Website on S3
 When setting up a static website in an S3 bucket, you need to specify an index
 and an error page. The index cannot be in a subdirectory but the error page
 can. Set the index to a non-existent file (e.g. `whatever.crap`) and set the
@@ -123,20 +123,20 @@ If you are relying on error pages, this will mess with your site because every
 error will be redirected to the index. Another way is to set a meta redirect in
 the index file in the root directory and redirect to that page.
 
-### Use AWS CLI Without Credentials
+## Use AWS CLI Without Credentials
 Use `--no-sign-request`. E.g., to list all items in a world-readable bucket:
 
 * `aws s3 ls s3://bucket-name --no-sign-request --recursive`
 
 ------
 
-## Windows
+# Windows
 
-### Shortcut to IE (or WinINET) Proxy Settings
+## Shortcut to IE (or WinINET) Proxy Settings
 
 `control inetcpl.cpl,,4`
 
-### where.exe
+## where.exe
 `where.exe` searches for files. If no location is passed it searches in the
 local directory and then in PATH.
 
@@ -144,7 +144,7 @@ local directory and then in PATH.
 - `/T` displays file size.
 - `/?` for help.
 
-### Delete File or Directory with a Path or Name Longer than the Windows Limit
+## Delete File or Directory with a Path or Name Longer than the Windows Limit
 
 ```
 mkdir empty_dir
@@ -155,7 +155,7 @@ rmdir the_dir_to_delete
 
 * Source: http://superuser.com/a/467814
 
-### Install 'Bash on Windows' - Outdated
+## Install 'Bash on Windows' - Outdated
 `lxrun /install` does not work anymore.
 
 1. Run the following command in an admin PowerShell and restart.
@@ -165,7 +165,7 @@ rmdir the_dir_to_delete
 4. Follow the prompts to choose a username and password.
 5. Type `bash` in a command prompt to start it.
 
-### Setup GitHub-GitLab SSH Keys in 'Bash on Windows'
+## Setup GitHub-GitLab SSH Keys in 'Bash on Windows'
 Main instructions:
 
 * https://help.github.com/en/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
@@ -207,7 +207,7 @@ Main instructions:
 5. Navigate to your git folder in a normal command prompt and run `bash` and use
    git normally.
 
-### Exit Status 3221225781
+## Exit Status 3221225781
 **TL;DR:** `exit status 3221225781` on Windows means a DLL is missing. In this
 case, `diff.exe` was missing `libintl3.dll` and it made `gorename` stop working.
 Get and install it from:
@@ -237,7 +237,7 @@ front of `DiffUtils`. It will download a package which contains the utils and
 two DLLs: `libintl3.dll` and `libiconv2.dll`. Copy all of them to where the
 original `diff.exe` was and it should work.
 
-### Map a Drive to a Specific Directory
+## Map a Drive to a Specific Directory
 This is useful when you want to refer to a specific directory as a drive.
 
 * `subst X: C:\path\to\source\code`
@@ -267,7 +267,7 @@ Automount it at startup:
 
 * http://woshub.com/auto-mount-vhd-at-startup/
 
-### Prevent Monitors from Going to Sleep after Locking the Computer
+## Prevent Monitors from Going to Sleep after Locking the Computer
 After locking the computer the monitor might go to sleep. To disable:
 
 1. Open the following registry key:
@@ -282,7 +282,7 @@ After locking the computer the monitor might go to sleep. To disable:
 6. Now under `Display` there should be a new item: `Console lock display off timeout`.
 7. Change this to whatever you want.
 
-### Convert a plist File to XML on Windows
+## Convert a plist File to XML on Windows
 `plutil -convert xmlfile.xml com.apple.springboard.plist` where:
 
 * `plutil` is installed with iTunes.
@@ -290,14 +290,14 @@ After locking the computer the monitor might go to sleep. To disable:
 
 * Source: https://superuser.com/a/1264369
 
-### Oneliner to Find Unquoted Service Paths
+## Oneliner to Find Unquoted Service Paths
 `wmic service get displayname,pathname|findstr /IV "C:\Windows"|findstr /IV """`
 
 Unquoted service paths are usually not exploitable. See my
 {{< xref path="/post/2020/2020-07-25-airtight-hatchway/"
     text="No, You Are Not Getting a CVE for That" >}}.
 
-### Run Chromium Browsers with a Proxy
+## Run Chromium Browsers with a Proxy
 Chromium uses the WinINET proxy settings. Instead of redirecting everything to
 the browser, we can set the proxy using the command line (also works for
 Chrome/Edge and other browsers built on Chromium but not Electron):
@@ -309,7 +309,7 @@ available. Don't use this because you will not know if the fall back happens:
 
 * `"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --proxy-server="http://localhost:8080,direct://"`
 
-### Microphone does not Work in Discord
+## Microphone does not Work in Discord
 You might have enabled the privacy settings in Windows 10.
 
 1. Settings.
@@ -320,7 +320,7 @@ You might have enabled the privacy settings in Windows 10.
 6. ???
 7. Yell at ~~your raid group~~ DPS for standing in fire.
 
-### Extract MSI Files
+## Extract MSI Files
 Use the built-in `msiexec` tool.
 
 * `msiexec /a c:\path\to\file.msi /qb TARGETDIR=C:\absolute\path\to\extract\directory`
@@ -330,7 +330,7 @@ Use the built-in `msiexec` tool.
 * If the path to the target directory (the second path) is not absolute, we
   will get this error: `Could not access network location 'xxx'`.
 
-### Disable Autofocus for Microsoft Lifecam Cinema
+## Disable Autofocus for Microsoft Lifecam Cinema
 If the "Microsoft Lifecam Cinema" webcam constantly autofocuses on Windows 10.
 
 1. Open the Windows camera app.
@@ -353,7 +353,7 @@ You can also try in Skype which is where the old utility is accessible.
   Skype you can see the change immediately.
 * **The setting is lost after restart**. Just opening the Camera app does the job.
 
-### Install WinDbg as the Post-Mortem Debugger
+## Install WinDbg as the Post-Mortem Debugger
 
 1. Install WinDbg as part of the Windows 10 SDK.
     * https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/debugger-download-tools
@@ -366,7 +366,7 @@ You can also try in Skype which is where the old utility is accessible.
 4. You should get a prompt that says WinDbg has been installed as the default
    post-mortem debugger.
 
-### Remove WinDbg as the Post-Mortem Debugger
+## Remove WinDbg as the Post-Mortem Debugger
 Delete some registry keys.
 
 * 64-bit version
@@ -376,7 +376,7 @@ Delete some registry keys.
     1. Go to `HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\AeDebug`.
     2. Remove the `Debugger` key.
 
-### Open a Network Monitor cap File in Wireshark and Save is Disabled
+## Open a Network Monitor cap File in Wireshark and Save is Disabled
 This happens in two instances:
 
 1. **Not fixable**: If the NetMon capture file contains IEEE 802.11 plus Network
@@ -399,7 +399,7 @@ If you already have a file with the display filter you can remove it.
 
 * Source: https://ask.wireshark.org/question/7163/my-save-and-save-as-are-grayed-out/
 
-### Keyboard Shortcut to Run Applications Elevated
+## Keyboard Shortcut to Run Applications Elevated
 For example, running `notepad` as admin.
 
 1. Open the start menu. E.g., Windows key.
@@ -410,7 +410,7 @@ For example, running `notepad` as admin.
 
 This also works if you select a shortcut and press `ctrl+shift+enter`.
 
-### Firewall Rules in the Registry
+## Firewall Rules in the Registry
 If you cannot delete firewall rules in the GUI, delete their corresponding rule
 in the registry (user rules are represented by a GUID). Also helps with reading
 the rules because the rule text might not say which executable is targeted:
@@ -423,14 +423,14 @@ Format:
 
 * https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-gpfas/2efe0b76-7b4a-41ff-9050-1023f8196d16
 
-### Install Packages on Windows from the Command Line (Needs Admin)
+## Install Packages on Windows from the Command Line (Needs Admin)
 To install `telnet client` in an admin command prompt:
 
 ```
 pkgmgr /iu:"TelnetClient"
 ```
 
-### Uninstall IE 11 from Windows 7 (and Install an Older Version)
+## Uninstall IE 11 from Windows 7 (and Install an Older Version)
 
 1. Go to `Control Panel > Programs > Programs and features`.
 2. Select `Installed Updated`.
@@ -438,7 +438,7 @@ pkgmgr /iu:"TelnetClient"
 4. Right click and uninstall.
 5. Download older version of IE (e.g. IE 9) for Windows 7 and install it.
 
-### Read Scheduled Task's DACL
+## Read Scheduled Task's DACL
 Find the task name in the `PathToTask` registry key and use it in the command:
 
 ```powershell
@@ -450,7 +450,7 @@ ConvertFrom-SddlString ([wmiclass]"Win32_SecurityDescriptorHelper").BinarySDToSD
 
 * Source: https://serverfault.com/a/997929
 
-### Find Users Under the HKEY_USERS Registry Hive
+## Find Users Under the HKEY_USERS Registry Hive
 `HKEY_LOCAL_USER` is a subset of `HKEY_USERS` for the current user. Under
 `HKEY_USERS` we see a bunch of directories. To figure out the users for these
 directories we need to see them in the following location:
@@ -464,7 +464,7 @@ and look under the `ProfileImagePath` key to see which user it is.
 
 * Source: https://stackoverflow.com/a/2919369
 
-### Find The Open Handle to a File or Resource
+## Find The Open Handle to a File or Resource
 
 1. Open `Resource Monitor`.
 2. `CPU` tab.
@@ -474,7 +474,7 @@ and look under the `ProfileImagePath` key to see which user it is.
 
 * Source: https://superuser.com/a/643312
 
-### powercfg
+## powercfg
 
 * `powercfg /requests`
     * See which programs have requested to keep the device display active.
@@ -485,7 +485,7 @@ and look under the `ProfileImagePath` key to see which user it is.
 
 [mattt-twitter]: https://twitter.com/mattt_cyber
 
-### WSL
+# WSL
 See current distributions and their version: `wsl -l -v`.
 
 Set the default version to 2 for all new distributions:
@@ -498,21 +498,21 @@ Moving to WSL2 will prevent your machine from talking to the internet with some
 VPN software and if you are connected to the VPN. WSL2 uses Hyper-V. Hyper-V VMs
 do not have network connectivity on VPN.
 
-#### File locations:
+## File locations:
 
 * `%LocalAppData%/packages/{full-distro-name}/LocalState` where
   `full-distro-name` is:
     * Ubuntu 18: `CanonicalGroupLimited.Ubuntu18.04onWindows_79rhkp1fndgsc`
     * Debian: `TheDebianProject.DebianGNULinux_76v4gfsz19hv4`
 
-#### Access WSL2 Files
+## Access WSL2 Files
 In WSL1, everything is a file. In WSL2 we have a `ext4.vhdx` file. WSL 2 uses a
 fully managed VM. Hence, why WSL1 has better performance on Windows files.
 
 Individual files on WSL2 are at `\\wsl$\{distro}` where `distro` comes from
 `wsl -l -v`. E.g., `Debian`.
 
-#### Import and Export
+## Import and Export
 If working with `Debian`.
 
 ```
@@ -536,16 +536,26 @@ Note: If you import a distro like this, the `ext4.vhdx` file be located inside
 `newdebian` and will not be in
 `%LocalAppData%/packages/{full-distro-name}/LocalState`.
 
-#### Hugo Server doesn't see File Notifications Events in WSL2
+## Hugo Server doesn't see File Notifications Events in WSL2
 Solution: Move the files to the Linux filesystem from Windows.
 
 More info: https://parsiya.io/random/wsl2-hugo-watch/
 
+## Docker in WSL2
+
+1. Start with https://docs.docker.com/desktop/windows/wsl/
+2. Install Docker Desktop for Windows.
+3. `Settings (gear icon) > Use the WSL2 based engine` (was checked by default for me).
+4. `Settings > Resources (side bar) > Enable integration with additional distros` and select any other distro.
+5. `sudo usermod -aG docker $USER`.
+6. ???
+7. Logout and login.
+
 ------
 
-## PowerShell
+# PowerShell
 
-### List All Files (Including Hidden Files)
+## List All Files (Including Hidden Files)
 `Get-ChildItem "searchterm" -recurse -force -path c:\ | select-object FullName`
 
 * `-recurse`: recursive. Loops through all directories
@@ -553,7 +563,7 @@ More info: https://parsiya.io/random/wsl2-hugo-watch/
 * `select-object`: Selects each file from last point
 * `FullName`: Only display file name
 
-### Diff in PowerShell
+## Diff in PowerShell
 `Compare-Object (Get-Content new1.txt) (Get-Content new2.txt) | Format-List >> Diff-Output`
 
 Output will be in format of
@@ -561,7 +571,7 @@ Output will be in format of
 * `InputObject`: `c:\users\username\somefile` -- line content
 * `SideIndicator`: `=>` -- exists in new2.txt (second file, file to the right)
 
-### Pseudo-grep in PowerShell
+## Pseudo-grep in PowerShell
 Alternatively, use [ripgrep][ripgrep-link] like `rg -i 'whatever'`.
 
 [ripgrep-link]: https://github.com/BurntSushi/ripgrep
@@ -586,34 +596,34 @@ will search for `keyword1 OR keyword2` in files
 
 * Source: https://technet.microsoft.com/en-us/library/Cc732459.aspx
 
-### grep in Command Results
+## grep in Command Results
 `whatever.exe | Select-String -pattern "admin"`
 
-### Get-Acl and icacls.exe
+## Get-Acl and icacls.exe
 `Get-Acl -path c:\windows\whatever.exe | Format-List`
 
 `icacls.exe c:\windows\whatever.exe`
 
-### time in PowerShell
+## time in PowerShell
 `Measure-Command {python whatever.py}`
 
-### VHD File is Open in System (and Cannot be Deleted)
+## VHD File is Open in System (and Cannot be Deleted)
 You clicked on a VHD file and now cannot delete it. Use this PowerShell command
 to dismount it. The path to the VHD should be absolute.
 
 `Dismount-DiskImage -ImagePath 'C:\full\path\to\whatever.vhd'`
 
-### Base64 Encode and Decode without PowerShell
+## Base64 Encode and Decode without PowerShell
 Use `certutil` for bootleg base64 encoding/decoding:
 
 - `certutil -encode whatever.exe whatever.base64`
 - `certutil -decode whetever.base64 whatever.exe`
 
-### Load a Managed DLL from PowerShell
+## Load a Managed DLL from PowerShell
 
 * Source: https://www.leeholmes.com/blog/2006/10/27/load-a-custom-dll-from-powershell/
 
-### Zip a Directory with PowerShell
+## Zip a Directory with PowerShell
 
 * `Compress-Archive -Path C:\path\to\folder\ -DestinationPath c:\path\to\destination\archive`
 
@@ -624,28 +634,28 @@ extension in the command.
 
 ------
 
-## Hyper-V
+# Hyper-V
 Switching from VirtualBox for Hyper-V had its own set of tradeoffs.
 
-### Cannot Create Virtual Switch
+## Cannot Create Virtual Switch
 When creating a Virtual Switch in Hyper-V you get an error along the lines of
 "failed adding ports to the switch" and "a parameter passed was invalid."
 
 1. Open an admin command prompt and run `netcfg -d`.
 2. Restart the host machine.
 
-### Cloning VMs in Hyper-V
+## Cloning VMs in Hyper-V
 You cannot clone VMs in Hyper-V like VirtualBox. Create a copy of the vhd(x)
 hard disk and use it in a new VM. Yes, it's as manual as it sounds.
 
-### The Guest Has No Internet
+## The Guest Has No Internet
 The internet recommends creating an external virtual switch but it did not work
 for me. I deleted the external switch and used the default switch and it somehow
 worked so try doing that.
 
 This also happens if you are using an active VPN connection on the host.
 
-### Higher Resolution For Debian/Ubuntu Guest in Hyper-V
+## Higher Resolution For Debian/Ubuntu Guest in Hyper-V
 Seems like the highest resolution is 1080p.
 
 1. `sudo nano /etc/default/grub`.
@@ -656,13 +666,13 @@ Seems like the highest resolution is 1080p.
 
 * Source: https://askubuntu.com/a/745142
 
-### Creating an Ubuntu VM in Hyper-V
+## Creating an Ubuntu VM in Hyper-V
 Most important item, do not select `log in automatically` during setup.
 Otherwise, xRDP will fail silently.
 
 * https://www.hanselman.com/blog/UsingEnhancedModeUbuntu1804ForHyperVOnWindows10.aspx
 
-### Windows DNS Cache is not Getting Populated in Hyper-V Guest
+## Windows DNS Cache is not Getting Populated in Hyper-V Guest
 In a default Hyper-V guest networking setup the local DNS resolver cache is
 empty.
 
@@ -672,9 +682,9 @@ empty.
 
 ------
 
-## VirtualBox
+# VirtualBox
 
-### Restart Clipboard Functionality in VirtualBox After Guest Resume
+## Restart Clipboard Functionality in VirtualBox After Guest Resume
 Sometimes disabling and enabling the clipboard in VirtualBox menu works.
 
 Or in the Windows guest:
@@ -684,7 +694,7 @@ Or in the Windows guest:
 
 * Source: https://superuser.com/a/691337
 
-### Change the Hardware UUID of Cloned Windows VMs to Avoid Windows Reactivation
+## Change the Hardware UUID of Cloned Windows VMs to Avoid Windows Reactivation
 You cloned a Windows VirtualBox VM and now you have to activate it again. This
 script changes the hardware UUID of the cloned machine to the old one. No
 reactivation needed.
@@ -698,7 +708,7 @@ $uid=$($($(.\VBoxManage.exe showvminfo $ORIGVirtualMachineName|select-string "Ha
 .\VBoxManage modifyvm $clonedVirtualMachineName --hardwareuuid $uid
 ```
 
-### Increase VM Disk Size
+## Increase VM Disk Size
 The default modern.ie VMs come with a 40GB vmdk hard drive and I want to resize
 them to 100GB (because videogames are huge). VirtualBox cannot resize it. We can
 clone it to vdi, resize it and convert it back to vdmk.
@@ -723,10 +733,10 @@ clone it to vdi, resize it and convert it back to vdmk.
 
 ------
 
-## Git
+# Git
 I know a total of 5-6 git commands.
 
-### Create New Branch and Merge
+## Create New Branch and Merge
 This works with small branches (e.g. one fix or so). Adapted from a
 [Bitbucket tutorial][bt-tut].
 
@@ -754,10 +764,10 @@ This works with small branches (e.g. one fix or so). Adapted from a
    We don't need it anymore. If it was pushed to remote, then we need to delete
    it there too.
 
-### Only Clone a Certain Branch
+## Only Clone a Certain Branch
 `git clone -b <branch> <remote_repo>`
 
-### Undo Remote git History after Push
+## Undo Remote git History after Push
 Because this keeps happening to me.
 
 1. Reset the head in local repo N commits back. - `git reset HEAD~N`\\
@@ -771,7 +781,7 @@ Because this keeps happening to me.
    Note: This will force the update and erase the commit history online. I only
    do it for my solo repositories.
 
-### Sync a Fork with the Original Repository
+## Sync a Fork with the Original Repository
 You have forked a repository a while ago. You want to sync the new changes.
 
 1. Add the original repository as `upstream`.
@@ -789,7 +799,7 @@ You have forked a repository a while ago. You want to sync the new changes.
 [config-remote]: https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/configuring-a-remote-for-a-fork
 [sync-fork]: https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/syncing-a-fork
 
-### Use Notepad++ as git Editor on Windows via Cygwin
+## Use Notepad++ as git Editor on Windows via Cygwin
 Create a file called `npp` with the following content and copy it to
 `cygwin\bin`. Modify the path of notepad++ to point to your installation.
 
@@ -803,21 +813,21 @@ Run the following command in Cygwin to set it as the global git editor:
 git config --global core.editor npp
 ```
 
-### Change Remote for an Existing Git Repository
+## Change Remote for an Existing Git Repository
 For example, moving `repository` from Bitbucket to GitHub or back.
 
 ```
 git remote set-url origin git@github.com:parsiya/repository.git
 ```
 
-### List All Authors in a Git Repository
+## List All Authors in a Git Repository
 I wanted to see if I was still showing up as `root` in old commits.
 
 ```
 git shortlog -s | cut -c8-
 ```
 
-### Rewrite Author for Older Commits
+## Rewrite Author for Older Commits
 `parsiya.net` had commits as `root` from when I was using it offline. I wanted
 to change everything to my own username.
 
@@ -831,7 +841,7 @@ to change everything to my own username.
 
 * Source: https://stackoverflow.com/a/3042512
 
-### Remove Uncommitted Files from Staging
+## Remove Uncommitted Files from Staging
 You have added files with `git add` but have not committed them and want to
 remove some (not all) instead of `git reset`.
 
@@ -839,7 +849,7 @@ remove some (not all) instead of `git reset`.
 git reset HEAD -- file/directory
 ```
 
-### Make git Case Sensitive (with a Catch)
+## Make git Case Sensitive (with a Catch)
 In a case-insensitive file system (Windows, Mac), git is case-insensitive by
 default. So if you rename `Bob.jpg` to `bob.jpg` after it has already been
 pushed, git doesn't change it because from a file-system perspective it's the
@@ -858,7 +868,7 @@ and push it. In the remote repo you will have two files `Bob.jpg` and `bob.jpg`.
 The answer is to rename `Bob.jpg` to something else like `Bob-1.jpg`, push and
 then rename it back to `bob.jpg`.
 
-### Exclude a Committed File with gitignore
+## Exclude a Committed File with gitignore
 `.gitignore` only works on new `git add`s. If we have already pushed
 `blah/whatever.cpp` to the repo, adding `whatever.cpp` to `.gitignore` does
 nothing.
@@ -873,18 +883,18 @@ the file completely from the filesystem):
 
 Note: Also overwrite history if the file had secrets/sensitive info.
 
-### Sign git Commits
+## Sign git Commits
 Follow this guide:
 
 * https://withblue.ink/2020/05/17/how-and-why-to-sign-git-commits.html
 
 ------
 
-## Visual Studio Code
+# Visual Studio Code
 My current (as of June 2019) editor of choice. Settings are at
 https://parsiya.io/categories/configs/vscode/.
 
-### Associate an Extension with a Specific Language
+## Associate an Extension with a Specific Language
 This allows us to have specific language highlighting for custom extensions. Add
 the following to `settings.json`:
 
@@ -895,7 +905,7 @@ the following to `settings.json`:
     }
 ```
 
-### Install a Specific Version of an Extension
+## Install a Specific Version of an Extension
 This also disables auto-update for that extension so you can keep an older
 version of an extension.
 
@@ -907,18 +917,18 @@ version of an extension.
 
 * Source: https://github.com/microsoft/vscode/issues/30579#issuecomment-456028574
 
-### couldn't start client gopls unsupported URI scheme
+## couldn't start client gopls unsupported URI scheme
 VS Code needs to open a workspace. Open the parent directory to the project.
 
 Source: https://www.reddit.com/r/golang/comments/g6l6y9/couldnt_start_client_gopls_unsupported_uri_scheme/
 
 ------
 
-## Sublime Text 3
+# Sublime Text 3
 Tips for using the Sublime Text 3 editor. I don't use Sublime Text anymore
 although I bought it. This section is probably outdated.
 
-### Fix "MarGo build failed" for GoSublime on Windows
+## Fix "MarGo build failed" for GoSublime on Windows
 GoSublime's executable has Go version in it. In most cases, it cannot grab the
 version on Windows and the build will fail like this:
 
@@ -949,20 +959,20 @@ build.
 
 **This must to be done for every new GoSublime version.**
 
-### Open the Same File in a New Tab
+## Open the Same File in a New Tab
 `File > New view into File`. Then drag the pane to a second screen/location.
 
 ------
 
-## Burp
+# Burp
 
-### Quality of Life Tips and Tricks for Burp
+## Quality of Life Tips and Tricks for Burp
 
 * See my blog post:
   {{< xref path="/post/2019/2019-10-13-quality-of-life-burp/"
     text="Quality of Life Tips and Tricks - Burp Suite" >}}
 
-### Selected Text in Burp is Black
+## Selected Text in Burp is Black
 Usually happens in Virtual Box.
 
 ![Burp 3D rendering issue](/images/cheatsheet/burp-3d-issue.png)
@@ -985,7 +995,7 @@ Source - credit to `floyd`:
 
 * https://support.portswigger.net/customer/portal/questions/16802069-text-highlighted-in-black
 
-### Using iptables to Proxy Android Apps with Burp
+## Using iptables to Proxy Android Apps with Burp
 Technically this should work with any proxy.
 
 1. Add Burp's CA certificate to the device.
@@ -1009,7 +1019,7 @@ iptables -t nat -A POSTROUTING -p tcp --dport 443 -j MASQUERADE
 
 [invisible-proxy]: https://portswigger.net/burp/documentation/desktop/tools/proxy/options/invisible
 
-### Regex to Search for URLs in Burp Responses
+## Regex to Search for URLs in Burp Responses
 Not the best regex but does the job:
 
 * `http([^"])*\.([^"])+`
@@ -1024,14 +1034,14 @@ Better but more expensive regex:
 
 ------
 
-## Linux
+# Linux
 I'd just like to interject for a moment. What you're referring to as Linux, is
 in fact, GNU/Linux, or as I've recently taken to calling it, GNU plus Linux.
 
-### Python Module Installed with pip but Command is not Available
+## Python Module Installed with pip but Command is not Available
 They are installed in `~/.local/bin`. Add it to your `$PATH`.
 
-### Add a User to sudoers on Debian
+## Add a User to sudoers on Debian
 
 1. `su -`: If you do `su` alone, you might not find `usermod` in your path.
     * "Starting su with the option " -" gives you the full path root would have
@@ -1042,16 +1052,16 @@ They are installed in `~/.local/bin`. Add it to your `$PATH`.
 2. `usermod -aG sudo user-name`
 3. Restart (or logoff and login?).
 
-### grep
+## grep
 Only search in files with specific extensions. E.g., only `md/markdown`.
 
 `grep -ir "whatever" --include\*.md --include \*.markdown`
 
 ------
 
-## Docker
+# Docker
 
-### Commands
+## Commands
 
 * Images:
     * All images: `docker images`
@@ -1077,17 +1087,17 @@ Only search in files with specific extensions. E.g., only `md/markdown`.
     * centOS cmd for `DockerFile`: `CMD ["/usr/sbin/init"]`
     * Create and run a centOS container: `docker run -it whatever/blah sh`
 
-### Troubleshooting
+## Troubleshooting
 
 * Error starting userland proxy: mkdir ... : input/output error.
     * Restart docker. On Windows, right click the docker tray icon and select `Restart...`.
 
 ------
 
-## Python
+# Python
 These were written when I used Python 2, some might not work with newer versions.
 
-### Create All Possible Combinations of Two Lists of Strings
+## Create All Possible Combinations of Two Lists of Strings
 
 ```python
 from itertools import product
@@ -1100,7 +1110,7 @@ for e1, e2 in product(set1, set2):
     print(e1+e2)
 ```
 
-### Multi-line String
+## Multi-line String
 Note the space on second line.
 
 ``` python
@@ -1108,7 +1118,7 @@ string1 = "This is line one of the string that is going to be over 80"
           " characters and thus needs to be broken into two or more lines."
 ```
 
-### Main
+## Main
 Because I always forget.
 
 ```python
@@ -1119,18 +1129,18 @@ if __name__ == "__main__":
     main()
 ```
 
-### Format String with {}
+## Format String with {}
 
 ```python
 "{}*{} = {}".format(x, y, x*y)
 ```
 
-### bytearray
+## bytearray
 With Python 3, it's not that useful but still:
 
 * [http://dabeaz.blogspot.com/2010/01/few-useful-bytearray-tricks.html](http://dabeaz.blogspot.com/2010/01/few-useful-bytearray-tricks.html)
 
-### Cyclic XOR on bytearrays
+## Cyclic XOR on bytearrays
 
 ```python
 import itertools
@@ -1144,7 +1154,7 @@ def xor_byte(payload, key):
                      itertools.izip(payload, itertools.cycle(key)))
 ```
 
-### Cyclic XOR on Strings
+## Cyclic XOR on Strings
 Same as above but string
 
 ```python
@@ -1159,7 +1169,7 @@ def xor_str(payload, key):
                    itertools.izip(payload, itertools.cycle(key)))
 ```
 
-### Python One-Liners in Command Line
+## Python One-Liners in Command Line
 You can run Python one-liners from command line using `python-c "command"`.
 Separate command with `;` and use `'` for strings. Remember that you need to
 `import` things too.
@@ -1179,9 +1189,9 @@ python -c "from Crypto.Cipher import AES; aes = AES.new(KEY, AES.MODE_ECB); prin
 
 ------
 
-## Java
+# Java
 
-### Enable Log4j for a Java App
+## Enable Log4j for a Java App
 This usually happens when I am testing a Java app and it uses `log4j` but
 logging is not enabled.
 
@@ -1223,9 +1233,9 @@ Run in the console `getAllAngularRootElements()[0].attributes["ng-version"];`.
 
 ------
 
-## Misc
+# Misc
 
-### Download Youtube Videos with Subtitles with youtube-dl
+## Download Youtube Videos with Subtitles with youtube-dl
 I love Wuxia (Chinese martial arts if I am not mistaken) series and movies. The
 following [youtube-dl](https://github.com/ytdl-org/youtube-dl) command will
 download the 56 episode HQ quality Chinese TV series called `Xiao Ao Jiang Hu`
@@ -1249,7 +1259,7 @@ It's also possible to download binaries from https://github.com/ytdl-org/youtube
 Sometimes, you need to pass `--no-check-certificate` to bypass certificate
 errors.
 
-### Download Different Qualities with youtube-dl
+## Download Different Qualities with youtube-dl
 `youtube-dl -F https://www.youtube.com/watch?v=xKYIde5jh_8` will show use a list
 of resolutions. The first column will be the `format code` which is a number.
 
@@ -1270,7 +1280,7 @@ Then, we can download that format code (or best):
 * 247: `youtube-dl -f 247 https://www.youtube.com/watch?v=xKYIde5jh_8`
 * 22 or best: `youtube-dl -f best https://www.youtube.com/watch?v=xKYIde5jh_8`
 
-### Print Envelopes with Brother printers and LibreOffice
+## Print Envelopes with Brother printers and LibreOffice
 I gave away the DW2280 printer when I moved to Canada but I am keeping the
 instructions just in case. Before printing, get to printer physically and use
 the following instructions:
@@ -1341,10 +1351,10 @@ Now open LibreOffice and use these instructions:
 10. Press the `Insert` button.
 11. Save the document and print. Note the envelope orientation above.
 
-### Tab Size 4 in the GitHub Web Interface
+## Tab Size 4 in the GitHub Web Interface
 Add `?ts=4` to end of the file URL.
 
-### ffmpeg
+## ffmpeg
 To split a file with `ffmpeg`. Let's say we want to grab the first 200 seconds
 of a file starting from second 100.
 
@@ -1364,7 +1374,7 @@ I still need to experiment with different codecs to figure out which one is best
 but this method reduces the file size dramatically without a noticeable change
 in quality.
 
-### Wrap Long Lines in Page Source in Firefox
+## Wrap Long Lines in Page Source in Firefox
 Easier method: In the `View Source` page, right-click and select
 `Wrap Long Lines`, or:
 
@@ -1373,7 +1383,7 @@ Easier method: In the `View Source` page, right-click and select
 
 * Source: https://support.mozilla.org/en-US/questions/1208440
 
-### Wireshark Not Equal Filter
+## Wireshark Not Equal Filter
 
 * Right: `!tcp.port == 8080`
 * Wrong: `tcp.port != 8080`
