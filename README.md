@@ -5,7 +5,7 @@ It is generated using [Hugo][hugo] and the [Hugo-Octopress Theme][hugo-octopress
 I ported the [Octopress][octopress] classic theme to Hugo.
 
 [hugo]: https://gohugo.io/
-[hugo-octopress]: https://github./parsiya/hugo-octopress
+[hugo-octopress]: https://github.com/parsiya/hugo-octopress
 [octopress]: https://github.com/octopress/octopress
 
 ## Workflow
@@ -16,8 +16,8 @@ I ported the [Octopress][octopress] classic theme to Hugo.
    directory to take advantage of [page bundles][page-bundles].
   1. `ctrl+shift+b` in VS Code starts a task that runs the Hugo watch server and
      opens it in a browser. See [.vscode/tasks.json](.vscode/tasks.json).
-3. Push to Github.
-4. Github action takes over and builds the site and deploys it to GitHub pages.
+3. Push to GitHub.
+4. GitHub action takes over and builds the site and deploys it to GitHub pages.
     * See the "Deploying" section below for more information.
 5. ~~[s3deploy][s3deploy] uploads the results to AWS.~~
 6. ???
@@ -29,7 +29,7 @@ I ported the [Octopress][octopress] classic theme to Hugo.
 ## Hosting
 The website is hosted in an AWS S3 bucket. CloudFront provides CDN and TLS (and
 certificate). GitHub pages are also popular (and free). See my blog post
-[Automagically Deploying Websites with Custom Domains to Github Pages][gh-pages].
+[Automagically Deploying Websites with Custom Domains to GitHub Pages][gh-pages].
 
 [gh-pages]: https://parsiya.net/blog/2021-02-17-automagically-deploying-websites-with-custom-domains-to-github-pages/
 
