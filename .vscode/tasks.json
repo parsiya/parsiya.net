@@ -13,12 +13,7 @@
             // opens http://localhost:1313 in the system browser to preview the site.
             "label": "open-browser-1313",
             "type": "shell",
-            "command": "/c start http://localhost:1313", // Windows only thing.
-            "options": {
-                "shell": {
-                    "executable": "cmd.exe", // My VS Code's default shell is wsl so I have to change the shell to cmd.exe here.
-                }
-            }
+            "command": "explorer.exe http://localhost:1313", // Windows only thing.
         },
         {
             "label": "preview-blog",

@@ -1019,19 +1019,6 @@ iptables -t nat -A POSTROUTING -p tcp --dport 443 -j MASQUERADE
 
 [invisible-proxy]: https://portswigger.net/burp/documentation/desktop/tools/proxy/options/invisible
 
-## Regex to Search for URLs in Burp Responses
-Not the best regex but does the job:
-
-* `http([^"])*\.([^"])+`
-
-Better but more expensive regex:
-
-```
-/(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)
-    (?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*
-    (?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])
-```
-
 ------
 
 # Linux
@@ -1389,3 +1376,18 @@ Easier method: In the `View Source` page, right-click and select
 * Wrong: `tcp.port != 8080`
 
 Source: https://thetechl33t.com/2015/06/01/wireshark-not-equal-to-filter/
+
+# Regex
+
+## Regex to Search for URLs in Burp Responses
+Not the best regex but does the job:
+
+* `http([^"])*\.([^"])+`
+
+Better but more expensive regex:
+
+```
+/(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)
+    (?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*
+    (?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])
+```
