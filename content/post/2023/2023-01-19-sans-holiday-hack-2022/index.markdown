@@ -4,6 +4,7 @@ date: 2023-01-19T12:29:17-08:00
 draft: false
 toc: true
 comments: true
+url: "/blog/sans-holiday-hack-2022/"
 categories:
 - Writeup
 - Holiday Hack
