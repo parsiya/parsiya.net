@@ -532,8 +532,8 @@ of the same distro:
 wsl --import NewDebian C:/path/to/newdebian/ C:/path/to/debian.tar
 ```
 
-Note: If you import a distro like this, the `ext4.vhdx` file be located inside
-`newdebian` and will not be in
+Note: If you import a distro like this, the `ext4.vhdx` file will be in
+`C:/path/to/newdebian/` and not in
 `%LocalAppData%/packages/{full-distro-name}/LocalState`.
 
 ## Hugo Server doesn't see File Notifications Events in WSL2
