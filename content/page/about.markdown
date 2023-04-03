@@ -7,8 +7,16 @@ comments: false
 type: about
 ---
 
-I am Parsia, I try to do application Security Engineer. I am currently taking a
-sabbatical.
+I am Parsia, I try to do application security most days. I am currently taking a
+sabbatical and doing some contract work.
+
+**2022-present**: Sabbatical. Dev contract work for a static analysis tool. Some
+security research, mainly static analysis and Rust. See
+[Personal Semgrep Server in Rust][sem-server] and
+[semgrep-rs: Rust crate to interact with Semgrep][semgrep-rs].
+
+[sem-server]: https://github.com/parsiya/personal-semgrep-server
+[semgrep-rs]: https://github.com/parsiya/semgrep-rs
 
 **2019-2022**: Senior Security Engineer at [Electronic Arts][ea-security]. I
 worked on many internal and external product (mostly videogames) and services.
