@@ -1,4 +1,4 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Decoding Large Base64 Files with Go</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.110.0"><meta name=twitter:card content="summary"><meta name=twitter:title content="Decoding Large Base64 Files with Go"><meta name=twitter:description content="I am working on this challenge and it has a large base64 file. Each line has 2 characters and it has 150+ million lines.
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Decoding Large Base64 Files with Go</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.111.3"><meta name=twitter:card content="summary"><meta name=twitter:title content="Decoding Large Base64 Files with Go"><meta name=twitter:description content="I am working on this challenge and it has a large base64 file. Each line has 2 characters and it has 150+ million lines.
 Luckily we can use the Base64 stream decoder. It reads from an io.Reader and returns one that can be copied into an io.Writer. It also takes care of the new lines.
 Sample code is at:
 
@@ -8,51 +8,51 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 <input type=hidden name=q value=site:https://parsiya.net/></fieldset></form></nav><div id=main><div id=content><div><article class=hentry role=article><header><p class=meta>Jan 19, 2018
 - 3 minute read
 - <a href=https://parsiya.net/blog/2018-01-19-decoding-large-base64-files-with-go/#disqus_thread>Comments</a>
-- <a class=label href=https://parsiya.net/categories/go/>Go</a></p><h1 class=entry-title>Decoding Large Base64 Files with Go</h1></header><div class=entry-content><p>I am working on this challenge and it has a large base64 file. Each line has 2 characters and it has 150+ million lines.</p><p>Luckily we can use the <a href=https://golang.org/pkg/encoding/base64/#NewDecoder target=_blank rel="noreferrer noopener">Base64 stream decoder</a>. It reads from an <code>io.Reader</code> and returns one that can be copied into an <code>io.Writer</code>. It also takes care of the new lines.</p><p>Sample code is at:</p><ul><li><a href=https://github.com/parsiya/Go-Security/blob/master/base64-stream-decoder/b64-stream-decoder.go target=_blank rel="noreferrer noopener">https://github.com/parsiya/Go-Security/blob/master/base64-stream-decoder/b64-stream-decoder.go</a>.</li></ul><p>This code will accept a base64 encoded file (whitespace does not matter) with <code>-file/--file</code> and store the decoded bytes in <code>filename-out</code>:</p><figure class=code><figcaption><span>Base64 stream decoder</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">28
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">29
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">30
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">31
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">32
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">33
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">34
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">35
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">36
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">37
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">38
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">39
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">40
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">41
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">42
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">43
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">44
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">45
+- <a class=label href=https://parsiya.net/categories/go/>Go</a></p><h1 class=entry-title>Decoding Large Base64 Files with Go</h1></header><div class=entry-content><p>I am working on this challenge and it has a large base64 file. Each line has 2 characters and it has 150+ million lines.</p><p>Luckily we can use the <a href=https://golang.org/pkg/encoding/base64/#NewDecoder target=_blank rel="noreferrer noopener">Base64 stream decoder</a>. It reads from an <code>io.Reader</code> and returns one that can be copied into an <code>io.Writer</code>. It also takes care of the new lines.</p><p>Sample code is at:</p><ul><li><a href=https://github.com/parsiya/Go-Security/blob/master/base64-stream-decoder/b64-stream-decoder.go target=_blank rel="noreferrer noopener">https://github.com/parsiya/Go-Security/blob/master/base64-stream-decoder/b64-stream-decoder.go</a>.</li></ul><p>This code will accept a base64 encoded file (whitespace does not matter) with <code>-file/--file</code> and store the decoded bytes in <code>filename-out</code>:</p><figure class=code><figcaption><span>Base64 stream decoder</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">31
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">32
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">33
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">34
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">35
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">36
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">37
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">38
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">39
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">40
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">41
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">42
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">43
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">44
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">45
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Example to demonstrate base64 stream decoder on large files.
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>package</span> main
 </span></span><span style=display:flex><span>

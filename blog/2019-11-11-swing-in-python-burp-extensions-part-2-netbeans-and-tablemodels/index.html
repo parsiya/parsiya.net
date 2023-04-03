@@ -1,4 +1,4 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.110.0"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2019-11-11-swing-in-python-burp-extensions-part-2-netbeans-and-tablemodels/00-swjfo-bd1.jpg"><meta name=twitter:title content="Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels"><meta name=twitter:description content="In part 1 we discussed handcrafting Swing GUI items
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.111.3"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2019-11-11-swing-in-python-burp-extensions-part-2-netbeans-and-tablemodels/00-swjfo-bd1.jpg"><meta name=twitter:title content="Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels"><meta name=twitter:description content="In part 1 we discussed handcrafting Swing GUI items
 in a form. In this part, we will design a GUI using
 NetBeans and then convert it to Jython. Then use it in
 a Burp tab. Next, we will create a custom table model based on objects to handle
@@ -40,12 +40,12 @@ we understand some of these words. This is good, because if something goes
 wrong, we can troubleshoot.</p><p>The conversion process was simple:</p><ol><li>Remove <code>new </code>.</li><li>Remove <code>;</code>.</li><li>Search for <code>javax.swing.</code> and import everything.</li><li>Then remove <code>javax.swing.</code>.</li><li>Add everything to the constructor of a new class.</li></ol><p>The result is in <code>02-JFrame</code>. If we add <code>extension.py</code> to Burp, we will get a
 detached JFrame.</p><span class=caption-wrapper><img class=caption src=03-frame.png title=JFrame alt=JFrame>
 <span class=caption-text>JFrame</span></span><p>Inside <code>getUiComponent</code> we create an instance of the frame, display it and
-return it.</p><figure class=code><figcaption><span>02-JFrame/extension.py/getUiComponent</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
+return it.</p><figure class=code><figcaption><span>02-JFrame/extension.py/getUiComponent</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> NBFrame <span style=color:#719e07>import</span> NBFrame
 </span></span><span style=display:flex><span>    frm <span style=color:#719e07>=</span> NBFrame()
@@ -106,11 +106,11 @@ is in <code>03-NBPanel</code> directory:</p><div class=highlight><pre tabindex=0
 </span></span><span style=display:flex><span><span style=color:#268bd2>self</span><span style=color:#719e07>.</span>panel <span style=color:#719e07>=</span> JPanel()
 </span></span><span style=display:flex><span>layout <span style=color:#719e07>=</span> GroupLayout(<span style=color:#268bd2>self</span><span style=color:#719e07>.</span>panel)
 </span></span><span style=display:flex><span><span style=color:#268bd2>self</span><span style=color:#719e07>.</span>panel<span style=color:#719e07>.</span>setLayout(layout)
-</span></span></code></pre></div><p>Inside our extension, we create an object and then return the panel.</p><figure class=code><figcaption><span>03-NBPanel\extension.py\getUiComponent</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+</span></span></code></pre></div><p>Inside our extension, we create an object and then return the panel.</p><figure class=code><figcaption><span>03-NBPanel\extension.py\getUiComponent</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
 </span></span><span style=display:flex><span>    <span style=color:#586e75># GUI happens here</span>
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> NBPanel <span style=color:#719e07>import</span> NBPanel
@@ -120,29 +120,29 @@ is in <code>03-NBPanel</code> directory:</p><div class=highlight><pre tabindex=0
 <a class=header-link href=#customizing-the-table><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>The table is editable. This is useful but not here. I want
 to edit the rows in a different pop-up because data will have more rows than
 displayed in the table.</p><p>We need to create our own <a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/table/TableModel.html target=_blank rel="noreferrer noopener">TableModel</a> named <code>IssueTable</code>. The
-source resides in <code>04-CustomTableModel</code>:</p><figure class=code><figcaption><span>04-CustomTableModel/IssueTable.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+source resides in <code>04-CustomTableModel</code>:</p><figure class=code><figcaption><span>04-CustomTableModel/IssueTable.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>class</span> <span style=color:#268bd2>IssueTableModel</span>(DefaultTableModel):
 </span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;&#34;&#34;Extends the DefaultTableModel to make it readonly (among other
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>    things).&#34;&#34;&#34;</span>
@@ -247,26 +247,26 @@ looks like too much work. Instead, I choose the simple way of passing a "global"
 panel object between modules. This is not pythonic but does the job.</p><p>The panel class has been renamed to <code>MainPanel</code> and resides in <code>MainPanel.py</code>
 (doh). At the end of the file, there is an instance of <code>MainPanel</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#586e75># create &#34;global&#34; panel</span>
 </span></span><span style=display:flex><span>mainPanel <span style=color:#719e07>=</span> MainPanel()
-</span></span></code></pre></div><p>This is then loaded in <code>extension.py</code> and used.</p><figure class=code><figcaption><span>05-UpdatePanel/extension.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span></span></code></pre></div><p>This is then loaded in <code>extension.py</code> and used.</p><figure class=code><figcaption><span>05-UpdatePanel/extension.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
 </span></span><span style=display:flex><span>    <span style=color:#586e75># GUI happens here</span>
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> MainPanel <span style=color:#719e07>import</span> mainPanel
-</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> mainPanel<span style=color:#719e07>.</span>panel</span></span></code></pre></td></tr></table></div></div></div></figure><p>Inside <code>IssueTable.py</code> we do the same and use <code>mainPanel</code> in <code>mouseClicked</code>.</p><figure class=code><figcaption><span>05-UpdatePanel/IssueTable.py/mouseClicked</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> mainPanel<span style=color:#719e07>.</span>panel</span></span></code></pre></td></tr></table></div></div></div></figure><p>Inside <code>IssueTable.py</code> we do the same and use <code>mainPanel</code> in <code>mouseClicked</code>.</p><figure class=code><figcaption><span>05-UpdatePanel/IssueTable.py/mouseClicked</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>mouseClicked</span>(<span style=color:#268bd2>self</span>, event):
 </span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> event<span style=color:#719e07>.</span>getClickCount() <span style=color:#719e07>==</span> <span style=color:#2aa198>1</span>:
 </span></span><span style=display:flex><span>        <span style=color:#586e75># print &#34;single-click. clicked index:&#34;, self.getClickedIndex(event)</span>
@@ -291,11 +291,11 @@ the 3rd item (now issue3), the panel will be updated with issue2.</p><span class
 necessarily the same as that of the underlying TableModel. For example, the
 selection is always in terms of JTable so that when using RowSorter you will
 need to convert using convertRowIndexToView or convertRowIndexToModel.</p></blockquote><p>We need to pass the row from the table (<code>table.getSelectedRow()</code>) to
-<a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JTable.html#convertRowIndexToModel-int- target=_blank rel="noreferrer noopener">table.convertRowIndexToModel</a>.</p><figure class=code><figcaption><span>Fixed getClickedRow</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+<a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JTable.html#convertRowIndexToModel-int- target=_blank rel="noreferrer noopener">table.convertRowIndexToModel</a>.</p><figure class=code><figcaption><span>Fixed getClickedRow</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getClickedRow</span>(<span style=color:#268bd2>self</span>, event):
 </span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;&#34;&#34;Returns the complete clicked row.&#34;&#34;&#34;</span>
 </span></span><span style=display:flex><span>    tbl <span style=color:#719e07>=</span> event<span style=color:#719e07>.</span>getSource()
@@ -322,24 +322,24 @@ created, so after adding the table I needed to do something else (maybe
 redraw?). I decided I need to change the structure a bit. Hence, instead of
 creating the <code>burpPanel</code> inside <code>MainPanel.py</code>, I would create the variable
 and then create and assign it in <code>extension.py</code>. I also decided to change the
-name of <code>mainPanel</code> to <code>burpPanel</code> (less confusing).</p><figure class=code><figcaption><span>Modified code for 06-UpdateTable</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+name of <code>mainPanel</code> to <code>burpPanel</code> (less confusing).</p><figure class=code><figcaption><span>Modified code for 06-UpdateTable</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#586e75># MainPanel.py</span>
 </span></span><span style=display:flex><span><span style=color:#586e75># create &#34;global&#34; panel</span>
 </span></span><span style=display:flex><span><span style=color:#586e75># mainPanel = MainPanel()</span>
@@ -358,13 +358,13 @@ name of <code>mainPanel</code> to <code>burpPanel</code> (less confusing).</p><f
 </span></span><span style=display:flex><span>    <span style=color:#719e07>import</span> MainPanel
 </span></span><span style=display:flex><span>    MainPanel<span style=color:#719e07>.</span>burpPanel <span style=color:#719e07>=</span> MainPanel<span style=color:#719e07>.</span>MainPanel(table)
 </span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> MainPanel<span style=color:#719e07>.</span>burpPanel<span style=color:#719e07>.</span>panel</span></span></code></pre></td></tr></table></div></div></div></figure><p>The constructor for <code>MainPanel</code> has also been modified to add an optional table
-parameter. We are using this new table parameter to pass the IssueTable.</p><figure class=code><figcaption><span>Modified constructor</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">7
+parameter. We are using this new table parameter to pass the IssueTable.</p><figure class=code><figcaption><span>Modified constructor</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">7
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>class</span> <span style=color:#268bd2>MainPanel</span>():
 </span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;&#34;&#34;Represents the converted frame from NetBeans.&#34;&#34;&#34;</span>
 </span></span><span style=display:flex><span>
@@ -372,12 +372,12 @@ parameter. We are using this new table parameter to pass the IssueTable.</p><fig
 </span></span><span style=display:flex><span>    <span style=color:#719e07>def</span> __init__(<span style=color:#268bd2>self</span>, table<span style=color:#719e07>=</span><span style=color:#cb4b16>None</span>):
 </span></span><span style=display:flex><span>        <span style=color:#586e75># removed</span>
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>jTable1 <span style=color:#719e07>=</span> table</span></span></code></pre></td></tr></table></div></div></div></figure><p>Let's also experiment with adding data to the table in real-time after the form
-has been created. The <code>IssueTable</code> class gets a new method:</p><figure class=code><figcaption><span>06-UpdateTable/IssueTable.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
+has been created. The <code>IssueTable</code> class gets a new method:</p><figure class=code><figcaption><span>06-UpdateTable/IssueTable.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>class</span> <span style=color:#268bd2>IssueTable</span>(JTable):
 </span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;&#34;&#34;Issue table.&#34;&#34;&#34;</span>
 </span></span><span style=display:flex><span>
@@ -385,22 +385,22 @@ has been created. The <code>IssueTable</code> class gets a new method:</p><figur
 </span></span><span style=display:flex><span>        <span style=color:#2aa198>&#34;&#34;&#34;Add a new row to the tablemodel.&#34;&#34;&#34;</span>
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>getModel()<span style=color:#719e07>.</span>addRow(data)</span></span></code></pre></td></tr></table></div></div></div></figure><p>Note that we are not checking the data for the correct length. Later, we
 need to create objects to pass to the table to display and add. After creating
-the table, we add a new row:</p><figure class=code><figcaption><span>06-UpdateTable/extension.py/getUiComponent</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+the table, we add a new row:</p><figure class=code><figcaption><span>06-UpdateTable/extension.py/getUiComponent</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
 </span></span><span style=display:flex><span>    <span style=color:#586e75># GUI happens here</span>
 </span></span><span style=display:flex><span>    tableData <span style=color:#719e07>=</span> [
@@ -419,15 +419,15 @@ the table, we add a new row:</p><figure class=code><figcaption><span>06-UpdateTa
 </span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> MainPanel<span style=color:#719e07>.</span>burpPanel<span style=color:#719e07>.</span>panel</span></span></code></pre></td></tr></table></div></div></div></figure><p>It works but to be sure, we want to add another row after we interact with the
 tab in Burp. To do so, I am going to modify the double click section in the
 <code>mouseClicked</code> method in <code>IssueTableMouseListener</code>. When we double-click any
-cell, a new row should be added to the table.</p><figure class=code><figcaption><span>06-UpdateTable/IssueTable.py/IssueTableMouseListener</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">9
+cell, a new row should be added to the table.</p><figure class=code><figcaption><span>06-UpdateTable/IssueTable.py/IssueTableMouseListener</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">9
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#586e75># event.getClickCount() returns the number of clicks.</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>mouseClicked</span>(<span style=color:#268bd2>self</span>, event):
 </span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> event<span style=color:#719e07>.</span>getClickCount() <span style=color:#719e07>==</span> <span style=color:#2aa198>1</span>:
@@ -442,23 +442,23 @@ cell, a new row should be added to the table.</p><figure class=code><figcaption>
 object and used it in the table.</p><h2 id=issue-object>Issue Object
 <a class=header-link href=#issue-object><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>We now have a new object called <code>Issue</code> (I would have preferred to call it a
 finding but Burp calls them issues and do we). Issue has a bunch of fields and
-not all fields are shown in the table.</p><figure class=code><figcaption><span>07-ObjectTableModel/Issues.py class</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+not all fields are shown in the table.</p><figure class=code><figcaption><span>07-ObjectTableModel/Issues.py class</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>class</span> <span style=color:#268bd2>Issue</span>():
 </span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;&#34;&#34;Issue represents one finding.&#34;&#34;&#34;</span>
 </span></span><span style=display:flex><span>    <span style=color:#586e75># index of the finding in the table.</span>
@@ -477,25 +477,25 @@ not all fields are shown in the table.</p><figure class=code><figcaption><span>0
 </span></span><span style=display:flex><span>    request <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;&#34;</span>  <span style=color:#586e75># type: str</span>
 </span></span><span style=display:flex><span>    response <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;&#34;</span>  <span style=color:#586e75># type: str</span></span></span></code></pre></td></tr></table></div></div></div></figure><p>You can ignore the type hints but they are useful when coding in IntelliJ IDEA
 (VS Code does not support Jython).</p><p>Requests and responses are generally byte arrays so we will store them in
-base64. Hence, we will have these extra methods to do it.</p><figure class=code><figcaption><span>07-ObjectTableModel/Issues.py request/response methods</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+base64. Hence, we will have these extra methods to do it.</p><figure class=code><figcaption><span>07-ObjectTableModel/Issues.py request/response methods</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getRequest</span>(<span style=color:#268bd2>self</span>):
 </span></span><span style=display:flex><span>    <span style=color:#586e75># type: () -&gt; bytearray</span>
 </span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;&#34;&#34;Base64 decode the request and return the results.&#34;&#34;&#34;</span>
@@ -514,18 +514,18 @@ base64. Hence, we will have these extra methods to do it.</p><figure class=code>
 </span></span><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>setResponse</span>(<span style=color:#268bd2>self</span>, resp):
 </span></span><span style=display:flex><span>    <span style=color:#586e75># type: (bytearray) -&gt; None</span>
 </span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;&#34;&#34;Base64 encode the response and store it.&#34;&#34;&#34;</span>
-</span></span><span style=display:flex><span>    <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>response <span style=color:#719e07>=</span> b64encode(resp)</span></span></code></pre></td></tr></table></div></div></div></figure><p>Which converts our constructor to:</p><figure class=code><figcaption><span>07-ObjectTableModel/Issues.py constructor</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>response <span style=color:#719e07>=</span> b64encode(resp)</span></span></code></pre></td></tr></table></div></div></div></figure><p>Which converts our constructor to:</p><figure class=code><figcaption><span>07-ObjectTableModel/Issues.py constructor</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> __init__(<span style=color:#268bd2>self</span>, index<span style=color:#719e07>=</span><span style=color:#cb4b16>None</span>, name<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;&#34;</span>, severity<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;&#34;</span>, host<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;&#34;</span>, path<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;&#34;</span>,
 </span></span><span style=display:flex><span>                description<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;&#34;</span>, remediation<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;&#34;</span>, request<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;&#34;</span>, response<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;&#34;</span>):
 </span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;&#34;&#34;Create the issue.&#34;&#34;&#34;</span>
@@ -544,17 +544,17 @@ base64. Hence, we will have these extra methods to do it.</p><figure class=code>
 in part 1).</p><p>IMessageEditors cannot be constructed normally. We have to use
 <a href=https://portswigger.net/burp/extender/api/burp/IBurpExtenderCallbacks.html#createMessageEditor%28burp.IMessageEditorController,%20boolean%29 target=_blank rel="noreferrer noopener">IBurpExtenderCallbacks.htmlcreateMessageEditor</a> to get
 an instance. As a result, we need to pass an instance of callbacks to MainPanel
-via the constructor.</p><figure class=code><figcaption><span>07-ObjectTableModel/MainPanel.py constructor</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+via the constructor.</p><figure class=code><figcaption><span>07-ObjectTableModel/MainPanel.py constructor</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>class</span> <span style=color:#268bd2>MainPanel</span>():
 </span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;&#34;&#34;Represents the converted frame from NetBeans.&#34;&#34;&#34;</span>
 </span></span><span style=display:flex><span>
@@ -580,25 +580,25 @@ is now extending the <a href=https://docs.oracle.com/javase/8/docs/api/javax/swi
 at the description, we only <em>need</em> to implement three methods. I followed this
 guide from 2008 and <code>CustomLogger</code> does the same:</p><ul><li><a href=https://tips4java.wordpress.com/2008/11/21/row-table-model/ target=_blank rel="noreferrer noopener">https://tips4java.wordpress.com/2008/11/21/row-table-model/</a></li></ul><p>In both examples, there is an underlying data structure which is an array of
 objects. The custom tablemodel manages adding and removing items. The
-table just displays them.</p><figure class=code><figcaption><span>07-ObjectTableModel/IssueTable.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+table just displays them.</p><figure class=code><figcaption><span>07-ObjectTableModel/IssueTable.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>class</span> <span style=color:#268bd2>IssueTableModel</span>(AbstractTableModel):
 </span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;&#34;&#34;Represents the extension&#39;s custom issue table. Extends the
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>    AbstractTableModel to make it readonly.&#34;&#34;&#34;</span>
@@ -619,34 +619,34 @@ table just displays them.</p><figure class=code><figcaption><span>07-ObjectTable
 </span></span><span style=display:flex><span>        <span style=color:#2aa198>&#34;&#34;&#34;Create an issue table model and populate it (if applicable).&#34;&#34;&#34;</span>
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>self</span><span style=color:#719e07>.</span>issues <span style=color:#719e07>=</span> issues</span></span></code></pre></td></tr></table></div></div></div></figure><p>We can see the usual column names/classes. Then we have the <code>issues</code> list which
 will hold all of them and is populated in the constructor.</p><p>Next comes the three methods we need to implement after inheriting from
-<code>AbstractTableModel</code>.</p><figure class=code><figcaption><span>07-ObjectTableModel/IssueTable.py implemented methods</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">28
+<code>AbstractTableModel</code>.</p><figure class=code><figcaption><span>07-ObjectTableModel/IssueTable.py implemented methods</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">28
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getColumnCount</span>(<span style=color:#268bd2>self</span>):
 </span></span><span style=display:flex><span>    <span style=color:#586e75># type: () -&gt; int</span>
 </span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;&#34;&#34;Returns the number of columns in the table model.&#34;&#34;&#34;</span>
@@ -680,24 +680,24 @@ transformation that we want.</p><p>I added some extra utility methods like <code
 method named <code>setValueAt</code> which is not needed here because our table is
 read-only.</p><h2 id=issuetablemouselistener>IssueTableMouseListener
 <a class=header-link href=#issuetablemouselistener><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>The MouseListener is the same as before with some minor modifications mostly in
-the <code>mouseClicked</code> method.</p><figure class=code><figcaption><span>07-ObjectTableModel/IssueTable.py mouseClicked</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+the <code>mouseClicked</code> method.</p><figure class=code><figcaption><span>07-ObjectTableModel/IssueTable.py mouseClicked</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>mouseClicked</span>(<span style=color:#268bd2>self</span>, event):
 </span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> event<span style=color:#719e07>.</span>getClickCount() <span style=color:#719e07>==</span> <span style=color:#2aa198>1</span>:
 </span></span><span style=display:flex><span>        <span style=color:#586e75># print &#34;single-click. clicked index:&#34;, self.getClickedIndex(event)</span>
@@ -718,21 +718,21 @@ the <code>mouseClicked</code> method.</p><figure class=code><figcaption><span>07
 </span></span><span style=display:flex><span>        burpPanel<span style=color:#719e07>.</span>panelResponse<span style=color:#719e07>.</span>setMessage(rowData<span style=color:#719e07>.</span>getResponse(), <span style=color:#cb4b16>False</span>)</span></span></code></pre></td></tr></table></div></div></div></figure><p>After every mouse click, we want to display everything in the bottom panel. Note
 the difference in assignments to <code>panelRequest</code> and <code>panelResponse</code>. We are
 storing the requests in base64 inside the Issue object so we must use the helper
-methods (that handle the encoding/decoding) to get them.</p><p>Double-click creates a new issue and adds it to the table.</p><figure class=code><figcaption><span>07-ObjectTableModel/IssueTable.py mouseClicked</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+methods (that handle the encoding/decoding) to get them.</p><p>Double-click creates a new issue and adds it to the table.</p><figure class=code><figcaption><span>07-ObjectTableModel/IssueTable.py mouseClicked</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span>    <span style=color:#719e07>if</span> event<span style=color:#719e07>.</span>getClickCount() <span style=color:#719e07>==</span> <span style=color:#2aa198>2</span>:
 </span></span><span style=display:flex><span>        <span style=color:#586e75># open the dialog to edit</span>
 </span></span><span style=display:flex><span>        <span style=color:#586e75># print &#34;double-click. clicked index:&#34;, self.getClickedIndex(event)</span>

@@ -1,4 +1,4 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Swing in Python Burp Extensions - Part 1</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.110.0"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2019-11-04-swing-in-python-burp-extensions-part-1/11-jeditorpane.png"><meta name=twitter:title content="Swing in Python Burp Extensions - Part 1"><meta name=twitter:description content="TL;DR: What I learned from creating handcrafted GUIs for Python Burp
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Swing in Python Burp Extensions - Part 1</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.111.3"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2019-11-04-swing-in-python-burp-extensions-part-1/11-jeditorpane.png"><meta name=twitter:title content="Swing in Python Burp Extensions - Part 1"><meta name=twitter:description content="TL;DR: What I learned from creating handcrafted GUIs for Python Burp
 extensions using Swing. Code is at:
 
 https://github.com/parsiya/Parsia-Code/tree/master/jython-swing-1
@@ -24,22 +24,22 @@ else who wants to take the same path.</p><h1 id=prerequisites>Prerequisites
 <a class=header-link href=#prerequisites><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>This tutorial assumes you know:</p><ol><li>How to search.<ol><li>When in doubt, search for Java and Jython Swing tutorials.</li></ol></li><li>How to setup Jython in Burp.</li><li>How to use Jython classes.</li><li>How to program in Python.</li><li>How to setup <a href=https://github.com/securityMB/burp-exceptions target=_blank rel="noreferrer noopener">https://github.com/securityMB/burp-exceptions</a>.</li></ol><h1 id=jython-swing-experiments>Jython Swing Experiments
 <a class=header-link href=#jython-swing-experiments><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><h2 id=basic-tab>Basic Tab
 <a class=header-link href=#basic-tab><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>To add a tab to Burp, we need to extend and implement the
-<a href=https://portswigger.net/burp/extender/api/burp/ITab.html target=_blank rel="noreferrer noopener">ITab interface</a>.</p><figure class=code><figcaption><span>01-tab-skeleton.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+<a href=https://portswigger.net/burp/extender/api/burp/ITab.html target=_blank rel="noreferrer noopener">ITab interface</a>.</p><figure class=code><figcaption><span>01-tab-skeleton.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#586e75># implement ITab</span>
 </span></span><span style=display:flex><span><span style=color:#586e75># https://portswigger.net/burp/extender/api/burp/ITab.html</span>
 </span></span><span style=display:flex><span><span style=color:#586e75># two methods must be implemented.</span>
@@ -58,11 +58,11 @@ else who wants to take the same path.</p><h1 id=prerequisites>Prerequisites
 </span></span><span style=display:flex><span>    <span style=color:#586e75># GUI happens here</span></span></span></code></pre></td></tr></table></div></div></div></figure><ul><li><code>getTabCaption</code> just returns the name of the tab.</li><li><code>getUiComponent</code> returns the new tab.</li></ul><p>This extension will not work because <code>getUiComponent</code> is returning nothing and
 we get a <code>NullPointerException</code> error. Edit the skeleton then <code>ctrl+click</code> on
 the checkbox in front of the extension in Burp's extender tab to reload it.</p><p>We start by creating a JPanel. JPanel is a container and can use layout
-managers. We will use the <code>BorderLayout</code>.</p><ul><li>BorderLayout tutorial: <a href=https://docs.oracle.com/javase/tutorial/uiswing/layout/border.html target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/tutorial/uiswing/layout/border.html</a></li><li>A Visual Guide to Layout Managers: <a href=https://docs.oracle.com/javase/tutorial/uiswing/layout/visual.html target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/tutorial/uiswing/layout/visual.html</a></li></ul><figure class=code><figcaption><span>Empty tab</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+managers. We will use the <code>BorderLayout</code>.</p><ul><li>BorderLayout tutorial: <a href=https://docs.oracle.com/javase/tutorial/uiswing/layout/border.html target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/tutorial/uiswing/layout/border.html</a></li><li>A Visual Guide to Layout Managers: <a href=https://docs.oracle.com/javase/tutorial/uiswing/layout/visual.html target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/tutorial/uiswing/layout/visual.html</a></li></ul><figure class=code><figcaption><span>Empty tab</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> javax.swing <span style=color:#719e07>import</span> JPanel
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> java.awt <span style=color:#719e07>import</span> BorderLayout
@@ -71,22 +71,22 @@ managers. We will use the <code>BorderLayout</code>.</p><ul><li>BorderLayout tut
 <span class=caption-text>Empty tab</span></span><p>Using the BorderLayout, we can assign positions to components in the panel.
 These positions are:</p><ul><li><code>PAGE_START</code> - <code>PAGE_END</code> - <code>LINE_START</code> - <code>LINE_END</code> - <code>CENTER</code></li></ul><h2 id=jbutton>JButton
 <a class=header-link href=#jbutton><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Adding some buttons that do nothing to show off different positions. A button is
-made from the class <code>JButton</code>:</p><ul><li><a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JButton.html target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/8/docs/api/javax/swing/JButton.html</a></li></ul><figure class=code><figcaption><span>Three buttons</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+made from the class <code>JButton</code>:</p><ul><li><a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JButton.html target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/8/docs/api/javax/swing/JButton.html</a></li></ul><figure class=code><figcaption><span>Three buttons</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> javax.swing <span style=color:#719e07>import</span> JPanel, JButton
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> java.awt <span style=color:#719e07>import</span> BorderLayout
@@ -106,25 +106,25 @@ made from the class <code>JButton</code>:</p><ul><li><a href=https://docs.oracle
 <span class=caption-text>Now we have three buttons</span></span><p>We used the second constructor for <code>JButton</code> to set the label. We can also set
 the fields here. The inherited <a href=https://docs.oracle.com/javase/8/docs/api/java/awt/event/ActionListener.html target=_blank rel="noreferrer noopener">actionListener field</a> allows
 us to do something when the button is clicked. To implement this interface we
-need to create and assign the <code>actionPerformed(ActionEvent e)</code> method.</p><p>See this tutorial at <a href=https://jython.readthedocs.io/en/latest/chapter16/ target=_blank rel="noreferrer noopener">https://jython.readthedocs.io/en/latest/chapter16/</a>.</p><figure class=code><figcaption><span>Click button action</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+need to create and assign the <code>actionPerformed(ActionEvent e)</code> method.</p><p>See this tutorial at <a href=https://jython.readthedocs.io/en/latest/chapter16/ target=_blank rel="noreferrer noopener">https://jython.readthedocs.io/en/latest/chapter16/</a>.</p><figure class=code><figcaption><span>Click button action</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> javax.swing <span style=color:#719e07>import</span> JPanel, JButton
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> java.awt <span style=color:#719e07>import</span> BorderLayout
@@ -151,24 +151,24 @@ an object to <code>getUiComponent</code>.</p><p>See the Twitter client example i
 better.</p><h2 id=jsplitpane>JSplitPane
 <a class=header-link href=#jsplitpane><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>I want to create something like the screenshot in this blog post from 2012 in a
 framework for creating Python Burp extensions:</p><ul><li><a href=http://burpextensions.blogspot.com/2012/08/adding-gui-features-to-extension.html target=_blank rel="noreferrer noopener">http://burpextensions.blogspot.com/2012/08/adding-gui-features-to-extension.html</a></li></ul><span class=caption-wrapper><img class=caption src=04.png title="Reference screenshot" alt="Reference screenshot">
-<span class=caption-text>Reference screenshot</span></span><p>To create the left-right split (and also the top-down), we can use a <code>JSplitPane</code>.</p><ul><li><a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JSplitPane.html target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/8/docs/api/javax/swing/JSplitPane.html</a></li></ul><figure class=code><figcaption><span>Basic JSplitPane</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+<span class=caption-text>Reference screenshot</span></span><p>To create the left-right split (and also the top-down), we can use a <code>JSplitPane</code>.</p><ul><li><a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JSplitPane.html target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/8/docs/api/javax/swing/JSplitPane.html</a></li></ul><figure class=code><figcaption><span>Basic JSplitPane</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> javax.swing <span style=color:#719e07>import</span> JPanel, JSplitPane, JLabel
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> java.awt <span style=color:#719e07>import</span> BorderLayout
@@ -198,26 +198,26 @@ work before the component is painted. If you set it, it has not effect.</p><h2 i
 a <code>JScrollPane</code> to it.</p><ul><li><a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JScrollPane.html target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/8/docs/api/javax/swing/JScrollPane.html</a></li></ul><p>The documentation (the link above) has a lot of text about a viewport and looks
 complicated. But we just want to display a list of text in it. First, we add the
 items to a <a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JList.html target=_blank rel="noreferrer noopener">JList</a>. Then we pass it to the <code>JScrollPane's</code>
-constructor: <code>JScrollPane(Component view)</code>.</p><figure class=code><figcaption><span>03-splitpane.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+constructor: <code>JScrollPane(Component view)</code>.</p><figure class=code><figcaption><span>03-splitpane.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> javax.swing <span style=color:#719e07>import</span> (JPanel, JSplitPane, JLabel, JList,
 </span></span><span style=display:flex><span>        JScrollPane, ListSelectionModel)
@@ -242,31 +242,31 @@ constructor: <code>JScrollPane(Component view)</code>.</p><figure class=code><fi
 add the selected item to the label in the right pane. We can do it by assigning
 a method to the <code>valueChanged</code> method for the JList.</p><p>In the <a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JList.html target=_blank rel="noreferrer noopener">JList docs</a> we read:</p><blockquote><p>The preferred way to listen for changes in list selection is to add
 ListSelectionListeners directly to the JList. JList then takes care of
-listening to the selection model and notifying your listeners of change.</p></blockquote><p>See this tutorial for more info:</p><ul><li><a href=https://docs.oracle.com/javase/tutorial/uiswing/events/listselectionlistener.html target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/tutorial/uiswing/events/listselectionlistener.html</a></li></ul><p>The <code>ListSelectionListener</code> has one method:</p><ul><li><a href=https://docs.oracle.com/javase/tutorial/uiswing/events/listselectionlistener.html#api target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/tutorial/uiswing/events/listselectionlistener.html#api</a></li><li><code>valueChanged(ListSelectionEvent): Called in response to selection changes</code></li></ul><p>Similar to the button action, we define an anonymous method and assign it.</p><figure class=code><figcaption><span>04-scrollpane-list.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
+listening to the selection model and notifying your listeners of change.</p></blockquote><p>See this tutorial for more info:</p><ul><li><a href=https://docs.oracle.com/javase/tutorial/uiswing/events/listselectionlistener.html target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/tutorial/uiswing/events/listselectionlistener.html</a></li></ul><p>The <code>ListSelectionListener</code> has one method:</p><ul><li><a href=https://docs.oracle.com/javase/tutorial/uiswing/events/listselectionlistener.html#api target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/tutorial/uiswing/events/listselectionlistener.html#api</a></li><li><code>valueChanged(ListSelectionEvent): Called in response to selection changes</code></li></ul><p>Similar to the button action, we define an anonymous method and assign it.</p><figure class=code><figcaption><span>04-scrollpane-list.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> javax.swing <span style=color:#719e07>import</span> (JPanel, JSplitPane, JLabel, JList,
 </span></span><span style=display:flex><span>        JScrollPane, ListSelectionModel)
@@ -297,13 +297,13 @@ modifying the label. It demonstrates the following gotcha.</p><span class=captio
 is called twice. I found the answer on <a href=https://stackoverflow.com/a/25448679 target=_blank rel="noreferrer noopener">stackoverflow</a>.
 Long story short, when listening to the events, we need to check if
 <code>valueIsAdjusting</code> is set to <code>False</code>. Java sets this to <code>True</code> when we are in a
-series of changes that are considered part of a single change. More info:</p><ul><li><a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/ListSelectionModel.html#setValueIsAdjusting-boolean- target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/8/docs/api/javax/swing/ListSelectionModel.html#setValueIsAdjusting-boolean-</a></li></ul><p>We can change the the <code>listSelect</code> method as follows:</p><figure class=code><figcaption><span>listSelect in 05-scrollpane-list-fixed.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">7
+series of changes that are considered part of a single change. More info:</p><ul><li><a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/ListSelectionModel.html#setValueIsAdjusting-boolean- target=_blank rel="noreferrer noopener">https://docs.oracle.com/javase/8/docs/api/javax/swing/ListSelectionModel.html#setValueIsAdjusting-boolean-</a></li></ul><p>We can change the the <code>listSelect</code> method as follows:</p><figure class=code><figcaption><span>listSelect in 05-scrollpane-list-fixed.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">7
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>listSelect</span>(event):
 </span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;&#34;&#34;Add the selected index to the label. Called twice when
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>    selecting the list item by mouse. So we need to use
@@ -314,39 +314,39 @@ series of changes that are considered part of a single change. More info:</p><ul
 <span class=caption-text>Double add fixed</span></span><h2 id=jtabbedpane>JTabbedPane
 <a class=header-link href=#jtabbedpane><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Instead of a label, we want to add two tabs to the right panel and reflect the
 results to one of them. The main frame in Burp is also a type of
-<a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JTabbedPane.html target=_blank rel="noreferrer noopener">JTabbedPane</a>. We are going to:</p><ol><li>Create a JTabbedPane.</li><li>Create two JLabels.</li><li>Add the labels to the tabbed pane from step 1.</li><li>Assign the tabbed pane to the split pane.</li></ol><figure class=code><figcaption><span>06-tabbedpane.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">28
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">29
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">30
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">31
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">32
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">33
+<a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JTabbedPane.html target=_blank rel="noreferrer noopener">JTabbedPane</a>. We are going to:</p><ol><li>Create a JTabbedPane.</li><li>Create two JLabels.</li><li>Add the labels to the tabbed pane from step 1.</li><li>Assign the tabbed pane to the split pane.</li></ol><figure class=code><figcaption><span>06-tabbedpane.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">31
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">32
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">33
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> javax.swing <span style=color:#719e07>import</span> (JPanel, JSplitPane, JList,
 </span></span><span style=display:flex><span>        JScrollPane, ListSelectionModel, JLabel, JTabbedPane)
@@ -386,45 +386,45 @@ results to one of them. The main frame in Burp is also a type of
 like images) with specific styles to the document.</p><p>The other tab will be a <a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/JEditorPane.html target=_blank rel="noreferrer noopener">JEditorPane</a> with <a href=https://example.net target=_blank rel="noreferrer noopener">https://example.net</a>
 loaded. We need to change the <code>listSelect</code> method and add items to the
 StyledDocument. This can be done with <code>insertString</code> (there are other methods
-for different content).</p><figure class=code><figcaption><span>07-styleddocument.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">28
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">29
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">30
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">31
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">32
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">33
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">34
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">35
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">36
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">37
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">38
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">39
+for different content).</p><figure class=code><figcaption><span>07-styleddocument.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">31
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">32
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">33
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">34
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">35
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">36
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">37
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">38
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">39
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> javax.swing <span style=color:#719e07>import</span> (JPanel, JSplitPane, JList, JTextPane,
 </span></span><span style=display:flex><span>        JScrollPane, ListSelectionModel, JLabel, JTabbedPane, JEditorPane)
@@ -472,68 +472,68 @@ text/graphics/etc as we see fit. This works for a small amount of data.</p><p>St
 inherit items from their parents. Everything is a child of the
 <a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/text/StyleContext.html#DEFAULT_STYLE target=_blank rel="noreferrer noopener">default style</a> <sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>.</p><p>Styles are added to the document with <a href=https://docs.oracle.com/javase/8/docs/api/javax/swing/text/DefaultStyledDocument.html#addStyle-java.lang.String-javax.swing.text.Style- target=_blank rel="noreferrer noopener">addStyle</a>. The first
 parameter is the name and the second is the parent style. Items are added with
-<code>insertString</code> (or other inserts).</p><figure class=code><figcaption><span>08-custom-style.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">28
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">29
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">30
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">31
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">32
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">33
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">34
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">35
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">36
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">37
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">38
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">39
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">40
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">41
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">42
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">43
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">44
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">45
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">46
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">47
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">48
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">49
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">50
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">51
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">52
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">53
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">54
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">55
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">56
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">57
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">58
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">59
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">60
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">61
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">62
+<code>insertString</code> (or other inserts).</p><figure class=code><figcaption><span>08-custom-style.py</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">28
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">29
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">30
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">31
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">32
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">33
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">34
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">35
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">36
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">37
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">38
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">39
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">40
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">41
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">42
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">43
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">44
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">45
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">46
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">47
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">48
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">49
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">50
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">51
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">52
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">53
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">54
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">55
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">56
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">57
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">58
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">59
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">60
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">61
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">62
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>getUiComponent</span>(<span style=color:#268bd2>self</span>):
 </span></span><span style=display:flex><span>    <span style=color:#719e07>from</span> javax.swing <span style=color:#719e07>import</span> (JPanel, JSplitPane, JList, JTextPane,
 </span></span><span style=display:flex><span>        JScrollPane, ListSelectionModel, JLabel, JTabbedPane, JEditorPane)

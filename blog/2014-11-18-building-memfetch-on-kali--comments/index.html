@@ -1,4 +1,4 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Building memfetch on Kali + Comments</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.110.0"><meta name=twitter:card content="summary"><meta name=twitter:title content="Building memfetch on Kali + Comments"><meta name=twitter:description content="I've used Disqus to add comments. At the moment, guests can comment and comments
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Building memfetch on Kali + Comments</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.111.3"><meta name=twitter:card content="summary"><meta name=twitter:title content="Building memfetch on Kali + Comments"><meta name=twitter:description content="I've used Disqus to add comments. At the moment, guests can comment and comments
 do not need to be approved (unless they have links). Hopefully there won't be
 much spam to sink the occasional comment that I think will be posted.
 Update from 2020: Comments without approval were a mistake. I got so much spam
@@ -20,23 +20,23 @@ and harassment.</p><p>Note: I just wanted to make it work in a hurry. There are 
 of doing this.</p><p>I stumbled upon the very useful tool
 <a href=http://lcamtuf.coredump.cx/soft/memfetch.tgz target=_blank rel="noreferrer noopener">memfetch</a> by the talented
 <em>lcamtuf</em>. The utility is quite old (from 2003 if I recall correctly) and I
-could not build it using the provided makefile.</p><figure class=code><figcaption><span>errors while building memfetch</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+could not build it using the provided makefile.</p><figure class=code><figcaption><span>errors while building memfetch</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ make
 </span></span><span style=display:flex><span>gcc -Wall -O9    memfetch.c   -o memfetch
 </span></span><span style=display:flex><span>memfetch.c:30:22: fatal error: asm/page.h: No such file or directory
 </span></span><span style=display:flex><span>compilation terminated.
 </span></span><span style=display:flex><span>make: *** <span style=color:#719e07>[</span>memfetch<span style=color:#719e07>]</span> Error <span style=color:#2aa198>1</span></span></span></code></pre></td></tr></table></div></div></div></figure><p>Seems like the location of header files have moved since then.
 <a href=http://stackoverflow.com/a/19310710 target=_blank rel="noreferrer noopener">This stackoverflow answer</a> mentions
-removing <code>asm/page.h</code> and adding <code>linux/types.h</code>. Let's see what happens:</p><figure class=code><figcaption><span>more errors</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
+removing <code>asm/page.h</code> and adding <code>linux/types.h</code>. Let's see what happens:</p><figure class=code><figcaption><span>more errors</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ make
 </span></span><span style=display:flex><span>gcc -Wall -O9    memfetch.c   -o memfetch
 </span></span><span style=display:flex><span>memfetch.c: In <span style=color:#719e07>function</span> <span style=color:#2aa198>&#39;main&#39;</span>:
@@ -46,18 +46,18 @@ removing <code>asm/page.h</code> and adding <code>linux/types.h</code>. Let's se
 <code>/usr/src/linux-headers-3.12-kali1-common/include/asm-generic/page.h</code> on Kali
 linux. This is where <code>PAGE_SIZE</code> is defined. Just adding it to <code>memfetch.c</code>
 along with changing <code>#include &lt;asm/page.h></code> to <code>#include &lt;linux/types.h></code>
-will do the trick.</p><figure class=code><figcaption><span>additions to memfetch.c</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+will do the trick.</p><figure class=code><figcaption><span>additions to memfetch.c</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>// <span style=color:#586e75>#include &lt;asm/page.h&gt;</span>
 </span></span><span style=display:flex><span><span style=color:#586e75>#include &lt;linux/types.h&gt;</span>
 </span></span><span style=display:flex><span>

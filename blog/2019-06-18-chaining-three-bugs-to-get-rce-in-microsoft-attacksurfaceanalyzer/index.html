@@ -1,4 +1,4 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Chaining Three Bugs to Get RCE in Microsoft AttackSurfaceAnalyzer</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.110.0"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2019-06-18-chaining-three-bugs-to-get-rce-in-microsoft-attacksurfaceanalyzer/11-localhost.gif"><meta name=twitter:title content="Chaining Three Bugs to Get RCE in Microsoft AttackSurfaceAnalyzer"><meta name=twitter:description content="This is a blog post about how I found three vulns and chained them to get RCE in
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Chaining Three Bugs to Get RCE in Microsoft AttackSurfaceAnalyzer</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.111.3"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2019-06-18-chaining-three-bugs-to-get-rce-in-microsoft-attacksurfaceanalyzer/11-localhost.gif"><meta name=twitter:title content="Chaining Three Bugs to Get RCE in Microsoft AttackSurfaceAnalyzer"><meta name=twitter:description content="This is a blog post about how I found three vulns and chained them to get RCE in
 the Microsoft
 AttackSurfaceAnalyzer (ASA
 moving forward) GUI version.
@@ -63,30 +63,30 @@ Application started. Press Ctrl+C to shut down.
 is not static, we can see in the application's source code that it starts from
 port 8000 and uses the first two available ports. The first is used by Electron
 and the second by the Kestrel web server. In a typical scenario, the ports will
-be <code>8000</code> and <code>8001</code>.</p><ul><li><a href=https://github.com/ElectronNET/Electron.NET/blob/131d1d9dd115d480b2c65353d44b9433b8b874f2/ElectronNET.Host/main.js#L141 target=_blank rel="noreferrer noopener">Electron.NET/ElectronNET.Host/main.js#L141</a></li></ul><figure class=code><figcaption><span>title</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
+be <code>8000</code> and <code>8001</code>.</p><ul><li><a href=https://github.com/ElectronNET/Electron.NET/blob/131d1d9dd115d480b2c65353d44b9433b8b874f2/ElectronNET.Host/main.js#L141 target=_blank rel="noreferrer noopener">Electron.NET/ElectronNET.Host/main.js#L141</a></li></ul><figure class=code><figcaption><span>title</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=display:flex><span><span style=color:#268bd2>function</span> startAspCoreBackend(electronPort) {
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#586e75>// hostname needs to be localhost, otherwise Windows Firewall will be triggered.
@@ -174,23 +174,23 @@ version of our test run is:</p><div class=highlight><pre tabindex=0 style=color:
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>The value of <code>RunId</code> is injected directly into the web page. The culprit is at
-<code>js/Collect.js:174</code>:</p><figure class=code><figcaption><span>GetCollectors()</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
+<code>js/Collect.js:174</code>:</p><figure class=code><figcaption><span>GetCollectors()</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=display:flex><span><span style=color:#268bd2>function</span> GetCollectors() {
 </span></span><span style=display:flex><span>    $.getJSON(<span style=color:#2aa198>&#39;GetCollectors&#39;</span>, <span style=color:#268bd2>function</span> (result) {
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>var</span> data <span style=color:#719e07>=</span> JSON.parse(result);
@@ -224,11 +224,11 @@ port <code>8001</code>, submit XSS and then it will pop in ASA when we use it lo
 <a class=header-link href=#vuln-3-xss-to-rce-via-nodeintegration><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Being Electron, I immediately thought of RCE. There are a lot of write-ups about
 how you can convert an XSS to RCE in Electron. It's easy when <code>NodeIntegration</code>
 is enabled which is the case for Electron.NET
-(<a href=https://github.com/ElectronNET/Electron.NET/blob/3cb92169dd1fc4ca917e1a48551192038f68bbec/ElectronNET.API/Entities/WebPreferences.cs#L18 target=_blank rel="noreferrer noopener">link to the current commit</a>):</p><figure class=code><figcaption><span>WebPreferences.cs</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+(<a href=https://github.com/ElectronNET/Electron.NET/blob/3cb92169dd1fc4ca917e1a48551192038f68bbec/ElectronNET.API/Entities/WebPreferences.cs#L18 target=_blank rel="noreferrer noopener">link to the current commit</a>):</p><figure class=code><figcaption><span>WebPreferences.cs</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=display:flex><span><span style=color:#719e07>/// &lt;summary&gt;</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>/// Whether node integration is enabled. Default is true.</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>/// &lt;/summary&gt;</span>
@@ -236,15 +236,15 @@ is enabled which is the case for Electron.NET
 </span></span><span style=display:flex><span><span style=color:#719e07>public</span> <span style=color:#dc322f>bool</span> NodeIntegration { <span style=color:#719e07>get</span>; <span style=color:#719e07>set</span>; } = <span style=color:#719e07>true</span>;</span></span></code></pre></td></tr></table></div></div></div></figure><p>More info:</p><ul><li><a href=https://github.com/electron/electron/blob/master/docs/tutorial/security.md#2-do-not-enable-nodejs-integration-for-remote-content target=_blank rel="noreferrer noopener">Electron Security - Do not enable Node.js Integration for Remote Content</a></li></ul><p>This means we can use the XSS to spawn processes in the guest VM running ASA.
 Note that there are <code>NodeIntegration</code> bypasses so just disabling it might not be
 enough.</p><h3 id=the-rce-payload>The RCE Payload
-<a class=header-link href=#the-rce-payload><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>It's the typical <code>Electron XSS to RCE</code> payload. Google one and use it.</p><figure class=code><figcaption><span>XSS to RCE Payload</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">7
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">8
-</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">9
+<a class=header-link href=#the-rce-payload><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>It's the typical <code>Electron XSS to RCE</code> payload. Google one and use it.</p><figure class=code><figcaption><span>XSS to RCE Payload</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">9
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=display:flex><span><span style=color:#268bd2>var</span> Process <span style=color:#719e07>=</span> process.binding(<span style=color:#2aa198>&#39;process_wrap&#39;</span>).Process;
 </span></span><span style=display:flex><span><span style=color:#268bd2>var</span> proc <span style=color:#719e07>=</span> <span style=color:#719e07>new</span> Process();
 </span></span><span style=display:flex><span>proc.onexit <span style=color:#719e07>=</span> <span style=color:#268bd2>function</span>(a,b) {};

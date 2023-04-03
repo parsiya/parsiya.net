@@ -1,4 +1,4 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>YAML Wrangling with Rust</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.110.0"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2022-10-16-yaml-wrangling-with-rust/owl.jpg"><meta name=twitter:title content="YAML Wrangling with Rust"><meta name=twitter:description content="I will talk about how I parsed Semgrep rules in YAML with Rust, how I created
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>YAML Wrangling with Rust</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.111.3"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2022-10-16-yaml-wrangling-with-rust/owl.jpg"><meta name=twitter:title content="YAML Wrangling with Rust"><meta name=twitter:description content="I will talk about how I parsed Semgrep rules in YAML with Rust, how I created
 Rust structs from JSON schemas for Semgrep rules, and finally, what
 didn't work. This blog post has different sections with code so you can follow
 and experiment."><meta name=twitter:domain content="parsiya.net"><meta name=twitter:creator content="@CryptoGangsta"></head><body><header role=banner><hgroup><h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
@@ -75,7 +75,7 @@ See more at <a href=https://serde.rs/derive.html target=_blank rel="noreferrer n
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// don&#39;t unwrap like this in the real world! Errors will result in panic!
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#268bd2>let</span> rule_file: <span style=color:#268bd2>RuleFile</span> <span style=color:#719e07>=</span> serde_yaml::from_str::<span style=color:#719e07>&lt;</span>RuleFile<span style=color:#719e07>&gt;</span>(<span style=color:#719e07>&amp;</span>contents).unwrap();
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    println!(<span style=color:#2aa198>&#34;{:#?}&#34;</span>, rule_file);
+</span></span><span style=display:flex><span>    println!(<span style=color:#2aa198>&#34;</span><span style=color:#2aa198>{:#?}</span><span style=color:#2aa198>&#34;</span>, rule_file);
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>The rules are deserialized correctly but I only have access to the defined
 fields.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>:~/yaml-wrangling-with-rust/01-first-try$ cargo run
@@ -196,7 +196,7 @@ example.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-
 </span></span><span style=display:flex><span>    );
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>let</span> code <span style=color:#719e07>=</span> expander.expand(<span style=color:#719e07>&amp;</span>schema);
-</span></span><span style=display:flex><span>    println!(<span style=color:#2aa198>&#34;{}&#34;</span>, code.to_string());
+</span></span><span style=display:flex><span>    println!(<span style=color:#2aa198>&#34;</span><span style=color:#2aa198>{}</span><span style=color:#2aa198>&#34;</span>, code.to_string());
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>No panic but we only get two empty structs. Oh, well!</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive (Clone , PartialEq , Debug , Default , Deserialize , Serialize)]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>pub</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>SchemaItemRules</span> { } 
@@ -221,7 +221,7 @@ YAML objects. Note, I am reading a rule file, again, and not the schema.</p><div
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// read the file and store it in a `Value`.
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#268bd2>let</span> rule_file <span style=color:#719e07>=</span> serde_yaml::from_str::<span style=color:#719e07>&lt;</span>Value<span style=color:#719e07>&gt;</span>(<span style=color:#719e07>&amp;</span>content).unwrap();
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    println!(<span style=color:#2aa198>&#34;{:#?}&#34;</span>, rule_file);
+</span></span><span style=display:flex><span>    println!(<span style=color:#2aa198>&#34;</span><span style=color:#2aa198>{:#?}</span><span style=color:#2aa198>&#34;</span>, rule_file);
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// ----- end of section 1
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span>}
 </span></span></code></pre></div><p>This gives us good info.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>Mapping {
@@ -262,7 +262,7 @@ and uncomment <code>section 2</code>.</p><div class=highlight><pre tabindex=0 st
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>let</span> rule_file <span style=color:#719e07>=</span> serde_yaml::from_str::<span style=color:#719e07>&lt;</span>Value<span style=color:#719e07>&gt;</span>(<span style=color:#719e07>&amp;</span>content).unwrap();
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// convert it back to a YAML string.
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#268bd2>let</span> back_to_yaml <span style=color:#719e07>=</span> serde_yaml::to_string::<span style=color:#719e07>&lt;</span>Value<span style=color:#719e07>&gt;</span>(<span style=color:#719e07>&amp;</span>rule_file).unwrap();
-</span></span><span style=display:flex><span>    println!(<span style=color:#2aa198>&#34;{}&#34;</span>, back_to_yaml);
+</span></span><span style=display:flex><span>    println!(<span style=color:#2aa198>&#34;</span><span style=color:#2aa198>{}</span><span style=color:#2aa198>&#34;</span>, back_to_yaml);
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// ----- end of section 2
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span>}
 </span></span></code></pre></div><p>And I got the same file back.</p><span class=caption-wrapper><img class=caption src=01-back-to-yaml.png title="The rule file converted back to a YAML string" alt="The rule file converted back to a YAML string">
@@ -281,7 +281,7 @@ item is a single rule in another <code>Mapping</code> and has a string <code>id<
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// go through the rules.
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>for</span> rule <span style=color:#719e07>in</span> rules {
 </span></span><span style=display:flex><span>        <span style=color:#586e75>// we know the &#34;id&#34; of each rule is a String.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        println!(<span style=color:#2aa198>&#34;{}&#34;</span>, rule.get(<span style=color:#2aa198>&#34;id&#34;</span>).unwrap().as_str().unwrap());
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        println!(<span style=color:#2aa198>&#34;</span><span style=color:#2aa198>{}</span><span style=color:#2aa198>&#34;</span>, rule.get(<span style=color:#2aa198>&#34;id&#34;</span>).unwrap().as_str().unwrap());
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// ----- end of section 3
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span>}
@@ -323,7 +323,7 @@ am creating a new <code>GenericRuleFile</code> to create a separate rule file.</
 </span></span><span style=display:flex><span>        <span style=color:#586e75>// convert it to yaml.
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span>        <span style=color:#268bd2>let</span> single_rule_yaml: <span style=color:#b58900>String</span> <span style=color:#719e07>=</span> serde_yaml::to_string(<span style=color:#719e07>&amp;</span>new_generic_rule).unwrap();
 </span></span><span style=display:flex><span>        <span style=color:#586e75>// print it.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        println!(<span style=color:#2aa198>&#34;{}&#34;</span>, single_rule_yaml);
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        println!(<span style=color:#2aa198>&#34;</span><span style=color:#2aa198>{}</span><span style=color:#2aa198>&#34;</span>, single_rule_yaml);
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><span class=caption-wrapper><img class=caption src=02-split-rules.png title="Separated rules" alt="Separated rules">
@@ -681,7 +681,7 @@ also print the rule IDs.</p><div class=highlight><pre tabindex=0 style=color:#93
 </span></span><span style=display:flex><span>            <span style=color:#b58900>Ok</span>(rf) <span style=color:#719e07>=&gt;</span> rf,
 </span></span><span style=display:flex><span>            <span style=color:#b58900>Err</span>(e) <span style=color:#719e07>=&gt;</span> {
 </span></span><span style=display:flex><span>                <span style=color:#586e75>// log the error and move to the next file.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>                println!(<span style=color:#2aa198>&#34;[!] File: {}\n\tError: {}&#34;</span>, rule_file, e.to_string());
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>                println!(<span style=color:#2aa198>&#34;[!] File: </span><span style=color:#2aa198>{}</span><span style=color:#cb4b16>\n\t</span><span style=color:#2aa198>Error: </span><span style=color:#2aa198>{}</span><span style=color:#2aa198>&#34;</span>, rule_file, e.to_string());
 </span></span><span style=display:flex><span>                <span style=color:#719e07>continue</span>;
 </span></span><span style=display:flex><span>            },
 </span></span><span style=display:flex><span>        };
@@ -692,7 +692,7 @@ also print the rule IDs.</p><div class=highlight><pre tabindex=0 style=color:#93
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span>            rule_index.insert(individual_rule.id.to_owned(), individual_rule);
 </span></span><span style=display:flex><span>        }
 </span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>    println!(<span style=color:#2aa198>&#34;Number of rules in the index: {}&#34;</span>, rule_index.keys().len());
+</span></span><span style=display:flex><span>    println!(<span style=color:#2aa198>&#34;Number of rules in the index: </span><span style=color:#2aa198>{}</span><span style=color:#2aa198>&#34;</span>, rule_index.keys().len());
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// print the keys.
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#586e75>// println!(&#34;{:#?}&#34;, rule_index.keys());
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span>}
