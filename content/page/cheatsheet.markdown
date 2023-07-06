@@ -1377,6 +1377,17 @@ Easier method: In the `View Source` page, right-click and select
 
 Source: https://thetechl33t.com/2015/06/01/wireshark-not-equal-to-filter/
 
+## Copy Ebooks to iPad with Calibre
+I have an old iPad Mini that I use for reading ebooks. The default way of
+copying them from Calibre doesn't work because the iOS version is so old that
+the Calibre Companion app doesn't support it.
+
+Using the web content server and going to `http://your-pc-ip:8080` also doesn't
+work because the Safari version so old that it doesn't support some of the new
+JavaScript functions. None of the modern browsers also support that iOS version.
+However, `http://your-pc-ip:8080/mobile` is the non-JS version and works. I have
+to click each book separately and open it in iBooks, but better than nothing.
+
 # Regex
 
 ## Regex to Search for URLs in Burp Responses
