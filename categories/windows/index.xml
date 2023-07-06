@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Windows on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/categories/windows/</link><description>Recent content in Windows on Hackerman's Hacking Tutorials</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 19 Dec 2017 19:45:22 -0500</lastBuildDate><atom:link href="https://parsiya.net/categories/windows/index.xml" rel="self" type="application/rss+xml"/><item><title>Windows XP 32-bit SP3 Virtual Machines</title><link>https://parsiya.net/blog/2017-12-19-windows-xp-32-bit-sp3-virtual-machines/</link><pubDate>Tue, 19 Dec 2017 19:45:22 -0500</pubDate><guid>https://parsiya.net/blog/2017-12-19-windows-xp-32-bit-sp3-virtual-machines/</guid><description>&lt;p>There used to be Windows XP virtual machines on &lt;a href="https://developer.microsoft.com/en-us/microsoft-edge/tools/vms/" target="_blank" rel="noreferrer noopener">modern.ie&lt;/a>. I still have a couple of copies around for testing. Unfortunately after XP going out of support, they were removed. But the copies used to be on &lt;a href="https://www.reddit.com/r/AskNetsec/comments/6qea8a/need_a_windows_xp_iso/dkwq0qw/" target="_blank" rel="noreferrer noopener">Azure CDN&lt;/a> (credit &lt;a href="https://www.reddit.com/user/JoshBrodieNZ" target="_blank" rel="noreferrer noopener">/u/JoshBrodieNZ&lt;/a>. Seems like they recently removed them too.&lt;/p>
+&lt;p>There's still a way to get Windows XP 32-bit VMs from Microsoft (no 64-bit) through Windows XP mode. It contains a VHD (virtual hard disk) with a 32-bit Windows XP SP3.&lt;/p>
+&lt;p>&lt;strong>EDIT 2022-01-12&lt;/strong>: The link below is dead. Looks like Windows XP Mode was tied to Windows 7 and removed when it went EOL.&lt;/p>
+&lt;ol>
+&lt;li>Download Microsoft XP Mode from &lt;a href="https://www.microsoft.com/en-us/download/details.aspx?id=8002" target="_blank" rel="noreferrer noopener">https://www.microsoft.com/en-us/download/details.aspx?id=8002&lt;/a>.&lt;/li>
+&lt;li>Using 7-zip or any other utility decompress the exe.&lt;/li>
+&lt;li>Inside sources, there's another file called &lt;code>xpm&lt;/code>. Decompress it too. With 7-zip, right click on it and select &amp;quot;Extract to ... .&amp;quot;&lt;/li>
+&lt;li>One of the extracted files is &lt;code>VirtualXPVHD&lt;/code> and around 1.2 GB. Rename it to &lt;code>VirtualXP.vhd&lt;/code>.&lt;/li>
+&lt;li>In VirtualBox (or any other virtualization software that supports importing VHDs), create a new Windows XP 32-bit VM and use this file as the hard disk. When you start the VM, it will start a Windows XP setup. My mouse did not work, but you can use shortcut keys to navigate the installer (e.g. Alt+N for Next).&lt;/li>
+&lt;li>???&lt;/li>
+&lt;li>Profit.&lt;/li>
+&lt;/ol>
+&lt;p>For a step by step guide with pictures, check &lt;a href="https://www.howtogeek.com/howto/12183/how-to-run-xp-mode-in-virtualbox-on-windows-7/" target="_blank" rel="noreferrer noopener">this post&lt;/a> from howtogeek.com.&lt;/p></description></item><item><title>Go and pcaps</title><link>https://parsiya.net/blog/2017-12-03-go-and-pcaps/</link><pubDate>Sun, 03 Dec 2017 18:40:26 -0500</pubDate><guid>https://parsiya.net/blog/2017-12-03-go-and-pcaps/</guid><description>&lt;p>I was trying to solve a challenge where the &amp;quot;hidden data&amp;quot; were in ICMP echo payloads. I decided to do it in Go but there were some hiccups on the way. Here are my notes in case (most likely) future me or someone else needs to do the same.&lt;/p>
+&lt;p>Code is in my clone at:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/parsiya/Go-Security/tree/master/pcap-tutorial" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Go-Security/tree/master/pcap-tutorial&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>cmd Startup Commands</title><link>https://parsiya.net/blog/2017-11-27-cmd-startup-commands/</link><pubDate>Mon, 27 Nov 2017 23:13:55 -0500</pubDate><guid>https://parsiya.net/blog/2017-11-27-cmd-startup-commands/</guid><description>&lt;p>This blog talks about how to run a command automatically every time you open a new command prompt on Windows.&lt;/p>
+&lt;ol>
+&lt;li>Open registry.&lt;/li>
+&lt;li>Navigate to the following location:
+&lt;ul>
+&lt;li>&lt;code>HKCU\Software\Microsoft\Command Processor&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Double click &lt;code>Autorun&lt;/code> and type in your command. For example:
+&lt;ul>
+&lt;li>&lt;code>cd /d C:\Users\IEUser\Desktop\Whatever\&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>If the &lt;code>Autorun&lt;/code> property is missing, create one with type &lt;code>REG_SZ&lt;/code>.&lt;/li>
+&lt;li>Now every cmd will automatically cd to the &lt;code>Whatever&lt;/code> directory.&lt;/li>
+&lt;/ol>
+&lt;p>I am going to keep blogging consistently (hopefully). This means breaking my habit of having to write extensive blog posts.&lt;/p></description></item><item><title>Silly Attack Using Run Line</title><link>https://parsiya.net/blog/2017-10-26-silly-attack-using-run-line/</link><pubDate>Thu, 26 Oct 2017 21:11:55 -0400</pubDate><guid>https://parsiya.net/blog/2017-10-26-silly-attack-using-run-line/</guid><description>&lt;p>&lt;a href="https://parsiya.net/blog/2017-10-23-run-line-vs.-cmd-vs.-powershell/" title="Run Line vs. cmd vs. PowerShell">Previously&lt;/a> we saw how Windows Run Line searches in &lt;code>App Paths&lt;/code> registry keys before PATH. We can perform a silly attack and create a registry key for an application in path and point it to another command.&lt;/p>
+&lt;p>This is a silly attack because we need to be admin to create/edit those keys. But if you ever find yourself in the unlikely situation, you can use this to become delayed admin (i.e. wait for admin to run the app via Run Line).&lt;/p></description></item><item><title>Run Line vs. cmd vs. PowerShell</title><link>https://parsiya.net/blog/2017-10-23-run-line-vs.-cmd-vs.-powershell/</link><pubDate>Mon, 23 Oct 2017 22:01:50 -0400</pubDate><guid>https://parsiya.net/blog/2017-10-23-run-line-vs.-cmd-vs.-powershell/</guid><description>&lt;p>Note about the differences between search paths when running stuff via the Windows Run Line (&lt;code>win+r&lt;/code>), command line and PowerShell.&lt;/p>
+&lt;p>We can type &lt;code>iexplore&lt;/code> in Run Line to open up Internet Explorer but doing the same in a cmd or PowerShell is not successful.&lt;/p>
+&lt;p>&lt;strong>tl;dr&lt;/strong>\
+Run Line looks in the following registry location then PATH. Credit Vic Laurie at &lt;a href="https://commandwindows.com/runline.htm" target="_blank" rel="noreferrer noopener">commandwindows.com&lt;/a>.&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>HKLM\Software\Microsoft\Windows\CurrentVersion\App Paths&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Search order&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>cmd searches first in local directory and then in PATH.&lt;/li>
+&lt;li>PowerShell searches first in PATH and then in local directory.&lt;/li>
+&lt;li>Run Line searches in &lt;code>App Paths&lt;/code> first.&lt;/li>
+&lt;/ul>
+&lt;p>Usual blabbering and needless digging follows.&lt;/p></description></item></channel></rss>

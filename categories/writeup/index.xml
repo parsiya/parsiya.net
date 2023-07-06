@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Writeup on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/categories/writeup/</link><description>Recent content in Writeup on Hackerman's Hacking Tutorials</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 19 Jan 2023 12:29:17 -0800</lastBuildDate><atom:link href="https://parsiya.net/categories/writeup/index.xml" rel="self" type="application/rss+xml"/><item><title>Some SANS Holiday Hack 2022 Solutions</title><link>https://parsiya.net/blog/sans-holiday-hack-2022/</link><pubDate>Thu, 19 Jan 2023 12:29:17 -0800</pubDate><guid>https://parsiya.net/blog/sans-holiday-hack-2022/</guid><description>&lt;p>As is tradition, I started the SANS Holiday Hack and stopped midway. A very fun
+static analysis problem came along ;)&lt;/p>
+&lt;p>Previous years' writeups:
+&lt;a href="https://parsiya.net/categories/holiday-hack/">/categories/holiday-hack/&lt;/a>.&lt;/p></description></item><item><title>Some SANS Holiday Hack 2021 Solutions</title><link>https://parsiya.net/blog/2022-01-21-some-sans-holiday-hack-2021-solutions/</link><pubDate>Fri, 21 Jan 2022 20:06:21 -0800</pubDate><guid>https://parsiya.net/blog/2022-01-21-some-sans-holiday-hack-2021-solutions/</guid><description>&lt;p>Here are some of my answers to the SANS Holiday Hack 2021. As usual, it's a
+pretty fun and accessible challenge.&lt;/p>
+&lt;p>Previous writeups:&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;a href="https://parsiya.net/blog/2019-01-15-sans-holiday-hack-challenge-2018-solutions/" title="SANS Holiday Hack 2018 Solutions" rel="nofollow" target="_blank">SANS Holiday Hack 2018 Solutions&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="https://parsiya.net/blog/2020-01-15-some-sans-holiday-hack-2019-solutions/" title="Some SANS Holiday Hack 2019 Solutions" rel="nofollow" target="_blank">Some SANS Holiday Hack 2019 Solutions&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="https://parsiya.net/blog/2021-01-17-some-sans-holiday-hack-2020-solutions/" title="Some SANS Holiday Hack 2020 Solutions" rel="nofollow" target="_blank">Some SANS Holiday Hack 2020 Solutions&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>RCE in Visual Studio Code's Remote WSL for Fun and Negative Profit</title><link>https://parsiya.net/blog/2021-12-20-rce-in-visual-studio-codes-remote-wsl-for-fun-and-negative-profit/</link><pubDate>Mon, 20 Dec 2021 03:22:10 -0800</pubDate><guid>https://parsiya.net/blog/2021-12-20-rce-in-visual-studio-codes-remote-wsl-for-fun-and-negative-profit/</guid><description>&lt;p>The Visual Studio Code server in Windows Subsystem for Linux uses a local
+WebSocket WebSocket connection to communicate with the &lt;code>Remote WSL&lt;/code> extension.
+JavaScript in websites can connect to this server and execute arbitrary commands
+on the target system. Assigned &lt;a href="https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2021-43907" target="_blank" rel="noreferrer noopener">CVE-2021-43907&lt;/a> and zero bounty. I paid 5
+USD for the EC2 machine hosting the proof-of-concept.&lt;/p>
+&lt;p>It's really funny that PlayStation paid 15K USD for &lt;a href="https://hackerone.com/reports/873614" target="_blank" rel="noreferrer noopener">almost the same bug&lt;/a>
+with 2.2 million subscribers (it was out of scope in their program, too), but
+MSFT doesn't pay for an official extension with more than 10 million installs
+(obviously, not every install is unique) for one of their most popular products.
+But you are not here to listen to my rants. So, read on.&lt;/p>
+&lt;p>This post's target audience was &lt;code>Desktop Application Security People&lt;/code> niche. I
+want to clarify some issues because more people have read it (edit on 2021-12-21):&lt;/p>
+&lt;ol>
+&lt;li>I didn't get 5 dollars. I paid 5 dollars out of pocket, so it's -5.&lt;/li>
+&lt;li>&amp;quot;I am not angry, I am just disappointed.&amp;quot; I knew it was out-of-scope. This
+wasn't some bait-and-switch by Microsoft. I am not angry&lt;/li>
+&lt;li>The vuln is &lt;strong>not&lt;/strong> in VS Code. MSFT says it's in the &lt;code>Remote WSL&lt;/code> extension
+but I think it's in the way &lt;code>VS Code Server&lt;/code> works with the remote
+development extensions.&lt;/li>
+&lt;/ol>
+&lt;p>HackerNews link: &lt;a href="https://news.ycombinator.com/item?id=29635300" target="_blank" rel="noreferrer noopener">https://news.ycombinator.com/item?id=29635300&lt;/a>.&lt;/p></description></item><item><title>Some SANS Holiday Hack 2020 Solutions</title><link>https://parsiya.net/blog/2021-01-17-some-sans-holiday-hack-2020-solutions/</link><pubDate>Sun, 17 Jan 2021 11:33:47 -0800</pubDate><guid>https://parsiya.net/blog/2021-01-17-some-sans-holiday-hack-2020-solutions/</guid><description>&lt;p>This year like last year and unlike 2018, I only did a few of the SANS Holiday
+Hack challenges. I got invited into this private bug bounty program with a
+desktop application in scope (those are quite rare) so I had to poke at it. To
+be fair, I hit the motherlode and submitted $10K of bounties.&lt;/p>
+&lt;p>Previous writeups:&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;a href="https://parsiya.net/blog/2019-01-15-sans-holiday-hack-challenge-2018-solutions/" title="SANS Holiday Hack 2018 Solutions" rel="nofollow" target="_blank">SANS Holiday Hack 2018 Solutions&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="https://parsiya.net/blog/2020-01-15-some-sans-holiday-hack-2019-solutions/" title="Some SANS Holiday Hack 2019 Solutions" rel="nofollow" target="_blank">Some SANS Holiday Hack 2019 Solutions&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>The $15000 PlayStation Bounty</title><link>https://parsiya.net/blog/2021-01-01-the-15000-playstation-bounty/</link><pubDate>Fri, 01 Jan 2021 15:29:00 -0800</pubDate><guid>https://parsiya.net/blog/2021-01-01-the-15000-playstation-bounty/</guid><description>&lt;p>Earlier in December 2020, my &lt;code>PlayStation Now&lt;/code> report was disclosed. You can see
+the report at &lt;a href="https://hackerone.com/reports/873614" target="_blank" rel="noreferrer noopener">https://hackerone.com/reports/873614&lt;/a>. That is my first paid bounty
+and my first disclosed report. It was quite exciting. I doubt I can top it.&lt;/p></description></item><item><title>Old ContextIS Challenge Solutions</title><link>https://parsiya.net/blog/2020-02-09-old-contextis-challenge-solutions/</link><pubDate>Sun, 09 Feb 2020 19:08:07 -0800</pubDate><guid>https://parsiya.net/blog/2020-02-09-old-contextis-challenge-solutions/</guid><description>&lt;p>A few years ago I did the &lt;a href="https://www.contextis.com/en/" target="_blank" rel="noreferrer noopener">Context Information Security&lt;/a>
+challenges. They used it for recruiting so I never published the results.
+However, they have now switched to &lt;a href="https://www.hackthebox.eu/" target="_blank" rel="noreferrer noopener">Hack The Box&lt;/a> and the old
+challenges are gone. So I am publishing what I did.&lt;/p>
+&lt;p>You can see the page with the old challenges using the Wayback Machine at:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="http://web.archive.org/web/20181012035146/https://www.contextis.com/en/careers/challenges" target="_blank" rel="noreferrer noopener">http://web.archive.org/web/20181012035146/https://www.contextis.com/en/careers/challenges&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;p>I also did some of their &lt;a href="https://parsiya.net/blog/2018-06-05-contextis-xmas-ctf-writeup/" title="xmas 2018 challenges">xmas 2018 challenges&lt;/a>.&lt;/p></description></item><item><title>Some SANS Holiday Hack 2019 Solutions</title><link>https://parsiya.net/blog/2020-01-15-some-sans-holiday-hack-2019-solutions/</link><pubDate>Wed, 15 Jan 2020 00:09:11 -0800</pubDate><guid>https://parsiya.net/blog/2020-01-15-some-sans-holiday-hack-2019-solutions/</guid><description>&lt;p>I did some of the solutions for the SANS Holiday Hack Challenge of 2019. Last
+year I participated for the first time. You can find the solutions below:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://parsiya.net/blog/2019-01-15-sans-holiday-hack-challenge-2018-solutions/" title="SANS Holiday Hack 2018 Solutions">SANS Holiday Hack 2018 Solutions&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>Chaining Three Bugs to Get RCE in Microsoft AttackSurfaceAnalyzer</title><link>https://parsiya.net/blog/2019-06-18-chaining-three-bugs-to-get-rce-in-microsoft-attacksurfaceanalyzer/</link><pubDate>Tue, 18 Jun 2019 13:03:53 -0700</pubDate><guid>https://parsiya.net/blog/2019-06-18-chaining-three-bugs-to-get-rce-in-microsoft-attacksurfaceanalyzer/</guid><description>&lt;p>This is a blog post about how I found three vulns and chained them to get RCE in
+the Microsoft
+&lt;a href="https://github.com/microsoft/AttackSurfaceAnalyzer" target="_blank" rel="noreferrer noopener">AttackSurfaceAnalyzer&lt;/a> (ASA
+moving forward) GUI version.&lt;/p>
+&lt;ol>
+&lt;li>ASA uses &lt;a href="https://github.com/ElectronNET/Electron.NET" target="_blank" rel="noreferrer noopener">Electron.NET&lt;/a> which
+binds the internal Kestrel web server to &lt;code>0.0.0.0&lt;/code>. If permission is given to
+bypass the Windows OS firewall (or if used on an OS without one), a remote
+attacker can connect to it and access the application.&lt;/li>
+&lt;li>The web application is vulnerable to Cross-Site Scripting (XSS). A remote
+attacker can submit a runID with embedded JavaScript that is executed by
+the victim using the ASA Electron application.&lt;/li>
+&lt;li>Electron.NET does not have the &lt;code>NodeIntegration&lt;/code> flag set to false. This
+allows the JavaScript payload to spawn up processes on the victim's machine.&lt;/li>
+&lt;/ol></description></item><item><title>SANS Holiday Hack Challenge 2018 Solutions</title><link>https://parsiya.net/blog/2019-01-15-sans-holiday-hack-challenge-2018-solutions/</link><pubDate>Tue, 15 Jan 2019 19:33:21 -0500</pubDate><guid>https://parsiya.net/blog/2019-01-15-sans-holiday-hack-challenge-2018-solutions/</guid><description>&lt;p>SANS Holiday hack challenge 2018 was fun. It was also the first one I tried. I liked the talks and that the challenges were accessible to most skill levels. I mean &lt;a href="https://abiondo.me/2019/01/02/exploiting-math-expm1-v8/" target="_blank" rel="noreferrer noopener">RCE through the -0 bug in v8 is great and all&lt;/a> but I want people to be able to have fun and learn new skills.&lt;/p>
+&lt;p>If being a security consultant has taught me anything, it's that no one has time to read your 100 page report. So here are some quick solutions. I will post my notes from the YouTube videos in different posts.&lt;/p></description></item><item><title>Cloudflare Concise Christmas Cryptography Challenges 2019 Solutions</title><link>https://parsiya.net/blog/2019-01-03-cloudflare-concise-christmas-cryptography-challenges-2019-solutions/</link><pubDate>Thu, 03 Jan 2019 20:24:15 -0500</pubDate><guid>https://parsiya.net/blog/2019-01-03-cloudflare-concise-christmas-cryptography-challenges-2019-solutions/</guid><description>&lt;p>Cloudflare had a &lt;a href="https://blog.cloudflare.com/christmas-cryptography-challenges-2019/" target="_blank" rel="noreferrer noopener">Christmas crypto(graphy) challenge&lt;/a>. Here are my solutions. The first two questions were pretty easy but the 3rd sent me down on a rabbit hole. Apparently, only 15 people solved it which places me in the world top 15 cryptographers (that's how it works right?).&lt;/p></description></item><item><title>Tiredful API - Part 2 - Comparing Site Maps with Burp</title><link>https://parsiya.net/blog/2018-12-17-tiredful-api-part-2-comparing-site-maps-with-burp/</link><pubDate>Mon, 17 Dec 2018 01:11:11 -0500</pubDate><guid>https://parsiya.net/blog/2018-12-17-tiredful-api-part-2-comparing-site-maps-with-burp/</guid><description>&lt;p>In &lt;a href="https://parsiya.net/blog/2018-12-11-tiredful-api-part-1-burp-session-validation-with-macros/" title="Burp Session Validation with Macros">Part 1 - Burp Session Validation with Macros&lt;/a> I discussed using Burp macros to validate sessions. In this part, I will show how to use Burp's sitemap comparison to detect forced browsing/access control/direct object reference issues and the like.&lt;/p>
+&lt;p>The flow is straightforward:&lt;/p>
+&lt;ol>
+&lt;li>Navigate around the application as user1. Personally, I just do my normal testing for a couple of days.&lt;/li>
+&lt;li>Set a session handling rule to do one of the two:
+&lt;ol>
+&lt;li>Update the cookie from the cookie jar. In this case you login as user2 first and let Burp update cookies.&lt;/li>
+&lt;li>Run a macro to create a valid session for user2 and use the token.&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>Tell Burp to compare site maps.&lt;/li>
+&lt;/ol>
+&lt;p>Also, read these:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://portswigger.net/burp/documentation/desktop/tools/target/site-map/comparing" target="_blank" rel="noreferrer noopener">https://portswigger.net/burp/documentation/desktop/tools/target/site-map/comparing&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://support.portswigger.net/customer/portal/articles/1969844-using-burp-s-site-map-to-test-for-access-control-issues" target="_blank" rel="noreferrer noopener">https://support.portswigger.net/customer/portal/articles/1969844-using-burp-s-site-map-to-test-for-access-control-issues&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>Tiredful API - Part 1 - Burp Session Validation with Macros</title><link>https://parsiya.net/blog/2018-12-11-tiredful-api-part-1-burp-session-validation-with-macros/</link><pubDate>Tue, 11 Dec 2018 00:15:07 -0500</pubDate><guid>https://parsiya.net/blog/2018-12-11-tiredful-api-part-1-burp-session-validation-with-macros/</guid><description>&lt;p>&lt;a href="https://github.com/payatu/Tiredful-API" target="_blank" rel="noreferrer noopener">Tiredful API&lt;/a> is an intentionally vulnerable REST API. I am going to use it to practice a bunch of Burp tricks.&lt;/p>
+&lt;p>In this part, I want to show how to use Burp macros to detect invalid session and add a custom bearer token header to the requests.&lt;/p></description></item><item><title>DVTA - Part 5 - Client-side Storage and DLL Hijacking</title><link>https://parsiya.net/blog/2018-08-25-dvta-part-5-client-side-storage-and-dll-hijacking/</link><pubDate>Sat, 25 Aug 2018 13:49:10 -0400</pubDate><guid>https://parsiya.net/blog/2018-08-25-dvta-part-5-client-side-storage-and-dll-hijacking/</guid><description>&lt;p>Thick clients store ample information on the device. In this part, we are going to investigate DVTA to see what, how, and where it stores data. We are also going to do some basic DLL hijacking. Our tools are procmon, PowerSploit, and dnSpy.&lt;/p>
+&lt;p>Previous parts are at:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://parsiya.net/blog/2018-07-15-dvta-part-1-setup/" title="DVTA - Part 1 - Setup">DVTA - Part 1 - Setup&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://parsiya.net/blog/2018-07-21-dvta-part-2-cert-pinning-and-login-button/" title="DVTA - Part 2 - Cert Pinning and Login Button">DVTA - Part 2 - Cert Pinning and Login Button&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://parsiya.net/blog/2018-07-30-dvta-part-3-network-recon/" title="DVTA - Part 3 - Network Recon">DVTA - Part 3 - Network Recon&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://parsiya.net/blog/2018-08-02-dvta-part-4-traffic-tampering-with-dnspy/" title="DVTA - Part 4 - Traffic Tampering with dnSpy">DVTA - Part 4 - Traffic Tampering with dnSpy&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>DVTA - Part 4 - Traffic Tampering with dnSpy</title><link>https://parsiya.net/blog/2018-08-02-dvta-part-4-traffic-tampering-with-dnspy/</link><pubDate>Thu, 02 Aug 2018 19:41:54 -0400</pubDate><guid>https://parsiya.net/blog/2018-08-02-dvta-part-4-traffic-tampering-with-dnspy/</guid><description>&lt;p>After doing network recon in part three, it's time to do some traffic manipulation. We will learn how to capture and modify network traffic using dnSpy. This is much easier than trying to intercept and modify traffic after it's transmitted.&lt;/p>
+&lt;p>Previous parts are at:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://parsiya.net/blog/2018-07-15-dvta-part-1-setup/" title="DVTA - Part 1 - Setup">DVTA - Part 1 - Setup&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://parsiya.net/blog/2018-07-21-dvta-part-2-cert-pinning-and-login-button/" title="DVTA - Part 2 - Cert Pinning and Login Button">DVTA - Part 2 - Cert Pinning and Login Button&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://parsiya.net/blog/2018-07-30-dvta-part-3-network-recon/" title="DVTA - Part 3 - Network Recon">DVTA - Part 3 - Network Recon&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>DVTA - Part 3 - Network Recon</title><link>https://parsiya.net/blog/2018-07-30-dvta-part-3-network-recon/</link><pubDate>Mon, 30 Jul 2018 00:35:57 -0400</pubDate><guid>https://parsiya.net/blog/2018-07-30-dvta-part-3-network-recon/</guid><description>&lt;p>In this part, we will focus on network traffic. More often than not, thick client applications have some sort of network connectivity. They talk to some server(s) to do things.&lt;/p>
+&lt;p>Previous parts are:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://parsiya.net/blog/2018-07-15-dvta-part-1-setup/" title="DVTA - Part 1 - Setup">DVTA - Part 1 - Setup&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://parsiya.net/blog/2018-07-21-dvta-part-2-cert-pinning-and-login-button/" title="DVTA - Part 2 - Cert Pinning and Login Button">DVTA - Part 2 - Cert Pinning and Login Button&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>DVTA - Part 2 - Cert Pinning and Login Button</title><link>https://parsiya.net/blog/2018-07-21-dvta-part-2-cert-pinning-and-login-button/</link><pubDate>Sat, 21 Jul 2018 01:38:50 -0400</pubDate><guid>https://parsiya.net/blog/2018-07-21-dvta-part-2-cert-pinning-and-login-button/</guid><description>&lt;p>After setting up the Damn Vulnerable Thick Client Application, we are now ready to hack it.&lt;/p>
+&lt;p>In this section, we will bypass the certificate pinning, enable the login button, learn how to modify the code in dnSpy through writing C# code and get a quick intro to Common Intermediate Language (CIL).&lt;/p>
+&lt;p>You can see previous parts here:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://parsiya.net/blog/2018-07-15-dvta-part-1-setup/" title="DVTA - Part 1 - Setup">Damn Vulnerable Thick Client Application - Part 1 - Setup&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>DVTA - Part 1 - Setup</title><link>https://parsiya.net/blog/2018-07-15-dvta-part-1-setup/</link><pubDate>Sun, 15 Jul 2018 21:26:41 -0400</pubDate><guid>https://parsiya.net/blog/2018-07-15-dvta-part-1-setup/</guid><description>&lt;p>I have written a lot about thick clients. However, I have not done more than a few practical examples that I can show my co-workers or anyone else asking questions. Recently, I came across the Damn Vulnerable Thick Client Application by SecVulture at &lt;a href="https://github.com/secvulture/dvta" target="_blank" rel="noreferrer noopener">https://github.com/secvulture/dvta&lt;/a>.&lt;/p>
+&lt;p>I am not going to use the original version of the application. Someone has created a fork and added more protections. We will use this fork instead:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/nddmars/dvta" target="_blank" rel="noreferrer noopener">https://github.com/nddmars/dvta&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;p>Neither fork's setup instructions worked for me. As a result, the first part is actually setting up the application and the necessary back-end in only one VM. But don't worry, we will do a bit of reverse engineering with dnSpy to fix an issue.&lt;/p>
+&lt;p>&lt;strong>Thanks to SecVulture for creating the app and maintainers of the second repository for adding protections.&lt;/strong>&lt;/p></description></item><item><title>ContextIS xmas CTF Writeup</title><link>https://parsiya.net/blog/2018-06-05-contextis-xmas-ctf-writeup/</link><pubDate>Tue, 05 Jun 2018 22:34:55 -0400</pubDate><guid>https://parsiya.net/blog/2018-06-05-contextis-xmas-ctf-writeup/</guid><description>&lt;p>In January 2018, &lt;a href="https://www.contextis.com/" target="_blank" rel="noreferrer noopener">Context Information Security&lt;/a> had a CTF. Here are my write-ups for some of them and write-ups for some I did not figure out. But that's CTF for you. If you manage to walk down the path of designer, you will be fine. Otherwise, you will have a bad time.&lt;/p>
+&lt;p>But enough complaining, let's see what happens.&lt;/p></description></item><item><title>Mounting Live Snapshots of Encrypted VMs in VirtualBox</title><link>https://parsiya.net/blog/2018-01-23-mounting-live-snapshots-of-encrypted-vms-in-virtualbox/</link><pubDate>Tue, 23 Jan 2018 22:24:39 -0500</pubDate><guid>https://parsiya.net/blog/2018-01-23-mounting-live-snapshots-of-encrypted-vms-in-virtualbox/</guid><description>&lt;h3 id="tldr">TL;DR
+&lt;a class="header-link" href="#tldr">&lt;svg class="fill-current o-60 hover-accent-color-light" height="22px" viewBox="0 0 24 24" width="22px" xmlns="http://www.w3.org/2000/svg">&lt;path d="M0 0h24v24H0z" fill="none"/>&lt;path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>&lt;/svg>&lt;/a>
+&lt;/h3>&lt;p>&lt;strong>Problem&lt;/strong>: We have an encrypted Virtual Machine (VM) disk and the associated
+VirtualBox (VBox) live snapshot (taken when user was logged in). Mount the VM
+and restore the live snapshot to get access to the data.&lt;/p>
+&lt;p>It seems pretty easy, but turns out it's not and looks to be a first of its kind
+tutorial (at least public). This is surprising because I can imagine this issue
+being a recurring problem in the forensics community.&lt;/p>
+&lt;p>A few days ago I did a couple of Forensics challenges. Both involved mounting
+images and analyzing the contents of a VM. The second challenge was a disk and a
+live snapshot. Part of the challenge involved mounting the snapshot and
+restoring the state to log in.&lt;/p>
+&lt;p>It's an ongoing challenge so I do not want to spill the beans. Instead, I have
+re-created a VM to show what I did. Hopefully this will help the next person
+with a similar problem.&lt;/p></description></item><item><title>WinAppDbg - Part 4 - Bruteforcing FlareOn 2017 - Challenge 3</title><link>https://parsiya.net/blog/2017-11-15-winappdbg-part-4-bruteforcing-flareon-2017-challenge-3/</link><pubDate>Wed, 15 Nov 2017 18:45:04 -0500</pubDate><guid>https://parsiya.net/blog/2017-11-15-winappdbg-part-4-bruteforcing-flareon-2017-challenge-3/</guid><description>&lt;p>Previous parts:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://parsiya.net/blog/2017-11-09-winappdbg-part-1-basics/" title="WinAppDbg - Part 1 - Basics">Part 1 - Basics&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://parsiya.net/blog/2017-11-11-winappdbg-part-2-function-hooking-and-others/" title="WinAppDbg - Part 2 - Function Hooking and Others">Part 2 - Function Hooking and Others&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://parsiya.net/blog/2017-11-11-winappdbg-part-2-function-hooking-and-others/" title="WinAppDbg - Part 3 - Manipulating Function Calls">Part 3 - Manipulating Function Calls&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;p>We have learned some good stuff. In this part I am going to talk about the original problem that led me to learning WinAppDbg. This is my writeup for challenge 3 &amp;quot;Greek to me&amp;quot; of &lt;a href="https://www.fireeye.com/blog/threat-research/2017/10/2017-flare-on-challenge-solutions.html" target="_blank" rel="noreferrer noopener">FlareOn 2017&lt;/a>. This is a bruteforce challenge and is rather easy but instead of bruteforcing it the conventional (and straightforward way), I will show how I traversed arbitrary Assembly blobs using WinAppDbg.&lt;/p>
+&lt;p>I will (hopefully) mostly talk about solving the challenge and not a lot of recon or other places I was stuck at.&lt;/p>
+&lt;p>Code is in my clone:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/winappdbg" title="WinAppDbg code in Parsia-Code" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/winappdbg&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>Razer Comms</title><link>https://parsiya.net/blog/2017-09-21-razer-comms/</link><pubDate>Thu, 21 Sep 2017 22:45:20 -0400</pubDate><guid>https://parsiya.net/blog/2017-09-21-razer-comms/</guid><description>&lt;p>A couple of years ago I looked at Razer Comms. I found a bunch of stuff that I never reported or pursued. I discovered the application is &lt;a href="http://support.razerzone.com/software/comms" target="_blank" rel="noreferrer noopener">now retired&lt;/a> so I am publishing these.&lt;/p>
+&lt;p>I did not look very hard but Razer Comms was essentially a webapp running via the &lt;a href="https://bitbucket.org/chromiumembedded/cef" target="_blank" rel="noreferrer noopener">Chromium Embedded Framework&lt;/a>. There were no checks on channel authorizations. You could read every channel including ones protected with passwords.&lt;/p>
+&lt;p>You can see my notes at &lt;a href="https://github.com/parsiya/Parsia-Clone/tree/master/research/razer-comms" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Clone/tree/master/research/razer-comms&lt;/a>.&lt;/p></description></item><item><title>My Adventure with Fireeye FLARE Challenge</title><link>https://parsiya.net/blog/2014-09-23-my-adventure-with-fireeye-flare-challenge/</link><pubDate>Tue, 23 Sep 2014 02:31:44 +0000</pubDate><guid>https://parsiya.net/blog/2014-09-23-my-adventure-with-fireeye-flare-challenge/</guid><description>&lt;p>These are my (rather long) solutions to Fireeye's FLARE challenge. This is just not the solution but other ways that I tried. This was a great learning experience for me so I am writing this post to document everything I tried. As a result, this post is somewhat long.&lt;/p>
+&lt;p>If you have any feedback, please let me know. I spent a lot of time on this writeup and I am always happy to learn new stuff. My email and twitter handle are in the sidebar.&lt;/p>
+&lt;p>I am a bit late to the party. There &lt;del>were two&lt;/del> are now other three solutions posted (that I know of). Check them out.&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://www.codeandsec.com/Detailed-Solutions-to-FireEye-FLARE-Challenge" target="_blank" rel="noreferrer noopener">Detailed Solutions to FireEye FLARE Challenge&lt;/a>&lt;/li>
+&lt;li>&lt;a href="http://www.ghettoforensics.com/2014/09/a-walkthrough-for-flare-re-challenges.html" target="_blank" rel="noreferrer noopener">A Walk through for FLARE RE Challenges&lt;/a>&lt;/li>
+&lt;li>The FLARE On Challenge Solutions by Fireye
+&lt;ul>
+&lt;li>&lt;a href="http://www.fireeye.com/blog/technical/cyber-exploits/2014/11/the-flare-on-challenge-solutions-part-1-of-2.html" target="_blank" rel="noreferrer noopener">Part 1 - solutions for challenges 1 to 5&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.fireeye.com/blog/threat-research/2014/11/flare_on_challengep.html" target="_blank" rel="noreferrer noopener">Part 2 - solutions for challenges 6 and 7&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul></description></item></channel></rss>

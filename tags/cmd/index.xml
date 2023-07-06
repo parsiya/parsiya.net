@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>cmd on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/tags/cmd/</link><description>Recent content in cmd on Hackerman's Hacking Tutorials</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 27 Nov 2017 23:13:55 -0500</lastBuildDate><atom:link href="https://parsiya.net/tags/cmd/index.xml" rel="self" type="application/rss+xml"/><item><title>cmd Startup Commands</title><link>https://parsiya.net/blog/2017-11-27-cmd-startup-commands/</link><pubDate>Mon, 27 Nov 2017 23:13:55 -0500</pubDate><guid>https://parsiya.net/blog/2017-11-27-cmd-startup-commands/</guid><description>&lt;p>This blog talks about how to run a command automatically every time you open a new command prompt on Windows.&lt;/p>
+&lt;ol>
+&lt;li>Open registry.&lt;/li>
+&lt;li>Navigate to the following location:
+&lt;ul>
+&lt;li>&lt;code>HKCU\Software\Microsoft\Command Processor&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Double click &lt;code>Autorun&lt;/code> and type in your command. For example:
+&lt;ul>
+&lt;li>&lt;code>cd /d C:\Users\IEUser\Desktop\Whatever\&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>If the &lt;code>Autorun&lt;/code> property is missing, create one with type &lt;code>REG_SZ&lt;/code>.&lt;/li>
+&lt;li>Now every cmd will automatically cd to the &lt;code>Whatever&lt;/code> directory.&lt;/li>
+&lt;/ol>
+&lt;p>I am going to keep blogging consistently (hopefully). This means breaking my habit of having to write extensive blog posts.&lt;/p></description></item><item><title>Run Line vs. cmd vs. PowerShell</title><link>https://parsiya.net/blog/2017-10-23-run-line-vs.-cmd-vs.-powershell/</link><pubDate>Mon, 23 Oct 2017 22:01:50 -0400</pubDate><guid>https://parsiya.net/blog/2017-10-23-run-line-vs.-cmd-vs.-powershell/</guid><description>&lt;p>Note about the differences between search paths when running stuff via the Windows Run Line (&lt;code>win+r&lt;/code>), command line and PowerShell.&lt;/p>
+&lt;p>We can type &lt;code>iexplore&lt;/code> in Run Line to open up Internet Explorer but doing the same in a cmd or PowerShell is not successful.&lt;/p>
+&lt;p>&lt;strong>tl;dr&lt;/strong>\
+Run Line looks in the following registry location then PATH. Credit Vic Laurie at &lt;a href="https://commandwindows.com/runline.htm" target="_blank" rel="noreferrer noopener">commandwindows.com&lt;/a>.&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>HKLM\Software\Microsoft\Windows\CurrentVersion\App Paths&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Search order&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>cmd searches first in local directory and then in PATH.&lt;/li>
+&lt;li>PowerShell searches first in PATH and then in local directory.&lt;/li>
+&lt;li>Run Line searches in &lt;code>App Paths&lt;/code> first.&lt;/li>
+&lt;/ul>
+&lt;p>Usual blabbering and needless digging follows.&lt;/p></description></item></channel></rss>

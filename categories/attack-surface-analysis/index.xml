@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Attack Surface Analysis on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/categories/attack-surface-analysis/</link><description>Recent content in Attack Surface Analysis on Hackerman's Hacking Tutorials</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 07 Feb 2022 22:37:59 -0800</lastBuildDate><atom:link href="https://parsiya.net/categories/attack-surface-analysis/index.xml" rel="self" type="application/rss+xml"/><item><title>Security Nightmares of Game Package Managers</title><link>https://parsiya.net/blog/2022-02-07-security-nightmares-of-game-package-managers/</link><pubDate>Mon, 07 Feb 2022 22:37:59 -0800</pubDate><guid>https://parsiya.net/blog/2022-02-07-security-nightmares-of-game-package-managers/</guid><description>&lt;p>Let's talk about the security nightmare of handling hundreds of different game
+installations. Over the years I have become the de facto security engineer
+responsible for EA's &amp;quot;game package managers&amp;quot; &lt;a href="https://www.origin.com/usa/en-us/store/download" target="_blank" rel="noreferrer noopener">Origin&lt;/a> and the
+&lt;a href="https://www.ea.com/ea-app-beta" target="_blank" rel="noreferrer noopener">EA App&lt;/a> and we have our own unique issues.&lt;/p></description></item><item><title>Attack Surface Analysis - Part 3 - Resurrected Code Execution</title><link>https://parsiya.net/blog/2021-09-26-attack-surface-analysis-part-3-resurrected-code-execution/</link><pubDate>Sun, 26 Sep 2021 20:50:38 -0700</pubDate><guid>https://parsiya.net/blog/2021-09-26-attack-surface-analysis-part-3-resurrected-code-execution/</guid><description>&lt;p>In part 3 of my attack surface analysis series, I will discuss an undisclosed RCE.
+This bug uses a combination of all tricks introduced in
+&lt;a href="https://parsiya.net/blog/2021-03-17-attack-surface-analysis-part-2-custom-protocol-handlers/" title="Attack Surface Analysis - Part 2 - Custom Protocol Handlers" rel="nofollow" target="_blank">part 2 of the series&lt;/a>.&lt;/p>
+&lt;p>We will see command-line switch injection from a custom protocol handler,
+loading remote files, reversing a custom scripting engine to instrument the
+application, and log file injection. Pretty nice chain if I may say so.&lt;/p></description></item><item><title>The JavaScript Bridge in Modern Desktop Applications</title><link>https://parsiya.net/blog/2021-06-08-the-javascript-bridge-in-modern-desktop-applications/</link><pubDate>Tue, 08 Jun 2021 00:53:25 -0700</pubDate><guid>https://parsiya.net/blog/2021-06-08-the-javascript-bridge-in-modern-desktop-applications/</guid><description>&lt;p>We have an XSS in a desktop application, what happens next? How can you
+escalate it to remote code execution? Let's see.&lt;/p></description></item><item><title>Attack Surface Analysis - Part 2 - Custom Protocol Handlers</title><link>https://parsiya.net/blog/2021-03-17-attack-surface-analysis-part-2-custom-protocol-handlers/</link><pubDate>Wed, 17 Mar 2021 15:14:00 -0800</pubDate><guid>https://parsiya.net/blog/2021-03-17-attack-surface-analysis-part-2-custom-protocol-handlers/</guid><description>&lt;p>Custom protocol handlers are an obscure attack surface. They allow us to convert
+local attacks into remote ones and are an alternative way to
+&lt;a href="https://parsiya.net/blog/2020-08-13-localghost-escaping-the-browser-sandbox-without-0-days/" title="jump the browser sandbox without 0days" rel="nofollow" target="_blank">jump the browser sandbox without 0days&lt;/a>).&lt;/p>
+&lt;p>Similar to the first part of this series
+&lt;a href="https://parsiya.net/blog/2021-01-08-attack-surface-analysis-part-1-application-update-a-novel-way-to-bypass-executable-signature-checks-with-electron/" title="A Novel Way to Bypass Executable Signature Checks with Electron" rel="nofollow" target="_blank">A Novel Way to Bypass Executable Signature Checks with Electron&lt;/a>
+I will analyze this attack surface and discuss a few interesting public bugs. I
+wanted to discuss two of my undisclosed bugs but the post is already too long.&lt;/p>
+&lt;p>&lt;strong>2021-04-21 updates&lt;/strong>:&lt;/p>
+&lt;ol>
+&lt;li>Startup path limitations and possible workarounds.&lt;/li>
+&lt;li>Positive security's excellent blog released a month after this with a near
+jar trick.&lt;/li>
+&lt;li>&lt;a href="https://positive.security/blog/url-open-rce" target="_blank" rel="noreferrer noopener">Allow arbitrary URLs, expect arbitrary code execution&lt;/a>.&lt;/li>
+&lt;/ol>
+&lt;p>The article has a great trick for passing parameters when we cannot. Use &lt;code>jar&lt;/code>
+files in UNC paths: &lt;code>\\ip\path\whatever.jar&lt;/code>. Search for &lt;code>windows-10-19042&lt;/code> in
+the page.&lt;/p></description></item><item><title>Attack Surface Analysis - Part 1 - Application Update:
+'A Novel Way to Bypass Executable Signature Checks with Electron'</title><link>https://parsiya.net/blog/2021-01-08-attack-surface-analysis-part-1-application-update-a-novel-way-to-bypass-executable-signature-checks-with-electron/</link><pubDate>Fri, 08 Jan 2021 22:33:32 -0800</pubDate><guid>https://parsiya.net/blog/2021-01-08-attack-surface-analysis-part-1-application-update-a-novel-way-to-bypass-executable-signature-checks-with-electron/</guid><description>&lt;p>A few months ago I found a way to subvert the update process of an Electron
+application to get local privilege escalation. The application stores the
+updater under a path where standard users have write access. But it also
+checked if the executable was signed by the vendor. I managed to bypass the
+signing using a backdoored Electron application.&lt;/p></description></item></channel></rss>

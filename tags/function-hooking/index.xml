@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>function hooking on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/tags/function-hooking/</link><description>Recent content in function hooking on Hackerman's Hacking Tutorials</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Wed, 15 Nov 2017 00:30:25 -0500</lastBuildDate><atom:link href="https://parsiya.net/tags/function-hooking/index.xml" rel="self" type="application/rss+xml"/><item><title>WinAppDbg - Part 3 - Manipulating Function Calls</title><link>https://parsiya.net/blog/2017-11-15-winappdbg-part-3-manipulating-function-calls/</link><pubDate>Wed, 15 Nov 2017 00:30:25 -0500</pubDate><guid>https://parsiya.net/blog/2017-11-15-winappdbg-part-3-manipulating-function-calls/</guid><description>&lt;p>Previously on WinAppDbg-TV:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://parsiya.net/blog/2017-11-09-winappdbg-part-1-basics/" title="WinAppDbg - Part 1 - Basics">Part 1 - Basics&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://parsiya.net/blog/2017-11-11-winappdbg-part-2-function-hooking-and-others/" title="WinAppDbg - Part 2 - Function Hooking and Others">Part 2 - Function Hooking and Others&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;p>As usual, code is in my clone on Github. Download that directory to your VM and follow along:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/winappdbg" title="WinAppDbg code in Parsia-Code" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/winappdbg&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;p>In part two we learned how to hook functions by hooking IE and Firefox to see pre-TLS traffic. Just looking at function calls is fun but often not enough. We need to be able to modify function parameters and return values.&lt;/p>
+&lt;p>In this part we will learn how to do that (and a few other things). We will start with something simple and then move on to more complex examples.&lt;/p></description></item><item><title>WinAppDbg - Part 2 - Function Hooking and Others</title><link>https://parsiya.net/blog/2017-11-11-winappdbg-part-2-function-hooking-and-others/</link><pubDate>Sat, 11 Nov 2017 12:04:48 -0500</pubDate><guid>https://parsiya.net/blog/2017-11-11-winappdbg-part-2-function-hooking-and-others/</guid><description>&lt;p>In &lt;a href="https://parsiya.net/blog/2017-11-09-winappdbg-part-1-basics/" title="WinAppDbg - Part 1 - Basics">part one&lt;/a> we talked about the basics of WinAppDbg. In this part we are going to learn a few new things:&lt;/p>
+&lt;ul>
+&lt;li>I wrote a &lt;a href="https://github.com/parsiya/WinAppUtil" title="WinAppDbg repository on Github" target="_blank" rel="noreferrer noopener">simple python module&lt;/a> to simplify my use of WinAppDbg. It will most likely be modified later, but I have included a version that works with the tutorials at:
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/winappdbg" title="WinAppDbg code in Parsia-Code" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/winappdbg&lt;/a>&lt;/li>
+&lt;li>We do not need to type the full filename anymore if the executable is in PATH. Note Run Line (&lt;code>win+r&lt;/code>) pulls stuff from more locations than PATH, so we cannot call &lt;code>chrome.exe&lt;/code>. I have written about it &lt;a href="https://parsiya.net/blog/2017-10-23-run-line-vs.-cmd-vs.-powershell/" title="Run Line vs. cmd vs. PowerShell">here&lt;/a>.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;strong>DLL enumeration&lt;/strong>: We're going to implement one of procmon's features.&lt;/li>
+&lt;li>&lt;strong>Process/Thread tracing&lt;/strong>: Another procmon feature.&lt;/li>
+&lt;li>&lt;strong>Function Hooking&lt;/strong>: It's very easy in WinAppDbg and we will learn how to do it a couple of different ways.
+&lt;ul>
+&lt;li>We will hook pre-TLS encryption data for Internet Explorer and Firefox to hack the Gibson.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>Copy this directory &lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/winappdbg" title="WinAppDbg code in Parsia-Code" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/winappdbg&lt;/a> to your VM and let's go.&lt;/p></description></item></channel></rss>

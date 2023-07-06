@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Run Line on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/tags/run-line/</link><description>Recent content in Run Line on Hackerman's Hacking Tutorials</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 26 Oct 2017 21:11:55 -0400</lastBuildDate><atom:link href="https://parsiya.net/tags/run-line/index.xml" rel="self" type="application/rss+xml"/><item><title>Silly Attack Using Run Line</title><link>https://parsiya.net/blog/2017-10-26-silly-attack-using-run-line/</link><pubDate>Thu, 26 Oct 2017 21:11:55 -0400</pubDate><guid>https://parsiya.net/blog/2017-10-26-silly-attack-using-run-line/</guid><description>&lt;p>&lt;a href="https://parsiya.net/blog/2017-10-23-run-line-vs.-cmd-vs.-powershell/" title="Run Line vs. cmd vs. PowerShell">Previously&lt;/a> we saw how Windows Run Line searches in &lt;code>App Paths&lt;/code> registry keys before PATH. We can perform a silly attack and create a registry key for an application in path and point it to another command.&lt;/p>
+&lt;p>This is a silly attack because we need to be admin to create/edit those keys. But if you ever find yourself in the unlikely situation, you can use this to become delayed admin (i.e. wait for admin to run the app via Run Line).&lt;/p></description></item><item><title>Run Line vs. cmd vs. PowerShell</title><link>https://parsiya.net/blog/2017-10-23-run-line-vs.-cmd-vs.-powershell/</link><pubDate>Mon, 23 Oct 2017 22:01:50 -0400</pubDate><guid>https://parsiya.net/blog/2017-10-23-run-line-vs.-cmd-vs.-powershell/</guid><description>&lt;p>Note about the differences between search paths when running stuff via the Windows Run Line (&lt;code>win+r&lt;/code>), command line and PowerShell.&lt;/p>
+&lt;p>We can type &lt;code>iexplore&lt;/code> in Run Line to open up Internet Explorer but doing the same in a cmd or PowerShell is not successful.&lt;/p>
+&lt;p>&lt;strong>tl;dr&lt;/strong>\
+Run Line looks in the following registry location then PATH. Credit Vic Laurie at &lt;a href="https://commandwindows.com/runline.htm" target="_blank" rel="noreferrer noopener">commandwindows.com&lt;/a>.&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>HKLM\Software\Microsoft\Windows\CurrentVersion\App Paths&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Search order&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>cmd searches first in local directory and then in PATH.&lt;/li>
+&lt;li>PowerShell searches first in PATH and then in local directory.&lt;/li>
+&lt;li>Run Line searches in &lt;code>App Paths&lt;/code> first.&lt;/li>
+&lt;/ul>
+&lt;p>Usual blabbering and needless digging follows.&lt;/p></description></item></channel></rss>

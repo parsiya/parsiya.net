@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Golang on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/tags/golang/</link><description>Recent content in Golang on Hackerman's Hacking Tutorials</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Fri, 29 Dec 2017 13:40:56 -0500</lastBuildDate><atom:link href="https://parsiya.net/tags/golang/index.xml" rel="self" type="application/rss+xml"/><item><title>Simple SSH Harvester in Go</title><link>https://parsiya.net/blog/2017-12-29-simple-ssh-harvester-in-go/</link><pubDate>Fri, 29 Dec 2017 13:40:56 -0500</pubDate><guid>https://parsiya.net/blog/2017-12-29-simple-ssh-harvester-in-go/</guid><description>&lt;p>During my Go SSH adventures at &lt;a href="https://github.com/parsiya/Hacking-with-Go/blob/master/content/04.4.md" target="_blank" rel="noreferrer noopener">Hacking with Go&lt;/a> I wanted to write a simple SSH harvester. As usual, the tool turned out to be much larger than I thought.&lt;/p>
+&lt;p>I realized I cannot find any examples of SSH certificate verification. There are a few examples for host keys here and there. Even the &lt;code>certs_test.go&lt;/code> file just checks the host name. There was a &lt;a href="https://github.com/golang/go/issues/23266" target="_blank" rel="noreferrer noopener">typo in an error message&lt;/a>&lt;sup id="fnref:1">&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref">1&lt;/a>&lt;/sup> in the &lt;code>crypto/ssh&lt;/code> package but I think because this is not very much used, had gone unreported.&lt;/p>
+&lt;p>Here's my step by step guide to writing this tool by piggybacking on SSH host verification callbacks. Hopefully this will make it easier for the next person.&lt;/p>
+&lt;p>You can find the code here:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/parsiya/SSH-Scanner/blob/master/SSHHarvesterv1.go?ts=4" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/SSH-Scanner/blob/master/SSHHarvesterv1.go&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h3 id="tldr-verifying-ssh-servers">TL;DR: verifying SSH servers
+&lt;a class="header-link" href="#tldr-verifying-ssh-servers">&lt;svg class="fill-current o-60 hover-accent-color-light" height="22px" viewBox="0 0 24 24" width="22px" xmlns="http://www.w3.org/2000/svg">&lt;path d="M0 0h24v24H0z" fill="none"/>&lt;path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>&lt;/svg>&lt;/a>
+&lt;/h3>&lt;ol>
+&lt;li>Create an instance of &lt;a href="https://godoc.org/golang.org/x/crypto/ssh#CertChecker" target="_blank" rel="noreferrer noopener">ssh.CertChecker&lt;/a>.&lt;/li>
+&lt;li>Set callback functions for &lt;code>IsHostAuthority&lt;/code>, &lt;code>IsRevoked&lt;/code> and optionally &lt;code>HostKeyFallback&lt;/code>.
+&lt;ul>
+&lt;li>&lt;code>IsHostAuthority&lt;/code>'s callback should return &lt;code>true&lt;/code> for valid certificates.&lt;/li>
+&lt;li>&lt;code>IsRevoked&lt;/code>'s callback should return &lt;code>false&lt;/code> for valid certificates.&lt;/li>
+&lt;li>&lt;code>HostKeyFallback&lt;/code>'s callback should return &lt;code>nil&lt;/code> for valid certificates.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Create an instance of &lt;a href="https://godoc.org/golang.org/x/crypto/ssh#ClientConfig" target="_blank" rel="noreferrer noopener">ssh.ClientConfig&lt;/a>.&lt;/li>
+&lt;li>Set &lt;code>HostKeyCallback&lt;/code> in &lt;code>ClientConfig&lt;/code> to &lt;code>&amp;amp;ssh.CertChecker.CheckHostKey&lt;/code>.&lt;/li>
+&lt;li>&lt;a href="https://godoc.org/golang.org/x/crypto/ssh#CertChecker.CheckHostKey" target="_blank" rel="noreferrer noopener">CheckHostKey&lt;/a> will verify the certificate based on other callback functions.&lt;/li>
+&lt;li>The certificate can be accessed in &lt;code>IsRevoked&lt;/code> callback function.&lt;/li>
+&lt;/ol></description></item><item><title>Learning Go</title><link>https://parsiya.net/blog/2016-06-01-learning-go/</link><pubDate>Wed, 01 Jun 2016 20:35:00 -0400</pubDate><guid>https://parsiya.net/blog/2016-06-01-learning-go/</guid><description>&lt;p>I have decided to learn Go (or Golang). I went through the &lt;a href="https://tour.golang.org/" target="_blank" rel="noreferrer noopener">Tour of Go&lt;/a> and made some notes. Some of the items/code are directly copy pasted from there. The notes are just a cheatsheet to help me look things up quickly while learning. I will update that page as I learn more.&lt;/p>
+&lt;p>You can see the notes at &lt;a href="https://parsiya.net/go/" title="Go Notes">https://parsiya.net/go/&lt;/a>.&lt;/p></description></item></channel></rss>

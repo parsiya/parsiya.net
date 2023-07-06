@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Car mechanic simulator 2015 on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/tags/car-mechanic-simulator-2015/</link><description>Recent content in Car mechanic simulator 2015 on Hackerman's Hacking Tutorials</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Wed, 29 Nov 2017 20:29:30 -0500</lastBuildDate><atom:link href="https://parsiya.net/tags/car-mechanic-simulator-2015/index.xml" rel="self" type="application/rss+xml"/><item><title>"Hacking" Car Mechanic Simulator 2015</title><link>https://parsiya.net/blog/2017-11-29-hacking-car-mechanic-simulator-2015/</link><pubDate>Wed, 29 Nov 2017 20:29:30 -0500</pubDate><guid>https://parsiya.net/blog/2017-11-29-hacking-car-mechanic-simulator-2015/</guid><description>&lt;p>Not real hacking!&lt;/p>
+&lt;p>&lt;strong>Tl;dr:&lt;/strong>&lt;/p>
+&lt;ol>
+&lt;li>Open this file with a hex editor:
+&lt;ul>
+&lt;li>&lt;code>\AppData\LocalLow\Red Dot Games\Car Mechanic Simulator 2015\profile#\global&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Search for &lt;code>money&lt;/code> and &lt;code>xp&lt;/code>.&lt;/li>
+&lt;li>Locate the int32 value of each property in little-endian.&lt;/li>
+&lt;li>Convert your current XP and money to hex to make the search easier.&lt;/li>
+&lt;li>Overwrite them with&lt;code>6F FF FF FF&lt;/code>.&lt;/li>
+&lt;li>???&lt;/li>
+&lt;li>You have &amp;quot;hacked&amp;quot; the game.&lt;/li>
+&lt;/ol>
+&lt;p>It does not get easier than this.&lt;/p></description></item></channel></rss>

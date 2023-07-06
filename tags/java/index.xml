@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Java on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/tags/java/</link><description>Recent content in Java on Hackerman's Hacking Tutorials</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sun, 22 Dec 2019 20:13:09 -0800</lastBuildDate><atom:link href="https://parsiya.net/tags/java/index.xml" rel="self" type="application/rss+xml"/><item><title>Using Mozilla Rhino to Run JavaScript in Java</title><link>https://parsiya.net/blog/2019-12-22-using-mozilla-rhino-to-run-javascript-in-java/</link><pubDate>Sun, 22 Dec 2019 20:13:09 -0800</pubDate><guid>https://parsiya.net/blog/2019-12-22-using-mozilla-rhino-to-run-javascript-in-java/</guid><description>&lt;p>This post discusses what I learned about executing JavaScript code in Java
+with Mozilla Rhino. By the end of this post, you will know:&lt;/p>
+&lt;ol>
+&lt;li>What Rhino is.&lt;/li>
+&lt;li>How to use Rhino in your Java application (e.g., a Burp extension).&lt;/li>
+&lt;li>Some tips and tricks when dealing with Rhino.&lt;/li>
+&lt;li>Alternative options to using Rhino.&lt;/li>
+&lt;/ol>
+&lt;p>Code is at:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/java-rhino" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/java-rhino&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>Developing and Debugging Java Burp Extensions with Visual Studio Code</title><link>https://parsiya.net/blog/2019-12-02-developing-and-debugging-java-burp-extensions-with-visual-studio-code/</link><pubDate>Mon, 02 Dec 2019 19:32:09 -0800</pubDate><guid>https://parsiya.net/blog/2019-12-02-developing-and-debugging-java-burp-extensions-with-visual-studio-code/</guid><description>&lt;p>A few days ago, I released the &lt;a href="https://github.com/parsiya/bug-diaries" target="_blank" rel="noreferrer noopener">Bug Diaries&lt;/a>
+Burp extension. It's a Burp extension that aims to mimic Burp issues for the
+community (free) version. For reasons, I decided to rewrite it in Java. This is
+the first part of my series on what I learned switching to Java.&lt;/p>
+&lt;p>This part discusses how my environment is set up for development with
+&lt;a href="https://code.visualstudio.com/" target="_blank" rel="noreferrer noopener">Visual Studio Code&lt;/a>. Things like
+auto-completion, Gradle builds and most importantly debugging.&lt;/p>
+&lt;p>Clone the repository to skip some of the steps in the blog. I still recommend
+doing them yourself if you are not familiar with Gradle and Burp development,
+clone the following repository:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/parsiya/burp-sample-extension-java" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/burp-sample-extension-java&lt;/a>&lt;/li>
+&lt;/ul></description></item></channel></rss>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>.NET Remoting on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/tags/.net-remoting/</link><description>Recent content in .NET Remoting on Hackerman's Hacking Tutorials</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sat, 14 Nov 2015 16:22:36 +0000</lastBuildDate><atom:link href="https://parsiya.net/tags/.net-remoting/index.xml" rel="self" type="application/rss+xml"/><item><title>Intro to .NET Remoting for Hackers</title><link>https://parsiya.net/blog/2015-11-14-intro-to-.net-remoting-for-hackers/</link><pubDate>Sat, 14 Nov 2015 16:22:36 +0000</pubDate><guid>https://parsiya.net/blog/2015-11-14-intro-to-.net-remoting-for-hackers/</guid><description>&lt;p>This is a simple tutorial about &lt;a href="https://msdn.microsoft.com/en-us/library/kwdt6w2k%28v=vs.71%29.aspx" target="_blank" rel="noreferrer noopener">.NET Remoting&lt;/a>. I am going to re-create a very simple RCE and local privilege escalation that I encountered in my projects and use it to explain .NET Remoting and simple debugging in &lt;code>dnSpy&lt;/code>.&lt;/p>
+&lt;p>In this post we will:&lt;/p>
+&lt;ol>
+&lt;li>Do a brief introduction to .NET Remoting&lt;/li>
+&lt;li>Develop a simple .NET Remoting client and a vulnerable server in Visual Studio&lt;/li>
+&lt;li>Observe .NET Remoting traffic&lt;/li>
+&lt;li>See .NET Remoting in action by doing some basic debugging with dnSpy&lt;/li>
+&lt;li>Re-create the vulnerable application&lt;/li>
+&lt;li>Use dnSpy to patch and create modified .NET modules to exploit our sample vulnerable server&lt;/li>
+&lt;/ol>
+&lt;p>If you know of any applications that use .NET Remoting please let me know. I want to look at them.&lt;/p>
+&lt;p>Code is at:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/net-remoting" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/net-remoting&lt;/a>&lt;/li>
+&lt;/ul></description></item></channel></rss>

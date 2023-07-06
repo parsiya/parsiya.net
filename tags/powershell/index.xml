@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PowerShell on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/tags/powershell/</link><description>Recent content in PowerShell on Hackerman's Hacking Tutorials</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sun, 28 Apr 2019 13:35:00 -0700</lastBuildDate><atom:link href="https://parsiya.net/tags/powershell/index.xml" rel="self" type="application/rss+xml"/><item><title>Thick Client Proxying - Part 9 - The Windows DNS Cache</title><link>https://parsiya.net/blog/2019-04-28-thick-client-proxying-part-9-the-windows-dns-cache/</link><pubDate>Sun, 28 Apr 2019 13:35:00 -0700</pubDate><guid>https://parsiya.net/blog/2019-04-28-thick-client-proxying-part-9-the-windows-dns-cache/</guid><description>&lt;p>This post explains a trick that I have been using for a few years to discover
+application endpoints on Windows quickly.&lt;/p>
+&lt;p>It's a simple trick:&lt;/p>
+&lt;ol>
+&lt;li>Clear the DNS cache.&lt;/li>
+&lt;li>Take a snapshot of the cache.&lt;/li>
+&lt;li>Run the application and use different functionalities.&lt;/li>
+&lt;li>Take another snapshot of the cache.&lt;/li>
+&lt;li>Compare these two snapshots.&lt;/li>
+&lt;li>???&lt;/li>
+&lt;li>Discover (most) endpoints.&lt;/li>
+&lt;/ol>
+&lt;p>Code is at:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/dns-cache" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/dns-cache&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>Run Line vs. cmd vs. PowerShell</title><link>https://parsiya.net/blog/2017-10-23-run-line-vs.-cmd-vs.-powershell/</link><pubDate>Mon, 23 Oct 2017 22:01:50 -0400</pubDate><guid>https://parsiya.net/blog/2017-10-23-run-line-vs.-cmd-vs.-powershell/</guid><description>&lt;p>Note about the differences between search paths when running stuff via the Windows Run Line (&lt;code>win+r&lt;/code>), command line and PowerShell.&lt;/p>
+&lt;p>We can type &lt;code>iexplore&lt;/code> in Run Line to open up Internet Explorer but doing the same in a cmd or PowerShell is not successful.&lt;/p>
+&lt;p>&lt;strong>tl;dr&lt;/strong>\
+Run Line looks in the following registry location then PATH. Credit Vic Laurie at &lt;a href="https://commandwindows.com/runline.htm" target="_blank" rel="noreferrer noopener">commandwindows.com&lt;/a>.&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>HKLM\Software\Microsoft\Windows\CurrentVersion\App Paths&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Search order&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>cmd searches first in local directory and then in PATH.&lt;/li>
+&lt;li>PowerShell searches first in PATH and then in local directory.&lt;/li>
+&lt;li>Run Line searches in &lt;code>App Paths&lt;/code> first.&lt;/li>
+&lt;/ul>
+&lt;p>Usual blabbering and needless digging follows.&lt;/p></description></item></channel></rss>

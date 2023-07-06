@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Forensics on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/categories/forensics/</link><description>Recent content in Forensics on Hackerman's Hacking Tutorials</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 29 Jan 2018 00:10:03 -0500</lastBuildDate><atom:link href="https://parsiya.net/categories/forensics/index.xml" rel="self" type="application/rss+xml"/><item><title>VirtualBox Live State File Format</title><link>https://parsiya.net/blog/2018-01-29-virtualbox-live-state-file-format/</link><pubDate>Mon, 29 Jan 2018 00:10:03 -0500</pubDate><guid>https://parsiya.net/blog/2018-01-29-virtualbox-live-state-file-format/</guid><description>&lt;p>In &lt;a href="https://parsiya.net/blog/2018-01-23-mounting-live-snapshots-of-encrypted-vms-in-virtualbox/" title="Mounting Live Snapshots of Encrypted VMs in VirtualBox">Mounting Live Snapshots of Encrypted VMs in VirtualBox&lt;/a> we mounted a live snapshot and logged into the machine. We also got a sneak peek of what kind of information we can extract from the live snapshot (&lt;code>sav&lt;/code> file).&lt;/p>
+&lt;p>In this post I will talk about parts of the live state file format and show some data that can be extracted from these files. The format is not formally documented but we have access to commented source.&lt;/p>
+&lt;p>To make it easier, I have uploaded the live state from our previous MysteryVM separately. You can download it from &lt;a href="https://drive.google.com/file/d/1WdlcHsQattvFs8Wu9RdFC5UOaSxqhk0d/view?usp=sharing" target="_blank" rel="noreferrer noopener">Google Drive&lt;/a> (45 MB).&lt;/p></description></item><item><title>Mounting Live Snapshots of Encrypted VMs in VirtualBox</title><link>https://parsiya.net/blog/2018-01-23-mounting-live-snapshots-of-encrypted-vms-in-virtualbox/</link><pubDate>Tue, 23 Jan 2018 22:24:39 -0500</pubDate><guid>https://parsiya.net/blog/2018-01-23-mounting-live-snapshots-of-encrypted-vms-in-virtualbox/</guid><description>&lt;h3 id="tldr">TL;DR
+&lt;a class="header-link" href="#tldr">&lt;svg class="fill-current o-60 hover-accent-color-light" height="22px" viewBox="0 0 24 24" width="22px" xmlns="http://www.w3.org/2000/svg">&lt;path d="M0 0h24v24H0z" fill="none"/>&lt;path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>&lt;/svg>&lt;/a>
+&lt;/h3>&lt;p>&lt;strong>Problem&lt;/strong>: We have an encrypted Virtual Machine (VM) disk and the associated
+VirtualBox (VBox) live snapshot (taken when user was logged in). Mount the VM
+and restore the live snapshot to get access to the data.&lt;/p>
+&lt;p>It seems pretty easy, but turns out it's not and looks to be a first of its kind
+tutorial (at least public). This is surprising because I can imagine this issue
+being a recurring problem in the forensics community.&lt;/p>
+&lt;p>A few days ago I did a couple of Forensics challenges. Both involved mounting
+images and analyzing the contents of a VM. The second challenge was a disk and a
+live snapshot. Part of the challenge involved mounting the snapshot and
+restoring the state to log in.&lt;/p>
+&lt;p>It's an ongoing challenge so I do not want to spill the beans. Instead, I have
+re-created a VM to show what I did. Hopefully this will help the next person
+with a similar problem.&lt;/p></description></item><item><title>Building memfetch on Kali + Comments</title><link>https://parsiya.net/blog/2014-11-18-building-memfetch-on-kali--comments/</link><pubDate>Tue, 18 Nov 2014 23:21:01 +0000</pubDate><guid>https://parsiya.net/blog/2014-11-18-building-memfetch-on-kali--comments/</guid><description>&lt;p>I've used Disqus to add comments. At the moment, guests can comment and comments
+do not need to be approved (unless they have links). Hopefully there won't be
+much spam to sink the occasional comment that I think will be posted.&lt;/p>
+&lt;p>Update from 2020: Comments without approval were a mistake. I got so much spam
+and harassment.&lt;/p>
+&lt;p>Note: I just wanted to make it work in a hurry. There are probably better ways
+of doing this.&lt;/p>
+&lt;p>I stumbled upon the very useful tool
+&lt;a href="http://lcamtuf.coredump.cx/soft/memfetch.tgz" target="_blank" rel="noreferrer noopener">memfetch&lt;/a> by the talented
+&lt;em>lcamtuf&lt;/em>. The utility is quite old (from 2003 if I recall correctly) and I
+could not build it using the provided makefile.&lt;/p></description></item></channel></rss>
