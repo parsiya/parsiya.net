@@ -1,4 +1,4 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>My Adventure with Fireeye FLARE Challenge</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.115.1"><meta name=twitter:card content="summary"><meta name=twitter:title content="My Adventure with Fireeye FLARE Challenge"><meta name=twitter:description content="These are my (rather long) solutions to Fireeye's FLARE challenge. This is just not the solution but other ways that I tried. This was a great learning experience for me so I am writing this post to document everything I tried. As a result, this post is somewhat long.
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>My Adventure with Fireeye FLARE Challenge</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.119.0"><meta name=twitter:card content="summary"><meta name=twitter:title content="My Adventure with Fireeye FLARE Challenge"><meta name=twitter:description content="These are my (rather long) solutions to Fireeye's FLARE challenge. This is just not the solution but other ways that I tried. This was a great learning experience for me so I am writing this post to document everything I tried. As a result, this post is somewhat long.
 If you have any feedback, please let me know. I spent a lot of time on this writeup and I am always happy to learn new stuff. My email and twitter handle are in the sidebar.
 I am a bit late to the party. There were two are now other three solutions posted (that I know of). Check them out.
 
@@ -50,7 +50,7 @@ The image is Managed (.NET)
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c# data-lang=c#><span style=display:flex><span><span style=color:#719e07>private</span> <span style=color:#719e07>void</span> btnDecode_Click(<span style=color:#dc322f>object</span> sender, EventArgs e)
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c# data-lang=c#><span style=display:flex><span><span style=color:#268bd2>private</span> <span style=color:#719e07>void</span> btnDecode_Click(<span style=color:#dc322f>object</span> sender, EventArgs e)
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#719e07>this</span>.pbRoge.Image = (Image) Resources.bob_roge; <span style=color:#586e75>// change the image</span>
 </span></span><span style=display:flex><span>  <span style=color:#dc322f>byte</span>[] datSecret = Resources.dat_secret;        <span style=color:#586e75>// interesting</span>
@@ -2694,13 +2694,13 @@ We&#39;ve got another evil one for you, see if you can figure this out. This one
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">14
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c# data-lang=c#><span style=display:flex><span><span style=color:#719e07>public</span> Form1()
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c# data-lang=c#><span style=display:flex><span><span style=color:#268bd2>public</span> Form1()
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#719e07>this</span>.InitializeComponent();
 </span></span><span style=display:flex><span>  <span style=color:#719e07>new</span> Thread(<span style=color:#719e07>new</span> ThreadStart(<span style=color:#719e07>this</span>.lulzors)).Start();
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#719e07>public</span> <span style=color:#719e07>void</span> lulzors()
+</span></span><span style=display:flex><span><span style=color:#268bd2>public</span> <span style=color:#719e07>void</span> lulzors()
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  lulz lulz = <span style=color:#719e07>new</span> lulz();
 </span></span><span style=display:flex><span>  Thread thread = <span style=color:#719e07>new</span> Thread(<span style=color:#719e07>new</span> ThreadStart(lulz.datwork));
@@ -2730,7 +2730,7 @@ We&#39;ve got another evil one for you, see if you can figure this out. This one
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c# data-lang=c#><span style=display:flex><span><span style=color:#586e75>// decoder1 and decoder3 omitted</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#719e07>public</span> <span style=color:#dc322f>string</span> decoder2(<span style=color:#dc322f>string</span> encoded)
+</span></span><span style=display:flex><span><span style=color:#268bd2>public</span> <span style=color:#dc322f>string</span> decoder2(<span style=color:#dc322f>string</span> encoded)
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#dc322f>string</span> str1 = <span style=color:#2aa198>&#34;&#34;</span>;
 </span></span><span style=display:flex><span>  <span style=color:#dc322f>string</span> str2 = <span style=color:#2aa198>&#34;this&#34;</span>;
@@ -2739,7 +2739,7 @@ We&#39;ve got another evil one for you, see if you can figure this out. This one
 </span></span><span style=display:flex><span>  <span style=color:#719e07>return</span> str1;
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#719e07>public</span> <span style=color:#dc322f>string</span> decoder4(<span style=color:#dc322f>string</span> encoded)
+</span></span><span style=display:flex><span><span style=color:#268bd2>public</span> <span style=color:#dc322f>string</span> decoder4(<span style=color:#dc322f>string</span> encoded)
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#dc322f>string</span> str1 = <span style=color:#2aa198>&#34;&#34;</span>;
 </span></span><span style=display:flex><span>  <span style=color:#dc322f>string</span> str2 = <span style=color:#719e07>this</span>.decoder2(<span style=color:#2aa198>&#34;\x001B\x0005\x000ES\x001D\x001BI\a\x001C\x0001\x001AS\0\0\fS\x0006\r\b\x001FT\a\a\x0016K&#34;</span>);

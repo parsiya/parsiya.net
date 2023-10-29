@@ -1,4 +1,4 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Thick Client Proxying - Part 5: FileHippo App Manager or the Bloated Hippo</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.115.1"><meta name=twitter:card content="summary"><meta name=twitter:title content="Thick Client Proxying - Part 5: FileHippo App Manager or the Bloated Hippo"><meta name=twitter:description content="I have talked a lot about this and that but have done nothing in action. Now I will talk about proxying actual applications. I will start with something easy, the FileHippo App Manager. This app was chosen because it can be proxied with Burp, it does not use TLS and it has its own proxy settings (also works with Internet Explorer proxy settings). The requests are pretty simple to understand. I like the FileHippo website because it archives old versions of software. For example I loved the non-bloated Yahoo! Messenger 8.0 when I used it (it's pretty popular in some places) and used FileHippo to download the old versions.
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Thick Client Proxying - Part 5: FileHippo App Manager or the Bloated Hippo</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.119.0"><meta name=twitter:card content="summary"><meta name=twitter:title content="Thick Client Proxying - Part 5: FileHippo App Manager or the Bloated Hippo"><meta name=twitter:description content="I have talked a lot about this and that but have done nothing in action. Now I will talk about proxying actual applications. I will start with something easy, the FileHippo App Manager. This app was chosen because it can be proxied with Burp, it does not use TLS and it has its own proxy settings (also works with Internet Explorer proxy settings). The requests are pretty simple to understand. I like the FileHippo website because it archives old versions of software. For example I loved the non-bloated Yahoo! Messenger 8.0 when I used it (it's pretty popular in some places) and used FileHippo to download the old versions.
 FileHippo App Manager turned out to be more interesting than I thought and this post turned into some .NET reverse engineering using dnSpy. Here's what I talk about in this post:
 
 The app contains the AWS SDK and a fortunately invalid set of AWS Access/Secret keys. Both the SDK and the keys are in dead code.
@@ -350,7 +350,7 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">9
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=display:flex><span><span style=color:#586e75>// FileHippo.AppManager.Core.Authentication.AuthenticationProvider</span>
 </span></span><span style=display:flex><span><span style=color:#586e75>// Token: 0x0600DE83 RID: 56963 RVA: 0x002073FC File Offset: 0x002055FC</span>
-</span></span><span style=display:flex><span><span style=color:#719e07>public</span> <span style=color:#dc322f>string</span> GenerateAccessToken(<span style=color:#dc322f>string</span> clientId, DateTime requestTime)
+</span></span><span style=display:flex><span><span style=color:#268bd2>public</span> <span style=color:#dc322f>string</span> GenerateAccessToken(<span style=color:#dc322f>string</span> clientId, DateTime requestTime)
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>	<span style=color:#719e07>this</span>.Encrypter.Key = Encoding.UTF8.GetBytes(<span style=color:#719e07>this</span>.GetEncryptionKey());
 </span></span><span style=display:flex><span>	<span style=color:#dc322f>int</span> count = <span style=color:#719e07>this</span>.Encrypter.BlockSize / <span style=color:#2aa198>8</span>;
@@ -361,12 +361,12 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 <span class=caption-text>Encrypter information</span></span><p>We see <code>3DES</code>, a 0x18 byte (24 byte or 192 bit) key and an 8 byte IV.</p><span class=caption-wrapper><img class=caption src=/images/2016/thickclient-5-filehippo/08-IV.PNG title=IV alt=IV>
 <span class=caption-text>IV</span></span><p>IV is <code>30 31 3A 31 35 3A 30 32</code> which is <code>01:15:32</code> in hex (quick hint: <code>0x3n</code> is ASCII-Hex for number <code>n</code>). This looks like time and the answer is right in front of our eyes in the previous screenshot. Look at the <code>requestTime</code>. Line number 7 generates the IV.</p><p>And we can see the key too which is <code>00020206040A060E08120A160C1A0E1E10221226142A162E</code> in hex.</p><span class=caption-wrapper><img class=caption src=/images/2016/thickclient-5-filehippo/09-Key.PNG title=Key alt=Key>
 <span class=caption-text>Key</span></span><p>The key is different from the IV, because it is the result of a function call. Later during static analysis we will see how the key is generated. For now, we want to see if it is hardcoded or no. Stop the application and run it again and look at the value of the key. It has not changed.</p><p>Now let's <code>step into</code> the function.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=display:flex><span><span style=color:#586e75>// Token: 0x0600DD04 RID: 56580 RVA: 0x00202858 File Offset: 0x00200A58</span>
-</span></span><span style=display:flex><span><span style=color:#719e07>public</span> <span style=color:#dc322f>string</span> EncryptString(<span style=color:#dc322f>string</span> text)
+</span></span><span style=display:flex><span><span style=color:#268bd2>public</span> <span style=color:#dc322f>string</span> EncryptString(<span style=color:#dc322f>string</span> text)
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#719e07>return</span> Convert.ToBase64String(<span style=color:#719e07>this</span>.Encrypt(Encoding.UTF8.GetBytes(text))); &lt;-- we are here
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>Which counts for the base64 encoding. Another step and we land in:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=display:flex><span><span style=color:#586e75>// Token: 0x0600DD02 RID: 56578 RVA: 0x002027E8 File Offset: 0x002009E8</span>
-</span></span><span style=display:flex><span><span style=color:#719e07>public</span> <span style=color:#dc322f>byte</span>[] Encrypt(<span style=color:#dc322f>byte</span>[] data)
+</span></span><span style=display:flex><span><span style=color:#268bd2>public</span> <span style=color:#dc322f>byte</span>[] Encrypt(<span style=color:#dc322f>byte</span>[] data)
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#719e07>return</span> <span style=color:#719e07>this</span>.Encrypt(data, data.Length); &lt;-- we are here
 </span></span><span style=display:flex><span>}
@@ -383,7 +383,7 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=display:flex><span><span style=color:#586e75>// Token: 0x0600DD03 RID: 56579 RVA: 0x002027F4 File Offset: 0x002009F4</span>
-</span></span><span style=display:flex><span><span style=color:#719e07>public</span> <span style=color:#dc322f>byte</span>[] Encrypt(<span style=color:#dc322f>byte</span>[] data, <span style=color:#dc322f>int</span> length)
+</span></span><span style=display:flex><span><span style=color:#268bd2>public</span> <span style=color:#dc322f>byte</span>[] Encrypt(<span style=color:#dc322f>byte</span>[] data, <span style=color:#dc322f>int</span> length)
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  MemoryStream memoryStream = <span style=color:#719e07>new</span> MemoryStream(); &lt;-- we are here
 </span></span><span style=display:flex><span>  CryptoStream cryptoStream = <span style=color:#719e07>new</span> CryptoStream(memoryStream, <span style=color:#719e07>this</span>._algorithm.CreateEncryptor(<span style=color:#719e07>this</span>._algorithm.Key, <span style=color:#719e07>this</span>._algorithm.IV), CryptoStreamMode.Write);
@@ -405,7 +405,7 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=display:flex><span><span style=color:#586e75>// Token: 0x0600DE84 RID: 56964 RVA: 0x00207474 File Offset: 0x00205674</span>
-</span></span><span style=display:flex><span><span style=color:#719e07>private</span> <span style=color:#dc322f>string</span> GetEncryptionKey()
+</span></span><span style=display:flex><span><span style=color:#268bd2>private</span> <span style=color:#dc322f>string</span> GetEncryptionKey()
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  StringBuilder stringBuilder = <span style=color:#719e07>new</span> StringBuilder();
 </span></span><span style=display:flex><span>  <span style=color:#719e07>for</span> (<span style=color:#dc322f>int</span> i = <span style=color:#2aa198>0</span>; i &lt; <span style=color:#2aa198>24</span>; i++)
@@ -437,15 +437,15 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span></span><span style=display:flex><span>.../<span style=color:#cb4b16>AmazonS3ContentPublishingService.cs</span>: <span style=color:#cb4b16>return</span> <span style=color:#cb4b16>this.AmazonS3SecretKey</span><span style=color:#586e75>;
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span>.../<span style=color:#cb4b16>AmazonS3ContentPublishingService.cs</span>: <span style=color:#cb4b16>using</span> (<span style=color:#cb4b16>AmazonS3</span> <span style=color:#cb4b16>amazonS</span> = <span style=color:#cb4b16>AWSClientFactory.CreateAmazonS3Client</span>(<span style=color:#cb4b16>this.GetAccessKey</span>(), <span style=color:#cb4b16>this.GetSecretKey</span>()))
 </span></span><span style=display:flex><span>.../<span style=color:#cb4b16>AmazonS3ContentPublishingService.cs</span>: <span style=color:#cb4b16>private</span> <span style=color:#cb4b16>readonly</span> <span style=color:#cb4b16>string</span> <span style=color:#cb4b16>AmazonS3SecretKey</span> = <span style=color:#2aa198>&#34;B6nB5T9d1CHGL4YrU5zCuySf65Js7fsi2cNhQh1B&#34;</span>;</span></span></code></pre></td></tr></table></div></div></div></figure><p><code>AmazonS3SecretKey</code> in the last line. Oh wow. Looking at the decompiled code for <code>AmazonS3ContentPublishingService.cs</code> we can see:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=display:flex><span><span style=color:#586e75>// Token: 0x04003423 RID: 13347</span>
-</span></span><span style=display:flex><span><span style=color:#719e07>private</span> <span style=color:#719e07>readonly</span> <span style=color:#dc322f>string</span> AmazonS3AccessKey = <span style=color:#2aa198>&#34;AKIAJYWNSWLQDSSXG3FA&#34;</span>;
+</span></span><span style=display:flex><span><span style=color:#268bd2>private</span> <span style=color:#719e07>readonly</span> <span style=color:#dc322f>string</span> AmazonS3AccessKey = <span style=color:#2aa198>&#34;AKIAJYWNSWLQDSSXG3FA&#34;</span>;
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#586e75>// Token: 0x04003425 RID: 13349</span>
-</span></span><span style=display:flex><span><span style=color:#719e07>private</span> <span style=color:#719e07>readonly</span> <span style=color:#dc322f>string</span> AmazonS3BucketName = <span style=color:#2aa198>&#34;cache.filehippo.com&#34;</span>;
+</span></span><span style=display:flex><span><span style=color:#268bd2>private</span> <span style=color:#719e07>readonly</span> <span style=color:#dc322f>string</span> AmazonS3BucketName = <span style=color:#2aa198>&#34;cache.filehippo.com&#34;</span>;
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#586e75>// Token: 0x04003424 RID: 13348</span>
-</span></span><span style=display:flex><span><span style=color:#719e07>private</span> <span style=color:#719e07>readonly</span> <span style=color:#dc322f>string</span> AmazonS3SecretKey = <span style=color:#2aa198>&#34;B6nB5T9d1CHGL4YrU5zCuySf65Js7fsi2cNhQh1B&#34;</span>;
+</span></span><span style=display:flex><span><span style=color:#268bd2>private</span> <span style=color:#719e07>readonly</span> <span style=color:#dc322f>string</span> AmazonS3SecretKey = <span style=color:#2aa198>&#34;B6nB5T9d1CHGL4YrU5zCuySf65Js7fsi2cNhQh1B&#34;</span>;
 </span></span></code></pre></div><p>A little bit further up we have:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=display:flex><span><span style=color:#586e75>// Token: 0x0600E4D3 RID: 58579 RVA: 0x00211474 File Offset: 0x0020F674</span>
-</span></span><span style=display:flex><span><span style=color:#719e07>protected</span> <span style=color:#719e07>virtual</span> <span style=color:#dc322f>string</span> GetBucketURL()
+</span></span><span style=display:flex><span><span style=color:#268bd2>protected</span> <span style=color:#719e07>virtual</span> <span style=color:#dc322f>string</span> GetBucketURL()
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#719e07>return</span> <span style=color:#2aa198>&#34;http://cache.filehippo.com&#34;</span>;
 </span></span><span style=display:flex><span>}
@@ -471,11 +471,11 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">7
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=display:flex><span>AppManager/MainForm.cs:                         <span style=color:#719e07>if</span> (text2.ToLower() == <span style=color:#2aa198>&#34;/debug&#34;</span>)
-</span></span><span style=display:flex><span>AppManager/MainForm.cs:                                 ApplicationManager.DebugMode = <span style=color:#719e07>true</span>;
+</span></span><span style=display:flex><span>AppManager/MainForm.cs:                                 ApplicationManager.DebugMode = <span style=color:#cb4b16>true</span>;
 </span></span><span style=display:flex><span>AppManager/MainForm.cs:                 <span style=color:#719e07>this</span>.SetDebugLabelVisibility();
 </span></span><span style=display:flex><span>AppManager/MainForm.cs:                         ApplicationManager.DebugMode = !ApplicationManager.DebugMode;
 </span></span><span style=display:flex><span>AppManager/MainForm.cs:                         <span style=color:#719e07>this</span>.SetDebugLabelVisibility();
-</span></span><span style=display:flex><span>AppManager/MainForm.cs:         <span style=color:#719e07>private</span> <span style=color:#719e07>void</span> SetDebugLabelVisibility()
+</span></span><span style=display:flex><span>AppManager/MainForm.cs:         <span style=color:#268bd2>private</span> <span style=color:#719e07>void</span> SetDebugLabelVisibility()
 </span></span><span style=display:flex><span>AppManager/MainForm.Designer.cs:                        <span style=color:#719e07>this</span>.debugModeLabel.Text = <span style=color:#2aa198>&#34;Application is in DEBUG mode&#34;</span>;</span></span></code></pre></td></tr></table></div></div></div></figure><p>The application has a debug mode when run with the <code>/debug</code> switch. If we go to <code>FileHippo.AppManager.MainForm</code> and look at the <code>MainForm_Load</code> function we will the first line in the grep results above.</p><figure class=code><figcaption><span>MainForm_Load</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
@@ -501,10 +501,10 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=display:flex><span><span style=color:#719e07>private</span> <span style=color:#719e07>void</span> MainForm_Load(<span style=color:#dc322f>object</span> sender, EventArgs e)
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=display:flex><span><span style=color:#268bd2>private</span> <span style=color:#719e07>void</span> MainForm_Load(<span style=color:#dc322f>object</span> sender, EventArgs e)
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  ...
-</span></span><span style=display:flex><span>  <span style=color:#dc322f>bool</span> flag = <span style=color:#719e07>false</span>;
+</span></span><span style=display:flex><span>  <span style=color:#dc322f>bool</span> flag = <span style=color:#cb4b16>false</span>;
 </span></span><span style=display:flex><span>  <span style=color:#dc322f>string</span>[] commandLineArgs = Environment.GetCommandLineArgs();
 </span></span><span style=display:flex><span>  <span style=color:#dc322f>string</span>[] array2 = commandLineArgs;
 </span></span><span style=display:flex><span>  <span style=color:#719e07>for</span> (<span style=color:#dc322f>int</span> i = <span style=color:#2aa198>0</span>; i &lt; array2.Length; i++)
@@ -513,11 +513,11 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span></span><span style=display:flex><span>    <span style=color:#dc322f>string</span> text2 = text;
 </span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> (text2.ToLower() == <span style=color:#2aa198>&#34;/debug&#34;</span>)
 </span></span><span style=display:flex><span>    {
-</span></span><span style=display:flex><span>      ApplicationManager.DebugMode = <span style=color:#719e07>true</span>;
+</span></span><span style=display:flex><span>      ApplicationManager.DebugMode = <span style=color:#cb4b16>true</span>;
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>    <span style=color:#719e07>else</span> <span style=color:#719e07>if</span> (text2.ToLower() == <span style=color:#2aa198>&#34;/background&#34;</span>)
 </span></span><span style=display:flex><span>    {
-</span></span><span style=display:flex><span>      flag = <span style=color:#719e07>true</span>;
+</span></span><span style=display:flex><span>      flag = <span style=color:#cb4b16>true</span>;
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>  }
 </span></span><span style=display:flex><span>  <span style=color:#719e07>if</span> (flag)
@@ -536,7 +536,7 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">7
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">8
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">9
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=display:flex><span><span style=color:#719e07>protected</span> <span style=color:#719e07>override</span> <span style=color:#dc322f>bool</span> ProcessCmdKey(<span style=color:#719e07>ref</span> Message msg, Keys keyData)
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=display:flex><span><span style=color:#268bd2>protected</span> <span style=color:#268bd2>override</span> <span style=color:#dc322f>bool</span> ProcessCmdKey(<span style=color:#719e07>ref</span> Message msg, Keys keyData)
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#719e07>if</span> (keyData == (Keys)<span style=color:#2aa198>196676</span>)
 </span></span><span style=display:flex><span>  {
@@ -593,7 +593,7 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#719e07>if</span> (<span style=color:#719e07>this</span>.DebugMode)
 </span></span><span style=display:flex><span>  {
-</span></span><span style=display:flex><span>    Interaction.MsgBox(ex.Message, MsgBoxStyle.OkOnly, <span style=color:#719e07>null</span>);
+</span></span><span style=display:flex><span>    Interaction.MsgBox(ex.Message, MsgBoxStyle.OkOnly, <span style=color:#cb4b16>null</span>);
 </span></span><span style=display:flex><span>  }
 </span></span><span style=display:flex><span>  <span style=color:#719e07>goto</span> IL_19F;
 </span></span><span style=display:flex><span>}
@@ -601,7 +601,7 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#719e07>if</span> (<span style=color:#719e07>this</span>.DebugMode)
 </span></span><span style=display:flex><span>  {
-</span></span><span style=display:flex><span>    Interaction.MsgBox(ex2.Message, MsgBoxStyle.OkOnly, <span style=color:#719e07>null</span>);
+</span></span><span style=display:flex><span>    Interaction.MsgBox(ex2.Message, MsgBoxStyle.OkOnly, <span style=color:#cb4b16>null</span>);
 </span></span><span style=display:flex><span>  }
 </span></span><span style=display:flex><span>  <span style=color:#719e07>goto</span> IL_19F;
 </span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>It seems like if the scanner cannot access a directory in debug mode, the application displays a message box. Nothing special.</p><h4 id=3622-obsolete-debug-program-definitions>3.6.2.2 (Obsolete) Debug Program Definitions
@@ -618,7 +618,7 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">12
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">13
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=display:flex><span><span style=color:#719e07>private</span> <span style=color:#dc322f>string</span> DownloadProgramDefinitions()
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=display:flex><span><span style=color:#268bd2>private</span> <span style=color:#dc322f>string</span> DownloadProgramDefinitions()
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#dc322f>string</span> result;
 </span></span><span style=display:flex><span>  <span style=color:#719e07>using</span> (WebClient webClient = <span style=color:#719e07>new</span> WebClient())
@@ -630,7 +630,7 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span></span><span style=display:flex><span>    result = @string;
 </span></span><span style=display:flex><span>  }
 </span></span><span style=display:flex><span>  <span style=color:#719e07>return</span> result;
-</span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>Check line 6, if <code>DebugMode</code> is active, the program definition URL is modified. Those two values are set like this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=display:flex><span><span style=color:#719e07>public</span> <span style=color:#719e07>static</span> <span style=color:#dc322f>string</span> ProgramDefinitionURL
+</span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>Check line 6, if <code>DebugMode</code> is active, the program definition URL is modified. Those two values are set like this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=display:flex><span><span style=color:#268bd2>public</span> <span style=color:#268bd2>static</span> <span style=color:#dc322f>string</span> ProgramDefinitionURL
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#586e75>// Token: 0x0600DD73 RID: 56691 RVA: 0x00204A28 File Offset: 0x00202C28</span>
 </span></span><span style=display:flex><span>  <span style=color:#719e07>get</span>
@@ -640,7 +640,7 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#586e75>// Token: 0x17002562 RID: 9570</span>
-</span></span><span style=display:flex><span><span style=color:#719e07>public</span> <span style=color:#719e07>static</span> <span style=color:#dc322f>string</span> ProgramDefinitionURL_Debug
+</span></span><span style=display:flex><span><span style=color:#268bd2>public</span> <span style=color:#268bd2>static</span> <span style=color:#dc322f>string</span> ProgramDefinitionURL_Debug
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#586e75>// Token: 0x0600DD74 RID: 56692 RVA: 0x00204A3C File Offset: 0x00202C3C</span>
 </span></span><span style=display:flex><span>  <span style=color:#719e07>get</span>

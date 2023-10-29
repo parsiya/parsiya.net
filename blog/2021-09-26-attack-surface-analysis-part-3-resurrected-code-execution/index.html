@@ -1,4 +1,4 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Attack Surface Analysis - Part 3 - Resurrected Code Execution</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.115.1"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2021-09-26-attack-surface-analysis-part-3-resurrected-code-execution/03-powerglove-rce.jpg"><meta name=twitter:title content="Attack Surface Analysis - Part 3 - Resurrected Code Execution"><meta name=twitter:description content="In part 3 of my attack surface analysis series, I will discuss an undisclosed RCE.
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Attack Surface Analysis - Part 3 - Resurrected Code Execution</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.119.0"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2021-09-26-attack-surface-analysis-part-3-resurrected-code-execution/03-powerglove-rce.jpg"><meta name=twitter:title content="Attack Surface Analysis - Part 3 - Resurrected Code Execution"><meta name=twitter:description content="In part 3 of my attack surface analysis series, I will discuss an undisclosed RCE.
 This bug uses a combination of all tricks introduced in
 
 
@@ -110,13 +110,13 @@ While debugging, I saw the app compares switches from input against a list of
 valid ones.</p><blockquote><p>Every computer science problem can be reduced to string comparison.</p><footer><strong>Parsia</strong>
 <cite>Self quote (lol)</cite></footer></blockquote><p>This was done in <code>System.Core.dll > namespace System.Linq</code>. By putting a
 breakpoint in the following function, I could see every valid switch in the
-value of <code>source</code>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=display:flex><span><span style=color:#719e07>public</span> <span style=color:#719e07>static</span> TSource FirstOrDefault&lt;TSource&gt;(<span style=color:#719e07>this</span> IEnumerable&lt;TSource&gt; source, Func&lt;TSource, <span style=color:#dc322f>bool</span>&gt; predicate)
+value of <code>source</code>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=display:flex><span><span style=color:#268bd2>public</span> <span style=color:#268bd2>static</span> TSource FirstOrDefault&lt;TSource&gt;(<span style=color:#719e07>this</span> IEnumerable&lt;TSource&gt; source, Func&lt;TSource, <span style=color:#dc322f>bool</span>&gt; predicate)
 </span></span><span style=display:flex><span>{
-</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> (source == <span style=color:#719e07>null</span>)
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> (source == <span style=color:#cb4b16>null</span>)
 </span></span><span style=display:flex><span>    {
 </span></span><span style=display:flex><span>        <span style=color:#719e07>throw</span> Error.ArgumentNull(<span style=color:#2aa198>&#34;source&#34;</span>);
 </span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> (predicate == <span style=color:#719e07>null</span>)
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> (predicate == <span style=color:#cb4b16>null</span>)
 </span></span><span style=display:flex><span>    {
 </span></span><span style=display:flex><span>        <span style=color:#719e07>throw</span> Error.ArgumentNull(<span style=color:#2aa198>&#34;predicate&#34;</span>);
 </span></span><span style=display:flex><span>    }
@@ -185,7 +185,7 @@ file to see how it behaves (mainly to see the error in the output file).</p><div
 </span></span></code></pre></div><p>This stack trace pointed me to the location where the app was checking the root
 tag. I put a breakpoint in the chain and debugged the app with dnSpy, I was able
 to find the expected name of the root tag (remember what I said about reducing
-every problem to string comparison?). Let's call the root tag <code>MyRoot</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=display:flex><span><span style=color:#719e07>private</span> <span style=color:#719e07>void</span> runCommands(XDocument nfc)
+every problem to string comparison?). Let's call the root tag <code>MyRoot</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=display:flex><span><span style=color:#268bd2>private</span> <span style=color:#719e07>void</span> runCommands(XDocument nfc)
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Code Removed</span>
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Check if the root tag is named &#34;MyRoot&#34;</span>
@@ -215,12 +215,12 @@ interaction. For example, there was a command named <code>TutorialButtonClick</c
 <code>BrowserOpen</code> (fake name again). The following code executes this tag. It checks
 if the tag has a URI attribute. If so, it's converted to a URI and passed to the
 <code>Runtime.Instance.Open</code> method:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=display:flex><span><span style=color:#586e75>// The original code was obfuscated so I renamed some variables to make it easier to read.</span>
-</span></span><span style=display:flex><span><span style=color:#719e07>private</span> <span style=color:#719e07>void</span> runBrowserOpen(XElement command)
+</span></span><span style=display:flex><span><span style=color:#268bd2>private</span> <span style=color:#719e07>void</span> runBrowserOpen(XElement command)
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Get the value of the &#34;URI&#34; attribute.</span>
 </span></span><span style=display:flex><span>    tempURI = command.GetAttribute(<span style=color:#2aa198>&#34;URI&#34;</span>);
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// If the value of the &#34;URI&#34; is not null, do the following.</span>
-</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> (tempURI != <span style=color:#719e07>null</span>)
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> (tempURI != <span style=color:#cb4b16>null</span>)
 </span></span><span style=display:flex><span>    {
 </span></span><span style=display:flex><span>        Runtime.Instance.Open(<span style=color:#719e07>new</span> Uri(attribute));
 </span></span><span style=display:flex><span>    }
@@ -230,7 +230,7 @@ if the tag has a URI attribute. If so, it's converted to a URI and passed to the
 </span></span><span style=display:flex><span><span style=color:#268bd2>&lt;/MyRoot&gt;</span>
 </span></span></code></pre></div><p>The input must satisfy the <code>Uri(input)</code> constructor. If there is an error,
 execution is stopped and the app prints a stack trace and error line to the
-output file.</p><p>The <code>Open</code> method does this.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=display:flex><span><span style=color:#719e07>public</span> <span style=color:#719e07>virtual</span> <span style=color:#719e07>void</span> Open(Uri uri)
+output file.</p><p>The <code>Open</code> method does this.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=display:flex><span><span style=color:#268bd2>public</span> <span style=color:#719e07>virtual</span> <span style=color:#719e07>void</span> Open(Uri uri)
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>    <span style=color:#719e07>try</span>
 </span></span><span style=display:flex><span>    {
@@ -246,7 +246,7 @@ can spot it). If the platform is not Windows, it calls
 <code>Process.Start("open", URI)</code>. I am not sure if this line is also vulnerable to
 command injection or not. The app is only available on Windows so I did not look
 into it.</p><p>On Windows, the app first checks if the incoming URI has the <code>http</code> or <code>https</code>
-scheme with <code>IsPathForBrowser</code>. If not, it calls <code>Process.Start(URI)</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=display:flex><span><span style=color:#719e07>private</span> <span style=color:#719e07>void</span> OpenFileOrUrl(<span style=color:#dc322f>string</span> pathOrUri)
+scheme with <code>IsPathForBrowser</code>. If not, it calls <code>Process.Start(URI)</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=display:flex><span><span style=color:#268bd2>private</span> <span style=color:#719e07>void</span> OpenFileOrUrl(<span style=color:#dc322f>string</span> pathOrUri)
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> (Runtime.IsOSPlatform(OSPlatform.Windows))
 </span></span><span style=display:flex><span>    {
@@ -280,9 +280,9 @@ try. Depending on the payload, <code>explorer.exe</code> does something. E.g.,
 at <a href=https://dotnetfiddle.net/o1mCnT target=_blank rel="noreferrer noopener">https://dotnetfiddle.net/o1mCnT</a> if you want to see the
 transformation.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=display:flex><span><span style=color:#719e07>using</span> System;
 </span></span><span style=display:flex><span>                    
-</span></span><span style=display:flex><span><span style=color:#719e07>public</span> <span style=color:#719e07>class</span> <span style=color:#268bd2>Program</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>public</span> <span style=color:#719e07>class</span> <span style=color:#268bd2>Program</span>
 </span></span><span style=display:flex><span>{
-</span></span><span style=display:flex><span>    <span style=color:#719e07>public</span> <span style=color:#719e07>static</span> <span style=color:#719e07>void</span> Main()
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>public</span> <span style=color:#268bd2>static</span> <span style=color:#719e07>void</span> Main()
 </span></span><span style=display:flex><span>    {
 </span></span><span style=display:flex><span>        Uri baseUri = <span style=color:#719e07>new</span> Uri(<span style=color:#2aa198>&#34;C:/Windows/System32/calc.exe&#34;</span>);
 </span></span><span style=display:flex><span>        Console.WriteLine(baseUri.ToString());

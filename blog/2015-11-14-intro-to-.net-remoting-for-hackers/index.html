@@ -1,4 +1,4 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Intro to .NET Remoting for Hackers</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.115.1"><meta name=twitter:card content="summary"><meta name=twitter:title content="Intro to .NET Remoting for Hackers"><meta name=twitter:description content="This is a simple tutorial about .NET Remoting. I am going to re-create a very simple RCE and local privilege escalation that I encountered in my projects and use it to explain .NET Remoting and simple debugging in dnSpy.
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Intro to .NET Remoting for Hackers</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.119.0"><meta name=twitter:card content="summary"><meta name=twitter:title content="Intro to .NET Remoting for Hackers"><meta name=twitter:description content="This is a simple tutorial about .NET Remoting. I am going to re-create a very simple RCE and local privilege escalation that I encountered in my projects and use it to explain .NET Remoting and simple debugging in dnSpy.
 In this post we will:
 
 Do a brief introduction to .NET Remoting
@@ -51,15 +51,15 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#719e07>namespace</span> RemotingSample
 </span></span><span style=display:flex><span>{
-</span></span><span style=display:flex><span>  <span style=color:#719e07>public</span> <span style=color:#719e07>class</span> <span style=color:#268bd2>RemoteMath</span> : MarshalByRefObject
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>public</span> <span style=color:#719e07>class</span> <span style=color:#268bd2>RemoteMath</span> : MarshalByRefObject
 </span></span><span style=display:flex><span>  {
-</span></span><span style=display:flex><span>    <span style=color:#719e07>public</span> <span style=color:#dc322f>int</span> Add(<span style=color:#dc322f>int</span> a, <span style=color:#dc322f>int</span> b)    <span style=color:#586e75>// add</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>public</span> <span style=color:#dc322f>int</span> Add(<span style=color:#dc322f>int</span> a, <span style=color:#dc322f>int</span> b)    <span style=color:#586e75>// add</span>
 </span></span><span style=display:flex><span>    {
 </span></span><span style=display:flex><span>      Console.WriteLine(<span style=color:#2aa198>&#34;Add({0},{1}) called&#34;</span>, a, b);
 </span></span><span style=display:flex><span>      <span style=color:#719e07>return</span> a + b;
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#719e07>public</span> <span style=color:#dc322f>int</span> Sub(<span style=color:#dc322f>int</span> a, <span style=color:#dc322f>int</span> b)    <span style=color:#586e75>// subtract</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>public</span> <span style=color:#dc322f>int</span> Sub(<span style=color:#dc322f>int</span> a, <span style=color:#dc322f>int</span> b)    <span style=color:#586e75>// subtract</span>
 </span></span><span style=display:flex><span>    {
 </span></span><span style=display:flex><span>      Console.WriteLine(<span style=color:#2aa198>&#34;Sub({0},{1}) called&#34;</span>, a, b);
 </span></span><span style=display:flex><span>      <span style=color:#719e07>return</span> a - b;
@@ -115,7 +115,7 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#719e07>class</span> <span style=color:#268bd2>Server</span>
 </span></span><span style=display:flex><span>  {
-</span></span><span style=display:flex><span>    <span style=color:#719e07>static</span> <span style=color:#719e07>void</span> Main(<span style=color:#dc322f>string</span>[] args)
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>static</span> <span style=color:#719e07>void</span> Main(<span style=color:#dc322f>string</span>[] args)
 </span></span><span style=display:flex><span>    {
 </span></span><span style=display:flex><span>      <span style=color:#586e75>// create a TCP channel and bind it to port 8888</span>
 </span></span><span style=display:flex><span>      TcpChannel remotingChannel = <span style=color:#719e07>new</span> TcpChannel(<span style=color:#2aa198>8888</span>);
@@ -123,7 +123,7 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span></span><span style=display:flex><span>      <span style=color:#586e75>// register the channel, the second parameter is ensureSecurity</span>
 </span></span><span style=display:flex><span>      <span style=color:#586e75>// I have set it to false to disable encryption and signing</span>
 </span></span><span style=display:flex><span>      <span style=color:#586e75>// for more information see section Remarks in https://msdn.microsoft.com/en-us/library/ms223155(v=vs.90).aspx</span>
-</span></span><span style=display:flex><span>      ChannelServices.RegisterChannel(remotingChannel, <span style=color:#719e07>false</span>);
+</span></span><span style=display:flex><span>      ChannelServices.RegisterChannel(remotingChannel, <span style=color:#cb4b16>false</span>);
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>      <span style=color:#586e75>// create a new servicetype of type RemoteMath named &#34;rMath&#34; and of type SingleCall</span>
 </span></span><span style=display:flex><span>      <span style=color:#586e75>// SingleCall: a new object will be created for each call</span>
@@ -191,12 +191,12 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#719e07>class</span> <span style=color:#268bd2>Client</span>
 </span></span><span style=display:flex><span>  {
-</span></span><span style=display:flex><span>    <span style=color:#719e07>static</span> <span style=color:#719e07>void</span> Main(<span style=color:#dc322f>string</span>[] args)
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>static</span> <span style=color:#719e07>void</span> Main(<span style=color:#dc322f>string</span>[] args)
 </span></span><span style=display:flex><span>    {
 </span></span><span style=display:flex><span>      <span style=color:#586e75>// create and register the TCP channel</span>
 </span></span><span style=display:flex><span>      <span style=color:#586e75>// please note that I have set the security of the channel to false</span>
 </span></span><span style=display:flex><span>      TcpChannel clientRemotingChannel = <span style=color:#719e07>new</span> TcpChannel();
-</span></span><span style=display:flex><span>      ChannelServices.RegisterChannel(clientRemotingChannel, <span style=color:#719e07>false</span>);
+</span></span><span style=display:flex><span>      ChannelServices.RegisterChannel(clientRemotingChannel, <span style=color:#cb4b16>false</span>);
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>      <span style=color:#586e75>// create an object of type RemothMath</span>
 </span></span><span style=display:flex><span>      <span style=color:#586e75>// we have to do a cast because Activator.GetObject returns an object (doh)</span>
@@ -325,22 +325,22 @@ OperationType: 0x0002 or Response
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=display:flex><span><span style=color:#719e07>namespace</span> RemotingLibraryExpanded
 </span></span><span style=display:flex><span>{
-</span></span><span style=display:flex><span>  <span style=color:#719e07>public</span> <span style=color:#719e07>class</span> <span style=color:#268bd2>RemoteMathExpanded</span> : MarshalByRefObject
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>public</span> <span style=color:#719e07>class</span> <span style=color:#268bd2>RemoteMathExpanded</span> : MarshalByRefObject
 </span></span><span style=display:flex><span>  {
-</span></span><span style=display:flex><span>    <span style=color:#719e07>public</span> <span style=color:#dc322f>int</span> Add(<span style=color:#dc322f>int</span> a, <span style=color:#dc322f>int</span> b)    <span style=color:#586e75>// add</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>public</span> <span style=color:#dc322f>int</span> Add(<span style=color:#dc322f>int</span> a, <span style=color:#dc322f>int</span> b)    <span style=color:#586e75>// add</span>
 </span></span><span style=display:flex><span>    {
 </span></span><span style=display:flex><span>      Console.WriteLine(<span style=color:#2aa198>&#34;Add({0},{1}) called&#34;</span>, a, b);
 </span></span><span style=display:flex><span>      <span style=color:#719e07>return</span> a + b;
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#719e07>public</span> <span style=color:#dc322f>int</span> Sub(<span style=color:#dc322f>int</span> a, <span style=color:#dc322f>int</span> b)    <span style=color:#586e75>// subtract</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>public</span> <span style=color:#dc322f>int</span> Sub(<span style=color:#dc322f>int</span> a, <span style=color:#dc322f>int</span> b)    <span style=color:#586e75>// subtract</span>
 </span></span><span style=display:flex><span>    {
 </span></span><span style=display:flex><span>      Console.WriteLine(<span style=color:#2aa198>&#34;Sub({0},{1}) called&#34;</span>, a, b);
 </span></span><span style=display:flex><span>      <span style=color:#719e07>return</span> a - b;
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// super secret process start method</span>
-</span></span><span style=display:flex><span>    <span style=color:#719e07>public</span> <span style=color:#719e07>void</span> StartProcess(<span style=color:#dc322f>string</span> processPath)
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>public</span> <span style=color:#719e07>void</span> StartProcess(<span style=color:#dc322f>string</span> processPath)
 </span></span><span style=display:flex><span>    {
 </span></span><span style=display:flex><span>      Console.WriteLine(<span style=color:#2aa198>&#34;Starting process {0}&#34;</span>, processPath);
 </span></span><span style=display:flex><span>      Process.Start(processPath);
@@ -439,7 +439,7 @@ OperationType: 0x0002 or Response
 </span></span><span style=display:flex><span>tcpChannelProperties[<span style=color:#2aa198>&#34;port&#34;</span>] = <span style=color:#2aa198>8888</span>;
 </span></span><span style=display:flex><span>tcpChannelProperties[<span style=color:#2aa198>&#34;bindTo&#34;</span>] = <span style=color:#2aa198>&#34;127.0.0.1&#34;</span>;
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>TcpChannel remotingChannel = <span style=color:#719e07>new</span> TcpChannel(tcpChannelProperties, <span style=color:#719e07>null</span>, <span style=color:#719e07>null</span>);
+</span></span><span style=display:flex><span>TcpChannel remotingChannel = <span style=color:#719e07>new</span> TcpChannel(tcpChannelProperties, <span style=color:#cb4b16>null</span>, <span style=color:#cb4b16>null</span>);
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#586e75>// Or in the config file:</span>
 </span></span><span style=display:flex><span>
@@ -466,9 +466,9 @@ OperationType: 0x0002 or Response
 </span></span><span style=display:flex><span>IDictionary tcpChannelProperties = <span style=color:#719e07>new</span> Hashtable();
 </span></span><span style=display:flex><span>properttcpChannelPropertiesies[<span style=color:#2aa198>&#34;port&#34;</span>] = <span style=color:#2aa198>8888</span>;
 </span></span><span style=display:flex><span>tcpChannelProperties[<span style=color:#2aa198>&#34;bindTo&#34;</span>] = <span style=color:#2aa198>&#34;127.0.0.1&#34;</span>;
-</span></span><span style=display:flex><span>tcpChannelProperties[<span style=color:#2aa198>&#34;secure&#34;</span>] = <span style=color:#719e07>true</span>
+</span></span><span style=display:flex><span>tcpChannelProperties[<span style=color:#2aa198>&#34;secure&#34;</span>] = <span style=color:#cb4b16>true</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>TcpChannel remotingChannel = <span style=color:#719e07>new</span> TcpChannel(tcpChannelProperties, <span style=color:#719e07>null</span>, <span style=color:#719e07>null</span>);
+</span></span><span style=display:flex><span>TcpChannel remotingChannel = <span style=color:#719e07>new</span> TcpChannel(tcpChannelProperties, <span style=color:#cb4b16>null</span>, <span style=color:#cb4b16>null</span>);
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#586e75>// Or in the config file:</span>
 </span></span><span style=display:flex><span>
@@ -487,7 +487,7 @@ OperationType: 0x0002 or Response
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-csharp data-lang=csharp><span style=display:flex><span><span style=color:#719e07>using</span> System.Collections;
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>IDictionary tcpChannelProperties = <span style=color:#719e07>new</span> Hashtable();
-</span></span><span style=display:flex><span>tcpChannelProperties[<span style=color:#2aa198>&#34;secure&#34;</span>] = <span style=color:#719e07>true</span>;
+</span></span><span style=display:flex><span>tcpChannelProperties[<span style=color:#2aa198>&#34;secure&#34;</span>] = <span style=color:#cb4b16>true</span>;
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#586e75>// Or in the config file:</span>
 </span></span><span style=display:flex><span>&lt;channels&gt;

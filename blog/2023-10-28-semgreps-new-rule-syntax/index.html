@@ -1,0 +1,354 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Semgrep's New Rule Syntax</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.119.0"><meta name=twitter:card content="summary"><meta name=twitter:title content="Semgrep's New Rule Syntax"><meta name=twitter:description content="Semgrep has a new and more readable rule syntax. I am converting my own
+reference to a tutorial."><meta name=twitter:domain content="parsiya.net"><meta name=twitter:creator content="@CryptoGangsta"></head><body><header role=banner><hgroup><h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation><fieldset class=mobile-nav><select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select></fieldset><ul class=main-navigation><li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription><a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a></ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer"><fieldset role=search><input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/></fieldset></form></nav><div id=main><div id=content><div><article class=hentry role=article><header><p class=meta>Oct 28, 2023
+- 8 minute read
+- <a href=https://parsiya.net/blog/2023-10-28-semgreps-new-rule-syntax/#disqus_thread>Comments</a>
+- <a class=label href=https://parsiya.net/categories/semgrep/>semgrep</a></p><h1 class=entry-title>Semgrep's New Rule Syntax</h1></header><div class=entry-content><nav id=TableOfContents><ul><li><a href=#tldr>TL;DR</a></li><li><a href=#official-references>Official References</a></li><li><a href=#example-1>Example 1</a><ul><li><a href=#top-level-patterns---match-and-all>Top-Level pattern(s) -> match and all</a></li><li><a href=#other-patterns---all>Other patterns -> all</a></li><li><a href=#pattern-can-be-removed>pattern can be removed</a></li><li><a href=#pattern-not-----not>pattern-not -> - not</a></li><li><a href=#pattern-inside---inside>pattern-inside -> inside</a></li><li><a href=#where>where</a></li></ul></li><li><a href=#example-2>Example 2</a><ul><li><a href=#pattern-not-inside---inside-under-not>pattern-not-inside -> inside under not</a></li><li><a href=#pattern-either---any>pattern-either -> any</a></li><li><a href=#final-results>Final Results</a></li><li><a href=#implied-constant-propagation>Implied Constant Propagation</a></li></ul></li><li><a href=#example-3>Example 3</a></li><li><a href=#what-did-we-learn-here-today>What Did We Learn Here Today?</a></li></ul></nav><p>Semgrep has a new and more readable rule syntax. I am converting my own
+reference to a tutorial.</p><p><strong>Disclaimer:</strong> Semgrep (binary, playground, cloud, etc.) supports the new
+syntax, but it's not released. If you're from the future and things have
+changed, let me know somehow. E.g., make an issue in the blog's source at
+<a href=https://github.com/parsiya/parsiya.net target=_blank rel="noreferrer noopener">parsiya/parsiya.net</a> or create a pull request.</p><h1 id=tldr>TL;DR
+<a class=header-link href=#tldr><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Use these tables:</p><table><thead><tr><th>Old</th><th>New</th></tr></thead><tbody><tr><td>patterns (top-level)</td><td>match and all</td></tr><tr><td>patterns (other)</td><td>all</td></tr><tr><td>pattern</td><td>[can be removed]</td></tr><tr><td>pattern-not</td><td>- not</td></tr><tr><td>pattern-either</td><td>any</td></tr><tr><td>pattern-inside</td><td>inside</td></tr><tr><td>pattern-not-inside</td><td>inside under not</td></tr></tbody></table><p>These items go inside a <code>where</code> clause:</p><table><thead><tr><th>Old</th><th>New</th></tr></thead><tbody><tr><td>metavariable-pattern</td><td>metavariable and pattern</td></tr><tr><td>metavariable-regex</td><td>metavariable and regex</td></tr><tr><td>metavariable-comparison</td><td>metavariable and comparison</td></tr><tr><td>metavariable-analysis</td><td>metavariable and analyzer</td></tr><tr><td>focus-metavariable</td><td>focus</td></tr></tbody></table><p>Taint mode changes</p><table><thead><tr><th>Old</th><th>New</th></tr></thead><tbody><tr><td>mode:taint</td><td>removed</td></tr><tr><td>match (taint mode)</td><td>taint</td></tr><tr><td>pattern-sources</td><td>sources</td></tr><tr><td>pattern-sinks</td><td>sinks</td></tr><tr><td>pattern-propagators</td><td>propagators</td></tr><tr><td>pattern-sanitizers</td><td>sanitizers</td></tr></tbody></table><h1 id=official-references>Official References
+<a class=header-link href=#official-references><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>I've only been able to find two references so far:</p><ul><li><a href="https://www.youtube.com/watch?v=dZUPjFvknnI" target=_blank rel="noreferrer noopener">Trying out the new Semgrep syntax</a> video.</li><li>The <a href=https://github.com/returntocorp/semgrep-interfaces/blob/main/rule_schema_v1.yaml target=_blank rel="noreferrer noopener">rule syntax JSON schema</a>.</li></ul><h1 id=example-1>Example 1
+<a class=header-link href=#example-1><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Modified version of the first example in the <a href=https://semgrep.dev/learn/advanced/1 target=_blank rel="noreferrer noopener">Advanced Rule Tutorials</a>,
+<a href=https://semgrep.dev/playground/r/AbU2BL/parsiya.blog-2023-10-use-decimalfield-for-money-old target=_blank rel="noreferrer noopener">practice playground link</a>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>- <span style=color:#268bd2>id</span>: blog-2023-10-use-decimalfield-for-money-old
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>patterns</span>:
+</span></span><span style=display:flex><span>  <span style=color:#586e75># I know this `patterns` can be replaced by one `pattern`</span>
+</span></span><span style=display:flex><span>  <span style=color:#586e75># but it&#39;s modified for the tutorial.</span>
+</span></span><span style=display:flex><span>  - <span style=color:#268bd2>patterns</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#268bd2>pattern</span>: $F = django.db.models.FloatField(...)
+</span></span><span style=display:flex><span>    - <span style=color:#268bd2>pattern</span>: $F = django.db.models.FloatField(...)
+</span></span><span style=display:flex><span>  - <span style=color:#268bd2>pattern-inside</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>      class $M(...):
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>        ...</span>      
+</span></span><span style=display:flex><span>  - <span style=color:#268bd2>metavariable-regex</span>:
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>metavariable</span>: <span style=color:#2aa198>&#39;$F&#39;</span>
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>regex</span>: <span style=color:#2aa198>&#39;.*(price|fee|salary).*&#39;</span>
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>message</span>: _removed_
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>languages</span>: [python]
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>severity</span>: ERROR
+</span></span></code></pre></div><h2 id=top-level-patterns---match-and-all>Top-Level pattern(s) -> match and all
+<a class=header-link href=#top-level-patterns---match-and-all><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>The top-level <code>pattern</code> or <code>patterns</code> becomes <code>match</code>. It's almost always
+followed by <code>all</code> or <code>any</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>- <span style=color:#268bd2>id</span>: use-decimalfield-for-money-new-syntax
+</span></span><span style=display:flex><span>  <span style=color:#586e75># top-level patterns replaced by match and all.</span>
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>match</span>:
+</span></span><span style=display:flex><span>      <span style=color:#586e75># the rest of the patterns</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75># # I know this `patterns` can be replaced by one `pattern`</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75># # but it&#39;s modified for the tutorial.</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75># - patterns:</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75>#   - pattern: $F = django.db.models.FloatField(...)</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75>#   - pattern: $F = django.db.models.FloatField(...)</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75># - pattern-inside: |</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75>#     class $M(...):</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75>#       ...</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75># - metavariable-regex:</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75>#     metavariable: &#39;$F&#39;</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75>#     regex: &#39;.*(price|fee|salary).*&#39;</span>
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>message</span>: _removed_
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>languages</span>: [python]
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>severity</span>: ERROR
+</span></span></code></pre></div><h2 id=other-patterns---all>Other patterns -> all
+<a class=header-link href=#other-patterns---all><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Other <code>patterns</code> keys that are a subset of the top-level one are replaced by
+<code>all</code>. Our example has a redundant <code>patterns</code> with two identical children to
+show how it will be modified.</p><p>Note that if we had a <code>pattern-either</code> here we would use <code>any</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>- <span style=color:#268bd2>id</span>: use-decimalfield-for-money-new-syntax
+</span></span><span style=display:flex><span>  <span style=color:#586e75># top-level patterns replaced by match and all.</span>
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>match</span>:
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>all</span>:
+</span></span><span style=display:flex><span>        <span style=color:#586e75># rest of the patterns</span>
+</span></span><span style=display:flex><span>        - <span style=color:#268bd2>pattern</span>: $F = django.db.models.FloatField(...)
+</span></span><span style=display:flex><span>        - <span style=color:#268bd2>pattern</span>: $F = django.db.models.FloatField(...)
+</span></span><span style=display:flex><span>      <span style=color:#586e75># - pattern-inside: |</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75>#     class $M(...):</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75>#       ...</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75># - metavariable-regex:</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75>#     metavariable: &#39;$F&#39;</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75>#     regex: &#39;.*(price|fee|salary).*&#39;</span>
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>message</span>: _removed_
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>languages</span>: [python]
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>severity</span>: ERROR
+</span></span></code></pre></div><h2 id=pattern-can-be-removed>pattern can be removed
+<a class=header-link href=#pattern-can-be-removed><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>The <code>pattern</code> keyword can be omitted. Replace <code>pattern: [something]</code> with just
+<code>- [something]</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>- <span style=color:#268bd2>pattern</span>: [something]  ---&gt; - [something]
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>- <span style=color:#268bd2>pattern</span>: |            ---&gt; - |
+</span></span><span style=display:flex><span>    [something]                   [something]
+</span></span><span style=display:flex><span>    [more lines]                  [more lines]
+</span></span></code></pre></div><p>More changes:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>- <span style=color:#268bd2>id</span>: use-decimalfield-for-money-new-syntax
+</span></span><span style=display:flex><span>  <span style=color:#586e75># top-level patterns replaced by match and all.</span>
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>match</span>:
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>all</span>:
+</span></span><span style=display:flex><span>      <span style=color:#586e75># the rest of the patterns</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75># I know this `patterns` can be replaced by one `pattern`</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75># but it&#39;s modified for the tutorial.</span>
+</span></span><span style=display:flex><span>      - $F = django.db.models.FloatField(...)
+</span></span><span style=display:flex><span>      - |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>        $F = django.db.models.FloatField(...)</span>        
+</span></span><span style=display:flex><span>      <span style=color:#586e75># - pattern-inside: |</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75>#     class $M(...):</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75>#       ...</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75># - metavariable-regex:</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75>#     metavariable: &#39;$F&#39;</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75>#     regex: &#39;.*(price|fee|salary).*&#39;</span>
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>message</span>: _removed_
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>languages</span>: [python]
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>severity</span>: ERROR
+</span></span></code></pre></div><p>There's one catch, if your pattern contains <code>:</code> it might mess with the yaml
+format. Either use a bar to send it to the next line or enclose it in <code>"</code>,
+<a href="https://youtu.be/dZUPjFvknnI?t=86" target=_blank rel="noreferrer noopener">explanation at 1:26 in the reference video</a>.</p><h2 id=pattern-not-----not>pattern-not -> - not
+<a class=header-link href=#pattern-not-----not><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>We don't have it in our current example, but it's similar to <code>pattern</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>- <span style=color:#268bd2>pattern-not: [something]  ---&gt; - not</span>: [something]
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>- <span style=color:#268bd2>pattern-not: |            ---&gt; - not</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>    [something]                       [something]
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>    [more lines]                      [more lines]</span>    
+</span></span></code></pre></div><h2 id=pattern-inside---inside>pattern-inside -> inside
+<a class=header-link href=#pattern-inside---inside><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Easy, peasy.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>- <span style=color:#268bd2>id</span>: use-decimalfield-for-money-new-syntax
+</span></span><span style=display:flex><span>  <span style=color:#586e75># top-level patterns replaced by match and all.</span>
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>match</span>:
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>all</span>:
+</span></span><span style=display:flex><span>      <span style=color:#586e75># the rest of the patterns</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75># I know this `patterns` can be replaced by one `pattern`</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75># but it&#39;s modified for the tutorial.</span>
+</span></span><span style=display:flex><span>      - $F = django.db.models.FloatField(...)
+</span></span><span style=display:flex><span>      - |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>        $F = django.db.models.FloatField(...)</span>        
+</span></span><span style=display:flex><span>      <span style=color:#586e75># pattern-inside</span>
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>inside</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          class $M(...):
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>            ...</span>          
+</span></span><span style=display:flex><span>      <span style=color:#586e75># - metavariable-regex:</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75>#     metavariable: &#39;$F&#39;</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75>#     regex: &#39;.*(price|fee|salary).*&#39;</span>
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>message</span>: _removed_
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>languages</span>: [python]
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>severity</span>: ERROR
+</span></span></code></pre></div><h2 id=where>where
+<a class=header-link href=#where><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Acts as a container for some elements that add conditions to metavariables. We
+will use <code>metavariable-regex</code> as an example:</p><ol><li>Add a <code>where</code> clause in the same level as <code>all</code></li><li><code>metavariable-regex</code> is also replaced with <code>metavariable</code> and <code>regex</code>.</li></ol><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>- <span style=color:#268bd2>id</span>: use-decimalfield-for-money-new-syntax
+</span></span><span style=display:flex><span>  <span style=color:#586e75># top-level patterns replaced by match and all.</span>
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>match</span>:
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>all</span>:
+</span></span><span style=display:flex><span>      <span style=color:#586e75># I know this `patterns` can be replaced by one `pattern`</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75># but it&#39;s modified for the tutorial.</span>
+</span></span><span style=display:flex><span>      - $F = django.db.models.FloatField(...)
+</span></span><span style=display:flex><span>      - |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>        $F = django.db.models.FloatField(...)</span>        
+</span></span><span style=display:flex><span>      <span style=color:#586e75># pattern-inside</span>
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>inside</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          class $M(...):
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>            ...</span>          
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>where</span>:
+</span></span><span style=display:flex><span>      <span style=color:#586e75># metavariable-regex</span>
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>metavariable</span>: $F
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>regex</span>: <span style=color:#2aa198>&#39;.*(price|fee|salary).*&#39;</span>
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>message</span>: _removed_
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>languages</span>: [python]
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>severity</span>: ERROR
+</span></span></code></pre></div><p>See the final rule in <a href=https://semgrep.dev/playground/r/ReUly9/parsiya.blog-2023-10-use-decimalfield-for-money-new target=_blank rel="noreferrer noopener">the playground</a>.</p><p>Other elements that appear under <code>where</code> have also been modified:</p><ul><li><code>metavariable-pattern</code></li><li><code>metavariable-analysis</code></li><li><code>metavariable-comparison</code></li><li><code>focus-metavariable</code></li></ul><p>We can use them like this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>- <span style=color:#268bd2>id</span>: sample-rule
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>match</span>:
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>all</span>:
+</span></span><span style=display:flex><span>      <span style=color:#586e75># removed</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>where</span>:
+</span></span><span style=display:flex><span>      <span style=color:#586e75># metavariable-regex</span>
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>metavariable</span>: $F
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>regex</span>: <span style=color:#2aa198>&#39;.*(price|fee|salary).*&#39;</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75># metavariable-analysis</span>
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>metavariable</span>: $F
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>analyzer</span>: redos
+</span></span><span style=display:flex><span>      <span style=color:#586e75># focus-metavariable becomes `focus`</span>
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>focus</span>: $F
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>message</span>: _removed_
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>languages</span>: [python]
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>severity</span>: ERROR
+</span></span></code></pre></div><p><code>metavariable-pattern</code> is tricky because it can contain multiple patterns, but
+it's similar to the patterns we've seen before.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>    <span style=color:#268bd2>where</span>:
+</span></span><span style=display:flex><span>      <span style=color:#586e75># metavariable-pattern</span>
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>metavariable</span>: $F
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>pattern</span>: <span style=color:#2aa198>&#34;some pattern&#34;</span>
+</span></span><span style=display:flex><span>      <span style=color:#586e75># if it had multiple patterns</span>
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>metavariable</span>: $F
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>all</span>:
+</span></span><span style=display:flex><span>          - <span style=color:#2aa198>&#34;pattern1&#34;</span>
+</span></span><span style=display:flex><span>          - <span style=color:#2aa198>&#34;pattern2&#34;</span>
+</span></span></code></pre></div><h1 id=example-2>Example 2
+<a class=header-link href=#example-2><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>This one is a
+<a href=/blog/2022-04-07-code-review-hot-spots-with-semgrep/ title="C++ Hotspot rule" rel=nofollow target=_blank>C++ Hotspot rule</a>
+that tracks when arrays are passed to functions. The complete rule is on
+<a href=https://github.com/parsiya/semgrep-hotspots/blob/main/cpp/arrays-passed-to-functions.yaml target=_blank rel="noreferrer noopener">GitHub</a> and has a <a href=https://github.com/parsiya/semgrep-hotspots/blob/main/cpp/arrays-passed-to-functions.md target=_blank rel="noreferrer noopener">handy triage guide</a>.</p><p>I will be using a partial version of the rule, <a href=https://semgrep.dev/playground/r/zdUZON/parsiya.blog-2023-10-arrays-passed-to-functions-partial target=_blank rel="noreferrer noopener">playground link</a>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>- <span style=color:#268bd2>id</span>: arrays-passed-to-functions-partial
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>patterns</span>:
+</span></span><span style=display:flex><span>    <span style=color:#586e75># a lot of ways to create an array</span>
+</span></span><span style=display:flex><span>    - <span style=color:#268bd2>pattern-either</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>pattern-inside</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          $TYPE $BUF[$SIZE] = $EXPR;
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          ...</span>          
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>pattern-inside</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          $TYPE $BUF[$SIZE];
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          ...</span>          
+</span></span><span style=display:flex><span>    <span style=color:#586e75># we don&#39;t want to flag these usages again</span>
+</span></span><span style=display:flex><span>    - <span style=color:#268bd2>pattern-not-inside</span>: free($BUF);
+</span></span><span style=display:flex><span>    - <span style=color:#268bd2>pattern-not-inside</span>: delete($BUF);
+</span></span><span style=display:flex><span>    <span style=color:#586e75># exclude uppercase variables, these are usually constants</span>
+</span></span><span style=display:flex><span>    - <span style=color:#268bd2>metavariable-regex</span>:
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>metavariable</span>: $BUF
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>regex</span>: (?![A-Z0-9_]+\b)
+</span></span><span style=display:flex><span>    <span style=color:#586e75># flag if it&#39;s passed to a function</span>
+</span></span><span style=display:flex><span>    - <span style=color:#268bd2>pattern</span>: $FUNC(..., $BUF, ...);
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>message</span>: _removed_
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>languages</span>:
+</span></span><span style=display:flex><span>    - cpp
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>severity</span>: WARNING
+</span></span></code></pre></div><h2 id=pattern-not-inside---inside-under-not>pattern-not-inside -> inside under not
+<a class=header-link href=#pattern-not-inside---inside-under-not><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>The only new item here is <code>pattern-not-inside</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>- <span style=color:#268bd2>id</span>: arrays-passed-to-functions-partial
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>match</span>:
+</span></span><span style=display:flex><span>    <span style=color:#586e75># removed everything else</span>
+</span></span><span style=display:flex><span>    - <span style=color:#268bd2>pattern-not-inside</span>: free($BUF);
+</span></span><span style=display:flex><span>    - <span style=color:#268bd2>pattern-not-inside</span>: delete($BUF);
+</span></span></code></pre></div><p>First, we create a <code>not</code> and then add an <code>inside</code> under it. Also note how the
+<code>inside</code> is indented unlike <code>- not: [pattern]</code> (from <code>pattern-not</code>).</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>- <span style=color:#268bd2>id</span>: arrays-passed-to-functions-partial
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>match</span>:
+</span></span><span style=display:flex><span>    <span style=color:#586e75># removed everything else</span>
+</span></span><span style=display:flex><span>    - <span style=color:#268bd2>not</span>:
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>inside</span>: free($BUF);
+</span></span><span style=display:flex><span>    - <span style=color:#268bd2>not</span>:
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>inside</span>: delete($BUF);
+</span></span></code></pre></div><p>I thought I could merge the two <code>not</code>s. You cannot. It's a map and if you add
+two <code>inside</code>, you will get an error that keys must be unique.</p><h2 id=pattern-either---any>pattern-either -> any
+<a class=header-link href=#pattern-either---any><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p><code>any</code> will act as OR.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>- <span style=color:#268bd2>pattern-either</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#268bd2>pattern-inside</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>      $TYPE $BUF[$SIZE] = $EXPR;
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>      ...</span>      
+</span></span><span style=display:flex><span>  - <span style=color:#268bd2>pattern-inside</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>      $TYPE $BUF[$SIZE];
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>      ...</span>      
+</span></span></code></pre></div><p>becomes:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>- <span style=color:#268bd2>any</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#268bd2>inside</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>      $TYPE $BUF[$SIZE] = $EXPR;
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>      ...</span>      
+</span></span><span style=display:flex><span>  - <span style=color:#268bd2>inside</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>      $TYPE $BUF[$SIZE];
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>      ...</span>      
+</span></span></code></pre></div><h2 id=final-results>Final Results
+<a class=header-link href=#final-results><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>The rest is routine:</p><ol><li>Top-level <code>patterns</code> -> <code>match</code>.</li><li><code>pattern-either</code> -> <code>any</code>.</li><li><code>pattern-not-inside</code> -> <code>not</code> and <code>inside</code>.</li><li><code>metavariable-regex</code> -> <code>metavariable</code> and <code>regex</code>.</li><li><code>pattern</code> (the word) is just removed.</li></ol><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>- <span style=color:#268bd2>id</span>: arrays-passed-to-functions-partial
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>match</span>:
+</span></span><span style=display:flex><span>    <span style=color:#586e75># a lot of ways to create an array</span>
+</span></span><span style=display:flex><span>    - <span style=color:#268bd2>any</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>inside</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          $TYPE $BUF[$SIZE] = $EXPR;
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          ...</span>          
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>inside</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          $TYPE $BUF[$SIZE];
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          ...</span>          
+</span></span><span style=display:flex><span>    <span style=color:#586e75># we don&#39;t want to flag these usages again</span>
+</span></span><span style=display:flex><span>    - <span style=color:#268bd2>pattern-not-inside</span>: free($BUF);
+</span></span><span style=display:flex><span>    - <span style=color:#268bd2>pattern-not-inside</span>: delete($BUF);
+</span></span><span style=display:flex><span>    <span style=color:#586e75># exclude uppercase variables, these are usually constants</span>
+</span></span><span style=display:flex><span>    - <span style=color:#268bd2>metavariable-regex</span>:
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>metavariable</span>: $BUF
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>regex</span>: (?![A-Z0-9_]+\b)
+</span></span><span style=display:flex><span>    <span style=color:#586e75># flag if it&#39;s passed to a function</span>
+</span></span><span style=display:flex><span>    - <span style=color:#268bd2>pattern</span>: $FUNC(..., $BUF, ...);
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>message</span>: _removed_
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>languages</span>:
+</span></span><span style=display:flex><span>    - cpp
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>severity</span>: WARNING
+</span></span></code></pre></div><h2 id=implied-constant-propagation>Implied Constant Propagation
+<a class=header-link href=#implied-constant-propagation><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>The original rule and the one we created do not have the same matches.
+The original rule has three matches, <a href=https://semgrep.dev/playground/r/OrUb1j/parsiya.blog-2023-10-arrays-passed-to-functions-partial-original target=_blank rel="noreferrer noopener">playground link</a>.</p><span class=caption-wrapper><img class=caption src=01.jpg title="old rule" alt="old rule">
+<span class=caption-text>old rule</span></span><p>The modified rule only returns one match, <a href=https://semgrep.dev/playground/r/eqUOB0/parsiya.blog-2023-10-arrays-passed-to-functions-partial-new-syntax target=_blank rel="noreferrer noopener">playground link</a>.</p><span class=caption-wrapper><img class=caption src=02.jpg title="new rule" alt="new rule">
+<span class=caption-text>new rule</span></span><p>The reason is that <a href=https://semgrep.dev/docs/writing-rules/data-flow/constant-propagation/ target=_blank rel="noreferrer noopener">constant propagation</a> is on by default in the new
+syntax (at least for now). Credit: <a href=https://github.com/kopecs target=_blank rel="noreferrer noopener">Cooper Pierce</a>, Semgrep.</p><p>We can get the same result by adding an <a href=https://semgrep.dev/docs/writing-rules/rule-syntax/#options target=_blank rel="noreferrer noopener">options</a> key and get the same
+matches, <a href=https://semgrep.dev/playground/r/v8URl1/parsiya.blog-2023-10-arrays-passed-to-functions-partial-new-syntax-const-prop target=_blank rel="noreferrer noopener">playground link</a>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#268bd2>id</span>: blah-blah
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>options</span>:
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>constant_propagation</span>: <span style=color:#cb4b16>false</span>
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>match</span>:
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>all</span>:
+</span></span><span style=display:flex><span>      <span style=color:#586e75># the rest of the rule</span>
+</span></span></code></pre></div><h1 id=example-3>Example 3
+<a class=header-link href=#example-3><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>In the last example we will look at a complex <code>metavariable-pattern</code> rule from
+Semgrep examples, <a href=https://semgrep.dev/playground/r/5rUzZ7/parsiya.blog-2023-10-open-redirect-old target=_blank rel="noreferrer noopener">playground link for practice</a>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>- <span style=color:#268bd2>id</span>: blog-2023-10-open-redirect-old
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>languages</span>:
+</span></span><span style=display:flex><span>    - python
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>message</span>: Match found
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>severity</span>: WARNING
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>patterns</span>:
+</span></span><span style=display:flex><span>    - <span style=color:#268bd2>pattern-inside</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>        def $FUNC(...):
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          ...
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          return django.http.HttpResponseRedirect(..., $DATA, ...)</span>        
+</span></span><span style=display:flex><span>    - <span style=color:#268bd2>metavariable-pattern</span>:
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>metavariable</span>: $DATA
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>patterns</span>:
+</span></span><span style=display:flex><span>          <span style=color:#586e75># patterns</span>
+</span></span></code></pre></div><p>Converting the outside patterns is easy.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#268bd2>id</span>: blog-2023-10-open-redirect-new
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>languages</span>:
+</span></span><span style=display:flex><span>      - python
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>message</span>: Match found
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>match</span>:
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>all</span>:
+</span></span><span style=display:flex><span>        - <span style=color:#268bd2>inside</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>            def $FUNC(...):
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>              ...
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>              return django.http.HttpResponseRedirect(..., $DATA, ...)</span>            
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>where</span>:
+</span></span><span style=display:flex><span>        - <span style=color:#268bd2>metavariable</span>: $DATA
+</span></span><span style=display:flex><span>          <span style=color:#268bd2>patterns</span>:
+</span></span><span style=display:flex><span>            <span style=color:#586e75># patterns</span>
+</span></span></code></pre></div><p>Now we do the same process for the inner patterns and replace <code>patterns</code> with
+<code>all</code> (we don't need a <code>match</code>). Things can get complicated quickly. We have
+three nested <code>where</code> clauses. One for the top <code>metavariable-pattern</code>, another
+for the 2nd one, and the last one is for <code>metavariable-regex</code>.</p><p>The result is in <a href=https://semgrep.dev/playground/r/GdUR1Y/parsiya.blog-2023-10-open-redirect-new target=_blank rel="noreferrer noopener">this playground link</a>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span><span style=display:flex><span>- <span style=color:#268bd2>id</span>: blog-2023-10-open-redirect-new
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>languages</span>:
+</span></span><span style=display:flex><span>    - python
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>message</span>: Match found
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>severity</span>: WARNING
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>match</span>:
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>all</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>inside</span>: |<span style=color:#2aa198>
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          def $FUNC(...):
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>            ...
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>            return django.http.HttpResponseRedirect(..., $DATA, ...)</span>          
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>where</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#268bd2>metavariable</span>: $DATA
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>all</span>:
+</span></span><span style=display:flex><span>          - <span style=color:#268bd2>any</span>:
+</span></span><span style=display:flex><span>              - $REQUEST
+</span></span><span style=display:flex><span>              - $STR.format(..., $REQUEST, ...)
+</span></span><span style=display:flex><span>              - $STR % $REQUEST
+</span></span><span style=display:flex><span>              - $STR + $REQUEST
+</span></span><span style=display:flex><span>              - f&#34;...{$REQUEST}...&#34;
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>where</span>:
+</span></span><span style=display:flex><span>          - <span style=color:#268bd2>metavariable</span>: $REQUEST
+</span></span><span style=display:flex><span>            <span style=color:#268bd2>all</span>:
+</span></span><span style=display:flex><span>              - <span style=color:#268bd2>any</span>:
+</span></span><span style=display:flex><span>                  - request.$W
+</span></span><span style=display:flex><span>                  - request.$W.get(...)
+</span></span><span style=display:flex><span>                  - request.$W(...)
+</span></span><span style=display:flex><span>                  - request.$W[...]
+</span></span><span style=display:flex><span>            <span style=color:#268bd2>where</span>:
+</span></span><span style=display:flex><span>              - <span style=color:#268bd2>metavariable</span>: $W
+</span></span><span style=display:flex><span>                <span style=color:#268bd2>regex</span>: (?!get_full_path)
+</span></span></code></pre></div><h1 id=what-did-we-learn-here-today>What Did We Learn Here Today?
+<a class=header-link href=#what-did-we-learn-here-today><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>We learned to convert rules from the old Semgrep syntax to the new one. IMO, the
+new syntax is more readable. There are some inconsistencies like the constant
+propagation section (and probably more), but not a big issue.</p></div><footer><p class=meta><span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Oct 28, 2023</time></span></p><p class=meta><a class="basic-alignment left" href=https://parsiya.net/blog/sans-holiday-hack-2022/ title="Some SANS Holiday Hack 2022 Solutions">Some SANS Holiday Hack 2022 Solutions</a></p><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></footer></article></div><aside class="sidebar thirds"><section class="first odd"><h1>Who am I?</h1><p><p>I am Parsia, an application security engineer.</p><p>I write about application security, cryptography, static analysis, and
+(of course) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="me noopener noreferrer" href=https://infosec.exchange/@parsiya title=https://infosec.exchange/@parsiya><i class="fa fa-mastodon fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/semgrep/ title=Semgrep>Semgrep</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/blockchain/ title="Blockchain (lol)">Blockchain (lol)</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title="WinAppDbg (use Frida instead)">WinAppDbg (use Frida instead)</a></li><li><a href=https://awsome.pw title='AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability'>AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2023 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.</p></footer></body></html>
