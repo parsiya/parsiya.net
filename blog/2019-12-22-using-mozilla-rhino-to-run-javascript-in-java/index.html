@@ -1,4 +1,5 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Using Mozilla Rhino to Run JavaScript in Java</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.119.0"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2019-12-22-using-mozilla-rhino-to-run-javascript-in-java/01-beautified.png"><meta name=twitter:title content="Using Mozilla Rhino to Run JavaScript in Java"><meta name=twitter:description content="This post discusses what I learned about executing JavaScript code in Java
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Using Mozilla Rhino to Run JavaScript in Java</title>
+<link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.120.2"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2019-12-22-using-mozilla-rhino-to-run-javascript-in-java/01-beautified.png"><meta name=twitter:title content="Using Mozilla Rhino to Run JavaScript in Java"><meta name=twitter:description content="This post discusses what I learned about executing JavaScript code in Java
 with Mozilla Rhino. By the end of this post, you will know:
 
 What Rhino is.
@@ -31,55 +32,55 @@ JavaScript from a file, beautifies it, and stores it in another file.</p><h2 id=
 <a class=header-link href=#adding-rhino-to-the-java-application><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Let's start with a skeleton project. This is not a Burp extension but we can use
 the instructions from
 <a href=/blog/2019-12-02-developing-and-debugging-java-burp-extensions-with-visual-studio-code/ title="Developing and Debugging Java Burp Extensions with VisualStudio Code">Developing and Debugging Java Burp Extensions with VisualStudio Code</a>.</p><p>Our <code>build.gradle</code> is different this time because we are making a standalone
-application. The most important parts are:</p><ul><li>Adding Rhino as a dependency with <code>compile 'org.mozilla:rhino:1.7.11'</code>.</li><li>Creating the <code>Main-Class</code> attribute to be able to do <code>java -jar whatever.jar</code>.</li></ul><p>See the comments to figure out what was changed.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#586e75>// Apply the application plugin (runs the &#39;java&#39; plugin implicitly).
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>apply plugin<span style=color:#719e07>:</span> &#39;application&#39;
+application. The most important parts are:</p><ul><li>Adding Rhino as a dependency with <code>compile 'org.mozilla:rhino:1.7.11'</code>.</li><li>Creating the <code>Main-Class</code> attribute to be able to do <code>java -jar whatever.jar</code>.</li></ul><p>See the comments to figure out what was changed.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#586e75>// Apply the application plugin (runs the &#39;java&#39; plugin implicitly).</span>
+</span></span><span style=display:flex><span>apply plugin: &#39;application&#39;
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#586e75>// Use Maven (because Burp Extender is on Maven)
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>repositories <span style=color:#719e07>{</span>
-</span></span><span style=display:flex><span>    mavenCentral<span style=color:#719e07>()</span>
-</span></span><span style=display:flex><span><span style=color:#719e07>}</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// Use Maven (because Burp Extender is on Maven)</span>
+</span></span><span style=display:flex><span>repositories {
+</span></span><span style=display:flex><span>    mavenCentral()
+</span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>dependencies <span style=color:#719e07>{</span>
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Add the Burp Extender interface
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    compile &#39;org<span style=color:#719e07>.</span>mozilla<span style=color:#719e07>:</span>rhino<span style=color:#719e07>:</span><span style=color:#2aa198>1</span><span style=color:#719e07>.</span>7<span style=color:#719e07>.</span>11&#39;
-</span></span><span style=display:flex><span>    compile &#39;commons<span style=color:#719e07>-</span>io<span style=color:#719e07>:</span>commons<span style=color:#719e07>-</span>io<span style=color:#719e07>:</span><span style=color:#2aa198>2</span><span style=color:#719e07>.</span>6&#39;
-</span></span><span style=display:flex><span><span style=color:#719e07>}</span>
+</span></span><span style=display:flex><span>dependencies {
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Add the Burp Extender interface</span>
+</span></span><span style=display:flex><span>    compile &#39;org.mozilla:rhino:1.7.11&#39;
+</span></span><span style=display:flex><span>    compile &#39;commons<span style=color:#719e07>-</span>io:commons<span style=color:#719e07>-</span>io:2.6&#39;
+</span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>sourceSets <span style=color:#719e07>{</span>
-</span></span><span style=display:flex><span>    main <span style=color:#719e07>{</span>
-</span></span><span style=display:flex><span>        java <span style=color:#719e07>{</span>
-</span></span><span style=display:flex><span>            <span style=color:#586e75>// Set the source directory to &#34;src&#34;
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>            srcDir &#39;src&#39;
+</span></span><span style=display:flex><span>sourceSets {
+</span></span><span style=display:flex><span>    main {
+</span></span><span style=display:flex><span>        java {
+</span></span><span style=display:flex><span>            <span style=color:#586e75>// Set the source directory to &#34;src&#34;</span>
+</span></span><span style=display:flex><span>            srcDir &#39;src&#39;
 </span></span><span style=display:flex><span>            exclude &#39;resources<span style=color:#719e07>/</span>&#39;
-</span></span><span style=display:flex><span>        <span style=color:#719e07>}</span>
-</span></span><span style=display:flex><span>    <span style=color:#719e07>}</span>
-</span></span><span style=display:flex><span>    main <span style=color:#719e07>{</span>
-</span></span><span style=display:flex><span>        resources <span style=color:#719e07>{</span>
-</span></span><span style=display:flex><span>            <span style=color:#586e75>// Set the resource directory to &#34;src/resources&#34;
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>            srcDir &#39;src<span style=color:#719e07>/</span>resources&#39;
-</span></span><span style=display:flex><span>        <span style=color:#719e07>}</span>
-</span></span><span style=display:flex><span>    <span style=color:#719e07>}</span>
-</span></span><span style=display:flex><span><span style=color:#719e07>}</span>
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    main {
+</span></span><span style=display:flex><span>        resources {
+</span></span><span style=display:flex><span>            <span style=color:#586e75>// Set the resource directory to &#34;src/resources&#34;</span>
+</span></span><span style=display:flex><span>            srcDir &#39;src<span style=color:#719e07>/</span>resources&#39;
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#586e75>// Put the final jar file in a different location
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>libsDirName <span style=color:#719e07>=</span> &#39;<span style=color:#719e07>../</span>release&#39;
+</span></span><span style=display:flex><span><span style=color:#586e75>// Put the final jar file in a different location</span>
+</span></span><span style=display:flex><span>libsDirName <span style=color:#719e07>=</span> &#39;..<span style=color:#719e07>/</span>release&#39;
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#586e75>// This is needed if we want to run the jar with &#34;gradlew run&#34;
-</span></span></span><span style=display:flex><span><span style=color:#586e75>// mainClassName = &#39;beautify.Beautify&#39;
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>
-</span></span><span style=display:flex><span><span style=color:#586e75>// Create a task for bundling all dependencies into a jar file.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>task <span style=color:#268bd2>bigJar</span><span style=color:#719e07>(</span>type<span style=color:#719e07>:</span> Jar<span style=color:#719e07>)</span> <span style=color:#719e07>{</span>
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Make an executable jar that can be executed with &#34;java -jar&#34;
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    manifest <span style=color:#719e07>{</span>
-</span></span><span style=display:flex><span>        attributes<span style=color:#719e07>(</span>
-</span></span><span style=display:flex><span>                &#39;Main<span style=color:#719e07>-</span>Class&#39;<span style=color:#719e07>:</span> &#39;beautify<span style=color:#719e07>.</span>Beautify&#39;
-</span></span><span style=display:flex><span>        <span style=color:#719e07>)</span>
-</span></span><span style=display:flex><span>    <span style=color:#719e07>}</span>
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Bundle all dependencies together in one jar file.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    baseName <span style=color:#719e07>=</span> project<span style=color:#719e07>.</span>name <span style=color:#719e07>+</span> &#39;<span style=color:#719e07>-</span>all&#39;
-</span></span><span style=display:flex><span>    from <span style=color:#719e07>{</span> configurations<span style=color:#719e07>.</span>compile<span style=color:#719e07>.</span>collect <span style=color:#719e07>{</span> it<span style=color:#719e07>.</span>isDirectory<span style=color:#719e07>()</span> <span style=color:#719e07>?</span> it <span style=color:#719e07>:</span> zipTree<span style=color:#719e07>(</span>it<span style=color:#719e07>)</span> <span style=color:#719e07>}</span> <span style=color:#719e07>}</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// This is needed if we want to run the jar with &#34;gradlew run&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// mainClassName = &#39;beautify.Beautify&#39;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// Create a task for bundling all dependencies into a jar file.</span>
+</span></span><span style=display:flex><span>task <span style=color:#268bd2>bigJar</span>(type: Jar) {
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Make an executable jar that can be executed with &#34;java -jar&#34;</span>
+</span></span><span style=display:flex><span>    manifest {
+</span></span><span style=display:flex><span>        attributes(
+</span></span><span style=display:flex><span>                &#39;Main<span style=color:#719e07>-</span>Class&#39;: &#39;beautify.Beautify&#39;
+</span></span><span style=display:flex><span>        )
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Bundle all dependencies together in one jar file.</span>
+</span></span><span style=display:flex><span>    baseName <span style=color:#719e07>=</span> project.name <span style=color:#719e07>+</span> &#39;<span style=color:#719e07>-</span>all&#39;
+</span></span><span style=display:flex><span>    from { configurations.compile.collect { it.isDirectory() <span style=color:#719e07>?</span> it : zipTree(it) } }
 </span></span><span style=display:flex><span>    with jar
-</span></span><span style=display:flex><span><span style=color:#719e07>}</span>
+</span></span><span style=display:flex><span>}
 </span></span></code></pre></div><h2 id=beautifyjs>beautify.js
 <a class=header-link href=#beautifyjs><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>There are different versions of the beautifier. We can use it as Node or Python
 package and there is a <a href=https://github.com/beautify-web/js-beautify#web-library target=_blank rel="noreferrer noopener">web version</a> in a stand-alone
@@ -89,40 +90,40 @@ extension and we will use it. Get it from
 to the <code>resources</code> directory.</p><h2 id=reading-resource-files>Reading Resource Files
 <a class=header-link href=#reading-resource-files><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p><code>src\Beautify\beautify.java</code> will be our main class. Inside, we
 create a couple of helper utils. For example, to load a file from the jar's
-resource, we use this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#268bd2>public</span> <span style=color:#268bd2>static</span> String <span style=color:#268bd2>getResourceFile</span><span style=color:#719e07>(</span>Class cls<span style=color:#719e07>,</span> String name<span style=color:#719e07>)</span> <span style=color:#268bd2>throws</span> IOException <span style=color:#719e07>{</span>
-</span></span><span style=display:flex><span>    InputStream in <span style=color:#719e07>=</span> cls<span style=color:#719e07>.</span>getResourceAsStream<span style=color:#719e07>(</span>name<span style=color:#719e07>);</span>
-</span></span><span style=display:flex><span>    String content <span style=color:#719e07>=</span> IOUtils<span style=color:#719e07>.</span>toString<span style=color:#719e07>(</span>in<span style=color:#719e07>,</span> <span style=color:#2aa198>&#34;UTF-8&#34;</span><span style=color:#719e07>);</span>
-</span></span><span style=display:flex><span>    in<span style=color:#719e07>.</span>close<span style=color:#719e07>();</span>
-</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> content<span style=color:#719e07>;</span>
-</span></span><span style=display:flex><span><span style=color:#719e07>}</span>
+resource, we use this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#268bd2>public</span> <span style=color:#268bd2>static</span> String <span style=color:#268bd2>getResourceFile</span>(Class cls, String name) <span style=color:#268bd2>throws</span> IOException {
+</span></span><span style=display:flex><span>    InputStream in <span style=color:#719e07>=</span> cls.getResourceAsStream(name);
+</span></span><span style=display:flex><span>    String content <span style=color:#719e07>=</span> IOUtils.toString(in, <span style=color:#2aa198>&#34;UTF-8&#34;</span>);
+</span></span><span style=display:flex><span>    in.close();
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> content;
+</span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>If you are already using the <a href=https://github.com/apache/commons-io target=_blank rel="noreferrer noopener">Apache Commons IO</a> library then
 this function is not an overhead. The following utility function does the same
-but without the extra dependency.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#268bd2>public</span> <span style=color:#268bd2>static</span> String <span style=color:#268bd2>getResourceFile</span><span style=color:#719e07>(</span>String name<span style=color:#719e07>)</span> <span style=color:#268bd2>throws</span> IOException <span style=color:#719e07>{</span>
-</span></span><span style=display:flex><span>    InputStream in <span style=color:#719e07>=</span> BurpExtender<span style=color:#719e07>.</span>class<span style=color:#719e07>.</span>getResourceAsStream<span style=color:#719e07>(</span>name<span style=color:#719e07>);</span> 
-</span></span><span style=display:flex><span>    BufferedReader reader <span style=color:#719e07>=</span> <span style=color:#719e07>new</span> BufferedReader<span style=color:#719e07>(</span><span style=color:#719e07>new</span> InputStreamReader<span style=color:#719e07>(</span>in<span style=color:#719e07>));</span>
+but without the extra dependency.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#268bd2>public</span> <span style=color:#268bd2>static</span> String <span style=color:#268bd2>getResourceFile</span>(String name) <span style=color:#268bd2>throws</span> IOException {
+</span></span><span style=display:flex><span>    InputStream in <span style=color:#719e07>=</span> BurpExtender.class.getResourceAsStream(name); 
+</span></span><span style=display:flex><span>    BufferedReader reader <span style=color:#719e07>=</span> <span style=color:#719e07>new</span> BufferedReader(<span style=color:#719e07>new</span> InputStreamReader(in));
 </span></span><span style=display:flex><span>    
-</span></span><span style=display:flex><span>    StringBuffer buf <span style=color:#719e07>=</span> <span style=color:#719e07>new</span> StringBuffer<span style=color:#719e07>();</span>
-</span></span><span style=display:flex><span>    String tmpStr <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;&#34;</span><span style=color:#719e07>;</span>
+</span></span><span style=display:flex><span>    StringBuffer buf <span style=color:#719e07>=</span> <span style=color:#719e07>new</span> StringBuffer();
+</span></span><span style=display:flex><span>    String tmpStr <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;&#34;</span>;
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#719e07>while</span><span style=color:#719e07>((</span>tmpStr <span style=color:#719e07>=</span> reader<span style=color:#719e07>.</span>readLine<span style=color:#719e07>())</span> <span style=color:#719e07>!=</span> <span style=color:#cb4b16>null</span><span style=color:#719e07>)</span> <span style=color:#719e07>{</span>
-</span></span><span style=display:flex><span>        buf<span style=color:#719e07>.</span>append<span style=color:#719e07>(</span>tmpStr<span style=color:#719e07>);</span>
-</span></span><span style=display:flex><span>    <span style=color:#719e07>}</span>
-</span></span><span style=display:flex><span>    in<span style=color:#719e07>.</span>close<span style=color:#719e07>();</span>
-</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> buf<span style=color:#719e07>.</span>toString<span style=color:#719e07>();</span>
-</span></span><span style=display:flex><span><span style=color:#719e07>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>while</span>((tmpStr <span style=color:#719e07>=</span> reader.readLine()) <span style=color:#719e07>!=</span> <span style=color:#cb4b16>null</span>) {
+</span></span><span style=display:flex><span>        buf.append(tmpStr);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    in.close();
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> buf.toString();
+</span></span><span style=display:flex><span>}
 </span></span></code></pre></div><h2 id=beautify-function>Beautify Function
 <a class=header-link href=#beautify-function><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>The other utility function is <code>beautify</code>. It uses <code>beautify.js</code> to beautify the
 JavaScript code in the input. We will follow the Mozilla embedding
 tutorial at
-<a href=https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Rhino/Embedding_tutorial target=_blank rel="noreferrer noopener">https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Rhino/Embedding_tutorial</a>.</p><p>We create a context and enter it.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#268bd2>public</span> <span style=color:#268bd2>static</span> String <span style=color:#268bd2>beautify</span><span style=color:#719e07>(</span>String uglyJS<span style=color:#719e07>)</span> <span style=color:#268bd2>throws</span> IOException <span style=color:#719e07>{</span>
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Enter a context.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    Context cx <span style=color:#719e07>=</span> Context<span style=color:#719e07>.</span>enter<span style=color:#719e07>();</span>
+<a href=https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Rhino/Embedding_tutorial target=_blank rel="noreferrer noopener">https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Rhino/Embedding_tutorial</a>.</p><p>We create a context and enter it.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#268bd2>public</span> <span style=color:#268bd2>static</span> String <span style=color:#268bd2>beautify</span>(String uglyJS) <span style=color:#268bd2>throws</span> IOException {
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Enter a context.</span>
+</span></span><span style=display:flex><span>    Context cx <span style=color:#719e07>=</span> Context.enter();
 </span></span></code></pre></div><p>We can set the optimization level. The optimization levels are explained at
 <a href=https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Rhino/Optimization target=_blank rel="noreferrer noopener">https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Rhino/Optimization</a>. I
-am not sure if we will need it here.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#586e75>// Set optimization.
-</span></span></span><span style=display:flex><span><span style=color:#586e75>// cx.setOptimizationLevel(-1);
-</span></span></span></code></pre></div><p>Create standard objects.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#586e75>// Initialize standard objects.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>Scriptable scope <span style=color:#719e07>=</span> cx<span style=color:#719e07>.</span>initSafeStandardObjects<span style=color:#719e07>();</span>
+am not sure if we will need it here.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#586e75>// Set optimization.</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// cx.setOptimizationLevel(-1);</span>
+</span></span></code></pre></div><p>Create standard objects.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#586e75>// Initialize standard objects.</span>
+</span></span><span style=display:flex><span>Scriptable scope <span style=color:#719e07>=</span> cx.initSafeStandardObjects();
 </span></span></code></pre></div><p>Moving forward, we can add scripts to the scope with
 <a href=http://mozilla.github.io/rhino/javadoc/org/mozilla/javascript/Context.html#evaluateString-org.mozilla.javascript.Scriptable-java.lang.String-java.lang.String-int-java.lang.Object- target=_blank rel="noreferrer noopener">cx.evaluateString</a>.</p><p>Follow the BurpSuiteJSBeautifier extension source code at</p><ul><li><a href=https://github.com/irsdl/BurpSuiteJSBeautifier/blob/master/jsbeautifier/src/burp/JSBeautifier/JSBeautifierFunctions.java#L321 target=_blank rel="noreferrer noopener">https://github.com/irsdl/BurpSuiteJSBeautifier/blob/master/jsbeautifier/src/burp/JSBeautifier/JSBeautifierFunctions.java#L321</a></li><li>or this solution on <a href=https://stackoverflow.com/a/16338524 target=_blank rel="noreferrer noopener">Stack Overflow</a>.</li></ul><p>Tl;DR, we need to add a <code>global</code> variable to our scope because the <code>js_beautify</code>
 function is added to the global variable. See the last few lines of
@@ -145,64 +146,64 @@ function is added to the global variable. See the last few lines of
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span>    global.js_beautify <span style=color:#719e07>=</span> js_beautify; <span style=color:#586e75>// &lt;----- HERE
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span>}
 </span></span></code></pre></div><p>Now we need to read <code>beautify.js</code> with <code>getResourceFile</code> and add it to the
-scope.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#586e75>// Read the jsbeautify.js file.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>String jsbeautifyFile <span style=color:#719e07>=</span> getResourceFile<span style=color:#719e07>(</span>Beautify<span style=color:#719e07>.</span>class<span style=color:#719e07>,</span> <span style=color:#2aa198>&#34;/beautify.js&#34;</span><span style=color:#719e07>);</span>
+scope.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#586e75>// Read the jsbeautify.js file.</span>
+</span></span><span style=display:flex><span>String jsbeautifyFile <span style=color:#719e07>=</span> getResourceFile(Beautify.class, <span style=color:#2aa198>&#34;/beautify.js&#34;</span>);
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>cx<span style=color:#719e07>.</span>evaluateString<span style=color:#719e07>(</span>scope<span style=color:#719e07>,</span> <span style=color:#2aa198>&#34;var global = {}; &#34;</span><span style=color:#719e07>+</span>jsbeautifyFile<span style=color:#719e07>,</span> <span style=color:#2aa198>&#34;global&#34;</span><span style=color:#719e07>,</span> <span style=color:#2aa198>0</span><span style=color:#719e07>,</span> <span style=color:#cb4b16>null</span><span style=color:#719e07>);</span>
+</span></span><span style=display:flex><span>cx.evaluateString(scope, <span style=color:#2aa198>&#34;var global = {}; &#34;</span><span style=color:#719e07>+</span>jsbeautifyFile, <span style=color:#2aa198>&#34;global&#34;</span>, 0, <span style=color:#cb4b16>null</span>);
 </span></span></code></pre></div><p>Note the initial forward slash in the file name <code>/beautify.js</code>. This wasted a
 few hours of my life.</p><p>Next is what wasted a few more hours of my life. In both the Burp extension and
 the Stack Overflow solution, the function is retrieved from the scope directly
-like this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#586e75>// Solution: https://stackoverflow.com/a/16338524 -- doesn&#39;t work
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>Object fjsBeautify <span style=color:#719e07>=</span> scope<span style=color:#719e07>.</span>get<span style=color:#719e07>(</span><span style=color:#2aa198>&#34;js_beautify&#34;</span><span style=color:#719e07>,</span> scope<span style=color:#719e07>);</span>
+like this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#586e75>// Solution: https://stackoverflow.com/a/16338524 -- doesn&#39;t work</span>
+</span></span><span style=display:flex><span>Object fjsBeautify <span style=color:#719e07>=</span> scope.get(<span style=color:#2aa198>&#34;js_beautify&#34;</span>, scope);
 </span></span></code></pre></div><p><strong>This does not work here.</strong> I am not sure why. It might be a JavaScript version
-issue. Even calling it with <code>global.js_beautify</code> does not work either.</p><p>Instead, what I did was add a new script to scope.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#586e75>// Add our own export.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>cx<span style=color:#719e07>.</span>evaluateString<span style=color:#719e07>(</span>scope<span style=color:#719e07>,</span> <span style=color:#2aa198>&#34;var js_beautify = global.js_beautify;&#34;</span><span style=color:#719e07>,</span> <span style=color:#2aa198>&#34;export&#34;</span><span style=color:#719e07>,</span> <span style=color:#2aa198>0</span><span style=color:#719e07>,</span> <span style=color:#cb4b16>null</span><span style=color:#719e07>);</span>
-</span></span></code></pre></div><p>We can get this new function with:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#586e75>// Get the function.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>Object fjsBeautify <span style=color:#719e07>=</span> scope<span style=color:#719e07>.</span>get<span style=color:#719e07>(</span><span style=color:#2aa198>&#34;js_beautify&#34;</span><span style=color:#719e07>,</span> scope<span style=color:#719e07>);</span>
+issue. Even calling it with <code>global.js_beautify</code> does not work either.</p><p>Instead, what I did was add a new script to scope.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#586e75>// Add our own export.</span>
+</span></span><span style=display:flex><span>cx.evaluateString(scope, <span style=color:#2aa198>&#34;var js_beautify = global.js_beautify;&#34;</span>, <span style=color:#2aa198>&#34;export&#34;</span>, 0, <span style=color:#cb4b16>null</span>);
+</span></span></code></pre></div><p>We can get this new function with:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#586e75>// Get the function.</span>
+</span></span><span style=display:flex><span>Object fjsBeautify <span style=color:#719e07>=</span> scope.get(<span style=color:#2aa198>&#34;js_beautify&#34;</span>, scope);
 </span></span></code></pre></div><p>We can follow the rest of the tutorial to call the function. The input to the
-function is the <code>uglyJS</code> string:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#586e75>// Check to see if we got the correct function?
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>if</span> <span style=color:#719e07>(!(</span>fjsBeautify <span style=color:#719e07>instanceof</span> Function<span style=color:#719e07>))</span> <span style=color:#719e07>{</span>
-</span></span><span style=display:flex><span>    System<span style=color:#719e07>.</span>out<span style=color:#719e07>.</span>println<span style=color:#719e07>(</span><span style=color:#2aa198>&#34;js_beautify is undefined or not a function.&#34;</span><span style=color:#719e07>);</span>
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// System.out.println(fjsBeautify.toString());
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    
-</span></span><span style=display:flex><span><span style=color:#719e07>}</span> <span style=color:#719e07>else</span> <span style=color:#719e07>{</span>
-</span></span><span style=display:flex><span>    Object functionArgs<span style=color:#719e07>[]</span> <span style=color:#719e07>=</span> <span style=color:#719e07>{</span> uglyJS <span style=color:#719e07>};</span>
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Object functionArgs[] = { &#34;var x=&#39;1234&#39;;var y=&#39;4444&#39;;var z=&#39;3123123&#39;;&#34; };
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    Function f <span style=color:#719e07>=</span> <span style=color:#719e07>(</span>Function<span style=color:#719e07>)</span>fjsBeautify<span style=color:#719e07>;</span>
-</span></span><span style=display:flex><span>    Object result <span style=color:#719e07>=</span> f<span style=color:#719e07>.</span>call<span style=color:#719e07>(</span>cx<span style=color:#719e07>,</span> scope<span style=color:#719e07>,</span> scope<span style=color:#719e07>,</span> functionArgs<span style=color:#719e07>);</span>
-</span></span><span style=display:flex><span>    Context<span style=color:#719e07>.</span>exit<span style=color:#719e07>();</span>
-</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> Context<span style=color:#719e07>.</span>toString<span style=color:#719e07>(</span>result<span style=color:#719e07>);</span>
-</span></span><span style=display:flex><span><span style=color:#719e07>}</span>
-</span></span><span style=display:flex><span><span style=color:#586e75>// We should throw an exception here in production code.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>Context<span style=color:#719e07>.</span>exit<span style=color:#719e07>();</span>
-</span></span><span style=display:flex><span><span style=color:#719e07>return</span> <span style=color:#cb4b16>null</span><span style=color:#719e07>;</span>
+function is the <code>uglyJS</code> string:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#586e75>// Check to see if we got the correct function?</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>if</span> (<span style=color:#719e07>!</span>(fjsBeautify <span style=color:#719e07>instanceof</span> Function)) {
+</span></span><span style=display:flex><span>    System.out.println(<span style=color:#2aa198>&#34;js_beautify is undefined or not a function.&#34;</span>);
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// System.out.println(fjsBeautify.toString());</span>
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>} <span style=color:#719e07>else</span> {
+</span></span><span style=display:flex><span>    Object functionArgs<span style=color:#719e07>[]</span> <span style=color:#719e07>=</span> { uglyJS };
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Object functionArgs[] = { &#34;var x=&#39;1234&#39;;var y=&#39;4444&#39;;var z=&#39;3123123&#39;;&#34; };</span>
+</span></span><span style=display:flex><span>    Function f <span style=color:#719e07>=</span> (Function)fjsBeautify;
+</span></span><span style=display:flex><span>    Object result <span style=color:#719e07>=</span> f.call(cx, scope, scope, functionArgs);
+</span></span><span style=display:flex><span>    Context.exit();
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> Context.toString(result);
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#586e75>// We should throw an exception here in production code.</span>
+</span></span><span style=display:flex><span>Context.exit();
+</span></span><span style=display:flex><span><span style=color:#719e07>return</span> <span style=color:#cb4b16>null</span>;
 </span></span></code></pre></div><p>The next utility function takes two file paths, reads the first one, beautifies
-it and stores it in the second path.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#268bd2>public</span> <span style=color:#268bd2>static</span> <span style=color:#dc322f>void</span> <span style=color:#268bd2>beautifyFile</span><span style=color:#719e07>(</span>String inFilePath<span style=color:#719e07>,</span> String outFilePath<span style=color:#719e07>)</span> <span style=color:#268bd2>throws</span> IOException <span style=color:#719e07>{</span>
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Read the file.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    File inFile <span style=color:#719e07>=</span> <span style=color:#719e07>new</span> File<span style=color:#719e07>(</span>inFilePath<span style=color:#719e07>);</span>
-</span></span><span style=display:flex><span>    String fileContent <span style=color:#719e07>=</span> FileUtils<span style=color:#719e07>.</span>readFileToString<span style=color:#719e07>(</span>inFile<span style=color:#719e07>,</span> <span style=color:#2aa198>&#34;UTF-8&#34;</span><span style=color:#719e07>);</span>
+it and stores it in the second path.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#268bd2>public</span> <span style=color:#268bd2>static</span> <span style=color:#dc322f>void</span> <span style=color:#268bd2>beautifyFile</span>(String inFilePath, String outFilePath) <span style=color:#268bd2>throws</span> IOException {
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Read the file.</span>
+</span></span><span style=display:flex><span>    File inFile <span style=color:#719e07>=</span> <span style=color:#719e07>new</span> File(inFilePath);
+</span></span><span style=display:flex><span>    String fileContent <span style=color:#719e07>=</span> FileUtils.readFileToString(inFile, <span style=color:#2aa198>&#34;UTF-8&#34;</span>);
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    File outFile <span style=color:#719e07>=</span> <span style=color:#719e07>new</span> File<span style=color:#719e07>(</span>outFilePath<span style=color:#719e07>);</span>
-</span></span><span style=display:flex><span>    <span style=color:#719e07>try</span> <span style=color:#719e07>{</span>
-</span></span><span style=display:flex><span>        String beautified <span style=color:#719e07>=</span> beautify<span style=color:#719e07>(</span>fileContent<span style=color:#719e07>);</span>
-</span></span><span style=display:flex><span>        FileUtils<span style=color:#719e07>.</span>writeStringToFile<span style=color:#719e07>(</span>outFile<span style=color:#719e07>,</span> beautified<span style=color:#719e07>,</span> <span style=color:#2aa198>&#34;UTF-8&#34;</span><span style=color:#719e07>);</span>
-</span></span><span style=display:flex><span>    <span style=color:#719e07>}</span> <span style=color:#719e07>catch</span> <span style=color:#719e07>(</span>Exception e<span style=color:#719e07>)</span> <span style=color:#719e07>{</span>
-</span></span><span style=display:flex><span>        <span style=color:#586e75>// TODO: handle exception
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        StringWriter sw <span style=color:#719e07>=</span> <span style=color:#719e07>new</span> StringWriter<span style=color:#719e07>();</span>
-</span></span><span style=display:flex><span>        e<span style=color:#719e07>.</span>printStackTrace<span style=color:#719e07>(</span><span style=color:#719e07>new</span> PrintWriter<span style=color:#719e07>(</span>sw<span style=color:#719e07>));</span>
-</span></span><span style=display:flex><span>        System<span style=color:#719e07>.</span>out<span style=color:#719e07>.</span>println<span style=color:#719e07>(</span>sw<span style=color:#719e07>.</span>toString<span style=color:#719e07>());</span>
-</span></span><span style=display:flex><span>    <span style=color:#719e07>}</span>
-</span></span><span style=display:flex><span><span style=color:#719e07>}</span>
+</span></span><span style=display:flex><span>    File outFile <span style=color:#719e07>=</span> <span style=color:#719e07>new</span> File(outFilePath);
+</span></span><span style=display:flex><span>    <span style=color:#719e07>try</span> {
+</span></span><span style=display:flex><span>        String beautified <span style=color:#719e07>=</span> beautify(fileContent);
+</span></span><span style=display:flex><span>        FileUtils.writeStringToFile(outFile, beautified, <span style=color:#2aa198>&#34;UTF-8&#34;</span>);
+</span></span><span style=display:flex><span>    } <span style=color:#719e07>catch</span> (Exception e) {
+</span></span><span style=display:flex><span>        <span style=color:#586e75>// TODO: handle exception</span>
+</span></span><span style=display:flex><span>        StringWriter sw <span style=color:#719e07>=</span> <span style=color:#719e07>new</span> StringWriter();
+</span></span><span style=display:flex><span>        e.printStackTrace(<span style=color:#719e07>new</span> PrintWriter(sw));
+</span></span><span style=display:flex><span>        System.out.println(sw.toString());
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>Time to tie everything together. As an example, we want to beautify the
-<code>cookiebanner.min.js</code> at:</p><ul><li><a href=https://raw.githubusercontent.com/dobarkod/cookie-banner/master/dist/cookiebanner.min.js target=_blank rel="noreferrer noopener">https://raw.githubusercontent.com/dobarkod/cookie-banner/master/dist/cookiebanner.min.js</a></li></ul><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>    <span style=color:#268bd2>public</span> <span style=color:#268bd2>static</span> <span style=color:#dc322f>void</span> <span style=color:#268bd2>main</span><span style=color:#719e07>(</span>String<span style=color:#719e07>[]</span> args<span style=color:#719e07>)</span> <span style=color:#719e07>{</span>
+<code>cookiebanner.min.js</code> at:</p><ul><li><a href=https://raw.githubusercontent.com/dobarkod/cookie-banner/master/dist/cookiebanner.min.js target=_blank rel="noreferrer noopener">https://raw.githubusercontent.com/dobarkod/cookie-banner/master/dist/cookiebanner.min.js</a></li></ul><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>    <span style=color:#268bd2>public</span> <span style=color:#268bd2>static</span> <span style=color:#dc322f>void</span> <span style=color:#268bd2>main</span>(String<span style=color:#719e07>[]</span> args) {
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        <span style=color:#719e07>try</span> <span style=color:#719e07>{</span>
-</span></span><span style=display:flex><span>            beautifyFile<span style=color:#719e07>(</span><span style=color:#2aa198>&#34;cookiebanner.min.js&#34;</span><span style=color:#719e07>,</span> <span style=color:#2aa198>&#34;cookie-beautified.js&#34;</span><span style=color:#719e07>);</span>
-</span></span><span style=display:flex><span>        <span style=color:#719e07>}</span> <span style=color:#719e07>catch</span> <span style=color:#719e07>(</span>Exception e<span style=color:#719e07>)</span> <span style=color:#719e07>{</span>
-</span></span><span style=display:flex><span>            e<span style=color:#719e07>.</span>printStackTrace<span style=color:#719e07>();</span>
-</span></span><span style=display:flex><span>        <span style=color:#719e07>}</span>
-</span></span><span style=display:flex><span>        System<span style=color:#719e07>.</span>out<span style=color:#719e07>.</span>println<span style=color:#719e07>(</span><span style=color:#2aa198>&#34;Done&#34;</span><span style=color:#719e07>);</span>
-</span></span><span style=display:flex><span>    <span style=color:#719e07>}</span>
+</span></span><span style=display:flex><span>        <span style=color:#719e07>try</span> {
+</span></span><span style=display:flex><span>            beautifyFile(<span style=color:#2aa198>&#34;cookiebanner.min.js&#34;</span>, <span style=color:#2aa198>&#34;cookie-beautified.js&#34;</span>);
+</span></span><span style=display:flex><span>        } <span style=color:#719e07>catch</span> (Exception e) {
+</span></span><span style=display:flex><span>            e.printStackTrace();
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        System.out.println(<span style=color:#2aa198>&#34;Done&#34;</span>);
+</span></span><span style=display:flex><span>    }
 </span></span></code></pre></div><p>Build the project. The jar will be created in the <code>release</code> directory. Download
 the <code>cookiebanner.min.js</code> file and store it in the same directory. Next, we can
 run the jar file <code>java -jar test-jsbeautify-all.jar</code>.</p><p>After a few seconds, the <code>cookie-beautified.js</code> is created.</p><span class=caption-wrapper><img class=caption src=01-beautified.png title="Beautified JavaScript" alt="Beautified JavaScript">
@@ -220,9 +221,9 @@ extension does.</p><h1 id=precompiling-to-bytecode>Precompiling to Bytecode
 To make a class file, we can do it programmatically with
 <a href=http://mozilla.github.io/rhino/javadoc/org/mozilla/javascript/Context.html#compileString-java.lang.String-java.lang.String-int-java.lang.Object- target=_blank rel="noreferrer noopener">Context.compileString</a>. The result is a <a href=http://mozilla.github.io/rhino/javadoc/org/mozilla/javascript/Script.html target=_blank rel="noreferrer noopener">Script</a>
 that can be executed with <code>exec</code>. In this case, <code>exec</code> will the equivalent of
-<code>evaluateString</code>.</p><p>So for <code>beautify.js</code> we can also use:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>Script scr <span style=color:#719e07>=</span> cx<span style=color:#719e07>.</span>compileString<span style=color:#719e07>(</span>jsbeautifyFile<span style=color:#719e07>,</span> <span style=color:#2aa198>&#34;beautify.js&#34;</span><span style=color:#719e07>,</span> <span style=color:#2aa198>0</span><span style=color:#719e07>,</span> <span style=color:#cb4b16>null</span><span style=color:#719e07>);</span>
-</span></span><span style=display:flex><span>scr<span style=color:#719e07>.</span>exec<span style=color:#719e07>(</span>cx<span style=color:#719e07>,</span> scope<span style=color:#719e07>);</span>
-</span></span><span style=display:flex><span>Object fjsBeautify <span style=color:#719e07>=</span> scope<span style=color:#719e07>.</span>get<span style=color:#719e07>(</span><span style=color:#2aa198>&#34;beautify&#34;</span><span style=color:#719e07>,</span> scope<span style=color:#719e07>);</span>
+<code>evaluateString</code>.</p><p>So for <code>beautify.js</code> we can also use:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>Script scr <span style=color:#719e07>=</span> cx.compileString(jsbeautifyFile, <span style=color:#2aa198>&#34;beautify.js&#34;</span>, 0, <span style=color:#cb4b16>null</span>);
+</span></span><span style=display:flex><span>scr.exec(cx, scope);
+</span></span><span style=display:flex><span>Object fjsBeautify <span style=color:#719e07>=</span> scope.get(<span style=color:#2aa198>&#34;beautify&#34;</span>, scope);
 </span></span></code></pre></div><h2 id=creating-class-files-from-javascript-files>Creating Class Files from JavaScript Files
 <a class=header-link href=#creating-class-files-from-javascript-files><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>We can create a class file from a JavaScript file using the Rhino jar.</p><ol><li>Download the Rhino jar file to a path.<ol><li>E.g., <code>rhino-1.7.11.jar</code> from <a href=https://github.com/mozilla/rhino/releases/tag/Rhino1_7_11_Release target=_blank rel="noreferrer noopener">https://github.com/mozilla/rhino/releases/tag/Rhino1_7_11_Release</a>.</li></ol></li><li>Run the following command.<ol><li><code>java -cp rhino-1.7.11.jar org.mozilla.javascript.tools.jsc.Main beautify.js</code></li></ol></li><li>Load the resulting class file and use objects/functions/etc.</li></ol><p>See the options at:</p><ul><li><a href=https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Rhino/JavaScript_Compiler target=_blank rel="noreferrer noopener">https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Rhino/JavaScript_Compiler</a></li></ul><p>I have not been able to load the compiled strings in Rhino and execute them yet.</p><h2 id=js_beautify-options>js_beautify Options
 <a class=header-link href=#js_beautify-options><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>The <code>js_beautify</code> function has a second optional parameter. This is a JSON
