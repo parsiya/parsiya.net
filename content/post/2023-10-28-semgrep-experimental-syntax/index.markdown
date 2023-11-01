@@ -1,5 +1,5 @@
 ---
-title: "Semgrep's New Rule Syntax"
+title: "Semgrep's Experimental Rule Syntax"
 date: 2023-10-28T12:43:08-07:00
 draft: false
 toc: true
@@ -7,14 +7,16 @@ comments: true
 # twitterImage: .png
 categories:
 - semgrep
+aliases:
+- "/blog/2023-10-28-semgreps-new-rule-syntax/"
 ---
 
-Semgrep has a new and more readable rule syntax. I am converting my own
-reference to a tutorial.
+Semgrep has an experimental and (IMO) more readable rule syntax. I am converting
+my own reference into a tutorial.
 
 <!--more-->
 
-**Disclaimer:** Semgrep (binary, playground, cloud, etc.) supports the new
+**Disclaimer:** Semgrep (binary, playground, cloud, etc.) supports the experimental
 syntax, but it's not released. If you're from the future and things have
 changed, let me know somehow. E.g., make an issue in the blog's source at
 [parsiya/parsiya.net][source] or create a pull request.
@@ -24,7 +26,7 @@ changed, let me know somehow. E.g., make an issue in the blog's source at
 # TL;DR
 Use these tables:
 
-| Old | New |
+| Old | Experimental |
 |---|---|
 | patterns (top-level) | match and all |
 | patterns (other) | all |
@@ -36,7 +38,7 @@ Use these tables:
 
 These items go inside a `where` clause:
 
-| Old | New |
+| Old | Experimental |
 |---|---|
 | metavariable-pattern | metavariable and pattern |
 | metavariable-regex | metavariable and regex |
@@ -46,7 +48,7 @@ These items go inside a `where` clause:
 
 Taint mode changes
 
-| Old | New |
+| Old | Experimental |
 |---|---|
 | mode:taint | removed |
 | match (taint mode) | taint |
@@ -449,7 +451,7 @@ The modified rule only returns one match, [playground link][new1].
 
 {{< imgcap title="new rule" src="02.jpg" >}}
 
-The reason is that [constant propagation][const] is on by default in the new
+The reason is that [constant propagation][const] is on by default in the experimental
 syntax (at least for now). Credit: [Cooper Pierce][cooper-gh], Semgrep.
 
 [const]: https://semgrep.dev/docs/writing-rules/data-flow/constant-propagation/
@@ -561,6 +563,6 @@ rules:
 [pattern-new]: https://semgrep.dev/playground/r/GdUR1Y/parsiya.blog-2023-10-open-redirect-new
 
 # What Did We Learn Here Today?
-We learned to convert rules from the old Semgrep syntax to the new one. IMO, the
-new syntax is more readable. There are some inconsistencies like the constant
+We learned to convert rules from the old Semgrep syntax to the experimental one. IMO, the
+experimental syntax is more readable. There are some inconsistencies like the constant
 propagation section (and probably more), but not a big issue.
