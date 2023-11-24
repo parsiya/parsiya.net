@@ -787,7 +787,7 @@ You have forked a repository a while ago. You want to sync the new changes.
 1. Add the original repository as `upstream`.
     1. `git remote add upstream git@github.com:original-user/original-repo.git`
     2. `git remote add upstream https://github.com/original-user/original-repo/`
-    3. Check with `git remote -v1`
+    3. Check with `git remote -v`
 2. `git fetch upstream`
 3. Merge the `upstream/main` branch into the local `main` branch:
     1. `git merge upstream/main`
@@ -884,9 +884,19 @@ the file completely from the filesystem):
 Note: Also overwrite history if the file had secrets/sensitive info.
 
 ## Sign git Commits
-Follow this guide:
+This is for GitHub, but should work for everywhere.
 
-* https://withblue.ink/2020/05/17/how-and-why-to-sign-git-commits.html
+1. Generate a new ed25519 SSH key. You can reuse the one used for connection.
+    1. ssh-keygen -t ed25519 -C "[github-username]@users.noreply.github.com"
+2. Upload it to your Git server. For GitHub, go to https://github.com/settings/ssh/new.
+    1. Key type: `Signing key`.
+    2. Paste the **public** key. It should be in `~/.ssh/whatever.pub`.
+3. Set the signing format to SSH.
+    1. `git config --global gpg.format ssh`
+4. Tell git to use the local public key:
+    1. `git config --global user.signingkey ~/.ssh/whatever.pub`
+5. Tell git to sign every commit:
+    1. `git config --global commit.gpgsign true`
 
 ------
 
