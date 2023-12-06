@@ -345,7 +345,8 @@ https://github.com/parsiya/evil-electron/tree/master/release.
 
 The idea of backdooring an Electron app is not really new. After writing this
 blog, I discovered a blog post by [Pavel Tsakalidis][pavel-twitter] from January
-2019 (almost two years ago):
+2019 (update 2023, the original blog is gone after an acquisition, changed it to
+a way back machine link):
 
 * [Basic Electron Framework Exploitation][pavel-blog]
 
@@ -359,7 +360,7 @@ nice, is more of a red team persistence trick and not signature evasion like
 what we want to do.
 
 [pavel-twitter]: https://twitter.com/sadreck
-[pavel-blog]: https://www.contextis.com/en/blog/basic-electron-framework-exploitation
+[pavel-blog]: https://web.archive.org/web/20220424150826/https://www.contextis.com/en/blog/basic-electron-framework-exploitation
 
 ## Recap
 
