@@ -3,14 +3,144 @@ installations. Over the years I have become the de facto security engineer
 responsible for EA's &amp;quot;game package managers&amp;quot; &lt;a href="https://www.origin.com/usa/en-us/store/download" target="_blank" rel="noreferrer noopener">Origin&lt;/a> and the
 &lt;a href="https://www.ea.com/ea-app-beta" target="_blank" rel="noreferrer noopener">EA App&lt;/a> and we have our own unique issues.&lt;/p></description></item><item><title>Attack Surface Analysis - Part 3 - Resurrected Code Execution</title><link>https://parsiya.net/blog/2021-09-26-attack-surface-analysis-part-3-resurrected-code-execution/</link><pubDate>Sun, 26 Sep 2021 20:50:38 -0700</pubDate><guid>https://parsiya.net/blog/2021-09-26-attack-surface-analysis-part-3-resurrected-code-execution/</guid><description>&lt;p>In part 3 of my attack surface analysis series, I will discuss an undisclosed RCE.
 This bug uses a combination of all tricks introduced in
+
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+ 
+ 
+ 
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 &lt;a href="https://parsiya.net/blog/2021-03-17-attack-surface-analysis-part-2-custom-protocol-handlers/" title="Attack Surface Analysis - Part 2 - Custom Protocol Handlers" rel="nofollow" target="_blank">part 2 of the series&lt;/a>.&lt;/p>
 &lt;p>We will see command-line switch injection from a custom protocol handler,
 loading remote files, reversing a custom scripting engine to instrument the
 application, and log file injection. Pretty nice chain if I may say so.&lt;/p></description></item><item><title>The JavaScript Bridge in Modern Desktop Applications</title><link>https://parsiya.net/blog/2021-06-08-the-javascript-bridge-in-modern-desktop-applications/</link><pubDate>Tue, 08 Jun 2021 00:53:25 -0700</pubDate><guid>https://parsiya.net/blog/2021-06-08-the-javascript-bridge-in-modern-desktop-applications/</guid><description>&lt;p>We have an XSS in a desktop application, what happens next? How can you
 escalate it to remote code execution? Let's see.&lt;/p></description></item><item><title>Attack Surface Analysis - Part 2 - Custom Protocol Handlers</title><link>https://parsiya.net/blog/2021-03-17-attack-surface-analysis-part-2-custom-protocol-handlers/</link><pubDate>Wed, 17 Mar 2021 15:14:00 -0800</pubDate><guid>https://parsiya.net/blog/2021-03-17-attack-surface-analysis-part-2-custom-protocol-handlers/</guid><description>&lt;p>Custom protocol handlers are an obscure attack surface. They allow us to convert
 local attacks into remote ones and are an alternative way to
+
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+ 
+ 
+ 
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
 &lt;a href="https://parsiya.net/blog/2020-08-13-localghost-escaping-the-browser-sandbox-without-0-days/" title="jump the browser sandbox without 0days" rel="nofollow" target="_blank">jump the browser sandbox without 0days&lt;/a>).&lt;/p>
 &lt;p>Similar to the first part of this series
+
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+ 
+ 
+ 
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
 &lt;a href="https://parsiya.net/blog/2021-01-08-attack-surface-analysis-part-1-application-update-a-novel-way-to-bypass-executable-signature-checks-with-electron/" title="A Novel Way to Bypass Executable Signature Checks with Electron" rel="nofollow" target="_blank">A Novel Way to Bypass Executable Signature Checks with Electron&lt;/a>
 I will analyze this attack surface and discuss a few interesting public bugs. I
 wanted to discuss two of my undisclosed bugs but the post is already too long.&lt;/p>
