@@ -887,7 +887,7 @@ Note: Also overwrite history if the file had secrets/sensitive info.
 This is for GitHub, but should work for everywhere.
 
 1. Generate a new ed25519 SSH key. You can reuse the one used for connection.
-    1. ssh-keygen -t ed25519 -C "[github-username]@users.noreply.github.com"
+    1. `ssh-keygen -t ed25519 -C "[github-username]@users.noreply.github.com"`
 2. Upload it to your Git server. For GitHub, go to https://github.com/settings/ssh/new.
     1. Key type: `Signing key`.
     2. Paste the **public** key. It should be in `~/.ssh/whatever.pub`.
