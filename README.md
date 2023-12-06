@@ -1,4 +1,4 @@
-# parsiya.net ![Deploy Blog](https://github.com/parsiya/parsiya.net/workflows/Deploy%20Blog/badge.svg)
+# parsiya.net ![Deploy Blog](https://github.com/parsiya/parsiya.net/actions/workflows/gh-pages.yml/badge.svg)
 This is the source for my personal website at https://parsiya.net.
 
 It is generated using [Hugo][hugo] and the [Hugo-Octopress Theme][hugo-octopress].
