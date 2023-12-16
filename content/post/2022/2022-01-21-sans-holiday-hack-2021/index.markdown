@@ -24,7 +24,7 @@ Previous writeups:
 # Note
 The only `novel` thing in this blog is how I used local overrides to modify
 the webpage JavaScript to solve the
-[Santa's Holiday Hero](#xchimney-scissorsticks---santas-holiday-hero) challenge.
+[Santa's Holiday Hero](chimney-scissorsticks---santas-holiday-hero) challenge.
 I owe it to the `[redacted]` game team for using gRPC in their companion app so
 I used it to debug and modify their client-side JavaScript.
 
