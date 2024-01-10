@@ -90,6 +90,9 @@ func main() {
 
 You can run it on the playground at https://play.golang.org/p/4NhqnMKeXTh.
 
+**Update Jan 2024:** I just checked and the result is now `8`, meaning the
+playground is running a 64-bit architecture.
+
 {{< imgcap title="int on the Go playground is 4 bytes" src="01-playground-int-size.png" >}}
 
 On my own machine which is running a 64-bit OS, it's 8 bytes (64 bits).
@@ -226,7 +229,8 @@ on line 9 and we never reach where the "official" answer is.
 
 * `int` in Go is dependent on the machine. It's 32 bits on a 32-bit machine and
   64 bits on 64-bit machines.
-* The Go playground is running on a 32-bit machine.
+* The Go playground is running on a 32-bit machine. Update from the future, it's
+  64-bit now.
 * Don't use `int`.
 
 I finished this blog at 3 AM and I feel like the below XKCD does the trick.
