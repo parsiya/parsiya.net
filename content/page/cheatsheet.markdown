@@ -765,7 +765,10 @@ This works with small branches (e.g. one fix or so). Adapted from a
    it there too.
 
 ## Only Clone a Certain Branch
-`git clone -b <branch> <remote_repo>`
+`git clone -b <branch> <repo>`
+
+## Clone and Populate Submodules
+`git clone --recurse-submodules <repo>`
 
 ## Undo Remote git History after Push
 Because this keeps happening to me.
