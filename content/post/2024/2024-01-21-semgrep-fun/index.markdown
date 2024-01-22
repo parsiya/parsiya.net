@@ -23,8 +23,8 @@ short experiments. You can see his at https://github.com/mjambon/dev-random.
 <!--more-->
 
 # Intro
-If you know me, you know I never shut up about Semgrep
-(see https://parsiya.net/categories/semgrep/). 
+If you know me, you know I never shut up about Semgrep, see
+https://parsiya.net/categories/semgrep/.
 
 I use Semgrep if I want something quick that works. For complex uses cases, you
 need to create your own static analysis tools. Parsing is doable with
