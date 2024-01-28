@@ -170,7 +170,7 @@ exploitable directly from the browser, it deals with how Qt (pronounced cute)
 command-line switches can result in remote code execution. It's a good start if
 you want to start doing security research on Qt apps.
 
-[fun-with-uri]: https://zero.lol/posts/2019-05-22-fun-with-uri-handlers/
+[fun-with-uri]: https://zero.lol/2019/05/22/fun-with-uri-handlers
 
 You can pass a command-line switch to Qt apps to designate the path to
 plugins. Qt plugins (at least on Windows) are DLLs that can spawn new processes.
@@ -210,7 +210,7 @@ We were not so lucky with the second bug
 [A Questionable Journey From XSS to RCE][origin-xss-rce]. Origin frontend uses
 Angular and it was vulnerable to a well-known sandbox escape.
 
-[origin-xss-rce]: https://zero.lol/posts/2019-05-13-xss-to-rce/
+[origin-xss-rce]: https://zero.lol/2019/05/13/xss-to-rce
 
 You could pass a URI scheme and inject values into `title`.
 `origin://game/launch/?offerIds=0&title={{7*7}}`. This is the typical Angular
@@ -233,6 +233,10 @@ get RCE on [PlayStation Now][playstation-now-rce-h1] (shameless brag).
 Origin had a "JavaScript bridge" (if I may) that allowed JavaScript to call
 `QDesktopServices`. A function named `asyncOpenUrl()` calls `openUrl()` which
 allows us to open URLs and also schemes.Using that limited RCE was possible.
+
+**Update 2024**: I made a separate blog posts in this topic a few months later,
+{{< xref path="/post/2021/2021-06-08-js-bridge-desktop-apps/"
+  text="The JavaScript Bridge in Modern Desktop Applications" >}}).
 
 For example, you could pop calc with
 `Origin.client.desktopServices.asyncOpenUrl("calc.exe")`. Unfortunately, this is
@@ -811,7 +815,9 @@ later.
 * [Understanding Protocols on docs.microsoft.com][understanding-protocols] is an
   oldie but a goodie.
 * [Exploiting Custom Protocol Handlers in Windows][exploiting-uri] by Andrey Polkovnychenko.
+  * Update 2024: The original article is gone, replaced with a Wayback Machine link.
 * [Provoking Windows - DragonCon 2016 - start at slide 77][provoking-windows] by Jeremy Brown.
+  * Update 2024: The old URL was invalid, fixed it.
 * [URI Use and Abuse - Black Hat Europe 2008 - slides][uri-use-abuse-slides] and
   [whitepaper][uri-use-abuse-wp] by Nathan McFeters, Billy Rios, and Rob Carter.
 * [Electron's bug, ShellExecute to blame?][shellexecute-codecolorist] by
@@ -819,15 +825,16 @@ later.
   * Mostly discusses the quirks of ShellExecute.
 * [Electron, scheme handlers, and stealthy security patches][juho-paper] by
   [Juho Nurminen][juho-twitter].
+  * Update 2024: Old link was dead, replaced with a new link.
 
 [understanding-protocols]: https://docs.microsoft.com/en-us/archive/blogs/ieinternals/understanding-protocols
-[exploiting-uri]: https://www.vdoo.com/blog/exploiting-custom-protocol-handlers-in-windows
-[provoking-windows]: https://www.slideshare.net/JeremyBrown37/provoking-windows-dragoncon-2016
+[exploiting-uri]: https://web.archive.org/web/20200525025338/https://www.vdoo.com/blog/exploiting-custom-protocol-handlers-in-windows
+[provoking-windows]: https://www.slideshare.net/JeremyBrown37/provoking-windows-dragoncon-2016-253308525
 [uri-use-abuse-slides]: https://www.blackhat.com/presentations/bh-europe-08/McFeters-Rios-Carter/Presentation/bh-eu-08-mcfeters-rios-carter.pdf
 [uri-use-abuse-wp]: https://www.blackhat.com/presentations/bh-europe-08/McFeters-Rios-Carter/Whitepaper/bh-eu-08-mcfeters-rios-carter-WP.pdf
 [codecolorist-twitter]: https://twitter.com/CodeColorist
 [shellexecute-codecolorist]: https://blog.chichou.me/2018/01/28/electron-s-bug-shellexecute-to-blame/
-[juho-paper]: https://2019.zeronights.ru/wp-content/themes/zeronights-2019/public/materials/1_ZN2019_Juho_Nurminen.pdf
+[juho-paper]: https://infocondb.org/con/disobey/disobey-2020/appsetasdefaultrceclient-electron-scheme-handlers-and-stealthy-security-patches
 [juho-twitter]: https://twitter.com/jupenur
 
 # Acknowledgements
