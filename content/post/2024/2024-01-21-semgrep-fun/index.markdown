@@ -147,6 +147,18 @@ https://parsiya.io/abandoned-research/semgrep-output-json/.
 
 Similar article for Rust: https://parsiya.net/blog/2022-10-16-yaml-wrangling-with-rust/.
 
+## Extracting Metavariables via the Message Field
+In these examples, I have smuggled the value of metavariables from the message
+field. It's convenient and with a bit of smart placement and text processing,
+you can get structured data out of it.
+
+You could also access the values of metavariables from the struct. They can be
+accessed via `result.Extra.Metavars["$METAVARNAME"]`. There are two fields,
+`AbstractContent` and `PropagatedValue`. Generally, you want the propagated
+value (the equivalent of having `value($METAVARNAME)` in the message field).
+For more information please see
+https://semgrep.dev/docs/writing-rules/experiments/display-propagated-metavariable/.
+
 # The Experiments
 The `code` subdirectory contains the test data as git submodules. Be sure to
 populate them with before running the examples. They are:
