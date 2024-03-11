@@ -446,8 +446,6 @@ Moving to WSL2 will prevent your machine from talking to the internet with some
 VPN software and if you are connected to the VPN. WSL2 uses Hyper-V. Hyper-V VMs
 usually do not have network connectivity on VPN.
 
-
-
 ## File locations:
 
 * `%LocalAppData%/packages/{full-distro-name}/LocalState` where
@@ -523,7 +521,7 @@ Now inside we have a bunch of `appx` files. E.g., the two big ones for Ubuntu
 We can rename and extract the `x64` file as we've seen before. Inside, we will
 see `install.tar.gz`.
 
-{{< imgcap title="install.tar.gz inside Ubuntu.._X64.appx" src="ubuntu-extracted.png" >}}
+{{< imgcap title="install.tar.gz inside Ubuntu.._X64.appx" src="/images/cheatsheet/ubuntu-extracted.png" >}}
 
 Unfortunately, `wsl --import` needs a tar file of the filesystem and doesn't
 accept tgz. We have to decompress this file. You would think the `tar` utility
