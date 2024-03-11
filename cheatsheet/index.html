@@ -169,7 +169,7 @@ This <code>appx</code> files are just zip. We can easily extract them.</p><ol><l
 <a href=https://learn.microsoft.com/en-us/windows/wsl/install-on-server#install-wsl-on-previous-versions-of-windows-server target=_blank rel="noreferrer noopener">https://learn.microsoft.com/en-us/windows/wsl/install-on-server#install-wsl-on-previous-versions-of-windows-server</a></p><p>Now inside we have a bunch of <code>appx</code> files. E.g., the two big ones for Ubuntu
 20.04 are <code>Ubuntu_2004.2021.825.0_ARM64.appx</code> and <code>Ubuntu_2004.2021.825.0_x64.appx</code></p><span class=caption-wrapper><img class=caption src=/images/cheatsheet/ubuntu-appx.png title="Inside ubuntu2024.appx" alt="Inside ubuntu2024.appx">
 <span class=caption-text>Inside ubuntu2024.appx</span></span><p>We can rename and extract the <code>x64</code> file as we've seen before. Inside, we will
-see <code>install.tar.gz</code>.</p><span class=caption-wrapper><img class=caption src=ubuntu-extracted.png title="install.tar.gz inside Ubuntu.._X64.appx" alt="install.tar.gz inside Ubuntu.._X64.appx">
+see <code>install.tar.gz</code>.</p><span class=caption-wrapper><img class=caption src=/images/cheatsheet/ubuntu-extracted.png title="install.tar.gz inside Ubuntu.._X64.appx" alt="install.tar.gz inside Ubuntu.._X64.appx">
 <span class=caption-text>install.tar.gz inside Ubuntu.._X64.appx</span></span><p>Unfortunately, <code>wsl --import</code> needs a tar file of the filesystem and doesn't
 accept tgz. We have to decompress this file. You would think the <code>tar</code> utility
 would have such an option, but it doesn't. It can extract the whole thing.</p><p>We could use an external utlity like gunzip, gzip, 7-zip, or
