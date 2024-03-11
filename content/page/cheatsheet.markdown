@@ -155,58 +155,6 @@ rmdir the_dir_to_delete
 
 * Source: http://superuser.com/a/467814
 
-## Install 'Bash on Windows' - Outdated
-`lxrun /install` does not work anymore.
-
-1. Run the following command in an admin PowerShell and restart.
-   * `Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux`
-2. Search for `Ubuntu` in Windows store and install Ubuntu.
-3. After Ubuntu is installed, search for `Ubuntu` in the start menu and run it.
-4. Follow the prompts to choose a username and password.
-5. Type `bash` in a command prompt to start it.
-
-## Setup GitHub-GitLab SSH Keys in 'Bash on Windows'
-Main instructions:
-
-* https://help.github.com/en/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
-
-1. Generate a key inside bash and save it at the default location inside `home`.
-   * `ssh-keygen -t rsa -b 4096 -C "your_email@example.com"`
-2. Make sure you have `ssh-agent` installed in WSL. It should be installed out
-   of the box.
-3. Add the following lines to `~/.bashrc` to start `ssh-agent` and add your key
-   every time you run `bash`.
-
-    ``` bash
-    env=~/.ssh/agent.env
-    agent_load_env () { test -f "$env" && . "$env" >| /dev/null ; }
-
-    agent_start () {
-        (umask 077; ssh-agent >| "$env")
-        . "$env" >| /dev/null ; }
-
-    agent_load_env
-
-    # agent_run_state: 0=agent running w/ key; 1=agent w/o key; 2= agent not running
-    agent_run_state=$(ssh-add -l >| /dev/null 2>&1; echo $?)
-
-    if [ ! "$SSH_AUTH_SOCK" ] || [ $agent_run_state = 2 ]; then
-        agent_start
-        ssh-add
-    elif [ "$SSH_AUTH_SOCK" ] && [ $agent_run_state = 1 ]; then
-        ssh-add
-    fi
-
-    unset env
-
-    # adding the GitHub key to ssh-agent
-    # change if the private key file changes
-    ssh-add ~/.ssh/id_rsa
-    ```
-4. Add the SSH key to Github/GitLab.
-5. Navigate to your git folder in a normal command prompt and run `bash` and use
-   git normally.
-
 ## Exit Status 3221225781
 **TL;DR:** `exit status 3221225781` on Windows means a DLL is missing. In this
 case, `diff.exe` was missing `libintl3.dll` and it made `gorename` stop working.
@@ -496,7 +444,9 @@ Convert a distro (e.g., `Ubuntu-18.04`) to version 2:
 
 Moving to WSL2 will prevent your machine from talking to the internet with some
 VPN software and if you are connected to the VPN. WSL2 uses Hyper-V. Hyper-V VMs
-do not have network connectivity on VPN.
+usually do not have network connectivity on VPN.
+
+
 
 ## File locations:
 
@@ -506,8 +456,9 @@ do not have network connectivity on VPN.
     * Debian: `TheDebianProject.DebianGNULinux_76v4gfsz19hv4`
 
 ## Access WSL2 Files
-In WSL1, everything is a file. In WSL2 we have a `ext4.vhdx` file. WSL 2 uses a
-fully managed VM. Hence, why WSL1 has better performance on Windows files.
+In WSL1, a file in the distro is a separate file on disk. In WSL2 we have a
+`ext4.vhdx` file. WSL 2 uses a fully managed VM. Hence, why WSL1 has better
+performance on Windows files.
 
 Individual files on WSL2 are at `\\wsl$\{distro}` where `distro` comes from
 `wsl -l -v`. E.g., `Debian`.
@@ -525,8 +476,8 @@ $ wsl --terminate Debian
 wsl --export Debian C:/path/to/debian.tar
 ```
 
-Now, we can import it as another distro. This way we can have multiple instances
-of the same distro:
+Now, we can import it as another distro. We can have multiple instances of the
+same distro:
 
 ```
 wsl --import NewDebian C:/path/to/newdebian/ C:/path/to/debian.tar
@@ -535,6 +486,70 @@ wsl --import NewDebian C:/path/to/newdebian/ C:/path/to/debian.tar
 Note: If you import a distro like this, the `ext4.vhdx` file will be in
 `C:/path/to/newdebian/` and not in
 `%LocalAppData%/packages/{full-distro-name}/LocalState`.
+
+We can also import the file in place.
+
+```
+wsl --import-in-place NewDebian C:/path/to/debian.tar
+```
+
+## Use WSL Distributions without the Microsoft Store
+First we need to download a distribution. Use the instructions in the link below
+to get a `distro.appx` file.
+
+* https://learn.microsoft.com/en-us/windows/wsl/install-manual#downloading-distributions
+
+Install the package (more details in the previous link):
+
+1. `Add-AppxPackage .\distro.appx`.
+2. Then double-click `distro.appx` to start. This is important.
+
+We can also get the file system as a file to use with `--import`.
+This `appx` files are just zip. We can easily extract them.
+
+1. Rename it to zip (instructions are in PowerShell):
+    1. `Rename-Item .\distro.appx .\distro.zip`
+2. Extract the archive:
+    1. `Expand-Archive .\distro.zip .\distro`
+
+Source:
+https://learn.microsoft.com/en-us/windows/wsl/install-on-server#install-wsl-on-previous-versions-of-windows-server
+
+Now inside we have a bunch of `appx` files. E.g., the two big ones for Ubuntu
+20.04 are `Ubuntu_2004.2021.825.0_ARM64.appx` and `Ubuntu_2004.2021.825.0_x64.appx`
+
+{{< imgcap title="Inside ubuntu2024.appx" src="/images/cheatsheet/ubuntu-appx.png" >}}
+
+We can rename and extract the `x64` file as we've seen before. Inside, we will
+see `install.tar.gz`.
+
+{{< imgcap title="install.tar.gz inside Ubuntu.._X64.appx" src="ubuntu-extracted.png" >}}
+
+Unfortunately, `wsl --import` needs a tar file of the filesystem and doesn't
+accept tgz. We have to decompress this file. You would think the `tar` utility
+would have such an option, but it doesn't. It can extract the whole thing.
+
+We could use an external utlity like gunzip, gzip, 7-zip, or
+[some random PowerShell script][ps-gzip]. Considering tar is included in
+Windows, the path of least resistance is extracting everything and putting it
+back together. That is a good chunk of extra read/writes.
+
+```
+tar -zxvf install.tar.gz -C install
+tar -cvf ubuntu2024.tar install/
+# delete install
+rm install # assuming we're in PowerShell
+```
+
+[ps-gzip]: https://stackoverflow.com/questions/69190609/unzipping-a-gzip-with-powershell-works-but-can-i-extract-directly-to-file
+
+Now we can use `wsl --import`. 
+
+`wsl --import NewUbuntu c:/path/to/VMs/ ubuntu2024.tar`
+
+You can import it in place if you don't want to make a copy.
+
+`wsl --import-in-place NewUbuntu ubuntu2024.tar`
 
 ## Hugo Server doesn't see File Notifications Events in WSL2
 Solution: Move the files to the Linux filesystem from Windows.
@@ -806,7 +821,7 @@ You have forked a repository a while ago. You want to sync the new changes.
 Create a file called `npp` with the following content and copy it to
 `cygwin\bin`. Modify the path of notepad++ to point to your installation.
 
-``` bash
+```bash
 'C:/Program Files (x86)/Notepad++/notepad++.exe' -multiInst -notabbar -nosession -noPlugin "$(cygpath -w "$*")"
 ```
 
@@ -1391,14 +1406,15 @@ Easier method: In the `View Source` page, right-click and select
 Source: https://thetechl33t.com/2015/06/01/wireshark-not-equal-to-filter/
 
 ## Copy Ebooks to iPad with Calibre
-I have an old iPad Mini that I use for reading ebooks. The default way of
-copying them from Calibre doesn't work because the iOS version is so old that
-the Calibre Companion app doesn't support it.
+I use an old iPad Mini for reading ebooks. The default way of copying them from
+Calibre doesn't work because the iOS version is so old that the Calibre
+Companion app doesn't support it.
 
 Using the web content server and going to `http://your-pc-ip:8080` also doesn't
 work because the Safari version so old that it doesn't support some of the new
 JavaScript functions. None of the modern browsers also support that iOS version.
-However, `http://your-pc-ip:8080/mobile` is the non-JS version and works. I have
+
+**Solution**: `http://your-pc-ip:8080/mobile` is the non-JS version and works. I have
 to click each book separately and open it in iBooks, but better than nothing.
 
 # Regex
@@ -1415,3 +1431,25 @@ Better but more expensive regex:
     (?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*
     (?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])
 ```
+
+----------
+
+# Bash
+
+## Bash Function to Change to a Directory and Open it in VS Code
+I store all my dev work in `~/dev`. Added this function to `~/.profile` along
+with `cd dev`. Then just after opening a session, I can do `zz [directory]` to
+start working on it. Also supports autocomplete in directory name.
+
+```bash
+# bash function to navigate to a directory and open it in code.
+function zz() {
+    cd $1
+    code .
+    return 0
+}
+
+# go to dev
+cd dev
+```
+
