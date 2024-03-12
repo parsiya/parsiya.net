@@ -433,6 +433,20 @@ and look under the `ProfileImagePath` key to see which user it is.
 
 [mattt-twitter]: https://twitter.com/mattt_cyber
 
+## Add "Edit" to the Context Menu for Images in Windows 11
+
+1. Run `regedit`.
+2. Go to `Computer\HKEY_CLASSES_ROOT\SystemFileAssociations\image\shell`.
+3. Create a key named `edit`.
+4. Create a key named `command` inside `edit`.
+5. Modify the value of the `(Default)` value in `edit` and change it to:
+    1. `"C:\Users\[username]\AppData\Local\Microsoft\WindowsApps\mspaint.exe" "%1"`
+
+Unfortunately, `"%LocalAppData%\Microsoft\WindowsApps\mspaint.exe" "%1"` doesn't
+work here.
+
+Source: https://superuser.com/a/1707163
+
 # WSL
 See current distributions and their version: `wsl -l -v`.
 
