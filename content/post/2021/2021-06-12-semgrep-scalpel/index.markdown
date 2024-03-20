@@ -8,6 +8,7 @@ categories:
 - Automation
 - Soapbox
 - Semgrep
+- Static Analysis
 ---
 
 # Why are We Here?

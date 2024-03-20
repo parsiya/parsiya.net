@@ -7,6 +7,7 @@ comments: true
 # twitterImage: .png
 categories:
 - semgrep
+- Static Analysis
 aliases:
 - "/blog/2023-10-28-semgreps-new-rule-syntax/"
 ---

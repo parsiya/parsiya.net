@@ -12,6 +12,7 @@ aliases:
 categories:
 - semgrep
 - automation
+- Static Analysis
 ---
 
 I will discuss the (not novel) concept of code review hot spots. Hot spots are

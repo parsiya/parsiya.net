@@ -8,6 +8,7 @@ twitterImage: 11-go-httponly-1.png
 categories:
 - Automation
 - Semgrep
+- Static Analysis
 ---
 
 Semgrep's experimental [autofix][semgrep-autofix] feature can automagically

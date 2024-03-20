@@ -8,6 +8,7 @@ url: /blog/semgrep-fun/
 twitterImage: 05.png
 categories:
 - semgrep
+- Static Analysis
 ---
 
 I want to use Semgrep as a light code intelligence tool with a few experiments.
