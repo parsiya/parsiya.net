@@ -1,4 +1,55 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Hackerman's Hacking Tutorials</title><link>https://parsiya.net/</link><description>Recent content on Hackerman's Hacking Tutorials</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 19 Mar 2024 16:35:30 -0700</lastBuildDate><atom:link href="https://parsiya.net/index.xml" rel="self" type="application/rss+xml"/><item><title>Knee Deep in tree-sitter Queries</title><link>https://parsiya.net/blog/knee-deep-tree-sitter-queries/</link><pubDate>Tue, 19 Mar 2024 16:35:30 -0700</pubDate><guid>https://parsiya.net/blog/knee-deep-tree-sitter-queries/</guid><description>&lt;p>&lt;a href="https://tree-sitter.github.io/tree-sitter/" target="_blank" rel="noreferrer noopener">tree-sitter&lt;/a> is a parser generator. You can use it to parse source code which
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Hackerman's Hacking Tutorials</title><link>https://parsiya.net/</link><description>Recent content on Hackerman's Hacking Tutorials</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 09 Apr 2024 12:35:35 -0800</lastBuildDate><atom:link href="https://parsiya.net/index.xml" rel="self" type="application/rss+xml"/><item><title>Knee Deep in tree-sitter CST</title><link>https://parsiya.net/blog/knee-deep-tree-sitter-2/</link><pubDate>Tue, 09 Apr 2024 12:35:35 -0800</pubDate><guid>https://parsiya.net/blog/knee-deep-tree-sitter-2/</guid><description>&lt;p>We will continue the tree-sitter adventure and tackle the problems we couldn't
+solve with just tree-sitter queries. We can get results with a combination of
+queries and the Concrete Syntax Tree (CST).&lt;/p>
+&lt;p>In the
+
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+ 
+ 
+ 
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+&lt;a href="https://parsiya.net/blog/knee-deep-tree-sitter-queries/" title="previous post" rel="nofollow" target="_blank">previous post&lt;/a>
+, I focused on just using queries. While they're useful for finding specific nodes, they're not enough.&lt;/p>
+&lt;p>Code is at &lt;a href="https://github.com/parsiya/knee-deep-tree-sitter" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/knee-deep-tree-sitter&lt;/a>. Don't forget to
+populate the submodule, we need it for the last part.&lt;/p></description></item><item><title>Knee Deep in tree-sitter Queries</title><link>https://parsiya.net/blog/knee-deep-tree-sitter-queries/</link><pubDate>Tue, 19 Mar 2024 16:35:30 -0700</pubDate><guid>https://parsiya.net/blog/knee-deep-tree-sitter-queries/</guid><description>&lt;p>&lt;a href="https://tree-sitter.github.io/tree-sitter/" target="_blank" rel="noreferrer noopener">tree-sitter&lt;/a> is a parser generator. You can use it to parse source code which
 is the first step of static analysis. For example, GitHub uses it to highlight
 code, code navigation, and also in CodeQL extractors.&lt;/p>
 &lt;p>&lt;strong>TL;DR&lt;/strong>: Queries are great for capturing text from code. But to extract
