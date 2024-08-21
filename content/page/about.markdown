@@ -10,13 +10,18 @@ type: about
 I am Parsia, I try to do application security most days. I am currently taking a
 sabbatical and doing some contract work.
 
-**2022-present**: Sabbatical. Dev contract work for a static analysis tool. Some
+**2024-Present**: Senior Offensive Security Engineer at Microsoft. 
+
+**2022-2024**: Sabbatical. Dev contract work for a static analysis tool that
+automatically generates an OpenAPI spec from the backend source code. Some
 security research, mainly static analysis and Rust. See
-[Personal Semgrep Server in Rust][sem-server] and
-[semgrep-rs: Rust crate to interact with Semgrep][semgrep-rs].
+[Personal Semgrep Server in Rust][sem-server],
+[semgrep-rs: Rust crate to interact with Semgrep][semgrep-rs], and
+[some tree-sitter stuff][tree-sitter].
 
 [sem-server]: https://github.com/parsiya/personal-semgrep-server
 [semgrep-rs]: https://github.com/parsiya/semgrep-rs
+[tree-sitter]: https://parsiya.net/categories/tree-sitter/
 
 **2019-2022**: Senior Security Engineer at [Electronic Arts][ea-security]. I
 worked on many internal and external product (mostly videogames) and services.
@@ -25,9 +30,8 @@ worked on many internal and external product (mostly videogames) and services.
 [ea-security]: https://www.ea.com/security
 [game-testers-youtube]: https://www.youtube.com/watch?v=BRWvfMLl4ho
 
-**2013-2019**: Senior Security Consultant at
-[Synopsys Software Integrity Group][sig-website] via the 2016 Cigital
-acquisition.
+**2013-2019**: Associate Consultant to Senior Security Consultant at
+[Synopsys Software Integrity Group][sig-website] via the 2016 Cigital acquisition.
 
 [sig-website]: https://www.synopsys.com/software-integrity.html
 
