@@ -414,9 +414,8 @@ OS and give us better results. This means our RCE is as admin.\
 **[+]** The ports are usually `8000` and `8001`. Unless you are running
 something else on those ports, it's easy to discover machines running a
 vulnerable version of the ASA.\
-
 **[-]** ASA is usually run in disposable VMs. You are not going to fingerprint
-your applications on a prod VM. But these VMs are still connected to something.\
+your applications on a prod VM. But these VMs are still connected to something.
 
 # How Can We Fix This?
 

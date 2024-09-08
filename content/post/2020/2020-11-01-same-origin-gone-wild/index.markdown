@@ -71,12 +71,12 @@ origin in the value of the `Access-Control-Allow-Origin` header in the response.
 
 Burp's scanner has a simple check for this. It sets the `Origin` header to some
 arbitrary value. If the response contains that value or the `*` wild card then
-it creates and issue.
+it creates an issue.
 
 ## Simple Requests
 The browser allows an origin to send "simple" requests to another origin without
 any checks[^2]. The request goes through but in the absence of CORS headers the
-browser might not let the sender see the response.
+browser ~~might~~ will not let the sender see the response.
 
 [^2]: This is why CSRF exists.
 
