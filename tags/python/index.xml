@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Python on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/tags/python/</link><description>Recent content in Python on Hackerman's Hacking Tutorials</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 26 Nov 2019 00:24:37 -0800</lastBuildDate><atom:link href="https://parsiya.net/tags/python/index.xml" rel="self" type="application/rss+xml"/><item><title>Swing in Python Burp Extensions - Part 3 - Tips and Tricks</title><link>https://parsiya.net/blog/2019-11-26-swing-in-python-burp-extensions-part-3-tips-and-tricks/</link><pubDate>Tue, 26 Nov 2019 00:24:37 -0800</pubDate><guid>https://parsiya.net/blog/2019-11-26-swing-in-python-burp-extensions-part-3-tips-and-tricks/</guid><description>&lt;p>In the two previous parts, we learned about Jython Swing. Those blogs take a lot
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Python on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/tags/python/</link><description>Recent content in Python on Hackerman's Hacking Tutorials</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Tue, 26 Nov 2019 00:24:37 -0800</lastBuildDate><atom:link href="https://parsiya.net/tags/python/index.xml" rel="self" type="application/rss+xml"/><item><title>Swing in Python Burp Extensions - Part 3 - Tips and Tricks</title><link>https://parsiya.net/blog/2019-11-26-swing-in-python-burp-extensions-part-3-tips-and-tricks/</link><pubDate>Tue, 26 Nov 2019 00:24:37 -0800</pubDate><guid>https://parsiya.net/blog/2019-11-26-swing-in-python-burp-extensions-part-3-tips-and-tricks/</guid><description>&lt;p>In the two previous parts, we learned about Jython Swing. Those blogs take a lot
 of time to write. I think each of them took around 10 hours. I do not want to
 spend that kind of time but I still want to document what I have learned.&lt;/p>
 &lt;p>In this blog I will write tips and tricks with a small code snippet instead of
@@ -92,9 +92,30 @@ extensions using Swing. Code is at:&lt;/p>
 &lt;li>&lt;a href="https://www.fireeye.com/blog/threat-research/2014/11/flare_on_challengep.html" target="_blank" rel="noreferrer noopener">Part 2 - solutions for challenges 6 and 7&lt;/a>&lt;/li>
 &lt;/ul>
 &lt;/li>
-&lt;/ul></description></item><item><title>Malware Adventure</title><link>https://parsiya.net/blog/2014-09-21-malware-adventure/</link><pubDate>Sun, 21 Sep 2014 19:11:43 +0000</pubDate><guid>https://parsiya.net/blog/2014-09-21-malware-adventure/</guid><description>Update 28 Oct 2017:\ I have moved most of my code under one repository. Malware adventure is copied at two places:
-https://github.com/parsiya/malwareadventure https://github.com/parsiya/Parsia-Code/tree/master/malware-adventure A fork of PAWS is here:
-https://github.com/Moonbase59/PAWS I finally caved in and started to push some of my code to github bitbucket. It is located at https://bitbucket.org/parsiya and is almost empty ;).
-This is Malware Adventure. It's a small adventure game I wrote using PAWS. PAWS is Pyhton Adventure Writing System by Roger Plowman.</description></item><item><title>Pasting Shellcode in GDB using Python</title><link>https://parsiya.net/blog/2014-05-25-pasting-shellcode-in-gdb-using-python/</link><pubDate>Sun, 25 May 2014 18:39:58 +0000</pubDate><guid>https://parsiya.net/blog/2014-05-25-pasting-shellcode-in-gdb-using-python/</guid><description>A few days ago I was trying to write an exploit for a buffer overflow with GDB. This was a console application and pasting shellcode would mess with it.
-There are a few options:
-Writing shellcode to a file and then using it as input for GDB. # you can also include GDB commands like setting up breakpoints (e.g. b * 0xDEADBEEF) # remember to include a new line after each command $ python -c &amp;#39;print &amp;#34;b * 0xDEADBEEF&amp;#34; + &amp;#34;\n&amp;#34; + &amp;#34;\x41&amp;#34;*1000 + &amp;#34;\n&amp;#34;&amp;#39; &amp;gt; input # $ perl -e for perl # start debugging with GDB # -q (quiet mode): no text at startup $ gdb executable1 -q (gdb) run &amp;lt; input After this you can manually debug in GDB.</description></item></channel></rss>
+&lt;/ul></description></item><item><title>Malware Adventure</title><link>https://parsiya.net/blog/2014-09-21-malware-adventure/</link><pubDate>Sun, 21 Sep 2014 19:11:43 +0000</pubDate><guid>https://parsiya.net/blog/2014-09-21-malware-adventure/</guid><description>&lt;p>&lt;strong>Update 28 Oct 2017:&lt;/strong>\
+I have moved most of my code under one repository. Malware adventure is copied at two places:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/parsiya/malwareadventure" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/malwareadventure&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/malware-adventure" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/malware-adventure&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;p>A fork of PAWS is here:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/Moonbase59/PAWS" target="_blank" rel="noreferrer noopener">https://github.com/Moonbase59/PAWS&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;p>I finally caved in and started to push some of my code to &lt;del>github&lt;/del> bitbucket. It is located at &lt;a href="https://bitbucket.org/parsiya" target="_blank" rel="noreferrer noopener">https://bitbucket.org/parsiya&lt;/a> and is almost empty ;).&lt;/p></description></item><item><title>Pasting Shellcode in GDB using Python</title><link>https://parsiya.net/blog/2014-05-25-pasting-shellcode-in-gdb-using-python/</link><pubDate>Sun, 25 May 2014 18:39:58 +0000</pubDate><guid>https://parsiya.net/blog/2014-05-25-pasting-shellcode-in-gdb-using-python/</guid><description>&lt;p>A few days ago I was trying to write an exploit for a buffer overflow with GDB. This was a console application and pasting shellcode would mess with it.&lt;/p>
+&lt;p>There are a few options:&lt;/p>
+&lt;ul>
+&lt;li>Writing shellcode to a file and then using it as input for GDB.&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#586e75"># you can also include GDB commands like setting up breakpoints (e.g. b * 0xDEADBEEF)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#586e75"># remember to include a new line after each command&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ python &lt;span style="color:#719e07">-&lt;/span>c &lt;span style="color:#2aa198">&amp;#39;print &amp;#34;b * 0xDEADBEEF&amp;#34; + &amp;#34;&lt;/span>&lt;span style="color:#cb4b16">\n&lt;/span>&lt;span style="color:#2aa198">&amp;#34; + &amp;#34;&lt;/span>&lt;span style="color:#cb4b16">\x41&lt;/span>&lt;span style="color:#2aa198">&amp;#34;*1000 + &amp;#34;&lt;/span>&lt;span style="color:#cb4b16">\n&lt;/span>&lt;span style="color:#2aa198">&amp;#34;&amp;#39;&lt;/span> &lt;span style="color:#719e07">&amp;gt;&lt;/span> &lt;span style="color:#b58900">input&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#586e75"># $ perl -e for perl&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#586e75"># start debugging with GDB&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#586e75"># -q (quiet mode): no text at startup&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ gdb executable1 &lt;span style="color:#719e07">-&lt;/span>q
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(gdb) run &lt;span style="color:#719e07">&amp;lt;&lt;/span> &lt;span style="color:#b58900">input&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item></channel></rss>
