@@ -1,7 +1,29 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Attack Surface Analysis on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/categories/attack-surface-analysis/</link><description>Recent content in Attack Surface Analysis on Hackerman's Hacking Tutorials</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Mon, 07 Feb 2022 22:37:59 -0800</lastBuildDate><atom:link href="https://parsiya.net/categories/attack-surface-analysis/index.xml" rel="self" type="application/rss+xml"/><item><title>Security Nightmares of Game Package Managers</title><link>https://parsiya.net/blog/2022-02-07-security-nightmares-of-game-package-managers/</link><pubDate>Mon, 07 Feb 2022 22:37:59 -0800</pubDate><guid>https://parsiya.net/blog/2022-02-07-security-nightmares-of-game-package-managers/</guid><description>&lt;p>Let's talk about the security nightmare of handling hundreds of different game
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Attack Surface Analysis on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/categories/attack-surface-analysis/</link><description>Recent content in Attack Surface Analysis on Hackerman's Hacking Tutorials</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Thu, 19 Sep 2024 19:45:53 -0700</lastBuildDate><atom:link href="https://parsiya.net/categories/attack-surface-analysis/index.xml" rel="self" type="application/rss+xml"/><item><title>Steam's 'Open in Desktop' Button</title><link>https://parsiya.net/blog/steam-open-desktop/</link><pubDate>Thu, 19 Sep 2024 19:45:53 -0700</pubDate><guid>https://parsiya.net/blog/steam-open-desktop/</guid><description>&lt;p>This is not a bug, but some notes about the new Steam &amp;quot;Open in Desktop&amp;quot; button.
+I am going to show how to look for bugs in these kinds of browser-to-desktop
+interactions.&lt;/p></description></item><item><title>Security Nightmares of Game Package Managers</title><link>https://parsiya.net/blog/2022-02-07-security-nightmares-of-game-package-managers/</link><pubDate>Mon, 07 Feb 2022 22:37:59 -0800</pubDate><guid>https://parsiya.net/blog/2022-02-07-security-nightmares-of-game-package-managers/</guid><description>&lt;p>Let's talk about the security nightmare of handling hundreds of different game
 installations. Over the years I have become the de facto security engineer
 responsible for EA's &amp;quot;game package managers&amp;quot; &lt;a href="https://www.origin.com/usa/en-us/store/download" target="_blank" rel="noreferrer noopener">Origin&lt;/a> and the
-&lt;a href="https://www.ea.com/ea-app-beta" target="_blank" rel="noreferrer noopener">EA App&lt;/a> and we have our own unique issues.&lt;/p></description></item><item><title>Attack Surface Analysis - Part 3 - Resurrected Code Execution</title><link>https://parsiya.net/blog/2021-09-26-attack-surface-analysis-part-3-resurrected-code-execution/</link><pubDate>Sun, 26 Sep 2021 20:50:38 -0700</pubDate><guid>https://parsiya.net/blog/2021-09-26-attack-surface-analysis-part-3-resurrected-code-execution/</guid><description>&lt;p>In part 3 of my attack surface analysis series, I will discuss an undisclosed RCE.
+&lt;a href="https://www.ea.com/ea-app-beta" target="_blank" rel="noreferrer noopener">EA App&lt;/a> and we have our own unique issues.&lt;/p></description></item><item><title>RCE in Visual Studio Code's Remote WSL for Fun and Negative Profit</title><link>https://parsiya.net/blog/2021-12-20-rce-in-visual-studio-codes-remote-wsl-for-fun-and-negative-profit/</link><pubDate>Mon, 20 Dec 2021 03:22:10 -0800</pubDate><guid>https://parsiya.net/blog/2021-12-20-rce-in-visual-studio-codes-remote-wsl-for-fun-and-negative-profit/</guid><description>&lt;p>The Visual Studio Code server in Windows Subsystem for Linux uses a local
+WebSocket WebSocket connection to communicate with the &lt;code>Remote WSL&lt;/code> extension.
+JavaScript in websites can connect to this server and execute arbitrary commands
+on the target system. Assigned &lt;a href="https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2021-43907" target="_blank" rel="noreferrer noopener">CVE-2021-43907&lt;/a> and zero bounty. I paid 5
+USD for the EC2 machine hosting the proof-of-concept.&lt;/p>
+&lt;p>It's really funny that PlayStation paid 15K USD for &lt;a href="https://hackerone.com/reports/873614" target="_blank" rel="noreferrer noopener">almost the same bug&lt;/a>
+with 2.2 million subscribers (it was out of scope in their program, too), but
+MSFT doesn't pay for an official extension with more than 10 million installs
+(obviously, not every install is unique) for one of their most popular products.
+But you are not here to listen to my rants. So, read on.&lt;/p>
+&lt;p>This post's target audience was &lt;code>Desktop Application Security People&lt;/code> niche. I
+want to clarify some issues because more people have read it (edit on 2021-12-21):&lt;/p>
+&lt;ol>
+&lt;li>I didn't get 5 dollars. I paid 5 dollars out of pocket, so it's -5.&lt;/li>
+&lt;li>&amp;quot;I am not angry, I am just disappointed.&amp;quot; I knew it was out-of-scope. This
+wasn't some bait-and-switch by Microsoft. I am not angry&lt;/li>
+&lt;li>The vuln is &lt;strong>not&lt;/strong> in VS Code. MSFT says it's in the &lt;code>Remote WSL&lt;/code> extension
+but I think it's in the way &lt;code>VS Code Server&lt;/code> works with the remote
+development extensions.&lt;/li>
+&lt;/ol>
+&lt;p>HackerNews link: &lt;a href="https://news.ycombinator.com/item?id=29635300" target="_blank" rel="noreferrer noopener">https://news.ycombinator.com/item?id=29635300&lt;/a>.&lt;/p></description></item><item><title>Attack Surface Analysis - Part 3 - Resurrected Code Execution</title><link>https://parsiya.net/blog/2021-09-26-attack-surface-analysis-part-3-resurrected-code-execution/</link><pubDate>Sun, 26 Sep 2021 20:50:38 -0700</pubDate><guid>https://parsiya.net/blog/2021-09-26-attack-surface-analysis-part-3-resurrected-code-execution/</guid><description>&lt;p>In part 3 of my attack surface analysis series, I will discuss an undisclosed RCE.
 This bug uses a combination of all tricks introduced in
 
 
