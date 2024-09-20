@@ -90,6 +90,9 @@ The 3rd message is the one that opens the page.
 }
 ```
 
+If you want to see which process is doing this, run `netstat -anb` in an admin
+prompt and look for who is listening on `127.0.0.1:27060`. It's `steam.exe`.
+
 ## Protocol Handlers
 This is actually the Steam protocol handler. And that can also lead to
 {{< xref path="/post/2021/2021-03-17-attack-surface-analysis-2-custom-uri/"
@@ -135,8 +138,11 @@ because **{{< xref path="/post/2020/2020-11-01-same-origin-gone-wild/"
 [websocket-sop]: https://blog.securityevaluators.com/websockets-not-bound-by-cors-does-this-mean-2e7819374acc
 
 It's not always a WebSocket server. Here's a bug by [Jonathan Leitschuh][jl-twitter]
-where it turns out Zoom was using a local web server (that even remained on the
-machine after removing Zoom) to do "seamless transition."
+where it turns out [Zoom was using a local web server][zoom] (that even remained
+on the machine after removing Zoom) to do "seamless transition."
+
+[zoom]: https://infosecwriteups.com/zoom-zero-day-4-million-webcams-maybe-an-rce-just-get-them-to-visit-your-website-ac75c83f4ef5
+[jl-twitter]: https://twitter.com/JLLeitschuh
 
 # So How do I Find Bugs Here?
 The moment you see a local web server or WebSocket server, you need to open Burp
@@ -173,9 +179,6 @@ JavaScript because it's a [Forbidden Header][forbidden].
 wants to spoof the `Origin` header then you have bigger problems.
 
 **But muh persistence tradecraft!** lol, shut up!
-
-[zoom]: https://infosecwriteups.com/zoom-zero-day-4-million-webcams-maybe-an-rce-just-get-them-to-visit-your-website-ac75c83f4ef5
-[jl-twitter]: https://twitter.com/JLLeitschuh
 
 There are other way to do web-to-app communication apart from protocol handlers
 and WebSockets. See [Browser Architecture: Web-to-App Communication Overview][web-to-app]
