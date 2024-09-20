@@ -8,6 +8,7 @@ twitterImage: 10-thumbnail.png
 categories:
 - Writeup
 - Bug Bounty
+- Attack Surface Analysis
 aliases:
 - "/blog/2021-vscode-wsl-rce/"
 ---
