@@ -10,7 +10,8 @@ type: about
 I am Parsia, I try to do application security most days. I am currently taking a
 sabbatical and doing some contract work.
 
-**2024-Present**: Senior Offensive Security Engineer at Microsoft. 
+**2024-Present**: Senior Offensive Security Engineer at Microsoft. Despite my
+title, I mostly do application security.
 
 **2022-2024**: Sabbatical. Dev contract work for a static analysis tool that
 automatically generates an OpenAPI spec from the backend source code. Some
@@ -25,10 +26,12 @@ security research, mainly static analysis and Rust. See
 
 **2019-2022**: Senior Security Engineer at [Electronic Arts][ea-security]. I
 worked on many internal and external product (mostly videogames) and services.
+Check my [Moby Games][moby] page for public game credits and a 
 [Realistic video of me hacking videogames at work][game-testers-youtube].
 
 [ea-security]: https://www.ea.com/security
 [game-testers-youtube]: https://www.youtube.com/watch?v=BRWvfMLl4ho
+[moby]: https://www.mobygames.com/person/1119364/parsia-hakimian/credits/
 
 **2013-2019**: Associate Consultant to Senior Security Consultant at
 [Synopsys Software Integrity Group][sig-website] via the 2016 Cigital acquisition.
@@ -83,8 +86,6 @@ yourself (if you have the time). It's worth it.
     - My first and highest bounty to date: [$15,000 from PlayStation][psnow]
     - Hacker One profile: https://hackerone.com/parsiya
     - Bugcrowd profile (I have one bug there lol): https://bugcrowd.com/parsiya
-    - If you have Windows desktop applications and especially videogames in your
-      program, please invite me.
 - **Go in security**: I have replaced Python with Go in my workflow.
     - https://github.com/parsiya/Hacking-with-Go
     - https://github.com/parsiya/Go-Security

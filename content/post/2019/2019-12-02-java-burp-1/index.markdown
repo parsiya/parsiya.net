@@ -44,7 +44,7 @@ been in Python. I documented what I learned:
   Burp Extensions - Part 3 - Tips and Tricks") 
 
 I had a lot of problems enabling the right-click functionality on Burp's
-[IMesageEditors][imsgeditor-doc].Long story short, I decided to rewrite the
+[IMesageEditors][imsgeditor-doc]. Long story short, I decided to rewrite the
 extension in Java instead.
 
 This is how my development VM looks like.
