@@ -1,5 +1,5 @@
 <!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Simple SSH Harvester in Go</title>
-<link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.134.3"><meta name=twitter:card content="summary"><meta name=twitter:title content="Simple SSH Harvester in Go"><meta name=twitter:description content="During my Go SSH adventures at Hacking with Go I wanted to write a simple SSH harvester. As usual, the tool turned out to be much larger than I thought.
+<link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.143.0"><meta name=twitter:card content="summary"><meta name=twitter:title content="Simple SSH Harvester in Go"><meta name=twitter:description content="During my Go SSH adventures at Hacking with Go I wanted to write a simple SSH harvester. As usual, the tool turned out to be much larger than I thought.
 I realized I cannot find any examples of SSH certificate verification. There are a few examples for host keys here and there. Even the certs_test.go file just checks the host name. There was a typo in an error message1 in the crypto/ssh package but I think because this is not very much used, had gone unreported.
 Here's my step by step guide to writing this tool by piggybacking on SSH host verification callbacks. Hopefully this will make it easier for the next person.
 You can find the code here:
@@ -94,24 +94,24 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span></span><span style=display:flex><span>    tUsage   = <span style=color:#2aa198>&#34;addresses separated by comma&#34;</span>
 </span></span><span style=display:flex><span>    vUsage   = <span style=color:#2aa198>&#34;print extra info&#34;</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Delimiter for host:port
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    AddressDelim = <span style=color:#2aa198>&#34;:&#34;</span>
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// // Delimiter for IPv6 addresses
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#586e75>// IPv6Delim = &#34;[]&#34;
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Log prefix - note the trailing space
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    LogPrefix = <span style=color:#2aa198>&#34;[*] &#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Delimiter for host:port</span>
+</span></span><span style=display:flex><span>    AddressDelim = <span style=color:#2aa198>&#34;:&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// // Delimiter for IPv6 addresses</span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// IPv6Delim = &#34;[]&#34;</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Test SSH username/password - not really important
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    TestUser     = <span style=color:#2aa198>&#34;user&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Log prefix - note the trailing space</span>
+</span></span><span style=display:flex><span>    LogPrefix = <span style=color:#2aa198>&#34;[*] &#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Test SSH username/password - not really important</span>
+</span></span><span style=display:flex><span>    TestUser     = <span style=color:#2aa198>&#34;user&#34;</span>
 </span></span><span style=display:flex><span>    TestPassword = <span style=color:#2aa198>&#34;password&#34;</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Timeout in seconds
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    Timeout = <span style=color:#2aa198>5</span> <span style=color:#719e07>*</span> time.Second
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Timeout in seconds</span>
+</span></span><span style=display:flex><span>    Timeout = <span style=color:#2aa198>5</span> <span style=color:#719e07>*</span> time.Second
 </span></span><span style=display:flex><span>)
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#586e75>// Usage string
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>func</span> <span style=color:#268bd2>usage</span>() {
+</span></span><span style=display:flex><span><span style=color:#586e75>// Usage string</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>usage</span>() {
 </span></span><span style=display:flex><span>    usg <span style=color:#719e07>:=</span> mUsage
 </span></span><span style=display:flex><span>    usg <span style=color:#719e07>+=</span> fmt.<span style=color:#268bd2>Sprintf</span>(<span style=color:#2aa198>&#34;\n  -i, -in\tstring\t%s&#34;</span>, inUsage)
 </span></span><span style=display:flex><span>    usg <span style=color:#719e07>+=</span> fmt.<span style=color:#268bd2>Sprintf</span>(<span style=color:#2aa198>&#34;\n  -o, -out\tstring\t%s&#34;</span>, outUsage)
@@ -153,8 +153,8 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">30
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">31
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>init</span>() {
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Setup flags
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    flag.<span style=color:#268bd2>StringVar</span>(<span style=color:#719e07>&amp;</span>out, <span style=color:#2aa198>&#34;out&#34;</span>, <span style=color:#2aa198>&#34;&#34;</span>, outUsage)
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Setup flags</span>
+</span></span><span style=display:flex><span>    flag.<span style=color:#268bd2>StringVar</span>(<span style=color:#719e07>&amp;</span>out, <span style=color:#2aa198>&#34;out&#34;</span>, <span style=color:#2aa198>&#34;&#34;</span>, outUsage)
 </span></span><span style=display:flex><span>    flag.<span style=color:#268bd2>StringVar</span>(<span style=color:#719e07>&amp;</span>out, <span style=color:#2aa198>&#34;o&#34;</span>, <span style=color:#2aa198>&#34;&#34;</span>, outUsage)
 </span></span><span style=display:flex><span>    flag.<span style=color:#268bd2>StringVar</span>(<span style=color:#719e07>&amp;</span>in, <span style=color:#2aa198>&#34;in&#34;</span>, <span style=color:#2aa198>&#34;&#34;</span>, inUsage)
 </span></span><span style=display:flex><span>    flag.<span style=color:#268bd2>StringVar</span>(<span style=color:#719e07>&amp;</span>in, <span style=color:#2aa198>&#34;i&#34;</span>, <span style=color:#2aa198>&#34;&#34;</span>, inUsage)
@@ -163,23 +163,23 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span></span><span style=display:flex><span>    flag.<span style=color:#268bd2>BoolVar</span>(<span style=color:#719e07>&amp;</span>verbose, <span style=color:#2aa198>&#34;verbose&#34;</span>, <span style=color:#cb4b16>false</span>, vUsage)
 </span></span><span style=display:flex><span>    flag.<span style=color:#268bd2>BoolVar</span>(<span style=color:#719e07>&amp;</span>verbose, <span style=color:#2aa198>&#34;v&#34;</span>, <span style=color:#cb4b16>false</span>, vUsage)
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Set flag usage
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    flag.Usage = usage
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Set flag usage</span>
+</span></span><span style=display:flex><span>    flag.Usage = usage
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Parse flags
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    flag.<span style=color:#268bd2>Parse</span>()
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Parse flags</span>
+</span></span><span style=display:flex><span>    flag.<span style=color:#268bd2>Parse</span>()
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Setting up logging
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    logSSH = log.<span style=color:#268bd2>New</span>(os.Stdout, LogPrefix, log.Ltime)
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Setting up logging</span>
+</span></span><span style=display:flex><span>    logSSH = log.<span style=color:#268bd2>New</span>(os.Stdout, LogPrefix, log.Ltime)
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Check if we have enough arguments
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> <span style=color:#b58900>len</span>(os.Args) &lt; <span style=color:#2aa198>2</span> {
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Check if we have enough arguments</span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> <span style=color:#b58900>len</span>(os.Args) &lt; <span style=color:#2aa198>2</span> {
 </span></span><span style=display:flex><span>        flag.<span style=color:#268bd2>Usage</span>()
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>errorExit</span>(<span style=color:#2aa198>&#34;not enough arguments&#34;</span>, <span style=color:#cb4b16>nil</span>)
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Check if both in and targets are supported
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> (in <span style=color:#719e07>!=</span> <span style=color:#2aa198>&#34;&#34;</span>) <span style=color:#719e07>&amp;&amp;</span> (targets <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Check if both in and targets are supported</span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> (in <span style=color:#719e07>!=</span> <span style=color:#2aa198>&#34;&#34;</span>) <span style=color:#719e07>&amp;&amp;</span> (targets <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span>) {
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>errorExit</span>(<span style=color:#2aa198>&#34;-in and -targets are mutually exclusive, use one&#34;</span>, <span style=color:#cb4b16>nil</span>)
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p><code>errorExit</code> just calls <code>logger.Fatalf</code> with a message. Logging the message and returning from main with status code 1.</p><figure class=code><figcaption><span>errorExit</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">1
@@ -190,10 +190,10 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">7
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">8
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// errorExit logs an error and then exits with status code 1.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>func</span> <span style=color:#268bd2>errorExit</span>(m <span style=color:#dc322f>string</span>, err <span style=color:#dc322f>error</span>) {
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// If err is provided print it, otherwise don&#39;t
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// errorExit logs an error and then exits with status code 1.</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>errorExit</span>(m <span style=color:#dc322f>string</span>, err <span style=color:#dc322f>error</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// If err is provided print it, otherwise don&#39;t</span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
 </span></span><span style=display:flex><span>        logSSH.<span style=color:#268bd2>Fatalf</span>(<span style=color:#2aa198>&#34;%v - stopping\n%v\n&#34;</span>, m, err)
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>    logSSH.<span style=color:#268bd2>Fatalf</span>(<span style=color:#2aa198>&#34;%v - stopping\n&#34;</span>, m)
@@ -218,25 +218,25 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">19
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">20
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Custom flag type for -t (code re-used from flag section)
-</span></span></span><span style=display:flex><span><span style=color:#586e75>// Create a custom type from a string slice
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>type</span> strList []<span style=color:#dc322f>string</span>
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Custom flag type for -t (code re-used from flag section)</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// Create a custom type from a string slice</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>type</span> strList []<span style=color:#dc322f>string</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#586e75>// Implement String()
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>func</span> (str <span style=color:#719e07>*</span>strList) <span style=color:#268bd2>String</span>() <span style=color:#dc322f>string</span> {
+</span></span><span style=display:flex><span><span style=color:#586e75>// Implement String()</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>func</span> (str <span style=color:#719e07>*</span>strList) <span style=color:#268bd2>String</span>() <span style=color:#dc322f>string</span> {
 </span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> fmt.<span style=color:#268bd2>Sprintf</span>(<span style=color:#2aa198>&#34;%v&#34;</span>, <span style=color:#719e07>*</span>str)
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#586e75>// Implement Set(*strList)
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>func</span> (str <span style=color:#719e07>*</span>strList) <span style=color:#268bd2>Set</span>(s <span style=color:#dc322f>string</span>) <span style=color:#dc322f>error</span> {
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// If input was empty, return an error
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> s <span style=color:#719e07>==</span> <span style=color:#2aa198>&#34;&#34;</span> {
+</span></span><span style=display:flex><span><span style=color:#586e75>// Implement Set(*strList)</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>func</span> (str <span style=color:#719e07>*</span>strList) <span style=color:#268bd2>Set</span>(s <span style=color:#dc322f>string</span>) <span style=color:#dc322f>error</span> {
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// If input was empty, return an error</span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> s <span style=color:#719e07>==</span> <span style=color:#2aa198>&#34;&#34;</span> {
 </span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> errors.<span style=color:#268bd2>New</span>(<span style=color:#2aa198>&#34;nil input&#34;</span>)
 </span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Split input by &#34;,&#34;
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>*</span>str = strings.<span style=color:#268bd2>Split</span>(s, <span style=color:#2aa198>&#34;,&#34;</span>)
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Do not return an error
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Split input by &#34;,&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>*</span>str = strings.<span style=color:#268bd2>Split</span>(s, <span style=color:#2aa198>&#34;,&#34;</span>)
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Do not return an error</span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>
 </span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p><a name=sshserver-struct></a></p><h3 id=sshserver-struct>SSHServer struct
 <a class=header-link href=#sshserver-struct><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>We use a struct and some methods to hold server info. The <code>SSHServer</code> struct has these fields:</p><figure class=code><figcaption><span>SSHServer struct</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
@@ -249,17 +249,17 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Struct to hold server data
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>type</span> SSHServer <span style=color:#268bd2>struct</span> {
-</span></span><span style=display:flex><span>    Address   <span style=color:#dc322f>string</span>          <span style=color:#586e75>// host:port
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    Host      <span style=color:#dc322f>string</span>          <span style=color:#586e75>// IP address
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    Port      <span style=color:#dc322f>int</span>             <span style=color:#586e75>// port
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    IsSSH     <span style=color:#dc322f>bool</span>            <span style=color:#586e75>// true if server is running SSH on address:port
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    Banner    <span style=color:#dc322f>string</span>          <span style=color:#586e75>// banner text, if any
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    Cert      ssh.Certificate <span style=color:#586e75>// server&#39;s certificate
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    Hostname  <span style=color:#dc322f>string</span>          <span style=color:#586e75>// hostname
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    PublicKey ssh.PublicKey   <span style=color:#586e75>// server&#39;s public key
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>Not all fields will be populated. For example <code>Hostname</code> and <code>PublicKey</code> are only populated if the server responds with a public key. If it has a cert, then <code>Cert</code> will be populated instead.</p><p>New <code>*SSHServer</code>s are created by <code>NewSSHServer</code>.</p><figure class=code><figcaption><span>NewSSHServer</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Struct to hold server data</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>type</span> SSHServer <span style=color:#268bd2>struct</span> {
+</span></span><span style=display:flex><span>    Address   <span style=color:#dc322f>string</span>          <span style=color:#586e75>// host:port</span>
+</span></span><span style=display:flex><span>    Host      <span style=color:#dc322f>string</span>          <span style=color:#586e75>// IP address</span>
+</span></span><span style=display:flex><span>    Port      <span style=color:#dc322f>int</span>             <span style=color:#586e75>// port</span>
+</span></span><span style=display:flex><span>    IsSSH     <span style=color:#dc322f>bool</span>            <span style=color:#586e75>// true if server is running SSH on address:port</span>
+</span></span><span style=display:flex><span>    Banner    <span style=color:#dc322f>string</span>          <span style=color:#586e75>// banner text, if any</span>
+</span></span><span style=display:flex><span>    Cert      ssh.Certificate <span style=color:#586e75>// server&#39;s certificate</span>
+</span></span><span style=display:flex><span>    Hostname  <span style=color:#dc322f>string</span>          <span style=color:#586e75>// hostname</span>
+</span></span><span style=display:flex><span>    PublicKey ssh.PublicKey   <span style=color:#586e75>// server&#39;s public key</span>
+</span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>Not all fields will be populated. For example <code>Hostname</code> and <code>PublicKey</code> are only populated if the server responds with a public key. If it has a cert, then <code>Cert</code> will be populated instead.</p><p>New <code>*SSHServer</code>s are created by <code>NewSSHServer</code>.</p><figure class=code><figcaption><span>NewSSHServer</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 4
@@ -282,11 +282,11 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// NewSSHServer returns a new SSHServer with address, host and port populated.
-</span></span></span><span style=display:flex><span><span style=color:#586e75>// If address cannot be processed, an error will be returned.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>func</span> <span style=color:#268bd2>NewSSHServer</span>(address <span style=color:#dc322f>string</span>) (<span style=color:#719e07>*</span>SSHServer, <span style=color:#dc322f>error</span>) {
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Process address, return error if it&#39;s not in the correct format
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    host, port, err <span style=color:#719e07>:=</span> net.<span style=color:#268bd2>SplitHostPort</span>(address)
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// NewSSHServer returns a new SSHServer with address, host and port populated.</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// If address cannot be processed, an error will be returned.</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>NewSSHServer</span>(address <span style=color:#dc322f>string</span>) (<span style=color:#719e07>*</span>SSHServer, <span style=color:#dc322f>error</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Process address, return error if it&#39;s not in the correct format</span>
+</span></span><span style=display:flex><span>    host, port, err <span style=color:#719e07>:=</span> net.<span style=color:#268bd2>SplitHostPort</span>(address)
 </span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
 </span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>, err
 </span></span><span style=display:flex><span>    }
@@ -299,8 +299,8 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
 </span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>, err
 </span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// If port is not in (0,65535]
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> <span style=color:#2aa198>0</span> &gt; s.Port <span style=color:#719e07>||</span> s.Port &gt; <span style=color:#2aa198>65535</span> {
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// If port is not in (0,65535]</span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> <span style=color:#2aa198>0</span> &gt; s.Port <span style=color:#719e07>||</span> s.Port &gt; <span style=color:#2aa198>65535</span> {
 </span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>, errors.<span style=color:#268bd2>New</span>(port <span style=color:#719e07>+</span> <span style=color:#2aa198>&#34; invalid port&#34;</span>)
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> <span style=color:#719e07>&amp;</span>s, <span style=color:#cb4b16>nil</span>
@@ -325,16 +325,16 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">18
 </span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>type</span> SSHServers []<span style=color:#719e07>*</span>SSHServer
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#586e75>// String converts []*SSHServer to JSON. If it cannot convert to JSON, it
-</span></span></span><span style=display:flex><span><span style=color:#586e75>// will convert each member to string using fmt.Sprintf(&#34;%+v&#34;).
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>func</span> (servers <span style=color:#719e07>*</span>SSHServers) <span style=color:#268bd2>String</span>() <span style=color:#dc322f>string</span> {
+</span></span><span style=display:flex><span><span style=color:#586e75>// String converts []*SSHServer to JSON. If it cannot convert to JSON, it</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// will convert each member to string using fmt.Sprintf(&#34;%+v&#34;).</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>func</span> (servers <span style=color:#719e07>*</span>SSHServers) <span style=color:#268bd2>String</span>() <span style=color:#dc322f>string</span> {
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>var</span> report <span style=color:#dc322f>string</span>
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Try converting to JSON
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    report, err <span style=color:#719e07>:=</span> <span style=color:#268bd2>ToJSON</span>(servers, <span style=color:#cb4b16>true</span>)
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// If cannot convert to JSON
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
-</span></span><span style=display:flex><span>        <span style=color:#586e75>// Save all servers as string (this is not as good as JSON)
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        <span style=color:#719e07>for</span> _, v <span style=color:#719e07>:=</span> <span style=color:#719e07>range</span> <span style=color:#719e07>*</span>servers {
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Try converting to JSON</span>
+</span></span><span style=display:flex><span>    report, err <span style=color:#719e07>:=</span> <span style=color:#268bd2>ToJSON</span>(servers, <span style=color:#cb4b16>true</span>)
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// If cannot convert to JSON</span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#586e75>// Save all servers as string (this is not as good as JSON)</span>
+</span></span><span style=display:flex><span>        <span style=color:#719e07>for</span> _, v <span style=color:#719e07>:=</span> <span style=color:#719e07>range</span> <span style=color:#719e07>*</span>servers {
 </span></span><span style=display:flex><span>            report <span style=color:#719e07>+=</span> fmt.<span style=color:#268bd2>Sprintf</span>(<span style=color:#2aa198>&#34;%+v\n%s\n&#34;</span>, v, strings.<span style=color:#268bd2>Repeat</span>(<span style=color:#2aa198>&#34;-&#34;</span>, <span style=color:#2aa198>30</span>))
 </span></span><span style=display:flex><span>        }
 </span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> report
@@ -364,24 +364,24 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">21
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">22
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">23
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// ToJSON converts input to JSON. If prettyPrint is set to True it will call
-</span></span></span><span style=display:flex><span><span style=color:#586e75>// MarshallIndent with 4 spaces.
-</span></span></span><span style=display:flex><span><span style=color:#586e75>// If your struct does not work here, make sure struct fields start with a
-</span></span></span><span style=display:flex><span><span style=color:#586e75>// capital letter. Otherwise they are not visible to the json package methods.
-</span></span></span><span style=display:flex><span><span style=color:#586e75>// We could also rewrite this as a method for ([]*SSHServer).
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>func</span> <span style=color:#268bd2>ToJSON</span>(s <span style=color:#268bd2>interface</span>{}, prettyPrint <span style=color:#dc322f>bool</span>) (<span style=color:#dc322f>string</span>, <span style=color:#dc322f>error</span>) {
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// ToJSON converts input to JSON. If prettyPrint is set to True it will call</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// MarshallIndent with 4 spaces.</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// If your struct does not work here, make sure struct fields start with a</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// capital letter. Otherwise they are not visible to the json package methods.</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// We could also rewrite this as a method for ([]*SSHServer).</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>ToJSON</span>(s <span style=color:#268bd2>interface</span>{}, prettyPrint <span style=color:#dc322f>bool</span>) (<span style=color:#dc322f>string</span>, <span style=color:#dc322f>error</span>) {
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>var</span> js []<span style=color:#dc322f>byte</span>
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>var</span> err <span style=color:#dc322f>error</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Pretty print if specified
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> prettyPrint {
-</span></span><span style=display:flex><span>        js, err = json.<span style=color:#268bd2>MarshalIndent</span>(s, <span style=color:#2aa198>&#34;&#34;</span>, <span style=color:#2aa198>&#34;    &#34;</span>) <span style=color:#586e75>// 4 spaces
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    } <span style=color:#719e07>else</span> {
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Pretty print if specified</span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> prettyPrint {
+</span></span><span style=display:flex><span>        js, err = json.<span style=color:#268bd2>MarshalIndent</span>(s, <span style=color:#2aa198>&#34;&#34;</span>, <span style=color:#2aa198>&#34;    &#34;</span>) <span style=color:#586e75>// 4 spaces</span>
+</span></span><span style=display:flex><span>    } <span style=color:#719e07>else</span> {
 </span></span><span style=display:flex><span>        js, err = json.<span style=color:#268bd2>Marshal</span>(s)
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Check for marshalling errors
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Check for marshalling errors</span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
 </span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> <span style=color:#2aa198>&#34;&#34;</span>, <span style=color:#cb4b16>nil</span>
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>
@@ -433,9 +433,9 @@ golang.org/x/crypto/ssh.(*CertChecker).CheckHostKey-fm(0xc0420080c0, 0xc,
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">24
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">25
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// CheckHostKey checks a host key certificate. This method can be
-</span></span></span><span style=display:flex><span><span style=color:#586e75>// plugged into ClientConfig.HostKeyCallback.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>func</span> (c <span style=color:#719e07>*</span>CertChecker) <span style=color:#268bd2>CheckHostKey</span>(addr <span style=color:#dc322f>string</span>, remote net.Addr, key PublicKey) <span style=color:#dc322f>error</span> {
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// CheckHostKey checks a host key certificate. This method can be</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// plugged into ClientConfig.HostKeyCallback.</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>func</span> (c <span style=color:#719e07>*</span>CertChecker) <span style=color:#268bd2>CheckHostKey</span>(addr <span style=color:#dc322f>string</span>, remote net.Addr, key PublicKey) <span style=color:#dc322f>error</span> {
 </span></span><span style=display:flex><span>    cert, ok <span style=color:#719e07>:=</span> key.(<span style=color:#719e07>*</span>Certificate)
 </span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> !ok {
 </span></span><span style=display:flex><span>        <span style=color:#719e07>if</span> c.HostKeyFallback <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
@@ -446,8 +446,8 @@ golang.org/x/crypto/ssh.(*CertChecker).CheckHostKey-fm(0xc0420080c0, 0xc,
 </span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> cert.CertType <span style=color:#719e07>!=</span> HostCert {
 </span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> fmt.<span style=color:#268bd2>Errorf</span>(<span style=color:#2aa198>&#34;ssh: certificate presented as a host key has type %d&#34;</span>, cert.CertType)
 </span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// If IsHostAuthority is not defined, run-time error occurs here
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> !c.<span style=color:#268bd2>IsHostAuthority</span>(cert.SignatureKey, addr) {
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// If IsHostAuthority is not defined, run-time error occurs here</span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> !c.<span style=color:#268bd2>IsHostAuthority</span>(cert.SignatureKey, addr) {
 </span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> fmt.<span style=color:#268bd2>Errorf</span>(<span style=color:#2aa198>&#34;ssh: no authorities for hostname: %v&#34;</span>, addr)
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>
@@ -456,8 +456,8 @@ golang.org/x/crypto/ssh.(*CertChecker).CheckHostKey-fm(0xc0420080c0, 0xc,
 </span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> err
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Pass hostname only as principal for host certificates (consistent with OpenSSH)
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>return</span> c.<span style=color:#268bd2>CheckCert</span>(hostname, cert)
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Pass hostname only as principal for host certificates (consistent with OpenSSH)</span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> c.<span style=color:#268bd2>CheckCert</span>(hostname, cert)
 </span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>So what does this function do?</p><p>First it tries to get a certificate from <code>key PublicKey</code> (by casting). If the cast is not successful, it uses <code>HostKeyFallBack</code> to verity server's public key instead.</p><p>Then the function checks if the certificate type is <code>HostCert</code>. SSH differentiates between host and client certificates. For example OpenSSH's <code>keygen</code> uses the <code>-h</code> switch to sign and create a host key.</p><p>Another of our callbacks, <code>IsHostAuthority</code> is called next. If it returns <code>false</code>, the certificate is not valid. The docs say:</p><pre tabindex=0><code>// IsHostAuthority should report whether the key is recognized as
 // an authority for this host. This allows for certificates to be
 // signed by other keys, and for those other keys to only be valid
@@ -470,9 +470,9 @@ golang.org/x/crypto/ssh.(*CertChecker).CheckHostKey-fm(0xc0420080c0, 0xc,
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">5
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">6
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">7
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// CheckCert checks CriticalOptions, ValidPrincipals, revocation, timestamp and
-</span></span></span><span style=display:flex><span><span style=color:#586e75>// the signature of the certificate.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>func</span> (c <span style=color:#719e07>*</span>CertChecker) <span style=color:#268bd2>CheckCert</span>(principal <span style=color:#dc322f>string</span>, cert <span style=color:#719e07>*</span>Certificate) <span style=color:#dc322f>error</span> {
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// CheckCert checks CriticalOptions, ValidPrincipals, revocation, timestamp and</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// the signature of the certificate.</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>func</span> (c <span style=color:#719e07>*</span>CertChecker) <span style=color:#268bd2>CheckCert</span>(principal <span style=color:#dc322f>string</span>, cert <span style=color:#719e07>*</span>Certificate) <span style=color:#dc322f>error</span> {
 </span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> c.IsRevoked <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> <span style=color:#719e07>&amp;&amp;</span> c.<span style=color:#268bd2>IsRevoked</span>(cert) {
 </span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> fmt.<span style=color:#268bd2>Errorf</span>(<span style=color:#2aa198>&#34;ssh: certicate serial %d revoked&#34;</span>, cert.Serial)
 </span></span><span style=display:flex><span>    }
@@ -488,14 +488,14 @@ golang.org/x/crypto/ssh.(*CertChecker).CheckHostKey-fm(0xc0420080c0, 0xc,
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Define custom type for IsHostAuthority
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>type</span> HostAuthorityCallBack <span style=color:#268bd2>func</span>(ssh.PublicKey, <span style=color:#dc322f>string</span>) <span style=color:#dc322f>bool</span>
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Define custom type for IsHostAuthority</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>type</span> HostAuthorityCallBack <span style=color:#268bd2>func</span>(ssh.PublicKey, <span style=color:#dc322f>string</span>) <span style=color:#dc322f>bool</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#586e75>// hostAuthCallback is the callbackfunction for IsHostAuthority. Without
-</span></span></span><span style=display:flex><span><span style=color:#586e75>// it, ssh.CertChecker will not work.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>func</span> <span style=color:#268bd2>hostAuthCallback</span>() HostAuthorityCallBack {
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Return true because we just want to make this work
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>return</span> <span style=color:#268bd2>func</span>(p ssh.PublicKey, addr <span style=color:#dc322f>string</span>) <span style=color:#dc322f>bool</span> {
+</span></span><span style=display:flex><span><span style=color:#586e75>// hostAuthCallback is the callbackfunction for IsHostAuthority. Without</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// it, ssh.CertChecker will not work.</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>hostAuthCallback</span>() HostAuthorityCallBack {
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Return true because we just want to make this work</span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> <span style=color:#268bd2>func</span>(p ssh.PublicKey, addr <span style=color:#dc322f>string</span>) <span style=color:#dc322f>bool</span> {
 </span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> <span style=color:#cb4b16>true</span>
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>If we want the connection to continue, the internal function needs to return <code>true</code>.</p><p><a name=isrevoked></a></p><h3 id=isrevoked>IsRevoked
@@ -517,21 +517,21 @@ golang.org/x/crypto/ssh.(*CertChecker).CheckHostKey-fm(0xc0420080c0, 0xc,
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">15
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">16
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">17
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Create IsRevoked function callback type
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>type</span> IsRevokedCallback <span style=color:#268bd2>func</span>(cert <span style=color:#719e07>*</span>ssh.Certificate) <span style=color:#dc322f>bool</span>
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Create IsRevoked function callback type</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>type</span> IsRevokedCallback <span style=color:#268bd2>func</span>(cert <span style=color:#719e07>*</span>ssh.Certificate) <span style=color:#dc322f>bool</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#586e75>// certCallback processes the SSH certificate. It is piggybacked on the
-</span></span></span><span style=display:flex><span><span style=color:#586e75>// IsRevoked callback function. It must return false (or nil) to keep the
-</span></span></span><span style=display:flex><span><span style=color:#586e75>// connection alive.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>func</span> <span style=color:#268bd2>certCallback</span>(s <span style=color:#719e07>*</span>SSHServer) IsRevokedCallback {
+</span></span><span style=display:flex><span><span style=color:#586e75>// certCallback processes the SSH certificate. It is piggybacked on the</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// IsRevoked callback function. It must return false (or nil) to keep the</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// connection alive.</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>certCallback</span>(s <span style=color:#719e07>*</span>SSHServer) IsRevokedCallback {
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> <span style=color:#268bd2>func</span>(cert <span style=color:#719e07>*</span>ssh.Certificate) <span style=color:#dc322f>bool</span> {
-</span></span><span style=display:flex><span>        <span style=color:#586e75>// Grab the certificate
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        s.Cert = <span style=color:#719e07>*</span>cert
+</span></span><span style=display:flex><span>        <span style=color:#586e75>// Grab the certificate</span>
+</span></span><span style=display:flex><span>        s.Cert = <span style=color:#719e07>*</span>cert
 </span></span><span style=display:flex><span>        s.IsSSH = <span style=color:#cb4b16>true</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        <span style=color:#586e75>// Always return false
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        <span style=color:#719e07>return</span> <span style=color:#cb4b16>false</span>
+</span></span><span style=display:flex><span>        <span style=color:#586e75>// Always return false</span>
+</span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> <span style=color:#cb4b16>false</span>
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>Inside <code>IsRevoked</code> we have access to the SSH certificate. Here we just assign it to the <code>Cert</code> field.</p><p><strong>If you want to verify the certificate, this is the place</strong>.</p><p><a name=%7E%7Equestion%7E%7E-solved></a></p><h5 id=question-solved><del>Question!!!!</del> Solved
 <a class=header-link href=#question-solved><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h5><p><del>Help me if you can. I don't like returning unnamed functions like this. But unless I create global variables, I need to be able to access <code>s *SSHServer</code> inside <code>certCallback</code> to populate it. The function type is strict so I cannot add arguments.</del></p><p><del>I think defining the inside function as a method will work. Am I write? Wrong? Please let me know if you know the answer.</del></p><p>Method is the way to go or just use anonymous functions. I don't like them but there's nothing wrong with using one.</p><p><a name=hostkeyfallback></a></p><h3 id=hostkeyfallback>HostKeyFallback
@@ -545,14 +545,14 @@ golang.org/x/crypto/ssh.(*CertChecker).CheckHostKey-fm(0xc0420080c0, 0xc,
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// hostCallback is the callback function for HostKeyCallback in SSH config.
-</span></span></span><span style=display:flex><span><span style=color:#586e75>// It can access hostname, remote address and server&#39;s public key.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>func</span> <span style=color:#268bd2>hostCallback</span>(s <span style=color:#719e07>*</span>SSHServer) ssh.HostKeyCallback {
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// hostCallback is the callback function for HostKeyCallback in SSH config.</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// It can access hostname, remote address and server&#39;s public key.</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>hostCallback</span>(s <span style=color:#719e07>*</span>SSHServer) ssh.HostKeyCallback {
 </span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> <span style=color:#268bd2>func</span>(hostname <span style=color:#dc322f>string</span>, remote net.Addr, key ssh.PublicKey) <span style=color:#dc322f>error</span> {
 </span></span><span style=display:flex><span>        s.Hostname = hostname
 </span></span><span style=display:flex><span>        s.PublicKey = key
-</span></span><span style=display:flex><span>        <span style=color:#586e75>// Return nil because we want the connection to move forward
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        <span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>
+</span></span><span style=display:flex><span>        <span style=color:#586e75>// Return nil because we want the connection to move forward</span>
+</span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>Here we grab server's public key and hostname.</p><p>With these three callbacks set, we can move to the next step.</p><p><a name=step-3-create-sshclientconfig></a></p><h3 id=step-3-create-sshclientconfig>Step 3: Create ssh.ClientConfig
 <a class=header-link href=#step-3-create-sshclientconfig><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p><a href=https://godoc.org/golang.org/x/crypto/ssh#ClientConfig target=_blank rel="noreferrer noopener">ssh.ClientConfig</a> is needed for every SSH connection in Go. You can read about creating SSH connections in <a href=https://github.com/parsiya/Hacking-with-Go/blob/master/content/04.4.md target=_blank rel="noreferrer noopener">Hacking with Go - 04.4</a>.</p><figure class=code><figcaption><span>Sample ssh.ClientConfig</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
@@ -566,17 +566,17 @@ golang.org/x/crypto/ssh.(*CertChecker).CheckHostKey-fm(0xc0420080c0, 0xc,
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">11
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Create SSH config
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>config <span style=color:#719e07>:=</span> <span style=color:#719e07>&amp;</span>ssh.ClientConfig{
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Test username and password
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    User: TestUser,
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Create SSH config</span>
+</span></span><span style=display:flex><span>config <span style=color:#719e07>:=</span> <span style=color:#719e07>&amp;</span>ssh.ClientConfig{
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Test username and password</span>
+</span></span><span style=display:flex><span>    User: TestUser,
 </span></span><span style=display:flex><span>    Auth: []ssh.AuthMethod{
 </span></span><span style=display:flex><span>        ssh.<span style=color:#268bd2>Password</span>(TestPassword),
 </span></span><span style=display:flex><span>    },
 </span></span><span style=display:flex><span>    HostKeyCallback: certCheck.CheckHostKey,
 </span></span><span style=display:flex><span>    BannerCallback:  <span style=color:#268bd2>bannerCallback</span>(s),
-</span></span><span style=display:flex><span>    Timeout:         Timeout, <span style=color:#586e75>// timeout
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p><code>Timeout</code> is also important. we do not want goroutines to wait forever connecting to inaccessible addresses. It's set to 5 seconds by default. Can be changed in the constants.</p><p><a name=banner-callback></a></p><h4 id=banner-callback>Banner callback
+</span></span><span style=display:flex><span>    Timeout:         Timeout, <span style=color:#586e75>// timeout</span>
+</span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p><code>Timeout</code> is also important. we do not want goroutines to wait forever connecting to inaccessible addresses. It's set to 5 seconds by default. Can be changed in the constants.</p><p><a name=banner-callback></a></p><h4 id=banner-callback>Banner callback
 <a class=header-link href=#banner-callback><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h4><p>Banner callback is another important function for information gathering. By now, you know the drill.</p><figure class=code><figcaption><span>bannerCallback</span></figcaption><div class=codewrapper><div class=highlight><div style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 1
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 2
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 3
@@ -587,14 +587,14 @@ golang.org/x/crypto/ssh.(*CertChecker).CheckHostKey-fm(0xc0420080c0, 0xc,
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 8
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050"> 9
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">10
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// bannerCallback is the callback function for BannerCallback in SSH config.
-</span></span></span><span style=display:flex><span><span style=color:#586e75>// Grabs server banner and stores it in the SSHServer object.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>func</span> <span style=color:#268bd2>bannerCallback</span>(s <span style=color:#719e07>*</span>SSHServer) ssh.BannerCallback {
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// bannerCallback is the callback function for BannerCallback in SSH config.</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// Grabs server banner and stores it in the SSHServer object.</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>bannerCallback</span>(s <span style=color:#719e07>*</span>SSHServer) ssh.BannerCallback {
 </span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> <span style=color:#268bd2>func</span>(message <span style=color:#dc322f>string</span>) <span style=color:#dc322f>error</span> {
-</span></span><span style=display:flex><span>        <span style=color:#586e75>// Store the banner
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        s.Banner = message
-</span></span><span style=display:flex><span>        <span style=color:#586e75>// Return nil because we want the connection to move forward
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        <span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>
+</span></span><span style=display:flex><span>        <span style=color:#586e75>// Store the banner</span>
+</span></span><span style=display:flex><span>        s.Banner = message
+</span></span><span style=display:flex><span>        <span style=color:#586e75>// Return nil because we want the connection to move forward</span>
+</span></span><span style=display:flex><span>        <span style=color:#719e07>return</span> <span style=color:#cb4b16>nil</span>
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>We store the banner message and return <code>nil</code>. Any other return value will terminate the connection.</p><p><a name=step-4-clientconfighostkeycallback></a></p><h3 id=step-4-clientconfighostkeycallback>Step 4: ClientConfig.HostKeyCallback
 <a class=header-link href=#step-4-clientconfighostkeycallback><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>This callback starts the server verification chain. It needs a function with <a href=https://godoc.org/golang.org/x/crypto/ssh#HostKeyCallback target=_blank rel="noreferrer noopener">ssh.HostKeyCallback</a> type:</p><ul><li><code>type HostKeyCallback func(hostname string, remote net.Addr, key PublicKey) error</code></li></ul><p>The package actually suggests <a href=https://godoc.org/golang.org/x/crypto/ssh#CertChecker.CheckHostKey target=_blank rel="noreferrer noopener">(*CertChecker) CheckHostKey</a> (we looked at its source code earlier). Looking inside <code>ClientConfig</code>, you can see I am passing it like this:</p><ul><li><code>HostKeyCallback: certCheck.CheckHostKey,</code></li></ul><p>This is where everything clicks. We created a <code>certCheck</code> and set its callback functions. Now we are passing it to be called when we connect to a server.</p><p><a name=other-ways-of-verifying-servers></a></p><h4 id=other-ways-of-verifying-servers>Other ways of verifying servers
@@ -638,12 +638,12 @@ golang.org/x/crypto/ssh.(*CertChecker).CheckHostKey-fm(0xc0420080c0, 0xc,
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">36
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">37
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">38
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// discover connects to ip:port and attempts to make an SSH connection.
-</span></span></span><span style=display:flex><span><span style=color:#586e75>// If successful, some SSH properties will be populated (most importantly isSSH
-</span></span></span><span style=display:flex><span><span style=color:#586e75>// and isAlive).
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>func</span> (s <span style=color:#719e07>*</span>SSHServer) <span style=color:#268bd2>discover</span>() {
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Release waitgroup after returning
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>defer</span> discoveryWG.<span style=color:#268bd2>Done</span>()
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// discover connects to ip:port and attempts to make an SSH connection.</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// If successful, some SSH properties will be populated (most importantly isSSH</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>// and isAlive).</span>
+</span></span><span style=display:flex><span><span style=color:#268bd2>func</span> (s <span style=color:#719e07>*</span>SSHServer) <span style=color:#268bd2>discover</span>() {
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Release waitgroup after returning</span>
+</span></span><span style=display:flex><span>    <span style=color:#719e07>defer</span> discoveryWG.<span style=color:#268bd2>Done</span>()
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#719e07>defer</span> logSSH.<span style=color:#268bd2>Println</span>(<span style=color:#2aa198>&#34;finished connecting to&#34;</span>, s.Address)
 </span></span><span style=display:flex><span>
@@ -653,28 +653,28 @@ golang.org/x/crypto/ssh.(*CertChecker).CheckHostKey-fm(0xc0420080c0, 0xc,
 </span></span><span style=display:flex><span>        HostKeyFallback: <span style=color:#268bd2>hostCallback</span>(s),
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Create SSH config
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    config <span style=color:#719e07>:=</span> <span style=color:#719e07>&amp;</span>ssh.ClientConfig{
-</span></span><span style=display:flex><span>        <span style=color:#586e75>// Test username and password
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        User: TestUser,
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Create SSH config</span>
+</span></span><span style=display:flex><span>    config <span style=color:#719e07>:=</span> <span style=color:#719e07>&amp;</span>ssh.ClientConfig{
+</span></span><span style=display:flex><span>        <span style=color:#586e75>// Test username and password</span>
+</span></span><span style=display:flex><span>        User: TestUser,
 </span></span><span style=display:flex><span>        Auth: []ssh.AuthMethod{
 </span></span><span style=display:flex><span>            ssh.<span style=color:#268bd2>Password</span>(TestPassword),
 </span></span><span style=display:flex><span>        },
 </span></span><span style=display:flex><span>        HostKeyCallback: certCheck.CheckHostKey,
 </span></span><span style=display:flex><span>        BannerCallback:  <span style=color:#268bd2>bannerCallback</span>(s),
-</span></span><span style=display:flex><span>        Timeout:         Timeout, <span style=color:#586e75>// timeout
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    }
+</span></span><span style=display:flex><span>        Timeout:         Timeout, <span style=color:#586e75>// timeout</span>
+</span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    logSSH.<span style=color:#268bd2>Println</span>(<span style=color:#2aa198>&#34;starting SSH connection to &#34;</span>, s.Address)
 </span></span><span style=display:flex><span>    sshConn, err <span style=color:#719e07>:=</span> ssh.<span style=color:#268bd2>Dial</span>(<span style=color:#2aa198>&#34;tcp&#34;</span>, s.Address, config)
 </span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> err <span style=color:#719e07>!=</span> <span style=color:#cb4b16>nil</span> {
-</span></span><span style=display:flex><span>        <span style=color:#586e75>// If error contains &#34;unable to authenticate&#34;, there&#39;s something there
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        logSSH.<span style=color:#268bd2>Println</span>(<span style=color:#2aa198>&#34;error &#34;</span>, err)
+</span></span><span style=display:flex><span>        <span style=color:#586e75>// If error contains &#34;unable to authenticate&#34;, there&#39;s something there</span>
+</span></span><span style=display:flex><span>        logSSH.<span style=color:#268bd2>Println</span>(<span style=color:#2aa198>&#34;error &#34;</span>, err)
 </span></span><span style=display:flex><span>        <span style=color:#719e07>return</span>
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#586e75>// Close connection if we succeed (almost never happens)
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    sshConn.<span style=color:#268bd2>Close</span>()
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Close connection if we succeed (almost never happens)</span>
+</span></span><span style=display:flex><span>    sshConn.<span style=color:#268bd2>Close</span>()
 </span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>First we defer releasing the waitgroup and the log message. This waitgroup will be explained later. In short, it's here to ensure that all <code>discover</code> goroutines are finished before starting the next stage.</p><p>Next are <code>CertCheck</code> and <code>ClientConfig</code>. We have already seen them. And finally we are connecting with <code>ssh.Dial</code>.</p><p><a name=goroutines-and-syncwaitgroups></a></p><h4 id=goroutines-and-syncwaitgroups>Goroutines and sync.WaitGroups
 <a class=header-link href=#goroutines-and-syncwaitgroups><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h4><p>Each connection is done in its own goroutine. This means, we have to wait for these to complete before processing the results. We use <code>sync.WaitGroups</code>. For a longer version please read <a href=https://github.com/parsiya/Hacking-with-Go/blob/master/content/02.6.md#synching-goroutines target=_blank rel="noreferrer noopener">Hacking with Go - 02.6 - Syncing goroutines</a>. But a tl;dr description is:</p><ol><li>Every time a goroutine is started, we add one to the waitgroup (note we need to do this in the calling function, not inside the goroutine).</li><li>When the goroutine returns we subtract one (the <code>defer discoveryWG.Done()</code> in <code>discover</code>).</li><li>Wait in main for all goroutines to finish with <code>discoveryWG.Wait()</code>. This will block the program until they all return.</li></ol><figure class=code><figcaption><span>Syncing goroutines</span></figcaption><div class=codewrapper><pre tabindex=0><code>for _, v := range servers {
     // Before each goroutine add 1 to waitgroup
@@ -691,9 +691,9 @@ discoveryWG.Wait()</code></pre></div></figure><p><a name=ssh-harvester-in-action
 <time>Dec 29, 2017</time>
 <span class=categories>Tags:
 <a class=category href=https://parsiya.net/tags/golang>Golang</a> <a class=category href=https://parsiya.net/tags/ssh>SSH</a></span></p><p class=meta><a class="basic-alignment left" href=https://parsiya.net/blog/2017-12-19-windows-xp-32-bit-sp3-virtual-machines/ title="Windows XP 32-bit SP3 Virtual Machines">Windows XP 32-bit SP3 Virtual Machines</a>
-<a class="basic-alignment right" href=https://parsiya.net/blog/2018-01-19-decoding-large-base64-files-with-go/ title="Decoding Large Base64 Files with Go">Decoding Large Base64 Files with Go</a></p><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></footer></article></div><aside class="sidebar thirds"><section class="first odd"><h1>Who am I?</h1><p><p>I am Parsia, an application security engineer.</p><p>I write about application security, cryptography, static analysis, and
+<a class="basic-alignment right" href=https://parsiya.net/blog/2018-01-19-decoding-large-base64-files-with-go/ title="Decoding Large Base64 Files with Go">Decoding Large Base64 Files with Go</a></p><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></footer></article></div><aside class="sidebar thirds"><section class="first odd"><h1>Who am I?</h1><p><p>I am Parsia, a security engineer at Microsoft.</p><p>I write about application security, cryptography, static analysis, and
 (of course) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="me noopener noreferrer" href=https://infosec.exchange/@parsiya title=https://infosec.exchange/@parsiya><i class="fa fa-mastodon fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
-<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/static-analysis/ title="Static Analysis">Static Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/blockchain/ title="Blockchain (lol)">Blockchain (lol)</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title="WinAppDbg (use Frida instead)">WinAppDbg (use Frida instead)</a></li><li><a href=https://awsome.pw title='AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability'>AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2024 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/static-analysis/ title="Static Analysis">Static Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/blockchain/ title="Blockchain (lol)">Blockchain (lol)</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title="WinAppDbg (use Frida instead)">WinAppDbg (use Frida instead)</a></li><li><a href=https://awsome.pw title='AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability'>AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2025 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.</p></footer></body></html>

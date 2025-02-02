@@ -1,5 +1,5 @@
 <!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>A Hands-On Intro to Semgrep's Autofix</title>
-<link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.134.3"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2021-10-25-a-hands-on-intro-to-semgreps-autofix/11-go-httponly-1.png"><meta name=twitter:title content="A Hands-On Intro to Semgrep's Autofix"><meta name=twitter:description content="Semgrep's experimental autofix feature can automagically
+<link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.143.0"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2021-10-25-a-hands-on-intro-to-semgreps-autofix/11-go-httponly-1.png"><meta name=twitter:title content="A Hands-On Intro to Semgrep's Autofix"><meta name=twitter:description content="Semgrep's experimental autofix feature can automagically
 modify vulnerable code. A few things can be fixed like this but it's worth
 exploring. This post is an introduction to creating fixes for your Semgrep
 rules.
@@ -147,7 +147,7 @@ or use the CLI.</p><pre tabindex=0><code>semgrep -c httponly-pracitce-2.yaml htt
 </span></span><span style=display:flex><span>      - <span style=color:#268bd2>pattern</span>: $RESPONSE.addCookie($COOKIE);
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>fix</span>: |<span style=color:#2aa198>
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>      $COOKIE.setHttpOnly(true);
-</span></span></span><span style=display:flex><span><span style=color:#2aa198>      $RESPONSE.addCookie($COOKIE);</span>      
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>      $RESPONSE.addCookie($COOKIE);</span>
 </span></span></code></pre></div><p>The fix works but it's not aligned properly.</p><span class=caption-wrapper><img class=caption src=03-httponly-2.png title="httponly-pracitce-2 fix" alt="httponly-pracitce-2 fix">
 <span class=caption-text>httponly-pracitce-2 fix</span></span><p>This is not an issue in Java but we can fix this with <code>fix-regex</code>.</p><h2 id=fix-regex>fix-regex
 <a class=header-link href=#fix-regex><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p><code>fix</code> is great for simple replacements (e.g., <code>badFunc</code> to <code>goodFunc</code>). But
@@ -197,7 +197,7 @@ supported metavariable replacement like <code>fix</code> the rule would look lik
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>regex</span>: (\s*)(.*)
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>replacement</span>: |<span style=color:#2aa198>
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>    \1$COOKIE.setHttpOnly(true);
-</span></span></span><span style=display:flex><span><span style=color:#2aa198>    \1\2</span>    
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>    \1\2</span>
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>count</span>: <span style=color:#2aa198>1</span>
 </span></span></code></pre></div><p>This is not implemented, yet. See
 <a href=https://semgrep.dev/s/parsiya:java-httponly-fix-regex-practice-2 target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:java-httponly-fix-regex-practice-2</a>.</p><span class=caption-wrapper><img class=caption src=07-httponly-fix-regex-4.png title="Metavariable in replacement" alt="Metavariable in replacement">
@@ -219,7 +219,7 @@ capture whatever comes after <code>addCookie(</code> and before <code>)</code>.<
 </span></span><span style=display:flex><span>      <span style=color:#268bd2>regex</span>: (\s*)(.*addCookie\((.*)\).*)
 </span></span><span style=display:flex><span>      <span style=color:#268bd2>replacement</span>: |<span style=color:#2aa198>
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>        \1\3.setHttpOnly(true);
-</span></span></span><span style=display:flex><span><span style=color:#2aa198>        \1\2</span>        
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>        \1\2</span>
 </span></span><span style=display:flex><span>      <span style=color:#268bd2>count</span>: <span style=color:#2aa198>1</span>
 </span></span></code></pre></div><span class=caption-wrapper><img class=caption src=08-httponly-fix-regex-final.png title="Correct fix with fix-regex" alt="Correct fix with fix-regex">
 <span class=caption-text>Correct fix with fix-regex</span></span><p>Playground link
@@ -235,7 +235,7 @@ with <code>html/template</code>. To test this theory, add a <code>fix</code> sec
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>message</span>: Match found.
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>severity</span>: WARNING
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>pattern</span>: |<span style=color:#2aa198>
-</span></span></span><span style=display:flex><span><span style=color:#2aa198>    import &#34;text/template&#34;</span>    
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>    import &#34;text/template&#34;</span>
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>languages</span>:
 </span></span><span style=display:flex><span>    - go
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>fix</span>: import &#34;html/template&#34;
@@ -251,7 +251,7 @@ good habit to include it anyways.</p><div class=highlight><pre tabindex=0 style=
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>message</span>: Match found.
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>severity</span>: WARNING
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>pattern</span>: |<span style=color:#2aa198>
-</span></span></span><span style=display:flex><span><span style=color:#2aa198>    import &#34;text/template&#34;</span>    
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>    import &#34;text/template&#34;</span>
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>languages</span>:
 </span></span><span style=display:flex><span>    - go
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>fix-regex</span>:
@@ -272,11 +272,11 @@ attribute. The original rule from the repo is at
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>            ...,
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>            HttpOnly: true,
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>            ...,
-</span></span></span><span style=display:flex><span><span style=color:#2aa198>          }</span>          
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          }</span>
 </span></span><span style=display:flex><span>      - <span style=color:#268bd2>pattern</span>: |<span style=color:#2aa198>
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>          http.Cookie{
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>            ...,
-</span></span></span><span style=display:flex><span><span style=color:#2aa198>          }</span>          
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          }</span>
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>message</span>: Match found
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>fix-regex</span>:
 </span></span><span style=display:flex><span>      <span style=color:#268bd2>regex</span>: (HttpOnly\s*:\s+)false
@@ -301,17 +301,17 @@ new rule to only catch if there is no mention of <code>HttpOnly</code>.</p><div 
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>            ...,
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>            HttpOnly: ...,
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>            ...,
-</span></span></span><span style=display:flex><span><span style=color:#2aa198>          }</span>          
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          }</span>
 </span></span><span style=display:flex><span>      - <span style=color:#268bd2>pattern</span>: |<span style=color:#2aa198>
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>          http.Cookie{
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>            ...,
-</span></span></span><span style=display:flex><span><span style=color:#2aa198>          }</span>          
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          }</span>
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>message</span>: Match found
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>fix-regex</span>:
 </span></span><span style=display:flex><span>      <span style=color:#268bd2>regex</span>: (?s)(\s+)(.*)
 </span></span><span style=display:flex><span>      <span style=color:#268bd2>replacement</span>: |<span style=color:#2aa198>
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>        \1\2
-</span></span></span><span style=display:flex><span><span style=color:#2aa198>        \1    HttpOnly: true,</span>        
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>        \1    HttpOnly: true,</span>
 </span></span><span style=display:flex><span>      <span style=color:#268bd2>count</span>: <span style=color:#2aa198>1</span>
 </span></span></code></pre></div><p>Playground link
 <a href=https://semgrep.dev/s/parsiya:go-cookie-missing-httponly-1 target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:go-cookie-missing-httponly-1</a>.</p><span class=caption-wrapper><img class=caption src=11-go-httponly-1.png title="Fix with the new rule" alt="Fix with the new rule">
@@ -335,18 +335,18 @@ should be similar.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;b
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>            ...,
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>            HttpOnly: ...,
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>            ...,
-</span></span></span><span style=display:flex><span><span style=color:#2aa198>          }</span>          
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          }</span>
 </span></span><span style=display:flex><span>      - <span style=color:#268bd2>pattern</span>: |<span style=color:#2aa198>
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>          http.Cookie{
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>            ...,
-</span></span></span><span style=display:flex><span><span style=color:#2aa198>          }</span>          
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>          }</span>
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>message</span>: Match found
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>fix-regex</span>:
 </span></span><span style=display:flex><span>      <span style=color:#268bd2>regex</span>: (?s)(\s+)(.*)
 </span></span><span style=display:flex><span>      <span style=color:#268bd2>replacement</span>: |<span style=color:#2aa198>
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>        \1// Match found by cookie-missing-httponly-comment.
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>        \1// HttpOnly must be set to true here.
-</span></span></span><span style=display:flex><span><span style=color:#2aa198>        \1\2</span>        
+</span></span></span><span style=display:flex><span><span style=color:#2aa198>        \1\2</span>
 </span></span><span style=display:flex><span>      <span style=color:#268bd2>count</span>: <span style=color:#2aa198>1</span>
 </span></span></code></pre></div><p>Playground link <a href=https://semgrep.dev/s/parsiya:go-comment target=_blank rel="noreferrer noopener">https://semgrep.dev/s/parsiya:go-comment</a>.</p><span class=caption-wrapper><img class=caption src=12-go-comment.png title="Comment added to the code" alt="Comment added to the code">
 <span class=caption-text>Comment added to the code</span></span><h1 id=what-did-we-learn-here-today>What Did We Learn Here Today?
@@ -354,9 +354,9 @@ should be similar.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;b
 examples. Go through the [semgrep-rules] repo on GitHub and see if you can add
 fixes for new rules or optimize/correct existing ones.</p></div><footer><p class=meta><span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
 <time>Oct 25, 2021</time></span></p><p class=meta><a class="basic-alignment left" href=https://parsiya.net/blog/2021-10-11-modify-gitlab-repositories-from-the-ci-pipeline/ title="Modify GitLab Repositories from the CI Pipeline">Modify GitLab Repositories from the CI Pipeline</a>
-<a class="basic-alignment right" href=https://parsiya.net/blog/2021-12-20-rce-in-visual-studio-codes-remote-wsl-for-fun-and-negative-profit/ title="RCE in Visual Studio Code's Remote WSL for Fun and Negative Profit">RCE in Visual Studio Code's Remote WSL for Fun and Negative Profit</a></p><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></footer></article></div><aside class="sidebar thirds"><section class="first odd"><h1>Who am I?</h1><p><p>I am Parsia, an application security engineer.</p><p>I write about application security, cryptography, static analysis, and
+<a class="basic-alignment right" href=https://parsiya.net/blog/2021-12-20-rce-in-visual-studio-codes-remote-wsl-for-fun-and-negative-profit/ title="RCE in Visual Studio Code's Remote WSL for Fun and Negative Profit">RCE in Visual Studio Code's Remote WSL for Fun and Negative Profit</a></p><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></footer></article></div><aside class="sidebar thirds"><section class="first odd"><h1>Who am I?</h1><p><p>I am Parsia, a security engineer at Microsoft.</p><p>I write about application security, cryptography, static analysis, and
 (of course) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="me noopener noreferrer" href=https://infosec.exchange/@parsiya title=https://infosec.exchange/@parsiya><i class="fa fa-mastodon fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
-<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/static-analysis/ title="Static Analysis">Static Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/blockchain/ title="Blockchain (lol)">Blockchain (lol)</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title="WinAppDbg (use Frida instead)">WinAppDbg (use Frida instead)</a></li><li><a href=https://awsome.pw title='AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability'>AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2024 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/static-analysis/ title="Static Analysis">Static Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/blockchain/ title="Blockchain (lol)">Blockchain (lol)</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title="WinAppDbg (use Frida instead)">WinAppDbg (use Frida instead)</a></li><li><a href=https://awsome.pw title='AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability'>AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2025 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.</p></footer></body></html>
