@@ -377,6 +377,12 @@ the internet run the server with just the port so the server will listen on
 `0.0.0.0` which is obviously not good (unless you want to debug from a remote
 machine).
 
+**Update from 2025 (lol):** These days I do most of my development in WSL, but
+Burp is running on Windows. Use the IP of the Windows machine instead of
+`localhost`. Generally, this is the IP assigned by your router/Wi-Fi modem,
+e.g., `10.0.0.111`. This is not your external IP address as seen by the
+internet. Say what you want about Java, but everything else just works.
+
 Next, we have to run Burp's jar file with the following parameter. Burp's jar
 file is at this path in a default installation:
 
@@ -425,7 +431,7 @@ into it and save:
             "type": "java",
             "name": "BurpExtension",
             "request": "attach",
-            "hostName": "localhost",
+            "hostName": "localhost", // Change this if you're using a different IP
             "port": 8000 // Change this if you had set a different debug port.
         }
     ]
@@ -434,6 +440,7 @@ into it and save:
 
 The file is very simple. The only important options are the `hostName` and
 `port` which should point to the debug port specified above (`localhost:8000`).
+If you used a different address:port, make sure to use them here.
 
 Start debugging again. Windows Firewall dialog might pop-up. If it does and you
 are not debugging a remote machine, press cancel. If the debugger times out

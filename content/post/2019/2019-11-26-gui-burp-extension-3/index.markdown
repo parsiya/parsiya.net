@@ -30,9 +30,9 @@ version. It's pretty neat.
 
 # See Error Messages in Spawned Frames/Dialogs
 When creating new JFrames or JDialogs, you might not get the crash or error
-message in Burp. I am not sure why (probably has something to do with either
-Swing threads [swing is not thread safe] or because stdout/stderr is not
-defined).
+message in Burp. I am not sure why, probably has something to do with either
+Swing threads (swing is not thread safe) or because stdout/stderr is not
+defined.
 
 For example, I would create a new dialog/frame and spawning it would not do
 anything or print any error messages to console. It was pretty hard to figure

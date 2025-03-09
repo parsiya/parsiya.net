@@ -41,11 +41,12 @@ modified from a NetBeans generated GUI:
 This is something I want to explore later. But to be able to translate the code
 and do modifications, I needed to figure out how things work internally.
 
-In my blog post [Cryptography in Python Burp Extensions]
-({{< relref "post/2018/2018-12-24-encryption-python-burp-extension/index.markdown#using-jython">}}
-"Cryptography in Python Burp Extensions"), I started using Jython classes in my
-Burp extensions and realized I can do the same with Swing (which is what
-everyone does).
+In my blog post
+{{< xref path="/post/2018/2018-12-24-encryption-python-burp-extension/"
+    text="Cryptography in Python Burp Extensions"
+    anchor="using-jython" >}},
+I started using Jython classes in my Burp extensions and realized I can do the
+same with Swing (which is what everyone does).
 
 I am documenting what I learned first for my future-self and then for everyone
 else who wants to take the same path.
@@ -187,7 +188,7 @@ framework for creating Python Burp extensions:
 
 * http://burpextensions.blogspot.com/2012/08/adding-gui-features-to-extension.html
 
-{{< imgcap title="Reference screenshot" src="04.png" >}}
+{{< imgcap title="Reference screenshot" src="04.jpg" >}}
 
 To create the left-right split (and also the top-down), we can use a `JSplitPane`.
 
