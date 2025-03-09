@@ -1,5 +1,5 @@
 <!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Developing and Debugging Java Burp Extensions with Visual Studio Code</title>
-<link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.143.0"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2019-12-02-developing-and-debugging-java-burp-extensions-with-visual-studio-code/03-intellicode.png"><meta name=twitter:title content="Developing and Debugging Java Burp Extensions with Visual Studio Code"><meta name=twitter:description content="A few days ago, I released the Bug Diaries
+<link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.145.0"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2019-12-02-developing-and-debugging-java-burp-extensions-with-visual-studio-code/03-intellicode.png"><meta name=twitter:title content="Developing and Debugging Java Burp Extensions with Visual Studio Code"><meta name=twitter:description content="A few days ago, I released the Bug Diaries
 Burp extension. It's a Burp extension that aims to mimic Burp issues for the
 community (free) version. For reasons, I decided to rewrite it in Java. This is
 the first part of my series on what I learned switching to Java.
@@ -270,7 +270,11 @@ burp.StartBurp.main()"</li></ul></li></ul><p>The VS Code Java extension pack com
 run Burp with this command-line option:</p><ul><li><code>-agentlib:jdwp=transport=dt_socket,address=localhost:8000,server=y,suspend=n</code></li></ul><p>This will run the debug server at <code>localhost:8000</code>. Note that most examples on
 the internet run the server with just the port so the server will listen on
 <code>0.0.0.0</code> which is obviously not good (unless you want to debug from a remote
-machine).</p><p>Next, we have to run Burp's jar file with the following parameter. Burp's jar
+machine).</p><p><strong>Update from 2025 (lol):</strong> These days I do most of my development in WSL, but
+Burp is running on Windows. Use the IP of the Windows machine instead of
+<code>localhost</code>. Generally, this is the IP assigned by your router/Wi-Fi modem,
+e.g., <code>10.0.0.111</code>. This is not your external IP address as seen by the
+internet. Say what you want about Java, but everything else just works.</p><p>Next, we have to run Burp's jar file with the following parameter. Burp's jar
 file is at this path in a default installation:</p><ul><li><code>C:\Program Files\BurpSuiteCommunity\burpsuite_community.jar</code></li></ul><p>The complete command:</p><pre tabindex=0><code>java -agentlib:jdwp=transport=dt_socket,address=localhost:8000,server=y,suspend=n
     -jar &#34;C:\Program Files\BurpSuiteCommunity\burpsuite_community.jar&#34;
 </code></pre><ul><li><strong>Hint</strong>: Use this as a shortcut so you can always debug Burp in your
@@ -304,12 +308,13 @@ into it and save:</p><figure class=code><figcaption><span>launch.json</span></fi
 </span></span><span style=display:flex><span>            <span style=color:#268bd2>&#34;type&#34;</span>: <span style=color:#2aa198>&#34;java&#34;</span>,
 </span></span><span style=display:flex><span>            <span style=color:#268bd2>&#34;name&#34;</span>: <span style=color:#2aa198>&#34;BurpExtension&#34;</span>,
 </span></span><span style=display:flex><span>            <span style=color:#268bd2>&#34;request&#34;</span>: <span style=color:#2aa198>&#34;attach&#34;</span>,
-</span></span><span style=display:flex><span>            <span style=color:#268bd2>&#34;hostName&#34;</span>: <span style=color:#2aa198>&#34;localhost&#34;</span>,
-</span></span><span style=display:flex><span>            <span style=color:#268bd2>&#34;port&#34;</span>: <span style=color:#2aa198>8000</span> <span style=color:#586e75>// Change this if you had set a different debug port.
+</span></span><span style=display:flex><span>            <span style=color:#268bd2>&#34;hostName&#34;</span>: <span style=color:#2aa198>&#34;localhost&#34;</span>, <span style=color:#586e75>// Change this if you&#39;re using a different IP
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>            <span style=color:#268bd2>&#34;port&#34;</span>: <span style=color:#2aa198>8000</span> <span style=color:#586e75>// Change this if you had set a different debug port.
 </span></span></span><span style=display:flex><span><span style=color:#586e75></span>        }
 </span></span><span style=display:flex><span>    ]
 </span></span><span style=display:flex><span>}</span></span></code></pre></td></tr></table></div></div></div></figure><p>The file is very simple. The only important options are the <code>hostName</code> and
-<code>port</code> which should point to the debug port specified above (<code>localhost:8000</code>).</p><p>Start debugging again. Windows Firewall dialog might pop-up. If it does and you
+<code>port</code> which should point to the debug port specified above (<code>localhost:8000</code>).
+If you used a different address:port, make sure to use them here.</p><p>Start debugging again. Windows Firewall dialog might pop-up. If it does and you
 are not debugging a remote machine, press cancel. If the debugger times out
 while the firewall dialog is active, debug again (<code>F5</code>).</p><p>After the debugger is attached, reload the extension with <code>Ctrl+Right-Click</code>
 on the checkbox in the Extender tab and see the debugger break.</p><span class=caption-wrapper><img class=caption src=08-debugging.png title="Achievement unlocked: Debugging in VS Code" alt="Achievement unlocked: Debugging in VS Code">
