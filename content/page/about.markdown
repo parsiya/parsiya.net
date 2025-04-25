@@ -7,8 +7,7 @@ comments: false
 type: about
 ---
 
-I am Parsia, I try to do application security most days. I am currently taking a
-sabbatical and doing some contract work.
+I am Parsia, I try to do security most days.
 
 **2024-Present**: Senior Offensive Security Engineer at Microsoft. Despite my
 title, I mostly do application security.
