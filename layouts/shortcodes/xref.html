@@ -1,5 +1,5 @@
-<!-- Author: Parsia Hakimian https://github.com/parsiya/Hugo-Shortcodes -->
-<!-- relref helper for my blog
+{{- /* Author: Parsia Hakimian https://github.com/parsiya/Hugo-Shortcodes */ -}}
+{{- /* relref helper for my blog
 
     Note: This adds text to the input params to create a relref link for my
     blog. You might need to modify it to make it work for you.
@@ -11,9 +11,9 @@
     the title. I.e., .Site.BaseURL/$relreflink.
     title: Optional. Mouse tooltip when you hover over the link or the link or
     the "title" attribute for the link.
--->
+*/ -}}
 
-<!-- support for both named and positional arguments. -->
+{{- /* support for both named and positional arguments. */ -}}
 
 {{ $path := "" }}
 {{ $anchor := "" }}
@@ -21,52 +21,52 @@
 {{ $title := "" }}
 
 {{ if .IsNamedParams }}
-  <!-- named version -->
+  {{- /* named version */ -}}
   {{ $path = .Get "path" }}
   {{ $anchor = .Get "anchor" }}
   {{ $text = .Get "text" }}
   {{ $title = .Get "title" }}
 {{ else }}
-  <!-- positional version -->
+  {{- /* positional version */ -}}
   {{ $path = .Get 0 }}
   {{ $text = .Get 1 }}
   {{ $title = .Get 2 }}
   {{ $anchor = .Get 3 }}
 {{ end }}
 
-<!-- remove "/" from beginning and ending from post's path (if any).
-    Now, we don't care if we have included them in the params or not. -->
+{{- /* remove "/" from beginning and ending from post's path (if any).
+    Now, we don't care if we have included them in the params or not. */ -}}
 {{ $path := trim $path "/" }}
 
-<!-- supporting older posts that do not use page bundle
+{{- /* supporting older posts that do not use page bundle
     Check if the post ends with .md or .markdown, if so, do not add `/index.markdown`
-    to the end. -->
+    to the end. */ -}}
 
 {{ if not (or (strings.HasSuffix $path ".markdown") (strings.HasSuffix $path ".md") ) }}
-  <!-- add "/index.markdown" to the end -->
+  {{- /* add "/index.markdown" to the end */ -}}
   {{ $path = print $path "/index.markdown" }}
 {{ end }}
 
-<!-- check if anchor exists, if so add # to the beginning and concat with path -->
+{{- /* check if anchor exists, if so add # to the beginning and concat with path */ -}}
 {{ if ne $anchor "" }}
-  <!-- trim # from the beginning (if any) so we do not need to worry if it's
-  already there -->
+  {{- /* trim # from the beginning (if any) so we do not need to worry if it's
+  already there */ -}}
   {{ $path = print $path "#" (trim $anchor "#") }}
 {{ end }}
 
-<!-- now pass it to the relref function -->
+{{- /* now pass it to the relref function */ -}}
 {{ $relreflink := relref . $path }}
 
-<!-- if text does not exist, use {{.Site.BaseURL}}{{$relreflink}} as text -->
+{{- /* if text does not exist, use {{.Site.BaseURL}}{{$relreflink}} as text */ -}}
 {{ if eq $text "" }}
   {{ $text = print .Site.BaseURL $relreflink }}
 {{ end }}
 
-<!-- if title does not exist, it will be text -->
+{{- /* if title does not exist, it will be text */ -}}
 {{ if eq $title "" }}
   {{ $title = $text }}
 {{ end }}
 
-<!-- the final link should look like this -->
-<!-- <a href="path-from-relref" title="title" rel="nofollow" target="_blank">text</a> -->
+{{- /* the final link should look like this */ -}}
+{{- /* <a href="path-from-relref" title="title" rel="nofollow" target="_blank">text</a> */ -}}
 <a href="{{ $relreflink }}" title="{{ $title }}" rel="nofollow" target="_blank">{{ $text }}</a>

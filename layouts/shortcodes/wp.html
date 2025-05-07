@@ -14,28 +14,28 @@
 
 {{ else }}
   {{ $.Scratch.Set "wp_tag" (.Get 0) }}
-  <!-- if all three attributes are provided -->
-  <!-- { { < wp VIC_Cipher "VIC Cipher" fr >}} -->
-  <!-- { { < wp VIC_Cipher "" fr >}} -->
+  {{- /* if all three attributes are provided */ -}}
+  {{- /* { { < wp VIC_Cipher "VIC Cipher" fr >}} */ -}}
+  {{- /* { { < wp VIC_Cipher "" fr >}} */ -}}
   {{ if len .Params | eq 3 }}
     {{ $.Scratch.Set "wp_lang" (.Get 2) }}
-    <!-- if title is empty (2nd example) -->
+    {{- /* if title is empty (2nd example) */ -}}
     {{ if len (.Get 1) | eq 0 }}
-      <!-- removing the underscore and converting it to space should be done here -->
+      {{- /* removing the underscore and converting it to space should be done here */ -}}
       {{ $.Scratch.Set "wp_title" (.Get 0) }}
     {{ else }}
       {{ $.Scratch.Set "wp_title" (.Get 1) }}
     {{ end }}
   {{ end }}
 
-  <!-- if only two attributes are provided -->
-  <!-- { { < wp VIC_Cipher fr >}} -->
-  <!-- { { < wp VIC_Cipher "VIC Cipher" >}} -->
+  {{- /* if only two attributes are provided */ -}}
+  {{- /* { { < wp VIC_Cipher fr >}} */ -}}
+  {{- /* { { < wp VIC_Cipher "VIC Cipher" >}} */ -}}
   {{ if len .Params | eq 2 }}
-    <!-- here I assume that if the length of the parameter is 2 then it's language otherwise title -->
+    {{- /* here I assume that if the length of the parameter is 2 then it's language otherwise title */ -}}
     {{ if len (.Get 1) | eq 2 }}
       {{ $.Scratch.Set "wp_lang" (.Get 1) }}
-      <!-- removing the underscore and converting it to space should be done here -->
+      {{- /* removing the underscore and converting it to space should be done here */ -}}
       {{ $.Scratch.Set "wp_title" (.Get 0) }}
     {{ else }}
       {{ $.Scratch.Set "wp_lang" "en" }}
@@ -45,7 +45,7 @@
 
   {{ if len .Params | eq 1 }}
     {{ $.Scratch.Set "wp_lang" "en" }}
-    <!-- removing the underscore and converting it to space should be done here -->
+    {{- /* removing the underscore and converting it to space should be done here */ -}}
     {{ $.Scratch.Set "wp_title" (.Get 0) }}
   {{ end }}
 {{ end }}
