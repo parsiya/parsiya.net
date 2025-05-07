@@ -1,5 +1,5 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Attack Surface Analysis - Part 2 - Custom Protocol Handlers</title>
-<link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.145.0"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2021-03-17-attack-surface-analysis-part-2-custom-protocol-handlers/03-gwd-poc.png"><meta name=twitter:title content="Attack Surface Analysis - Part 2 - Custom Protocol Handlers"><meta name=twitter:description content="Custom protocol handlers are an obscure attack surface. They allow us to convert
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Attack Surface Analysis - Part 2 - Custom Protocol Handlers</title><link rel=stylesheet href=/css/hugo-octopress.css>
+<link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.147.2"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2021-03-17-attack-surface-analysis-part-2-custom-protocol-handlers/03-gwd-poc.png"><meta name=twitter:title content="Attack Surface Analysis - Part 2 - Custom Protocol Handlers"><meta name=twitter:description content="Custom protocol handlers are an obscure attack surface. They allow us to convert
 local attacks into remote ones and are an alternative way to
 
 
@@ -7,44 +7,12 @@ local attacks into remote ones and are an alternative way to
 
 
 
-
-
-
-
-
-  
-  
   
   
   
 
 
-
-
-
-
-
-
   
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
 jump the browser sandbox without 0days).
 Similar to the first part of this series
 
@@ -53,44 +21,12 @@ Similar to the first part of this series
 
 
 
-
-
-
-
-
-  
-  
   
   
   
 
 
-
-
-
-
-
-
   
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
 A Novel Way to Bypass Executable Signature Checks with Electron
 I will analyze this attack surface and discuss a few interesting public bugs. I
 wanted to discuss two of my undisclosed bugs but the post is already too long.
@@ -492,8 +428,7 @@ oldie but a goodie.</li><li><a href=https://web.archive.org/web/20200525025338/h
 <a href=https://twitter.com/jupenur target=_blank rel="noreferrer noopener">Juho Nurminen</a>.<ul><li>Update 2024: Old link was dead, replaced with a new link.</li></ul></li></ul><h1 id=acknowledgements>Acknowledgements
 <a class=header-link href=#acknowledgements><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Special thanks to everyone who publishes their bugs so we can learn and
 specially these great folks who also reviewed my explanation of their bugs and
-gave me feedback (in alphabetical order):</p><ul><li><a href=https://twitter.com/b1ack0wl target=_blank rel="noreferrer noopener">@b1ack0wl</a></li><li><a href=https://twitter.com/cyku_tw target=_blank rel="noreferrer noopener">@Cyku</a></li><li><a href=https://twitter.com/jeffssh target=_blank rel="noreferrer noopener">@jeffssh</a></li><li><a href=https://twitter.com/zer0pwn target=_blank rel="noreferrer noopener">@zer0pwn</a></li></ul></div><footer><p class=meta><span class="byline author vcard">Posted by <span class=fn>Parsia</span></span>
-<time>Mar 17, 2021</time></span></p><p class=meta><a class="basic-alignment left" href=https://parsiya.net/blog/2021-02-17-automagically-deploying-websites-with-custom-domains-to-github-pages/ title="Automagically Deploying Websites with Custom Domains to GitHub Pages">Automagically Deploying Websites with Custom Domains to GitHub Pages</a>
+gave me feedback (in alphabetical order):</p><ul><li><a href=https://twitter.com/b1ack0wl target=_blank rel="noreferrer noopener">@b1ack0wl</a></li><li><a href=https://twitter.com/cyku_tw target=_blank rel="noreferrer noopener">@Cyku</a></li><li><a href=https://twitter.com/jeffssh target=_blank rel="noreferrer noopener">@jeffssh</a></li><li><a href=https://twitter.com/zer0pwn target=_blank rel="noreferrer noopener">@zer0pwn</a></li></ul></div><footer><p class=meta><span class="byline author vcard">Posted by <span class=fn>Parsia</span></span><time>Mar 17, 2021</time></span></p><p class=meta><a class="basic-alignment left" href=https://parsiya.net/blog/2021-02-17-automagically-deploying-websites-with-custom-domains-to-github-pages/ title="Automagically Deploying Websites with Custom Domains to GitHub Pages">Automagically Deploying Websites with Custom Domains to GitHub Pages</a>
 <a class="basic-alignment right" href=https://parsiya.net/blog/2021-04-30-testing-extensions-in-chromium-browsers-nordpass/ title="Testing Extensions in Chromium Browsers - Nordpass">Testing Extensions in Chromium Browsers - Nordpass</a></p><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//parsiya.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></footer></article></div><aside class="sidebar thirds"><section class="first odd"><h1>Who am I?</h1><p><p>I am Parsia, a security engineer at Microsoft.</p><p>I write about application security, cryptography, static analysis, and
 (of course) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="me noopener noreferrer" href=https://infosec.exchange/@parsiya title=https://infosec.exchange/@parsiya><i class="fa fa-mastodon fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
