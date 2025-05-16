@@ -90,7 +90,7 @@ So The Automator most likely:
 I was the second person. I worked long hours and almost burned out. People with
 family and obligations cannot do this and let's be honest, no one should.
 
-**Even the mythical Russian build engineer had this problem.** \\
+**Even the mythical Russian build engineer had this problem.** \
 The myth started in [bash.im][bash.im]. Read the translation at [jitbit][jitbit].
 It's about this legendary Russian build engineer who had [scripts][hacker-scripts]
 for everything. For example, one:
@@ -98,7 +98,7 @@ for everything. For example, one:
 > sends a text message "late at work" to his wife (apparently). [...]
 > The job fires if there are active SSH-sessions on the server after 9pm with his login.
 
-Seems like even automation legends overwork. Our ideal person is someone who has
+Seems like even automation legends overworks. Our ideal person is someone who has
 automated his excuses for working long hours. SAD!
 
 ## But Automation Gives You Time
