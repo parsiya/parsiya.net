@@ -6,7 +6,7 @@
         {
             "label": "start-hugo-server",
             "type": "shell",
-            "command": "hugo server -v --navigateToChanged", // if the default VS Code terminal on Windows is cmd, use `wsl.exe hugo serve -vw`
+            "command": "hugo server --renderToMemory --navigateToChanged", // if the default VS Code terminal on Windows is cmd, use `wsl.exe hugo serve -vw`
             "isBackground": true    // this is a watch process that keeps running
         },
         {
