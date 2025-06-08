@@ -26,7 +26,7 @@ security research, mainly static analysis and Rust. See
 **2019-2022**: Senior Security Engineer at [Electronic Arts][ea-security]. I
 worked on many internal and external product (mostly videogames) and services.
 Check my [Moby Games][moby] page for public game credits and a 
-[Realistic video of me hacking videogames at work][game-testers-youtube].
+[realistic video of me hacking videogames at work][game-testers-youtube].
 
 [ea-security]: https://www.ea.com/security
 [game-testers-youtube]: https://www.youtube.com/watch?v=BRWvfMLl4ho
@@ -37,7 +37,7 @@ Check my [Moby Games][moby] page for public game credits and a
 
 [sig-website]: https://www.synopsys.com/software-integrity.html
 
-**Major Presentations**
+### Major Presentations
 
 * DEF CON 26 Main Track: Tineola Taking a Bite Out of Enterprise Blockchain
     * https://www.youtube.com/watch?v=xKYIde5jh_8
@@ -45,7 +45,7 @@ Check my [Moby Games][moby] page for public game credits and a
 * DEF CON 28 Appsec Village: localghost: Escaping Browser Sandbox Without 0-Days
     * https://www.youtube.com/watch?v=Cgl51ZcACLg&t=90
 
-**Who is Hackerman?**
+### Who is Hackerman?
 
 *Hackerman* is a character from the movie [Kung Fury][kungfury-youtube]. He is
 the greatest hacker of all time and can hack people through time. He also hacks
@@ -61,14 +61,14 @@ with a Nintendo Power Glove like me.
 
 {{< imgcap title="I actually have a working Nintendo Power Glove." src="/images/power.jpg" >}}
 
-**What is This Website?**
+### What is This Website?
 
 This website is my security research and notes. It doubles as my cheat sheet and
 knowledge base along with [parsiya.io](https://parsiya.io). I look up pages or
 send links to this website at least a few times every day. It's part of my
 brand. You don't wanna be the other guy from Wham!
 
-**What does "Don't be The Other Guy from Wham!" Mean?**
+### What does "Don't be The Other Guy from Wham!" Mean?
 
 [Wham!][wham-link] was a popular UK music duo. Most people remember one of its
 members, George Michael. No one remembers the other guy,
@@ -78,7 +78,7 @@ yourself (if you have the time). It's worth it.
 [wham-link]: https://en.wikipedia.org/wiki/Wham!
 [andrew-link]: https://www.google.com/search?q=andrew+ridgeley
 
-**Goals in Progress:**
+### Goals in Progress
 
 - **Bug bounties**: I started the bug bounty game really late and mostly only
   work the occasional Windows desktop application.
@@ -99,7 +99,7 @@ yourself (if you have the time). It's worth it.
 
 [psnow]: https://hackerone.com/reports/873614
 
-**Done and Dusted:**
+### Done and Dusted
 
 - Enterprise blockchain and [Hyperledger Fabric](https://www.hyperledger.org/projects/fabric) security:
     - **DEF CON 26 video**: https://www.youtube.com/watch?v=xKYIde5jh_8
@@ -107,7 +107,7 @@ yourself (if you have the time). It's worth it.
     - Tineola the tool: https://github.com/tineola/tineola
     - Random posts as I learned: [https://parsiya.net/categories/blockchain/](/categories/blockchain/ "https://parsiya.net/categories/blockchain/")
 
-**Gone to The Dogs:**
+### Gone to The Dogs
 
 - In-memory fuzzing via binary instrumentation (aka traversing arbitrary
   assembly blobs over and over and over).
