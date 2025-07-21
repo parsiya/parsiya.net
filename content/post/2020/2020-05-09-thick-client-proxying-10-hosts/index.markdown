@@ -10,6 +10,7 @@ categories:
 - Burp
 aliases:
 - "/blog/2020-05-09-thick-client-proxing-part-10-the-hosts-file/"
+- "/blog/2020-05-09-thick-client-proxing-part-10-hosts-file/"
 ---
 
 Welcome to the 10th installment of
