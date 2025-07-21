@@ -9,6 +9,8 @@ categories:
 - .NET Framework
 tags:
 - .NET
+aliases:
+- "/blog/2017-10-07-thick-client-proxying-part-7-net-applications"
 ---
 
 .NET applications use a configuration file to read some settings. It's an XML

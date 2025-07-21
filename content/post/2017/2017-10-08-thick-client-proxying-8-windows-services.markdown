@@ -13,6 +13,7 @@ tags:
 - netsh
 aliases:
 - "/blog/2017-10-08-thick-client-proxying---part-8---notes-on-proxying-windows-services/"
+- "/blog/2017-10-08-thick-client-proxying-part-8-proxying-windows-services/"
 ---
 
 These are my notes about proxying Windows services. Being run from a different account (usually LocalSystem).
