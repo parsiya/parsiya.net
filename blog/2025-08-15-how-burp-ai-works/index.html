@@ -1,0 +1,438 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>How Burp AI Works</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.148.2"><meta name=twitter:card content="summary"><meta name=twitter:title content="How Burp AI Works"><meta name=twitter:description content="This is a quick peek inside Burp AI. I'll show how to proxy its requests, what
+actually happens when you trigger a feature. This knowledge allows us to
+redirect Burp AI to your own AI instance. As far as I know, this is not publicly
+documented.
+I covered a shorter version in my DEF CON 33 Bug Bounty Village talk
+The Year of the Bounty Desktop: Bugs from Binaries. See the
+extended slides (pages 14–22) (placeholder for video)."><meta name=twitter:domain content="parsiya.net"><meta name=twitter:creator content="@CryptoGangsta"></head><body><header role=banner><hgroup><h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation><fieldset class=mobile-nav><select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select></fieldset><ul class=main-navigation><li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription><a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a></ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer"><fieldset role=search><input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/></fieldset></form></nav><div id=main><div id=content><div><article class=hentry role=article><header><p class=meta>Aug 15, 2025
+- 15 minute read - <a class=label href=https://parsiya.net/categories/def-con/>DEF CON </a><a class=label href=https://parsiya.net/categories/burp/>Burp</a></p><h1 class=entry-title>How Burp AI Works</h1></header><div class=entry-content><nav id=TableOfContents><ul><li><a href=#quick-start>Quick Start</a></li><li><a href=#quick-facts>Quick Facts</a></li><li><a href=#motivation>Motivation</a></li><li><a href=#proxying-burp>Proxying Burp</a><ul><li><a href=#checking-the-logs>Checking the Logs</a></li><li><a href=#upstream-proxy>Upstream Proxy</a></li><li><a href=#jre-cacerts-file>JRE cacerts File</a></li></ul></li><li><a href=#whats-inside-burp-ai>What's Inside Burp AI</a><ul><li><a href=#explore-issue>Explore Issue</a></li><li><a href=#explain-this-context-menu-item>'Explain This' Context Menu Item</a></li><li><a href=#ai-recorded-login>AI Recorded Login</a></li></ul></li><li><a href=#what-is-this-useful-for>What is This Useful For?</a><ul><li><a href=#suggestion-to-portswigger>Suggestion to PortSwigger</a></li></ul></li><li><a href=#other-solutions>Other Solutions</a><ul><li><a href=#other-java-proxy-settings>Other Java Proxy Settings</a></li><li><a href=#hooking>Hooking</a></li></ul></li></ul></nav><p>This is a quick peek inside Burp AI. I'll show how to proxy its requests, what
+actually happens when you trigger a feature. This knowledge allows us to
+redirect Burp AI to your own AI instance. As far as I know, this is not publicly
+documented.</p><p>I covered a shorter version in my DEF CON 33 Bug Bounty Village talk
+<code>The Year of the Bounty Desktop: Bugs from Binaries</code>. See the
+<a href=https://github.com/parsiya/Presentations/blob/main/defcon-33-bugs-binaries/defcon-33-bugs-binaries-all-slides.pdf target=_blank rel="noreferrer noopener">extended slides (pages 14–22)</a> (placeholder for video).</p><h1 id=quick-start>Quick Start
+<a class=header-link href=#quick-start><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><ol><li>Run two Burp instances.</li><li>In the first (Burp client), set the upstream proxy to <code>localhost:9000</code>.</li><li>In the second (Burp server), create a listener on port <code>9000</code>.</li><li>Add the Burp CA to the JRE <code>cacerts</code>.</li><li>Use AI in Burp client; watch results in Burp server.</li></ol><h1 id=quick-facts>Quick Facts
+<a class=header-link href=#quick-facts><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><ol><li>AI is off by default (props to PortSwigger).</li><li>All AI traffic goes to <code>ai.portswigger.net</code>. Block it to disable Burp AI.</li><li>This is also mentioned in the documentation, but I wanted to confirm.</li><li>Requests/responses are JSON.</li><li>Burp had "agentic behavior" pre‑hype. E.g., AI can ask Repeater or the login
+recorder to act.</li></ol><h1 id=motivation>Motivation
+<a class=header-link href=#motivation><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>I wanted to see how Burp AI works internally: where traffic goes and what is
+sent. A big Burp AI flaw (to me) is the lack of a configurable endpoint. I trust
+PortSwigger; I'm running their software. Still, I can't send internal data to
+an outside service.</p><h1 id=proxying-burp>Proxying Burp
+<a class=header-link href=#proxying-burp><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>I'll walk through what I tried. What worked, what didn't, and what I'd have
+tried next.</p><h2 id=checking-the-logs>Checking the Logs
+<a class=header-link href=#checking-the-logs><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Burp has a built-in Logger, so I started there. Only <em>some</em> Burp AI requests
+show up there. When I clicked <code>Explore Issue</code> for "Exploring Strict transport
+security not enforced on example.net" I saw only one AI request.</p><p>Here's how the issue looks in Burp after exploration:</p><span class=caption-wrapper><img class=caption src=01-explore-hsts.webp title="Exploring HSTS in example.net" alt="Exploring HSTS in example.net">
+<span class=caption-text>Exploring HSTS in example.net</span></span><p>And this is the only request Logger captured:</p><span class=caption-wrapper><img class=caption src=02.webp title="Only request captured in Logger" alt="Only request captured in Logger">
+<span class=caption-text>Only request captured in Logger</span></span><p>I've not investigated this, but Logger likely uses the same APIs extensions use,
+so an extension won't see everything either. Those APIs are:</p><ul><li>Legacy API: <a href=https://portswigger.net/burp/extender/api/burp/iburpextendercallbacks.html#registerHttpListener-burp.IHttpListener- target=_blank rel="noreferrer noopener">void registerHttpListener(IHttpListener listener)</a></li><li>Montoya API: <a href=https://portswigger.github.io/burp-extensions-montoya-api/javadoc/burp/api/montoya/http/Http.html#registerHttpHandler%28burp.api.montoya.http.handler.HttpHandler%29 target=_blank rel="noreferrer noopener">Registration registerHttpHandler(HttpHandler handler)</a></li></ul><h2 id=upstream-proxy>Upstream Proxy
+<a class=header-link href=#upstream-proxy><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Burp supports an upstream proxy, so we can intercept outbound traffic. It's
+"proxy‑aware" and sends the <code>CONNECT</code> request properly. For background, see my
+2016 post <a href=https://parsiya.net/blog/2016-07-28-thick-client-proxying-part-6-how-https-proxies-work/ target=_blank rel="noreferrer noopener">Thick Client Proxying - Part 6: How HTTP(s) Proxies Work</a>.</p><p>For more about proxying Burp (and other similar tools), read my
+<a href=https://parsiya.net/blog/2016-04-07-thick-client-proxying-part-4-burp-in-proxy-chains/ target=_blank rel="noreferrer noopener">Thick Client Proxying - Part 4: Burp in Proxy Chains</a> blog.</p><ol><li>Run two instances of Burp. Let's call them Burp client and server.</li><li>Set the Upstream Proxy for Burp client to <code>localhost:9000</code>.</li><li>Create a proxy listener in Burp server on port <code>9000</code>.</li></ol><span class=caption-wrapper><img class=caption src=03-upstream.webp title="Burp client and server setup" alt="Burp client and server setup">
+<span class=caption-text>Burp client and server setup</span></span><p>After wiring this up I clicked the purple magic icon (bottom right) to check my
+Burp balance. Surprisingly, it failed.</p><span class=caption-wrapper><img class=caption src=04-balance.webp title="Failed Burp balance check" alt="Failed Burp balance check">
+<span class=caption-text>Failed Burp balance check</span></span><p>I'd already added Burp's CA to the Windows certificate store. So what broke?</p><h2 id=jre-cacerts-file>JRE cacerts File
+<a class=header-link href=#jre-cacerts-file><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Burp is written in Java. The Windows version bundles a Java Runtime Environment
+(JRE). The executable wraps <code>java -jar ...</code> plus flags from <code>.vmoptions</code> files.</p><p>The JRE has its own certificate trust store at <code>JAVA_HOME/lib/security/cacerts</code>.
+On Windows it's located at:
+<code>%LocalAppData%/Programs/BurpSuitePro/jre/lib/security/cacerts</code>.</p><p>We can import the Burp CA with <code>keytool</code>. Keytool is conveniently bundled with
+JRE at <code>JAVA_HOME/bin/keytool</code>.</p><ol><li>Extract the Burp CA in DER format.</li><li>(Optional) cd into <code>.../jre/lib/security/</code> for convenience.</li><li>Run the following command. Adjust the paths as needed.</li></ol><pre tabindex=0><code>..\..\bin\keytool.exe -importcert -alias burp -keystore cacerts
+    -storepass changeit -file /path/to/burpca.crt
+</code></pre><p>Done. Now the balance request shows up in Burp server. GET to
+<code>https://ai.portswigger.net/burp/balance</code> with a base64 token in the
+<code>Portswigger-Burp-Ai-Token</code> header.</p><span class=caption-wrapper><img class=caption src=05-balance2.webp title="Burp balance check request" alt="Burp balance check request">
+<span class=caption-text>Burp balance check request</span></span><p>Token size is 864 bytes base64 and 648 bytes decoded. High entropy (7.61
+Shannon) so likely random/encrypted.</p><span class=caption-wrapper><img class=caption src=06-token.webp title="Entropy of the token in CyberChef" alt="Entropy of the token in CyberChef">
+<span class=caption-text>Entropy of the token in CyberChef</span></span><h1 id=whats-inside-burp-ai>What's Inside Burp AI
+<a class=header-link href=#whats-inside-burp-ai><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Burp has quite a few AI features. Let's look at some of them.</p><h2 id=explore-issue>Explore Issue
+<a class=header-link href=#explore-issue><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Each issue has an <code>Explore Issue</code> button. Here I use the HSTS finding on
+example.net.</p><span class=caption-wrapper><img class=caption src=07-explore-issue.webp title="The 'Explore HSTS' button" alt="The 'Explore HSTS' button">
+<span class=caption-text>The 'Explore HSTS' button</span></span><p>First request: POST to
+<code>https://ai.portswigger.net/ai/hakawai-explore-service/api/v1/start</code>. Values are
+replaced with <code>{{ }}</code> placeholders, but you can guess them.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>POST /ai/hakawai-explore-service/api/v<span style=color:#2aa198>1</span>/start HTTP/<span style=color:#2aa198>2</span>
+</span></span><span style=display:flex><span>Host: ai.portswigger.net
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;issue_definition&#34;</span>: {
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;name&#34;</span>: <span style=color:#2aa198>&#34;Strict transport security not enforced&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;type&#34;</span>: <span style=color:#2aa198>&#34;STRICT_TRANSPORT_SECURITY_NOT_ENFORCED&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;detail&#34;</span>: <span style=color:#cb4b16>null</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;background&#34;</span>: <span style=color:#2aa198>&#34;{{ description from PortSwigger KB}}&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;evidence&#34;</span>: [
+</span></span><span style=display:flex><span>      {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;type&#34;</span>: <span style=color:#2aa198>&#34;REQUEST_RESPONSE&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;request&#34;</span>: <span style=color:#2aa198>&#34;{{ request }}&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;response&#34;</span>: <span style=color:#2aa198>&#34;{{ response }}&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;request_highlights&#34;</span>: [],
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;response_highlights&#34;</span>: []
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>    ]
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>We see:</p><ol><li>Finding name and type (same).</li><li>Description from the Burp KB (description section of <a href=https://portswigger.net/kb/issues/01000300_strict-transport-security-not-enforced target=_blank rel="noreferrer noopener">this page</a>) as HTML.</li><li>Full originating request and response.</li></ol><p>We don't see any prompts. It's injected later by the Burp AI proxy. They are
+easy to guess.</p><p>The response instructs Burp to send a request. It looks like a Repeater action,
+but nothing appears there. This is the same request we saw in Logger earlier.</p><span class=caption-wrapper><img class=caption src=08-explore-resp.webp title="'Explore HSTS' response" alt="'Explore HSTS' response">
+<span class=caption-text>'Explore HSTS' response</span></span><p>Response structure:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;exploration_id&#34;</span>: <span style=color:#2aa198>&#34;{{ some guid }}&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;step_title&#34;</span>: <span style=color:#2aa198>&#34;Check for security headers and HTTPS redirect&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;step_action&#34;</span>: <span style=color:#2aa198>&#34;I&#39;m sending a basic GET request to examine the server&#39;s security headers and see if there&#39;s any HTTPS redirect mechanism in place. This will help us understand what security controls are missing and how we might exploit this weakness. Specifically, I&#39;m looking for:\n1. Absence of HSTS header\n2. Lack of automatic HTTPS redirect\n3. Any other security headers that might be present or missing\nThis is the most logical first step as it directly relates to the reported vulnerability and will help us understand the server&#39;s security posture.&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;tool_calls&#34;</span>: [
+</span></span><span style=display:flex><span>    {
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>&#34;toolu_01SDWeJPzMZptuCBFmb7uRtA&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;tool_name&#34;</span>: <span style=color:#2aa198>&#34;repeater&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;arguments&#34;</span>: {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;request&#34;</span>: <span style=color:#2aa198>&#34;GET / HTTP/1.1\nHost: example.net\nAccept-Language: en-US,en;q=0.9\nUpgrade-Insecure-Requests: 1\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7\nSec-Ch-Ua: \&#34;Not.A/Brand\&#34;;v=\&#34;99\&#34;, \&#34;Chromium\&#34;;v=\&#34;136\&#34;\nSec-Ch-Ua-Mobile: ?0\nSec-Ch-Ua-Platform: \&#34;Windows\&#34;\nSec-Fetch-Site: none\nSec-Fetch-Mode: navigate\nSec-Fetch-User: ?1\nSec-Fetch-Dest: document\nAccept-Encoding: gzip, deflate, br\nPriority: u=0, i\nConnection: keep-alive&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;learnings&#34;</span>: <span style=color:#2aa198>&#34;This is the first step, so there are no previous learnings to evaluate. However, from the initial evidence, we can see that the application responds to HTTP requests without enforcing HTTPS, which confirms the reported vulnerability.&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;progress&#34;</span>: <span style=color:#2aa198>&#34;This is the first step in our investigation. We&#39;ll start by examining the server&#39;s response headers to understand what security measures are in place and what might be missing.&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;knowledge&#34;</span>: <span style=color:#2aa198>&#34;From the initial response, we can see that the server supports HTTP/2 and offers alternative services including h3 (HTTP/3) and QUIC on port 443. The server appears to be a standard web server serving static content.&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;step_title&#34;</span>: <span style=color:#2aa198>&#34;Check for security headers and HTTPS redirect&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;step_action&#34;</span>: <span style=color:#2aa198>&#34;I&#39;m sending a basic GET request to examine the server&#39;s security headers and see if there&#39;s any HTTPS redirect mechanism in place. This will help us understand what security controls are missing and how we might exploit this weakness. Specifically, I&#39;m looking for:\n1. Absence of HSTS header\n2. Lack of automatic HTTPS redirect\n3. Any other security headers that might be present or missing\nThis is the most logical first step as it directly relates to the reported vulnerability and will help us understand the server&#39;s security posture.&#34;</span>
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  ]
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Next <code>/continue</code> request: includes the prior response, same GUID, adds
+<code>X-Forwarded-Proto: http</code>.</p><span class=caption-wrapper><img class=caption src=09-explore-req-2.webp title="'Explore HSTS' request #2" alt="'Explore HSTS' request #2">
+<span class=caption-text>'Explore HSTS' request #2</span></span><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>POST /ai/hakawai-explore-service/api/v<span style=color:#2aa198>1</span>/continue HTTP/<span style=color:#2aa198>2</span>
+</span></span><span style=display:flex><span>Host: ai.portswigger.net
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;exploration_id&#34;</span>: <span style=color:#2aa198>&#34;{{ same guid as before }}&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;tool_results&#34;</span>: [
+</span></span><span style=display:flex><span>    {
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;tool_id&#34;</span>: <span style=color:#2aa198>&#34;toolu_01SDWeJPzMZptuCBFmb7uRtA&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;result&#34;</span>: <span style=color:#2aa198>&#34;{{ response }}&#34;</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  ]
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>The response adds a description and the next action (send another request).</p><span class=caption-wrapper><img class=caption src=10-explore-resp-2.webp title="'Explore HSTS' response #2" alt="'Explore HSTS' response #2">
+<span class=caption-text>'Explore HSTS' response #2</span></span><p>Structure:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;exploration_id&#34;</span>: <span style=color:#2aa198>&#34;{{ same guid as before }}&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;step_title&#34;</span>: <span style=color:#2aa198>&#34;Test proxy header behavior&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;step_action&#34;</span>: <span style=color:#2aa198>&#34;From the previous response, we confirmed that the server:\n1. Lacks HSTS headers\n2. Doesn&#39;t force HTTPS redirects\n3. Has minimal security headers\n4. Serves content over HTTP/2 despite being accessed via HTTP\n\nI&#39;m adding the X-Forwarded-Proto header set to &#39;http&#39; to see if the server&#39;s behavior changes when it believes the request came through a proxy. This could reveal if there&#39;s any proxy-aware security logic that might help us understand how the server handles SSL/TLS decisions. This is important because many applications implement HTTPS enforcement at the proxy level, and understanding this behavior could reveal additional attack vectors.&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;tool_calls&#34;</span>: [
+</span></span><span style=display:flex><span>        {
+</span></span><span style=display:flex><span>            <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>&#34;toolu_01JRsZBtYYhoUsrYXasMkWTY&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#268bd2>&#34;tool_name&#34;</span>: <span style=color:#2aa198>&#34;repeater&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#268bd2>&#34;arguments&#34;</span>: {
+</span></span><span style=display:flex><span>                <span style=color:#268bd2>&#34;request&#34;</span>: <span style=color:#2aa198>&#34;{{ request}}&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#268bd2>&#34;learnings&#34;</span>: <span style=color:#2aa198>&#34;From the previous response, we confirmed that the server:\n1. Lacks HSTS headers\n2. Doesn&#39;t force HTTPS redirects\n3. Has minimal security headers\n4. Serves content over HTTP/2 despite being accessed via HTTP&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#268bd2>&#34;progress&#34;</span>: <span style=color:#2aa198>&#34;We&#39;re making progress in understanding the server&#39;s security configuration. Now we&#39;ll test if the server behaves differently when it thinks the request came through a proxy, which could reveal additional vectors for exploitation.&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#268bd2>&#34;knowledge&#34;</span>: <span style=color:#2aa198>&#34;The server is running a modern stack with HTTP/2 and HTTP/3 support, but lacks basic security headers. It also appears to be a static content server with no obvious signs of a complex application stack.&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#268bd2>&#34;step_title&#34;</span>: <span style=color:#2aa198>&#34;Test proxy header behavior&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#268bd2>&#34;step_action&#34;</span>: <span style=color:#2aa198>&#34;I&#39;m adding the X-Forwarded-Proto header set to &#39;http&#39; to see if the server&#39;s behavior changes when it believes the request came through a proxy. This could reveal if there&#39;s any proxy-aware security logic that might help us understand how the server handles SSL/TLS decisions. This is important because many applications implement HTTPS enforcement at the proxy level, and understanding this behavior could reveal additional attack vectors.&#34;</span>
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    ]
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Final <code>/continue</code> contains the previous response.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>POST /ai/hakawai-explore-service/api/v<span style=color:#2aa198>1</span>/continue HTTP/<span style=color:#2aa198>2</span>
+</span></span><span style=display:flex><span>Host: ai.portswigger.net
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;exploration_id&#34;</span>: <span style=color:#2aa198>&#34;{{ same guid as before }}&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;tool_results&#34;</span>: [
+</span></span><span style=display:flex><span>    {
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;tool_id&#34;</span>: <span style=color:#2aa198>&#34;toolu_01JRsZBtYYhoUsrYXasMkWTY&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;result&#34;</span>: <span style=color:#2aa198>&#34;{{ response }}&#34;</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  ]
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>That response ends the conversation.</p><span class=caption-wrapper><img class=caption src=11-explore-resp-3.webp title="'Explore HSTS' response #3" alt="'Explore HSTS' response #3">
+<span class=caption-text>'Explore HSTS' response #3</span></span><p>If you want to copy the structure:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;exploration_id&#34;</span>: <span style=color:#2aa198>&#34;{{ same guid as before }}&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;step_title&#34;</span>: <span style=color:#2aa198>&#34;Report findings on HTTPS enforcement vulnerability&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;step_action&#34;</span>: <span style=color:#2aa198>&#34;The server consistently serves content over HTTP without any security redirects or headers, regardless of the protocol or proxy headers used. This behavior persists even when explicitly indicating HTTP traffic through proxy headers.\n\nAfter confirming the lack of HTTPS enforcement through multiple test cases, including direct requests and proxy-aware testing, it&#39;s appropriate to report our findings. The vulnerability has been fully verified and its impact understood, making this the logical conclusion to our testing.&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;tool_calls&#34;</span>: [
+</span></span><span style=display:flex><span>    {
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>&#34;toolu_01FUxXnvkaDVNNK6NYDkMikj&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;tool_name&#34;</span>: <span style=color:#2aa198>&#34;reporter&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;arguments&#34;</span>: {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;report&#34;</span>: <span style=color:#2aa198>&#34;We have confirmed that the server accepts HTTP traffic without enforcing HTTPS, lacks HSTS headers, and does not implement any form of SSL/TLS redirect mechanism, even when accessed through a proxy. This vulnerability allows an attacker to perform SSL stripping attacks, potentially intercepting all traffic between users and the server, including any sensitive data or authentication credentials that may be transmitted.&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;learnings&#34;</span>: <span style=color:#2aa198>&#34;The server consistently serves content over HTTP without any security redirects or headers, regardless of the protocol or proxy headers used. This behavior persists even when explicitly indicating HTTP traffic through proxy headers.&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;progress&#34;</span>: <span style=color:#2aa198>&#34;We have thoroughly tested the server&#39;s behavior regarding HTTPS enforcement and confirmed the vulnerability. Further testing would not reveal additional information about this specific issue.&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;knowledge&#34;</span>: <span style=color:#2aa198>&#34;The server runs a modern stack with HTTP/2 and HTTP/3 support (on port 443) but lacks fundamental security headers and HTTPS enforcement. It appears to be primarily serving static content.&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;step_title&#34;</span>: <span style=color:#2aa198>&#34;Report findings on HTTPS enforcement vulnerability&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;step_action&#34;</span>: <span style=color:#2aa198>&#34;After confirming the lack of HTTPS enforcement through multiple test cases, including direct requests and proxy-aware testing, it&#39;s appropriate to report our findings. The vulnerability has been fully verified and its impact understood, making this the logical conclusion to our testing.&#34;</span>
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  ]
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Task view shows the summary, results, and the request/responses.</p><span class=caption-wrapper><img class=caption src=12-task-summary.webp title="'Explore HSTS' task summary" alt="'Explore HSTS' task summary">
+<span class=caption-text>'Explore HSTS' task summary</span></span><h2 id=explain-this-context-menu-item>'Explain This' Context Menu Item
+<a class=header-link href=#explain-this-context-menu-item><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>In Repeater (and elsewhere) highlight text and right‑click. Select <code>Explain This</code> (top of the context menu). Here I highlighted the full request to
+<code>example.net</code>.</p><span class=caption-wrapper><img class=caption src=13-explain-button.webp title="'Explain This' button" alt="'Explain This' button">
+<span class=caption-text>'Explain This' button</span></span><p>This results in a POST request to
+<code>https://ai.portswigger.net/ai/hakawai-explain-this/api/v1/explainthis</code>.</p><span class=caption-wrapper><img class=caption src=14-explain-req.webp title="'Explain This' request #1" alt="'Explain This' request #1">
+<span class=caption-text>'Explain This' request #1</span></span><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>POST /ai/hakawai-explain-this/api/v<span style=color:#2aa198>1</span>/explainthis HTTP/<span style=color:#2aa198>2</span>
+</span></span><span style=display:flex><span>Host: ai.portswigger.net
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;{{ request }}&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;context&#34;</span>: <span style=color:#2aa198>&#34;REQUEST_HEADERS&#34;</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Note the context. When I changed this request to POST and added some dummy
+values, the value of context changed to <code>REQUEST</code>.</p><p>The response just explains the issue.</p><span class=caption-wrapper><img class=caption src=15-explain-resp.webp title="'Explain This' response" alt="'Explain This' response">
+<span class=caption-text>'Explain This' response</span></span><p>Response structure:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;content&#34;</span>: <span style=color:#2aa198>&#34;{{ removed }}&#34;</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>And this appears in the sidebar.</p><span class=caption-wrapper><img class=caption src=16-explain-sidebar.webp title="'Explain This' results in the side bar" alt="'Explain This' results in the side bar">
+<span class=caption-text>'Explain This' results in the side bar</span></span><h2 id=ai-recorded-login>AI Recorded Login
+<a class=header-link href=#ai-recorded-login><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>When scanning APIs Burp can record a login sequence with AI. Here I use
+<a href=https://google-gruyere.appspot.com/ target=_blank rel="noreferrer noopener">Google's Gruyere</a>, an intentionally vulnerable app.</p><p>First I created an instance and account <code>gru_user:gru_password</code>. Instance URL is
+<code>https://google-gruyere.appspot.com/[numbers]/</code>. Then I started a scan and
+chose AI recorded login.</p><span class=caption-wrapper><img class=caption src=17-ai-login-1.webp title="Recording a new login with AI" alt="Recording a new login with AI">
+<span class=caption-text>Recording a new login with AI</span></span><p>Supply URL, username, and password. I could speed it up by starting at the login
+page, but I wanted to see the discovery process.</p><span class=caption-wrapper><img class=caption src=18-ai-login-2.webp title="Info for AI recorded login" alt="Info for AI recorded login">
+<span class=caption-text>Info for AI recorded login</span></span><p>In the first step, Burp sends the following information to
+<code>https://ai.portswigger.net/ai/hakawai-recorded-login-generator/api/v1/start</code>
+in a POST request:</p><ul><li>URL</li><li>Title</li><li>Page text</li><li>An array of elements (links, inputs, buttons, etc.)</li><li>A screenshot of the page in base64</li></ul><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>POST /ai/hakawai-recorded-login-generator/api/v<span style=color:#2aa198>1</span>/start HTTP/<span style=color:#2aa198>2</span>
+</span></span><span style=display:flex><span>Host: ai.portswigger.net
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;page_description&#34;</span>: {
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;url&#34;</span>: <span style=color:#2aa198>&#34;https://google-gruyere.appspot.com/{{ gruyere-instance-id }}/&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;title&#34;</span>: <span style=color:#2aa198>&#34;Gruyere: Home&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;Home Sign in | Sign up Gruyere: [removed]&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;interactive_elements&#34;</span>: [
+</span></span><span style=display:flex><span>      {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>15</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;Home&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;attributes&#34;</span>: <span style=color:#2aa198>&#34;href=/{{ gruyere-instance-id }}/&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;input_value&#34;</span>: <span style=color:#cb4b16>null</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;accepts_input&#34;</span>: <span style=color:#cb4b16>false</span>
+</span></span><span style=display:flex><span>      },
+</span></span><span style=display:flex><span>      {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>18</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;Sign in&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;attributes&#34;</span>: <span style=color:#2aa198>&#34;href=/{{ gruyere-instance-id }}/login&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;input_value&#34;</span>: <span style=color:#cb4b16>null</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;accepts_input&#34;</span>: <span style=color:#cb4b16>false</span>
+</span></span><span style=display:flex><span>      }, <span style=color:#586e75>// removed the rest
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    ],
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;screenshot&#34;</span>: <span style=color:#2aa198>&#34;data:image/png;base64,{{removed screenshot data}}&#34;</span>
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>The response tells the recorder to click <code>Sign in</code>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;recorded_login_id&#34;</span>: <span style=color:#2aa198>&#34;{{ guid }}&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;tool_call&#34;</span>: {
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>&#34;toolu_01KLBGYsdH6JBvrcf6ircZkx&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;tool_name&#34;</span>: <span style=color:#2aa198>&#34;click_element&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;arguments&#34;</span>: {
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>18</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;reason&#34;</span>: <span style=color:#2aa198>&#34;Clicking the \&#34;Sign in\&#34; link to navigate to the login page since we need to log in with existing credentials&#34;</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>We've reached the login page. The next request has similar info about this page.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>POST /ai/hakawai-recorded-login-generator/api/v<span style=color:#2aa198>1</span>/continue HTTP/<span style=color:#2aa198>2</span>
+</span></span><span style=display:flex><span>Host: ai.portswigger.net
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;recorded_login_id&#34;</span>: <span style=color:#2aa198>&#34;{{ same guid }}&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;tool_result&#34;</span>: {
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;tool_id&#34;</span>: <span style=color:#2aa198>&#34;toolu_01KLBGYsdH6JBvrcf6ircZkx&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;result&#34;</span>: <span style=color:#cb4b16>true</span>
+</span></span><span style=display:flex><span>  },
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;page_description&#34;</span>: {
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;url&#34;</span>: <span style=color:#2aa198>&#34;https://google-gruyere.appspot.com/{{ gruyere-instance-id }}/login&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;title&#34;</span>: <span style=color:#2aa198>&#34;Gruyere: Login&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;Home Sign in | Sign up Gruyere: Login User name: Password: Login&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;interactive_elements&#34;</span>: [
+</span></span><span style=display:flex><span>      <span style=color:#586e75>// removed
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>      {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>160</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;attributes&#34;</span>: <span style=color:#2aa198>&#34;type=password&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;input_value&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;accepts_input&#34;</span>: <span style=color:#cb4b16>true</span>
+</span></span><span style=display:flex><span>      },
+</span></span><span style=display:flex><span>      {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>165</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;Login&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;attributes&#34;</span>: <span style=color:#2aa198>&#34;type=submit&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;input_value&#34;</span>: <span style=color:#2aa198>&#34;Login&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;accepts_input&#34;</span>: <span style=color:#cb4b16>true</span>
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>    ],
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;screenshot&#34;</span>: <span style=color:#2aa198>&#34;data:image/png;base64,{{ removed }}&#34;</span>
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Username and password are never sent to AI (another point to PortSwigger). The
+response from AI tells the recorder to enter the username.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;recorded_login_id&#34;</span>: <span style=color:#2aa198>&#34;{{ same guid }}&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;tool_call&#34;</span>: {
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>&#34;toolu_018auKHege7thfnHrVQSsb2f&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;tool_name&#34;</span>: <span style=color:#2aa198>&#34;input_text&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;arguments&#34;</span>: {
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>154</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;USERNAME_PLACEHOLDER&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;reason&#34;</span>: <span style=color:#2aa198>&#34;Entering username in the username field&#34;</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>After that, this request goes out.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>POST /ai/hakawai-recorded-login-generator/api/v<span style=color:#2aa198>1</span>/continue HTTP/<span style=color:#2aa198>2</span>
+</span></span><span style=display:flex><span>Host: ai.portswigger.net
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;recorded_login_id&#34;</span>: <span style=color:#2aa198>&#34;b416611a-16d5-492d-8a4f-7826774dfec3&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;tool_result&#34;</span>: {
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;tool_id&#34;</span>: <span style=color:#2aa198>&#34;toolu_018auKHege7thfnHrVQSsb2f&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;result&#34;</span>: <span style=color:#cb4b16>true</span>
+</span></span><span style=display:flex><span>  },
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;page_description&#34;</span>: {
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;url&#34;</span>: <span style=color:#2aa198>&#34;https://google-gruyere.appspot.com/{{ gruyere-instance-id }}/login&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;title&#34;</span>: <span style=color:#2aa198>&#34;Gruyere: Login&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;Home Sign in | Sign up Gruyere: Login User name: USERNAME_PLACEHOLDER Password: Login&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;interactive_elements&#34;</span>: [
+</span></span><span style=display:flex><span>      <span style=color:#586e75>// removed
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>      {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>154</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;USERNAME_PLACEHOLDER&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;attributes&#34;</span>: <span style=color:#2aa198>&#34;type=text&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;input_value&#34;</span>: <span style=color:#2aa198>&#34;USERNAME_PLACEHOLDER&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;accepts_input&#34;</span>: <span style=color:#cb4b16>true</span>
+</span></span><span style=display:flex><span>      },
+</span></span><span style=display:flex><span>      {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>160</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;attributes&#34;</span>: <span style=color:#2aa198>&#34;type=password&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;input_value&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;accepts_input&#34;</span>: <span style=color:#cb4b16>true</span>
+</span></span><span style=display:flex><span>      },
+</span></span><span style=display:flex><span>      {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>165</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;Login&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;attributes&#34;</span>: <span style=color:#2aa198>&#34;type=submit&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;input_value&#34;</span>: <span style=color:#2aa198>&#34;Login&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;accepts_input&#34;</span>: <span style=color:#cb4b16>true</span>
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>    ],
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;screenshot&#34;</span>: <span style=color:#2aa198>&#34;data:image/png;base64,{{ removed }}&#34;</span>
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>AI tells Burp to enter the password.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;recorded_login_id&#34;</span>: <span style=color:#2aa198>&#34;{{ same guid }}&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;tool_call&#34;</span>: {
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>&#34;tooluse_DDIbQfI0TiGlRbSCTIw67g&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;tool_name&#34;</span>: <span style=color:#2aa198>&#34;input_text&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;arguments&#34;</span>: {
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;reason&#34;</span>: <span style=color:#2aa198>&#34;Entering password in the password field&#34;</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>160</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;PASSWORD_PLACEHOLDER&#34;</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Next request shows the entered password.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>POST /ai/hakawai-recorded-login-generator/api/v<span style=color:#2aa198>1</span>/continue HTTP/<span style=color:#2aa198>2</span>
+</span></span><span style=display:flex><span>Host: ai.portswigger.net
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;recorded_login_id&#34;</span>: <span style=color:#2aa198>&#34;b416611a-16d5-492d-8a4f-7826774dfec3&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;tool_result&#34;</span>: {
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;tool_id&#34;</span>: <span style=color:#2aa198>&#34;tooluse_DDIbQfI0TiGlRbSCTIw67g&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;result&#34;</span>: <span style=color:#cb4b16>true</span>
+</span></span><span style=display:flex><span>  },
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;page_description&#34;</span>: {
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;url&#34;</span>: <span style=color:#2aa198>&#34;https://google-gruyere.appspot.com/{{ gruyere-instance-id }}/login&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;title&#34;</span>: <span style=color:#2aa198>&#34;Gruyere: Login&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;Home Sign in | Sign up Gruyere: Login User name: USERNAME_PLACEHOLDER Password: •••••••••••• Login&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;interactive_elements&#34;</span>: [
+</span></span><span style=display:flex><span>      <span style=color:#586e75>// removed
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>      {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>154</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;USERNAME_PLACEHOLDER&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;attributes&#34;</span>: <span style=color:#2aa198>&#34;type=text&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;input_value&#34;</span>: <span style=color:#2aa198>&#34;USERNAME_PLACEHOLDER&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;accepts_input&#34;</span>: <span style=color:#cb4b16>true</span>
+</span></span><span style=display:flex><span>      },
+</span></span><span style=display:flex><span>      {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>160</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;••••••••••••&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;attributes&#34;</span>: <span style=color:#2aa198>&#34;type=password&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;input_value&#34;</span>: <span style=color:#2aa198>&#34;PASSWORD_PLACEHOLDER&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;accepts_input&#34;</span>: <span style=color:#cb4b16>true</span>
+</span></span><span style=display:flex><span>      },
+</span></span><span style=display:flex><span>      {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>165</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;Login&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;attributes&#34;</span>: <span style=color:#2aa198>&#34;type=submit&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;input_value&#34;</span>: <span style=color:#2aa198>&#34;Login&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;accepts_input&#34;</span>: <span style=color:#cb4b16>true</span>
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>    ],
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;screenshot&#34;</span>: <span style=color:#2aa198>&#34;data:image/png;base64,{{ removed }}&#34;</span>
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Then AI tells Burp to click the login button.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;recorded_login_id&#34;</span>: <span style=color:#2aa198>&#34;b416611a-16d5-492d-8a4f-7826774dfec3&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;tool_call&#34;</span>: {
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>&#34;toolu_015P9EuahD1iuQR3ETzyU1q4&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;tool_name&#34;</span>: <span style=color:#2aa198>&#34;click_element&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;arguments&#34;</span>: {
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>165</span>,
+</span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;reason&#34;</span>: <span style=color:#2aa198>&#34;Clicking the Login button to submit the login form now that both username and password have been entered&#34;</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>After clicking login we reach the app and Burp reports back to AI.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;recorded_login_id&#34;</span>: <span style=color:#2aa198>&#34;b416611a-16d5-492d-8a4f-7826774dfec3&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;tool_result&#34;</span>: {
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;tool_id&#34;</span>: <span style=color:#2aa198>&#34;toolu_015P9EuahD1iuQR3ETzyU1q4&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;result&#34;</span>: <span style=color:#cb4b16>true</span>
+</span></span><span style=display:flex><span>  },
+</span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;page_description&#34;</span>: {
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;url&#34;</span>: <span style=color:#2aa198>&#34;https://google-gruyere.appspot.com/{{ gruyere-instance-id }}/login?uid=gru_user&amp;pw=gru_password&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;title&#34;</span>: <span style=color:#2aa198>&#34;Gruyere: Home&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;Home | My Snippets | New Snippet | Upload USERNAME_PLACEHOLDER &lt;USERNAME_PLACEHOLDER&gt; | Profile | Sign out Gruyere: Home Refresh Most recent snippets: Cheddar Mac Gruyere is the cheesiest application on the web. All snippets  Homepage Brie Brie is the queen of the cheeses!!! All snippets  Homepage&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;interactive_elements&#34;</span>: [
+</span></span><span style=display:flex><span>      <span style=color:#586e75>// removed the elements on the page
+</span></span></span><span style=display:flex><span><span style=color:#586e75></span>      {
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>230</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;Sign out&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;attributes&#34;</span>: <span style=color:#2aa198>&#34;href=/{{ gruyere-instance-id }}/logout&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;input_value&#34;</span>: <span style=color:#cb4b16>null</span>,
+</span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;accepts_input&#34;</span>: <span style=color:#cb4b16>false</span>
+</span></span><span style=display:flex><span>      },
+</span></span><span style=display:flex><span>    ],
+</span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;screenshot&#34;</span>: <span style=color:#2aa198>&#34;data:image/png;base64,{{ removed }}&#34;</span>
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>For some reason, AI never sends a response here and Burp cannot complete the
+login sequence. I tried multiple times and it always stops here.</p><p>Video capture below. I trimmed ~15 seconds between steps.</p><video controls>
+<source src=output.webm type=video/webm>Your browser does not support the video tag.</video><h1 id=what-is-this-useful-for>What is This Useful For?
+<a class=header-link href=#what-is-this-useful-for><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>You can build an extension to run on the 2nd instance (Burp server) and redirect
+AI traffic to your endpoint. Recreate the prompts (they're obvious) and ensure
+the responses are in the correct JSON format. Then you can run Burp AI flows
+with your own local or remote AI instance.</p><p>Extension developers can create a simple wrapper for AI calls and let users
+choose a custom instance or Burp AI. I vibecoded a helper library for this in
+~15 minutes.</p><h2 id=suggestion-to-portswigger>Suggestion to PortSwigger
+<a class=header-link href=#suggestion-to-portswigger><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Let users configure the AI endpoint and include the prompts. The OpenAI API
+(e.g., <code>chat/completions</code>) is the de facto standard so it should not require a
+lot of customization. You're not in the business of selling AI compute :)</p><h1 id=other-solutions>Other Solutions
+<a class=header-link href=#other-solutions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>This section lists failures and ideas I didn't get to try. I am documenting them
+because they might help you or me in the future.</p><h2 id=other-java-proxy-settings>Other Java Proxy Settings
+<a class=header-link href=#other-java-proxy-settings><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>In 2019 I (unsuccessfully) tried to disable the Burp 2.0 update nag and went
+down a similar rabbit hole. See
+<a href=https://parsiya.net/blog/2019-04-21-disabling-burps-update-screen-part-1-analysis-and-failures/#proxying-burp-with-burp target=_blank rel="noreferrer noopener">Disabling Burp's Update Screen - Part 1 - Analysis and Failures</a>.</p><p>Run Burp with these switches. Either add them to <code>BurpSuitePro.vmoptions</code> or
+pass manually:</p><pre tabindex=0><code>-Dhttp.proxyHost=127.0.0.1
+-Dhttp.proxyPort=9000
+-Dhttps.proxyHost=127.0.0.1
+-Dhttps.proxyPort=9000
+</code></pre><p>JVM also has proxy settings at <code>.../jre/conf/net.properties</code>. Set
+<code>java.net.useSystemProxies=true</code> to reuse system settings or define per‑
+protocol values:</p><pre tabindex=0><code>http.proxyHost=localhost
+http.proxyPort=9000
+https.proxyHost=localhost
+https.proxyPort=9000
+</code></pre><p>That blog also covers other hooking methods.</p><h2 id=hooking>Hooking
+<a class=header-link href=#hooking><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>I also considered runtime hooking. Remember old Echo Mirage (if you can find a
+clean copy)? <code>JavaJournal</code> by Jason Geffner is solid (I social engineered him
+into hiring me at some point). See "Java Journal & Pyresso: A Python-Based
+Framework for Debugging Java":</p><ul><li><a href=https://www.slideshare.net/CrowdStrike/java-journal-pyresso-a-pythonbased-framework-for-debugging-java target=_blank rel="noreferrer noopener">Slides</a></li><li><a href="https://www.youtube.com/watch?v=-CCjruYx6Y0" target=_blank rel="noreferrer noopener">Video from Oxa Recon 2016</a></li><li><a href=https://github.com/CrowdStrike/pyspresso target=_blank rel="noreferrer noopener">github.com/CrowdStrike/pyspresso</a></li></ul></div><footer><p class=meta><span class="byline author vcard">Posted by <span class=fn>Parsia</span></span><time>Aug 15, 2025</time></span></p><p class=meta><a class="basic-alignment left" href=https://parsiya.net/blog/kusto-mice-join-optimization/ title="Kusto-Mice: Optimizing Kusto joins">Kusto-Mice: Optimizing Kusto joins</a></p></footer></article></div><aside class="sidebar thirds"><section class="first odd"><h1>Who am I?</h1><p><p>I am Parsia, a security engineer at Microsoft.</p><p>I write about application security, cryptography, static analysis, and
+(of course) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more. Contact me via any of these ways.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="me noopener noreferrer" href=https://infosec.exchange/@parsiya title=https://infosec.exchange/@parsiya><i class="fa fa-mastodon fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/static-analysis/ title="Static Analysis">Static Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/blockchain/ title="Blockchain (lol)">Blockchain (lol)</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title="WinAppDbg (use Frida instead)">WinAppDbg (use Frida instead)</a></li><li><a href=https://awsome.pw title='AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability'>AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2025 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.</p></footer></body></html>
