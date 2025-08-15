@@ -39,11 +39,17 @@ Check my [Moby Games][moby] page for public game credits and a
 
 ### Major Presentations
 
-* DEF CON 26 Main Track: Tineola Taking a Bite Out of Enterprise Blockchain
+* [DEF CON 26 (2018) Main Track: Tineola Taking a Bite Out of Enterprise Blockchain][tineola]
     * https://www.youtube.com/watch?v=xKYIde5jh_8
-    * I guess I should add `DEF CON Speaker` to my LinkedIn title (lol).
-* DEF CON 28 Appsec Village: localghost: Escaping Browser Sandbox Without 0-Days
+* [DEF CON 28 (2020) Appsec Village: localghost: Escaping Browser Sandbox Without 0-Days][localghost]
     * https://www.youtube.com/watch?v=Cgl51ZcACLg&t=90
+* [DEF CON 33 (2025) Creator Stages: The Power(Point) Glove][glove]
+* [DEF CON 33 (2025) Bug Bounty Village: The Year of the Bounty Desktop: Bugs from Binaries][bb]
+
+[tineola]: https://github.com/parsiya/Presentations?tab=readme-ov-file#tineola-taking-a-bite-out-of-enterprise-blockchain
+[localghost]: https://github.com/parsiya/Presentations?tab=readme-ov-file#localghost-escaping-browser-sandbox-without-0-days
+[glove]: https://github.com/parsiya/Presentations?tab=readme-ov-file#the-powerpoint-glove
+[bb]: https://github.com/parsiya/Presentations?tab=readme-ov-file#the-year-of-the-bounty-desktop-bugs-from-binaries
 
 ### Who is Hackerman?
 
