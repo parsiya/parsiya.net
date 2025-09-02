@@ -3,7 +3,7 @@ title: "How Burp AI Works"
 date: 2025-08-15T00:10:43-07:00
 draft: false
 toc: true
-twitterImage: 
+twitterImage: 17-ai-login-1.webp
 aliases:
 - /blog/2025-burp-ai
 categories:
