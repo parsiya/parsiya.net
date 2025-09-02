@@ -1,19 +1,19 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Fuzzing on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/categories/fuzzing/</link><description>Recent content in Fuzzing on Hackerman's Hacking Tutorials</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Sat, 05 May 2018 18:01:09 -0400</lastBuildDate><atom:link href="https://parsiya.net/categories/fuzzing/index.xml" rel="self" type="application/rss+xml"/><item><title>Learning Go-Fuzz 2: goexif2</title><link>https://parsiya.net/blog/2018-05-05-learning-go-fuzz-2-goexif2/</link><pubDate>Sat, 05 May 2018 18:01:09 -0400</pubDate><guid>https://parsiya.net/blog/2018-05-05-learning-go-fuzz-2-goexif2/</guid><description>&lt;p>Previously on &lt;code>Learning Go-Fuzz&lt;/code>:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://parsiya.net/blog/2018-04-29-learning-go-fuzz-1-iprange/" title="Learning Go-Fuzz 1: iprange">&amp;quot;Learning Go-Fuzz 1: iprange&amp;quot;&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;p>This time I am looking at a different package. This is a package called &lt;code>goexif&lt;/code> at &lt;a href="https://github.com/rwcarlsen/goexif" target="_blank" rel="noreferrer noopener">https://github.com/rwcarlsen/goexif&lt;/a>. Being a file parser, it's a prime target for &lt;code>Go-Fuzz&lt;/code>. Unfortunately it has not been updated for a while. Instead, we will be looking at a fork at &lt;a href="https://github.com/xor-gate/goexif2" target="_blank" rel="noreferrer noopener">https://github.com/xor-gate/goexif2&lt;/a>.&lt;/p>
-&lt;p>Code and fuzzing artifacts are at:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://github.com/parsiya/Go-Security/tree/master/go-fuzz/goexif2" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Go-Security/tree/master/go-fuzz/goexif2&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;!-- Links in summary --></description></item><item><title>Learning Go-Fuzz 1: iprange</title><link>https://parsiya.net/blog/2018-04-29-learning-go-fuzz-1-iprange/</link><pubDate>Sun, 29 Apr 2018 19:25:10 -0400</pubDate><guid>https://parsiya.net/blog/2018-04-29-learning-go-fuzz-1-iprange/</guid><description>&lt;p>&lt;a href="https://github.com/dvyukov/go-fuzz" target="_blank" rel="noreferrer noopener">Go-Fuzz&lt;/a> is like AFL but for Go. If you have a Go package that parses some input, you might be able fuzz it with Go-Fuzz (terms and conditions apply). Not everything can be fuzzed very easily. For example Go-Fuzz does not like cycling imports, so if one of your sub-packages imports the main package then you are in trouble (I am looking at your &lt;a href="https://github.com/alecthomas/chroma" target="_blank" rel="noreferrer noopener">Chroma&lt;/a>).&lt;/p>
-&lt;p>The rest of the article will show how to use Go-Fuzz to fuzz a Go library named &lt;code>iprange&lt;/code> at:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://github.com/malfunkt/iprange" target="_blank" rel="noreferrer noopener">https://github.com/malfunkt/iprange&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;p>Code and fuzzing artifacts are at:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://github.com/parsiya/Go-Security/tree/master/go-fuzz/iprange" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Go-Security/tree/master/go-fuzz/iprange&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;!-- Summary Links --></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Fuzzing on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/categories/fuzzing/</link><description>Recent content in Fuzzing on Hackerman's Hacking Tutorials</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Sat, 05 May 2018 18:01:09 -0400</lastBuildDate><atom:link href="https://parsiya.net/categories/fuzzing/index.xml" rel="self" type="application/rss+xml"/><item><title>Learning Go-Fuzz 2: goexif2</title><link>https://parsiya.net/blog/2018-05-05-learning-go-fuzz-2-goexif2/</link><pubDate>Sat, 05 May 2018 18:01:09 -0400</pubDate><guid>https://parsiya.net/blog/2018-05-05-learning-go-fuzz-2-goexif2/</guid><description>&lt;p&gt;Previously on &lt;code&gt;Learning Go-Fuzz&lt;/code&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://parsiya.net/blog/2018-04-29-learning-go-fuzz-1-iprange/" title="Learning Go-Fuzz 1: iprange"&gt;&amp;quot;Learning Go-Fuzz 1: iprange&amp;quot;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This time I am looking at a different package. This is a package called &lt;code&gt;goexif&lt;/code&gt; at &lt;a href="https://github.com/rwcarlsen/goexif" target="_blank" rel="noreferrer noopener"&gt;https://github.com/rwcarlsen/goexif&lt;/a&gt;. Being a file parser, it's a prime target for &lt;code&gt;Go-Fuzz&lt;/code&gt;. Unfortunately it has not been updated for a while. Instead, we will be looking at a fork at &lt;a href="https://github.com/xor-gate/goexif2" target="_blank" rel="noreferrer noopener"&gt;https://github.com/xor-gate/goexif2&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Code and fuzzing artifacts are at:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/parsiya/Go-Security/tree/master/go-fuzz/goexif2" target="_blank" rel="noreferrer noopener"&gt;https://github.com/parsiya/Go-Security/tree/master/go-fuzz/goexif2&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!-- Links in summary --&gt;</description></item><item><title>Learning Go-Fuzz 1: iprange</title><link>https://parsiya.net/blog/2018-04-29-learning-go-fuzz-1-iprange/</link><pubDate>Sun, 29 Apr 2018 19:25:10 -0400</pubDate><guid>https://parsiya.net/blog/2018-04-29-learning-go-fuzz-1-iprange/</guid><description>&lt;p&gt;&lt;a href="https://github.com/dvyukov/go-fuzz" target="_blank" rel="noreferrer noopener"&gt;Go-Fuzz&lt;/a&gt; is like AFL but for Go. If you have a Go package that parses some input, you might be able fuzz it with Go-Fuzz (terms and conditions apply). Not everything can be fuzzed very easily. For example Go-Fuzz does not like cycling imports, so if one of your sub-packages imports the main package then you are in trouble (I am looking at your &lt;a href="https://github.com/alecthomas/chroma" target="_blank" rel="noreferrer noopener"&gt;Chroma&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;The rest of the article will show how to use Go-Fuzz to fuzz a Go library named &lt;code&gt;iprange&lt;/code&gt; at:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/malfunkt/iprange" target="_blank" rel="noreferrer noopener"&gt;https://github.com/malfunkt/iprange&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Code and fuzzing artifacts are at:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/parsiya/Go-Security/tree/master/go-fuzz/iprange" target="_blank" rel="noreferrer noopener"&gt;https://github.com/parsiya/Go-Security/tree/master/go-fuzz/iprange&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!-- Summary Links --&gt;</description></item></channel></rss>

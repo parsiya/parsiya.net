@@ -1,0 +1,961 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Kusto Detective Agency: Echoes of Deception - 0-8 Solves</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.149.0"><meta name=twitter:card content="summary"><meta name=twitter:title content="Kusto Detective Agency: Echoes of Deception - 0-8 Solves"><meta name=twitter:description content="Kusto is kinda important at my current employer and one of my work besties does
+SecOps. So, I've decided to learn more Kusto. Solves for the first eight tasks
+for Kusto Detective Agency challenge Echoes of Deception.
+
+It turns out Kusto is not just a better looking SQL, it does a lot more. E.g.,
+it can make a graph and find paths (yes, as I've just searched, T-SQL can also
+do this). It makes me wonder if we can do some esoteric data flow static
+analysis by converting the AST into rows of data and finding paths from sources
+to sinks (or am I reinventing CodeQL, again, lol 1)."><meta name=twitter:domain content="parsiya.net"><meta name=twitter:creator content="@CryptoGangsta"></head><body><header role=banner><hgroup><h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation><fieldset class=mobile-nav><select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select></fieldset><ul class=main-navigation><li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription><a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a></ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer"><fieldset role=search><input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/></fieldset></form></nav><div id=main><div id=content><div><article class=hentry role=article><header><p class=meta>Sep 1, 2025
+- 33 minute read - <a class=label href=https://parsiya.net/categories/kusto/>Kusto</a></p><h1 class=entry-title>Kusto Detective Agency: Echoes of Deception - 0-8 Solves</h1></header><div class=entry-content><nav id=TableOfContents><ul><li><a href=#typical-workflow>Typical Workflow</a><ul><li><a href=#using-ai>Using AI</a></li></ul></li><li><a href=#0-onboarding>0: Onboarding</a></li><li><a href=#case-1-to-bill-or-not-to-bill>Case 1: To bill or not to bill?</a></li><li><a href=#case-2-catch-the-phishermen>Case 2: Catch the Phishermen!</a></li><li><a href=#case-3-return-stolen-cars>Case 3: Return stolen cars!</a></li><li><a href=#case-4-triple-trouble>Case 4: Triple trouble!</a></li><li><a href=#case-5-blast-into-the-past>Case 5: Blast into the past</a></li><li><a href=#case-6-hack-this-rack>Case 6: Hack this rack!</a></li><li><a href=#case-7-mission-connect>Case 7: Mission 'Connect'</a></li><li><a href=#case-8-catchy-run>Case 8: Catchy Run</a></li></ul></nav><p>Kusto is kinda important at my current employer and one of my work besties does
+SecOps. So, I've decided to learn more Kusto. Solves for the first eight tasks
+for Kusto Detective Agency challenge Echoes of Deception.</p><p>It turns out Kusto is not just a better looking SQL, it does a lot more. E.g.,
+it can make a graph and find paths (yes, as I've just searched, T-SQL can also
+do this). It makes me wonder if we can do some esoteric data flow static
+analysis by converting the AST into rows of data and finding paths from sources
+to sinks (or am I reinventing CodeQL, again, lol <sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>).</p><p>There are a series of challenges named <a href=https://detective.kusto.io/ target=_blank rel="noreferrer noopener">Kusto Detective Agency</a> which are
+basically "find this flag in a bunch of logs with KQL." A few months ago, I was
+enthusiastic and started season 3 <code>Call of the Cyber Duty</code> in real time with
+almost zero Kusto background and did the first three before I realized, this is
+much harder than I imagined.</p><p>I started from season 1 to learn and do the challenges. Here are the first eight
+(or nine if you count onboarding) solves.</p><h1 id=typical-workflow>Typical Workflow
+<a class=header-link href=#typical-workflow><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Each challenge has a bunch of "training" material associated with it. These are
+Kusto functionalities and tricks that can be used to solve the challenge. I
+didn't notice them in my season 3 run.</p><p>Then I look at the tables. We can get the table columns and types with a query
+like this:</p><pre tabindex=0><code>TableName
+| getschema
+| project ColumnName, DataType
+</code></pre><p>And it will give us something like this:</p><pre tabindex=0><code>Timestamp	System.DateTime
+callsign	System.String
+lat	        System.Double
+lon	        System.Double
+</code></pre><p>Then I check the first 10 rows to see what the data looks like:</p><pre tabindex=0><code>TableName
+| take 10
+</code></pre><p>Then I try to figure out how to solve the challenge using the training material.</p><h2 id=using-ai>Using AI
+<a class=header-link href=#using-ai><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>AI (LLMs in this context) was kinda both good and bad here. It was great for
+syntax issues, AKA "I want to filter A and B, write a Kusto query for me", but
+not great for the actual solves. I usually added all the data, table schemas and
+other insights from training to a markdown file and asked different models in
+GitHub Copilot Chat to solve. It actually worked for the first 2-3 challenges,
+but not after.</p><p>I had the best results with Claude 4 and GPT-5. Both have a tendency to ya<sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup>
+and over complicate things even with extensive instructions. It was a fun
+experience to yank them often and try to herd AI into the correct solve path.</p><h1 id=0-onboarding>0: Onboarding
+<a class=header-link href=#0-onboarding><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>We need to find which detective has earned the most bounties.</p><pre tabindex=0><code>DetectiveCases
+| take 2
+</code></pre><p>We have five columns:</p><pre tabindex=0><code>Timestamp
+EventType
+DetectiveId
+CaseId
+Properties
+</code></pre><p>See different types of <code>EventType</code></p><pre tabindex=0><code>DetectiveCases
+| distinct EventType
+
+CaseUnsolved
+CaseAssigned
+CaseSolved
+CaseOpened
+</code></pre><p>If <code>CaseOpened</code>, <code>Properties</code> will have the bounty: <code>{"Bounty":3146}</code>.</p><p>We can extract bounties:</p><pre tabindex=0><code>let bounties = DetectiveCases
+| where EventType == &#34;CaseOpened&#34;
+| extend Bounty = tolong(Properties.Bounty)
+| project CaseId, Bounty;
+</code></pre><p>I wrote a query that added up all detective bounties using <code>CaseSolved</code> events.
+It was the wrong answer. I should have checked if the detective was assigned the
+case in a <code>CaseAssigned</code> event AND if they had a <code>CaseSolved</code> event for the same
+case ID. Apparently, you can solve a case get no bounty if you were not
+assigned the case.</p><p>We can extract assignments like this:</p><pre tabindex=0><code>let assignments = DetectiveCases
+| where EventType == &#34;CaseAssigned&#34;
+| project CaseId, AssignedDetectiveId = DetectiveId;
+</code></pre><p>Sum for the IDs that are the same for assigned and solved.</p><pre tabindex=0><code>let bounties = DetectiveCases
+| where EventType == &#34;CaseOpened&#34;
+| extend Bounty = tolong(Properties.Bounty)
+| project CaseId, Bounty;
+let assignments = DetectiveCases
+| where EventType == &#34;CaseAssigned&#34;
+| project CaseId, AssignedDetectiveId = DetectiveId;
+DetectiveCases
+| where EventType == &#34;CaseSolved&#34;
+| project CaseId, SolvedDetectiveId = DetectiveId
+| join kind=inner assignments on CaseId
+| where SolvedDetectiveId == AssignedDetectiveId
+| join kind=inner bounties on CaseId
+| summarize total = sum(Bounty) by SolvedDetectiveId
+| sort by total desc
+</code></pre><p>And the top three are:</p><pre tabindex=0><code>kvc61f0b891ee26195970a	874,699
+kvc12a22e9e9e65c1694f1	838,852
+kvc29d392ca965f09646f8	812,028
+</code></pre><p>Our answer is <code>kvc61f0b891ee26195970a</code>.</p><h1 id=case-1-to-bill-or-not-to-bill>Case 1: To bill or not to bill?
+<a class=header-link href=#case-1-to-bill-or-not-to-bill><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p><code>What is the total bills amount due in April?</code></p><p>Old SQL query to calculate bills:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span><span style=color:#719e07>SELECT</span> <span style=color:#719e07>SUM</span>(Consumed <span style=color:#719e07>*</span> Cost) <span style=color:#719e07>AS</span> TotalCost
+</span></span><span style=display:flex><span><span style=color:#719e07>FROM</span> Costs
+</span></span><span style=display:flex><span><span style=color:#719e07>JOIN</span> Consumption <span style=color:#719e07>ON</span> Costs.MeterType <span style=color:#719e07>=</span> Consumption.MeterType
+</span></span></code></pre></div><p>The <code>Costs</code> table has only two rows:</p><p>Cost columns:</p><pre tabindex=0><code>| MeterType   | Unit  | Cost     |
+| ----------- | ----- | -------- |
+| Water       | Liter | 0.001562 |
+| Electricity | kwH   | 0.3016   |
+</code></pre><p>The <code>Consumption</code> table has four columns:</p><ul><li><code>Timestamp</code></li><li><code>HouseholdId</code></li><li><code>MeterType</code></li><li><code>Consumed</code></li></ul><p>So:</p><ol><li>Timestamp should be in April.</li><li>Ignore HouseholdId because we want the total.</li><li>Each bill is Consumed * Cost based on MeterType.</li></ol><p>We only have April data so we don't need to check the Timestamp, but I did it
+anyways. <a href=https://learn.microsoft.com/en-us/kusto/query/monthofyear-function target=_blank rel="noreferrer noopener">getmonth</a> (also called <code>monthofyear</code>) is a fun function and
+<code>getmonth(Timestamp) == 4</code> checks if the timestamp's month is April.</p><pre tabindex=0><code>Consumption
+| where getmonth(Timestamp) == 4
+| summarize total_consumed = sum(Consumed) by MeterType
+| join kind=inner (Costs) on MeterType
+| extend bill = total_consumed * Cost
+| summarize total = sum(bill)
+</code></pre><p>This works, but doesn't have the correct answer <code>35,637,875.19770707</code>.</p><p>Checking for duplicates:</p><pre tabindex=0><code>Consumption
+| where getmonth(Timestamp) == 4
+| summarize Count = count() by Timestamp, HouseholdId, MeterType, Consumed
+| where Count &gt; 1
+| take 10
+</code></pre><p>There are a lot of 2 counts. So we try to get distinct</p><pre tabindex=0><code>Consumption
+| where getmonth(Timestamp) == 4
+| distinct Timestamp, HouseholdId, MeterType, Consumed
+| summarize total_consumed = sum(Consumed) by MeterType
+| join kind=inner (Costs) on MeterType
+| extend bill = total_consumed * Cost
+| summarize total = sum(bill)
+</code></pre><p>Looks like there might be multiple reports per household per day. Some of them
+are negative which is curious. At first both me and AI thought a negative is
+either correction or a house selling solar energy back, but it turns out
+duplicates and negatives are invalid and we need to filter these out.</p><pre tabindex=0><code>Consumption
+| where getmonth(Timestamp) == 4
+| where Consumed &gt; 0
+| distinct Timestamp, HouseholdId, MeterType, Consumed
+| summarize total_consumed = sum(Consumed) by MeterType
+| join kind=inner (Costs) on MeterType
+| extend bill = total_consumed * Cost
+| summarize total = sum(bill)
+</code></pre><p>And the answer is <code>35420883.072401375</code>.</p><h1 id=case-2-catch-the-phishermen>Case 2: Catch the Phishermen!
+<a class=header-link href=#case-2-catch-the-phishermen><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p><code>What phone number is used for placing the phishing calls?</code></p><p>The import for this case took 70 seconds there must be lots of data.</p><p>One table <code>PhoneCalls</code>:</p><ul><li><code>Timestamp</code></li><li><code>EventType</code>: <code>Connect</code>, <code>Disconnect</code></li><li><code>CallConnectionId</code>: guid</li><li><code>Properties</code>: JSON</li></ul><p>If EventType is <code>Disconnect</code>, then <code>Properties</code> says who disconnected the call.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{<span style=color:#268bd2>&#34;DisconnectedBy&#34;</span>:<span style=color:#2aa198>&#34;Origin&#34;</span>}
+</span></span><span style=display:flex><span>{<span style=color:#268bd2>&#34;DisconnectedBy&#34;</span>:<span style=color:#2aa198>&#34;Destination&#34;</span>}
+</span></span></code></pre></div><p>For Connect we get something like this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{<span style=color:#268bd2>&#34;Origin&#34;</span>:<span style=color:#2aa198>&#34;06635832122&#34;</span>,<span style=color:#268bd2>&#34;Destination&#34;</span>:<span style=color:#2aa198>&#34;06370200090&#34;</span>,<span style=color:#268bd2>&#34;IsHidden&#34;</span>:<span style=color:#cb4b16>false</span>}
+</span></span><span style=display:flex><span>{<span style=color:#268bd2>&#34;Origin&#34;</span>:<span style=color:#2aa198>&#34;06360086060&#34;</span>,<span style=color:#268bd2>&#34;Destination&#34;</span>:<span style=color:#2aa198>&#34;06549896514&#34;</span>,<span style=color:#268bd2>&#34;IsHidden&#34;</span>:<span style=color:#cb4b16>true</span>}
+</span></span></code></pre></div><p>Let's extract everything:</p><pre tabindex=0><code>PhoneCalls
+| where EventType == &#34;Connect&#34;
+| extend Props = parse_json(Properties)
+| extend Origin = tostring(Props.Origin)
+| extend Destination = tostring(Props.Destination)
+| extend IsHidden = tobool(Props.IsHidden)
+| project-away Props
+</code></pre><p>We can assume phishing callers hide their number. That gives us 1901071 calls.</p><pre tabindex=0><code>PhoneCalls
+| where EventType == &#34;Connect&#34;
+| extend Props = parse_json(Properties)
+| extend Origin = tostring(Props.Origin)
+| extend Destination = tostring(Props.Destination)
+| extend IsHidden = tobool(Props.IsHidden)
+| project-away Props
+| where IsHidden == true
+| count
+</code></pre><p>We need to summarize the count by <code>Origin</code> to see which numbers make lots of
+calls.</p><pre tabindex=0><code>PhoneCalls
+| where EventType == &#34;Connect&#34;
+| extend Props = parse_json(Properties)
+| extend Origin = tostring(Props.Origin)
+| extend Destination = tostring(Props.Destination)
+| extend IsHidden = tobool(Props.IsHidden)
+| project-away Props
+| where IsHidden == true
+| summarize TotalCalls = count() by Origin
+| order by TotalCalls desc
+</code></pre><p>There's no number that stands out.</p><pre tabindex=0><code>| Phone       | TotalCalls |
+| ----------- | ---------- |
+| 06749360920 | 257        |
+| 06836757512 | 248        |
+| 06784884765 | 248        |
+| 06422797186 | 164        |
+| 06632227502 | 162        |
+| 06226870181 | 158        |
+| 06890115685 | 158        |
+| 06371507378 | 158        |
+// ...
+</code></pre><p>Then we add average call duration (I asked Claude to write this):</p><pre tabindex=0><code>PhoneCalls
+| where EventType == &#34;Connect&#34;
+| extend Props = parse_json(Properties)
+| extend Origin = tostring(Props.Origin)
+| extend Destination = tostring(Props.Destination)
+| extend IsHidden = tobool(Props.IsHidden)
+| project-away Props
+| where IsHidden == true
+| join kind=inner (
+    PhoneCalls
+    | where EventType == &#34;Disconnect&#34;
+) on CallConnectionId
+| extend CallDuration = datetime_diff(&#39;second&#39;, Timestamp1, Timestamp)
+| summarize 
+    TotalCalls = count(),
+    AvgDuration = avg(CallDuration),
+    UniqueDestinations = dcount(Destination)
+    by Origin
+| order by UniqueDestinations desc, AvgDuration asc, TotalCalls desc
+</code></pre><p>And the result is interesting.</p><pre tabindex=0><code>| PhoneNum    | UniqueDestinations | AvgDuration | TotalCalls |
+| ----------- | ------------------ | ----------- | ---------- |
+| 06749360920 | 257                | 297.96      | 256        |
+| 06784884765 | 248                | **145.78**  | 248        |
+| 06836757512 | 248                | 296.06      | 248        |
+| 06422797186 | 164                | 305.83      | 163        |
+| 06632227502 | 162                | 301.44      | 162        |
+</code></pre><p>The 2nd number's average call duration (145) is half of the others. That is our
+phisher: <code>06784884765</code>.</p><h1 id=case-3-return-stolen-cars>Case 3: Return stolen cars!
+<a class=header-link href=#case-3-return-stolen-cars><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p><code>Where are the stolen cars being kept?</code></p><p>We have two tables:</p><pre tabindex=0><code>StolenCars
+| take 10
+
+// One column - VIN
+</code></pre><p>And</p><pre tabindex=0><code>CarsTraffic
+| take 10
+
+// Timestamp
+// VIN
+// Ave
+// Street
+</code></pre><p>We should to check where the stolen cars appear frequently, but we need to
+add unique VINs because otherwise it will capture the same car going home.</p><pre tabindex=0><code>let stolen = StolenCars;
+CarsTraffic
+| where VIN in (stolen) // Remember kusto-mice? No need to join only one column.
+| summarize Appearances = count(), UniqueVINs = dcount(VIN) by Ave, Street
+| order by Appearances
+</code></pre><p>Top three:</p><pre tabindex=0><code>| Ave | Street | Appearances | UniqueVINs |
+| --- | ------ | ----------- | ---------- |
+| 223 | 86     | 223         | 12         |
+| 122 | 248    | 122         | 10         |
+| 223 | 98     | 223         | 9          |
+</code></pre><p>Top address has 12 unique VINs. But that is not the answer. Looks like we need
+to find all 20 stolen cars going to the address (the task assumes only one
+entity with one chop shop is stealing cars).</p><p>Maybe they are changing VINs. So first we find the last location of every stolen
+VIN.</p><pre tabindex=0><code>let stolen = StolenCars;
+let last_locations = CarsTraffic
+| where VIN in (stolen)
+| summarize LastTimestamp = max(Timestamp) by VIN
+| join kind=inner (CarsTraffic) on VIN
+| where Timestamp == LastTimestamp
+| project VIN, LastTimestamp, Ave, Street;
+</code></pre><p>Then we need to see which new VINs appear in the same location within a short
+time, let's say 5 minutes.</p><pre tabindex=0><code>let stolen = StolenCars;
+let last_locations = CarsTraffic
+| where VIN in (stolen)
+| summarize LastTimestamp = max(Timestamp) by VIN
+| join kind=inner (CarsTraffic) on VIN
+| where Timestamp == LastTimestamp
+| project VIN, LastTimestamp, Ave, Street;
+CarsTraffic
+| join kind=inner (last_locations) on Ave, Street
+| where Timestamp &gt; LastTimestamp and Timestamp &lt;= LastTimestamp + 5m
+| where VIN !in (stolen)  // Find NEW VINs that appear at same location
+| summarize NewVINs = make_set(VIN), NewVINCount = dcount(VIN) by Ave, Street
+| order by NewVINCount desc
+</code></pre><p>We get two answers</p><pre tabindex=0><code>| Ave | Street | NewVINs   | NewVINCount |
+| --- | ------ | --------- | ----------- |
+| 223 | 86     | [removed] | 227         |
+| 122 | 251    | [removed] | 118         |
+</code></pre><p>We've already tried the first one, it might be second one. That is also wrong.</p><p>We modify the query a bit. We check whether the VIN has changed within 10
+minutes and create a list of possible new VINs. Then check where they appear
+last and look which one is closest to the number of stolen cars (20).</p><pre tabindex=0><code>let stolen = StolenCars;
+let last_locations = CarsTraffic
+| where VIN in (stolen)
+| summarize LastTimestamp = max(Timestamp) by VIN
+| join kind=inner (CarsTraffic) on VIN
+| where Timestamp == LastTimestamp
+| project VIN, LastTimestamp, Ave, Street;
+let new_vins = CarsTraffic
+| join kind=inner (last_locations) on Ave, Street
+| where Timestamp &gt; LastTimestamp and Timestamp &lt;= LastTimestamp + 10m
+| where VIN !in (stolen)
+| distinct VIN;
+CarsTraffic
+| where VIN in (new_vins)
+| summarize arg_max(Timestamp, *) by VIN
+| summarize UniqueVINs = dcount(VIN), TotalAppearances = count() by Ave, Street
+| order by UniqueVINs desc
+</code></pre><p>This is the result. The answer is the third one with 21 unique VINs <code>156 81</code></p><pre tabindex=0><code>| Ave | Street | UniqueVINs | TotalAppearances |
+| --- | ------ | ---------- | ---------------- |
+| 223 | 86     | 59         | 59               |
+| 122 | 251    | 49         | 49               |
+| 156 | 81     | 21         | 21 &lt;---          |
+| 183 | 94     | 2          | 2                |
+</code></pre><h1 id=case-4-triple-trouble>Case 4: Triple trouble!
+<a class=header-link href=#case-4-triple-trouble><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p><code>Who is behind all this?</code></p><p>Two new tables. <code>IpInfo</code> and <code>NetworkMetrics</code>.</p><pre tabindex=0><code>IpInfo
+| take 10
+
+// IpCidr
+// Info - Name of the owner
+</code></pre><p>And</p><pre tabindex=0><code>NetworkMetrics
+
+// Timestamp
+// ClientIP
+// TargetIP
+// BytesSent
+// BytesReceived
+// NewConnections
+</code></pre><p>Where do we even start? I checked the hints for the first (and last) time.
+Summary of hints:</p><pre tabindex=0><code>Hint 1: Uncover the Hidden Trail
+
+Delve deeper into the telemetry data and consider the possibility of a longer
+preparation period that preceded the breach.
+
+Hint2: Exposing the Leaker
+
+Analyze the patterns, spikes, or anomalies that indicate a massive influx of data.
+(Keyword here is &#34;anomaly&#34;).
+
+Hint 3: Unmasking the Cunning Intruders
+
+observe the changes in usage patterns across the entire attacker network.
+</code></pre><p>First we want to see which IP addresses received/sent a lot of data and it turns
+out we can find the IP address that had the secret data (probably?).</p><pre tabindex=0><code>NetworkMetrics
+| summarize TotalBytesSent = sum(BytesSent) by Day = bin(Timestamp, 1d), TargetIP
+| top 20 by TotalBytesSent
+</code></pre><p>17 of the top 20 IP addresses in the result are <code>178.248.55.249</code> so that is msot
+likely the victim system, and it belongs to DigiTown. Note the fun
+<a href=https://learn.microsoft.com/en-us/kusto/query/ipv4-is-in-range-function target=_blank rel="noreferrer noopener">ipv4_is_in_range</a> function which LLMs didn't know until I
+mentioned it.</p><pre tabindex=0><code>IpInfo
+| where ipv4_is_in_range(&#34;178.248.55.249&#34;, IpCidr)
+| project IpCidr, Info
+
+// 178.248.55.0/24	DIGITOWN
+</code></pre><p>We know we need to detect anomalies. So let's look at the times with the
+suspicious transfers. The training mentioned creating a graph and using
+<a href=https://learn.microsoft.com/en-us/kusto/query/series-decompose-anomalies-function target=_blank rel="noreferrer noopener">series_decompose_anomalies</a> which I'd never seen before.</p><p>I did some experiments to see how it works. 1 day appear to be a good compromise
+and will tell us which day was anomalous.</p><pre tabindex=0><code>NetworkMetrics
+| make-series BytesSent=sum(BytesSent) on Timestamp step 1d
+| extend anomalies = series_decompose_anomalies(BytesSent)
+</code></pre><p>The result is one row with three columns. Each column is an array. Columns are:</p><ul><li><code>BytesSent</code></li><li><code>Timestamp</code></li><li><code>anomalies</code>: Vector liks <code>[0,0,... ,1,0]</code> with only one <code>1</code>.</li></ul><p>So I need to <code>extend</code> this to get the data out and then look for the only point
+with the <code>1</code>.</p><pre tabindex=0><code>NetworkMetrics
+| make-series BytesSent=sum(BytesSent) on Timestamp step 1d
+| extend anomalies = series_decompose_anomalies(BytesSent)
+| mv-expand
+    BytesSent to typeof(long),
+    Timestamp to typeof(datetime),
+    anomalies to typeof(double)
+| where anomalies &gt; 0
+</code></pre><p>And this gives us</p><pre tabindex=0><code>255,535,868,619	6/29/2023, 12:00:00 AM	1
+</code></pre><p>So we've found the date where the bad things happened. We need to see which
+IP addresses sent the most data on that day?</p><p>I learned another trick from Liesel Hughes. Their tech blog is gone but the
+<a href=https://web.archive.org/web/20231206104114/https://www.lieselhughes.com/posts/tech/kusto-detective-agency/season2case4/ target=_blank rel="noreferrer noopener">archive link</a> remains.</p><p>They expanded the <code>IPCidr</code> table and resolved all IP addresses into a new
+table with this trick. I remember I got stuck in this exact same phase in task
+four of season 3. This is very similar to that task.</p><pre tabindex=0><code>.set-or-replace IpInfoEx &lt;|
+    NetworkMetrics
+    | distinct ClientIP 
+    | evaluate ipv4_lookup(IpInfo, ClientIP, IpCidr)
+</code></pre><p>This creates a new table for each unique IP in the dataset that we can use.</p><pre tabindex=0><code>| ClientIP        | IpCidr           | Info                      |
+| --------------- | ---------------- | ------------------------- |
+| 146.19.241.91   | 146.19.241.0/24  | ALTANET-AS                |
+| 161.199.246.241 | 161.199.246.0/24 | COEOSOLUTIONS             |
+| 98.173.151.101  | 98.173.144.0/21  | ASN-CXA-ALL-CCI-22773-RDC |
+</code></pre><p>It turns out that I was using the <a href=https://learn.microsoft.com/en-us/kusto/query/series-decompose-anomalies-function target=_blank rel="noreferrer noopener">series_decompose_anomalies</a> wrong and it
+has three results: <code>anomaly</code>, <code>score</code>, and <code>baseline</code>.</p><p>Using the trick from Liesel, we can change our query to look up the owners of
+<code>IpCidrs</code> from the new <code>IpInfoEx</code> table.</p><pre tabindex=0><code>NetworkMetrics
+| lookup IpInfoEx on ClientIP
+| make-series BytesSent=sum(BytesSent) on Timestamp step 1d by Info
+| extend (Anomaly, Score, Baseline) = series_decompose_anomalies(BytesSent)
+| mv-expand
+    Anomaly to typeof(double),
+    Score to typeof(double),
+    // We can ignore Baseline
+    BytesSent to typeof(long)
+| where Anomaly != 0 // Not sure what negative anomaly scores mean.
+| project Info, Score
+| sort by Score desc
+</code></pre><p>And the first result is <code>KUANDA.ORG</code> which is our answer.</p><h1 id=case-5-blast-into-the-past>Case 5: Blast into the past
+<a class=header-link href=#case-5-blast-into-the-past><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p><code>What is the link to secret interview?</code></p><p>Apparently there's a secret interview. The 900th episode of Scott Hanselman's
+podcast that was unpublished and is in these logs.</p><p>New table <code>StorageArchiveLogs</code></p><pre tabindex=0><code>// Timestamp
+// Event
+</code></pre><p><code>EventText</code> has three types:</p><pre tabindex=0><code>Read blob transaction: 
+&#39;https://agjmmlhdu.blob.core.windows.net/eqjotm/qdlyqqhgik.mp2&#39; read access
+(1 reads) were detected on the origin
+
+Delete blob transaction:
+&#39;https://qxjkisxw.blob.core.windows.net/ypfsrg/xvyvhtihrm.mpe&#39; backup is
+completely removed
+
+Create blob transaction:
+&#39;https://oxdnbbgqup.blob.core.windows.net/svlkp/yragrkd.mpg&#39; backup is created on
+https://2023storagebackup.blob.core.windows.net/oxdnbbgqup/svlkp/yragrkd.mpg
+</code></pre><p>The training section teaches how to extract different types of <code>EventText</code>. So
+we can parse everything.</p><pre tabindex=0><code>StorageArchiveLogs
+| parse EventText with TransactionType &#34; blob transaction: &#39;&#34; BlobURI &#34;&#39;&#34; *
+| parse EventText with * &#34;(&#34; Reads:long &#34;reads)&#34; *
+| parse EventText with * &#34;backup is created on &#34; BackupURI
+| extend Host = tostring(parse_url(BlobURI).Host)
+| project-away EventText
+</code></pre><p>The training also teaches us <code>count/sum if</code> functions to summarize different
+transaction types. AI didn't know so I had to explain them and ask it to rewrite
+the query with those.</p><pre tabindex=0><code>StorageArchiveLogs
+| parse EventText with TransactionType &#34; blob transaction: &#39;&#34; BlobURI &#34;&#39;&#34; *
+| parse EventText with * &#34;(&#34; Reads:long &#34;reads)&#34; *
+| parse EventText with * &#34;backup is created on &#34; BackupURI
+| extend Host = tostring(parse_url(BlobURI).Host)
+| project-away EventText
+| summarize Deletes=countif(TransactionType == &#39;Delete&#39;), 
+		Reads=sumif(Reads, TransactionType == &#39;Read&#39;) by Host
+</code></pre><p>I used anomaly detection as a crutch, but turns out this was much easier. We
+know the interview was published and then deleted. We want a blob that was
+created, backed up, and deleted.</p><pre tabindex=0><code>StorageArchiveLogs
+| parse EventText with TransactionType &#34; blob transaction: &#39;&#34; BlobURI &#34;&#39;&#34; *
+| parse EventText with * &#34;backup is created on &#34; BackupURI
+| extend FileName = tostring(parse_url(BlobURI).Path)
+| summarize 
+    Creates = countif(TransactionType == &#39;Create&#39;),
+    Deletes = countif(TransactionType == &#39;Delete&#39;),
+    BackupURIs = make_set_if(BackupURI, isnotempty(BackupURI))
+    by BlobURI, FileName
+| where Creates &gt; 0 and Deletes &gt; 0  // created and deleted
+| where array_length(BackupURIs) &gt; 0 // has backup
+| project BlobURI, FileName, SecretInterviewLinks = BackupURIs
+</code></pre><p>This query returned over 17000 rows. But we know it was published and then
+quickly deleted so the time between creation and deletion must be small.
+I modified the query to track the time between creation and deletion.</p><pre tabindex=0><code>StorageArchiveLogs
+| parse EventText with TransactionType &#34; blob transaction: &#39;&#34; BlobURI &#34;&#39;&#34; *
+| parse EventText with * &#34;backup is created on &#34; BackupURI
+| extend FileName = tostring(parse_url(BlobURI).Path)
+| summarize 
+    CreateTime = minif(Timestamp, TransactionType == &#39;Create&#39;),
+    DeleteTime = maxif(Timestamp, TransactionType == &#39;Delete&#39;),
+    Creates = countif(TransactionType == &#39;Create&#39;),
+    Deletes = countif(TransactionType == &#39;Delete&#39;),
+    BackupURIs = make_set_if(BackupURI, isnotempty(BackupURI))
+    by BlobURI, FileName
+| where Creates &gt; 0 and Deletes &gt; 0  // created and deleted
+| where array_length(BackupURIs) &gt; 0 // has backup
+| extend LifetimeMinutes = datetime_diff(&#39;minute&#39;, DeleteTime, CreateTime)
+| where LifetimeMinutes &gt; 0          // valid timespan
+| project BlobURI, FileName, BackupURIs, CreateTime, DeleteTime, LifetimeMinutes
+| order by LifetimeMinutes asc
+</code></pre><p>The top entry in this result set was deleted only after six minutes.</p><pre tabindex=0><code>&#34;BlobURI&#34;: https://okeexeghsqwmda.blob.core.windows.net/vyskl/jqfovf.mp4,
+&#34;FileName&#34;: /vyskl/jqfovf.mp4,
+&#34;BackupURIs&#34;: [
+  &#34;https://2023storagebackup.blob.core.windows.net/okeexeghsqwmda/vyskl/jqfovf.mp4&#34;
+],
+&#34;CreateTime&#34;: 2023-07-12T14:12:00.000Z,
+&#34;DeleteTime&#34;: 2023-07-12T14:18:00.000Z,
+&#34;LifetimeMinutes&#34;: 6
+</code></pre><p>The answer is the back up at:
+<code>https://2023storagebackup.blob.core.windows.net/okeexeghsqwmda/vyskl/jqfovf.mp4</code>.</p><h1 id=case-6-hack-this-rack>Case 6: Hack this rack!
+<a class=header-link href=#case-6-hack-this-rack><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p><code>Who is the leader of Kuanda.org?</code></p><pre tabindex=0><code>NationalGalleryArt
+| take 10
+
+| ColumnName     | Notes                   |
+| -------------- | ----------------------- |
+| ObjectId       | Unique ID of the object |
+| Title          |                         |
+| BeginYear      |                         |
+| EndYear        |                         |
+| Medium         |                         |
+| Inscription    |                         |
+| Attribution    |                         |
+| AssistiveText  | Could be empty          |
+| ProvenanceText | Could be empty          |
+| Creditline     |                         |
+| Classification | See below               |
+| ImageUrl       | URL. Could be empty     |
+</code></pre><p><code>Classification</code> can be:</p><pre tabindex=0><code>Index of American Design
+Photograph
+Print
+Volume
+Portfolio
+Drawing
+Painting
+Sculpture
+Time-Based Media Art
+Technical Material
+Decorative Art
+</code></pre><p>And apparently this is the code:</p><pre tabindex=0><code>12204/497 62295/24 50883/678 47108/107 193867/3,
+45534/141 hidden 100922/183 143461/1 1181/505 46187/380.
+41526/155 66447/199 30241/114, 33745/154 12145/387 46437/398 177191/131:
+293/64 41629/1506 210038/432, 41612/803 216839/1.
+
+404/258 rules 40/186 1472/222 122894/2 46081/105:
+41594/650 32579/439 44625/141 184121/19 33254/348 357/273 32589/821,
+46171/687 punctuations 62420/10 50509/48 1447/128,
+176565/82&#39;56721/591 561/225 insensitive, 30744/129 76197/32.
+
+1319/42 41599/216 68/457 136016/146, 42420/126&#39;46198/389 42429/158 40091/108 41667/252,
+1515/555 177593/223 176924/73 45889/65 159836/96 35080/384 32578/199.
+1607/167 124996/9 71/56, 1303/187 45640/1114 72328/247 75802/11,
+1168/146 163380/12 57541/116 206122/738 365/267 46026/211 46127/19.
+
+119295/425 45062/128 12198/133 163917/238 45092/8 54183/4 42453/82:
+561/433 9/387 37004/287 1493/118 41676/38 163917/238 3159/118 63264/687
+1/905 1493/109 43723/252, 136355/1 1159/134 40062/172 32588/604,
+158574/1 45411/8 10/892 127587/175 - 633/9 72328/247 1514/615 42940/138.
+
+164958/84 221014/479 151526/7 111124/138, 41668/206 34109/46 1514/555,
+147789/2 3228/152 993/323 166477/167 178042/167, 50753/91&#39;207786/8 12/372.
+1108/158&#39;42423/150 12/309 66154/9 213566/11 44981/158 1197/300
+40184/149 92994/63-71071/179 75093/7 211718/18 74211/5 46144/399.
+</code></pre><p>I assumed this is text and each item points to something in the collection that
+resolves to a letter. Is the first item the object ID? Maybe?</p><p>If it's one of the fields, then the field needs to be long. Because some of
+these second numbers are large like 497. The only fields long enough are
+<code>Inscription</code> and <code>ProvenanceText</code>.</p><p>Or maybe we concatenate all the fields except <code>ObjectId</code> and the 2nd number is
+the index (this was overthinking).</p><p>It looks like only <code>ProvenanceText</code> is long enough to be the second field. But
+these do not appear to be single letters because we have things like
+<code>1108/158'42423/150</code> so each one is a word. In the training section for this
+case, we also calculated the word count with regex like below. We're
+definitely looking for words.</p><pre tabindex=0><code>Recipe
+| extend words = extract_all(@&#34;(\w+)&#34;, Text)
+| extend WordCount = array_length(words)
+</code></pre><p>I extracted the numbers using regex in VS Code and wrote this query:</p><pre tabindex=0><code>let code = datatable (ObjectId: int, WordIndex: int) [
+  12204,497, 62295,24 // removed
+];
+code
+| join kind=inner (
+    NationalGalleryArt
+    | extend ObjectId = toint(ObjectId)
+    | extend words = extract_all(@&#34;(\w+)&#34;, ProvenanceText)
+    | project ObjectId, words
+) on ObjectId
+| extend extractedWord = iff(WordIndex &lt;= array_length(words), words[WordIndex-1], &#34;&#34;)
+| project extractedWord
+</code></pre><p>It extracted a bunch of words for me, but the sequence was not preserved. So I
+asked AI for solutions and then added a sequence to the table like this.</p><pre tabindex=0><code>let code = datatable (ObjectId: int, WordIndex: int) [
+  12204,497, 62295,24 // removed
+]
+| serialize
+| extend Sequence = row_number();
+code
+| join kind=inner (
+    NationalGalleryArt
+    | extend ObjectId = toint(ObjectId)
+    | extend words = extract_all(@&#34;(\w+)&#34;, ProvenanceText)
+    | project ObjectId, words
+) on ObjectId
+| extend extractedWord = iff(WordIndex &lt;= array_length(words), words[WordIndex-1], &#34;&#34;)
+| order by Sequence asc // preserving the sequence
+| project extractedWord
+</code></pre><p>But it was not correct. I had assumed the index is from zero
+<code>words[WordIndex-1]</code>. Classic dev vs. data world off-by-one clash, we have to
+index from 1,</p><pre tabindex=0><code>let code = datatable (ObjectId: int, WordIndex: int) [
+  12204,497, 62295,24 // removed
+]
+| serialize
+| extend Sequence = row_number();
+code
+| join kind=inner (
+    NationalGalleryArt
+    | extend ObjectId = toint(ObjectId)
+    | extend words = extract_all(@&#34;(\w+)&#34;, ProvenanceText)
+    | project ObjectId, words
+) on ObjectId
+                                                               // 1-index
+| extend extractedWord = iff(WordIndex &lt;= array_length(words), words[WordIndex], &#34;&#34;)
+| order by Sequence asc
+| project extractedWord
+</code></pre><p>And this is the result (after adding punctuation from the original code)</p><pre tabindex=0><code>in catalogue of titles Grand,
+three hidden words Demand your Hand
+when found all, they form A line:
+A clear timeline, simply Fine
+
+words rules are simple to Review:
+at least three Letters have in view,
+all punctuations Mark the End,
+they&#39;re case insensitive, my friend
+
+to find all words, you&#39;ll need some skill,
+seeking the popular will guide you still
+below The King, the first word mounts,
+the Second shares with Third their counts
+
+reveal the last word with Wise thought:
+take first two letters from word most sought
+into marked dozen, and change just one,
+and with those two – the word is done
+
+so search the titles, high and low,
+and when you find it, you&#39;ll know
+you&#39;ve picked the Image that revealed
+the pass-code to the World concealed
+</code></pre><p>Which is a riddle.</p><p>First I thought the riddle means this. Spoiler alert: some assumptions are
+wrong.</p><ol><li>Search the <code>Title</code> field.</li><li>We need three words.</li><li>Each word is at least three letters.</li><li>Words are case-insensitive.</li><li>First word is the 2nd most common? (below "The King")</li><li>The second and third word have the same word count.</li><li>Take first two letters from the most common word. Put them in a 12 letter
+word and change one letter to get the third word.</li></ol><p>We can get the word count:</p><pre tabindex=0><code>let wordCounts = NationalGalleryArt
+| extend words = extract_all(@&#34;(\w+)&#34;, Title)
+| mv-expand word = words
+| where isnotempty(word) and strlen(word) &gt;= 3  // at least 3 letters
+| extend word = tolower(tostring(word))  // case insensitive
+| summarize Count = count() by word
+| order by Count desc, word asc;
+</code></pre><p>And the first five words are:</p><pre tabindex=0><code>| Word     | Count  |
+| -------- | ------ |
+| the      | 25,417 |
+| and      | 11,157 |
+| untitled | 7,587  |
+| with     | 7,541  |
+| for      | 3,228  |
+</code></pre><p>So <code>and</code> is the first word? Doesn't look like it. "below The King" doesn't mean
+the second most frequent word. After an hour of thinking, I realized it means
+the word after the word <code>king</code> in the frequency ranking. So we add the rank to
+the table.</p><p>Originally I had this based on Claude suggestions:</p><pre tabindex=0><code>let wordCounts = ...
+...
+| serialize
+| extend Rank = row_number();
+</code></pre><p>Then I did a bit of searching and realized I can do it easier with
+<a href=https://learn.microsoft.com/en-us/kusto/query/row-rank-min-function target=_blank rel="noreferrer noopener">row_rank_min(Count)</a>.</p><pre tabindex=0><code class=language-kql data-lang=kql>let wordCounts = NationalGalleryArt
+| extend words = extract_all(@&#34;(\w+)&#34;, Title)
+| mv-expand word = words
+| where isnotempty(word) and strlen(word) &gt;= 3  // at least 3 letters
+| extend word = tolower(tostring(word))  // case insensitive
+| summarize Count = count() by word
+| order by Count desc, word asc
+| extend Rank = row_rank_min(Count);
+let kingRank = toscalar(wordCounts | where word == &#34;king&#34; | project Rank);
+wordCounts
+| where Rank == kingRank + 1
+| project word, Count, Rank
+</code></pre><p>And the answer is <code>day</code>.</p><p>The second and third words have the same ranking which is hard to find. I wanted
+to create something that checks all words with same rank. But then I realized
+this assumptions was also wrong and the riddle means the second word has the
+same rank as the word "Third."</p><pre tabindex=0><code class=language-kql data-lang=kql>// Find the rank of &#34;third&#34; and all words with the same rank
+let thirdRank = toscalar(wordCounts | where word == &#34;third&#34; | project Rank);
+wordCounts
+| where Rank == thirdRank
+| project word, Count, Rank
+</code></pre><p>This returned five results.</p><pre tabindex=0><code>daphnis
+fruit
+macchina
+third
+year
+</code></pre><p>But our first word was <code>day</code> and the hints means they all refer to time.</p><pre tabindex=0><code>when found all, they form A line:
+A clear timeline, simply Fine
+</code></pre><p>The second word is <code>year</code>.</p><p>My prediction about the last word was also wrong. I searched for 12
+letter words and found nothing. I am not "Wise" lmao.</p><pre tabindex=0><code>reveal the last word with Wise thought:
+take first two letters from word most sought
+into marked dozen, and change just one,
+and with those two – the word is done
+</code></pre><p>This means we take the first two letters from the word with rank 1 (<code>the</code>) and do
+something with rank 12 (<code>man</code>). Let's get them.</p><pre tabindex=0><code>| Word | Count  | Rank |
+| ---- | ------ | ---- |
+| the  | 25,417 | 1    |
+| man  | 2,217  | 12   |
+</code></pre><p><code>th</code> + <code>man</code> == <code>than</code>? No that has nothing to do with time.</p><p>Let's read it again. Get <code>th</code> and then add to <code>man</code> and change one letter. So
+the letters are <code>thman</code> and one must be modified and it must be related to time
+because our other words where <code>day</code> and <code>year</code>.</p><p>And the answer is <code>month</code> according to Claude :)</p><p>This means we need to find the title that has all these three words.</p><pre tabindex=0><code>NationalGalleryArt
+| where Title has_all (&#34;day&#34;, &#34;month&#34;, &#34;year&#34;)
+
+ID: 222,050	
+// removed
+https://api.nga.gov/iiif/64c9eb07-5e01-40fe-8fd0-886cfb4a70c7/full/!900,900/0/default.jpg
+</code></pre><p>Oh, shit, I can read this because it's in Farsi, lol. I thought the text had
+clues, but no.</p><p>But apparently, this is about the website from last task. Go to <code>KUANDA.ORG</code> and
+click <code>join the club</code>. Needs passcode and login hint. We add this URI as login
+hint.</p><p>We still need the passcode, but now the Octopus has some letters: <code>kotspusot</code>.</p><p>Which is an anagram of <code>stopkusto</code>. Both me and AI were useless here. I was
+looking for a one-word anagram for 30 minutes..</p><p>Inside we see a letter signed by <code>Krypto</code> and that is our answer.</p><h1 id=case-7-mission-connect>Case 7: Mission 'Connect'
+<a class=header-link href=#case-7-mission-connect><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p><code>In which city did the suspect land?</code></p><p>Two new tables <code>Flights</code>.</p><pre tabindex=0><code>Flights
+| getschema
+| project ColumnName, DataType
+
+| ColumnName  | DataType        |
+| ----------- | --------------- |
+| Timestamp   | System.DateTime |
+| callsign    | System.String   |
+| lat         | System.Double   |
+| lon         | System.Double   |
+| velocity    | System.Double   |
+| heading     | System.Double   |
+| vertrate    | System.Double   |
+| onground    | System.SByte    |
+| geoaltitude | System.Double   |
+</code></pre><p>And <code>Airports</code></p><pre tabindex=0><code>Airports
+| getschema
+| project ColumnName, DataType
+
+| ColumnName   | DataType      |
+| ------------ | ------------- |
+| Id           | System.String |
+| Ident        | System.String |
+| Type         | System.String |
+| Name         | System.String |
+| lat          | System.Double |
+| lon          | System.Double |
+| elevation_ft | System.Int64  |
+| iso_country  | System.String |
+| iso_region   | System.String |
+| municipality | System.String |
+| gps_code     | System.String |
+| local_code   | System.String |
+</code></pre><p>Training talks about geo hashing values and using the S2 geo-hash algorithm.</p><p>Problem:</p><ol><li>Kryto was in Doha airport.</li><li>Between August 11, 2023, between 03:30 AM and 05:30 AM (UTC).</li><li>Left with a jet and then switched planes mid-air.</li></ol><p>My assumptions (I wasn't wrong this time):</p><ol><li>Find flights that left Doha airport between 03:30 AM and 05:30 AM.</li><li>Find which flights came close to those flights and he might have jumped to them.<ol><li>What is a good s2 precision point here? What is the distance for a wingsuit plane-to-plane jump?</li></ol></li><li>Assuming he has done only one jump. Let's find where all those flights landed.</li></ol><p>The airport is Doha is <code>Hamad International Airport</code>.</p><pre tabindex=0><code>Airports
+| where municipality contains &#34;doha&#34;
+
+&#34;Id&#34;: 44686,
+&#34;Ident&#34;: OTHH,
+// removed
+</code></pre><p>So I wrote a function that find all planes on the ground in an airport from a
+certain timestamp until n hours later.</p><pre tabindex=0><code>let flightsFromAirport = (AirportIdent:string, StartTime:datetime, HoursToAdd:int) {
+    let EndTime = datetime_add(&#39;hour&#39;, HoursToAdd, StartTime);
+    Airports
+    | where Ident == AirportIdent
+    | extend key=geo_point_to_s2cell(lon, lat) // default precision is 11
+    | join kind=inner (
+        Flights
+        | extend key=geo_point_to_s2cell(lon, lat)
+        | where onground
+        | where Timestamp between (StartTime .. EndTime)
+    ) on key
+    | distinct callsign
+};
+flightsFromAirport(&#34;OTHH&#34;, datetime(2023-08-11 03:30:00), 2)
+</code></pre><p>We find 19 flights and Krypto left on one. We are using the default s2_precision
+of 11.</p><p>Now to match the other flights. We need to find all flights that departed after
+5:30:00, were not on the ground and flew close to these 19 flights.</p><pre tabindex=0><code>let departures = flightsFromAirport(&#34;OTHH&#34;, datetime(2023-08-11 03:30:00), 2);
+Flights
+| where Timestamp &gt; datetime(2023-08-11 05:30:00)
+| where onground == false
+| where callsign in (departures)
+| extend key=geo_point_to_s2cell(lon, lat)
+| join kind = inner (Flights
+    | where Timestamp &gt; datetime(2023-08-11 05:30:00)
+    | where onground == false
+    | where callsign !in (departures) // don&#39;t track the same flight
+    | extend key=geo_point_to_s2cell(lon, lat)
+    ) on key, Timestamp
+</code></pre><p>This gives us 915 flights with the default <code>s2_precision</code> of 11. According to
+<a href=https://learn.microsoft.com/en-us/kusto/query/geo-point-to-s2cell-function target=_blank rel="noreferrer noopener">geo_point_to_s2cell documentation</a> precision 11 is 5 km.</p><p>Going down to 13 (1225 meters) we're left with 137 flights which is still too
+many.</p><pre tabindex=0><code>let departures = flightsFromAirport(&#34;OTHH&#34;, datetime(2023-08-11 03:30:00), 2);
+let s2_precision = 13;
+Flights
+| where Timestamp &gt; datetime(2023-08-11 05:30:00)
+| where onground == false
+| where callsign in (departures)
+| extend key=geo_point_to_s2cell(lon, lat, s2_precision)
+| join kind = inner (Flights
+    | where Timestamp &gt; datetime(2023-08-11 05:30:00)
+    | where onground == false
+    | where callsign !in (departures) // don&#39;t track the same flight
+    | extend key=geo_point_to_s2cell(lon, lat, s2_precision)
+    ) on key, Timestamp
+</code></pre><p>Let's reduce it from 13 to 15 which is 306 meters. Now we only have 9 flights
+with only 5 callsigns! So we could, I guess find where each of these flights
+landed right after that timestamp and bruteforce the address.</p><p>We can do another check. We can assume the second flight is flying at a lower
+altitude. We modify our query accordingly.</p><pre tabindex=0><code>let flightsFromAirport = (AirportIdent:string, StartTime:datetime, HoursToAdd:int) {
+    let EndTime = datetime_add(&#39;hour&#39;, HoursToAdd, StartTime);
+    Airports
+    | where Ident == AirportIdent
+    | extend key=geo_point_to_s2cell(lon, lat) // default precision is 11
+    | join kind=inner (
+        Flights
+        | extend key=geo_point_to_s2cell(lon, lat)
+        | where onground
+        | where Timestamp between (StartTime .. EndTime)
+    ) on key
+    | distinct callsign
+};
+let departures = flightsFromAirport(&#34;OTHH&#34;, datetime(2023-08-11 03:30:00), 2);
+let s2_precision = 15;
+Flights
+| where Timestamp &gt; datetime(2023-08-11 05:30:00)
+| where onground == false
+| where callsign in (departures)
+| extend key=geo_point_to_s2cell(lon, lat, s2_precision)
+| project
+    Timestamp, key,
+    // renaming columns for easier use
+    departure_callsign = callsign,
+    departure_geoaltitude = geoaltitude
+| join kind = inner (Flights
+    | where Timestamp &gt; datetime(2023-08-11 05:30:00)
+    | where onground == false
+    | where callsign !in (departures) // don&#39;t track the same flight
+    | extend key=geo_point_to_s2cell(lon, lat, s2_precision)
+    | project
+        Timestamp, key,
+        // renaming columns
+        suspected_callsign = callsign,
+        suspected_geoaltitude = geoaltitude
+    ) on key, Timestamp
+| where departure_geoaltitude &gt; suspected_geoaltitude
+| distinct suspected_callsign
+</code></pre><p>And we get three callsigns</p><pre tabindex=0><code>JJHM470
+HFID97
+MFDI779
+</code></pre><p>Let's see where these end up and we get one result: <code>Barcelona</code>.</p><p>Complete query:</p><pre tabindex=0><code>let flightsFromAirport = (AirportIdent:string, StartTime:datetime, HoursToAdd:int) {
+    let EndTime = datetime_add(&#39;hour&#39;, HoursToAdd, StartTime);
+    Airports
+    | where Ident == AirportIdent
+    | extend key=geo_point_to_s2cell(lon, lat) // default precision is 11
+    | join kind=inner (
+        Flights
+        | extend key=geo_point_to_s2cell(lon, lat)
+        | where onground
+        | where Timestamp between (StartTime .. EndTime)
+    ) on key
+    | distinct callsign
+};
+let departures = flightsFromAirport(&#34;OTHH&#34;, datetime(2023-08-11 03:30:00), 2);
+let s2_precision = 15;
+Flights
+| where Timestamp &gt; datetime(2023-08-11 05:30:00)
+| where onground == false
+| where callsign in (departures)
+| extend key=geo_point_to_s2cell(lon, lat, s2_precision)
+| project
+    Timestamp, key,
+    // renaming columns for easier use
+    departure_callsign = callsign,
+    departure_geoaltitude = geoaltitude
+| join kind = inner (Flights
+    | where Timestamp &gt; datetime(2023-08-11 05:30:00)
+    | where onground == false
+    | where callsign !in (departures) // don&#39;t track the same flight
+    | extend key=geo_point_to_s2cell(lon, lat, s2_precision)
+    | project
+        Timestamp, key,
+        // renaming columns
+        suspected_callsign = callsign,
+        suspected_geoaltitude = geoaltitude
+    ) on key, Timestamp
+| where departure_geoaltitude &gt; suspected_geoaltitude
+| distinct suspected_callsign
+| join kind= inner (
+    Flights
+    | where onground == true
+    | where Timestamp &gt; datetime(2023-08-11 05:30:00)
+    | extend key=geo_point_to_s2cell(lon, lat, 13)
+) on $left.suspected_callsign == $right.callsign
+| join kind=inner(
+    Airports
+    | extend key=geo_point_to_s2cell(lon, lat, 13)
+) on key
+| distinct municipality
+</code></pre><h1 id=case-8-catchy-run>Case 8: Catchy Run
+<a class=header-link href=#case-8-catchy-run><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p><code>Where can we catch the suspect?</code></p><p>We get two functions <code>Dekrypt</code> and <code>SecretCodeToKey</code> and a table <code>Runs</code>.</p><pre tabindex=0><code>Runs
+| getschema
+| project ColumnName, DataType
+
+| ColumnName | DataType        |
+| ---------- | --------------- |
+| Timestamp  | System.DateTime |
+| RunnerID   | System.String   |
+| Distance   | System.Double   |
+| Duration   | System.TimeSpan |
+| StartLat   | System.Double   |
+| StartLon   | System.Double   |
+</code></pre><p>Let's look at the training for this case. It has a few hints about the Sagrada
+Familia's Nativity and Passion facades. I am not sure how that helps.</p><p>The training also gives us a function to use Google Maps to find the location of
+the final answer.</p><p>Looking at part of the decryption code:</p><pre tabindex=0><code>let city_code=datatable(c1:long,c2:long,c3:long,c4:long)
+[1, ?, ?,  4, 
+ ?, 7, 6,  ?,
+ 8, ?, 10, 5,
+ ?, 2, ?, 15];   
+</code></pre><p>We can assume <code>?</code> needs to be replaced by a single number and the decrypted item
+has the answer.</p><p>Looks like we might have to find the Sagrada Familia location and then see what
+numbers we need to plug into the function from the training to find it. It might
+be the code to the puzzle:</p><pre tabindex=0><code>let VirtualTourLink = (lat:real, lon:real) {
+    print Link = strcat(&#39;https://www.google.com/maps/@&#39;, lat, &#39;,&#39;, lon, 
+        &#39;,3a,75y,252.01h,89.45t/data=!3m6!1e1!3m4!1s-1P!2e0!7i16384!8i8192&#39;)
+};
+VirtualTourLink(lat, lon)
+</code></pre><p>First I thought it was the location and Meta AI was not useful either.</p><p>However, Claude 4 found the answer for me.</p><pre tabindex=0><code>The Sagrada Familia Magic Squares
+
+Passion Facade Magic Square: The Passion
+facade features a 4x4 magic square where each row, column, and diagonal sums to
+33 (representing the age of Jesus at crucifixion):
+
+1  14  14  4
+11  7   6  9
+8  10  10  5
+13  2   3 15
+
+Nativity Facade Magic Square: The Nativity facade has a different arrangement
+but with similar properties.
+</code></pre><p>And we can "dekrypt" the code.</p><p>Originally I though these numbers are unique and between 1-16. So we had to find
+the seven missing numbers and a combination of 7! or 5040 (assuming no
+duplicates), which can be bruteforced if we rewrote the decryption function in
+a programming language. But it turns out numbers can be repeated, so our address
+space is now 7 to the power of 7 or 823543 which is still easy to bruteforce.</p><p>The answer to the puzzle was:</p><pre tabindex=0><code>Listen up, esteemed members of Kuanda, for we have encountered a slight hiccup
+in our grand scheme.
+
+I can sense your concern, as rumors of our true intentions have reached the ears
+of the KDA. But fear not, my loyal comrades, for we shall not waver from our
+path! If anything, we shall intensify our efforts until the KDA crumbles beneath
+our feet.
+
+I cannot share too much at this time, but rest assured, we are running our
+&#34;smoke tests&#34;, both figuratively and quite literally.
+
+They shall expose the KDA&#39;s weaknesses and herald its epic downfall.
+
+Now, let us address the matter of my well-being. I understand that there is a
+great deal of curiosity regarding my safety.
+
+Let me assure you, it was all a matter of impeccable timing. No doubt my
+connecting flight was an experience of a lifetime!
+
+Too bad my luggage failed to join me on this thrilling journey! :)
+
+But fear not, my friends, leaving things to chance is not my style. I have
+assembled a team of loyal bodyguards, who move with me like elusive phantoms,
+ensuring my invincibility. At any given time, at least two of them discreetly
+shadow my every move, even during my exhilarating runs through the city. Truly,
+I feel untouchable. And let me tell you, this city is a hidden gem! It offers an
+abundance of marvelous spots where one can indulge in a refreshing shake after
+conquering a breathtaking 10K run. It is a perfect blend of mischief and
+rejuvenation, a delightful concoction that fuels my strength.
+
+So, my fellow rogues, let us keep our eyes fixed on the target. I will reveal
+more details about our plans in due time.
+
+Prepare yourselves to witness the spectacular downfall of the KDA, as we
+relentlessly drill into its core at full speed!
+ 
+Krypto
+</code></pre><p>Looking at the clues:</p><ol><li>Krypto is a runner.</li><li>Does 3-4 runs a week.</li><li>Running 8-12 KMs + gets a shake after.</li><li>He has at least two bodyguards running with him (close by so we can use
+geohash again).</li></ol><p>So we have to use the runs to find the start of his runs and the location of the
+hideout.</p><p>First, the distance:</p><pre tabindex=0><code>Runs
+| where Distance between (8 .. 12)
+// 275915 runs
+</code></pre><p>Next, runners with 3-4 runs a week.</p><pre tabindex=0><code>Runs
+| where Distance between (8.0 .. 12.0)
+| extend Week = startofweek(Timestamp) // group by week
+| summarize 
+    RunsPerWeek = count()
+    by RunnerID, Week
+| where RunsPerWeek between (3 .. 4)   // 3-4 runs per week
+| distinct RunnerID
+// 25708 records
+</code></pre><p>We need to use geohash to track a minimum of two bodyguards.</p><pre tabindex=0><code>let suspectedRunners = Runs
+| where Distance between (8.0 .. 12.0)
+| extend Week = startofweek(Timestamp)
+| summarize RunsPerWeek = count() by RunnerID, Week
+| where RunsPerWeek between (3 .. 4)
+| distinct RunnerID;
+// Find groups of runners starting from same location at same time.
+Runs
+| where RunnerID in (suspectedRunners)
+| where Distance between (8.0 .. 12.0)
+| extend TimeBin = bin(Timestamp, 5m)  // start within 5 minutes?
+// precision 18 is 38 meters.
+| extend LocationHash = geo_point_to_s2cell(StartLon, StartLat, 18)
+| summarize 
+    Runners = make_set(RunnerID),
+    RunnerCount = dcount(RunnerID)
+    by TimeBin, LocationHash
+| where RunnerCount &gt;= 3  // at least 3 runners
+| extend RunnerGroup = tostring(array_sort_asc(Runners))
+| summarize 
+    GroupOccurrences = count()
+    by RunnerGroup, RunnerCount
+| where GroupOccurrences &gt;= 3  // groups that run together multiple times
+| order by GroupOccurrences desc, RunnerCount desc
+</code></pre><p>Changing the s2 precision from 15 to 18 returned the same three runners:</p><p><code>["uid1063831570386","uid1549166190602","uid4027695575215"]</code></p><p>Let's track their start location.</p><pre tabindex=0><code>let targetRunners = dynamic([&#34;uid1063831570386&#34;,&#34;uid1549166190602&#34;,&#34;uid4027695575215&#34;]);
+Runs
+| where RunnerID in (targetRunners)
+| where Distance between (8.0 .. 12.0)
+| extend StartLocationHash = geo_point_to_s2cell(StartLon, StartLat, 16)
+| summarize 
+    AvgStartLat = avg(StartLat),
+    AvgStartLon = avg(StartLon)
+    by StartLocationHash
+</code></pre><p>And the answer is:</p><pre tabindex=0><code>| Column            | Value              |
+| ----------------- | ------------------ |
+| StartLocationHash | 12a4a2fe1          |
+| AvgStartLat       | 41.38467253747556  |
+| AvgStartLon       | 2.1833582740901267 |
+</code></pre><p>Now if we plug this into the virtual tour link:</p><pre tabindex=0><code>let VirtualTourLink = (lat:real, lon:real) {
+    print Link = strcat(&#39;https://www.google.com/maps/@&#39;, lat, &#39;,&#39;, lon, 
+        &#39;,3a,75y,252.01h,89.45t/data=!3m6!1e1!3m4!1s-1P!2e0!7i16384!8i8192&#39;)
+};
+VirtualTourLink(41.38467253747556, 2.1833582740901267)
+</code></pre><p>We get
+<a href="https://www.google.com/maps/@41.38467253747556,2.1833582740901269,3a,75y,252.01h,89.45t/data=!3m6!1e1!3m4!1s-1P!2e0!7i16384!8i8192" target=_blank rel="noreferrer noopener">https://www.google.com/maps/@41.38467253747556,2.1833582740901269,3a,75y,252.01h,89.45t/data=!3m6!1e1!3m4!1s-1P!2e0!7i16384!8i8192</a></p><p>A picture of a shop named <code>Juice Dudes</code>.</p><p>And I quit after this one. Maybe I will continue in a bit, but I feel like I
+know enough to sift through logs for now.</p><div class=footnotes role=doc-endnotes><hr><ol><li id=fn:1><p>My last CodeQL reinvention was creating a database from code for static
+analysis which is essentially what a <a href=https://docs.github.com/en/code-security/codeql-cli/using-the-advanced-functionality-of-the-codeql-cli/extractor-options target=_blank rel="noreferrer noopener">CodeQL Extractor</a> is.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:2><p>Even more than me and I am called Yapsia in certain circles.&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></div></div><footer><p class=meta><span class="byline author vcard">Posted by <span class=fn>Parsia</span></span><time>Sep 1, 2025</time></span></p><p class=meta><a class="basic-alignment left" href=https://parsiya.net/blog/2025-08-15-how-burp-ai-works/ title="How Burp AI Works">How Burp AI Works</a></p></footer></article></div><aside class="sidebar thirds"><section class="first odd"><h1>Who am I?</h1><p><p>I am Parsia, a security engineer at Microsoft.</p><p>I write about application security, cryptography, static analysis, and
+(of course) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more. Contact me via any of these ways.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="me noopener noreferrer" href=https://infosec.exchange/@parsiya title=https://infosec.exchange/@parsiya><i class="fa fa-mastodon fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/static-analysis/ title="Static Analysis">Static Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/blockchain/ title="Blockchain (lol)">Blockchain (lol)</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title="WinAppDbg (use Frida instead)">WinAppDbg (use Frida instead)</a></li><li><a href=https://awsome.pw title='AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability'>AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2025 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.</p></footer></body></html>

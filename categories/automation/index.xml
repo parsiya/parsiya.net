@@ -1,28 +1,28 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Automation on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/categories/automation/</link><description>Recent content in Automation on Hackerman's Hacking Tutorials</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Thu, 07 Apr 2022 12:51:57 -0700</lastBuildDate><atom:link href="https://parsiya.net/categories/automation/index.xml" rel="self" type="application/rss+xml"/><item><title>Code Review Hot Spots with Semgrep</title><link>https://parsiya.net/blog/2022-04-07-code-review-hot-spots-with-semgrep/</link><pubDate>Thu, 07 Apr 2022 12:51:57 -0700</pubDate><guid>https://parsiya.net/blog/2022-04-07-code-review-hot-spots-with-semgrep/</guid><description>&lt;p>I will discuss the (not novel) concept of code review hot spots. Hot spots are
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Automation on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/categories/automation/</link><description>Recent content in Automation on Hackerman's Hacking Tutorials</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Thu, 07 Apr 2022 12:51:57 -0700</lastBuildDate><atom:link href="https://parsiya.net/categories/automation/index.xml" rel="self" type="application/rss+xml"/><item><title>Code Review Hot Spots with Semgrep</title><link>https://parsiya.net/blog/2022-04-07-code-review-hot-spots-with-semgrep/</link><pubDate>Thu, 07 Apr 2022 12:51:57 -0700</pubDate><guid>https://parsiya.net/blog/2022-04-07-code-review-hot-spots-with-semgrep/</guid><description>&lt;p&gt;I will discuss the (not novel) concept of code review hot spots. Hot spots are
 parts of the code that might contain vulnerabilities. They are not suitable for
 automatic reporting, so security engineers should review them manually. I will
 define what I call a hot spot; I'll find some examples with Semgrep; and finally,
-I'll show how I collect these rules.&lt;/p></description></item><item><title>A Hands-On Intro to Semgrep's Autofix</title><link>https://parsiya.net/blog/2021-10-25-a-hands-on-intro-to-semgreps-autofix/</link><pubDate>Mon, 25 Oct 2021 20:00:47 -0700</pubDate><guid>https://parsiya.net/blog/2021-10-25-a-hands-on-intro-to-semgreps-autofix/</guid><description>&lt;p>Semgrep's experimental &lt;a href="https://semgrep.dev/docs/experiments/overview/#autofix" target="_blank" rel="noreferrer noopener">autofix&lt;/a> feature can automagically
+I'll show how I collect these rules.&lt;/p&gt;</description></item><item><title>A Hands-On Intro to Semgrep's Autofix</title><link>https://parsiya.net/blog/2021-10-25-a-hands-on-intro-to-semgreps-autofix/</link><pubDate>Mon, 25 Oct 2021 20:00:47 -0700</pubDate><guid>https://parsiya.net/blog/2021-10-25-a-hands-on-intro-to-semgreps-autofix/</guid><description>&lt;p&gt;Semgrep's experimental &lt;a href="https://semgrep.dev/docs/experiments/overview/#autofix" target="_blank" rel="noreferrer noopener"&gt;autofix&lt;/a&gt; feature can automagically
 modify vulnerable code. A few things can be fixed like this but it's worth
 exploring. This post is an introduction to creating fixes for your Semgrep
-rules.&lt;/p>
-&lt;p>I have included links to the playground for practicing. If you prefer
+rules.&lt;/p&gt;
+&lt;p&gt;I have included links to the playground for practicing. If you prefer
 running the rules via the command-line please see the rules and code at
-&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/semgrep-autofix" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/semgrep-autofix&lt;/a>.&lt;/p></description></item><item><title>Modify GitLab Repositories from the CI Pipeline</title><link>https://parsiya.net/blog/2021-10-11-modify-gitlab-repositories-from-the-ci-pipeline/</link><pubDate>Mon, 11 Oct 2021 01:12:58 -0700</pubDate><guid>https://parsiya.net/blog/2021-10-11-modify-gitlab-repositories-from-the-ci-pipeline/</guid><description>&lt;p>You would think modifying a GitLab repository from its CI job should be
-straightforward. Well, it's not. Here's how I did it.&lt;/p></description></item><item><title>Semgrep: The Surgical Static Analysis Tool</title><link>https://parsiya.net/blog/2021-06-22-semgrep-the-surgical-static-analysis-tool/</link><pubDate>Tue, 22 Jun 2021 18:42:06 -0700</pubDate><guid>https://parsiya.net/blog/2021-06-22-semgrep-the-surgical-static-analysis-tool/</guid><description>&lt;h1 id="why-are-we-here">Why are We Here?
-&lt;a class="header-link" href="#why-are-we-here">&lt;svg class="fill-current o-60 hover-accent-color-light" height="22px" viewBox="0 0 24 24" width="22px" xmlns="http://www.w3.org/2000/svg">&lt;path d="M0 0h24v24H0z" fill="none"/>&lt;path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>&lt;/svg>&lt;/a>
-&lt;/h1>&lt;p>What this blog is about:&lt;/p>
-&lt;ol>
-&lt;li>Why I like Semgrep.&lt;/li>
-&lt;li>Why I think you should use it.&lt;/li>
-&lt;li>How I use Semgrep.&lt;/li>
-&lt;/ol>
-&lt;p>What this blog is not about:&lt;/p>
-&lt;ol>
-&lt;li>What static analysis is.&lt;/li>
-&lt;li>Semgrep tutorial.&lt;/li>
-&lt;/ol></description></item><item><title>Automagically Deploying Websites with Custom Domains to GitHub Pages</title><link>https://parsiya.net/blog/2021-02-17-automagically-deploying-websites-with-custom-domains-to-github-pages/</link><pubDate>Wed, 17 Feb 2021 09:56:33 -0800</pubDate><guid>https://parsiya.net/blog/2021-02-17-automagically-deploying-websites-with-custom-domains-to-github-pages/</guid><description>&lt;p>Recently, I have started moving my non-critical websites to GitHub pages. I am
-documenting the process in one place for future me.&lt;/p></description></item><item><title>Thick Client Proxying - Part 11 - GOG Galaxy and Extract-SNI</title><link>https://parsiya.net/blog/2020-06-22-thick-client-proxying-part-11-gog-galaxy-and-extract-sni/</link><pubDate>Mon, 22 Jun 2020 09:49:35 -0700</pubDate><guid>https://parsiya.net/blog/2020-06-22-thick-client-proxying-part-11-gog-galaxy-and-extract-sni/</guid><description>&lt;p>In this post we will use our knowledge from
+&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/semgrep-autofix" target="_blank" rel="noreferrer noopener"&gt;https://github.com/parsiya/Parsia-Code/tree/master/semgrep-autofix&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>Modify GitLab Repositories from the CI Pipeline</title><link>https://parsiya.net/blog/2021-10-11-modify-gitlab-repositories-from-the-ci-pipeline/</link><pubDate>Mon, 11 Oct 2021 01:12:58 -0700</pubDate><guid>https://parsiya.net/blog/2021-10-11-modify-gitlab-repositories-from-the-ci-pipeline/</guid><description>&lt;p&gt;You would think modifying a GitLab repository from its CI job should be
+straightforward. Well, it's not. Here's how I did it.&lt;/p&gt;</description></item><item><title>Semgrep: The Surgical Static Analysis Tool</title><link>https://parsiya.net/blog/2021-06-22-semgrep-the-surgical-static-analysis-tool/</link><pubDate>Tue, 22 Jun 2021 18:42:06 -0700</pubDate><guid>https://parsiya.net/blog/2021-06-22-semgrep-the-surgical-static-analysis-tool/</guid><description>&lt;h1 id="why-are-we-here"&gt;Why are We Here?
+&lt;a class="header-link" href="#why-are-we-here"&gt;&lt;svg class="fill-current o-60 hover-accent-color-light" height="22px" viewBox="0 0 24 24" width="22px" xmlns="http://www.w3.org/2000/svg"&gt;&lt;path d="M0 0h24v24H0z" fill="none"/&gt;&lt;path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/&gt;&lt;/svg&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;What this blog is about:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Why I like Semgrep.&lt;/li&gt;
+&lt;li&gt;Why I think you should use it.&lt;/li&gt;
+&lt;li&gt;How I use Semgrep.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;What this blog is not about:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;What static analysis is.&lt;/li&gt;
+&lt;li&gt;Semgrep tutorial.&lt;/li&gt;
+&lt;/ol&gt;</description></item><item><title>Automagically Deploying Websites with Custom Domains to GitHub Pages</title><link>https://parsiya.net/blog/2021-02-17-automagically-deploying-websites-with-custom-domains-to-github-pages/</link><pubDate>Wed, 17 Feb 2021 09:56:33 -0800</pubDate><guid>https://parsiya.net/blog/2021-02-17-automagically-deploying-websites-with-custom-domains-to-github-pages/</guid><description>&lt;p&gt;Recently, I have started moving my non-critical websites to GitHub pages. I am
+documenting the process in one place for future me.&lt;/p&gt;</description></item><item><title>Thick Client Proxying - Part 11 - GOG Galaxy and Extract-SNI</title><link>https://parsiya.net/blog/2020-06-22-thick-client-proxying-part-11-gog-galaxy-and-extract-sni/</link><pubDate>Mon, 22 Jun 2020 09:49:35 -0700</pubDate><guid>https://parsiya.net/blog/2020-06-22-thick-client-proxying-part-11-gog-galaxy-and-extract-sni/</guid><description>&lt;p&gt;In this post we will use our knowledge from
 
 
 
@@ -35,56 +35,56 @@ documenting the process in one place for future me.&lt;/p></description></item><
 
 
  
-&lt;a href="https://parsiya.net/blog/2020-05-09-thick-client-proxying-part-10-the-hosts-file/" title="Thick Client Proxying - Part 10 - The hosts File" rel="nofollow" target="_blank">Thick Client Proxying - Part 10 - The hosts File&lt;/a>
+&lt;a href="https://parsiya.net/blog/2020-05-09-thick-client-proxying-part-10-the-hosts-file/" title="Thick Client Proxying - Part 10 - The hosts File" rel="nofollow" target="_blank"&gt;Thick Client Proxying - Part 10 - The hosts File&lt;/a&gt;
 to proxy GOG Galaxy 2. I will also introduce
-&lt;a href="https://github.com/parsiya/extract-sni" target="_blank" rel="noreferrer noopener">some automation&lt;/a> to make our lives easier.&lt;/p></description></item><item><title>Time Management For Systems Administrators - Lessons Learned</title><link>https://parsiya.net/blog/2020-03-13-time-management-for-systems-administrators-lessons-learned/</link><pubDate>Fri, 13 Mar 2020 19:25:18 -0700</pubDate><guid>https://parsiya.net/blog/2020-03-13-time-management-for-systems-administrators-lessons-learned/</guid><description>&lt;p>A while ago I read &lt;a href="https://everythingsysadmin.com/books.html" target="_blank" rel="noreferrer noopener">Time Management for System Administrators&lt;/a> by
-&lt;a href="https://twitter.com/yesthattom" target="_blank" rel="noreferrer noopener">Tom Limoncelli&lt;/a>. This blog is my reviewed notes.&lt;/p>
-&lt;p>You can find my raw notes in my clone at:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://parsiya.io/automation/time-management-sysadmins-notes/" target="_blank" rel="noreferrer noopener">https://parsiya.io/automation/time-management-sysadmins-notes/&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;p>Tom is also the author of one of my favorite articles
-&lt;a href="https://queue.acm.org/detail.cfm?id=3197520" target="_blank" rel="noreferrer noopener">Manual Work is a Bug&lt;/a>.&lt;/p>
-&lt;p>I have written about it:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://parsiya.net/blog/2018-10-03-reflections-on-manual-work-is-a-bug/" title="Reflections on &amp;#39;Manual Work is a Bug&amp;#39;">Reflections on 'Manual Work is a Bug'&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://parsiya.net/blog/2019-04-17-the-dark-side-of-manual-work-is-a-bug/" title="The Dark Side of &amp;#39;Manual Work is a Bug&amp;#39;">The Dark Side of 'Manual Work is a Bug'&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>Documentation Writing for System Administrators - Notes</title><link>https://parsiya.net/blog/2020-02-06-documentation-writing-for-system-administrators-notes/</link><pubDate>Thu, 06 Feb 2020 23:21:57 -0800</pubDate><guid>https://parsiya.net/blog/2020-02-06-documentation-writing-for-system-administrators-notes/</guid><description>&lt;p>These are my notes for the booklet &lt;code>Documentation Writing for System Administrtors&lt;/code>.
+&lt;a href="https://github.com/parsiya/extract-sni" target="_blank" rel="noreferrer noopener"&gt;some automation&lt;/a&gt; to make our lives easier.&lt;/p&gt;</description></item><item><title>Time Management For Systems Administrators - Lessons Learned</title><link>https://parsiya.net/blog/2020-03-13-time-management-for-systems-administrators-lessons-learned/</link><pubDate>Fri, 13 Mar 2020 19:25:18 -0700</pubDate><guid>https://parsiya.net/blog/2020-03-13-time-management-for-systems-administrators-lessons-learned/</guid><description>&lt;p&gt;A while ago I read &lt;a href="https://everythingsysadmin.com/books.html" target="_blank" rel="noreferrer noopener"&gt;Time Management for System Administrators&lt;/a&gt; by
+&lt;a href="https://twitter.com/yesthattom" target="_blank" rel="noreferrer noopener"&gt;Tom Limoncelli&lt;/a&gt;. This blog is my reviewed notes.&lt;/p&gt;
+&lt;p&gt;You can find my raw notes in my clone at:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://parsiya.io/automation/time-management-sysadmins-notes/" target="_blank" rel="noreferrer noopener"&gt;https://parsiya.io/automation/time-management-sysadmins-notes/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Tom is also the author of one of my favorite articles
+&lt;a href="https://queue.acm.org/detail.cfm?id=3197520" target="_blank" rel="noreferrer noopener"&gt;Manual Work is a Bug&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I have written about it:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://parsiya.net/blog/2018-10-03-reflections-on-manual-work-is-a-bug/" title="Reflections on &amp;#39;Manual Work is a Bug&amp;#39;"&gt;Reflections on 'Manual Work is a Bug'&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://parsiya.net/blog/2019-04-17-the-dark-side-of-manual-work-is-a-bug/" title="The Dark Side of &amp;#39;Manual Work is a Bug&amp;#39;"&gt;The Dark Side of 'Manual Work is a Bug'&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Documentation Writing for System Administrators - Notes</title><link>https://parsiya.net/blog/2020-02-06-documentation-writing-for-system-administrators-notes/</link><pubDate>Thu, 06 Feb 2020 23:21:57 -0800</pubDate><guid>https://parsiya.net/blog/2020-02-06-documentation-writing-for-system-administrators-notes/</guid><description>&lt;p&gt;These are my notes for the booklet &lt;code&gt;Documentation Writing for System Administrtors&lt;/code&gt;.
 It's from 2003, so some of the tools and procedures are old. However, somethings
-never change and it's still useful.&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://www.usenix.org/short-topics/documentation-writing-system-administrators" target="_blank" rel="noreferrer noopener">https://www.usenix.org/short-topics/documentation-writing-system-administrators&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>The Dark Side of "Manual Work is a Bug"</title><link>https://parsiya.net/blog/2019-04-17-the-dark-side-of-manual-work-is-a-bug/</link><pubDate>Wed, 17 Apr 2019 19:12:33 -0700</pubDate><guid>https://parsiya.net/blog/2019-04-17-the-dark-side-of-manual-work-is-a-bug/</guid><description>&lt;p>This is a revisit of &lt;a href="https://queue.acm.org/detail.cfm?id=3197520" target="_blank" rel="noreferrer noopener">Manual Work is a Bug&lt;/a>
-during my ramp up at my &lt;a href="https://twitter.com/CryptoGangsta/status/1109185306295746563" target="_blank" rel="noreferrer noopener">new job&lt;/a>.
+never change and it's still useful.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://www.usenix.org/short-topics/documentation-writing-system-administrators" target="_blank" rel="noreferrer noopener"&gt;https://www.usenix.org/short-topics/documentation-writing-system-administrators&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>The Dark Side of "Manual Work is a Bug"</title><link>https://parsiya.net/blog/2019-04-17-the-dark-side-of-manual-work-is-a-bug/</link><pubDate>Wed, 17 Apr 2019 19:12:33 -0700</pubDate><guid>https://parsiya.net/blog/2019-04-17-the-dark-side-of-manual-work-is-a-bug/</guid><description>&lt;p&gt;This is a revisit of &lt;a href="https://queue.acm.org/detail.cfm?id=3197520" target="_blank" rel="noreferrer noopener"&gt;Manual Work is a Bug&lt;/a&gt;
+during my ramp up at my &lt;a href="https://twitter.com/CryptoGangsta/status/1109185306295746563" target="_blank" rel="noreferrer noopener"&gt;new job&lt;/a&gt;.
 I will discuss my experience doing some automation at my previous job and the
-flip side to the utopia painted by the article.&lt;/p></description></item><item><title>Reflections on "Manual Work is a Bug"</title><link>https://parsiya.net/blog/2018-10-03-reflections-on-manual-work-is-a-bug/</link><pubDate>Wed, 03 Oct 2018 00:48:17 -0400</pubDate><guid>https://parsiya.net/blog/2018-10-03-reflections-on-manual-work-is-a-bug/</guid><description>&lt;p>I recently read &lt;a href="https://queue.acm.org/detail.cfm?id=3197520" target="_blank" rel="noreferrer noopener">Manual Work is a Bug&lt;/a> by Thomas A. Limoncelli. It's a great article in my opinion. I realized I had been doing some of what it mentions.&lt;/p>
-&lt;p>If you know me, you know I am a great fan of knowledge bases or &lt;code>clones&lt;/code> as I call them. I have my own external clone at &lt;a href="https://parsiya.io" target="_blank" rel="noreferrer noopener">parsiya.io&lt;/a>. It's also somewhat &lt;a href="https://parsiya.net/blog/2018-04-24-semi-automated-cloning-pain-free-knowledge-base-creation/" title="Semi-Automated Cloning: Pain-Free Knowledge Base Creation">automated&lt;/a>. I have had an internal one for more than two years.&lt;/p>
-&lt;p>But the automation was not what rhymed with me. It was the documentation.&lt;/p></description></item><item><title>Semi-Automated Cloning: Pain-Free Knowledge Base Creation</title><link>https://parsiya.net/blog/2018-04-24-semi-automated-cloning-pain-free-knowledge-base-creation/</link><pubDate>Tue, 24 Apr 2018 21:18:32 -0400</pubDate><guid>https://parsiya.net/blog/2018-04-24-semi-automated-cloning-pain-free-knowledge-base-creation/</guid><description>&lt;h1 id="tldr">TL;DR:
-&lt;a class="header-link" href="#tldr">&lt;svg class="fill-current o-60 hover-accent-color-light" height="22px" viewBox="0 0 24 24" width="22px" xmlns="http://www.w3.org/2000/svg">&lt;path d="M0 0h24v24H0z" fill="none"/>&lt;path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>&lt;/svg>&lt;/a>
-&lt;/h1>&lt;p>Instead of creating an index manually for Github, I am using a Hugo blog for my knowledge base (a.k.a. &lt;code>Parsia-Clone&lt;/code>). This blog is about my flow and how I have semi-automated the process. Demo site is at &lt;a href="https://parsiya.io" target="_blank" rel="noreferrer noopener">https://parsiya.io&lt;/a> (it's served in plaintext because I am making rapid changes and do not want to invalidate CloudFront's cache after every push).&lt;/p>
-&lt;h1 id="flow">Flow
-&lt;a class="header-link" href="#flow">&lt;svg class="fill-current o-60 hover-accent-color-light" height="22px" viewBox="0 0 24 24" width="22px" xmlns="http://www.w3.org/2000/svg">&lt;path d="M0 0h24v24H0z" fill="none"/>&lt;path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>&lt;/svg>&lt;/a>
-&lt;/h1>&lt;p>Flow is pretty simple:&lt;/p>
-&lt;ol>
-&lt;li>Create the page bundle directory and page in the clone with &lt;code>hugo new&lt;/code>. I usually create it under &lt;code>categories\main-category-name&lt;/code>. The command will look like:
-&lt;ul>
-&lt;li>&lt;code>hugo new categories\research\hacking-the-gibson\index.md&lt;/code>&lt;/li>
-&lt;/ul>
-&lt;/li>
-&lt;li>Run &lt;code>hugo serve&lt;/code> to preview the page during the edit.&lt;/li>
-&lt;li>Fill front matter and write the page in &lt;code>index.md&lt;/code>.&lt;/li>
-&lt;li>Any resources such as pictures and files can be in the same directory. This helps in two ways, they can be referenced in the page (like pictures) and seen on Github (like config files).&lt;/li>
-&lt;li>When done, &lt;code>git add/commit/push&lt;/code> the clone inside the &lt;code>content&lt;/code> directory.&lt;/li>
-&lt;li>???&lt;/li>
-&lt;li>Profit. See updated blog, built and deployed by &lt;code>Travis CI&lt;/code>.&lt;/li>
-&lt;/ol></description></item><item><title>Deploying my Knowledge Base at parsiya.io to S3 with Travis CI</title><link>https://parsiya.net/blog/2018-04-24-deploying-my-knowledge-base-at-parsiya.io-to-s3-with-travis-ci/</link><pubDate>Tue, 24 Apr 2018 01:02:03 -0400</pubDate><guid>https://parsiya.net/blog/2018-04-24-deploying-my-knowledge-base-at-parsiya.io-to-s3-with-travis-ci/</guid><description>&lt;p>I finally managed to automate deployment of &lt;a href="https://parsiya.io" target="_blank" rel="noreferrer noopener">parsiya.io&lt;/a> with Travis CI. Not having done this before, I encountered some pitfalls. Additionally I had two extra problems:&lt;/p>
-&lt;ul>
-&lt;li>The structure of the blog is different from most Hugo deployments. &lt;a href="https://github.com/parsiya/Parsia-Clone" target="_blank" rel="noreferrer noopener">Parsia-Clone&lt;/a> only contains the &lt;code>content&lt;/code> directory. Parents and everything else are in the &lt;a href="https://github.com/parsiya/Parsiya.io" target="_blank" rel="noreferrer noopener">parsiya.io&lt;/a> repo. So while we push to &lt;code>Parsia-Clone&lt;/code>, we need to clone &lt;code>parsiya.io&lt;/code> and build the repository there.&lt;/li>
-&lt;li>I am hosting it out of an S3 bucket. All other examples were using github pages.&lt;/li>
-&lt;/ul>
-&lt;p>&lt;strong>Update November 2020:&lt;/strong> As of late November 2020, I have switched to Github
-actions for both &lt;code>parsiya.net&lt;/code> and &lt;code>parsiya.io&lt;/code>. Please see
-&lt;a href="https://github.com/parsiya/Parsia-Clone/blob/main/.github/workflows/deploy.ymlOLD" target="_blank" rel="noreferrer noopener">deploy.ymlOLD&lt;/a>.&lt;/p>
-&lt;p>&lt;strong>Update February 2021:&lt;/strong> parsiya.io is now hosted on github pages with a custom
+flip side to the utopia painted by the article.&lt;/p&gt;</description></item><item><title>Reflections on "Manual Work is a Bug"</title><link>https://parsiya.net/blog/2018-10-03-reflections-on-manual-work-is-a-bug/</link><pubDate>Wed, 03 Oct 2018 00:48:17 -0400</pubDate><guid>https://parsiya.net/blog/2018-10-03-reflections-on-manual-work-is-a-bug/</guid><description>&lt;p&gt;I recently read &lt;a href="https://queue.acm.org/detail.cfm?id=3197520" target="_blank" rel="noreferrer noopener"&gt;Manual Work is a Bug&lt;/a&gt; by Thomas A. Limoncelli. It's a great article in my opinion. I realized I had been doing some of what it mentions.&lt;/p&gt;
+&lt;p&gt;If you know me, you know I am a great fan of knowledge bases or &lt;code&gt;clones&lt;/code&gt; as I call them. I have my own external clone at &lt;a href="https://parsiya.io" target="_blank" rel="noreferrer noopener"&gt;parsiya.io&lt;/a&gt;. It's also somewhat &lt;a href="https://parsiya.net/blog/2018-04-24-semi-automated-cloning-pain-free-knowledge-base-creation/" title="Semi-Automated Cloning: Pain-Free Knowledge Base Creation"&gt;automated&lt;/a&gt;. I have had an internal one for more than two years.&lt;/p&gt;
+&lt;p&gt;But the automation was not what rhymed with me. It was the documentation.&lt;/p&gt;</description></item><item><title>Semi-Automated Cloning: Pain-Free Knowledge Base Creation</title><link>https://parsiya.net/blog/2018-04-24-semi-automated-cloning-pain-free-knowledge-base-creation/</link><pubDate>Tue, 24 Apr 2018 21:18:32 -0400</pubDate><guid>https://parsiya.net/blog/2018-04-24-semi-automated-cloning-pain-free-knowledge-base-creation/</guid><description>&lt;h1 id="tldr"&gt;TL;DR:
+&lt;a class="header-link" href="#tldr"&gt;&lt;svg class="fill-current o-60 hover-accent-color-light" height="22px" viewBox="0 0 24 24" width="22px" xmlns="http://www.w3.org/2000/svg"&gt;&lt;path d="M0 0h24v24H0z" fill="none"/&gt;&lt;path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/&gt;&lt;/svg&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;Instead of creating an index manually for Github, I am using a Hugo blog for my knowledge base (a.k.a. &lt;code&gt;Parsia-Clone&lt;/code&gt;). This blog is about my flow and how I have semi-automated the process. Demo site is at &lt;a href="https://parsiya.io" target="_blank" rel="noreferrer noopener"&gt;https://parsiya.io&lt;/a&gt; (it's served in plaintext because I am making rapid changes and do not want to invalidate CloudFront's cache after every push).&lt;/p&gt;
+&lt;h1 id="flow"&gt;Flow
+&lt;a class="header-link" href="#flow"&gt;&lt;svg class="fill-current o-60 hover-accent-color-light" height="22px" viewBox="0 0 24 24" width="22px" xmlns="http://www.w3.org/2000/svg"&gt;&lt;path d="M0 0h24v24H0z" fill="none"/&gt;&lt;path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/&gt;&lt;/svg&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;Flow is pretty simple:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Create the page bundle directory and page in the clone with &lt;code&gt;hugo new&lt;/code&gt;. I usually create it under &lt;code&gt;categories\main-category-name&lt;/code&gt;. The command will look like:
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;hugo new categories\research\hacking-the-gibson\index.md&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Run &lt;code&gt;hugo serve&lt;/code&gt; to preview the page during the edit.&lt;/li&gt;
+&lt;li&gt;Fill front matter and write the page in &lt;code&gt;index.md&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Any resources such as pictures and files can be in the same directory. This helps in two ways, they can be referenced in the page (like pictures) and seen on Github (like config files).&lt;/li&gt;
+&lt;li&gt;When done, &lt;code&gt;git add/commit/push&lt;/code&gt; the clone inside the &lt;code&gt;content&lt;/code&gt; directory.&lt;/li&gt;
+&lt;li&gt;???&lt;/li&gt;
+&lt;li&gt;Profit. See updated blog, built and deployed by &lt;code&gt;Travis CI&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;</description></item><item><title>Deploying my Knowledge Base at parsiya.io to S3 with Travis CI</title><link>https://parsiya.net/blog/2018-04-24-deploying-my-knowledge-base-at-parsiya.io-to-s3-with-travis-ci/</link><pubDate>Tue, 24 Apr 2018 01:02:03 -0400</pubDate><guid>https://parsiya.net/blog/2018-04-24-deploying-my-knowledge-base-at-parsiya.io-to-s3-with-travis-ci/</guid><description>&lt;p&gt;I finally managed to automate deployment of &lt;a href="https://parsiya.io" target="_blank" rel="noreferrer noopener"&gt;parsiya.io&lt;/a&gt; with Travis CI. Not having done this before, I encountered some pitfalls. Additionally I had two extra problems:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The structure of the blog is different from most Hugo deployments. &lt;a href="https://github.com/parsiya/Parsia-Clone" target="_blank" rel="noreferrer noopener"&gt;Parsia-Clone&lt;/a&gt; only contains the &lt;code&gt;content&lt;/code&gt; directory. Parents and everything else are in the &lt;a href="https://github.com/parsiya/Parsiya.io" target="_blank" rel="noreferrer noopener"&gt;parsiya.io&lt;/a&gt; repo. So while we push to &lt;code&gt;Parsia-Clone&lt;/code&gt;, we need to clone &lt;code&gt;parsiya.io&lt;/code&gt; and build the repository there.&lt;/li&gt;
+&lt;li&gt;I am hosting it out of an S3 bucket. All other examples were using github pages.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Update November 2020:&lt;/strong&gt; As of late November 2020, I have switched to Github
+actions for both &lt;code&gt;parsiya.net&lt;/code&gt; and &lt;code&gt;parsiya.io&lt;/code&gt;. Please see
+&lt;a href="https://github.com/parsiya/Parsia-Clone/blob/main/.github/workflows/deploy.ymlOLD" target="_blank" rel="noreferrer noopener"&gt;deploy.ymlOLD&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Update February 2021:&lt;/strong&gt; parsiya.io is now hosted on github pages with a custom
 domain instead of an S3 bucket. Please see the workflow file at
-&lt;a href="https://github.com/parsiya/Parsia-Clone/blob/main/.github/workflows/gh-pages.yml" target="_blank" rel="noreferrer noopener">gh-pages.yml&lt;/a>.&lt;/p></description></item></channel></rss>
+&lt;a href="https://github.com/parsiya/Parsia-Clone/blob/main/.github/workflows/gh-pages.yml" target="_blank" rel="noreferrer noopener"&gt;gh-pages.yml&lt;/a&gt;.&lt;/p&gt;</description></item></channel></rss>

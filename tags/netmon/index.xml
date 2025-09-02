@@ -1,27 +1,27 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Netmon on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/tags/netmon/</link><description>Recent content in Netmon on Hackerman's Hacking Tutorials</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Thu, 08 Oct 2015 23:05:24 +0000</lastBuildDate><atom:link href="https://parsiya.net/tags/netmon/index.xml" rel="self" type="application/rss+xml"/><item><title>Proxying Hipchat Part 1: Where did the Traffic Go?</title><link>https://parsiya.net/blog/2015-10-08-proxying-hipchat-part-1-where-did-the-traffic-go/</link><pubDate>Thu, 08 Oct 2015 23:05:24 +0000</pubDate><guid>https://parsiya.net/blog/2015-10-08-proxying-hipchat-part-1-where-did-the-traffic-go/</guid><description>&lt;p>This is a slightly different version of a series of blog post that I wrote on our internal blog about proxying. I see that proxying traffic is a time consuming step in testing thick client applications so I thought I would share what I know. I tackled Hipchat. Why Hipchat? Because it uses a known protocol (XMPP) and I thought it's an interesting application.&lt;/p>
-&lt;p>I used Hipchat Windows client version 2. At the time of writing version 4 is in beta. In this part we will see how we can identify endpoints from traffic captures even when they are behind a load balancer/shared hosting etc. In next parts we will start proxying.&lt;/p></description></item><item><title>Network Traffic Attribution on Windows</title><link>https://parsiya.net/blog/2015-08-01-network-traffic-attribution-on-windows/</link><pubDate>Sat, 01 Aug 2015 19:37:42 +0000</pubDate><guid>https://parsiya.net/blog/2015-08-01-network-traffic-attribution-on-windows/</guid><description>&lt;p>Thick client assessments come in different flavors. Most of our work is on
-&lt;code>consumer applications&lt;/code> where &lt;code>consumer&lt;/code> means either the customer or an
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Netmon on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/tags/netmon/</link><description>Recent content in Netmon on Hackerman's Hacking Tutorials</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Thu, 08 Oct 2015 23:05:24 +0000</lastBuildDate><atom:link href="https://parsiya.net/tags/netmon/index.xml" rel="self" type="application/rss+xml"/><item><title>Proxying Hipchat Part 1: Where did the Traffic Go?</title><link>https://parsiya.net/blog/2015-10-08-proxying-hipchat-part-1-where-did-the-traffic-go/</link><pubDate>Thu, 08 Oct 2015 23:05:24 +0000</pubDate><guid>https://parsiya.net/blog/2015-10-08-proxying-hipchat-part-1-where-did-the-traffic-go/</guid><description>&lt;p&gt;This is a slightly different version of a series of blog post that I wrote on our internal blog about proxying. I see that proxying traffic is a time consuming step in testing thick client applications so I thought I would share what I know. I tackled Hipchat. Why Hipchat? Because it uses a known protocol (XMPP) and I thought it's an interesting application.&lt;/p&gt;
+&lt;p&gt;I used Hipchat Windows client version 2. At the time of writing version 4 is in beta. In this part we will see how we can identify endpoints from traffic captures even when they are behind a load balancer/shared hosting etc. In next parts we will start proxying.&lt;/p&gt;</description></item><item><title>Network Traffic Attribution on Windows</title><link>https://parsiya.net/blog/2015-08-01-network-traffic-attribution-on-windows/</link><pubDate>Sat, 01 Aug 2015 19:37:42 +0000</pubDate><guid>https://parsiya.net/blog/2015-08-01-network-traffic-attribution-on-windows/</guid><description>&lt;p&gt;Thick client assessments come in different flavors. Most of our work is on
+&lt;code&gt;consumer applications&lt;/code&gt; where &lt;code&gt;consumer&lt;/code&gt; means either the customer or an
 employee of our client. But these applications usually have network
-communications.&lt;/p>
-&lt;p>When looking at thick client applications from a network traffic perspective, we
-face two big challenges:&lt;/p>
-&lt;ol>
-&lt;li>
-&lt;p>&lt;strong>Traffic Attribution&lt;/strong> or &lt;strong>Where does this traffic come from?&lt;/strong>: How to we
+communications.&lt;/p&gt;
+&lt;p&gt;When looking at thick client applications from a network traffic perspective, we
+face two big challenges:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Traffic Attribution&lt;/strong&gt; or &lt;strong&gt;Where does this traffic come from?&lt;/strong&gt;: How to we
 identify application's traffic? The operating system (in this case Windows)
 is running many applications and services. Each of them may have network
-connectivity.&lt;/p>
-&lt;/li>
-&lt;li>
-&lt;p>&lt;strong>Proxying Traffic&lt;/strong> or &lt;strong>How do I look view/modify traffic?&lt;/strong>: This is more
+connectivity.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Proxying Traffic&lt;/strong&gt; or &lt;strong&gt;How do I look view/modify traffic?&lt;/strong&gt;: This is more
 challenging and involves capturing, modifying and in a lot of cases
 decrypting/decoding target application's traffic. This could be as easy as
 setting up Burp via an application setting (EZ-mode) or as hard as setting up
 your own access point to capture a device's traffic then developing your own
-decryption plugin for your proxy tool (good luck).&lt;/p>
-&lt;/li>
-&lt;/ol>
-&lt;p>In this post, I will be talking about the much easier first challenge. I will be
+decryption plugin for your proxy tool (good luck).&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;In this post, I will be talking about the much easier first challenge. I will be
 talking about some of the tools and techniques that I use to accomplish this.
 This is not a groundbreaking post ;). We will use a simple application, in this
-case &lt;code>notepad++&lt;/code>.&lt;/p></description></item></channel></rss>
+case &lt;code&gt;notepad++&lt;/code&gt;.&lt;/p&gt;</description></item></channel></rss>

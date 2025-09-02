@@ -1,29 +1,29 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Attack Surface Analysis on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/categories/attack-surface-analysis/</link><description>Recent content in Attack Surface Analysis on Hackerman's Hacking Tutorials</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Thu, 19 Sep 2024 19:45:53 -0700</lastBuildDate><atom:link href="https://parsiya.net/categories/attack-surface-analysis/index.xml" rel="self" type="application/rss+xml"/><item><title>Steam's 'Open in Desktop' Button</title><link>https://parsiya.net/blog/steam-open-desktop/</link><pubDate>Thu, 19 Sep 2024 19:45:53 -0700</pubDate><guid>https://parsiya.net/blog/steam-open-desktop/</guid><description>&lt;p>This is not a bug, but some notes about the new Steam &amp;quot;Open in Desktop&amp;quot; button.
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Attack Surface Analysis on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/categories/attack-surface-analysis/</link><description>Recent content in Attack Surface Analysis on Hackerman's Hacking Tutorials</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Thu, 19 Sep 2024 19:45:53 -0700</lastBuildDate><atom:link href="https://parsiya.net/categories/attack-surface-analysis/index.xml" rel="self" type="application/rss+xml"/><item><title>Steam's 'Open in Desktop' Button</title><link>https://parsiya.net/blog/steam-open-desktop/</link><pubDate>Thu, 19 Sep 2024 19:45:53 -0700</pubDate><guid>https://parsiya.net/blog/steam-open-desktop/</guid><description>&lt;p&gt;This is not a bug, but some notes about the new Steam &amp;quot;Open in Desktop&amp;quot; button.
 I am going to show how to look for bugs in these kinds of browser-to-desktop
-interactions.&lt;/p></description></item><item><title>Security Nightmares of Game Package Managers</title><link>https://parsiya.net/blog/2022-02-07-security-nightmares-of-game-package-managers/</link><pubDate>Mon, 07 Feb 2022 22:37:59 -0800</pubDate><guid>https://parsiya.net/blog/2022-02-07-security-nightmares-of-game-package-managers/</guid><description>&lt;p>Let's talk about the security nightmare of handling hundreds of different game
+interactions.&lt;/p&gt;</description></item><item><title>Security Nightmares of Game Package Managers</title><link>https://parsiya.net/blog/2022-02-07-security-nightmares-of-game-package-managers/</link><pubDate>Mon, 07 Feb 2022 22:37:59 -0800</pubDate><guid>https://parsiya.net/blog/2022-02-07-security-nightmares-of-game-package-managers/</guid><description>&lt;p&gt;Let's talk about the security nightmare of handling hundreds of different game
 installations. Over the years I have become the de facto security engineer
-responsible for EA's &amp;quot;game package managers&amp;quot; &lt;a href="https://www.origin.com/usa/en-us/store/download" target="_blank" rel="noreferrer noopener">Origin&lt;/a> and the
-&lt;a href="https://www.ea.com/ea-app-beta" target="_blank" rel="noreferrer noopener">EA App&lt;/a> and we have our own unique issues.&lt;/p></description></item><item><title>RCE in Visual Studio Code's Remote WSL for Fun and Negative Profit</title><link>https://parsiya.net/blog/2021-12-20-rce-in-visual-studio-codes-remote-wsl-for-fun-and-negative-profit/</link><pubDate>Mon, 20 Dec 2021 03:22:10 -0800</pubDate><guid>https://parsiya.net/blog/2021-12-20-rce-in-visual-studio-codes-remote-wsl-for-fun-and-negative-profit/</guid><description>&lt;p>The Visual Studio Code server in Windows Subsystem for Linux uses a local
-WebSocket WebSocket connection to communicate with the &lt;code>Remote WSL&lt;/code> extension.
+responsible for EA's &amp;quot;game package managers&amp;quot; &lt;a href="https://www.origin.com/usa/en-us/store/download" target="_blank" rel="noreferrer noopener"&gt;Origin&lt;/a&gt; and the
+&lt;a href="https://www.ea.com/ea-app-beta" target="_blank" rel="noreferrer noopener"&gt;EA App&lt;/a&gt; and we have our own unique issues.&lt;/p&gt;</description></item><item><title>RCE in Visual Studio Code's Remote WSL for Fun and Negative Profit</title><link>https://parsiya.net/blog/2021-12-20-rce-in-visual-studio-codes-remote-wsl-for-fun-and-negative-profit/</link><pubDate>Mon, 20 Dec 2021 03:22:10 -0800</pubDate><guid>https://parsiya.net/blog/2021-12-20-rce-in-visual-studio-codes-remote-wsl-for-fun-and-negative-profit/</guid><description>&lt;p&gt;The Visual Studio Code server in Windows Subsystem for Linux uses a local
+WebSocket WebSocket connection to communicate with the &lt;code&gt;Remote WSL&lt;/code&gt; extension.
 JavaScript in websites can connect to this server and execute arbitrary commands
-on the target system. Assigned &lt;a href="https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2021-43907" target="_blank" rel="noreferrer noopener">CVE-2021-43907&lt;/a> and zero bounty. I paid 5
-USD for the EC2 machine hosting the proof-of-concept.&lt;/p>
-&lt;p>It's really funny that PlayStation paid 15K USD for &lt;a href="https://hackerone.com/reports/873614" target="_blank" rel="noreferrer noopener">almost the same bug&lt;/a>
+on the target system. Assigned &lt;a href="https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2021-43907" target="_blank" rel="noreferrer noopener"&gt;CVE-2021-43907&lt;/a&gt; and zero bounty. I paid 5
+USD for the EC2 machine hosting the proof-of-concept.&lt;/p&gt;
+&lt;p&gt;It's really funny that PlayStation paid 15K USD for &lt;a href="https://hackerone.com/reports/873614" target="_blank" rel="noreferrer noopener"&gt;almost the same bug&lt;/a&gt;
 with 2.2 million subscribers (it was out of scope in their program, too), but
 MSFT doesn't pay for an official extension with more than 10 million installs
 (obviously, not every install is unique) for one of their most popular products.
-But you are not here to listen to my rants. So, read on.&lt;/p>
-&lt;p>This post's target audience was &lt;code>Desktop Application Security People&lt;/code> niche. I
-want to clarify some issues because more people have read it (edit on 2021-12-21):&lt;/p>
-&lt;ol>
-&lt;li>I didn't get 5 dollars. I paid 5 dollars out of pocket, so it's -5.&lt;/li>
-&lt;li>&amp;quot;I am not angry, I am just disappointed.&amp;quot; I knew it was out-of-scope. This
-wasn't some bait-and-switch by Microsoft. I am not angry&lt;/li>
-&lt;li>The vuln is &lt;strong>not&lt;/strong> in VS Code. MSFT says it's in the &lt;code>Remote WSL&lt;/code> extension
-but I think it's in the way &lt;code>VS Code Server&lt;/code> works with the remote
-development extensions.&lt;/li>
-&lt;/ol>
-&lt;p>HackerNews link: &lt;a href="https://news.ycombinator.com/item?id=29635300" target="_blank" rel="noreferrer noopener">https://news.ycombinator.com/item?id=29635300&lt;/a>.&lt;/p></description></item><item><title>Attack Surface Analysis - Part 3 - Resurrected Code Execution</title><link>https://parsiya.net/blog/2021-09-26-attack-surface-analysis-part-3-resurrected-code-execution/</link><pubDate>Sun, 26 Sep 2021 20:50:38 -0700</pubDate><guid>https://parsiya.net/blog/2021-09-26-attack-surface-analysis-part-3-resurrected-code-execution/</guid><description>&lt;p>In part 3 of my attack surface analysis series, I will discuss an undisclosed RCE.
+But you are not here to listen to my rants. So, read on.&lt;/p&gt;
+&lt;p&gt;This post's target audience was &lt;code&gt;Desktop Application Security People&lt;/code&gt; niche. I
+want to clarify some issues because more people have read it (edit on 2021-12-21):&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;I didn't get 5 dollars. I paid 5 dollars out of pocket, so it's -5.&lt;/li&gt;
+&lt;li&gt;&amp;quot;I am not angry, I am just disappointed.&amp;quot; I knew it was out-of-scope. This
+wasn't some bait-and-switch by Microsoft. I am not angry&lt;/li&gt;
+&lt;li&gt;The vuln is &lt;strong&gt;not&lt;/strong&gt; in VS Code. MSFT says it's in the &lt;code&gt;Remote WSL&lt;/code&gt; extension
+but I think it's in the way &lt;code&gt;VS Code Server&lt;/code&gt; works with the remote
+development extensions.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;HackerNews link: &lt;a href="https://news.ycombinator.com/item?id=29635300" target="_blank" rel="noreferrer noopener"&gt;https://news.ycombinator.com/item?id=29635300&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>Attack Surface Analysis - Part 3 - Resurrected Code Execution</title><link>https://parsiya.net/blog/2021-09-26-attack-surface-analysis-part-3-resurrected-code-execution/</link><pubDate>Sun, 26 Sep 2021 20:50:38 -0700</pubDate><guid>https://parsiya.net/blog/2021-09-26-attack-surface-analysis-part-3-resurrected-code-execution/</guid><description>&lt;p&gt;In part 3 of my attack surface analysis series, I will discuss an undisclosed RCE.
 This bug uses a combination of all tricks introduced in
 
 
@@ -35,11 +35,11 @@ This bug uses a combination of all tricks introduced in
  
  
 
-&lt;a href="https://parsiya.net/blog/2021-03-17-attack-surface-analysis-part-2-custom-protocol-handlers/" title="Attack Surface Analysis - Part 2 - Custom Protocol Handlers" rel="nofollow" target="_blank">part 2 of the series&lt;/a>.&lt;/p>
-&lt;p>We will see command-line switch injection from a custom protocol handler,
+&lt;a href="https://parsiya.net/blog/2021-03-17-attack-surface-analysis-part-2-custom-protocol-handlers/" title="Attack Surface Analysis - Part 2 - Custom Protocol Handlers" rel="nofollow" target="_blank"&gt;part 2 of the series&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;We will see command-line switch injection from a custom protocol handler,
 loading remote files, reversing a custom scripting engine to instrument the
-application, and log file injection. Pretty nice chain if I may say so.&lt;/p></description></item><item><title>The JavaScript Bridge in Modern Desktop Applications</title><link>https://parsiya.net/blog/2021-06-08-the-javascript-bridge-in-modern-desktop-applications/</link><pubDate>Tue, 08 Jun 2021 00:53:25 -0700</pubDate><guid>https://parsiya.net/blog/2021-06-08-the-javascript-bridge-in-modern-desktop-applications/</guid><description>&lt;p>We have an XSS in a desktop application, what happens next? How can you
-escalate it to remote code execution? Let's see.&lt;/p></description></item><item><title>Attack Surface Analysis - Part 2 - Custom Protocol Handlers</title><link>https://parsiya.net/blog/2021-03-17-attack-surface-analysis-part-2-custom-protocol-handlers/</link><pubDate>Wed, 17 Mar 2021 15:14:00 -0800</pubDate><guid>https://parsiya.net/blog/2021-03-17-attack-surface-analysis-part-2-custom-protocol-handlers/</guid><description>&lt;p>Custom protocol handlers are an obscure attack surface. They allow us to convert
+application, and log file injection. Pretty nice chain if I may say so.&lt;/p&gt;</description></item><item><title>The JavaScript Bridge in Modern Desktop Applications</title><link>https://parsiya.net/blog/2021-06-08-the-javascript-bridge-in-modern-desktop-applications/</link><pubDate>Tue, 08 Jun 2021 00:53:25 -0700</pubDate><guid>https://parsiya.net/blog/2021-06-08-the-javascript-bridge-in-modern-desktop-applications/</guid><description>&lt;p&gt;We have an XSS in a desktop application, what happens next? How can you
+escalate it to remote code execution? Let's see.&lt;/p&gt;</description></item><item><title>Attack Surface Analysis - Part 2 - Custom Protocol Handlers</title><link>https://parsiya.net/blog/2021-03-17-attack-surface-analysis-part-2-custom-protocol-handlers/</link><pubDate>Wed, 17 Mar 2021 15:14:00 -0800</pubDate><guid>https://parsiya.net/blog/2021-03-17-attack-surface-analysis-part-2-custom-protocol-handlers/</guid><description>&lt;p&gt;Custom protocol handlers are an obscure attack surface. They allow us to convert
 local attacks into remote ones and are an alternative way to
 
 
@@ -53,8 +53,8 @@ local attacks into remote ones and are an alternative way to
 
 
  
-&lt;a href="https://parsiya.net/blog/2020-08-13-localghost-escaping-the-browser-sandbox-without-0-days/" title="jump the browser sandbox without 0days" rel="nofollow" target="_blank">jump the browser sandbox without 0days&lt;/a>).&lt;/p>
-&lt;p>Similar to the first part of this series
+&lt;a href="https://parsiya.net/blog/2020-08-13-localghost-escaping-the-browser-sandbox-without-0-days/" title="jump the browser sandbox without 0days" rel="nofollow" target="_blank"&gt;jump the browser sandbox without 0days&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;Similar to the first part of this series
 
 
 
@@ -67,21 +67,21 @@ local attacks into remote ones and are an alternative way to
 
 
  
-&lt;a href="https://parsiya.net/blog/2021-01-08-attack-surface-analysis-part-1-application-update-a-novel-way-to-bypass-executable-signature-checks-with-electron/" title="A Novel Way to Bypass Executable Signature Checks with Electron" rel="nofollow" target="_blank">A Novel Way to Bypass Executable Signature Checks with Electron&lt;/a>
+&lt;a href="https://parsiya.net/blog/2021-01-08-attack-surface-analysis-part-1-application-update-a-novel-way-to-bypass-executable-signature-checks-with-electron/" title="A Novel Way to Bypass Executable Signature Checks with Electron" rel="nofollow" target="_blank"&gt;A Novel Way to Bypass Executable Signature Checks with Electron&lt;/a&gt;
 I will analyze this attack surface and discuss a few interesting public bugs. I
-wanted to discuss two of my undisclosed bugs but the post is already too long.&lt;/p>
-&lt;p>&lt;strong>2021-04-21 updates&lt;/strong>:&lt;/p>
-&lt;ol>
-&lt;li>Startup path limitations and possible workarounds.&lt;/li>
-&lt;li>Positive security's excellent blog released a month after this with a near
-jar trick.&lt;/li>
-&lt;li>&lt;a href="https://positive.security/blog/url-open-rce" target="_blank" rel="noreferrer noopener">Allow arbitrary URLs, expect arbitrary code execution&lt;/a>.&lt;/li>
-&lt;/ol>
-&lt;p>The article has a great trick for passing parameters when we cannot. Use &lt;code>jar&lt;/code>
-files in UNC paths: &lt;code>\\ip\path\whatever.jar&lt;/code>. Search for &lt;code>windows-10-19042&lt;/code> in
-the page.&lt;/p></description></item><item><title>Attack Surface Analysis - Part 1 - Application Update:
-'A Novel Way to Bypass Executable Signature Checks with Electron'</title><link>https://parsiya.net/blog/2021-01-08-attack-surface-analysis-part-1-application-update-a-novel-way-to-bypass-executable-signature-checks-with-electron/</link><pubDate>Fri, 08 Jan 2021 22:33:32 -0800</pubDate><guid>https://parsiya.net/blog/2021-01-08-attack-surface-analysis-part-1-application-update-a-novel-way-to-bypass-executable-signature-checks-with-electron/</guid><description>&lt;p>A few months ago I found a way to subvert the update process of an Electron
+wanted to discuss two of my undisclosed bugs but the post is already too long.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;2021-04-21 updates&lt;/strong&gt;:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Startup path limitations and possible workarounds.&lt;/li&gt;
+&lt;li&gt;Positive security's excellent blog released a month after this with a near
+jar trick.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://positive.security/blog/url-open-rce" target="_blank" rel="noreferrer noopener"&gt;Allow arbitrary URLs, expect arbitrary code execution&lt;/a&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The article has a great trick for passing parameters when we cannot. Use &lt;code&gt;jar&lt;/code&gt;
+files in UNC paths: &lt;code&gt;\\ip\path\whatever.jar&lt;/code&gt;. Search for &lt;code&gt;windows-10-19042&lt;/code&gt; in
+the page.&lt;/p&gt;</description></item><item><title>Attack Surface Analysis - Part 1 - Application Update:
+'A Novel Way to Bypass Executable Signature Checks with Electron'</title><link>https://parsiya.net/blog/2021-01-08-attack-surface-analysis-part-1-application-update-a-novel-way-to-bypass-executable-signature-checks-with-electron/</link><pubDate>Fri, 08 Jan 2021 22:33:32 -0800</pubDate><guid>https://parsiya.net/blog/2021-01-08-attack-surface-analysis-part-1-application-update-a-novel-way-to-bypass-executable-signature-checks-with-electron/</guid><description>&lt;p&gt;A few months ago I found a way to subvert the update process of an Electron
 application to get local privilege escalation. The application stores the
 updater under a path where standard users have write access. But it also
 checked if the executable was signed by the vendor. I managed to bypass the
-signing using a backdoored Electron application.&lt;/p></description></item></channel></rss>
+signing using a backdoored Electron application.&lt;/p&gt;</description></item></channel></rss>

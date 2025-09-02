@@ -1,57 +1,57 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Burp Extension on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/categories/burp-extension/</link><description>Recent content in Burp Extension on Hackerman's Hacking Tutorials</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Sun, 22 Dec 2019 20:13:09 -0800</lastBuildDate><atom:link href="https://parsiya.net/categories/burp-extension/index.xml" rel="self" type="application/rss+xml"/><item><title>Using Mozilla Rhino to Run JavaScript in Java</title><link>https://parsiya.net/blog/2019-12-22-using-mozilla-rhino-to-run-javascript-in-java/</link><pubDate>Sun, 22 Dec 2019 20:13:09 -0800</pubDate><guid>https://parsiya.net/blog/2019-12-22-using-mozilla-rhino-to-run-javascript-in-java/</guid><description>&lt;p>This post discusses what I learned about executing JavaScript code in Java
-with Mozilla Rhino. By the end of this post, you will know:&lt;/p>
-&lt;ol>
-&lt;li>What Rhino is.&lt;/li>
-&lt;li>How to use Rhino in your Java application (e.g., a Burp extension).&lt;/li>
-&lt;li>Some tips and tricks when dealing with Rhino.&lt;/li>
-&lt;li>Alternative options to using Rhino.&lt;/li>
-&lt;/ol>
-&lt;p>Code is at:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/java-rhino" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/java-rhino&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>Developing and Debugging Java Burp Extensions with Visual Studio Code</title><link>https://parsiya.net/blog/2019-12-02-developing-and-debugging-java-burp-extensions-with-visual-studio-code/</link><pubDate>Mon, 02 Dec 2019 19:32:09 -0800</pubDate><guid>https://parsiya.net/blog/2019-12-02-developing-and-debugging-java-burp-extensions-with-visual-studio-code/</guid><description>&lt;p>A few days ago, I released the &lt;a href="https://github.com/parsiya/bug-diaries" target="_blank" rel="noreferrer noopener">Bug Diaries&lt;/a>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Burp Extension on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/categories/burp-extension/</link><description>Recent content in Burp Extension on Hackerman's Hacking Tutorials</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Sun, 22 Dec 2019 20:13:09 -0800</lastBuildDate><atom:link href="https://parsiya.net/categories/burp-extension/index.xml" rel="self" type="application/rss+xml"/><item><title>Using Mozilla Rhino to Run JavaScript in Java</title><link>https://parsiya.net/blog/2019-12-22-using-mozilla-rhino-to-run-javascript-in-java/</link><pubDate>Sun, 22 Dec 2019 20:13:09 -0800</pubDate><guid>https://parsiya.net/blog/2019-12-22-using-mozilla-rhino-to-run-javascript-in-java/</guid><description>&lt;p&gt;This post discusses what I learned about executing JavaScript code in Java
+with Mozilla Rhino. By the end of this post, you will know:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;What Rhino is.&lt;/li&gt;
+&lt;li&gt;How to use Rhino in your Java application (e.g., a Burp extension).&lt;/li&gt;
+&lt;li&gt;Some tips and tricks when dealing with Rhino.&lt;/li&gt;
+&lt;li&gt;Alternative options to using Rhino.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Code is at:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/java-rhino" target="_blank" rel="noreferrer noopener"&gt;https://github.com/parsiya/Parsia-Code/tree/master/java-rhino&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Developing and Debugging Java Burp Extensions with Visual Studio Code</title><link>https://parsiya.net/blog/2019-12-02-developing-and-debugging-java-burp-extensions-with-visual-studio-code/</link><pubDate>Mon, 02 Dec 2019 19:32:09 -0800</pubDate><guid>https://parsiya.net/blog/2019-12-02-developing-and-debugging-java-burp-extensions-with-visual-studio-code/</guid><description>&lt;p&gt;A few days ago, I released the &lt;a href="https://github.com/parsiya/bug-diaries" target="_blank" rel="noreferrer noopener"&gt;Bug Diaries&lt;/a&gt;
 Burp extension. It's a Burp extension that aims to mimic Burp issues for the
 community (free) version. For reasons, I decided to rewrite it in Java. This is
-the first part of my series on what I learned switching to Java.&lt;/p>
-&lt;p>This part discusses how my environment is set up for development with
-&lt;a href="https://code.visualstudio.com/" target="_blank" rel="noreferrer noopener">Visual Studio Code&lt;/a>. Things like
-auto-completion, Gradle builds and most importantly debugging.&lt;/p>
-&lt;p>Clone the repository to skip some of the steps in the blog. I still recommend
+the first part of my series on what I learned switching to Java.&lt;/p&gt;
+&lt;p&gt;This part discusses how my environment is set up for development with
+&lt;a href="https://code.visualstudio.com/" target="_blank" rel="noreferrer noopener"&gt;Visual Studio Code&lt;/a&gt;. Things like
+auto-completion, Gradle builds and most importantly debugging.&lt;/p&gt;
+&lt;p&gt;Clone the repository to skip some of the steps in the blog. I still recommend
 doing them yourself if you are not familiar with Gradle and Burp development,
-clone the following repository:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://github.com/parsiya/burp-sample-extension-java" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/burp-sample-extension-java&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>Swing in Python Burp Extensions - Part 3 - Tips and Tricks</title><link>https://parsiya.net/blog/2019-11-26-swing-in-python-burp-extensions-part-3-tips-and-tricks/</link><pubDate>Tue, 26 Nov 2019 00:24:37 -0800</pubDate><guid>https://parsiya.net/blog/2019-11-26-swing-in-python-burp-extensions-part-3-tips-and-tricks/</guid><description>&lt;p>In the two previous parts, we learned about Jython Swing. Those blogs take a lot
+clone the following repository:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/parsiya/burp-sample-extension-java" target="_blank" rel="noreferrer noopener"&gt;https://github.com/parsiya/burp-sample-extension-java&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Swing in Python Burp Extensions - Part 3 - Tips and Tricks</title><link>https://parsiya.net/blog/2019-11-26-swing-in-python-burp-extensions-part-3-tips-and-tricks/</link><pubDate>Tue, 26 Nov 2019 00:24:37 -0800</pubDate><guid>https://parsiya.net/blog/2019-11-26-swing-in-python-burp-extensions-part-3-tips-and-tricks/</guid><description>&lt;p&gt;In the two previous parts, we learned about Jython Swing. Those blogs take a lot
 of time to write. I think each of them took around 10 hours. I do not want to
-spend that kind of time but I still want to document what I have learned.&lt;/p>
-&lt;p>In this blog I will write tips and tricks with a small code snippet instead of
-creating a complete extension.&lt;/p>
-&lt;p>Did I tell you I release &lt;a href="https://github.com/parsiya/bug-diaries" target="_blank" rel="noreferrer noopener">Bug Diaries&lt;/a>,
+spend that kind of time but I still want to document what I have learned.&lt;/p&gt;
+&lt;p&gt;In this blog I will write tips and tricks with a small code snippet instead of
+creating a complete extension.&lt;/p&gt;
+&lt;p&gt;Did I tell you I release &lt;a href="https://github.com/parsiya/bug-diaries" target="_blank" rel="noreferrer noopener"&gt;Bug Diaries&lt;/a&gt;,
 it's a Python Burp extension that aims to bring Burp issues to the community
-version. It's pretty neat.&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://parsiya.net/blog/2019-11-04-swing-in-python-burp-extensions-part-1/" title="Swing in Python Burp Extensions - Part 1">Swing in Python Burp Extensions - Part 1&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://parsiya.net/blog/2019-11-11-swing-in-python-burp-extensions-part-2-netbeans-and-tablemodels/" title="Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels">Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels</title><link>https://parsiya.net/blog/2019-11-11-swing-in-python-burp-extensions-part-2-netbeans-and-tablemodels/</link><pubDate>Mon, 11 Nov 2019 12:00:53 -0800</pubDate><guid>https://parsiya.net/blog/2019-11-11-swing-in-python-burp-extensions-part-2-netbeans-and-tablemodels/</guid><description>&lt;p>In &lt;a href="https://parsiya.net/blog/2019-11-04-swing-in-python-burp-extensions-part-1/" title="Swing
-in Python Burp Extensions - Part 1">part 1&lt;/a> we discussed handcrafting Swing GUI items
+version. It's pretty neat.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://parsiya.net/blog/2019-11-04-swing-in-python-burp-extensions-part-1/" title="Swing in Python Burp Extensions - Part 1"&gt;Swing in Python Burp Extensions - Part 1&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://parsiya.net/blog/2019-11-11-swing-in-python-burp-extensions-part-2-netbeans-and-tablemodels/" title="Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels"&gt;Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels</title><link>https://parsiya.net/blog/2019-11-11-swing-in-python-burp-extensions-part-2-netbeans-and-tablemodels/</link><pubDate>Mon, 11 Nov 2019 12:00:53 -0800</pubDate><guid>https://parsiya.net/blog/2019-11-11-swing-in-python-burp-extensions-part-2-netbeans-and-tablemodels/</guid><description>&lt;p&gt;In &lt;a href="https://parsiya.net/blog/2019-11-04-swing-in-python-burp-extensions-part-1/" title="Swing
+in Python Burp Extensions - Part 1"&gt;part 1&lt;/a&gt; we discussed handcrafting Swing GUI items
 in a form. In this part, we will design a GUI using
-&lt;a href="https://netbeans.org/" target="_blank" rel="noreferrer noopener">NetBeans&lt;/a> and then convert it to Jython. Then use it in
+&lt;a href="https://netbeans.org/" target="_blank" rel="noreferrer noopener"&gt;NetBeans&lt;/a&gt; and then convert it to Jython. Then use it in
 a Burp tab. Next, we will create a custom table model based on objects to handle
-our issues.&lt;/p>
-&lt;p>Code is at:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/jython-swing-2" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/jython-swing-2&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>Swing in Python Burp Extensions - Part 1</title><link>https://parsiya.net/blog/2019-11-04-swing-in-python-burp-extensions-part-1/</link><pubDate>Mon, 04 Nov 2019 00:40:42 -0700</pubDate><guid>https://parsiya.net/blog/2019-11-04-swing-in-python-burp-extensions-part-1/</guid><description>&lt;p>&lt;strong>TL;DR:&lt;/strong> What I learned from creating handcrafted GUIs for Python Burp
-extensions using Swing. Code is at:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/jython-swing-1" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/jython-swing-1&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>Hiding OPTIONS - An Adventure in Dealing with Burp Proxy in an Extension</title><link>https://parsiya.net/blog/2019-04-06-hiding-options-an-adventure-in-dealing-with-burp-proxy-in-an-extension/</link><pubDate>Sat, 06 Apr 2019 15:30:16 -0700</pubDate><guid>https://parsiya.net/blog/2019-04-06-hiding-options-an-adventure-in-dealing-with-burp-proxy-in-an-extension/</guid><description>&lt;p>&lt;strong>TL;DR&lt;/strong>: No matter what you do, your Burp extension cannot modify requests before they hit the HTTP History panel. You can modify requests after that and before they are sent out. We will discuss two ways to modify them with extensions. While the Match/Replace functionality is special, it has the same limitation (note how it has a separate tab that says &lt;code>auto-modified&lt;/code>?).&lt;/p>
-&lt;p>Update October 2019: Latest version using &lt;a href="https://github.com/parsiya/burputils/" target="_blank" rel="noreferrer noopener">burputils&lt;/a> is at:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/burp-filter-options" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/burp-filter-options&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>Cryptography in Python Burp Extensions</title><link>https://parsiya.net/blog/2018-12-24-cryptography-in-python-burp-extensions/</link><pubDate>Mon, 24 Dec 2018 01:00:14 -0500</pubDate><guid>https://parsiya.net/blog/2018-12-24-cryptography-in-python-burp-extensions/</guid><description>&lt;p>In this post, I will discuss a few tricks for creating Burp extensions in Python that deal with cryptography. Our example is a Burp extension that adds a new tab to decode and decrypt an application's traffic. This allows us to modify payloads on the fly and take advantage of Repeater (and other tabs). I have used similar extensions when testing mobile and thickclient applications.&lt;/p>
-&lt;p>The code is at:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/python-burp-crypto" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/python-burp-crypto&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>Python Utility Modules for Burp Extensions</title><link>https://parsiya.net/blog/2018-12-19-python-utility-modules-for-burp-extensions/</link><pubDate>Wed, 19 Dec 2018 22:48:10 -0500</pubDate><guid>https://parsiya.net/blog/2018-12-19-python-utility-modules-for-burp-extensions/</guid><description>&lt;p>We can create and load Python/Java utility modules in Burp and then use them in extensions. It's a somewhat unknown/unused capability in Burp's Python/Java extensions.&lt;/p>
-&lt;p>&lt;strong>Note:&lt;/strong> Alternatively, the modules can be placed in the same path as the extension and loaded/used the same way. For example, instead of putting the Burp Exceptions file in the modules folder, store it in the extension directory.&lt;/p></description></item></channel></rss>
+our issues.&lt;/p&gt;
+&lt;p&gt;Code is at:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/jython-swing-2" target="_blank" rel="noreferrer noopener"&gt;https://github.com/parsiya/Parsia-Code/tree/master/jython-swing-2&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Swing in Python Burp Extensions - Part 1</title><link>https://parsiya.net/blog/2019-11-04-swing-in-python-burp-extensions-part-1/</link><pubDate>Mon, 04 Nov 2019 00:40:42 -0700</pubDate><guid>https://parsiya.net/blog/2019-11-04-swing-in-python-burp-extensions-part-1/</guid><description>&lt;p&gt;&lt;strong&gt;TL;DR:&lt;/strong&gt; What I learned from creating handcrafted GUIs for Python Burp
+extensions using Swing. Code is at:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/jython-swing-1" target="_blank" rel="noreferrer noopener"&gt;https://github.com/parsiya/Parsia-Code/tree/master/jython-swing-1&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Hiding OPTIONS - An Adventure in Dealing with Burp Proxy in an Extension</title><link>https://parsiya.net/blog/2019-04-06-hiding-options-an-adventure-in-dealing-with-burp-proxy-in-an-extension/</link><pubDate>Sat, 06 Apr 2019 15:30:16 -0700</pubDate><guid>https://parsiya.net/blog/2019-04-06-hiding-options-an-adventure-in-dealing-with-burp-proxy-in-an-extension/</guid><description>&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt;: No matter what you do, your Burp extension cannot modify requests before they hit the HTTP History panel. You can modify requests after that and before they are sent out. We will discuss two ways to modify them with extensions. While the Match/Replace functionality is special, it has the same limitation (note how it has a separate tab that says &lt;code&gt;auto-modified&lt;/code&gt;?).&lt;/p&gt;
+&lt;p&gt;Update October 2019: Latest version using &lt;a href="https://github.com/parsiya/burputils/" target="_blank" rel="noreferrer noopener"&gt;burputils&lt;/a&gt; is at:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/burp-filter-options" target="_blank" rel="noreferrer noopener"&gt;https://github.com/parsiya/Parsia-Code/tree/master/burp-filter-options&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Cryptography in Python Burp Extensions</title><link>https://parsiya.net/blog/2018-12-24-cryptography-in-python-burp-extensions/</link><pubDate>Mon, 24 Dec 2018 01:00:14 -0500</pubDate><guid>https://parsiya.net/blog/2018-12-24-cryptography-in-python-burp-extensions/</guid><description>&lt;p&gt;In this post, I will discuss a few tricks for creating Burp extensions in Python that deal with cryptography. Our example is a Burp extension that adds a new tab to decode and decrypt an application's traffic. This allows us to modify payloads on the fly and take advantage of Repeater (and other tabs). I have used similar extensions when testing mobile and thickclient applications.&lt;/p&gt;
+&lt;p&gt;The code is at:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/python-burp-crypto" target="_blank" rel="noreferrer noopener"&gt;https://github.com/parsiya/Parsia-Code/tree/master/python-burp-crypto&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Python Utility Modules for Burp Extensions</title><link>https://parsiya.net/blog/2018-12-19-python-utility-modules-for-burp-extensions/</link><pubDate>Wed, 19 Dec 2018 22:48:10 -0500</pubDate><guid>https://parsiya.net/blog/2018-12-19-python-utility-modules-for-burp-extensions/</guid><description>&lt;p&gt;We can create and load Python/Java utility modules in Burp and then use them in extensions. It's a somewhat unknown/unused capability in Burp's Python/Java extensions.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Alternatively, the modules can be placed in the same path as the extension and loaded/used the same way. For example, instead of putting the Burp Exceptions file in the modules folder, store it in the extension directory.&lt;/p&gt;</description></item></channel></rss>

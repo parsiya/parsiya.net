@@ -1,24 +1,24 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Bug Bounty on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/categories/bug-bounty/</link><description>Recent content in Bug Bounty on Hackerman's Hacking Tutorials</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Mon, 20 Dec 2021 03:22:10 -0800</lastBuildDate><atom:link href="https://parsiya.net/categories/bug-bounty/index.xml" rel="self" type="application/rss+xml"/><item><title>RCE in Visual Studio Code's Remote WSL for Fun and Negative Profit</title><link>https://parsiya.net/blog/2021-12-20-rce-in-visual-studio-codes-remote-wsl-for-fun-and-negative-profit/</link><pubDate>Mon, 20 Dec 2021 03:22:10 -0800</pubDate><guid>https://parsiya.net/blog/2021-12-20-rce-in-visual-studio-codes-remote-wsl-for-fun-and-negative-profit/</guid><description>&lt;p>The Visual Studio Code server in Windows Subsystem for Linux uses a local
-WebSocket WebSocket connection to communicate with the &lt;code>Remote WSL&lt;/code> extension.
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Bug Bounty on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/categories/bug-bounty/</link><description>Recent content in Bug Bounty on Hackerman's Hacking Tutorials</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Mon, 20 Dec 2021 03:22:10 -0800</lastBuildDate><atom:link href="https://parsiya.net/categories/bug-bounty/index.xml" rel="self" type="application/rss+xml"/><item><title>RCE in Visual Studio Code's Remote WSL for Fun and Negative Profit</title><link>https://parsiya.net/blog/2021-12-20-rce-in-visual-studio-codes-remote-wsl-for-fun-and-negative-profit/</link><pubDate>Mon, 20 Dec 2021 03:22:10 -0800</pubDate><guid>https://parsiya.net/blog/2021-12-20-rce-in-visual-studio-codes-remote-wsl-for-fun-and-negative-profit/</guid><description>&lt;p&gt;The Visual Studio Code server in Windows Subsystem for Linux uses a local
+WebSocket WebSocket connection to communicate with the &lt;code&gt;Remote WSL&lt;/code&gt; extension.
 JavaScript in websites can connect to this server and execute arbitrary commands
-on the target system. Assigned &lt;a href="https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2021-43907" target="_blank" rel="noreferrer noopener">CVE-2021-43907&lt;/a> and zero bounty. I paid 5
-USD for the EC2 machine hosting the proof-of-concept.&lt;/p>
-&lt;p>It's really funny that PlayStation paid 15K USD for &lt;a href="https://hackerone.com/reports/873614" target="_blank" rel="noreferrer noopener">almost the same bug&lt;/a>
+on the target system. Assigned &lt;a href="https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2021-43907" target="_blank" rel="noreferrer noopener"&gt;CVE-2021-43907&lt;/a&gt; and zero bounty. I paid 5
+USD for the EC2 machine hosting the proof-of-concept.&lt;/p&gt;
+&lt;p&gt;It's really funny that PlayStation paid 15K USD for &lt;a href="https://hackerone.com/reports/873614" target="_blank" rel="noreferrer noopener"&gt;almost the same bug&lt;/a&gt;
 with 2.2 million subscribers (it was out of scope in their program, too), but
 MSFT doesn't pay for an official extension with more than 10 million installs
 (obviously, not every install is unique) for one of their most popular products.
-But you are not here to listen to my rants. So, read on.&lt;/p>
-&lt;p>This post's target audience was &lt;code>Desktop Application Security People&lt;/code> niche. I
-want to clarify some issues because more people have read it (edit on 2021-12-21):&lt;/p>
-&lt;ol>
-&lt;li>I didn't get 5 dollars. I paid 5 dollars out of pocket, so it's -5.&lt;/li>
-&lt;li>&amp;quot;I am not angry, I am just disappointed.&amp;quot; I knew it was out-of-scope. This
-wasn't some bait-and-switch by Microsoft. I am not angry&lt;/li>
-&lt;li>The vuln is &lt;strong>not&lt;/strong> in VS Code. MSFT says it's in the &lt;code>Remote WSL&lt;/code> extension
-but I think it's in the way &lt;code>VS Code Server&lt;/code> works with the remote
-development extensions.&lt;/li>
-&lt;/ol>
-&lt;p>HackerNews link: &lt;a href="https://news.ycombinator.com/item?id=29635300" target="_blank" rel="noreferrer noopener">https://news.ycombinator.com/item?id=29635300&lt;/a>.&lt;/p></description></item><item><title>Public Remote File Share in The Cloud</title><link>https://parsiya.net/blog/2021-05-31-public-remote-file-share-in-the-cloud/</link><pubDate>Mon, 31 May 2021 10:20:40 -0700</pubDate><guid>https://parsiya.net/blog/2021-05-31-public-remote-file-share-in-the-cloud/</guid><description>&lt;p>In
+But you are not here to listen to my rants. So, read on.&lt;/p&gt;
+&lt;p&gt;This post's target audience was &lt;code&gt;Desktop Application Security People&lt;/code&gt; niche. I
+want to clarify some issues because more people have read it (edit on 2021-12-21):&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;I didn't get 5 dollars. I paid 5 dollars out of pocket, so it's -5.&lt;/li&gt;
+&lt;li&gt;&amp;quot;I am not angry, I am just disappointed.&amp;quot; I knew it was out-of-scope. This
+wasn't some bait-and-switch by Microsoft. I am not angry&lt;/li&gt;
+&lt;li&gt;The vuln is &lt;strong&gt;not&lt;/strong&gt; in VS Code. MSFT says it's in the &lt;code&gt;Remote WSL&lt;/code&gt; extension
+but I think it's in the way &lt;code&gt;VS Code Server&lt;/code&gt; works with the remote
+development extensions.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;HackerNews link: &lt;a href="https://news.ycombinator.com/item?id=29635300" target="_blank" rel="noreferrer noopener"&gt;https://news.ycombinator.com/item?id=29635300&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>Public Remote File Share in The Cloud</title><link>https://parsiya.net/blog/2021-05-31-public-remote-file-share-in-the-cloud/</link><pubDate>Mon, 31 May 2021 10:20:40 -0700</pubDate><guid>https://parsiya.net/blog/2021-05-31-public-remote-file-share-in-the-cloud/</guid><description>&lt;p&gt;In
 
 
 
@@ -29,17 +29,17 @@ development extensions.&lt;/li>
  
  
 
-&lt;a href="https://parsiya.net/blog/2021-03-17-attack-surface-analysis-part-2-custom-protocol-handlers/" title="Attack Surface Analysis - Part 2 - Custom Protocol Handlers" rel="nofollow" target="_blank">Part 2 of the Attack Surface Analysis series&lt;/a>
+&lt;a href="https://parsiya.net/blog/2021-03-17-attack-surface-analysis-part-2-custom-protocol-handlers/" title="Attack Surface Analysis - Part 2 - Custom Protocol Handlers" rel="nofollow" target="_blank"&gt;Part 2 of the Attack Surface Analysis series&lt;/a&gt;
 I talked about how passing a remote file with a UNC path can lead to unexpected
-results.&lt;/p>
-&lt;p>I am documenting how I created a share using an EC2 instance. This guide is for
-AWS, but it's a Linux machine running in the cloud. You can easily replicate it.&lt;/p></description></item><item><title>Testing Extensions in Chromium Browsers - Nordpass</title><link>https://parsiya.net/blog/2021-04-30-testing-extensions-in-chromium-browsers-nordpass/</link><pubDate>Fri, 30 Apr 2021 14:20:40 -0700</pubDate><guid>https://parsiya.net/blog/2021-04-30-testing-extensions-in-chromium-browsers-nordpass/</guid><description>&lt;p>Recently, I looked at the &lt;a href="https://chrome.google.com/webstore/detail/nordpass%C2%AE-password-manage/fooolghllnmhmmndgjiamiiodkpenpbb" target="_blank" rel="noreferrer noopener">NordPass Password Manager browser extension&lt;/a>.
+results.&lt;/p&gt;
+&lt;p&gt;I am documenting how I created a share using an EC2 instance. This guide is for
+AWS, but it's a Linux machine running in the cloud. You can easily replicate it.&lt;/p&gt;</description></item><item><title>Testing Extensions in Chromium Browsers - Nordpass</title><link>https://parsiya.net/blog/2021-04-30-testing-extensions-in-chromium-browsers-nordpass/</link><pubDate>Fri, 30 Apr 2021 14:20:40 -0700</pubDate><guid>https://parsiya.net/blog/2021-04-30-testing-extensions-in-chromium-browsers-nordpass/</guid><description>&lt;p&gt;Recently, I looked at the &lt;a href="https://chrome.google.com/webstore/detail/nordpass%C2%AE-password-manage/fooolghllnmhmmndgjiamiiodkpenpbb" target="_blank" rel="noreferrer noopener"&gt;NordPass Password Manager browser extension&lt;/a&gt;.
 I could not find any guides on manual testing of browser extensions. I decided
-to write my own. So, here we are, &amp;quot;pushing the boundaries of science.&amp;quot;&lt;/p></description></item><item><title>Attack Surface Analysis - Part 1 - Application Update:
-'A Novel Way to Bypass Executable Signature Checks with Electron'</title><link>https://parsiya.net/blog/2021-01-08-attack-surface-analysis-part-1-application-update-a-novel-way-to-bypass-executable-signature-checks-with-electron/</link><pubDate>Fri, 08 Jan 2021 22:33:32 -0800</pubDate><guid>https://parsiya.net/blog/2021-01-08-attack-surface-analysis-part-1-application-update-a-novel-way-to-bypass-executable-signature-checks-with-electron/</guid><description>&lt;p>A few months ago I found a way to subvert the update process of an Electron
+to write my own. So, here we are, &amp;quot;pushing the boundaries of science.&amp;quot;&lt;/p&gt;</description></item><item><title>Attack Surface Analysis - Part 1 - Application Update:
+'A Novel Way to Bypass Executable Signature Checks with Electron'</title><link>https://parsiya.net/blog/2021-01-08-attack-surface-analysis-part-1-application-update-a-novel-way-to-bypass-executable-signature-checks-with-electron/</link><pubDate>Fri, 08 Jan 2021 22:33:32 -0800</pubDate><guid>https://parsiya.net/blog/2021-01-08-attack-surface-analysis-part-1-application-update-a-novel-way-to-bypass-executable-signature-checks-with-electron/</guid><description>&lt;p&gt;A few months ago I found a way to subvert the update process of an Electron
 application to get local privilege escalation. The application stores the
 updater under a path where standard users have write access. But it also
 checked if the executable was signed by the vendor. I managed to bypass the
-signing using a backdoored Electron application.&lt;/p></description></item><item><title>The $15000 PlayStation Bounty</title><link>https://parsiya.net/blog/2021-01-01-the-15000-playstation-bounty/</link><pubDate>Fri, 01 Jan 2021 15:29:00 -0800</pubDate><guid>https://parsiya.net/blog/2021-01-01-the-15000-playstation-bounty/</guid><description>&lt;p>Earlier in December 2020, my &lt;code>PlayStation Now&lt;/code> report was disclosed. You can see
-the report at &lt;a href="https://hackerone.com/reports/873614" target="_blank" rel="noreferrer noopener">https://hackerone.com/reports/873614&lt;/a>. That is my first paid bounty
-and my first disclosed report. It was quite exciting. I doubt I can top it.&lt;/p></description></item></channel></rss>
+signing using a backdoored Electron application.&lt;/p&gt;</description></item><item><title>The $15000 PlayStation Bounty</title><link>https://parsiya.net/blog/2021-01-01-the-15000-playstation-bounty/</link><pubDate>Fri, 01 Jan 2021 15:29:00 -0800</pubDate><guid>https://parsiya.net/blog/2021-01-01-the-15000-playstation-bounty/</guid><description>&lt;p&gt;Earlier in December 2020, my &lt;code&gt;PlayStation Now&lt;/code&gt; report was disclosed. You can see
+the report at &lt;a href="https://hackerone.com/reports/873614" target="_blank" rel="noreferrer noopener"&gt;https://hackerone.com/reports/873614&lt;/a&gt;. That is my first paid bounty
+and my first disclosed report. It was quite exciting. I doubt I can top it.&lt;/p&gt;</description></item></channel></rss>

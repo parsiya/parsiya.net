@@ -1,29 +1,29 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Powershell on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/tags/powershell/</link><description>Recent content in Powershell on Hackerman's Hacking Tutorials</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Sun, 28 Apr 2019 13:35:00 -0700</lastBuildDate><atom:link href="https://parsiya.net/tags/powershell/index.xml" rel="self" type="application/rss+xml"/><item><title>Thick Client Proxying - Part 9 - The Windows DNS Cache</title><link>https://parsiya.net/blog/2019-04-28-thick-client-proxying-part-9-the-windows-dns-cache/</link><pubDate>Sun, 28 Apr 2019 13:35:00 -0700</pubDate><guid>https://parsiya.net/blog/2019-04-28-thick-client-proxying-part-9-the-windows-dns-cache/</guid><description>&lt;p>This post explains a trick that I have been using for a few years to discover
-application endpoints on Windows quickly.&lt;/p>
-&lt;p>It's a simple trick:&lt;/p>
-&lt;ol>
-&lt;li>Clear the DNS cache.&lt;/li>
-&lt;li>Take a snapshot of the cache.&lt;/li>
-&lt;li>Run the application and use different functionalities.&lt;/li>
-&lt;li>Take another snapshot of the cache.&lt;/li>
-&lt;li>Compare these two snapshots.&lt;/li>
-&lt;li>???&lt;/li>
-&lt;li>Discover (most) endpoints.&lt;/li>
-&lt;/ol>
-&lt;p>Code is at:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/dns-cache" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/dns-cache&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>Run Line vs. cmd vs. PowerShell</title><link>https://parsiya.net/blog/2017-10-23-run-line-vs.-cmd-vs.-powershell/</link><pubDate>Mon, 23 Oct 2017 22:01:50 -0400</pubDate><guid>https://parsiya.net/blog/2017-10-23-run-line-vs.-cmd-vs.-powershell/</guid><description>&lt;p>Note about the differences between search paths when running stuff via the Windows Run Line (&lt;code>win+r&lt;/code>), command line and PowerShell.&lt;/p>
-&lt;p>We can type &lt;code>iexplore&lt;/code> in Run Line to open up Internet Explorer but doing the same in a cmd or PowerShell is not successful.&lt;/p>
-&lt;p>&lt;strong>tl;dr&lt;/strong>\
-Run Line looks in the following registry location then PATH. Credit Vic Laurie at &lt;a href="https://commandwindows.com/runline.htm" target="_blank" rel="noreferrer noopener">commandwindows.com&lt;/a>.&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>HKLM\Software\Microsoft\Windows\CurrentVersion\App Paths&lt;/code>&lt;/li>
-&lt;/ul>
-&lt;p>&lt;strong>Search order&lt;/strong>&lt;/p>
-&lt;ul>
-&lt;li>cmd searches first in local directory and then in PATH.&lt;/li>
-&lt;li>PowerShell searches first in PATH and then in local directory.&lt;/li>
-&lt;li>Run Line searches in &lt;code>App Paths&lt;/code> first.&lt;/li>
-&lt;/ul>
-&lt;p>Usual blabbering and needless digging follows.&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Powershell on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/tags/powershell/</link><description>Recent content in Powershell on Hackerman's Hacking Tutorials</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Sun, 28 Apr 2019 13:35:00 -0700</lastBuildDate><atom:link href="https://parsiya.net/tags/powershell/index.xml" rel="self" type="application/rss+xml"/><item><title>Thick Client Proxying - Part 9 - The Windows DNS Cache</title><link>https://parsiya.net/blog/2019-04-28-thick-client-proxying-part-9-the-windows-dns-cache/</link><pubDate>Sun, 28 Apr 2019 13:35:00 -0700</pubDate><guid>https://parsiya.net/blog/2019-04-28-thick-client-proxying-part-9-the-windows-dns-cache/</guid><description>&lt;p&gt;This post explains a trick that I have been using for a few years to discover
+application endpoints on Windows quickly.&lt;/p&gt;
+&lt;p&gt;It's a simple trick:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Clear the DNS cache.&lt;/li&gt;
+&lt;li&gt;Take a snapshot of the cache.&lt;/li&gt;
+&lt;li&gt;Run the application and use different functionalities.&lt;/li&gt;
+&lt;li&gt;Take another snapshot of the cache.&lt;/li&gt;
+&lt;li&gt;Compare these two snapshots.&lt;/li&gt;
+&lt;li&gt;???&lt;/li&gt;
+&lt;li&gt;Discover (most) endpoints.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Code is at:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/dns-cache" target="_blank" rel="noreferrer noopener"&gt;https://github.com/parsiya/Parsia-Code/tree/master/dns-cache&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Run Line vs. cmd vs. PowerShell</title><link>https://parsiya.net/blog/2017-10-23-run-line-vs.-cmd-vs.-powershell/</link><pubDate>Mon, 23 Oct 2017 22:01:50 -0400</pubDate><guid>https://parsiya.net/blog/2017-10-23-run-line-vs.-cmd-vs.-powershell/</guid><description>&lt;p&gt;Note about the differences between search paths when running stuff via the Windows Run Line (&lt;code&gt;win+r&lt;/code&gt;), command line and PowerShell.&lt;/p&gt;
+&lt;p&gt;We can type &lt;code&gt;iexplore&lt;/code&gt; in Run Line to open up Internet Explorer but doing the same in a cmd or PowerShell is not successful.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;tl;dr&lt;/strong&gt;\
+Run Line looks in the following registry location then PATH. Credit Vic Laurie at &lt;a href="https://commandwindows.com/runline.htm" target="_blank" rel="noreferrer noopener"&gt;commandwindows.com&lt;/a&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;HKLM\Software\Microsoft\Windows\CurrentVersion\App Paths&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Search order&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;cmd searches first in local directory and then in PATH.&lt;/li&gt;
+&lt;li&gt;PowerShell searches first in PATH and then in local directory.&lt;/li&gt;
+&lt;li&gt;Run Line searches in &lt;code&gt;App Paths&lt;/code&gt; first.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Usual blabbering and needless digging follows.&lt;/p&gt;</description></item></channel></rss>

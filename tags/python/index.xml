@@ -1,122 +1,122 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Python on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/tags/python/</link><description>Recent content in Python on Hackerman's Hacking Tutorials</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Tue, 26 Nov 2019 00:24:37 -0800</lastBuildDate><atom:link href="https://parsiya.net/tags/python/index.xml" rel="self" type="application/rss+xml"/><item><title>Swing in Python Burp Extensions - Part 3 - Tips and Tricks</title><link>https://parsiya.net/blog/2019-11-26-swing-in-python-burp-extensions-part-3-tips-and-tricks/</link><pubDate>Tue, 26 Nov 2019 00:24:37 -0800</pubDate><guid>https://parsiya.net/blog/2019-11-26-swing-in-python-burp-extensions-part-3-tips-and-tricks/</guid><description>&lt;p>In the two previous parts, we learned about Jython Swing. Those blogs take a lot
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Python on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/tags/python/</link><description>Recent content in Python on Hackerman's Hacking Tutorials</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Tue, 26 Nov 2019 00:24:37 -0800</lastBuildDate><atom:link href="https://parsiya.net/tags/python/index.xml" rel="self" type="application/rss+xml"/><item><title>Swing in Python Burp Extensions - Part 3 - Tips and Tricks</title><link>https://parsiya.net/blog/2019-11-26-swing-in-python-burp-extensions-part-3-tips-and-tricks/</link><pubDate>Tue, 26 Nov 2019 00:24:37 -0800</pubDate><guid>https://parsiya.net/blog/2019-11-26-swing-in-python-burp-extensions-part-3-tips-and-tricks/</guid><description>&lt;p&gt;In the two previous parts, we learned about Jython Swing. Those blogs take a lot
 of time to write. I think each of them took around 10 hours. I do not want to
-spend that kind of time but I still want to document what I have learned.&lt;/p>
-&lt;p>In this blog I will write tips and tricks with a small code snippet instead of
-creating a complete extension.&lt;/p>
-&lt;p>Did I tell you I release &lt;a href="https://github.com/parsiya/bug-diaries" target="_blank" rel="noreferrer noopener">Bug Diaries&lt;/a>,
+spend that kind of time but I still want to document what I have learned.&lt;/p&gt;
+&lt;p&gt;In this blog I will write tips and tricks with a small code snippet instead of
+creating a complete extension.&lt;/p&gt;
+&lt;p&gt;Did I tell you I release &lt;a href="https://github.com/parsiya/bug-diaries" target="_blank" rel="noreferrer noopener"&gt;Bug Diaries&lt;/a&gt;,
 it's a Python Burp extension that aims to bring Burp issues to the community
-version. It's pretty neat.&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://parsiya.net/blog/2019-11-04-swing-in-python-burp-extensions-part-1/" title="Swing in Python Burp Extensions - Part 1">Swing in Python Burp Extensions - Part 1&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://parsiya.net/blog/2019-11-11-swing-in-python-burp-extensions-part-2-netbeans-and-tablemodels/" title="Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels">Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels</title><link>https://parsiya.net/blog/2019-11-11-swing-in-python-burp-extensions-part-2-netbeans-and-tablemodels/</link><pubDate>Mon, 11 Nov 2019 12:00:53 -0800</pubDate><guid>https://parsiya.net/blog/2019-11-11-swing-in-python-burp-extensions-part-2-netbeans-and-tablemodels/</guid><description>&lt;p>In &lt;a href="https://parsiya.net/blog/2019-11-04-swing-in-python-burp-extensions-part-1/" title="Swing
-in Python Burp Extensions - Part 1">part 1&lt;/a> we discussed handcrafting Swing GUI items
+version. It's pretty neat.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://parsiya.net/blog/2019-11-04-swing-in-python-burp-extensions-part-1/" title="Swing in Python Burp Extensions - Part 1"&gt;Swing in Python Burp Extensions - Part 1&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://parsiya.net/blog/2019-11-11-swing-in-python-burp-extensions-part-2-netbeans-and-tablemodels/" title="Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels"&gt;Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Swing in Python Burp Extensions - Part 2 - NetBeans and TableModels</title><link>https://parsiya.net/blog/2019-11-11-swing-in-python-burp-extensions-part-2-netbeans-and-tablemodels/</link><pubDate>Mon, 11 Nov 2019 12:00:53 -0800</pubDate><guid>https://parsiya.net/blog/2019-11-11-swing-in-python-burp-extensions-part-2-netbeans-and-tablemodels/</guid><description>&lt;p&gt;In &lt;a href="https://parsiya.net/blog/2019-11-04-swing-in-python-burp-extensions-part-1/" title="Swing
+in Python Burp Extensions - Part 1"&gt;part 1&lt;/a&gt; we discussed handcrafting Swing GUI items
 in a form. In this part, we will design a GUI using
-&lt;a href="https://netbeans.org/" target="_blank" rel="noreferrer noopener">NetBeans&lt;/a> and then convert it to Jython. Then use it in
+&lt;a href="https://netbeans.org/" target="_blank" rel="noreferrer noopener"&gt;NetBeans&lt;/a&gt; and then convert it to Jython. Then use it in
 a Burp tab. Next, we will create a custom table model based on objects to handle
-our issues.&lt;/p>
-&lt;p>Code is at:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/jython-swing-2" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/jython-swing-2&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>Swing in Python Burp Extensions - Part 1</title><link>https://parsiya.net/blog/2019-11-04-swing-in-python-burp-extensions-part-1/</link><pubDate>Mon, 04 Nov 2019 00:40:42 -0700</pubDate><guid>https://parsiya.net/blog/2019-11-04-swing-in-python-burp-extensions-part-1/</guid><description>&lt;p>&lt;strong>TL;DR:&lt;/strong> What I learned from creating handcrafted GUIs for Python Burp
-extensions using Swing. Code is at:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/jython-swing-1" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/jython-swing-1&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>Hiding OPTIONS - An Adventure in Dealing with Burp Proxy in an Extension</title><link>https://parsiya.net/blog/2019-04-06-hiding-options-an-adventure-in-dealing-with-burp-proxy-in-an-extension/</link><pubDate>Sat, 06 Apr 2019 15:30:16 -0700</pubDate><guid>https://parsiya.net/blog/2019-04-06-hiding-options-an-adventure-in-dealing-with-burp-proxy-in-an-extension/</guid><description>&lt;p>&lt;strong>TL;DR&lt;/strong>: No matter what you do, your Burp extension cannot modify requests before they hit the HTTP History panel. You can modify requests after that and before they are sent out. We will discuss two ways to modify them with extensions. While the Match/Replace functionality is special, it has the same limitation (note how it has a separate tab that says &lt;code>auto-modified&lt;/code>?).&lt;/p>
-&lt;p>Update October 2019: Latest version using &lt;a href="https://github.com/parsiya/burputils/" target="_blank" rel="noreferrer noopener">burputils&lt;/a> is at:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/burp-filter-options" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/burp-filter-options&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>Cryptography in Python Burp Extensions</title><link>https://parsiya.net/blog/2018-12-24-cryptography-in-python-burp-extensions/</link><pubDate>Mon, 24 Dec 2018 01:00:14 -0500</pubDate><guid>https://parsiya.net/blog/2018-12-24-cryptography-in-python-burp-extensions/</guid><description>&lt;p>In this post, I will discuss a few tricks for creating Burp extensions in Python that deal with cryptography. Our example is a Burp extension that adds a new tab to decode and decrypt an application's traffic. This allows us to modify payloads on the fly and take advantage of Repeater (and other tabs). I have used similar extensions when testing mobile and thickclient applications.&lt;/p>
-&lt;p>The code is at:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/python-burp-crypto" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/python-burp-crypto&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>Python Utility Modules for Burp Extensions</title><link>https://parsiya.net/blog/2018-12-19-python-utility-modules-for-burp-extensions/</link><pubDate>Wed, 19 Dec 2018 22:48:10 -0500</pubDate><guid>https://parsiya.net/blog/2018-12-19-python-utility-modules-for-burp-extensions/</guid><description>&lt;p>We can create and load Python/Java utility modules in Burp and then use them in extensions. It's a somewhat unknown/unused capability in Burp's Python/Java extensions.&lt;/p>
-&lt;p>&lt;strong>Note:&lt;/strong> Alternatively, the modules can be placed in the same path as the extension and loaded/used the same way. For example, instead of putting the Burp Exceptions file in the modules folder, store it in the extension directory.&lt;/p></description></item><item><title>WinAppDbg - Part 4 - Bruteforcing FlareOn 2017 - Challenge 3</title><link>https://parsiya.net/blog/2017-11-15-winappdbg-part-4-bruteforcing-flareon-2017-challenge-3/</link><pubDate>Wed, 15 Nov 2017 18:45:04 -0500</pubDate><guid>https://parsiya.net/blog/2017-11-15-winappdbg-part-4-bruteforcing-flareon-2017-challenge-3/</guid><description>&lt;p>Previous parts:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://parsiya.net/blog/2017-11-09-winappdbg-part-1-basics/" title="WinAppDbg - Part 1 - Basics">Part 1 - Basics&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://parsiya.net/blog/2017-11-11-winappdbg-part-2-function-hooking-and-others/" title="WinAppDbg - Part 2 - Function Hooking and Others">Part 2 - Function Hooking and Others&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://parsiya.net/blog/2017-11-11-winappdbg-part-2-function-hooking-and-others/" title="WinAppDbg - Part 3 - Manipulating Function Calls">Part 3 - Manipulating Function Calls&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;p>We have learned some good stuff. In this part I am going to talk about the original problem that led me to learning WinAppDbg. This is my writeup for challenge 3 &amp;quot;Greek to me&amp;quot; of &lt;a href="https://www.fireeye.com/blog/threat-research/2017/10/2017-flare-on-challenge-solutions.html" target="_blank" rel="noreferrer noopener">FlareOn 2017&lt;/a>. This is a bruteforce challenge and is rather easy but instead of bruteforcing it the conventional (and straightforward way), I will show how I traversed arbitrary Assembly blobs using WinAppDbg.&lt;/p>
-&lt;p>I will (hopefully) mostly talk about solving the challenge and not a lot of recon or other places I was stuck at.&lt;/p>
-&lt;p>Code is in my clone:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/winappdbg" title="WinAppDbg code in Parsia-Code" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/winappdbg&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>WinAppDbg - Part 3 - Manipulating Function Calls</title><link>https://parsiya.net/blog/2017-11-15-winappdbg-part-3-manipulating-function-calls/</link><pubDate>Wed, 15 Nov 2017 00:30:25 -0500</pubDate><guid>https://parsiya.net/blog/2017-11-15-winappdbg-part-3-manipulating-function-calls/</guid><description>&lt;p>Previously on WinAppDbg-TV:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://parsiya.net/blog/2017-11-09-winappdbg-part-1-basics/" title="WinAppDbg - Part 1 - Basics">Part 1 - Basics&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://parsiya.net/blog/2017-11-11-winappdbg-part-2-function-hooking-and-others/" title="WinAppDbg - Part 2 - Function Hooking and Others">Part 2 - Function Hooking and Others&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;p>As usual, code is in my clone on Github. Download that directory to your VM and follow along:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/winappdbg" title="WinAppDbg code in Parsia-Code" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/winappdbg&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;p>In part two we learned how to hook functions by hooking IE and Firefox to see pre-TLS traffic. Just looking at function calls is fun but often not enough. We need to be able to modify function parameters and return values.&lt;/p>
-&lt;p>In this part we will learn how to do that (and a few other things). We will start with something simple and then move on to more complex examples.&lt;/p></description></item><item><title>WinAppDbg - Part 2 - Function Hooking and Others</title><link>https://parsiya.net/blog/2017-11-11-winappdbg-part-2-function-hooking-and-others/</link><pubDate>Sat, 11 Nov 2017 12:04:48 -0500</pubDate><guid>https://parsiya.net/blog/2017-11-11-winappdbg-part-2-function-hooking-and-others/</guid><description>&lt;p>In &lt;a href="https://parsiya.net/blog/2017-11-09-winappdbg-part-1-basics/" title="WinAppDbg - Part 1 - Basics">part one&lt;/a> we talked about the basics of WinAppDbg. In this part we are going to learn a few new things:&lt;/p>
-&lt;ul>
-&lt;li>I wrote a &lt;a href="https://github.com/parsiya/WinAppUtil" title="WinAppDbg repository on Github" target="_blank" rel="noreferrer noopener">simple python module&lt;/a> to simplify my use of WinAppDbg. It will most likely be modified later, but I have included a version that works with the tutorials at:
-&lt;ul>
-&lt;li>&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/winappdbg" title="WinAppDbg code in Parsia-Code" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/winappdbg&lt;/a>&lt;/li>
-&lt;li>We do not need to type the full filename anymore if the executable is in PATH. Note Run Line (&lt;code>win+r&lt;/code>) pulls stuff from more locations than PATH, so we cannot call &lt;code>chrome.exe&lt;/code>. I have written about it &lt;a href="https://parsiya.net/blog/2017-10-23-run-line-vs.-cmd-vs.-powershell/" title="Run Line vs. cmd vs. PowerShell">here&lt;/a>.&lt;/li>
-&lt;/ul>
-&lt;/li>
-&lt;li>&lt;strong>DLL enumeration&lt;/strong>: We're going to implement one of procmon's features.&lt;/li>
-&lt;li>&lt;strong>Process/Thread tracing&lt;/strong>: Another procmon feature.&lt;/li>
-&lt;li>&lt;strong>Function Hooking&lt;/strong>: It's very easy in WinAppDbg and we will learn how to do it a couple of different ways.
-&lt;ul>
-&lt;li>We will hook pre-TLS encryption data for Internet Explorer and Firefox to hack the Gibson.&lt;/li>
-&lt;/ul>
-&lt;/li>
-&lt;/ul>
-&lt;p>Copy this directory &lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/winappdbg" title="WinAppDbg code in Parsia-Code" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/winappdbg&lt;/a> to your VM and let's go.&lt;/p></description></item><item><title>WinAppDbg - Part 1 - Basics</title><link>https://parsiya.net/blog/2017-11-09-winappdbg-part-1-basics/</link><pubDate>Thu, 09 Nov 2017 19:22:24 -0500</pubDate><guid>https://parsiya.net/blog/2017-11-09-winappdbg-part-1-basics/</guid><description>&lt;p>&lt;a href="https://github.com/MarioVilas/winappdbg" title="WinAppDbg repository on Github" target="_blank" rel="noreferrer noopener">WinAppDbg&lt;/a> by &lt;a href="https://twitter.com/Mario_Vilas" title="Mario Vilas Twitter account" target="_blank" rel="noreferrer noopener">Mario Vilas&lt;/a> is perhaps one of the most underrated instrumentation frameworks for Windows. In this day and age where everyone write JavaScript code to hook functions (I am looking at you Frida), writing Python code feels great. Just kidding, Frida is pretty cool too.&lt;/p>
-&lt;p>Going around the web searching for tutorials did not give me many results. &lt;a href="https://winappdbg.readthedocs.io/en/latest/" title="WinAppDbg documentation on readthedocs" target="_blank" rel="noreferrer noopener">The docs&lt;/a> are great, they are some of the most practical docs I have seen. But apart from that, I could not find much. There are some random code here and there where people have documented using it but there were no guides to get me started apart from the docs.&lt;/p>
-&lt;p>Here's the result of my learning. I am sharing it to fill the gap that I encountered while getting started with the tool. We're going to learn as we go using real-world applications and will write code. We will start from the basics, expanding our code-base as we learn more.&lt;/p>
-&lt;p>Code is in my clone at:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/winappdbg" title="WinAppDbg code in Parsia-Code" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/winappdbg&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>Proxying Hipchat Part 3: SSL Added and Removed Here :^)</title><link>https://parsiya.net/blog/2015-10-19-proxying-hipchat-part-3-ssl-added-and-removed-here/</link><pubDate>Mon, 19 Oct 2015 21:42:10 +0000</pubDate><guid>https://parsiya.net/blog/2015-10-19-proxying-hipchat-part-3-ssl-added-and-removed-here/</guid><description>&lt;p>Finally we are at part 3 of proxying Hipchat. This has been quite the adventure. In &lt;a href="https://parsiya.net/blog/2015-10-08-proxying-hipchat-part-1-where-did-the-traffic-go/" title="Proxying Hipchat Part 1: Where did the Traffic Go?">&lt;strong>part1&lt;/strong>&lt;/a> we identified the endpoints. In &lt;a href="https://parsiya.net/blog/2015-10-09-proxying-hipchat-part-2-so-you-think-you-can-use-burp/" title="Proxying Hipchat Part 2: So You Think You Can Use Burp?">&lt;strong>part2&lt;/strong>&lt;/a> we answered the question “So you think you can use Burp” with yes and proxied some of Hipchat's traffic with Burp.&lt;/p>
-&lt;p>In this part we will talk about developing our own proxy in Python to view Hipchat's traffic to/form &lt;code>hipchatserver.com&lt;/code> (our example Hipchat server). First we are going to discuss how proxies work and we will get over Burp breaking our heart by creating our own proxy in Python to observe and dump the traffic in plaintext.&lt;/p>
-&lt;p>Related (crappy) code is at now in my clone at:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/hipchat-proxy" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/hipchat-proxy&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;p>For a similar effort (although with a much more complex proxy in &lt;code>erlang&lt;/code>) look at &lt;a href="http://blog.silentsignal.eu/2015/10/02/proxying-nonstandard-https-traffic/" target="_blank" rel="noreferrer noopener">http://blog.silentsignal.eu/2015/10/02/proxying-nonstandard-https-traffic/&lt;/a>.&lt;/p></description></item><item><title>My Adventure with Fireeye FLARE Challenge</title><link>https://parsiya.net/blog/2014-09-23-my-adventure-with-fireeye-flare-challenge/</link><pubDate>Tue, 23 Sep 2014 02:31:44 +0000</pubDate><guid>https://parsiya.net/blog/2014-09-23-my-adventure-with-fireeye-flare-challenge/</guid><description>&lt;p>These are my (rather long) solutions to Fireeye's FLARE challenge. This is just not the solution but other ways that I tried. This was a great learning experience for me so I am writing this post to document everything I tried. As a result, this post is somewhat long.&lt;/p>
-&lt;p>If you have any feedback, please let me know. I spent a lot of time on this writeup and I am always happy to learn new stuff. My email and twitter handle are in the sidebar.&lt;/p>
-&lt;p>I am a bit late to the party. There &lt;del>were two&lt;/del> are now other three solutions posted (that I know of). Check them out.&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://www.codeandsec.com/Detailed-Solutions-to-FireEye-FLARE-Challenge" target="_blank" rel="noreferrer noopener">Detailed Solutions to FireEye FLARE Challenge&lt;/a>&lt;/li>
-&lt;li>&lt;a href="http://www.ghettoforensics.com/2014/09/a-walkthrough-for-flare-re-challenges.html" target="_blank" rel="noreferrer noopener">A Walk through for FLARE RE Challenges&lt;/a>&lt;/li>
-&lt;li>The FLARE On Challenge Solutions by Fireye
-&lt;ul>
-&lt;li>&lt;a href="http://www.fireeye.com/blog/technical/cyber-exploits/2014/11/the-flare-on-challenge-solutions-part-1-of-2.html" target="_blank" rel="noreferrer noopener">Part 1 - solutions for challenges 1 to 5&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://www.fireeye.com/blog/threat-research/2014/11/flare_on_challengep.html" target="_blank" rel="noreferrer noopener">Part 2 - solutions for challenges 6 and 7&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;/li>
-&lt;/ul></description></item><item><title>Malware Adventure</title><link>https://parsiya.net/blog/2014-09-21-malware-adventure/</link><pubDate>Sun, 21 Sep 2014 19:11:43 +0000</pubDate><guid>https://parsiya.net/blog/2014-09-21-malware-adventure/</guid><description>&lt;p>&lt;strong>Update 28 Oct 2017:&lt;/strong>\
-I have moved most of my code under one repository. Malware adventure is copied at two places:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://github.com/parsiya/malwareadventure" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/malwareadventure&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/malware-adventure" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/malware-adventure&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;p>A fork of PAWS is here:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://github.com/Moonbase59/PAWS" target="_blank" rel="noreferrer noopener">https://github.com/Moonbase59/PAWS&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;hr>
-&lt;p>I finally caved in and started to push some of my code to &lt;del>github&lt;/del> bitbucket. It is located at &lt;a href="https://bitbucket.org/parsiya" target="_blank" rel="noreferrer noopener">https://bitbucket.org/parsiya&lt;/a> and is almost empty ;).&lt;/p>
-&lt;p>This is Malware Adventure. It's a small adventure game I wrote using PAWS. PAWS is Pyhton Adventure Writing System by Roger Plowman. Get it from &lt;a href="http://home.fuse.net/wolfonenet/PAWS.htm" target="_blank" rel="noreferrer noopener">http://home.fuse.net/wolfonenet/PAWS.htm&lt;/a>. It's great.&lt;/p></description></item><item><title>Pasting Shellcode in GDB using Python</title><link>https://parsiya.net/blog/2014-05-25-pasting-shellcode-in-gdb-using-python/</link><pubDate>Sun, 25 May 2014 18:39:58 +0000</pubDate><guid>https://parsiya.net/blog/2014-05-25-pasting-shellcode-in-gdb-using-python/</guid><description>&lt;p>A few days ago I was trying to write an exploit for a buffer overflow with GDB. This was a console application and pasting shellcode would mess with it.&lt;/p>
-&lt;p>There are a few options:&lt;/p>
-&lt;ul>
-&lt;li>Writing shellcode to a file and then using it as input for GDB.&lt;/li>
-&lt;/ul>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#586e75"># you can also include GDB commands like setting up breakpoints (e.g. b * 0xDEADBEEF)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#586e75"># remember to include a new line after each command&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ python &lt;span style="color:#719e07">-&lt;/span>c &lt;span style="color:#2aa198">&amp;#39;print &amp;#34;b * 0xDEADBEEF&amp;#34; + &amp;#34;&lt;/span>&lt;span style="color:#cb4b16">\n&lt;/span>&lt;span style="color:#2aa198">&amp;#34; + &amp;#34;&lt;/span>&lt;span style="color:#cb4b16">\x41&lt;/span>&lt;span style="color:#2aa198">&amp;#34;*1000 + &amp;#34;&lt;/span>&lt;span style="color:#cb4b16">\n&lt;/span>&lt;span style="color:#2aa198">&amp;#34;&amp;#39;&lt;/span> &lt;span style="color:#719e07">&amp;gt;&lt;/span> &lt;span style="color:#b58900">input&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#586e75"># $ perl -e for perl&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#586e75"># start debugging with GDB&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#586e75"># -q (quiet mode): no text at startup&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ gdb executable1 &lt;span style="color:#719e07">-&lt;/span>q
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(gdb) run &lt;span style="color:#719e07">&amp;lt;&lt;/span> &lt;span style="color:#b58900">input&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>After this you can manually debug in GDB.&lt;/p></description></item></channel></rss>
+our issues.&lt;/p&gt;
+&lt;p&gt;Code is at:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/jython-swing-2" target="_blank" rel="noreferrer noopener"&gt;https://github.com/parsiya/Parsia-Code/tree/master/jython-swing-2&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Swing in Python Burp Extensions - Part 1</title><link>https://parsiya.net/blog/2019-11-04-swing-in-python-burp-extensions-part-1/</link><pubDate>Mon, 04 Nov 2019 00:40:42 -0700</pubDate><guid>https://parsiya.net/blog/2019-11-04-swing-in-python-burp-extensions-part-1/</guid><description>&lt;p&gt;&lt;strong&gt;TL;DR:&lt;/strong&gt; What I learned from creating handcrafted GUIs for Python Burp
+extensions using Swing. Code is at:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/jython-swing-1" target="_blank" rel="noreferrer noopener"&gt;https://github.com/parsiya/Parsia-Code/tree/master/jython-swing-1&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Hiding OPTIONS - An Adventure in Dealing with Burp Proxy in an Extension</title><link>https://parsiya.net/blog/2019-04-06-hiding-options-an-adventure-in-dealing-with-burp-proxy-in-an-extension/</link><pubDate>Sat, 06 Apr 2019 15:30:16 -0700</pubDate><guid>https://parsiya.net/blog/2019-04-06-hiding-options-an-adventure-in-dealing-with-burp-proxy-in-an-extension/</guid><description>&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt;: No matter what you do, your Burp extension cannot modify requests before they hit the HTTP History panel. You can modify requests after that and before they are sent out. We will discuss two ways to modify them with extensions. While the Match/Replace functionality is special, it has the same limitation (note how it has a separate tab that says &lt;code&gt;auto-modified&lt;/code&gt;?).&lt;/p&gt;
+&lt;p&gt;Update October 2019: Latest version using &lt;a href="https://github.com/parsiya/burputils/" target="_blank" rel="noreferrer noopener"&gt;burputils&lt;/a&gt; is at:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/burp-filter-options" target="_blank" rel="noreferrer noopener"&gt;https://github.com/parsiya/Parsia-Code/tree/master/burp-filter-options&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Cryptography in Python Burp Extensions</title><link>https://parsiya.net/blog/2018-12-24-cryptography-in-python-burp-extensions/</link><pubDate>Mon, 24 Dec 2018 01:00:14 -0500</pubDate><guid>https://parsiya.net/blog/2018-12-24-cryptography-in-python-burp-extensions/</guid><description>&lt;p&gt;In this post, I will discuss a few tricks for creating Burp extensions in Python that deal with cryptography. Our example is a Burp extension that adds a new tab to decode and decrypt an application's traffic. This allows us to modify payloads on the fly and take advantage of Repeater (and other tabs). I have used similar extensions when testing mobile and thickclient applications.&lt;/p&gt;
+&lt;p&gt;The code is at:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/python-burp-crypto" target="_blank" rel="noreferrer noopener"&gt;https://github.com/parsiya/Parsia-Code/tree/master/python-burp-crypto&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Python Utility Modules for Burp Extensions</title><link>https://parsiya.net/blog/2018-12-19-python-utility-modules-for-burp-extensions/</link><pubDate>Wed, 19 Dec 2018 22:48:10 -0500</pubDate><guid>https://parsiya.net/blog/2018-12-19-python-utility-modules-for-burp-extensions/</guid><description>&lt;p&gt;We can create and load Python/Java utility modules in Burp and then use them in extensions. It's a somewhat unknown/unused capability in Burp's Python/Java extensions.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Alternatively, the modules can be placed in the same path as the extension and loaded/used the same way. For example, instead of putting the Burp Exceptions file in the modules folder, store it in the extension directory.&lt;/p&gt;</description></item><item><title>WinAppDbg - Part 4 - Bruteforcing FlareOn 2017 - Challenge 3</title><link>https://parsiya.net/blog/2017-11-15-winappdbg-part-4-bruteforcing-flareon-2017-challenge-3/</link><pubDate>Wed, 15 Nov 2017 18:45:04 -0500</pubDate><guid>https://parsiya.net/blog/2017-11-15-winappdbg-part-4-bruteforcing-flareon-2017-challenge-3/</guid><description>&lt;p&gt;Previous parts:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://parsiya.net/blog/2017-11-09-winappdbg-part-1-basics/" title="WinAppDbg - Part 1 - Basics"&gt;Part 1 - Basics&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://parsiya.net/blog/2017-11-11-winappdbg-part-2-function-hooking-and-others/" title="WinAppDbg - Part 2 - Function Hooking and Others"&gt;Part 2 - Function Hooking and Others&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://parsiya.net/blog/2017-11-11-winappdbg-part-2-function-hooking-and-others/" title="WinAppDbg - Part 3 - Manipulating Function Calls"&gt;Part 3 - Manipulating Function Calls&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We have learned some good stuff. In this part I am going to talk about the original problem that led me to learning WinAppDbg. This is my writeup for challenge 3 &amp;quot;Greek to me&amp;quot; of &lt;a href="https://www.fireeye.com/blog/threat-research/2017/10/2017-flare-on-challenge-solutions.html" target="_blank" rel="noreferrer noopener"&gt;FlareOn 2017&lt;/a&gt;. This is a bruteforce challenge and is rather easy but instead of bruteforcing it the conventional (and straightforward way), I will show how I traversed arbitrary Assembly blobs using WinAppDbg.&lt;/p&gt;
+&lt;p&gt;I will (hopefully) mostly talk about solving the challenge and not a lot of recon or other places I was stuck at.&lt;/p&gt;
+&lt;p&gt;Code is in my clone:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/winappdbg" title="WinAppDbg code in Parsia-Code" target="_blank" rel="noreferrer noopener"&gt;https://github.com/parsiya/Parsia-Code/tree/master/winappdbg&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>WinAppDbg - Part 3 - Manipulating Function Calls</title><link>https://parsiya.net/blog/2017-11-15-winappdbg-part-3-manipulating-function-calls/</link><pubDate>Wed, 15 Nov 2017 00:30:25 -0500</pubDate><guid>https://parsiya.net/blog/2017-11-15-winappdbg-part-3-manipulating-function-calls/</guid><description>&lt;p&gt;Previously on WinAppDbg-TV:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://parsiya.net/blog/2017-11-09-winappdbg-part-1-basics/" title="WinAppDbg - Part 1 - Basics"&gt;Part 1 - Basics&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://parsiya.net/blog/2017-11-11-winappdbg-part-2-function-hooking-and-others/" title="WinAppDbg - Part 2 - Function Hooking and Others"&gt;Part 2 - Function Hooking and Others&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;As usual, code is in my clone on Github. Download that directory to your VM and follow along:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/winappdbg" title="WinAppDbg code in Parsia-Code" target="_blank" rel="noreferrer noopener"&gt;https://github.com/parsiya/Parsia-Code/tree/master/winappdbg&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In part two we learned how to hook functions by hooking IE and Firefox to see pre-TLS traffic. Just looking at function calls is fun but often not enough. We need to be able to modify function parameters and return values.&lt;/p&gt;
+&lt;p&gt;In this part we will learn how to do that (and a few other things). We will start with something simple and then move on to more complex examples.&lt;/p&gt;</description></item><item><title>WinAppDbg - Part 2 - Function Hooking and Others</title><link>https://parsiya.net/blog/2017-11-11-winappdbg-part-2-function-hooking-and-others/</link><pubDate>Sat, 11 Nov 2017 12:04:48 -0500</pubDate><guid>https://parsiya.net/blog/2017-11-11-winappdbg-part-2-function-hooking-and-others/</guid><description>&lt;p&gt;In &lt;a href="https://parsiya.net/blog/2017-11-09-winappdbg-part-1-basics/" title="WinAppDbg - Part 1 - Basics"&gt;part one&lt;/a&gt; we talked about the basics of WinAppDbg. In this part we are going to learn a few new things:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;I wrote a &lt;a href="https://github.com/parsiya/WinAppUtil" title="WinAppDbg repository on Github" target="_blank" rel="noreferrer noopener"&gt;simple python module&lt;/a&gt; to simplify my use of WinAppDbg. It will most likely be modified later, but I have included a version that works with the tutorials at:
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/winappdbg" title="WinAppDbg code in Parsia-Code" target="_blank" rel="noreferrer noopener"&gt;https://github.com/parsiya/Parsia-Code/tree/master/winappdbg&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;We do not need to type the full filename anymore if the executable is in PATH. Note Run Line (&lt;code&gt;win+r&lt;/code&gt;) pulls stuff from more locations than PATH, so we cannot call &lt;code&gt;chrome.exe&lt;/code&gt;. I have written about it &lt;a href="https://parsiya.net/blog/2017-10-23-run-line-vs.-cmd-vs.-powershell/" title="Run Line vs. cmd vs. PowerShell"&gt;here&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;DLL enumeration&lt;/strong&gt;: We're going to implement one of procmon's features.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Process/Thread tracing&lt;/strong&gt;: Another procmon feature.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Function Hooking&lt;/strong&gt;: It's very easy in WinAppDbg and we will learn how to do it a couple of different ways.
+&lt;ul&gt;
+&lt;li&gt;We will hook pre-TLS encryption data for Internet Explorer and Firefox to hack the Gibson.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Copy this directory &lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/winappdbg" title="WinAppDbg code in Parsia-Code" target="_blank" rel="noreferrer noopener"&gt;https://github.com/parsiya/Parsia-Code/tree/master/winappdbg&lt;/a&gt; to your VM and let's go.&lt;/p&gt;</description></item><item><title>WinAppDbg - Part 1 - Basics</title><link>https://parsiya.net/blog/2017-11-09-winappdbg-part-1-basics/</link><pubDate>Thu, 09 Nov 2017 19:22:24 -0500</pubDate><guid>https://parsiya.net/blog/2017-11-09-winappdbg-part-1-basics/</guid><description>&lt;p&gt;&lt;a href="https://github.com/MarioVilas/winappdbg" title="WinAppDbg repository on Github" target="_blank" rel="noreferrer noopener"&gt;WinAppDbg&lt;/a&gt; by &lt;a href="https://twitter.com/Mario_Vilas" title="Mario Vilas Twitter account" target="_blank" rel="noreferrer noopener"&gt;Mario Vilas&lt;/a&gt; is perhaps one of the most underrated instrumentation frameworks for Windows. In this day and age where everyone write JavaScript code to hook functions (I am looking at you Frida), writing Python code feels great. Just kidding, Frida is pretty cool too.&lt;/p&gt;
+&lt;p&gt;Going around the web searching for tutorials did not give me many results. &lt;a href="https://winappdbg.readthedocs.io/en/latest/" title="WinAppDbg documentation on readthedocs" target="_blank" rel="noreferrer noopener"&gt;The docs&lt;/a&gt; are great, they are some of the most practical docs I have seen. But apart from that, I could not find much. There are some random code here and there where people have documented using it but there were no guides to get me started apart from the docs.&lt;/p&gt;
+&lt;p&gt;Here's the result of my learning. I am sharing it to fill the gap that I encountered while getting started with the tool. We're going to learn as we go using real-world applications and will write code. We will start from the basics, expanding our code-base as we learn more.&lt;/p&gt;
+&lt;p&gt;Code is in my clone at:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/winappdbg" title="WinAppDbg code in Parsia-Code" target="_blank" rel="noreferrer noopener"&gt;https://github.com/parsiya/Parsia-Code/tree/master/winappdbg&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Proxying Hipchat Part 3: SSL Added and Removed Here :^)</title><link>https://parsiya.net/blog/2015-10-19-proxying-hipchat-part-3-ssl-added-and-removed-here/</link><pubDate>Mon, 19 Oct 2015 21:42:10 +0000</pubDate><guid>https://parsiya.net/blog/2015-10-19-proxying-hipchat-part-3-ssl-added-and-removed-here/</guid><description>&lt;p&gt;Finally we are at part 3 of proxying Hipchat. This has been quite the adventure. In &lt;a href="https://parsiya.net/blog/2015-10-08-proxying-hipchat-part-1-where-did-the-traffic-go/" title="Proxying Hipchat Part 1: Where did the Traffic Go?"&gt;&lt;strong&gt;part1&lt;/strong&gt;&lt;/a&gt; we identified the endpoints. In &lt;a href="https://parsiya.net/blog/2015-10-09-proxying-hipchat-part-2-so-you-think-you-can-use-burp/" title="Proxying Hipchat Part 2: So You Think You Can Use Burp?"&gt;&lt;strong&gt;part2&lt;/strong&gt;&lt;/a&gt; we answered the question “So you think you can use Burp” with yes and proxied some of Hipchat's traffic with Burp.&lt;/p&gt;
+&lt;p&gt;In this part we will talk about developing our own proxy in Python to view Hipchat's traffic to/form &lt;code&gt;hipchatserver.com&lt;/code&gt; (our example Hipchat server). First we are going to discuss how proxies work and we will get over Burp breaking our heart by creating our own proxy in Python to observe and dump the traffic in plaintext.&lt;/p&gt;
+&lt;p&gt;Related (crappy) code is at now in my clone at:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/hipchat-proxy" target="_blank" rel="noreferrer noopener"&gt;https://github.com/parsiya/Parsia-Code/tree/master/hipchat-proxy&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;For a similar effort (although with a much more complex proxy in &lt;code&gt;erlang&lt;/code&gt;) look at &lt;a href="http://blog.silentsignal.eu/2015/10/02/proxying-nonstandard-https-traffic/" target="_blank" rel="noreferrer noopener"&gt;http://blog.silentsignal.eu/2015/10/02/proxying-nonstandard-https-traffic/&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>My Adventure with Fireeye FLARE Challenge</title><link>https://parsiya.net/blog/2014-09-23-my-adventure-with-fireeye-flare-challenge/</link><pubDate>Tue, 23 Sep 2014 02:31:44 +0000</pubDate><guid>https://parsiya.net/blog/2014-09-23-my-adventure-with-fireeye-flare-challenge/</guid><description>&lt;p&gt;These are my (rather long) solutions to Fireeye's FLARE challenge. This is just not the solution but other ways that I tried. This was a great learning experience for me so I am writing this post to document everything I tried. As a result, this post is somewhat long.&lt;/p&gt;
+&lt;p&gt;If you have any feedback, please let me know. I spent a lot of time on this writeup and I am always happy to learn new stuff. My email and twitter handle are in the sidebar.&lt;/p&gt;
+&lt;p&gt;I am a bit late to the party. There &lt;del&gt;were two&lt;/del&gt; are now other three solutions posted (that I know of). Check them out.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://www.codeandsec.com/Detailed-Solutions-to-FireEye-FLARE-Challenge" target="_blank" rel="noreferrer noopener"&gt;Detailed Solutions to FireEye FLARE Challenge&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://www.ghettoforensics.com/2014/09/a-walkthrough-for-flare-re-challenges.html" target="_blank" rel="noreferrer noopener"&gt;A Walk through for FLARE RE Challenges&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;The FLARE On Challenge Solutions by Fireye
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="http://www.fireeye.com/blog/technical/cyber-exploits/2014/11/the-flare-on-challenge-solutions-part-1-of-2.html" target="_blank" rel="noreferrer noopener"&gt;Part 1 - solutions for challenges 1 to 5&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://www.fireeye.com/blog/threat-research/2014/11/flare_on_challengep.html" target="_blank" rel="noreferrer noopener"&gt;Part 2 - solutions for challenges 6 and 7&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Malware Adventure</title><link>https://parsiya.net/blog/2014-09-21-malware-adventure/</link><pubDate>Sun, 21 Sep 2014 19:11:43 +0000</pubDate><guid>https://parsiya.net/blog/2014-09-21-malware-adventure/</guid><description>&lt;p&gt;&lt;strong&gt;Update 28 Oct 2017:&lt;/strong&gt;\
+I have moved most of my code under one repository. Malware adventure is copied at two places:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/parsiya/malwareadventure" target="_blank" rel="noreferrer noopener"&gt;https://github.com/parsiya/malwareadventure&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/malware-adventure" target="_blank" rel="noreferrer noopener"&gt;https://github.com/parsiya/Parsia-Code/tree/master/malware-adventure&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;A fork of PAWS is here:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/Moonbase59/PAWS" target="_blank" rel="noreferrer noopener"&gt;https://github.com/Moonbase59/PAWS&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;I finally caved in and started to push some of my code to &lt;del&gt;github&lt;/del&gt; bitbucket. It is located at &lt;a href="https://bitbucket.org/parsiya" target="_blank" rel="noreferrer noopener"&gt;https://bitbucket.org/parsiya&lt;/a&gt; and is almost empty ;).&lt;/p&gt;
+&lt;p&gt;This is Malware Adventure. It's a small adventure game I wrote using PAWS. PAWS is Pyhton Adventure Writing System by Roger Plowman. Get it from &lt;a href="http://home.fuse.net/wolfonenet/PAWS.htm" target="_blank" rel="noreferrer noopener"&gt;http://home.fuse.net/wolfonenet/PAWS.htm&lt;/a&gt;. It's great.&lt;/p&gt;</description></item><item><title>Pasting Shellcode in GDB using Python</title><link>https://parsiya.net/blog/2014-05-25-pasting-shellcode-in-gdb-using-python/</link><pubDate>Sun, 25 May 2014 18:39:58 +0000</pubDate><guid>https://parsiya.net/blog/2014-05-25-pasting-shellcode-in-gdb-using-python/</guid><description>&lt;p&gt;A few days ago I was trying to write an exploit for a buffer overflow with GDB. This was a console application and pasting shellcode would mess with it.&lt;/p&gt;
+&lt;p&gt;There are a few options:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Writing shellcode to a file and then using it as input for GDB.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#586e75"&gt;# you can also include GDB commands like setting up breakpoints (e.g. b * 0xDEADBEEF)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#586e75"&gt;# remember to include a new line after each command&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;$ python &lt;span style="color:#719e07"&gt;-&lt;/span&gt;c &lt;span style="color:#2aa198"&gt;&amp;#39;print &amp;#34;b * 0xDEADBEEF&amp;#34; + &amp;#34;&lt;/span&gt;&lt;span style="color:#cb4b16"&gt;\n&lt;/span&gt;&lt;span style="color:#2aa198"&gt;&amp;#34; + &amp;#34;&lt;/span&gt;&lt;span style="color:#cb4b16"&gt;\x41&lt;/span&gt;&lt;span style="color:#2aa198"&gt;&amp;#34;*1000 + &amp;#34;&lt;/span&gt;&lt;span style="color:#cb4b16"&gt;\n&lt;/span&gt;&lt;span style="color:#2aa198"&gt;&amp;#34;&amp;#39;&lt;/span&gt; &lt;span style="color:#719e07"&gt;&amp;gt;&lt;/span&gt; &lt;span style="color:#b58900"&gt;input&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#586e75"&gt;# $ perl -e for perl&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#586e75"&gt;# start debugging with GDB&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#586e75"&gt;# -q (quiet mode): no text at startup&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;$ gdb executable1 &lt;span style="color:#719e07"&gt;-&lt;/span&gt;q
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;(gdb) run &lt;span style="color:#719e07"&gt;&amp;lt;&lt;/span&gt; &lt;span style="color:#b58900"&gt;input&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;After this you can manually debug in GDB.&lt;/p&gt;</description></item></channel></rss>

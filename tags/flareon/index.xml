@@ -1,24 +1,24 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>FlareOn on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/tags/flareon/</link><description>Recent content in FlareOn on Hackerman's Hacking Tutorials</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Wed, 15 Nov 2017 18:45:04 -0500</lastBuildDate><atom:link href="https://parsiya.net/tags/flareon/index.xml" rel="self" type="application/rss+xml"/><item><title>WinAppDbg - Part 4 - Bruteforcing FlareOn 2017 - Challenge 3</title><link>https://parsiya.net/blog/2017-11-15-winappdbg-part-4-bruteforcing-flareon-2017-challenge-3/</link><pubDate>Wed, 15 Nov 2017 18:45:04 -0500</pubDate><guid>https://parsiya.net/blog/2017-11-15-winappdbg-part-4-bruteforcing-flareon-2017-challenge-3/</guid><description>&lt;p>Previous parts:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://parsiya.net/blog/2017-11-09-winappdbg-part-1-basics/" title="WinAppDbg - Part 1 - Basics">Part 1 - Basics&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://parsiya.net/blog/2017-11-11-winappdbg-part-2-function-hooking-and-others/" title="WinAppDbg - Part 2 - Function Hooking and Others">Part 2 - Function Hooking and Others&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://parsiya.net/blog/2017-11-11-winappdbg-part-2-function-hooking-and-others/" title="WinAppDbg - Part 3 - Manipulating Function Calls">Part 3 - Manipulating Function Calls&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;p>We have learned some good stuff. In this part I am going to talk about the original problem that led me to learning WinAppDbg. This is my writeup for challenge 3 &amp;quot;Greek to me&amp;quot; of &lt;a href="https://www.fireeye.com/blog/threat-research/2017/10/2017-flare-on-challenge-solutions.html" target="_blank" rel="noreferrer noopener">FlareOn 2017&lt;/a>. This is a bruteforce challenge and is rather easy but instead of bruteforcing it the conventional (and straightforward way), I will show how I traversed arbitrary Assembly blobs using WinAppDbg.&lt;/p>
-&lt;p>I will (hopefully) mostly talk about solving the challenge and not a lot of recon or other places I was stuck at.&lt;/p>
-&lt;p>Code is in my clone:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/winappdbg" title="WinAppDbg code in Parsia-Code" target="_blank" rel="noreferrer noopener">https://github.com/parsiya/Parsia-Code/tree/master/winappdbg&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>My Adventure with Fireeye FLARE Challenge</title><link>https://parsiya.net/blog/2014-09-23-my-adventure-with-fireeye-flare-challenge/</link><pubDate>Tue, 23 Sep 2014 02:31:44 +0000</pubDate><guid>https://parsiya.net/blog/2014-09-23-my-adventure-with-fireeye-flare-challenge/</guid><description>&lt;p>These are my (rather long) solutions to Fireeye's FLARE challenge. This is just not the solution but other ways that I tried. This was a great learning experience for me so I am writing this post to document everything I tried. As a result, this post is somewhat long.&lt;/p>
-&lt;p>If you have any feedback, please let me know. I spent a lot of time on this writeup and I am always happy to learn new stuff. My email and twitter handle are in the sidebar.&lt;/p>
-&lt;p>I am a bit late to the party. There &lt;del>were two&lt;/del> are now other three solutions posted (that I know of). Check them out.&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://www.codeandsec.com/Detailed-Solutions-to-FireEye-FLARE-Challenge" target="_blank" rel="noreferrer noopener">Detailed Solutions to FireEye FLARE Challenge&lt;/a>&lt;/li>
-&lt;li>&lt;a href="http://www.ghettoforensics.com/2014/09/a-walkthrough-for-flare-re-challenges.html" target="_blank" rel="noreferrer noopener">A Walk through for FLARE RE Challenges&lt;/a>&lt;/li>
-&lt;li>The FLARE On Challenge Solutions by Fireye
-&lt;ul>
-&lt;li>&lt;a href="http://www.fireeye.com/blog/technical/cyber-exploits/2014/11/the-flare-on-challenge-solutions-part-1-of-2.html" target="_blank" rel="noreferrer noopener">Part 1 - solutions for challenges 1 to 5&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://www.fireeye.com/blog/threat-research/2014/11/flare_on_challengep.html" target="_blank" rel="noreferrer noopener">Part 2 - solutions for challenges 6 and 7&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;/li>
-&lt;/ul></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>FlareOn on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/tags/flareon/</link><description>Recent content in FlareOn on Hackerman's Hacking Tutorials</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Wed, 15 Nov 2017 18:45:04 -0500</lastBuildDate><atom:link href="https://parsiya.net/tags/flareon/index.xml" rel="self" type="application/rss+xml"/><item><title>WinAppDbg - Part 4 - Bruteforcing FlareOn 2017 - Challenge 3</title><link>https://parsiya.net/blog/2017-11-15-winappdbg-part-4-bruteforcing-flareon-2017-challenge-3/</link><pubDate>Wed, 15 Nov 2017 18:45:04 -0500</pubDate><guid>https://parsiya.net/blog/2017-11-15-winappdbg-part-4-bruteforcing-flareon-2017-challenge-3/</guid><description>&lt;p&gt;Previous parts:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://parsiya.net/blog/2017-11-09-winappdbg-part-1-basics/" title="WinAppDbg - Part 1 - Basics"&gt;Part 1 - Basics&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://parsiya.net/blog/2017-11-11-winappdbg-part-2-function-hooking-and-others/" title="WinAppDbg - Part 2 - Function Hooking and Others"&gt;Part 2 - Function Hooking and Others&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://parsiya.net/blog/2017-11-11-winappdbg-part-2-function-hooking-and-others/" title="WinAppDbg - Part 3 - Manipulating Function Calls"&gt;Part 3 - Manipulating Function Calls&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We have learned some good stuff. In this part I am going to talk about the original problem that led me to learning WinAppDbg. This is my writeup for challenge 3 &amp;quot;Greek to me&amp;quot; of &lt;a href="https://www.fireeye.com/blog/threat-research/2017/10/2017-flare-on-challenge-solutions.html" target="_blank" rel="noreferrer noopener"&gt;FlareOn 2017&lt;/a&gt;. This is a bruteforce challenge and is rather easy but instead of bruteforcing it the conventional (and straightforward way), I will show how I traversed arbitrary Assembly blobs using WinAppDbg.&lt;/p&gt;
+&lt;p&gt;I will (hopefully) mostly talk about solving the challenge and not a lot of recon or other places I was stuck at.&lt;/p&gt;
+&lt;p&gt;Code is in my clone:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/parsiya/Parsia-Code/tree/master/winappdbg" title="WinAppDbg code in Parsia-Code" target="_blank" rel="noreferrer noopener"&gt;https://github.com/parsiya/Parsia-Code/tree/master/winappdbg&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>My Adventure with Fireeye FLARE Challenge</title><link>https://parsiya.net/blog/2014-09-23-my-adventure-with-fireeye-flare-challenge/</link><pubDate>Tue, 23 Sep 2014 02:31:44 +0000</pubDate><guid>https://parsiya.net/blog/2014-09-23-my-adventure-with-fireeye-flare-challenge/</guid><description>&lt;p&gt;These are my (rather long) solutions to Fireeye's FLARE challenge. This is just not the solution but other ways that I tried. This was a great learning experience for me so I am writing this post to document everything I tried. As a result, this post is somewhat long.&lt;/p&gt;
+&lt;p&gt;If you have any feedback, please let me know. I spent a lot of time on this writeup and I am always happy to learn new stuff. My email and twitter handle are in the sidebar.&lt;/p&gt;
+&lt;p&gt;I am a bit late to the party. There &lt;del&gt;were two&lt;/del&gt; are now other three solutions posted (that I know of). Check them out.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://www.codeandsec.com/Detailed-Solutions-to-FireEye-FLARE-Challenge" target="_blank" rel="noreferrer noopener"&gt;Detailed Solutions to FireEye FLARE Challenge&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://www.ghettoforensics.com/2014/09/a-walkthrough-for-flare-re-challenges.html" target="_blank" rel="noreferrer noopener"&gt;A Walk through for FLARE RE Challenges&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;The FLARE On Challenge Solutions by Fireye
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="http://www.fireeye.com/blog/technical/cyber-exploits/2014/11/the-flare-on-challenge-solutions-part-1-of-2.html" target="_blank" rel="noreferrer noopener"&gt;Part 1 - solutions for challenges 1 to 5&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://www.fireeye.com/blog/threat-research/2014/11/flare_on_challengep.html" target="_blank" rel="noreferrer noopener"&gt;Part 2 - solutions for challenges 6 and 7&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>

@@ -1,4 +1,4 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>A Few Fun Semgrep Experiments</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.148.2"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/semgrep-fun/05.png"><meta name=twitter:title content="A Few Fun Semgrep Experiments"><meta name=twitter:description content="I want to use Semgrep as a light code intelligence tool with a few experiments.
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>A Few Fun Semgrep Experiments</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.149.0"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/semgrep-fun/05.png"><meta name=twitter:title content="A Few Fun Semgrep Experiments"><meta name=twitter:description content="I want to use Semgrep as a light code intelligence tool with a few experiments.
 I will write custom rules to extract info from code and then process the
 results.
 The type of these experiments is inspired by Martin Jambon who is
@@ -334,8 +334,8 @@ create a report struct.</p><div class=highlight><pre tabindex=0 style=color:#93a
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// removed</span>
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>Then we will pass to an HTML template which uses the built-in Go template engine.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// embed the 05-report-html-tmpl.html in a string.</span>
-</span></span><span style=display:flex><span><span style=color:#586e75>//</span>
-</span></span><span style=display:flex><span><span style=color:#586e75>//go:embed 05-report-html-template.html</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>//
+</span></span></span><span style=display:flex><span><span style=color:#586e75>//go:embed 05-report-html-template.html</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>var</span> tmpl <span style=color:#dc322f>string</span>
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>HTMLReport</span>(path <span style=color:#dc322f>string</span>) <span style=color:#dc322f>error</span> {
@@ -407,11 +407,11 @@ its complete name. We create an <code>ImportMap</code> for each file. It's a
 <code>github.com/foo/bar</code>) or its import alias (e.g., <code>bar</code> for
 <code>import bar "github.com/foo/bar"</code>).</p><p>All of these go into a different map where the key is the file path and value is
 the import map.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// ImportMap is map of one file&#39;s imports.</span>
-</span></span><span style=display:flex><span><span style=color:#586e75>//</span>
-</span></span><span style=display:flex><span><span style=color:#586e75>// Key: Alias if it exists or the top-level package if not (e.g., &#34;bar&#34; for</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>//
+</span></span></span><span style=display:flex><span><span style=color:#586e75>// Key: Alias if it exists or the top-level package if not (e.g., &#34;bar&#34; for</span>
 </span></span><span style=display:flex><span><span style=color:#586e75>// &#34;github.com/foo/bar&#34;).</span>
-</span></span><span style=display:flex><span><span style=color:#586e75>//</span>
-</span></span><span style=display:flex><span><span style=color:#586e75>// Value: Complete package name.</span>
+</span></span><span style=display:flex><span><span style=color:#586e75>//
+</span></span></span><span style=display:flex><span><span style=color:#586e75>// Value: Complete package name.</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>type</span> ImportMap <span style=color:#268bd2>map</span>[<span style=color:#dc322f>string</span>]<span style=color:#dc322f>string</span>
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#586e75>// Imports is a map of file paths to their imports. Key is file path.</span>

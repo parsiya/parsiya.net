@@ -1,199 +1,199 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Cheatsheet on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/categories/cheatsheet/</link><description>Recent content in Cheatsheet on Hackerman's Hacking Tutorials</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Wed, 01 Jun 2016 20:35:00 -0400</lastBuildDate><atom:link href="https://parsiya.net/categories/cheatsheet/index.xml" rel="self" type="application/rss+xml"/><item><title>Go Notes</title><link>https://parsiya.net/go/</link><pubDate>Wed, 01 Jun 2016 20:35:00 -0400</pubDate><guid>https://parsiya.net/go/</guid><description>&lt;p>These notes have moved to
-&lt;a href="https://parsiya.io/dev/go/" target="_blank" rel="noreferrer noopener">https://parsiya.io/dev/go/&lt;/a>.&lt;/p></description></item><item><title>Cheat Sheet</title><link>https://parsiya.net/cheatsheet/</link><pubDate>Wed, 24 Feb 2016 22:29:57 -0500</pubDate><guid>https://parsiya.net/cheatsheet/</guid><description>&lt;p>You will find those commands and tips that I need from time to time (and usually
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Cheatsheet on Hackerman's Hacking Tutorials</title><link>https://parsiya.net/categories/cheatsheet/</link><description>Recent content in Cheatsheet on Hackerman's Hacking Tutorials</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Wed, 01 Jun 2016 20:35:00 -0400</lastBuildDate><atom:link href="https://parsiya.net/categories/cheatsheet/index.xml" rel="self" type="application/rss+xml"/><item><title>Go Notes</title><link>https://parsiya.net/go/</link><pubDate>Wed, 01 Jun 2016 20:35:00 -0400</pubDate><guid>https://parsiya.net/go/</guid><description>&lt;p&gt;These notes have moved to
+&lt;a href="https://parsiya.io/dev/go/" target="_blank" rel="noreferrer noopener"&gt;https://parsiya.io/dev/go/&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>Cheat Sheet</title><link>https://parsiya.net/cheatsheet/</link><pubDate>Wed, 24 Feb 2016 22:29:57 -0500</pubDate><guid>https://parsiya.net/cheatsheet/</guid><description>&lt;p&gt;You will find those commands and tips that I need from time to time (and usually
 forget when I need them). This is a page to complement
-&lt;a href="https://parsiya.io" target="_blank" rel="noreferrer noopener">my clone at parsiya.io&lt;/a> and gives me a simple repository of
-how-tos I can access online. Look at the table of contents below or &lt;code>ctrl+f&lt;/code> and
-search for keywords.&lt;/p>
-&lt;nav id="TableOfContents">
- &lt;ul>
- &lt;li>&lt;a href="#tar">Tar&lt;/a>
- &lt;ul>
- &lt;li>&lt;a href="#compress-a-directory-using-tar">Compress a Directory Using tar&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#decompress-a-targz-file">Decompress a tar.gz file&lt;/a>&lt;/li>
- &lt;/ul>
- &lt;/li>
- &lt;li>&lt;a href="#openssl">OpenSSL&lt;/a>
- &lt;ul>
- &lt;li>&lt;a href="#dump-the-tls-certificate-of-a-domain-with-openssl">Dump The TLS Certificate of a Domain with OpenSSL&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#tls-connection-with-a-specific-ciphersuite-with-openssl">TLS Connection with a Specific Ciphersuite with OpenSSL&lt;/a>&lt;/li>
- &lt;/ul>
- &lt;/li>
- &lt;li>&lt;a href="#aws">AWS&lt;/a>
- &lt;ul>
- &lt;li>&lt;a href="#how-to-use-s3deploy">How to Use s3deploy&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#sync-a-directory-with-an-amazon-s3-bucket-with-s3cmd">Sync a Directory with an Amazon S3 bucket with s3cmd&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#change-the-mime-type-of-the-css-file-after-upload-to-fix-css-not-displaying-correctly">Change the MIME-Type of the CSS file After Upload to Fix CSS not Displaying Correctly&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#set-the-website-index-to-a-non-root-file-in-a-static-website-on-s3">Set the Website Index to a Non-Root file in a Static Website on S3&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#use-aws-cli-without-credentials">Use AWS CLI Without Credentials&lt;/a>&lt;/li>
- &lt;/ul>
- &lt;/li>
- &lt;li>&lt;a href="#windows">Windows&lt;/a>
- &lt;ul>
- &lt;li>&lt;a href="#shortcut-to-ie-or-wininet-proxy-settings">Shortcut to IE (or WinINET) Proxy Settings&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#whereexe">where.exe&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#delete-file-or-directory-with-a-path-or-name-longer-than-the-windows-limit">Delete File or Directory with a Path or Name Longer than the Windows Limit&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#exit-status-3221225781">Exit Status 3221225781&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#map-a-drive-to-a-specific-directory">Map a Drive to a Specific Directory&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#prevent-monitors-from-going-to-sleep-after-locking-the-computer">Prevent Monitors from Going to Sleep after Locking the Computer&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#convert-a-plist-file-to-xml-on-windows">Convert a plist File to XML on Windows&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#oneliner-to-find-unquoted-service-paths">Oneliner to Find Unquoted Service Paths&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#run-chromium-browsers-with-a-proxy">Run Chromium Browsers with a Proxy&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#microphone-does-not-work-in-discord">Microphone does not Work in Discord&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#extract-msi-files">Extract MSI Files&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#disable-autofocus-for-microsoft-lifecam-cinema">Disable Autofocus for Microsoft Lifecam Cinema&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#install-windbg-as-the-post-mortem-debugger">Install WinDbg as the Post-Mortem Debugger&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#remove-windbg-as-the-post-mortem-debugger">Remove WinDbg as the Post-Mortem Debugger&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#open-a-network-monitor-cap-file-in-wireshark-and-save-is-disabled">Open a Network Monitor cap File in Wireshark and Save is Disabled&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#keyboard-shortcut-to-run-applications-elevated">Keyboard Shortcut to Run Applications Elevated&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#firewall-rules-in-the-registry">Firewall Rules in the Registry&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#install-packages-on-windows-from-the-command-line-needs-admin">Install Packages on Windows from the Command Line (Needs Admin)&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#uninstall-ie-11-from-windows-7-and-install-an-older-version">Uninstall IE 11 from Windows 7 (and Install an Older Version)&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#read-scheduled-tasks-dacl">Read Scheduled Task's DACL&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#find-users-under-the-hkey_users-registry-hive">Find Users Under the HKEY_USERS Registry Hive&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#find-the-open-handle-to-a-file-or-resource">Find The Open Handle to a File or Resource&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#powercfg">powercfg&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#add-edit-to-the-context-menu-for-images-in-windows-11">Add &amp;quot;Edit&amp;quot; to the Context Menu for Images in Windows 11&lt;/a>&lt;/li>
- &lt;/ul>
- &lt;/li>
- &lt;li>&lt;a href="#wsl">WSL&lt;/a>
- &lt;ul>
- &lt;li>&lt;a href="#file-locations">File locations:&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#access-wsl2-files">Access WSL2 Files&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#import-and-export">Import and Export&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#use-wsl-distributions-without-the-microsoft-store">Use WSL Distributions without the Microsoft Store&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#hugo-server-doesnt-see-file-notifications-events-in-wsl2">Hugo Server doesn't see File Notifications Events in WSL2&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#docker-in-wsl2">Docker in WSL2&lt;/a>&lt;/li>
- &lt;/ul>
- &lt;/li>
- &lt;li>&lt;a href="#powershell">PowerShell&lt;/a>
- &lt;ul>
- &lt;li>&lt;a href="#list-all-files-including-hidden-files">List All Files (Including Hidden Files)&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#diff-in-powershell">Diff in PowerShell&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#pseudo-grep-in-powershell">Pseudo-grep in PowerShell&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#grep-in-command-results">grep in Command Results&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#get-acl-and-icaclsexe">Get-Acl and icacls.exe&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#time-in-powershell">time in PowerShell&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#vhd-file-is-open-in-system-and-cannot-be-deleted">VHD File is Open in System (and Cannot be Deleted)&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#base64-encode-and-decode-without-powershell">Base64 Encode and Decode without PowerShell&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#load-a-managed-dll-from-powershell">Load a Managed DLL from PowerShell&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#zip-a-directory-with-powershell">Zip a Directory with PowerShell&lt;/a>&lt;/li>
- &lt;/ul>
- &lt;/li>
- &lt;li>&lt;a href="#hyper-v">Hyper-V&lt;/a>
- &lt;ul>
- &lt;li>&lt;a href="#cannot-create-virtual-switch">Cannot Create Virtual Switch&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#cloning-vms-in-hyper-v">Cloning VMs in Hyper-V&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#the-guest-has-no-internet">The Guest Has No Internet&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#higher-resolution-for-debianubuntu-guest-in-hyper-v">Higher Resolution For Debian/Ubuntu Guest in Hyper-V&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#creating-an-ubuntu-vm-in-hyper-v">Creating an Ubuntu VM in Hyper-V&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#windows-dns-cache-is-not-getting-populated-in-hyper-v-guest">Windows DNS Cache is not Getting Populated in Hyper-V Guest&lt;/a>&lt;/li>
- &lt;/ul>
- &lt;/li>
- &lt;li>&lt;a href="#virtualbox">VirtualBox&lt;/a>
- &lt;ul>
- &lt;li>&lt;a href="#restart-clipboard-functionality-in-virtualbox-after-guest-resume">Restart Clipboard Functionality in VirtualBox After Guest Resume&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#change-the-hardware-uuid-of-cloned-windows-vms-to-avoid-windows-reactivation">Change the Hardware UUID of Cloned Windows VMs to Avoid Windows Reactivation&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#increase-vm-disk-size">Increase VM Disk Size&lt;/a>&lt;/li>
- &lt;/ul>
- &lt;/li>
- &lt;li>&lt;a href="#git">Git&lt;/a>
- &lt;ul>
- &lt;li>&lt;a href="#create-new-branch-and-merge">Create New Branch and Merge&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#only-clone-a-certain-branch">Only Clone a Certain Branch&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#clone-and-populate-submodules">Clone and Populate Submodules&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#undo-remote-git-history-after-push">Undo Remote git History after Push&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#sync-a-fork-with-the-original-repository">Sync a Fork with the Original Repository&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#use-notepad-as-git-editor-on-windows-via-cygwin">Use Notepad++ as git Editor on Windows via Cygwin&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#change-remote-for-an-existing-git-repository">Change Remote for an Existing Git Repository&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#list-all-authors-in-a-git-repository">List All Authors in a Git Repository&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#rewrite-author-for-older-commits">Rewrite Author for Older Commits&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#remove-uncommitted-files-from-staging">Remove Uncommitted Files from Staging&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#make-git-case-sensitive-with-a-catch">Make git Case Sensitive (with a Catch)&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#exclude-a-committed-file-with-gitignore">Exclude a Committed File with gitignore&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#sign-git-commits">Sign git Commits&lt;/a>&lt;/li>
- &lt;/ul>
- &lt;/li>
- &lt;li>&lt;a href="#visual-studio-code">Visual Studio Code&lt;/a>
- &lt;ul>
- &lt;li>&lt;a href="#associate-an-extension-with-a-specific-language">Associate an Extension with a Specific Language&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#install-a-specific-version-of-an-extension">Install a Specific Version of an Extension&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#couldnt-start-client-gopls-unsupported-uri-scheme">couldn't start client gopls unsupported URI scheme&lt;/a>&lt;/li>
- &lt;/ul>
- &lt;/li>
- &lt;li>&lt;a href="#sublime-text-3">Sublime Text 3&lt;/a>
- &lt;ul>
- &lt;li>&lt;a href="#fix-margo-build-failed-for-gosublime-on-windows">Fix &amp;quot;MarGo build failed&amp;quot; for GoSublime on Windows&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#open-the-same-file-in-a-new-tab">Open the Same File in a New Tab&lt;/a>&lt;/li>
- &lt;/ul>
- &lt;/li>
- &lt;li>&lt;a href="#burp">Burp&lt;/a>
- &lt;ul>
- &lt;li>&lt;a href="#quality-of-life-tips-and-tricks-for-burp">Quality of Life Tips and Tricks for Burp&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#selected-text-in-burp-is-black">Selected Text in Burp is Black&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#using-iptables-to-proxy-android-apps-with-burp">Using iptables to Proxy Android Apps with Burp&lt;/a>&lt;/li>
- &lt;/ul>
- &lt;/li>
- &lt;li>&lt;a href="#linux">Linux&lt;/a>
- &lt;ul>
- &lt;li>&lt;a href="#python-module-installed-with-pip-but-command-is-not-available">Python Module Installed with pip but Command is not Available&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#add-a-user-to-sudoers-on-debian">Add a User to sudoers on Debian&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#grep">grep&lt;/a>&lt;/li>
- &lt;/ul>
- &lt;/li>
- &lt;li>&lt;a href="#docker">Docker&lt;/a>
- &lt;ul>
- &lt;li>&lt;a href="#commands">Commands&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#troubleshooting">Troubleshooting&lt;/a>&lt;/li>
- &lt;/ul>
- &lt;/li>
- &lt;li>&lt;a href="#python">Python&lt;/a>
- &lt;ul>
- &lt;li>&lt;a href="#create-all-possible-combinations-of-two-lists-of-strings">Create All Possible Combinations of Two Lists of Strings&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#multi-line-string">Multi-line String&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#main">Main&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#format-string-with">Format String with&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#bytearray">bytearray&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#cyclic-xor-on-bytearrays">Cyclic XOR on bytearrays&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#cyclic-xor-on-strings">Cyclic XOR on Strings&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#python-one-liners-in-command-line">Python One-Liners in Command Line&lt;/a>&lt;/li>
- &lt;/ul>
- &lt;/li>
- &lt;li>&lt;a href="#java">Java&lt;/a>
- &lt;ul>
- &lt;li>&lt;a href="#enable-log4j-for-a-java-app">Enable Log4j for a Java App&lt;/a>&lt;/li>
- &lt;/ul>
- &lt;/li>
- &lt;li>&lt;a href="#angular">Angular&lt;/a>
- &lt;ul>
- &lt;li>&lt;a href="#find-the-version-of-angular-on-a-website-with-devtools">Find the Version of Angular on a Website with DevTools&lt;/a>&lt;/li>
- &lt;/ul>
- &lt;/li>
- &lt;li>&lt;a href="#misc">Misc&lt;/a>
- &lt;ul>
- &lt;li>&lt;a href="#download-youtube-videos-with-subtitles-with-youtube-dl">Download Youtube Videos with Subtitles with youtube-dl&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#download-different-qualities-with-youtube-dl">Download Different Qualities with youtube-dl&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#print-envelopes-with-brother-printers-and-libreoffice">Print Envelopes with Brother printers and LibreOffice&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#tab-size-4-in-the-github-web-interface">Tab Size 4 in the GitHub Web Interface&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#ffmpeg">ffmpeg&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#wrap-long-lines-in-page-source-in-firefox">Wrap Long Lines in Page Source in Firefox&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#wireshark-not-equal-filter">Wireshark Not Equal Filter&lt;/a>&lt;/li>
- &lt;li>&lt;a href="#copy-ebooks-to-ipad-with-calibre">Copy Ebooks to iPad with Calibre&lt;/a>&lt;/li>
- &lt;/ul>
- &lt;/li>
- &lt;li>&lt;a href="#regex">Regex&lt;/a>
- &lt;ul>
- &lt;li>&lt;a href="#regex-to-search-for-urls-in-burp-responses">Regex to Search for URLs in Burp Responses&lt;/a>&lt;/li>
- &lt;/ul>
- &lt;/li>
- &lt;li>&lt;a href="#bash">Bash&lt;/a>
- &lt;ul>
- &lt;li>&lt;a href="#bash-function-to-change-to-a-directory-and-open-it-in-vs-code">Bash Function to Change to a Directory and Open it in VS Code&lt;/a>&lt;/li>
- &lt;/ul>
- &lt;/li>
- &lt;/ul>
-&lt;/nav>
+&lt;a href="https://parsiya.io" target="_blank" rel="noreferrer noopener"&gt;my clone at parsiya.io&lt;/a&gt; and gives me a simple repository of
+how-tos I can access online. Look at the table of contents below or &lt;code&gt;ctrl+f&lt;/code&gt; and
+search for keywords.&lt;/p&gt;
+&lt;nav id="TableOfContents"&gt;
+ &lt;ul&gt;
+ &lt;li&gt;&lt;a href="#tar"&gt;Tar&lt;/a&gt;
+ &lt;ul&gt;
+ &lt;li&gt;&lt;a href="#compress-a-directory-using-tar"&gt;Compress a Directory Using tar&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#decompress-a-targz-file"&gt;Decompress a tar.gz file&lt;/a&gt;&lt;/li&gt;
+ &lt;/ul&gt;
+ &lt;/li&gt;
+ &lt;li&gt;&lt;a href="#openssl"&gt;OpenSSL&lt;/a&gt;
+ &lt;ul&gt;
+ &lt;li&gt;&lt;a href="#dump-the-tls-certificate-of-a-domain-with-openssl"&gt;Dump The TLS Certificate of a Domain with OpenSSL&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#tls-connection-with-a-specific-ciphersuite-with-openssl"&gt;TLS Connection with a Specific Ciphersuite with OpenSSL&lt;/a&gt;&lt;/li&gt;
+ &lt;/ul&gt;
+ &lt;/li&gt;
+ &lt;li&gt;&lt;a href="#aws"&gt;AWS&lt;/a&gt;
+ &lt;ul&gt;
+ &lt;li&gt;&lt;a href="#how-to-use-s3deploy"&gt;How to Use s3deploy&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#sync-a-directory-with-an-amazon-s3-bucket-with-s3cmd"&gt;Sync a Directory with an Amazon S3 bucket with s3cmd&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#change-the-mime-type-of-the-css-file-after-upload-to-fix-css-not-displaying-correctly"&gt;Change the MIME-Type of the CSS file After Upload to Fix CSS not Displaying Correctly&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#set-the-website-index-to-a-non-root-file-in-a-static-website-on-s3"&gt;Set the Website Index to a Non-Root file in a Static Website on S3&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#use-aws-cli-without-credentials"&gt;Use AWS CLI Without Credentials&lt;/a&gt;&lt;/li&gt;
+ &lt;/ul&gt;
+ &lt;/li&gt;
+ &lt;li&gt;&lt;a href="#windows"&gt;Windows&lt;/a&gt;
+ &lt;ul&gt;
+ &lt;li&gt;&lt;a href="#shortcut-to-ie-or-wininet-proxy-settings"&gt;Shortcut to IE (or WinINET) Proxy Settings&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#whereexe"&gt;where.exe&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#delete-file-or-directory-with-a-path-or-name-longer-than-the-windows-limit"&gt;Delete File or Directory with a Path or Name Longer than the Windows Limit&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#exit-status-3221225781"&gt;Exit Status 3221225781&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#map-a-drive-to-a-specific-directory"&gt;Map a Drive to a Specific Directory&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#prevent-monitors-from-going-to-sleep-after-locking-the-computer"&gt;Prevent Monitors from Going to Sleep after Locking the Computer&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#convert-a-plist-file-to-xml-on-windows"&gt;Convert a plist File to XML on Windows&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#oneliner-to-find-unquoted-service-paths"&gt;Oneliner to Find Unquoted Service Paths&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#run-chromium-browsers-with-a-proxy"&gt;Run Chromium Browsers with a Proxy&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#microphone-does-not-work-in-discord"&gt;Microphone does not Work in Discord&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#extract-msi-files"&gt;Extract MSI Files&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#disable-autofocus-for-microsoft-lifecam-cinema"&gt;Disable Autofocus for Microsoft Lifecam Cinema&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#install-windbg-as-the-post-mortem-debugger"&gt;Install WinDbg as the Post-Mortem Debugger&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#remove-windbg-as-the-post-mortem-debugger"&gt;Remove WinDbg as the Post-Mortem Debugger&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#open-a-network-monitor-cap-file-in-wireshark-and-save-is-disabled"&gt;Open a Network Monitor cap File in Wireshark and Save is Disabled&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#keyboard-shortcut-to-run-applications-elevated"&gt;Keyboard Shortcut to Run Applications Elevated&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#firewall-rules-in-the-registry"&gt;Firewall Rules in the Registry&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#install-packages-on-windows-from-the-command-line-needs-admin"&gt;Install Packages on Windows from the Command Line (Needs Admin)&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#uninstall-ie-11-from-windows-7-and-install-an-older-version"&gt;Uninstall IE 11 from Windows 7 (and Install an Older Version)&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#read-scheduled-tasks-dacl"&gt;Read Scheduled Task's DACL&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#find-users-under-the-hkey_users-registry-hive"&gt;Find Users Under the HKEY_USERS Registry Hive&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#find-the-open-handle-to-a-file-or-resource"&gt;Find The Open Handle to a File or Resource&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#powercfg"&gt;powercfg&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#add-edit-to-the-context-menu-for-images-in-windows-11"&gt;Add &amp;quot;Edit&amp;quot; to the Context Menu for Images in Windows 11&lt;/a&gt;&lt;/li&gt;
+ &lt;/ul&gt;
+ &lt;/li&gt;
+ &lt;li&gt;&lt;a href="#wsl"&gt;WSL&lt;/a&gt;
+ &lt;ul&gt;
+ &lt;li&gt;&lt;a href="#file-locations"&gt;File locations:&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#access-wsl2-files"&gt;Access WSL2 Files&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#import-and-export"&gt;Import and Export&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#use-wsl-distributions-without-the-microsoft-store"&gt;Use WSL Distributions without the Microsoft Store&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#hugo-server-doesnt-see-file-notifications-events-in-wsl2"&gt;Hugo Server doesn't see File Notifications Events in WSL2&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#docker-in-wsl2"&gt;Docker in WSL2&lt;/a&gt;&lt;/li&gt;
+ &lt;/ul&gt;
+ &lt;/li&gt;
+ &lt;li&gt;&lt;a href="#powershell"&gt;PowerShell&lt;/a&gt;
+ &lt;ul&gt;
+ &lt;li&gt;&lt;a href="#list-all-files-including-hidden-files"&gt;List All Files (Including Hidden Files)&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#diff-in-powershell"&gt;Diff in PowerShell&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#pseudo-grep-in-powershell"&gt;Pseudo-grep in PowerShell&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#grep-in-command-results"&gt;grep in Command Results&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#get-acl-and-icaclsexe"&gt;Get-Acl and icacls.exe&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#time-in-powershell"&gt;time in PowerShell&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#vhd-file-is-open-in-system-and-cannot-be-deleted"&gt;VHD File is Open in System (and Cannot be Deleted)&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#base64-encode-and-decode-without-powershell"&gt;Base64 Encode and Decode without PowerShell&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#load-a-managed-dll-from-powershell"&gt;Load a Managed DLL from PowerShell&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#zip-a-directory-with-powershell"&gt;Zip a Directory with PowerShell&lt;/a&gt;&lt;/li&gt;
+ &lt;/ul&gt;
+ &lt;/li&gt;
+ &lt;li&gt;&lt;a href="#hyper-v"&gt;Hyper-V&lt;/a&gt;
+ &lt;ul&gt;
+ &lt;li&gt;&lt;a href="#cannot-create-virtual-switch"&gt;Cannot Create Virtual Switch&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#cloning-vms-in-hyper-v"&gt;Cloning VMs in Hyper-V&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#the-guest-has-no-internet"&gt;The Guest Has No Internet&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#higher-resolution-for-debianubuntu-guest-in-hyper-v"&gt;Higher Resolution For Debian/Ubuntu Guest in Hyper-V&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#creating-an-ubuntu-vm-in-hyper-v"&gt;Creating an Ubuntu VM in Hyper-V&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#windows-dns-cache-is-not-getting-populated-in-hyper-v-guest"&gt;Windows DNS Cache is not Getting Populated in Hyper-V Guest&lt;/a&gt;&lt;/li&gt;
+ &lt;/ul&gt;
+ &lt;/li&gt;
+ &lt;li&gt;&lt;a href="#virtualbox"&gt;VirtualBox&lt;/a&gt;
+ &lt;ul&gt;
+ &lt;li&gt;&lt;a href="#restart-clipboard-functionality-in-virtualbox-after-guest-resume"&gt;Restart Clipboard Functionality in VirtualBox After Guest Resume&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#change-the-hardware-uuid-of-cloned-windows-vms-to-avoid-windows-reactivation"&gt;Change the Hardware UUID of Cloned Windows VMs to Avoid Windows Reactivation&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#increase-vm-disk-size"&gt;Increase VM Disk Size&lt;/a&gt;&lt;/li&gt;
+ &lt;/ul&gt;
+ &lt;/li&gt;
+ &lt;li&gt;&lt;a href="#git"&gt;Git&lt;/a&gt;
+ &lt;ul&gt;
+ &lt;li&gt;&lt;a href="#create-new-branch-and-merge"&gt;Create New Branch and Merge&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#only-clone-a-certain-branch"&gt;Only Clone a Certain Branch&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#clone-and-populate-submodules"&gt;Clone and Populate Submodules&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#undo-remote-git-history-after-push"&gt;Undo Remote git History after Push&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#sync-a-fork-with-the-original-repository"&gt;Sync a Fork with the Original Repository&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#use-notepad-as-git-editor-on-windows-via-cygwin"&gt;Use Notepad++ as git Editor on Windows via Cygwin&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#change-remote-for-an-existing-git-repository"&gt;Change Remote for an Existing Git Repository&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#list-all-authors-in-a-git-repository"&gt;List All Authors in a Git Repository&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#rewrite-author-for-older-commits"&gt;Rewrite Author for Older Commits&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#remove-uncommitted-files-from-staging"&gt;Remove Uncommitted Files from Staging&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#make-git-case-sensitive-with-a-catch"&gt;Make git Case Sensitive (with a Catch)&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#exclude-a-committed-file-with-gitignore"&gt;Exclude a Committed File with gitignore&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#sign-git-commits"&gt;Sign git Commits&lt;/a&gt;&lt;/li&gt;
+ &lt;/ul&gt;
+ &lt;/li&gt;
+ &lt;li&gt;&lt;a href="#visual-studio-code"&gt;Visual Studio Code&lt;/a&gt;
+ &lt;ul&gt;
+ &lt;li&gt;&lt;a href="#associate-an-extension-with-a-specific-language"&gt;Associate an Extension with a Specific Language&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#install-a-specific-version-of-an-extension"&gt;Install a Specific Version of an Extension&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#couldnt-start-client-gopls-unsupported-uri-scheme"&gt;couldn't start client gopls unsupported URI scheme&lt;/a&gt;&lt;/li&gt;
+ &lt;/ul&gt;
+ &lt;/li&gt;
+ &lt;li&gt;&lt;a href="#sublime-text-3"&gt;Sublime Text 3&lt;/a&gt;
+ &lt;ul&gt;
+ &lt;li&gt;&lt;a href="#fix-margo-build-failed-for-gosublime-on-windows"&gt;Fix &amp;quot;MarGo build failed&amp;quot; for GoSublime on Windows&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#open-the-same-file-in-a-new-tab"&gt;Open the Same File in a New Tab&lt;/a&gt;&lt;/li&gt;
+ &lt;/ul&gt;
+ &lt;/li&gt;
+ &lt;li&gt;&lt;a href="#burp"&gt;Burp&lt;/a&gt;
+ &lt;ul&gt;
+ &lt;li&gt;&lt;a href="#quality-of-life-tips-and-tricks-for-burp"&gt;Quality of Life Tips and Tricks for Burp&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#selected-text-in-burp-is-black"&gt;Selected Text in Burp is Black&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#using-iptables-to-proxy-android-apps-with-burp"&gt;Using iptables to Proxy Android Apps with Burp&lt;/a&gt;&lt;/li&gt;
+ &lt;/ul&gt;
+ &lt;/li&gt;
+ &lt;li&gt;&lt;a href="#linux"&gt;Linux&lt;/a&gt;
+ &lt;ul&gt;
+ &lt;li&gt;&lt;a href="#python-module-installed-with-pip-but-command-is-not-available"&gt;Python Module Installed with pip but Command is not Available&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#add-a-user-to-sudoers-on-debian"&gt;Add a User to sudoers on Debian&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#grep"&gt;grep&lt;/a&gt;&lt;/li&gt;
+ &lt;/ul&gt;
+ &lt;/li&gt;
+ &lt;li&gt;&lt;a href="#docker"&gt;Docker&lt;/a&gt;
+ &lt;ul&gt;
+ &lt;li&gt;&lt;a href="#commands"&gt;Commands&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#troubleshooting"&gt;Troubleshooting&lt;/a&gt;&lt;/li&gt;
+ &lt;/ul&gt;
+ &lt;/li&gt;
+ &lt;li&gt;&lt;a href="#python"&gt;Python&lt;/a&gt;
+ &lt;ul&gt;
+ &lt;li&gt;&lt;a href="#create-all-possible-combinations-of-two-lists-of-strings"&gt;Create All Possible Combinations of Two Lists of Strings&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#multi-line-string"&gt;Multi-line String&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#main"&gt;Main&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#format-string-with"&gt;Format String with&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#bytearray"&gt;bytearray&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#cyclic-xor-on-bytearrays"&gt;Cyclic XOR on bytearrays&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#cyclic-xor-on-strings"&gt;Cyclic XOR on Strings&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#python-one-liners-in-command-line"&gt;Python One-Liners in Command Line&lt;/a&gt;&lt;/li&gt;
+ &lt;/ul&gt;
+ &lt;/li&gt;
+ &lt;li&gt;&lt;a href="#java"&gt;Java&lt;/a&gt;
+ &lt;ul&gt;
+ &lt;li&gt;&lt;a href="#enable-log4j-for-a-java-app"&gt;Enable Log4j for a Java App&lt;/a&gt;&lt;/li&gt;
+ &lt;/ul&gt;
+ &lt;/li&gt;
+ &lt;li&gt;&lt;a href="#angular"&gt;Angular&lt;/a&gt;
+ &lt;ul&gt;
+ &lt;li&gt;&lt;a href="#find-the-version-of-angular-on-a-website-with-devtools"&gt;Find the Version of Angular on a Website with DevTools&lt;/a&gt;&lt;/li&gt;
+ &lt;/ul&gt;
+ &lt;/li&gt;
+ &lt;li&gt;&lt;a href="#misc"&gt;Misc&lt;/a&gt;
+ &lt;ul&gt;
+ &lt;li&gt;&lt;a href="#download-youtube-videos-with-subtitles-with-youtube-dl"&gt;Download Youtube Videos with Subtitles with youtube-dl&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#download-different-qualities-with-youtube-dl"&gt;Download Different Qualities with youtube-dl&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#print-envelopes-with-brother-printers-and-libreoffice"&gt;Print Envelopes with Brother printers and LibreOffice&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#tab-size-4-in-the-github-web-interface"&gt;Tab Size 4 in the GitHub Web Interface&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#ffmpeg"&gt;ffmpeg&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#wrap-long-lines-in-page-source-in-firefox"&gt;Wrap Long Lines in Page Source in Firefox&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#wireshark-not-equal-filter"&gt;Wireshark Not Equal Filter&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#copy-ebooks-to-ipad-with-calibre"&gt;Copy Ebooks to iPad with Calibre&lt;/a&gt;&lt;/li&gt;
+ &lt;/ul&gt;
+ &lt;/li&gt;
+ &lt;li&gt;&lt;a href="#regex"&gt;Regex&lt;/a&gt;
+ &lt;ul&gt;
+ &lt;li&gt;&lt;a href="#regex-to-search-for-urls-in-burp-responses"&gt;Regex to Search for URLs in Burp Responses&lt;/a&gt;&lt;/li&gt;
+ &lt;/ul&gt;
+ &lt;/li&gt;
+ &lt;li&gt;&lt;a href="#bash"&gt;Bash&lt;/a&gt;
+ &lt;ul&gt;
+ &lt;li&gt;&lt;a href="#bash-function-to-change-to-a-directory-and-open-it-in-vs-code"&gt;Bash Function to Change to a Directory and Open it in VS Code&lt;/a&gt;&lt;/li&gt;
+ &lt;/ul&gt;
+ &lt;/li&gt;
+ &lt;/ul&gt;
+&lt;/nav&gt;
 
-&lt;hr>
-&lt;h1 id="tar">Tar
-&lt;a class="header-link" href="#tar">&lt;svg class="fill-current o-60 hover-accent-color-light" height="22px" viewBox="0 0 24 24" width="22px" xmlns="http://www.w3.org/2000/svg">&lt;path d="M0 0h24v24H0z" fill="none"/>&lt;path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>&lt;/svg>&lt;/a>
-&lt;/h1>&lt;p>Insert &lt;a href="https://xkcd.com/1168/" target="_blank" rel="noreferrer noopener">XKCD 1168&lt;/a>, hur dur!&lt;/p></description></item></channel></rss>
+&lt;hr&gt;
+&lt;h1 id="tar"&gt;Tar
+&lt;a class="header-link" href="#tar"&gt;&lt;svg class="fill-current o-60 hover-accent-color-light" height="22px" viewBox="0 0 24 24" width="22px" xmlns="http://www.w3.org/2000/svg"&gt;&lt;path d="M0 0h24v24H0z" fill="none"/&gt;&lt;path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/&gt;&lt;/svg&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;Insert &lt;a href="https://xkcd.com/1168/" target="_blank" rel="noreferrer noopener"&gt;XKCD 1168&lt;/a&gt;, hur dur!&lt;/p&gt;</description></item></channel></rss>
