@@ -27,8 +27,7 @@ I ported the [Octopress][octopress] classic theme to Hugo.
 [s3deploy]: https://github.com/bep/s3deploy
 
 ## Hosting
-The website is hosted in an AWS S3 bucket. CloudFront provides CDN and TLS (and
-certificate). GitHub pages are also popular (and free). See my blog post
+The website is hosted on GitHub pages with a custom domain. See my blog post
 [Automagically Deploying Websites with Custom Domains to GitHub Pages][gh-pages].
 
 [gh-pages]: https://parsiya.net/blog/2021-02-17-automagically-deploying-websites-with-custom-domains-to-github-pages/
