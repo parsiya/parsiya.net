@@ -9,7 +9,7 @@ categories:
 - Kusto
 ---
 
-Kusto is kinda important at my current employer and one of my work besties does
+Kusto is important at my current employer and one of my work besties does
 SecOps. So, I've decided to learn more Kusto. Solves for the first eight tasks
 for Kusto Detective Agency challenge Echoes of Deception.
 
@@ -70,16 +70,19 @@ TableName
 Then I try to figure out how to solve the challenge using the training material.
 
 ## Using AI
-AI (LLMs in this context) was kinda both good and bad here. It was great for
-syntax issues, AKA "I want to filter A and B, write a Kusto query for me", but
-not great for the actual solves. I usually added all the data, table schemas and
+AI (LLMs in this context) was both good and bad here. It was great for syntax
+issues, AKA "I want to filter A and B, write a Kusto query for me", but not
+great for the actual solves. I usually added all the data, table schemas and
 other insights from training to a markdown file and asked different models in
-GitHub Copilot Chat to solve. It actually worked for the first 2-3 challenges,
+GitHub Copilot Chat to solve. They actually worked for the first 2-3 challenges,
 but not after.
 
-I had the best results with Claude 4 and GPT-5. Both have a tendency to ya[^2]
-and over complicate things even with extensive instructions. It was a fun
-experience to yank them often and try to herd AI into the correct solve path.
+I had the best results with Claude 4 and GPT-5. Both yap[^2] and over complicate
+things even with extensive instructions. It was a fun experience to yank them
+often and try to herd them into the correct solve path.
+
+LLMs are also good at formatting, so I asked them to format my data into the
+markdown tables that you see in this blog/
 
 [^2]: Even more than me and I am called Yapsia in certain circles.
 
@@ -127,8 +130,8 @@ let bounties = DetectiveCases
 I wrote a query that added up all detective bounties using `CaseSolved` events.
 It was the wrong answer. I should have checked if the detective was assigned the
 case in a `CaseAssigned` event AND if they had a `CaseSolved` event for the same
-case ID. Apparently, you can solve a case  get no bounty if you were not
-assigned the case.
+case ID. Apparently, you can solve a case and get no bounty if you were not
+assigned to the case.
 
 We can extract assignments like this:
 
@@ -199,7 +202,7 @@ The `Consumption` table has four columns:
 
 So:
 
-1. Timestamp should be in April.
+1. Timestamps are in April.
 2. Ignore HouseholdId because we want the total.
 3. Each bill is Consumed * Cost based on MeterType.
 
@@ -243,9 +246,9 @@ Consumption
 ```
 
 Looks like there might be multiple reports per household per day. Some of them
-are negative which is curious. At first both me and AI thought a negative is
+are negative which is curious. At first both AI and me thought a negative is
 either correction or a house selling solar energy back, but it turns out
-duplicates and negatives are invalid and we need to filter these out.
+duplicates and negatives are invalid and we need to filter them.
 
 ```
 Consumption
@@ -263,7 +266,7 @@ And the answer is `35420883.072401375`.
 # Case 2: Catch the Phishermen!
 `What phone number is used for placing the phishing calls?`
 
-The import for this case took 70 seconds there must be lots of data.
+The import for this case took 70 seconds; there must be lots of data.
 
 One table `PhoneCalls`:
 
@@ -407,7 +410,7 @@ CarsTraffic
 // Street
 ```
 
-We should to check where the stolen cars appear frequently, but we need to
+We should check where the stolen cars appear frequently, but we need to
 add unique VINs because otherwise it will capture the same car going home.
 
 ```
@@ -564,7 +567,7 @@ NetworkMetrics
 | top 20 by TotalBytesSent
 ```
 
-17 of the top 20 IP addresses in the result are `178.248.55.249` so that is msot
+17 of the top 20 IP addresses in the result are `178.248.55.249` so that is most
 likely the victim system, and it belongs to DigiTown. Note the fun
 [ipv4_is_in_range][ipv4_inrange] function which LLMs didn't know until I
 mentioned it.
@@ -970,8 +973,7 @@ the pass-code to the World concealed
 
 Which is a riddle.
 
-First I thought the riddle means this. Spoiler alert: some assumptions are
-wrong.
+My initial understanding of the riddle were these items. Spoiler alert: some of them are wrong.
 
 1. Search the `Title` field.
 2. We need three words.
@@ -1098,7 +1100,7 @@ something with rank 12 (`man`). Let's get them.
 
 Let's read it again. Get `th` and then add to `man` and change one letter. So
 the letters are `thman` and one must be modified and it must be related to time
-because our other words where `day` and `year`.
+because our other words were `day` and `year`.
 
 And the answer is `month` according to Claude :)
 
@@ -1449,11 +1451,12 @@ but with similar properties.
 
 And we can "dekrypt" the code.
 
-Originally I though these numbers are unique and between 1-16. So we had to find
-the seven missing numbers and a combination of 7! or 5040 (assuming no
-duplicates), which can be bruteforced if we rewrote the decryption function in
-a programming language. But it turns out numbers can be repeated, so our address
-space is now 7 to the power of 7 or 823543 which is still easy to bruteforce.
+At first I thought these numbers were unique and we could only have one of each
+number between 1-16. So we had to find the seven missing numbers and a
+combination of 7! or 5040 (assuming no duplicates), which can be bruteforced if
+we rewrote the decryption function in a programming language. But it turns out
+numbers can be repeated, so our address space is now 7 to the power of 7 or
+823543 which is still easy to bruteforce.
 
 The answer to the puzzle was:
 
@@ -1602,5 +1605,5 @@ https://www.google.com/maps/@41.38467253747556,2.1833582740901269,3a,75y,252.01h
 
 A picture of a shop named `Juice Dudes`.
 
-And I quit after this one. Maybe I will continue in a bit, but I feel like I
+And I stopped after this one. Maybe I will continue in a bit, but I feel like I
 know enough to sift through logs for now.
