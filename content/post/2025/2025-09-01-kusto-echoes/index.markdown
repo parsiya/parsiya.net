@@ -27,7 +27,7 @@ to sinks (or am I reinventing CodeQL, again, lol [^1]).
 [codeql-extactor]: https://docs.github.com/en/code-security/codeql-cli/using-the-advanced-functionality-of-the-codeql-cli/extractor-options
 
 There are a series of challenges named [Kusto Detective Agency][kda] which are
-basically "find this flag in a bunch of logs with KQL." A few months ago, I was
+basically "find this flag in a bunch of logs using KQL." A few months ago, I was
 enthusiastic and started season 3 `Call of the Cyber Duty` in real time with
 almost zero Kusto background and did the first three before I realized, this is
 much harder than I imagined.
@@ -54,10 +54,12 @@ TableName
 And it will give us something like this:
 
 ```
-Timestamp	System.DateTime
-callsign	System.String
-lat	        System.Double
-lon	        System.Double
+| ColumnName | DataType        |
+| ---------- | --------------- |
+| Timestamp  | System.DateTime |
+| callsign   | System.String   |
+| lat        | System.Double   |
+| lon        | System.Double   |
 ```
 
 Then I check the first 10 rows to see what the data looks like:
@@ -81,8 +83,8 @@ I had the best results with Claude 4 and GPT-5. Both yap[^2] and over complicate
 things even with extensive instructions. It was a fun experience to yank them
 often and try to herd them into the correct solve path.
 
-LLMs are also good at formatting, so I asked them to format my data into the
-markdown tables that you see in this blog/
+LLMs are also good at formatting, so I asked them to format my text. E.g., the
+markdown tables you see in this blog.
 
 [^2]: Even more than me and I am called Yapsia in certain circles.
 
@@ -127,8 +129,8 @@ let bounties = DetectiveCases
 | project CaseId, Bounty;
 ```
 
-I wrote a query that added up all detective bounties using `CaseSolved` events.
-It was the wrong answer. I should have checked if the detective was assigned the
+I wrote a query to sum up all detective bounties using `CaseSolved` events. It
+was the wrong answer. I should have checked if the detective was assigned the
 case in a `CaseAssigned` event AND if they had a `CaseSolved` event for the same
 case ID. Apparently, you can solve a case and get no bounty if you were not
 assigned to the case.
@@ -164,9 +166,11 @@ DetectiveCases
 And the top three are:
 
 ```
-kvc61f0b891ee26195970a	874,699
-kvc12a22e9e9e65c1694f1	838,852
-kvc29d392ca965f09646f8	812,028
+| DetectiveId            | Total Bounties |
+| ---------------------- | -------------- |
+| kvc61f0b891ee26195970a | 874,699        |
+| kvc12a22e9e9e65c1694f1 | 838,852        |
+| kvc29d392ca965f09646f8 | 812,028        |
 ```
 
 Our answer is `kvc61f0b891ee26195970a`.
@@ -206,9 +210,10 @@ So:
 2. Ignore HouseholdId because we want the total.
 3. Each bill is Consumed * Cost based on MeterType.
 
-We only have April data so we don't need to check the Timestamp, but I did it
-anyways. [getmonth][getmonth] (also called `monthofyear`) is a fun function and
-`getmonth(Timestamp) == 4` checks if the timestamp's month is April.
+We only have April data in the table so we don't need to check the Timestamp,
+but I did it anyways. [getmonth][getmonth] (also called `monthofyear`) is a fun
+function and `getmonth(Timestamp) == 4` checks if the timestamp's month is
+April.
 
 [getmonth]: https://learn.microsoft.com/en-us/kusto/query/monthofyear-function
 
@@ -579,7 +584,7 @@ IpInfo
 | where ipv4_is_in_range("178.248.55.249", IpCidr)
 | project IpCidr, Info
 
-// 178.248.55.0/24	DIGITOWN
+// 178.248.55.0/24  DIGITOWN
 ```
 
 We know we need to detect anomalies. So let's look at the times with the
