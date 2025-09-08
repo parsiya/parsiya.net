@@ -9,6 +9,7 @@ aliases:
 categories:
 - DEF CON
 - Burp
+- AI
 ---
 
 This is a quick peek inside Burp AI. I'll show how to proxy its requests, what
@@ -116,6 +117,14 @@ JRE at `JAVA_HOME/bin/keytool`.
 ..\..\bin\keytool.exe -importcert -alias burp -keystore cacerts
     -storepass changeit -file /path/to/burpca.crt
 ```
+
+On Linux (credit: [Nico][nico]):
+
+```
+./bin/keytool -importcert -cacerts -alias burp -file /path/to/burpca.crt
+```
+
+[nico]: https://hackademy.agarri.fr/contact
 
 Done. Now the balance request shows up in Burp server. GET to
 `https://ai.portswigger.net/burp/balance` with a base64 token in the 

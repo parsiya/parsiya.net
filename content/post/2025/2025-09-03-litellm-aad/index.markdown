@@ -234,6 +234,14 @@ You have to edit it in JSON mode and add this info.
 4. If Chat asks for an API key, enter any random text unless you had set up one
    in LiteLLM's config. This will only be sent to LiteLLM.
 
+You should disable all other Copilot models in Chat to ensure you're only using
+the AI in your own subscription. The model might change when you start a new
+instance of VS Code.
+
+1. In Chat, click on `Manage Models`.
+2. Select `Copilot` and remove all models.
+3. Repeat for any other model you've setup.
+
 ## Benefits
 Now you have your own private hallucinating oracle that grants wishes in a
 secure manner.
