@@ -130,7 +130,9 @@ You have to edit it in JSON mode and add this info.</p><div class=highlight><pre
 </span></span></code></pre></div><h2 id=workflow>Workflow
 <a class=header-link href=#workflow><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><ol><li>Run LiteLLM</li></ol><pre tabindex=0><code>litellm --config config.yaml --host localhost
 </code></pre><ol start=2><li>In VS Code's Chat, click the model and select <code>Manage Models</code>.</li><li>Select Azure and you should see your model.</li><li>If Chat asks for an API key, enter any random text unless you had set up one
-in LiteLLM's config. This will only be sent to LiteLLM.</li></ol><h2 id=benefits>Benefits
+in LiteLLM's config. This will only be sent to LiteLLM.</li></ol><p>You should disable all other Copilot models in Chat to ensure you're only using
+the AI in your own subscription. The model might change when you start a new
+instance of VS Code.</p><ol><li>In Chat, click on <code>Manage Models</code>.</li><li>Select <code>Copilot</code> and remove all models.</li><li>Repeat for any other model you've setup.</li></ol><h2 id=benefits>Benefits
 <a class=header-link href=#benefits><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Now you have your own private hallucinating oracle that grants wishes in a
 secure manner.</p><p>For me, the main benefit is separating my models, authentication, and tokens
 from code. In the code, I just need a model name and endpoint and to quote
