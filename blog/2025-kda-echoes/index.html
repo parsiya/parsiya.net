@@ -16,7 +16,7 @@ it can make a graph and find paths (yes, as I've just searched, T-SQL can also
 do this). It makes me wonder if we can do some esoteric data flow static
 analysis by converting the AST into rows of data and finding paths from sources
 to sinks (or am I reinventing CodeQL, again, lol <sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>).</p><p>There are a series of challenges named <a href=https://detective.kusto.io/ target=_blank rel="noreferrer noopener">Kusto Detective Agency</a> which are
-basically "find this flag in a bunch of logs with KQL." A few months ago, I was
+basically "find this flag in a bunch of logs using KQL." A few months ago, I was
 enthusiastic and started season 3 <code>Call of the Cyber Duty</code> in real time with
 almost zero Kusto background and did the first three before I realized, this is
 much harder than I imagined.</p><p>I started from season 1 to learn and do the challenges. Here are the first eight
@@ -27,10 +27,12 @@ didn't notice them in my season 3 run.</p><p>Then I look at the tables. We can g
 like this:</p><pre tabindex=0><code>TableName
 | getschema
 | project ColumnName, DataType
-</code></pre><p>And it will give us something like this:</p><pre tabindex=0><code>Timestamp	System.DateTime
-callsign	System.String
-lat	        System.Double
-lon	        System.Double
+</code></pre><p>And it will give us something like this:</p><pre tabindex=0><code>| ColumnName | DataType        |
+| ---------- | --------------- |
+| Timestamp  | System.DateTime |
+| callsign   | System.String   |
+| lat        | System.Double   |
+| lon        | System.Double   |
 </code></pre><p>Then I check the first 10 rows to see what the data looks like:</p><pre tabindex=0><code>TableName
 | take 10
 </code></pre><p>Then I try to figure out how to solve the challenge using the training material.</p><h2 id=using-ai>Using AI
@@ -41,8 +43,8 @@ other insights from training to a markdown file and asked different models in
 GitHub Copilot Chat to solve. They actually worked for the first 2-3 challenges,
 but not after.</p><p>I had the best results with Claude 4 and GPT-5. Both yap<sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup> and over complicate
 things even with extensive instructions. It was a fun experience to yank them
-often and try to herd them into the correct solve path.</p><p>LLMs are also good at formatting, so I asked them to format my data into the
-markdown tables that you see in this blog/</p><h1 id=0-onboarding>0: Onboarding
+often and try to herd them into the correct solve path.</p><p>LLMs are also good at formatting, so I asked them to format my text. E.g., the
+markdown tables you see in this blog.</p><h1 id=0-onboarding>0: Onboarding
 <a class=header-link href=#0-onboarding><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>We need to find which detective has earned the most bounties.</p><pre tabindex=0><code>DetectiveCases
 | take 2
 </code></pre><p>We have five columns:</p><pre tabindex=0><code>Timestamp
@@ -61,8 +63,8 @@ CaseOpened
 | where EventType == &#34;CaseOpened&#34;
 | extend Bounty = tolong(Properties.Bounty)
 | project CaseId, Bounty;
-</code></pre><p>I wrote a query that added up all detective bounties using <code>CaseSolved</code> events.
-It was the wrong answer. I should have checked if the detective was assigned the
+</code></pre><p>I wrote a query to sum up all detective bounties using <code>CaseSolved</code> events. It
+was the wrong answer. I should have checked if the detective was assigned the
 case in a <code>CaseAssigned</code> event AND if they had a <code>CaseSolved</code> event for the same
 case ID. Apparently, you can solve a case and get no bounty if you were not
 assigned to the case.</p><p>We can extract assignments like this:</p><pre tabindex=0><code>let assignments = DetectiveCases
@@ -83,9 +85,11 @@ DetectiveCases
 | join kind=inner bounties on CaseId
 | summarize total = sum(Bounty) by SolvedDetectiveId
 | sort by total desc
-</code></pre><p>And the top three are:</p><pre tabindex=0><code>kvc61f0b891ee26195970a	874,699
-kvc12a22e9e9e65c1694f1	838,852
-kvc29d392ca965f09646f8	812,028
+</code></pre><p>And the top three are:</p><pre tabindex=0><code>| DetectiveId            | Total Bounties |
+| ---------------------- | -------------- |
+| kvc61f0b891ee26195970a | 874,699        |
+| kvc12a22e9e9e65c1694f1 | 838,852        |
+| kvc29d392ca965f09646f8 | 812,028        |
 </code></pre><p>Our answer is <code>kvc61f0b891ee26195970a</code>.</p><h1 id=case-1-to-bill-or-not-to-bill>Case 1: To bill or not to bill?
 <a class=header-link href=#case-1-to-bill-or-not-to-bill><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p><code>What is the total bills amount due in April?</code></p><p>Old SQL query to calculate bills:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span><span style=color:#719e07>SELECT</span> <span style=color:#719e07>SUM</span>(Consumed <span style=color:#719e07>*</span> Cost) <span style=color:#719e07>AS</span> TotalCost
 </span></span><span style=display:flex><span><span style=color:#719e07>FROM</span> Costs
@@ -94,9 +98,10 @@ kvc29d392ca965f09646f8	812,028
 | ----------- | ----- | -------- |
 | Water       | Liter | 0.001562 |
 | Electricity | kwH   | 0.3016   |
-</code></pre><p>The <code>Consumption</code> table has four columns:</p><ul><li><code>Timestamp</code></li><li><code>HouseholdId</code></li><li><code>MeterType</code></li><li><code>Consumed</code></li></ul><p>So:</p><ol><li>Timestamps are in April.</li><li>Ignore HouseholdId because we want the total.</li><li>Each bill is Consumed * Cost based on MeterType.</li></ol><p>We only have April data so we don't need to check the Timestamp, but I did it
-anyways. <a href=https://learn.microsoft.com/en-us/kusto/query/monthofyear-function target=_blank rel="noreferrer noopener">getmonth</a> (also called <code>monthofyear</code>) is a fun function and
-<code>getmonth(Timestamp) == 4</code> checks if the timestamp's month is April.</p><pre tabindex=0><code>Consumption
+</code></pre><p>The <code>Consumption</code> table has four columns:</p><ul><li><code>Timestamp</code></li><li><code>HouseholdId</code></li><li><code>MeterType</code></li><li><code>Consumed</code></li></ul><p>So:</p><ol><li>Timestamps are in April.</li><li>Ignore HouseholdId because we want the total.</li><li>Each bill is Consumed * Cost based on MeterType.</li></ol><p>We only have April data in the table so we don't need to check the Timestamp,
+but I did it anyways. <a href=https://learn.microsoft.com/en-us/kusto/query/monthofyear-function target=_blank rel="noreferrer noopener">getmonth</a> (also called <code>monthofyear</code>) is a fun
+function and <code>getmonth(Timestamp) == 4</code> checks if the timestamp's month is
+April.</p><pre tabindex=0><code>Consumption
 | where getmonth(Timestamp) == 4
 | summarize total_consumed = sum(Consumed) by MeterType
 | join kind=inner (Costs) on MeterType
@@ -310,7 +315,7 @@ mentioned it.</p><pre tabindex=0><code>IpInfo
 | where ipv4_is_in_range(&#34;178.248.55.249&#34;, IpCidr)
 | project IpCidr, Info
 
-// 178.248.55.0/24	DIGITOWN
+// 178.248.55.0/24  DIGITOWN
 </code></pre><p>We know we need to detect anomalies. So let's look at the times with the
 suspicious transfers. The training mentioned creating a graph and using
 <a href=https://learn.microsoft.com/en-us/kusto/query/series-decompose-anomalies-function target=_blank rel="noreferrer noopener">series_decompose_anomalies</a> which I'd never seen before.</p><p>I did some experiments to see how it works. 1 day appear to be a good compromise
