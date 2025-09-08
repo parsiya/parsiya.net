@@ -287,4 +287,4 @@ existing product in case I want to use other endpoints.
      extension API in vscode-insiders that can be used to implement this
      functionality.
 
-As usual if you have any better solutions, you know where to find me.
+As usual you know where to find me, especially if you have any better solutions.
