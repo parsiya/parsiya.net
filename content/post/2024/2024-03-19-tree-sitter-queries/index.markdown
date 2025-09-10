@@ -19,7 +19,7 @@ code, code navigation, and also in CodeQL extractors.
 anything moderately structured we need to traverse the syntax tree.
 
 And, yes, the title is based on Doom Episode 1 [Knee Deep in the Dead][doom].
-I love the title (and the game), because it let's me relive my edgy days.
+I love the title (and the game), because it lets me relive my edgy days.
 
 [tree-sitter]: https://tree-sitter.github.io/tree-sitter/
 [doom]: https://doom.fandom.com/wiki/Knee-Deep_in_the_Dead
@@ -142,7 +142,7 @@ and then add the predicate.
 ```
 
 We start with `call_expression`, then we add the `function` field name. The
-field is a child node of type `identifier` so we at it to our query's path to
+field is a child node of type `identifier` so we add it to our query's path to
 capture it. Now we have captured only `Deserialize` and `panic`. This may look
 like `casting`, but it's not. We're not casting the name of the function into an
 `identifier`. We're looking for code where the value of the `function` field is
@@ -217,7 +217,7 @@ _simple_type: $ => choice(
 ```
 
 ## Quick Solution
-Trying to account for all of these types is a nightmare. So I just handwaved it
+Trying to account for all of these types is a nightmare. So I just hand-waved it
 with a [wildcard node][tree-sitter-wildcard]. It matches any node. I am using it
 similar to the  `getText` method in [ANTLR][antlr] (which is another useful
 parser generator I have used in the past). That method returns the text that
@@ -448,7 +448,7 @@ capture color for this match.
 
 ## Struct Type
 We can define an anonymous struct right in the parameters. Apparently, Rob Pike
-has given use the ability twist ourselves into a pretzel like this:
+has given us the ability to twist ourselves into a pretzel like this:
 
 ```go
 func testStructType(person struct {
@@ -516,7 +516,7 @@ array_type: $ => prec.right(seq(
 )),
 ```
 
-Both are can of worms to parse because they can be of recursive types. Isn't
+Both are cans of worms to parse because they can be of recursive types. Isn't
 life fun?
 
 tree-sitter will parse a sample array type input like this:
@@ -652,7 +652,7 @@ function_declaration
   body: block                     // function body
 ```
 
-Let's build it step by step. First we want to capture the `name` and `result` in
+Let's build it step by step. First, we want to capture the `name` and `result` in
 the `function_declaration`.
 
 ```
@@ -784,7 +784,7 @@ but it will not understand most of them.
 ```
 
 ## Verdict
-And the list goes on and on. We can use wildcards to handwave our way through
+And the list goes on and on. We can use wildcards to hand-wave our way through
 the problem, but we return to the same issue, how do we capture recursive types
 with tree-sitter queries?
 
@@ -915,13 +915,12 @@ This is not gonna work out for us. I have not tried it, but if I may make
 another prediction. **We need to capture call_expression nodes and work out way
 back up traversing the tree until we reach function_declaration nodes**.
 
-Right now, I don't know how to do that yet, but I am just learning queries right
-now.
+Right now, I don't know how to do that yet, but I am still learning queries.
 
 # Running Queries in Rust
 tree-sitter has native support for [Rust Bindings][rust-bindings] (there are
 also bindings for many other languages thanks to FFI). I also wanted to wrestle
-the Borrow Checker so I wrote the code in Rust instead of using
+with the Borrow Checker, so I wrote the code in Rust instead of using
 [Go bindings][go-bindings].
 
 [rust-bindings]: https://github.com/tree-sitter/tree-sitter/tree/master/lib/binding_rust
@@ -1128,8 +1127,9 @@ A match is a complete path. If a path is valid, then all captures are populated
 or have some value. Captures grouped together in a match are part of the same
 path.
 
-Add alternate paths with `[ ]`. I still have not found anything for "lack of a
-node." This is useful for things like capturing functions without return values.
+Add alternate paths with `[ ]`. I still have not found anything for the "lack of
+a node." This is useful for things like capturing functions without return
+values.
 
 ## Borrow Checker
 No Rust post is complete without complaining about the borrow checker.
