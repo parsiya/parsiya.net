@@ -43,8 +43,12 @@ queries. If a path in the query doesn't match, there will be no results. There
 are no partial captures.
 
 I will be starting with the playground at:
-https://tree-sitter.github.io/tree-sitter/playground. Click on any item in the
-tree at the bottom to see it highlighted in the code and vice versa.
+https://tree-sitter.github.io/tree-sitter/7-playground.html. Click on any item
+in the tree at the bottom to see it highlighted in the code and vice versa.
+
+**Update Sep 2025**: The tree-sitter playground has moved since writing the blog
+and I've updated the link. The screenshots are from the old playground and might
+not look like the new one.
 
 Most playground examples use `@capture`, but the name is freeform (and can even
 contain `.`). The capture gets a color and its matching captures are highlighted
@@ -56,7 +60,7 @@ If you check the `Log` box, the logs appear in the browser console in DevTools.
 I am gonna use this code in the [playground][playground]. We really don't care
 if the code compiles; we're just interested if tree-sitter can parse it.
 
-[playground]: https://tree-sitter.github.io/tree-sitter/playground
+[playground]: https://tree-sitter.github.io/tree-sitter/7-playground.html
 
 ```go
 package main
