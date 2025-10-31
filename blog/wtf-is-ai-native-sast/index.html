@@ -1,0 +1,242 @@
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>WTF is ... - AI-Native SAST?</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.152.2"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/wtf-is-ai-native-sast/05.webp"><meta name=twitter:title content="WTF is ... - AI-Native SAST?"><meta name=twitter:description content="Ladies and gentlemen, my name is Parsia and I'm here to ask and answer one
+simple question: WTF is AI-Native SAST? (RIP TotalBiscuit).
+Spoiler: It's SAST+AI. But that doesn't make it useless. Quite the opposite,
+I'll make the case for passing all your code to AI while tokens are cheap. Don't
+believe the marketing, though. Current LLMs need serious hand-holding to go
+beyond surface-level bug discovery, and that hand-holding comes from static
+analysis."><meta name=twitter:domain content="parsiya.net"><meta name=twitter:creator content="@CryptoGangsta"></head><body><header role=banner><hgroup><h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
+complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav role=navigation><fieldset class=mobile-nav><select onchange="location=this.value"><option value>Navigate…</option><option value=https://parsiya.net/about/>» About Me!</option><option value=https://parsiya.net/cheatsheet/>» Cheat Sheet</option><option value=https://parsiya.io/>» My Clone</option><option value=https://github.com/parsiya/parsiya.net>» Source Repo</option><option value="https://queue.acm.org/detail.cfm?id=3197520">» Manual Work is a Bug</option><option value="https://www.google.com/search?q=andrew+ridgeley">» The Other Guy from Wham!</option></select></fieldset><ul class=main-navigation><li><a href=https://parsiya.net/about/ title="About Me!" target=_blank rel="noopener noreferrer">About Me!</a></li><li><a href=https://parsiya.net/cheatsheet/ title="Cheat Sheet" target=_blank rel="noopener noreferrer">Cheat Sheet</a></li><li><a href=https://parsiya.io/ title="My Clone" target=_blank rel="noopener noreferrer">My Clone</a></li><li><a href=https://github.com/parsiya/parsiya.net title="Source Repo" target=_blank rel="noopener noreferrer">Source Repo</a></li><li><a href="https://queue.acm.org/detail.cfm?id=3197520" title="Manual Work is a Bug" target=_blank rel="noopener noreferrer">Manual Work is a Bug</a></li><li><a href="https://www.google.com/search?q=andrew+ridgeley" title="The Other Guy from Wham!" target=_blank rel="noopener noreferrer">The Other Guy from Wham!</a></li></ul><ul class=subscription><a href=https://parsiya.net/index.xml target=_blank type=application/rss+xml title=RSS rel="noopener noreferrer"><i class="fa fa-rss-square fa-lg"></i></a></ul><form action=https://www.google.com/search method=get target=_blank rel="noopener noreferrer"><fieldset role=search><input class=search type=text name=q results=0 placeholder=Search>
+<input type=hidden name=q value=site:https://parsiya.net/></fieldset></form></nav><div id=main><div id=content><div><article class=hentry role=article><header><p class=meta>Oct 31, 2025
+- 17 minute read - <a class=label href=https://parsiya.net/categories/ai/>AI </a><a class=label href=https://parsiya.net/categories/static-analysis/>Static Analysis</a></p><h1 class=entry-title>WTF is ... - AI-Native SAST?</h1></header><div class=entry-content><nav id=TableOfContents><ul><li><a href=#the-promise-or-the-premise>The Promise (Or the Premise)</a></li><li><a href=#why-you-should-try-sastai>Why You Should Try SAST+AI!</a><ul><li><a href=#complementing-traditional-sast>Complementing Traditional SAST</a></li></ul></li><li><a href=#what-hurdles-await-you>What Hurdles Await You!</a><ul><li><a href=#cost>Cost</a></li><li><a href=#context-rot>Context Rot</a></li><li><a href=#non-determinism>Non-Determinism</a></li></ul></li><li><a href=#a-blueprint-for-securitytoolingai>A Blueprint for SecurityTooling+AI?!</a><ul><li><a href=#ingredients>Ingredients</a></li><li><a href=#input>Input</a><ul><li><a href=#rag>RAG</a></li></ul></li></ul></li><li><a href=#how-many-ways-can-you-do-sastai-anyway>How Many Ways Can You Do SAST+AI Anyway?</a><ul><li><a href=#prompt--code>Prompt + Code</a><ul><li><a href=#analyzing-pull-requests-with-ai>Analyzing Pull Requests with AI</a></li><li><a href=#ai-as-classifiertriager>AI as Classifier/Triager</a></li></ul></li><li><a href=#prompt--agent>Prompt + Agent</a></li><li><a href=#tailored-prompt--sast-result>Tailored Prompt + SAST Result</a></li><li><a href=#agent--code-graph--sast-mcp>Agent + Code Graph + SAST MCP</a><ul><li><a href=#how-zeropath-works>How ZeroPath Works</a></li><li><a href=#mcps>MCPs</a></li><li><a href=#embedding-models>Embedding Models</a></li></ul></li></ul></li><li><a href=#what-did-we-learn-here-today>What Did We Learn Here Today?</a></li></ul></nav><p>Ladies and gentlemen, my name is Parsia and I'm here to ask and answer one
+simple question: WTF is AI-Native SAST? (RIP TotalBiscuit).</p><p>Spoiler: It's SAST+AI. But that doesn't make it useless. Quite the opposite,
+I'll make the case for passing all your code to AI while tokens are cheap. Don't
+believe the marketing, though. Current LLMs need serious hand-holding to go
+beyond surface-level bug discovery, and that hand-holding comes from static
+analysis.</p><p>Disclaimers: Not related to or endorsed by past, present, or future employers.</p><h1 id=the-promise-or-the-premise>The Promise (Or the Premise)
+<a class=header-link href=#the-promise-or-the-premise><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>You've seen it, read it. The world has changed forever. Those other SAST tools
+are bad; our AI-Native tool can replace all your tools and engineers. "Are we
+gonna lose our jobs?" I yelled as I jumped like a maniac into the XBOW huddle at
+DEF CON.</p><p>I get lots of marketing emails like this. First, I have no purchase authority,
+besties. Second, "Gentlemen, you can't fight in here! This is LinkedIn!" Tag
+your competition on Twitter and insult them directly instead of my inbox.</p><p>A few weeks ago I read this excellent blog,
+<a href=https://joshua.hu/llm-engineer-review-sast-security-ai-tools-pentesters target=_blank rel="noreferrer noopener">Hacking with AI SASTs: An overview of 'AI Security Engineers'/'LLM Security Scanners' for Penetration Testers and Security Teams</a>
+(Joshua, could I possibly interest you in shorter titles?). It's a hands-on
+comparison of multiple SAST+AI tools and a great primer on getting started in
+this space.</p><p>Instead of passing that blog to an LLM and asking it to rewrite it in my style
+like the norm these days, I want to explain what <em>I</em> would do to create a new
+static analysis tool in "the age of AI." But first, you need to sit through some
+of my rants. Because if you cannot handle my rants, you do not deserve my
+thought leadership (lol).</p><h1 id=why-you-should-try-sastai>Why You Should Try SAST+AI!
+<a class=header-link href=#why-you-should-try-sastai><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>If you know me, you know I love static analysis. For employment reasons, I'm
+obligated to say I also love AI and dream of adding Copilot to Windows
+Calculator. I've been disappointed in the SAST+AI space. I don't mean the people
+"with AI in their Twitter bio" (grifters gonna grift), but actual static
+analysis companies are doing, well, not much?!</p><p>We need progress in this space while VCs throw money at AI. In my opinion, if
+you are interested in static analysis you should experiment with AI because:</p><ol><li>The Price is Right! Tokens are heavily subsidized right now.</li><li>This might be your only chance to run AI tools on all your code.</li><li>We need AI to review all this AI-generated code.</li><li>AI can catch bug classes that are hard to detect with traditional SAST.</li></ol><p>The hype is useful. Convince your employer to let you review all your code with
+AI. You won't get this chance again. Run it before they start caring about costs
+(not legal advice).</p><span class=caption-wrapper><img class=caption src=06.webp title="Boss can AI review all of our code?" alt="Boss can AI review all of our code?">
+<span class=caption-text>Boss can AI review all of our code?</span></span><p>Companies claim X% of their code is AI-generated. There's a tsunami of
+AI-generated code. Our only chance to secure it is more AI!</p><span class=caption-wrapper><img class=caption src=01.png title="The only thing that can stop bad AI-generated code is good AI-generated code" alt="The only thing that can stop bad AI-generated code is good AI-generated code">
+<span class=caption-text>The only thing that can stop bad AI-generated code is good AI-generated code</span></span><p>Image credit: By Unknown author - Chrysopoea of Cleopatra (Codex Marcianus graecus 299 fol. 188v), <a href="https://commons.wikimedia.org/w/index.php?curid=36915535" target=_blank rel="noreferrer noopener">Public Domain from wikimedia</a></p><h2 id=complementing-traditional-sast>Complementing Traditional SAST
+<a class=header-link href=#complementing-traditional-sast><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Traditional static analysis has been historically bad at catching some bug
+classes like authorization and business logic issues. AI is promising here.
+Sometimes AI can understand the code's intent. In other words, you explain what
+the code needs to do and ask AI "chat, is this true?"</p><p>In other words, I do not believe current AI-native SAST products are a direct
+replacement. Here's another simple question: are you catching all I catch with
+Semgrep, CodeQL, and more? I have hand-crafted artisanal Semgrep rules (lol) and
+a treasure trove of CodeQL queries at my disposal. I am not being adversarial;
+it's completely OK to create a product to fill those gaps instead of doing
+everything.</p><h1 id=what-hurdles-await-you>What Hurdles Await You!
+<a class=header-link href=#what-hurdles-await-you><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>I've hyped AI up like a prompt engineering course hawker, now listen to my AI
+H8R side.</p><h2 id=cost>Cost
+<a class=header-link href=#cost><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Tokens are cheap, but not that cheap. Human-generated code still dwarfs
+AI-generated code. "There's a lot of software out there, Parsia! More
+repositories than stars in the sky!"</p><span class=caption-wrapper><img class=caption src=03.webp title="Paraphrasing princess Kahm from Outlanders" alt="Paraphrasing princess Kahm from Outlanders">
+<span class=caption-text>Paraphrasing princess Kahm from Outlanders</span></span><p>Recently, I read <a href=https://github.com/FuzzingLabs/fuzzforge_ai/blob/master/backend/benchmarks/by_category/secret_detection/results/comparison_report.md target=_blank rel="noreferrer noopener">Secret Detection Tools Comparison</a> by FuzzingLabs. While
+I'm impressed by LLMs, look at the run times. GPT-5 mini took more than 10
+minutes to find 32 secrets! This is not "web scale" (lol). While AI processed
+one log file, 10 more were added to the backlog.</p><h2 id=context-rot>Context Rot
+<a class=header-link href=#context-rot><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Models advertise longer context windows and users think it's a good thing,
+right? Wrong. Initial tokens are more important. You can feel this in
+conversations. The AI forgets older prompts and data.</p><span class=caption-wrapper><img class=caption src=04.webp title="Older tokens, saluting goodbye!" alt="Older tokens, saluting goodbye!">
+<span class=caption-text>Older tokens, saluting goodbye!</span></span><p>Image credit: My Hero Academia manga, chapter 333.</p><p>I read two studies recently that deal with this phenomenon. Even when the model
+advertises a large context window, you need to get things done within the first
+few 10K tokens. So while we can fit entire projects or modules into a context
+window, the model won't actually understand all of them.</p><ol><li><a href=https://nrehiew.github.io/blog/long_context/ target=_blank rel="noreferrer noopener">Evaluating Long Context (Reasoning) Ability</a><ol><li>"What do 1M and 500K context windows have in common? They are both actually 64K." lol.</li></ol></li><li><a href=https://research.trychroma.com/context-rot target=_blank rel="noreferrer noopener">Context Rot: How Increasing Input Tokens Impacts LLM Performance</a></li></ol><h2 id=non-determinism>Non-Determinism
+<a class=header-link href=#non-determinism><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Half the industry's effort goes into making LLMs deterministic. Prompts,
+instruction files, context management, MCPs, and now skills all try to rein in
+this non-deterministic beast and fix its Gene Wolfe level of unreliability. This
+hits hard in code reviews where AI gives different answers depending on the time
+of day. It's funny that I have to run it multiple times to get consistent
+answers.</p><h1 id=a-blueprint-for-securitytoolingai>A Blueprint for SecurityTooling+AI?!
+<a class=header-link href=#a-blueprint-for-securitytoolingai><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Enough soapboxing, let's talk solutions. Why say cliches like "POC||GTFO" when
+you can quote <a href=https://en.wikipedia.org/wiki/Saadi_Shirazi target=_blank rel="noreferrer noopener">Saadi</a>?</p><blockquote><p>عالم بی عمل به چه ماند؟ به زنبور بی عسل</p><p>What a scholar without practice resembles? A bee without honey.</p><ul><li>Saadi Shirazi. Golestan. Chapter 8: On Rules for Conduct in Life. Maxim 74<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>.</li></ul></blockquote><p>Here's my proposed blueprint for SAST+AI.</p><h2 id=ingredients>Ingredients
+<a class=header-link href=#ingredients><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>We pass one or ideally all of these to AI:</p><ol><li>Main input: The data we're examining.</li><li>Prompt: How we set the objective.</li><li>RAG: Extra information passed to the model.</li><li>Context: More information about the input itself (not the AI context).</li></ol><p>Note that RAG and context are different. RAG contains general information about
+the vulnerability class we're hunting. Context provides specifics about the
+input like surrounding code.</p><p>We can apply this paradigm (using big words now) to DAST (Dynamic Application
+Security Analysis), fuzzing, and probably other security domains. Jason Haddix's
+article <a href=https://executiveoffense.beehiiv.com/p/ai-hackbots-part-1 target=_blank rel="noreferrer noopener">Building AI Hackbots, Part 1</a> is about DAST and a great read for
+making "XBOW at home." We can learn from it and use it in SAST.</p><table><thead><tr><th>Item</th><th>SAST</th><th>DAST</th><th>Fuzzing</th></tr></thead><tbody><tr><td>Input</td><td>Code</td><td>Request response pair</td><td>Crashdump or app state</td></tr><tr><td>Prompt</td><td>Does the code have XSS?</td><td>Is the request vulnerable to XSS?</td><td>Is this dump/state exploitable?</td></tr><tr><td>RAG</td><td>Vulnerable code samples</td><td>Payloads and 'What is XSS?'</td><td>Vulnerable dumps and inputs</td></tr><tr><td>Context</td><td>Data flow</td><td>Related request responses</td><td>Related exploitable dumps/input</td></tr></tbody></table><h2 id=input>Input
+<a class=header-link href=#input><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>This is our main data: the suspected vulnerable code, the HTTP request/response
+pair, or the latest crash dump. Million-token context windows are tempting, but
+as we saw above, they're not real. We need to be selective. This is where
+traditional static analysis comes in (take that, marketing!).</p><p>The tooling generates and filters both <code>Input</code> and <code>RAG</code>. For SAST, we need
+tools that retrieve specific code pieces with tree-sitter (or ANTLR if you hate
+yourself). DAST needs something that sends HTTP requests and receives responses.
+While there are other fuzzers than AFL, it's funnier to continue the wrapper
+joke.</p><pre tabindex=0><code>| Item    | SAST                | DAST         | Fuzzing     |
+| ------- | ------------------- | ------------ | ----------- |
+| Tooling | tree-sitter wrapper | cURL wrapper | AFL wrapper |
+</code></pre><h3 id=rag>RAG
+<a class=header-link href=#rag><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>Retrieval Augmented Generation (RAG) is technically a technique or framework,
+but almost everyone (including me) treats it as a database. Jason Haddix
+discusses collecting write-ups and payloads for RAG. For XSS detection, we can
+pass the following from our RAG to AI:</p><ol><li>XSS payloads.</li><li>"What is XSS" articles.</li><li>Some vulnerable XSS responses.</li></ol><p>"But why do I need RAG? Surely the model has been trained on more XSS data than
+I can gather?" Yes, but your silicon genie has also been trained on a lot more,
+especially crap from Reddit. Depending on how it <del>feels</del> vibes, it might not
+reach the XSS corner of the state machine. RAG lets you fill the context with
+relevant information of your choosing.</p><span class=caption-wrapper><img class=caption src=05.webp title="Now you know Context Engineering!" alt="Now you know Context Engineering!">
+<span class=caption-text>Now you know Context Engineering!</span></span><p>Manual and AI edited screenshot from Dagashi Kashi anime. I replaced
+"JavaScript" with "Context Engineering."</p><p>In SAST+AI, RAG typically contains vulnerable code examples. I use two main
+sources:</p><ol><li>Bugs and write-ups.</li><li>AI-generated code based on documentation.</li></ol><p>Sounds easy, right? "Just scrape the internet" and "ask AI to generate code!"
+It's not, lol!</p><ol><li>Few public write-ups (compared to DAST bugs) include vulnerable code.</li><li>We need to remove noise and isolate patterns in existing samples.</li><li>There are many different ways to do the same thing in code.</li></ol><p>The last item is especially frustrating. I recently tried documenting all the
+ways to create a hash object in C#. This became a long doc titled "How many ways
+can you generate a hash anyway?" I learned two things: there are many ways to
+create hash objects in C#, and AI hallucinates even for well-documented
+languages like C# (this is not a sponsored post, lol).</p><h1 id=how-many-ways-can-you-do-sastai-anyway>How Many Ways Can You Do SAST+AI Anyway?
+<a class=header-link href=#how-many-ways-can-you-do-sastai-anyway><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Let's focus on SAST. In rough order of complexity and effectiveness, the current
+methods are (this is a personal list):</p><ol><li>Prompt + code<ol><li>"Find security issues in this code block."</li><li>"Does this code have security issues?"</li></ol></li><li>Prompt + agent<ol><li>"Hey GitHub Copilot Chat, find security issues in this project open in VS Code."</li></ol></li><li>Tailored prompt + SAST result<ol><li>"Is this code block with <code>.innerHTML</code> vulnerable to XSS?"</li></ol></li><li>Agent + code graph + SAST MCP<ol><li>"Find issues in this code graph and here's a bunch of tools you can use
+to get more information about the codebase"</li></ol></li></ol><h2 id=prompt--code>Prompt + Code
+<a class=header-link href=#prompt--code><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Send a generic prompt with code to AI
+and get an answer in a one-shot interaction. These were very popular when LLMs
+started, and some companies still claim this is the way.</p><p>Do I think you should skip this? Absolutely not! AI can understand more and
+probably find more issues than uncustomized bare bones SAST. If your options are
+"run AI on code" vs. not, then run AI on code. This is the easiest way to get
+started especially with cheap tokens.</p><blockquote><p>Running AI with a generic prompt on your code is better than running Semgrep
+with r/all. Any exercise is better than none.</p></blockquote><p>That was cringe! LinkedIn is down the hall and to the left, Parsia.</p><h3 id=analyzing-pull-requests-with-ai>Analyzing Pull Requests with AI
+<a class=header-link href=#analyzing-pull-requests-with-ai><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>Use this method to complement your more complex reviews. Running quick SAST on
+PRs is one of the best bang-for-buck activities (vulnerable patterns, secret
+detection). Everyone should be doing this. All big and probably medium-size tech
+companies do.</p><p>Even a simple action that adds an "explain this PR" comment is a huge win. It
+helps reviewers understand the code faster. The risk? Engineers getting used to
+it and blindly trusting AI.</p><p>At this point, every PR will have two comments:</p><ol><li>What does this PR do?</li><li>Does it have any bugs and if so, how do I fix them?</li></ol><p>If you want to go one step further, you can ask AI to create a commit to fix the
+bug. Great start, straightforward to set up. Welcome to your new baseline.</p><h3 id=ai-as-classifiertriager>AI as Classifier/Triager
+<a class=header-link href=#ai-as-classifiertriager><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>This method is also popular for creating LLM classifiers. Use a lightweight
+model as first pass to determine vulnerability. If the AI decides the code is
+vulnerable, scan it with a more expensive model.</p><p>Theori (3rd place in AIxCC 2025) does this. Here's an excerpt from a
+<a href=https://x.com/tjbecker_/status/1955678196097290618 target=_blank rel="noreferrer noopener">series of tweets by Tim Becker</a>. Note "off-the-shelf static analyzers."
+We'll see more of this.</p><blockquote><p>We start by passing every function in the source code into LLMs, asking them
+to consider a wide-range of vulnerability classes and explicitly accept/reject
+each class. We also run off-the-shelf static analyzers.</p></blockquote><p>With a huge code base, pass each function to AI for a quick look. This helps you
+discover vulnerability types that might be present in each block for more
+advanced analysis later. Great first step.</p><h2 id=prompt--agent>Prompt + Agent
+<a class=header-link href=#prompt--agent><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>As an application security engineer (well, my title is Offensive Security
+Engineer but the terminally online have made Red Team cringe), here's
+what I do with a new codebase:</p><ol><li>Open the project in VS Code (normie doesn't use Vim/Emacs!).</li><li>Search for sensitive keywords (e.g., route annotations in C#).</li><li>Highlight interesting blocks and ask AI to document analysis in a local markdown file.</li><li>AI in Agent Mode has access to the codebase and can grep at will. It
+analyzes and documents.</li><li>Review the analysis and ask follow-ups. Start fresh if needed.</li><li>???</li><li>Rinse and Repeat.</li></ol><p>This manual workflow has served me well. For automation, change the request
+limit in VS Code so AI never stops and let it run for a few hours.</p><ol><li>Ask AI to create a list of keywords to grep for security issues. Save to file.</li><li>Edit to taste.</li><li>Ask AI to summarize what to look for in each keyword.</li><li>Edit and iterate a few times.</li><li>Ask AI to go through the list one by one and document issues.</li><li>???</li><li>Profit</li></ol><p>I've tried this process with OpenAI models from 3.5 to 5. They're eager to find
+issues but produce a lot of noise. YMMV. You could enhance this process with
+RAG, but RAG contains 1. vulnerable code patterns and 2. description of the bug.
+If so, why not just use static analysis to extract those patterns in the first
+place?</p><p>In August 2025, Anthropic released <a href=https://x.com/claudeai/status/1953125698081833346 target=_blank rel="noreferrer noopener">/security-review</a> for static
+analysis (<a href=https://github.com/anthropics/claude-code-security-review target=_blank rel="noreferrer noopener">GitHub repo</a>) and the usual crowd marked it as the end of
+code review. I have not played with it, but here's a nice experiment by
+<a href=https://x.com/IceSolst/status/1953299793645568231 target=_blank rel="noreferrer noopener">@IceSolst</a> <sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup>. It's been less than three months and,
+<a href=https://x.com/hkashfi/status/1972397906784317929 target=_blank rel="noreferrer noopener">has anyone else run experiments with it?</a>, looks like no?</p><p>While finalizing this blog, OpenAI introduced <a href=https://openai.com/index/introducing-aardvark/ target=_blank rel="noreferrer noopener">Aardvark</a>. Will it shut
+down every AI-Native startup (as the usual crowd claim) or be forgotten in a few
+months? According to the architecture, the agent creates a threat model, finds
+issues, and fixes them. More advanced, allegedly.</p><h2 id=tailored-prompt--sast-result>Tailored Prompt + SAST Result
+<a class=header-link href=#tailored-prompt--sast-result><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Instead of asking AI "what are the security issues here?" run static analysis
+first and target specific code with tailored prompts. The simplest approach is
+running AI on SAST findings as a classifier/triager. Congratulations! Add
+AI-Native SAST to your resume.</p><p>But this misses things. If you're allergic to noise like me, you've tailored
+your SAST rules to be very specific. When my main ruleset hits, I'm almost sure
+it's an issue. Triage becomes somewhat redundant. Those rules are not good
+candidates for this approach. This is where
+<a href=/blog/2022-04-07-code-review-hot-spots-with-semgrep/ title="Code Review Hot Spots with Semgrep" rel=nofollow target=_blank>hotspot rules</a>
+come in. Here's an example: for API security issues, create a rule to extract
+routes<sup id=fnref:3><a href=#fn:3 class=footnote-ref role=doc-noteref>3</a></sup> (even AI-generated regex works) and spend tokens on those
+looking for specific issues. Another example: For cryptographic issues, extract
+pieces of code with specific imports containing these objects (e.g.,
+<code>System.Security.Cryptography</code> in C#) then pass them to AI asking specific
+questions. This reduces token usage.</p><p>If you've done these, you're probably way ahead of everyone else. But we can
+still do better.</p><p>Got data flow from CodeQL or Semgrep? You can pass the entire flow, but as we
+saw above, large context windows are a myth. It's been hit and miss for me. I've
+seen 20+ step CodeQL flows cause AI hallucinations. With current models, I think
+we get more value from splitting flows into smaller chunks and asking AI if a
+function is vulnerable assuming tainted input.</p><h2 id=agent--code-graph--sast-mcp>Agent + Code Graph + SAST MCP
+<a class=header-link href=#agent--code-graph--sast-mcp><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>At this point you're almost "AI-Native." What's the path forward? I haven't
+experimented enough to have a good answer, so let's learn from others. ZeroPath
+has a blog <a href=https://zeropath.com/blog/how-zeropath-works target=_blank rel="noreferrer noopener">explaining how it works</a>.</p><h3 id=how-zeropath-works>How ZeroPath Works
+<a class=header-link href=#how-zeropath-works><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>Interesting read. They're telling us what they do. Their method is not
+surprising. This is what every SAST+AI tool must do. First they parse the code
+with tree-sitter (get the "tree-sitter wrapper" joke now?) to generate the AST.
+Then they create a filtered function call graph where only the <em>important</em>
+functions appear (e.g., route method for listing users calls render).</p><p>The ZeroPath blog shows this graph, but it's tiny because of page margins. It's
+also a rendered mermaid diagram as svg so it's text and I can't view it in full
+size. I had to delete the sidebar elements in DevTools and change the width to
+take a screen shot. Right-click and open the image in a new tab like an NFT to
+see a readable graph.</p><span class=caption-wrapper><img class=caption src=07.webp title="What is this? A graph for ants?" alt="What is this? A graph for ants?">
+<span class=caption-text>What is this? A graph for ants?</span></span><p>You can create this graph with pure static analysis; no AI needed (yet). I've
+done it with both
+<a href=/blog/semgrep-fun/#06-go-function-call-chain title="Go Function Call Chain with Semgrep" rel=nofollow target=_blank>Semgrep</a>
+and
+<a href=/blog/knee-deep-tree-sitter-2/#function-call-chains title="Function Call Chains with tree-sitter CST" rel=nofollow target=_blank>tree-sitter.</a>.
+It's much easier than it sounds (not trying to discredit ZeroPath here). Create
+a list of each function's callees (e.g., function A calls B and C, C calls D).
+The rest is a simple process that creates a connectivity graph (A -> C -> D).</p><p>Tools like <a href=https://github.com/scabench-org/hound target=_blank rel="noreferrer noopener">scabench-org/hound</a> do this with AI (yet another anime
+mascot? 'what the hell, sure'.png). I've not dog ('Fozzie Bear waiting for
+applause'.gif) deep into the code, but looking at requirements.txt I can't see a
+parser. When a tool claims to be "language-agnostic" it's not parsing code. IMO,
+static analysis is better than AI for this step. ZeroPath is on the correct path
+(har har).</p><p>Next, the graph is "enriched with AI." At this point, I'm sure ZeroPath's UI
+designers want to blind us because this graph is even less readable.</p><span class=caption-wrapper><img class=caption src=09.webp title="Diagrams in their original size" alt="Diagrams in their original size">
+<span class=caption-text>Diagrams in their original size</span></span><p>With magic and cunning, I've stolen their graph, again. Right-click and open in
+a new tab NFT style to see the large image. Sorry about the joke, folks, but
+those diagrams are really unreadable.</p><span class=caption-wrapper><img class=caption src=08.webp title="Enjoy my truly unique non-AI art!" alt="Enjoy my truly unique non-AI art!">
+<span class=caption-text>Enjoy my truly unique non-AI art!</span></span><p>Now we can look at parts of this graph. Here we have the routes, their methods,
+the HTTP verbs, and what they do. This is the extended call chain most likely
+passed to AI to make the connections (e.g., creates a response or interacts with
+the DB using the ORM).</p><span class=caption-wrapper><img class=caption src=10.webp title="A section of the enriched graph" alt="A section of the enriched graph">
+<span class=caption-text>A section of the enriched graph</span></span><p>The pink boxes on the graph probably represent a separate system or security
+specifics. Not sure honestly. That's a great example of what we can do to make
+my tool better. Thanks for the information.</p><span class=caption-wrapper><img class=caption src=11.webp title="Pink boxes" alt="Pink boxes">
+<span class=caption-text>Pink boxes</span></span><p>Next, they introduce papers for exploring the graph but I've learned what I
+wanted.</p><p>A different tool, <a href=https://noperator.dev/posts/slice/ target=_blank rel="noreferrer noopener">Slice: SAST + LLM Interprocedural Context Extractor</a>
+works similarly. It uses CodeQL queries and tree-sitter to extract vulnerable
+code, triages with gpt-5-mini, then uses GPT-5 on the survivors.</p><h3 id=mcps>MCPs
+<a class=header-link href=#mcps><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>MCPs are the current rage and the latest weapon in the "make AI deterministic"
+war. MCP gives AI access to tools. If we give AI access to a SAST MCP like
+Semgrep, it can query the data itself. This beats grep since AI can request
+specific code parts. You still need to create and expose Semgrep rules
+individually unless you trust AI to write them on the fly.</p><p>Bottom line: The more you hold AI's hand (AKA add more relevant information in
+the context), the better.</p><h3 id=embedding-models>Embedding Models
+<a class=header-link href=#embedding-models><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>The ZeroPath graph is an example of code converted to something AI can
+understand for better retrieval. This is another one. GitHub Copilot
+recently introduced a new embedding model (<code>copilot-embedding</code>) that is supposed
+to improve code retrieval. See
+<a href=https://github.blog/news-insights/product-news/copilot-new-embedding-model-vs-code/ target=_blank rel="noreferrer noopener">GitHub Copilot gets smarter at finding your code: Inside our new embedding model</a>.</p><p>What does an embedding model do? It converts the data into a point in
+multidimensional space (e.g., 1024 floating point numbers). Feed it your code
+in chunks (models have token limits). To retrieve, feed search criteria to the
+same model and find which code chunks are closest to the input with some basic
+matrix math.</p><p>Will embedding models outperform static analysis pattern matching? We threw away
+decades of information retrieval research for embedding models and AI summaries,
+so who knows. The real breakthrough would be a model that understands code
+intent. Explain what the code should do, compare it with the actual intent to
+find vulnerabilities. Much better than pattern matching for bug classes like
+business logic flaws and AuthN/AuthZ. If you know any research in this space,
+let me know :)</p><h1 id=what-did-we-learn-here-today>What Did We Learn Here Today?
+<a class=header-link href=#what-did-we-learn-here-today><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Here's the summary of my 3800-word yap session:</p><p>Even the most basic approach (prompt + code) is better than nothing. Time and
+cheap tokens won't last forever. Go do this in your org and get that promotion.
+Build that startup to get the VC money. These AI capex subsidies will be gone
+before you know it.</p><p>In my opinion, AI-native SAST can't replace traditional SAST yet. Current LLMs
+cannot understand code that well. We need to show them where to look with static
+analysis. Hand-holding through context engineering, targeted prompts, and
+filtered inputs makes AI exponentially more useful than generic "find bugs"
+requests.</p><p>As usual, if you have feedback, you know how to contact me. If you can't find
+me, you don't deserve to yell at me :)</p><div class=footnotes role=doc-endnotes><hr><ol><li id=fn:1><p>For some reason this maxim is numbered 74 in the Persian version and 50 in English translations.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:2><p>One of the few anime pfp accounts on Twitter w/o shitty tech opinions.&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:3><p>While tempting, don't ask AI to extract the routes. Don't use AI to accomplish tasks that can be done with way less compute.&#160;<a href=#fnref:3 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></div></div><footer><p class=meta><span class="byline author vcard">Posted by <span class=fn>Parsia</span></span><time>Oct 31, 2025</time></span></p><p class=meta><a class="basic-alignment left" href=https://parsiya.net/blog/litellm-ghc-aad/ title="So You Wanna Use Your Own LLMs in GitHub Copilot Chat">So You Wanna Use Your Own LLMs in GitHub Copilot Chat</a></p></footer></article></div><aside class="sidebar thirds"><section class="first odd"><h1>Who am I?</h1><p><p>I am Parsia, a security engineer at Microsoft.</p><p>I write about application security, cryptography, static analysis, and
+(of course) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more. Contact me via any of these ways.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="me noopener noreferrer" href=https://infosec.exchange/@parsiya title=https://infosec.exchange/@parsiya><i class="fa fa-mastodon fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/static-analysis/ title="Static Analysis">Static Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/blockchain/ title="Blockchain (lol)">Blockchain (lol)</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title="WinAppDbg (use Frida instead)">WinAppDbg (use Frida instead)</a></li><li><a href=https://awsome.pw title='AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability'>AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2025 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.</p></footer></body></html>
