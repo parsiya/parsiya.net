@@ -24,11 +24,10 @@ analysis.
 Disclaimers: Not related to or endorsed by past, present, or future employers.
 
 # The Promise (Or the Premise)
-You've seen it, read it. The world has changed forever. Those other SAST tools
-are bad; our AI-Native tool can replace all your tools and engineers. "Are we
-gonna lose our jobs?" I yelled as I jumped like a maniac into the XBOW huddle at
-DEF CON.
-
+You've seen it, you've read it. The world has changed forever with AI. Those
+other SAST tools are bad; our AI-Native tool can replace all your tools and
+engineers. "Are we gonna lose our jobs?" I yelled as I jumped like a maniac into
+the XBOW huddle at DEF CON.
 
 I get lots of marketing emails like this. First, I have no purchase authority,
 besties. Second, "Gentlemen, you can't fight in here! This is LinkedIn!" Tag
@@ -72,11 +71,10 @@ AI. You won't get this chance again. Run it before they start caring about costs
 Companies claim X% of their code is AI-generated. There's a tsunami of
 AI-generated code. Our only chance to secure it is more AI!
 
-{{< imgcap title="The only thing that can stop bad AI-generated code is good AI-generated code" src="01.png" >}}
-
-Image credit: By Unknown author - Chrysopoea of Cleopatra (Codex Marcianus graecus 299 fol. 188v), [Public Domain from wikimedia][img1-credit]
-
-[img1-credit]: https://commons.wikimedia.org/w/index.php?curid=36915535
+<span class="caption-wrapper">
+  <img class="caption" src="01.png" title="The only thing that can stop bad AI-generated code is good AI-generated code." alt="The only thing that can stop bad AI-generated code is good AI-generated code.">
+  <span class="caption-text">The only thing that can stop bad AI-generated code is good AI-generated code.</br>Image credit: By Unknown author - Chrysopoea of Cleopatra (Codex Marcianus graecus 299 fol. 188v), <a href="https://commons.wikimedia.org/w/index.php?curid=36915535">from Wikipedia</a></span>
+</span>
 
 ## Complementing Traditional SAST
 Traditional static analysis has been historically bad at catching some bug
@@ -114,9 +112,10 @@ Models advertise longer context windows and users think it's a good thing,
 right? Wrong. Initial tokens are more important. You can feel this in
 conversations. The AI forgets older prompts and data.
 
-{{< imgcap title="Older tokens, saluting goodbye!" src="04.webp" >}}
-
-Image credit: My Hero Academia manga, chapter 333.
+<span class="caption-wrapper">
+  <img class="caption" src="04.webp" title="Older tokens, saluting goodbye!" alt="Older tokens, saluting goodbye!">
+  <span class="caption-text">Older tokens, saluting goodbye!</br>Image credit: My Hero Academia manga, chapter 333</span>
+</span>
 
 I read two studies recently that deal with this phenomenon. Even when the model
 advertises a large context window, you need to get things done within the first
@@ -213,10 +212,10 @@ especially crap from Reddit. Depending on how it ~~feels~~ vibes, it might not
 reach the XSS corner of the state machine. RAG lets you fill the context with
 relevant information of your choosing.
 
-{{< imgcap title="Now you know Context Engineering!" src="05.webp" >}}
-
-Manual and AI edited screenshot from Dagashi Kashi anime. I replaced
-"JavaScript" with "Context Engineering."
+<span class="caption-wrapper">
+  <img class="caption" src="05.webp" title="Now you know Context Engineering!" alt="Now you know Context Engineering!">
+  <span class="caption-text">Now you know Context Engineering!</br>Image credit: Dagashi Kashi anime. Edited manually and with AI. I replaced "JavaScript" with "Context Engineering."</span>
+</span>
 
 In SAST+AI, RAG typically contains vulnerable code examples. I use two main
 sources:
@@ -336,7 +335,7 @@ If so, why not just use static analysis to extract those patterns in the first
 place?
 
 In August 2025, Anthropic released [/security-review][sec-rev-tw] for static
-analysis ([GitHub repo][sec-rev-gh]) and the usual crowd marked it as the end of
+analysis ([GitHub repo][sec-rev-gh]) and it was marked as the end of
 code review. I have not played with it, but here's a nice experiment by
 [@IceSolst][sec-rev-ice] [^ft-ice]. It's been less than three months and, 
 [has anyone else run experiments with it?][sec-rev-hm], looks like no?
@@ -435,7 +434,7 @@ static analysis is better than AI for this step. ZeroPath is on the correct path
 Next, the graph is "enriched with AI." At this point, I'm sure ZeroPath's UI
 designers want to blind us because this graph is even less readable.
 
-{{< imgcap title="Diagrams in their original size" src="09.webp" >}}
+{{< imgcap title="Diagrams in their original size. Source: ZeroPath blog." src="09.webp" >}}
 
 With magic and cunning, I've stolen their graph, again. Right-click and open in
 a new tab NFT style to see the large image. Sorry about the joke, folks, but
