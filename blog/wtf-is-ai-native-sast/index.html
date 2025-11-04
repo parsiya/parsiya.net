@@ -13,10 +13,10 @@ I'll make the case for passing all your code to AI while tokens are cheap. Don't
 believe the marketing, though. Current LLMs need serious hand-holding to go
 beyond surface-level bug discovery, and that hand-holding comes from static
 analysis.</p><p>Disclaimers: Not related to or endorsed by past, present, or future employers.</p><h1 id=the-promise-or-the-premise>The Promise (Or the Premise)
-<a class=header-link href=#the-promise-or-the-premise><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>You've seen it, read it. The world has changed forever. Those other SAST tools
-are bad; our AI-Native tool can replace all your tools and engineers. "Are we
-gonna lose our jobs?" I yelled as I jumped like a maniac into the XBOW huddle at
-DEF CON.</p><p>I get lots of marketing emails like this. First, I have no purchase authority,
+<a class=header-link href=#the-promise-or-the-premise><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>You've seen it, you've read it. The world has changed forever with AI. Those
+other SAST tools are bad; our AI-Native tool can replace all your tools and
+engineers. "Are we gonna lose our jobs?" I yelled as I jumped like a maniac into
+the XBOW huddle at DEF CON.</p><p>I get lots of marketing emails like this. First, I have no purchase authority,
 besties. Second, "Gentlemen, you can't fight in here! This is LinkedIn!" Tag
 your competition on Twitter and insult them directly instead of my inbox.</p><p>A few weeks ago I read this excellent blog,
 <a href=https://joshua.hu/llm-engineer-review-sast-security-ai-tools-pentesters target=_blank rel="noreferrer noopener">Hacking with AI SASTs: An overview of 'AI Security Engineers'/'LLM Security Scanners' for Penetration Testers and Security Teams</a>
@@ -36,8 +36,8 @@ you are interested in static analysis you should experiment with AI because:</p>
 AI. You won't get this chance again. Run it before they start caring about costs
 (not legal advice).</p><span class=caption-wrapper><img class=caption src=06.webp title="Boss can AI review all of our code?" alt="Boss can AI review all of our code?">
 <span class=caption-text>Boss can AI review all of our code?</span></span><p>Companies claim X% of their code is AI-generated. There's a tsunami of
-AI-generated code. Our only chance to secure it is more AI!</p><span class=caption-wrapper><img class=caption src=01.png title="The only thing that can stop bad AI-generated code is good AI-generated code" alt="The only thing that can stop bad AI-generated code is good AI-generated code">
-<span class=caption-text>The only thing that can stop bad AI-generated code is good AI-generated code</span></span><p>Image credit: By Unknown author - Chrysopoea of Cleopatra (Codex Marcianus graecus 299 fol. 188v), <a href="https://commons.wikimedia.org/w/index.php?curid=36915535" target=_blank rel="noreferrer noopener">Public Domain from wikimedia</a></p><h2 id=complementing-traditional-sast>Complementing Traditional SAST
+AI-generated code. Our only chance to secure it is more AI!</p><span class=caption-wrapper><img class=caption src=01.png title="The only thing that can stop bad AI-generated code is good AI-generated code." alt="The only thing that can stop bad AI-generated code is good AI-generated code.">
+<span class=caption-text>The only thing that can stop bad AI-generated code is good AI-generated code.</br>Image credit: By Unknown author - Chrysopoea of Cleopatra (Codex Marcianus graecus 299 fol. 188v), <a href="https://commons.wikimedia.org/w/index.php?curid=36915535">from Wikipedia</a></span></span><h2 id=complementing-traditional-sast>Complementing Traditional SAST
 <a class=header-link href=#complementing-traditional-sast><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Traditional static analysis has been historically bad at catching some bug
 classes like authorization and business logic issues. AI is promising here.
 Sometimes AI can understand the code's intent. In other words, you explain what
@@ -59,7 +59,7 @@ one log file, 10 more were added to the backlog.</p><h2 id=context-rot>Context R
 <a class=header-link href=#context-rot><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Models advertise longer context windows and users think it's a good thing,
 right? Wrong. Initial tokens are more important. You can feel this in
 conversations. The AI forgets older prompts and data.</p><span class=caption-wrapper><img class=caption src=04.webp title="Older tokens, saluting goodbye!" alt="Older tokens, saluting goodbye!">
-<span class=caption-text>Older tokens, saluting goodbye!</span></span><p>Image credit: My Hero Academia manga, chapter 333.</p><p>I read two studies recently that deal with this phenomenon. Even when the model
+<span class=caption-text>Older tokens, saluting goodbye!</br>Image credit: My Hero Academia manga, chapter 333</span></span><p>I read two studies recently that deal with this phenomenon. Even when the model
 advertises a large context window, you need to get things done within the first
 few 10K tokens. So while we can fit entire projects or modules into a context
 window, the model won't actually understand all of them.</p><ol><li><a href=https://nrehiew.github.io/blog/long_context/ target=_blank rel="noreferrer noopener">Evaluating Long Context (Reasoning) Ability</a><ol><li>"What do 1M and 500K context windows have in common? They are both actually 64K." lol.</li></ol></li><li><a href=https://research.trychroma.com/context-rot target=_blank rel="noreferrer noopener">Context Rot: How Increasing Input Tokens Impacts LLM Performance</a></li></ol><h2 id=non-determinism>Non-Determinism
@@ -96,8 +96,7 @@ I can gather?" Yes, but your silicon genie has also been trained on a lot more,
 especially crap from Reddit. Depending on how it <del>feels</del> vibes, it might not
 reach the XSS corner of the state machine. RAG lets you fill the context with
 relevant information of your choosing.</p><span class=caption-wrapper><img class=caption src=05.webp title="Now you know Context Engineering!" alt="Now you know Context Engineering!">
-<span class=caption-text>Now you know Context Engineering!</span></span><p>Manual and AI edited screenshot from Dagashi Kashi anime. I replaced
-"JavaScript" with "Context Engineering."</p><p>In SAST+AI, RAG typically contains vulnerable code examples. I use two main
+<span class=caption-text>Now you know Context Engineering!</br>Image credit: Dagashi Kashi anime. Edited manually and with AI. I replaced "JavaScript" with "Context Engineering."</span></span><p>In SAST+AI, RAG typically contains vulnerable code examples. I use two main
 sources:</p><ol><li>Bugs and write-ups.</li><li>AI-generated code based on documentation.</li></ol><p>Sounds easy, right? "Just scrape the internet" and "ask AI to generate code!"
 It's not, lol!</p><ol><li>Few public write-ups (compared to DAST bugs) include vulnerable code.</li><li>We need to remove noise and isolate patterns in existing samples.</li><li>There are many different ways to do the same thing in code.</li></ol><p>The last item is especially frustrating. I recently tried documenting all the
 ways to create a hash object in C#. This became a long doc titled "How many ways
@@ -139,7 +138,7 @@ issues but produce a lot of noise. YMMV. You could enhance this process with
 RAG, but RAG contains 1. vulnerable code patterns and 2. description of the bug.
 If so, why not just use static analysis to extract those patterns in the first
 place?</p><p>In August 2025, Anthropic released <a href=https://x.com/claudeai/status/1953125698081833346 target=_blank rel="noreferrer noopener">/security-review</a> for static
-analysis (<a href=https://github.com/anthropics/claude-code-security-review target=_blank rel="noreferrer noopener">GitHub repo</a>) and the usual crowd marked it as the end of
+analysis (<a href=https://github.com/anthropics/claude-code-security-review target=_blank rel="noreferrer noopener">GitHub repo</a>) and it was marked as the end of
 code review. I have not played with it, but here's a nice experiment by
 <a href=https://x.com/IceSolst/status/1953299793645568231 target=_blank rel="noreferrer noopener">@IceSolst</a> <sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup>. It's been less than three months and,
 <a href=https://x.com/hkashfi/status/1972397906784317929 target=_blank rel="noreferrer noopener">has anyone else run experiments with it?</a>, looks like no?</p><p>While finalizing this blog, OpenAI introduced <a href=https://openai.com/index/introducing-aardvark/ target=_blank rel="noreferrer noopener">Aardvark</a>. Will it shut
@@ -190,8 +189,8 @@ applause'.gif) deep into the code, but looking at requirements.txt I can't see a
 parser. When a tool claims to be "language-agnostic" it's not parsing code. IMO,
 static analysis is better than AI for this step. ZeroPath is on the correct path
 (har har).</p><p>Next, the graph is "enriched with AI." At this point, I'm sure ZeroPath's UI
-designers want to blind us because this graph is even less readable.</p><span class=caption-wrapper><img class=caption src=09.webp title="Diagrams in their original size" alt="Diagrams in their original size">
-<span class=caption-text>Diagrams in their original size</span></span><p>With magic and cunning, I've stolen their graph, again. Right-click and open in
+designers want to blind us because this graph is even less readable.</p><span class=caption-wrapper><img class=caption src=09.webp title="Diagrams in their original size. Source: ZeroPath blog." alt="Diagrams in their original size. Source: ZeroPath blog.">
+<span class=caption-text>Diagrams in their original size. Source: ZeroPath blog.</span></span><p>With magic and cunning, I've stolen their graph, again. Right-click and open in
 a new tab NFT style to see the large image. Sorry about the joke, folks, but
 those diagrams are really unreadable.</p><span class=caption-wrapper><img class=caption src=08.webp title="Enjoy my truly unique non-AI art!" alt="Enjoy my truly unique non-AI art!">
 <span class=caption-text>Enjoy my truly unique non-AI art!</span></span><p>Now we can look at parts of this graph. Here we have the routes, their methods,
