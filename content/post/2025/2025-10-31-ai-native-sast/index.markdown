@@ -84,8 +84,8 @@ the code needs to do and ask AI "chat, is this true?"
 
 In other words, I do not believe current AI-native SAST products are a direct
 replacement. Here's another simple question: are you catching all I catch with
-Semgrep, CodeQL, and more? I have hand-crafted artisanal Semgrep rules (lol) and
-a treasure trove of CodeQL queries at my disposal. I am not being adversarial;
+Semgrep, CodeQL, and more? I have hand-crafted artisanal Semgrep rules and a
+treasure trove of CodeQL queries at my disposal. I am not being adversarial;
 it's completely OK to create a product to fill those gaps instead of doing
 everything.
 
@@ -234,7 +234,7 @@ The last item is especially frustrating. I recently tried documenting all the
 ways to create a hash object in C#. This became a long doc titled "How many ways
 can you generate a hash anyway?" I learned two things: there are many ways to
 create hash objects in C#, and AI hallucinates even for well-documented
-languages like C# (this is not a sponsored post, lol).
+languages like C# (this is not a sponsored post).
 
 # How Many Ways Can You Do SAST+AI Anyway?
 Let's focus on SAST. In rough order of complexity and effectiveness, the current
