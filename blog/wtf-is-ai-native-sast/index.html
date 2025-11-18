@@ -43,8 +43,8 @@ classes like authorization and business logic issues. AI is promising here.
 Sometimes AI can understand the code's intent. In other words, you explain what
 the code needs to do and ask AI "chat, is this true?"</p><p>In other words, I do not believe current AI-native SAST products are a direct
 replacement. Here's another simple question: are you catching all I catch with
-Semgrep, CodeQL, and more? I have hand-crafted artisanal Semgrep rules (lol) and
-a treasure trove of CodeQL queries at my disposal. I am not being adversarial;
+Semgrep, CodeQL, and more? I have hand-crafted artisanal Semgrep rules and a
+treasure trove of CodeQL queries at my disposal. I am not being adversarial;
 it's completely OK to create a product to fill those gaps instead of doing
 everything.</p><h1 id=what-hurdles-await-you>What Hurdles Await You!
 <a class=header-link href=#what-hurdles-await-you><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>I've hyped AI up like a prompt engineering course hawker, now listen to my AI
@@ -102,7 +102,7 @@ It's not, lol!</p><ol><li>Few public write-ups (compared to DAST bugs) include v
 ways to create a hash object in C#. This became a long doc titled "How many ways
 can you generate a hash anyway?" I learned two things: there are many ways to
 create hash objects in C#, and AI hallucinates even for well-documented
-languages like C# (this is not a sponsored post, lol).</p><h1 id=how-many-ways-can-you-do-sastai-anyway>How Many Ways Can You Do SAST+AI Anyway?
+languages like C# (this is not a sponsored post).</p><h1 id=how-many-ways-can-you-do-sastai-anyway>How Many Ways Can You Do SAST+AI Anyway?
 <a class=header-link href=#how-many-ways-can-you-do-sastai-anyway><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Let's focus on SAST. In rough order of complexity and effectiveness, the current
 methods are (this is a personal list):</p><ol><li>Prompt + code<ol><li>"Find security issues in this code block."</li><li>"Does this code have security issues?"</li></ol></li><li>Prompt + agent<ol><li>"Hey GitHub Copilot Chat, find security issues in this project open in VS Code."</li></ol></li><li>Tailored prompt + SAST result<ol><li>"Is this code block with <code>.innerHTML</code> vulnerable to XSS?"</li></ol></li><li>Agent + code graph + SAST MCP<ol><li>"Find issues in this code graph and here's a bunch of tools you can use
 to get more information about the codebase"</li></ol></li></ol><h2 id=prompt--code>Prompt + Code
