@@ -9,8 +9,8 @@ type: about
 
 I am Parsia, I try to do security most days.
 
-**2024-Present**: Senior Offensive Security Engineer at Microsoft. Despite my
-title, I mostly do application security.
+**2024-Present**: Senior Offensive Security Engineer at Microsoft. Ignore my
+title, I am an application security engineer :).
 
 **2022-2024**: Sabbatical. Dev contract work for a static analysis tool that
 automatically generates an OpenAPI spec from the backend source code. Some
@@ -52,7 +52,6 @@ Check my [Moby Games][moby] page for public game credits and a
 [bb]: https://github.com/parsiya/Presentations?tab=readme-ov-file#the-year-of-the-bounty-desktop-bugs-from-binaries
 
 ### Who is Hackerman?
-
 *Hackerman* is a character from the movie [Kung Fury][kungfury-youtube]. He is
 the greatest hacker of all time and can hack people through time. He also hacks
 with a Nintendo Power Glove like me.
@@ -68,14 +67,12 @@ with a Nintendo Power Glove like me.
 {{< imgcap title="I actually have a working Nintendo Power Glove." src="/images/power.jpg" >}}
 
 ### What is This Website?
-
 This website is my security research and notes. It doubles as my cheat sheet and
 knowledge base along with [parsiya.io](https://parsiya.io). I look up pages or
 send links to this website at least a few times every day. It's part of my
 brand. You don't wanna be the other guy from Wham!
 
 ### What does "Don't be The Other Guy from Wham!" Mean?
-
 [Wham!][wham-link] was a popular UK music duo. Most people remember one of its
 members, George Michael. No one remembers the other guy,
 [Andrew Ridgeley][andrew-link]. Write a blog, don't be afraid to promote
