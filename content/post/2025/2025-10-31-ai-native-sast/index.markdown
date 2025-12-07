@@ -23,6 +23,9 @@ analysis.
 
 Disclaimers: Not related to or endorsed by past, present, or future employers.
 
+RE the title: It's a homage to the popular (maybe not as popular as I thought)
+videogame critique TotalBiscuit (real name John Bain).
+
 # The Promise (Or the Premise)
 You've seen it, you've read it. The world has changed forever with AI. Those
 other SAST tools are bad; our AI-Native tool can replace all your tools and
