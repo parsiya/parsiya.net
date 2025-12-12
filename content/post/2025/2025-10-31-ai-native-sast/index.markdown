@@ -418,7 +418,7 @@ done it with both
     anchor="06-go-function-call-chain" >}}
 and
 {{< xref path="/post/2024/2024-04-09-tree-sitter-2/"
-    text="tree-sitter."
+    text="tree-sitter"
     title="Function Call Chains with tree-sitter CST"
     anchor="function-call-chains" >}}.
 It's much easier than it sounds (not trying to discredit ZeroPath here). Create
