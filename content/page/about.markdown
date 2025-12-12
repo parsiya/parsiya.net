@@ -53,9 +53,8 @@ Check my [Moby Games][moby] page for public game credits and a
 
 ### Who is Hackerman?
 *Hackerman* is a character from the movie [Kung Fury][kungfury-youtube]. He is
-the greatest hacker of all time and can hack people through time. He also hacks
-with a Nintendo Power Glove like me.
-[His cheesy hacking tutorial][hackerman-hacking-tutorial].
+the greatest hacker of all time. He also hacks with a Nintendo Power Glove like
+me. [His cheesy hacking tutorial][hackerman-hacking-tutorial].
 
 [kungfury-youtube]: https://www.youtube.com/watch?v=bS5P_LAqiVg
 [hackerman-hacking-tutorial]: https://www.youtube.com/watch?v=KEkrWRHCDQU
@@ -64,13 +63,16 @@ with a Nintendo Power Glove like me.
 "I trust this man, he has a power glove."
 {{< /blockquote >}}
 
+I cannot hack people through time like Hackerman, but I use the Power Glove as a
+presentation gimmick.
+
 {{< imgcap title="I actually have a working Nintendo Power Glove." src="/images/power.jpg" >}}
 
 ### What is This Website?
-This website is my security research and notes. It doubles as my cheat sheet and
-knowledge base along with [parsiya.io](https://parsiya.io). I look up pages or
-send links to this website at least a few times every day. It's part of my
-brand. You don't wanna be the other guy from Wham!
+It is my security research and notes. It doubles as my cheat sheet and knowledge
+base along with [parsiya.io](https://parsiya.io). I look up pages or send links
+to this website at least a few times every day. It's also part of "my brand" and
+it's gotten me jobs. You don't wanna be the other guy from Wham!
 
 ### What does "Don't be The Other Guy from Wham!" Mean?
 [Wham!][wham-link] was a popular UK music duo. Most people remember one of its
@@ -81,37 +83,21 @@ yourself (if you have the time). It's worth it.
 [wham-link]: https://en.wikipedia.org/wiki/Wham!
 [andrew-link]: https://www.google.com/search?q=andrew+ridgeley
 
-### Goals in Progress
+### LLM Usage
+I don't use LLMs to generate text. What use is reading an LLM generated blog
+when you can create one yourself? Might as well just share the prompt.
 
-- **Bug bounties**: I started the bug bounty game really late and mostly only
-  work the occasional Windows desktop application.
-    - My first and highest bounty to date: [$15,000 from PlayStation][psnow]
-    - Hacker One profile: https://hackerone.com/parsiya
-    - Bugcrowd profile (I have one bug there lol): https://bugcrowd.com/parsiya
-- **Go in security**: I have replaced Python with Go in my workflow.
-    - https://github.com/parsiya/Hacking-with-Go
-    - https://github.com/parsiya/Go-Security
-    - https://github.com/parsiya/Parsia-Code
-    - [https://parsiya.net/categories/go/](/categories/go/ "https://parsiya.net/categories/go/") 
-- **Automation** (never done):
-    - [https://parsiya.net/categories/automation/](/categories/automation/ "https://parsiya.net/categories/automation/") 
-    - Borrowed Time: My project and note management app
-        - https://github.com/parsiya/borrowedtime/
-    - ESLinter: Burp extension to automatically extract and ESLint JavaScript
-        - https://github.com/parsiya/eslinter
+I do not use LLMs to rewrite my text. I like my writing style and I do not want
+to sound like everyone else.
 
-[psnow]: https://hackerone.com/reports/873614
+My LLM usage in this context is:
 
-### Done and Dusted
+1. Catching spelling and punctuation mistakes.
+2. Formatting text (e.g., convert this text into a numbered list).
 
-- Enterprise blockchain and [Hyperledger Fabric](https://www.hyperledger.org/projects/fabric) security:
-    - **DEF CON 26 video**: https://www.youtube.com/watch?v=xKYIde5jh_8
-    - My post on Synopsys' corporate blog: [Tineola: Taking a Bite out of Enterprise Blockchain](https://www.synopsys.com/blogs/software-security/tineola-enterprise-blockchain/ "Tineola: Taking a Bite out of Enterprise Blockchain")
-    - Tineola the tool: https://github.com/tineola/tineola
-    - Random posts as I learned: [https://parsiya.net/categories/blockchain/](/categories/blockchain/ "https://parsiya.net/categories/blockchain/")
+### Tracking
+I have no tracking in this website. It's static HTML by Hugo and only a couple
+of lines of JavaScript. It's hosted on GitHub pages ([source][src]) so GitHub
+might log traffic, but I have no visibility.
 
-### Gone to The Dogs
-
-- In-memory fuzzing via binary instrumentation (aka traversing arbitrary
-  assembly blobs over and over and over).
-    - [https://parsiya.net/categories/winappdbg/](/categories/winappdbg/ "https://parsiya.net/categories/winappdbg/") 
+[src]: https://github.com/parsiya/parsiya.net
