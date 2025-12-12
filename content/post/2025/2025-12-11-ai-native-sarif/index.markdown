@@ -5,7 +5,7 @@ draft: false
 toc: true
 comments: true
 url: /blog/ai-native-sarif/
-twitterImage: 03.png
+twitterImage: 04.png
 categories:
 - AI
 - Static Analysis
