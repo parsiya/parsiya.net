@@ -300,8 +300,7 @@ This object also supports a property bag that we can reuse:
 
 # When Do I Modify the SARIF File?
 Ideally static analysis tools should do it. I've modified my toy static analysis
-tool to generate these new SARIF files. A feature that no one else has according
-to the chart!
+tool to generate these new SARIF files. A unique feature according to this chart.
 
 {{< imgcap title="Accepting funding at 1 billion valuation!" src="04.webp" >}}
 
