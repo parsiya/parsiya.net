@@ -167,8 +167,7 @@ not having sensitive info in the SARIF file 😜.</p><p>This object also support
 </span></span><span style=display:flex><span>        <span style=color:#586e75>// removed
 </span></span></span></code></pre></div><h1 id=when-do-i-modify-the-sarif-file>When Do I Modify the SARIF File?
 <a class=header-link href=#when-do-i-modify-the-sarif-file><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Ideally static analysis tools should do it. I've modified my toy static analysis
-tool to generate these new SARIF files. A feature that no one else has according
-to the chart!</p><span class=caption-wrapper><img class=caption src=04.webp title="Accepting funding at 1 billion valuation!" alt="Accepting funding at 1 billion valuation!">
+tool to generate these new SARIF files. A unique feature according to this chart.</p><span class=caption-wrapper><img class=caption src=04.webp title="Accepting funding at 1 billion valuation!" alt="Accepting funding at 1 billion valuation!">
 <span class=caption-text>Accepting funding at 1 billion valuation!</span></span><p>It's easy to process rule context data. Create the prompt and the code samples
 for each rule (I use Semgrep tests) and store them by rule ID in a database.
 Then use the rule ID in the SARIF file to retrieve them.</p><p><em>Code context</em> matching sounds much harder but it's not. Store the code context by
