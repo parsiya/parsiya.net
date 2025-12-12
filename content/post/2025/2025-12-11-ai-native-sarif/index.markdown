@@ -331,7 +331,7 @@ This is inline with my idea. I like the name "SARIF enrichment."
 
 [sast-lnk]: https://www.linkedin.com/blog/engineering/security/modernizing-linkedins-static-application-security-testing-capabilities
 
-# What Does the Data Come From?
+# Where Does the Data Come From?
 That is the million dollar question. The secret sauce or better yet, the
 so-called "Potter's Puff." What's that? It's my transliteration of the Persian
 idiom فوت کوزه‌ گری.
