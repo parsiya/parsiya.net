@@ -11,7 +11,7 @@ categories:
 - Static Analysis
 ---
 
-The "radical" idea to add prompts and code context directly into SARIF files for
+The "radical" idea to add prompts and code context directly to SARIF files for
 AI triage.
 
 <!--more-->
@@ -201,8 +201,8 @@ tools.
 [spec-multi]: https://docs.oasis-open.org/sarif/sarif/v2.1.0/errata01/os/sarif-v2.1.0-errata01-os-complete.html#_Toc141790723
 
 I decided to use [3.8 Property Bags][spec-prop] instead. The format defines them
-as "an unordered set of properties with arbitrary names." More importantly, they
-can be part of any tag:
+as "an unordered set of properties with arbitrary names." More importantly, all
+SARIF tags can have them:
 
 [spec-prop]: https://docs.oasis-open.org/sarif/sarif/v2.1.0/errata01/os/sarif-v2.1.0-errata01-os-complete.html#_Toc141790698
 
@@ -230,8 +230,8 @@ the _rule context_ there.
               "id": "semgrep-rules.c.raptor-command-injection",
               "name": "semgrep-rules.c.raptor-command-injection",
               "properties": {
-                "aiPrompt": "...", // ZZZ: triagePrompt?
-                "codeContext": "...", // ZZZ: need better name
+                "aiPrompt": "...",
+                "codeContext": "...", // Needs a better name
               },
             }
             // removed
@@ -277,8 +277,8 @@ The code context should be part of each finding. The findings are
         // removed
 ```
 
-Note the `snippet > text` key with the value of the captured code. So much for
-not having sensitive info in the SARIF file 😜.
+Note the `snippet > text` key with the value of the captured code Semgrep SARIF
+files. So much for not having sensitive info in the SARIF file 😜.
 
 This object also supports a property bag that we can reuse:
 
@@ -297,6 +297,39 @@ This object also supports a property bag that we can reuse:
         },
         // removed
 ```
+
+## Code
+**Section added on Feb-09-2026.**
+
+If you want to add the code to the SARIF file for self-contained triage, the
+SARIF format's [run > artifacts property][art] should do the job. Create one
+artifact per unique file or code content, then reference each from the
+finding/result via `physicalLocation > artifactLocation > index`.
+
+Here is the minimal wiring:
+
+```json
+{
+  "runs": [
+    {
+      "artifacts": [
+        // Store the file here
+        {
+          "location": { "uri": "foo/bar.go" },
+          "contents": { "text": "..." }
+        }
+      ],
+      "results": [
+        {
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": { "index": 0 }, // Add the index here
+                "region": { "startLine": 10, "endLine": 20 }
+            // removed
+```
+
+[art]: https://docs.oasis-open.org/sarif/sarif/v2.1.0/errata01/os/sarif-v2.1.0-errata01-os-complete.html#_Toc141790749
 
 # When Do I Modify the SARIF File?
 Ideally static analysis tools should do it. I've modified my toy static analysis
