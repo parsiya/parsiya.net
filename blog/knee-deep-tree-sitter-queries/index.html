@@ -1,4 +1,4 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Knee Deep in tree-sitter Queries</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.152.2"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/knee-deep-tree-sitter-queries/08.png"><meta name=twitter:title content="Knee Deep in tree-sitter Queries"><meta name=twitter:description content="tree-sitter is a parser generator. You can use it to parse source code which
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Knee Deep in tree-sitter Queries</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.155.3"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/knee-deep-tree-sitter-queries/08.png"><meta name=twitter:title content="Knee Deep in tree-sitter Queries"><meta name=twitter:description content="tree-sitter is a parser generator. You can use it to parse source code which
 is the first step of static analysis. For example, GitHub uses it to highlight
 code, code navigation, and also in CodeQL extractors.
 TL;DR: Queries are great for capturing text from code. But to extract
@@ -23,7 +23,7 @@ not look like the new one.</p><p>Most playground examples use <code>@capture</co
 contain <code>.</code>). The capture gets a color and its matching captures are highlighted
 in code with the same color. Nifty!</p><p>If you check the <code>Log</code> box, the logs appear in the browser console in DevTools.</p><h1 id=basic-example>Basic Example
 <a class=header-link href=#basic-example><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>I am gonna use this code in the <a href=https://tree-sitter.github.io/tree-sitter/7-playground.html target=_blank rel="noreferrer noopener">playground</a>. We really don't care
-if the code compiles; we're just interested if tree-sitter can parse it.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#719e07>package</span> main
+if the code compiles; we're just interested if tree-sitter can parse it.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#719e07>package</span> main
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>main</span>() {
 </span></span><span style=display:flex><span>	out, err <span style=color:#719e07>:=</span> <span style=color:#268bd2>Deserialize</span>(a, b)
@@ -44,7 +44,7 @@ creates a database based on these files for each language
 (source <a href=https://github.blog/2022-02-01-code-scanning-and-ruby-turning-source-code-into-a-queryable-database/ target=_blank rel="noreferrer noopener">Code scanning and Ruby: turning source code into a queryable database</a>).</p><p>We could go deeper and only select <code>main</code> with <code>(package_identifier) @capture</code>.
 But to only match where package name is main, we have to add a predicate (see
 the <code>Predicates</code> section in the tutorial). The predicate here is essentially
-<code>if @package-name == "main"</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=display:flex><span>((package_identifier) <span style=color:#268bd2>@package</span><span style=color:#719e07>-</span>name
+<code>if @package-name == "main"</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-ts data-lang=ts><span style=display:flex><span>((package_identifier) <span style=color:#268bd2>@package</span><span style=color:#719e07>-</span>name
 </span></span><span style=display:flex><span>  (#eq<span style=color:#719e07>?</span> <span style=color:#268bd2>@package</span><span style=color:#719e07>-</span>name <span style=color:#2aa198>&#34;main&#34;</span>))
 </span></span></code></pre></div><p><img src=02.png alt></p><p>Change the string from <code>main</code> to <code>hello</code> to see how it's not highlighted anymore.</p><p><img src=03.png alt></p><p>Similar query to capture function calls. The entire function line is considered
 a <code>short_var_declaration</code> which is basically anytime we see <code>a := ...</code>. We're
@@ -57,14 +57,14 @@ only interested in the function call which is a <code>call_expression</code>.</p
 names, we have to capture the <code>function</code> field for the <code>call_expression</code> node
 and use a predicate. More about fields:
 <a href=https://tree-sitter.github.io/tree-sitter/using-parsers#node-field-names target=_blank rel="noreferrer noopener">https://tree-sitter.github.io/tree-sitter/using-parsers#node-field-names</a>.</p><p>Things get complicated pretty quickly, so we will capture function names first
-and then add the predicate.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=display:flex><span>(call_expression
+and then add the predicate.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-ts data-lang=ts><span style=display:flex><span>(call_expression
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>function</span><span style=color:#719e07>:</span> (identifier) <span style=color:#268bd2>@capture</span>)
 </span></span></code></pre></div><p>We start with <code>call_expression</code>, then we add the <code>function</code> field name. The
 field is a child node of type <code>identifier</code> so we add it to our query's path to
 capture it. Now we have captured only <code>Deserialize</code> and <code>panic</code>. This may look
 like <code>casting</code>, but it's not. We're not casting the name of the function into an
 <code>identifier</code>. We're looking for code where the value of the <code>function</code> field is
-an <code>identifier</code>.</p><p><img src=05.png alt></p><p>Now we wrap this in <code>()</code> and add our predicate for <code>@capture</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=display:flex><span>(
+an <code>identifier</code>.</p><p><img src=05.png alt></p><p>Now we wrap this in <code>()</code> and add our predicate for <code>@capture</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-ts data-lang=ts><span style=display:flex><span>(
 </span></span><span style=display:flex><span>  (call_expression
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>function</span><span style=color:#719e07>:</span> (identifier) <span style=color:#268bd2>@capture</span>)
 </span></span><span style=display:flex><span>  (#eq<span style=color:#719e07>?</span> <span style=color:#268bd2>@capture</span> <span style=color:#2aa198>&#34;Deserialize&#34;</span>)
@@ -73,7 +73,7 @@ an <code>identifier</code>.</p><p><img src=05.png alt></p><p>Now we wrap this in
 <a class=header-link href=#function-parameters><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>We can further expand this query and also include the types of function
 parameters.</p><p>This gives us a new challenge. The <code>type</code> (or <code>_type</code> in
 <a href=https://github.com/tree-sitter/tree-sitter-go/blob/master/src/node-types.json target=_blank rel="noreferrer noopener">node-types.json</a>) is not always a <code>type_identifier</code> like the
-return values.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+return values.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-json data-lang=json><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;type&#34;</span>: <span style=color:#2aa198>&#34;_type&#34;</span>,
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;named&#34;</span>: <span style=color:#cb4b16>true</span>,
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;subtypes&#34;</span>: [
@@ -87,7 +87,7 @@ return values.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;backg
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>  ]
 </span></span><span style=display:flex><span>},
-</span></span></code></pre></div><p>We can see it more clearly in the <a href=https://github.com/tree-sitter/tree-sitter-go/blob/master/grammar.js target=_blank rel="noreferrer noopener">tree-sitter-go/grammar.js</a> file.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-javascript data-lang=javascript><span style=display:flex><span>_type<span style=color:#719e07>:</span> $ =&gt; choice(
+</span></span></code></pre></div><p>We can see it more clearly in the <a href=https://github.com/tree-sitter/tree-sitter-go/blob/master/grammar.js target=_blank rel="noreferrer noopener">tree-sitter-go/grammar.js</a> file.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-javascript data-lang=javascript><span style=display:flex><span>_type<span style=color:#719e07>:</span> $ =&gt; choice(
 </span></span><span style=display:flex><span>  $._simple_type,
 </span></span><span style=display:flex><span>  $.parenthesized_type,
 </span></span><span style=display:flex><span>),
@@ -114,7 +114,7 @@ return values.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;backg
 with a <a href=https://tree-sitter.github.io/tree-sitter/using-parsers#wildcard-node target=_blank rel="noreferrer noopener">wildcard node</a>. It matches any node. I am using it
 similar to the <code>getText</code> method in <a href=https://www.antlr.org/ target=_blank rel="noreferrer noopener">ANTLR</a> (which is another useful
 parser generator I have used in the past). That method returns the text that
-matched that node which include everything in the node and its children.</p><p>So we're just gonna say, show me the text in the type:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=display:flex><span>(function_declaration
+matched that node which include everything in the node and its children.</p><p>So we're just gonna say, show me the text in the type:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-ts data-lang=ts><span style=display:flex><span>(function_declaration
 </span></span><span style=display:flex><span>  parameters<span style=color:#719e07>:</span> (parameter_list
 </span></span><span style=display:flex><span>    (parameter_declaration
 </span></span><span style=display:flex><span>      <span style=color:#268bd2>type</span><span style=color:#719e07>:</span> (_) <span style=color:#268bd2>@param</span><span style=color:#719e07>-</span><span style=color:#268bd2>type</span>))
@@ -132,7 +132,7 @@ function_declaration
 </code></pre><p>We can make our query better with <a href=https://tree-sitter.github.io/tree-sitter/using-parsers#alternations target=_blank rel="noreferrer noopener">Alternations</a>. Alternations are
 choices that appear between <code>[]</code>. We're telling the query to match if it can
 take any of the choices. In this case we are accounting for the two
-<code>parameter_declaration</code> options.</p><p>Hint: When you see <code>choice</code> in the tree-sitter grammar, it's time for alternations.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=display:flex><span>(function_declaration
+<code>parameter_declaration</code> options.</p><p>Hint: When you see <code>choice</code> in the tree-sitter grammar, it's time for alternations.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-ts data-lang=ts><span style=display:flex><span>(function_declaration
 </span></span><span style=display:flex><span>  parameters<span style=color:#719e07>:</span> (parameter_list [
 </span></span><span style=display:flex><span>    (parameter_declaration
 </span></span><span style=display:flex><span>      name<span style=color:#719e07>:</span> (identifier) <span style=color:#268bd2>@param</span><span style=color:#719e07>-</span>name
@@ -145,7 +145,7 @@ take any of the choices. In this case we are accounting for the two
 </span></span></code></pre></div><p><img src=08.png alt></p><h2 id=simple-types>Simple Types
 <a class=header-link href=#simple-types><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>So we've fixed the variadic function issue, but the type issue is still there.
 We can look at the grammar and try to create alterations for every
-<code>_simple_type</code> choice.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=display:flex><span>_simple_type<span style=color:#719e07>:</span> $ =&gt; choice(
+<code>_simple_type</code> choice.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-js data-lang=js><span style=display:flex><span>_simple_type<span style=color:#719e07>:</span> $ =&gt; choice(
 </span></span><span style=display:flex><span>  prec.dynamic(<span style=color:#719e07>-</span><span style=color:#2aa198>1</span>, $._type_identifier),
 </span></span><span style=display:flex><span>  $.generic_type,
 </span></span><span style=display:flex><span>  $.qualified_type,
@@ -164,7 +164,7 @@ We can look at the grammar and try to create alterations for every
 a child node. This is the case here for <code>_simple_type</code> and <code>_type_identifier</code>.
 They do not appear in the tree. So we have to replace them with all the choices
 if we want to capture the correct values in the query. See
-<a href=https://tree-sitter.github.io/tree-sitter/creating-parsers#hiding-rules target=_blank rel="noreferrer noopener">Hiding Rules</a> in the docs.</p><p>Following <code>_type_identifier</code> in the grammar, we reach:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=display:flex><span>identifier<span style=color:#719e07>:</span> _ =&gt; <span style=color:#719e07>/</span>[_\p{XID_Start}][_\p{XID_Continue}]<span style=color:#719e07>*</span>/,
+<a href=https://tree-sitter.github.io/tree-sitter/creating-parsers#hiding-rules target=_blank rel="noreferrer noopener">Hiding Rules</a> in the docs.</p><p>Following <code>_type_identifier</code> in the grammar, we reach:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-js data-lang=js><span style=display:flex><span>identifier<span style=color:#719e07>:</span> _ =&gt; <span style=color:#719e07>/</span>[_\p{XID_Start}][_\p{XID_Continue}]<span style=color:#719e07>*</span>/,
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>_type_identifier<span style=color:#719e07>:</span> $ =&gt; alias($.identifier, $.type_identifier),
 </span></span><span style=display:flex><span>_field_identifier<span style=color:#719e07>:</span> $ =&gt; alias($.identifier, $.field_identifier),
@@ -175,7 +175,7 @@ space), we rename that node to <code>type_identifier</code> or the other names. 
 <code>aliases</code> in the <a href=https://tree-sitter.github.io/tree-sitter/creating-parsers target=_blank rel="noreferrer noopener">Creating Parsers</a> to read more.</p><p>So every time we see a <code>type_identifier</code> node, that's just a type. This is
 exactly what we have been doing. I am removing the variadic parameter path from
 the example to make it more concise.</p><p>I've created a new alternation for <code>type</code> and one of the choices is just a
-<code>type_identifier</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=display:flex><span>(function_declaration
+<code>type_identifier</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-ts data-lang=ts><span style=display:flex><span>(function_declaration
 </span></span><span style=display:flex><span>  parameters<span style=color:#719e07>:</span> (parameter_list [
 </span></span><span style=display:flex><span>    (parameter_declaration
 </span></span><span style=display:flex><span>      name<span style=color:#719e07>:</span> (identifier) <span style=color:#268bd2>@func</span>.name
@@ -185,7 +185,7 @@ the example to make it more concise.</p><p>I've created a new alternation for <c
 </span></span><span style=display:flex><span>  ]
 </span></span><span style=display:flex><span>))
 </span></span></code></pre></div><h2 id=slice-types>Slice Types
-<a class=header-link href=#slice-types><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Let's tackle <code>slice_type</code> to recognize the <code>[]byte</code> in our example.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=display:flex><span>slice_type<span style=color:#719e07>:</span> $ =&gt; prec.right(seq(
+<a class=header-link href=#slice-types><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Let's tackle <code>slice_type</code> to recognize the <code>[]byte</code> in our example.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-js data-lang=js><span style=display:flex><span>slice_type<span style=color:#719e07>:</span> $ =&gt; prec.right(seq(
 </span></span><span style=display:flex><span>  <span style=color:#2aa198>&#39;[&#39;</span>,
 </span></span><span style=display:flex><span>  <span style=color:#2aa198>&#39;]&#39;</span>,
 </span></span><span style=display:flex><span>  field(<span style=color:#2aa198>&#39;element&#39;</span>, $._type),
@@ -204,7 +204,7 @@ function_declaration
       name: identifier            // jsBytes
       type: slice_type            // []byte
         element: type_identifier  // byte
-</code></pre><p>And our query captures the value of <code>element</code> with a wildcard.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=display:flex><span>(function_declaration
+</code></pre><p>And our query captures the value of <code>element</code> with a wildcard.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-ts data-lang=ts><span style=display:flex><span>(function_declaration
 </span></span><span style=display:flex><span>  parameters<span style=color:#719e07>:</span> (parameter_list [
 </span></span><span style=display:flex><span>    (parameter_declaration
 </span></span><span style=display:flex><span>      name<span style=color:#719e07>:</span> (identifier)
@@ -214,7 +214,7 @@ function_declaration
 </span></span><span style=display:flex><span>          element<span style=color:#719e07>:</span> (_) <span style=color:#268bd2>@param</span>.<span style=color:#268bd2>type</span>.slice)
 </span></span><span style=display:flex><span>      ])]))
 </span></span></code></pre></div><p><img src=09.png alt></p><h2 id=pointer-type>Pointer Type
-<a class=header-link href=#pointer-type><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p><code>pointer_type</code> is another easy example. It's just a <code>*</code> followed by a <code>_type</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=display:flex><span>pointer_type<span style=color:#719e07>:</span> $ =&gt; prec(PREC.unary, seq(<span style=color:#2aa198>&#39;*&#39;</span>, $._type)),
+<a class=header-link href=#pointer-type><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p><code>pointer_type</code> is another easy example. It's just a <code>*</code> followed by a <code>_type</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-js data-lang=js><span style=display:flex><span>pointer_type<span style=color:#719e07>:</span> $ =&gt; prec(PREC.unary, seq(<span style=color:#2aa198>&#39;*&#39;</span>, $._type)),
 </span></span></code></pre></div><p>Let's add a second input parameter to our example.</p><pre tabindex=0><code>// func Deserialize(a *Person, jsBytes []byte) (Person, error) {
 
 function_declaration
@@ -228,7 +228,7 @@ function_declaration
     // removed
 </code></pre><p>Similar to <code>[]byte</code>, the type of a slice can be <code>_type</code> which brings us back to
 the recursive elephant in the room that is parsing <code>_type</code>. Again, let's just
-capture it with a wildcard and add another path to the <code>type</code> field.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=display:flex><span>(function_declaration
+capture it with a wildcard and add another path to the <code>type</code> field.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-ts data-lang=ts><span style=display:flex><span>(function_declaration
 </span></span><span style=display:flex><span>  parameters<span style=color:#719e07>:</span> (parameter_list [
 </span></span><span style=display:flex><span>    (parameter_declaration
 </span></span><span style=display:flex><span>      name<span style=color:#719e07>:</span> (identifier)
@@ -241,7 +241,7 @@ capture it with a wildcard and add another path to the <code>type</code> field.<
 </span></span></code></pre></div><p>I've removed some of the paths in the screenshot so the playground uses a better
 capture color for this match.</p><p><img src=10.png alt></p><h2 id=struct-type>Struct Type
 <a class=header-link href=#struct-type><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>We can define an anonymous struct right in the parameters. Apparently, Rob Pike
-has given us the ability to twist ourselves into a pretzel like this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>testStructType</span>(person <span style=color:#268bd2>struct</span> {
+has given us the ability to twist ourselves into a pretzel like this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>testStructType</span>(person <span style=color:#268bd2>struct</span> {
 </span></span><span style=display:flex><span>	name  <span style=color:#dc322f>string</span>
 </span></span><span style=display:flex><span>	score <span style=color:#dc322f>int</span>
 </span></span><span style=display:flex><span>}) <span style=color:#dc322f>int</span> {
@@ -269,7 +269,7 @@ parameter_declaration           // person struct { name string  score int }
         name: field_identifier  // score
         type: type_identifier   // int
 </code></pre><p>Guess what? The <code>type</code> inside the <code>field_declaration</code> is a <code>_type</code>. Har har! OK,
-another wildcard.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=display:flex><span>(function_declaration
+another wildcard.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-ts data-lang=ts><span style=display:flex><span>(function_declaration
 </span></span><span style=display:flex><span>  parameters<span style=color:#719e07>:</span> (parameter_list [
 </span></span><span style=display:flex><span>    (parameter_declaration
 </span></span><span style=display:flex><span>      name<span style=color:#719e07>:</span> (identifier)
@@ -281,7 +281,7 @@ another wildcard.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;ba
 </span></span><span style=display:flex><span>      ])]))
 </span></span></code></pre></div><p><img src=11.png alt></p><h2 id=array-type>Array Type
 <a class=header-link href=#array-type><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p><code>array_type</code> is similar. It has a <code>length</code> and an <code>element</code> as defined in the
-grammar.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=display:flex><span>array_type<span style=color:#719e07>:</span> $ =&gt; prec.right(seq(
+grammar.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-js data-lang=js><span style=display:flex><span>array_type<span style=color:#719e07>:</span> $ =&gt; prec.right(seq(
 </span></span><span style=display:flex><span>  <span style=color:#2aa198>&#39;[&#39;</span>,
 </span></span><span style=display:flex><span>  field(<span style=color:#2aa198>&#39;length&#39;</span>, $._expression),
 </span></span><span style=display:flex><span>  <span style=color:#2aa198>&#39;]&#39;</span>,
@@ -297,7 +297,7 @@ parameters: parameter_list      // (nums [10]int)
     type: array_type            // [10]int
       length: int_literal       // 10
       element: type_identifier  // int
-</code></pre><p>We will use wildcards to capture both length and type.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=display:flex><span>(function_declaration
+</code></pre><p>We will use wildcards to capture both length and type.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-ts data-lang=ts><span style=display:flex><span>(function_declaration
 </span></span><span style=display:flex><span>  parameters<span style=color:#719e07>:</span> (parameter_list [
 </span></span><span style=display:flex><span>    (parameter_declaration
 </span></span><span style=display:flex><span>      name<span style=color:#719e07>:</span> (identifier)
@@ -307,7 +307,7 @@ parameters: parameter_list      // (nums [10]int)
 </span></span><span style=display:flex><span>          element<span style=color:#719e07>:</span> (_) <span style=color:#268bd2>@param</span>.<span style=color:#268bd2>type</span>.array.<span style=color:#268bd2>type</span>)
 </span></span><span style=display:flex><span>      ])]))
 </span></span></code></pre></div><p><img src=12.png alt></p><p>And the list goes on and on. We can add other things like maps. In the end, I
-ended up with this monstrosity (which is still incomplete).</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=display:flex><span>(function_declaration
+ended up with this monstrosity (which is still incomplete).</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-ts data-lang=ts><span style=display:flex><span>(function_declaration
 </span></span><span style=display:flex><span>  name<span style=color:#719e07>:</span> (identifier) <span style=color:#268bd2>@func</span>.name
 </span></span><span style=display:flex><span>  parameters<span style=color:#719e07>:</span> (parameter_list [
 </span></span><span style=display:flex><span>    (parameter_declaration
@@ -339,18 +339,18 @@ ended up with this monstrosity (which is still incomplete).</p><div class=highli
 </span></span><span style=display:flex><span>    ]
 </span></span><span style=display:flex><span>))
 </span></span></code></pre></div><h1 id=function-return-values>Function Return Values
-<a class=header-link href=#function-return-values><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Return values are very similar. It's in the <code>result</code> field in the grammar.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=display:flex><span>function_declaration<span style=color:#719e07>:</span> $ =&gt; prec.right(<span style=color:#2aa198>1</span>, seq(
+<a class=header-link href=#function-return-values><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Return values are very similar. It's in the <code>result</code> field in the grammar.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-js data-lang=js><span style=display:flex><span>function_declaration<span style=color:#719e07>:</span> $ =&gt; prec.right(<span style=color:#2aa198>1</span>, seq(
 </span></span><span style=display:flex><span>  <span style=color:#2aa198>&#39;func&#39;</span>,
 </span></span><span style=display:flex><span>  field(<span style=color:#2aa198>&#39;name&#39;</span>, $.identifier),
 </span></span><span style=display:flex><span>  field(<span style=color:#2aa198>&#39;type_parameters&#39;</span>, optional($.type_parameter_list)),
 </span></span><span style=display:flex><span>  field(<span style=color:#2aa198>&#39;parameters&#39;</span>, $.parameter_list),
 </span></span><span style=display:flex><span>  field(<span style=color:#2aa198>&#39;result&#39;</span>, optional(choice($.parameter_list, $._simple_type))), <span style=color:#586e75>// &lt;--- HERE
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>  field(<span style=color:#2aa198>&#39;body&#39;</span>, optional($.block)),
+</span></span></span><span style=display:flex><span>  field(<span style=color:#2aa198>&#39;body&#39;</span>, optional($.block)),
 </span></span><span style=display:flex><span>)),
 </span></span></code></pre></div><ol><li>It's optional. Functions don't have to have return values.<ol><li><code>func noReturnValue() { //... }</code>.</li></ol></li><li>The result can be a <code>_simple_type</code>.<ol><li>This is the huge list we saw before.</li></ol></li><li>The result can be a list of parameters. They are called <a href=https://go.dev/tour/basics/7 target=_blank rel="noreferrer noopener">named return values</a>.<ol><li>E.g., <code>func named ReturnValues() (a int) { //... }</code>.</li></ol></li></ol><p>Basically, the return value can be a list of types or a list of parameters just
 like we saw in input.</p><p>Let's do a simple example. Note tree-sitter doesn't really know the types of
 <code>out, err</code> in <code>out, err := Deserialize(a, b)</code>. In the real world, we need more
-information by reviewing the function declaration.</p><p>Let's make something up.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>type</span> Person <span style=color:#268bd2>struct</span> {
+information by reviewing the function declaration.</p><p>Let's make something up.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>type</span> Person <span style=color:#268bd2>struct</span> {
 </span></span><span style=display:flex><span>	Name <span style=color:#dc322f>string</span>
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
@@ -392,7 +392,7 @@ the <code>function_declaration</code>.</p><pre tabindex=0><code>(function_declar
       type: (type_identifier) @return-type)))
 </code></pre><p>The <code>@return-type</code> part only captures <code>Person</code> and <code>error</code>.</p><p>Go also supports named return parameters. It creates variables that we can use
 in code and allows us to just specify <code>return</code> (called a naked return) which
-returns the values of these variables. Personally, I don't like naked returns.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Convert JSON text to a Person object.</span>
+returns the values of these variables. Personally, I don't like naked returns.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#586e75>// Convert JSON text to a Person object.</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>Deserialize</span>(jsBytes []<span style=color:#dc322f>byte</span>) (p Person, err <span style=color:#dc322f>error</span>) {
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// I know we can just return json.Unmarshal directly here, but bear with me.</span>
 </span></span><span style=display:flex><span>	err = json.<span style=color:#268bd2>Unmarshal</span>(jsBytes, <span style=color:#719e07>&amp;</span>p)
@@ -409,15 +409,15 @@ skipping the optional <code>name</code> child for <code>parameter_declaration</c
   parameter_declaration     // err error
     name: identifier        // err
     type: type_identifier   // error
-</code></pre><p>We can see this in the <a href=https://github.com/tree-sitter/tree-sitter-go/blob/master/src/node-types.json target=_blank rel="noreferrer noopener">node-types.json file in the Go grammar</a>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span><span style=color:#586e75>// stuff removed before and after
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>{
+</code></pre><p>We can see this in the <a href=https://github.com/tree-sitter/tree-sitter-go/blob/master/src/node-types.json target=_blank rel="noreferrer noopener">node-types.json file in the Go grammar</a>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-json data-lang=json><span style=display:flex><span><span style=color:#586e75>// stuff removed before and after
+</span></span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;type&#34;</span>: <span style=color:#2aa198>&#34;parameter_declaration&#34;</span>,
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;named&#34;</span>: <span style=color:#cb4b16>true</span>,
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;fields&#34;</span>: {
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;name&#34;</span>: {
 </span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;multiple&#34;</span>: <span style=color:#cb4b16>true</span>,
 </span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;required&#34;</span>: <span style=color:#cb4b16>false</span>, <span style=color:#586e75>// the `name` field is not required
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>      <span style=color:#268bd2>&#34;types&#34;</span>: [
+</span></span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;types&#34;</span>: [
 </span></span><span style=display:flex><span>        {
 </span></span><span style=display:flex><span>          <span style=color:#268bd2>&#34;type&#34;</span>: <span style=color:#2aa198>&#34;identifier&#34;</span>,
 </span></span><span style=display:flex><span>          <span style=color:#268bd2>&#34;named&#34;</span>: <span style=color:#cb4b16>true</span>
@@ -427,7 +427,7 @@ skipping the optional <code>name</code> child for <code>parameter_declaration</c
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;type&#34;</span>: {
 </span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;multiple&#34;</span>: <span style=color:#cb4b16>false</span>,
 </span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;required&#34;</span>: <span style=color:#cb4b16>true</span>, <span style=color:#586e75>// the `type` field is required
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>      <span style=color:#268bd2>&#34;types&#34;</span>: [
+</span></span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;types&#34;</span>: [
 </span></span><span style=display:flex><span>        {
 </span></span><span style=display:flex><span>          <span style=color:#268bd2>&#34;type&#34;</span>: <span style=color:#2aa198>&#34;_type&#34;</span>,
 </span></span><span style=display:flex><span>          <span style=color:#268bd2>&#34;named&#34;</span>: <span style=color:#cb4b16>true</span>
@@ -472,7 +472,7 @@ tutorials on the internet. If you know the answer, please let me know.</p><p>But
 a CST node of types <code>_type</code> and parse it with recursive calls.</p><h1 id=discovering-indirect-parentchildren-connections-are-hard>Discovering Indirect Parent/Children Connections are Hard
 <a class=header-link href=#discovering-indirect-parentchildren-connections-are-hard><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Function call chains are useful. I did
 <a href=/blog/semgrep-fun/#06-go-function-call-chain title="try to tackle it with Semgrep" rel=nofollow target=_blank>try to tackle it with Semgrep</a>.
-We want to capture the parent of a function. Our example code is:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>parentFunc</span>() {
+We want to capture the parent of a function. Our example code is:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>parentFunc</span>() {
 </span></span><span style=display:flex><span>	a <span style=color:#719e07>:=</span> <span style=color:#268bd2>child</span>()
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>And tree-sitter will parse it into a tree.</p><pre tabindex=0><code>function_declaration                // func parentFunc() { a := child() }
@@ -525,7 +525,7 @@ short_var_declaration             // a1 := a + child()
 ))))
 </code></pre><p>This will also capture things like <code>a2 := a1 + a + child()</code>, but not
 <code>a2 := a1 + a / child()</code> because it's now nested under another
-<code>binary_expression</code>.</p><p>It will also miss things like this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>var</span> b <span style=color:#dc322f>string</span>
+<code>binary_expression</code>.</p><p>It will also miss things like this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>var</span> b <span style=color:#dc322f>string</span>
 </span></span><span style=display:flex><span>b = <span style=color:#268bd2>child2</span>()
 </span></span></code></pre></div><p>This requires a new path in the block which is a copy of the one for
 <code>short_var_declaration</code>, but instead for <code>assignment_statement</code>.</p><pre tabindex=0><code>(function_declaration
@@ -549,10 +549,10 @@ with the Borrow Checker, so I wrote the code in Rust instead of using
 gonna focus on the captures of queries we've seen so far. The results are not as
 neatly organized as I expected.</p><p>I've tried to make most parts abstract and there's basic error handling.</p><p>Code is in <a href=https://github.com/parsiya/knee-deep-tree-sitter target=_blank rel="noreferrer noopener">https://github.com/parsiya/knee-deep-tree-sitter</a>.
 Clone the repository and run <code>cargo run -- 00</code>.</p><h2 id=capturing-function-names>Capturing Function Names
-<a class=header-link href=#capturing-function-names><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>How to parse the code. Assuming <code>src</code> contains the source code.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#719e07>fn</span> <span style=color:#268bd2>parse_the_code</span>(src: <span style=color:#719e07>&amp;</span><span style=color:#dc322f>str</span>) -&gt; <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span>Tree<span style=color:#719e07>&gt;</span> {
+<a class=header-link href=#capturing-function-names><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>How to parse the code. Assuming <code>src</code> contains the source code.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#719e07>fn</span> <span style=color:#268bd2>parse_the_code</span>(src: <span style=color:#719e07>&amp;</span><span style=color:#dc322f>str</span>) -&gt; <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span>Tree<span style=color:#719e07>&gt;</span> {
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Get the language from tree_sitter_go.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#586e75>// It&#39;s Go Lang, har har!
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#268bd2>let</span> go_lang <span style=color:#719e07>=</span> tree_sitter_go::language();
+</span></span></span><span style=display:flex><span>    <span style=color:#586e75>// It&#39;s Go Lang, har har!
+</span></span></span><span style=display:flex><span>    <span style=color:#268bd2>let</span> go_lang <span style=color:#719e07>=</span> tree_sitter_go::language();
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>let</span> <span style=color:#719e07>mut</span> parser <span style=color:#719e07>=</span> Parser::new();
 </span></span><span style=display:flex><span>
@@ -562,48 +562,48 @@ Clone the repository and run <code>cargo run -- 00</code>.</p><h2 id=capturing-f
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> parser.parse(src, <span style=color:#b58900>None</span>);
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>Now we have a parsed tree. We can unwrap the Option.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#586e75>// Parse the source.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>let</span> parsed <span style=color:#719e07>=</span> <span style=color:#719e07>match</span> parse_the_code(src) {
+</span></span></code></pre></div><p>Now we have a parsed tree. We can unwrap the Option.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#586e75>// Parse the source.
+</span></span></span><span style=display:flex><span><span style=color:#268bd2>let</span> parsed <span style=color:#719e07>=</span> <span style=color:#719e07>match</span> parse_the_code(src) {
 </span></span><span style=display:flex><span>    <span style=color:#b58900>Some</span>(p) <span style=color:#719e07>=&gt;</span> p,
 </span></span><span style=display:flex><span>    <span style=color:#b58900>None</span> <span style=color:#719e07>=&gt;</span> <span style=color:#268bd2>panic!</span>(<span style=color:#2aa198>&#34;couldn&#39;t parse the source code&#34;</span>),
 </span></span><span style=display:flex><span>};
-</span></span></code></pre></div><p>Create a query.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#586e75>// Query to extract function names from Go code.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>let</span> query_extract_func_names <span style=color:#719e07>=</span> <span style=color:#2aa198>r</span><span style=color:#2aa198>#&#34;
+</span></span></code></pre></div><p>Create a query.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#586e75>// Query to extract function names from Go code.
+</span></span></span><span style=display:flex><span><span style=color:#268bd2>let</span> query_extract_func_names <span style=color:#719e07>=</span> <span style=color:#2aa198>r</span><span style=color:#2aa198>#&#34;
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>(function_declaration
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>  name: (identifier) @func.name)
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>&#34;#</span>;
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#586e75>// Compile the query.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>let</span> query <span style=color:#719e07>=</span> Query::new(tree_sitter_go::language(), query_extract_func_names)
+</span></span></span><span style=display:flex><span><span style=color:#268bd2>let</span> query <span style=color:#719e07>=</span> Query::new(tree_sitter_go::language(), query_extract_func_names)
 </span></span><span style=display:flex><span>    .expect(<span style=color:#2aa198>&#34;couldn&#39;t parse the query&#34;</span>);
-</span></span></code></pre></div><p>Create a query cursor and use it iterate through the matches.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#268bd2>let</span> <span style=color:#719e07>mut</span> cursor <span style=color:#719e07>=</span> QueryCursor::new();
+</span></span></code></pre></div><p>Create a query cursor and use it iterate through the matches.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#268bd2>let</span> <span style=color:#719e07>mut</span> cursor <span style=color:#719e07>=</span> QueryCursor::new();
 </span></span><span style=display:flex><span><span style=color:#268bd2>let</span> query_matches <span style=color:#719e07>=</span> cursor.matches(<span style=color:#719e07>&amp;</span>query, parsed_tree.root_node(), src.as_bytes());
 </span></span></code></pre></div><p>Each capture has an index (starting from zero). We can either get a capture's
-index by name like this (note we should not include the <code>@</code>):</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#268bd2>let</span> func_name_index <span style=color:#719e07>=</span> query
+index by name like this (note we should not include the <code>@</code>):</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#268bd2>let</span> func_name_index <span style=color:#719e07>=</span> query
 </span></span><span style=display:flex><span>    .capture_index_for_name(<span style=color:#2aa198>&#34;func.name&#34;</span>)
 </span></span><span style=display:flex><span>    .expect(<span style=color:#2aa198>&#34;couldn&#39;t find capture index for `func.name`&#34;</span>);
 </span></span></code></pre></div><p>Or we can get a string slice where each capture name's position in the slice is
-its index in the query.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#268bd2>let</span> capture_names <span style=color:#719e07>=</span> query.capture_names();
+its index in the query.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#268bd2>let</span> capture_names <span style=color:#719e07>=</span> query.capture_names();
 </span></span><span style=display:flex><span><span style=color:#586e75>// capture_names[0] == func.name
 </span></span></span></code></pre></div><p>Now we can iterate through the matches. Each match is a set of captures and a
-path in the query.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#719e07>for</span> one_match <span style=color:#719e07>in</span> query_matches {
+path in the query.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#719e07>for</span> one_match <span style=color:#719e07>in</span> query_matches {
 </span></span><span style=display:flex><span>    <span style=color:#719e07>for</span> capture <span style=color:#719e07>in</span> one_match
 </span></span><span style=display:flex><span>        .captures
 </span></span><span style=display:flex><span>        .iter()
 </span></span><span style=display:flex><span>        .filter(<span style=color:#719e07>|</span>c<span style=color:#719e07>|</span> c.index <span style=color:#719e07>==</span> func_name_index) <span style=color:#586e75>// Not useful here, but we can filter by capture index
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    {
+</span></span></span><span style=display:flex><span>    {
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>println!</span>(<span style=color:#2aa198>&#34;</span><span style=color:#2aa198>{}</span><span style=color:#2aa198>&#34;</span>, node_string(capture.node, src));
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>tree-sitter nodes don't include the actual text. It only has the location of the
 text in the source code. So I created a couple of helper functions to extract
-the text from the source and return it.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#2aa198>/// Extract the text of tree-sitter captured node from source.
-</span></span></span><span style=display:flex><span><span style=color:#2aa198></span><span style=color:#719e07>fn</span> <span style=color:#268bd2>node_text</span>(node: <span style=color:#268bd2>tree_sitter</span>::Node, src: <span style=color:#719e07>&amp;</span><span style=color:#dc322f>str</span>) -&gt; <span style=color:#b58900>String</span> {
+the text from the source and return it.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#2aa198>/// Extract the text of tree-sitter captured node from source.
+</span></span></span><span style=display:flex><span><span style=color:#719e07>fn</span> <span style=color:#268bd2>node_text</span>(node: <span style=color:#268bd2>tree_sitter</span>::Node, src: <span style=color:#719e07>&amp;</span><span style=color:#dc322f>str</span>) -&gt; <span style=color:#b58900>String</span> {
 </span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> src[node.start_byte()<span style=color:#719e07>..</span>node.end_byte()].to_string();
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#2aa198>/// Return the node information as a pretty string.
-</span></span></span><span style=display:flex><span><span style=color:#2aa198></span><span style=color:#719e07>pub</span>(<span style=color:#719e07>crate</span>) <span style=color:#719e07>fn</span> <span style=color:#268bd2>node_string</span>(node: <span style=color:#268bd2>tree_sitter</span>::Node, src: <span style=color:#719e07>&amp;</span><span style=color:#dc322f>str</span>) -&gt; <span style=color:#b58900>String</span> {
+</span></span></span><span style=display:flex><span><span style=color:#719e07>pub</span>(<span style=color:#719e07>crate</span>) <span style=color:#719e07>fn</span> <span style=color:#268bd2>node_string</span>(node: <span style=color:#268bd2>tree_sitter</span>::Node, src: <span style=color:#719e07>&amp;</span><span style=color:#dc322f>str</span>) -&gt; <span style=color:#b58900>String</span> {
 </span></span><span style=display:flex><span>    <span style=color:#719e07>return</span> <span style=color:#268bd2>format!</span>(
 </span></span><span style=display:flex><span>        <span style=color:#2aa198>&#34;Text: </span><span style=color:#2aa198>{}</span><span style=color:#2aa198> - Kind: </span><span style=color:#2aa198>{}</span><span style=color:#2aa198> - sexp: </span><span style=color:#2aa198>{}</span><span style=color:#2aa198>&#34;</span>,
 </span></span><span style=display:flex><span>        node_text(node, src),
@@ -615,7 +615,7 @@ the text from the source and return it.</p><div class=highlight><pre tabindex=0 
 tree we see in the playground. They are helpful for creating queries that
 capture specific nodes.</p><p>Bonus idea: Use this output to automatically create queries to capture specific
 parts of nodes from a previous capture.</p><p>If we run it on the following code (ignore that it's not buildable code), we can
-grab the function names.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>Deserialize</span>(jsBytes []<span style=color:#dc322f>byte</span>) (Person, <span style=color:#dc322f>error</span>) {}
+grab the function names.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>Deserialize</span>(jsBytes []<span style=color:#dc322f>byte</span>) (Person, <span style=color:#dc322f>error</span>) {}
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>test</span>(a, b <span style=color:#dc322f>int</span>) <span style=color:#dc322f>int</span> {}
 </span></span><span style=display:flex><span>
@@ -643,10 +643,10 @@ are gonna destroy the queries.</p><h1 id=some-pitfalls>Some Pitfalls
 <a class=header-link href=#crate-versions><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Use the version of the tree-sitter crate that is compatible with the generated
 parser. E.g., at the time of writing, the current version of
 <a href=https://crates.io/crates/tree-sitter-go target=_blank rel="noreferrer noopener">tree-sitter-go crate</a> (0.20) requires the tree-sitter
-between 0.20 and 0.21. Check the <a href=https://github.com/tree-sitter/tree-sitter-go/blob/master/Cargo.toml target=_blank rel="noreferrer noopener">cargo.toml</a> file.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ini data-lang=ini><span style=display:flex><span><span style=color:#719e07>[dependencies]</span>
+between 0.20 and 0.21. Check the <a href=https://github.com/tree-sitter/tree-sitter-go/blob/master/Cargo.toml target=_blank rel="noreferrer noopener">cargo.toml</a> file.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-ini data-lang=ini><span style=display:flex><span><span style=color:#719e07>[dependencies]</span>
 </span></span><span style=display:flex><span>tree-sitter <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;&gt;= 0.20, &lt; 0.21&#34;</span>
 </span></span></code></pre></div><p>If you use tree-sitter 0.21 (the current version at the time of writing) in your
-cargo file like this, you will have errors.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ini data-lang=ini><span style=display:flex><span><span style=color:#719e07>[dependencies]</span>
+cargo file like this, you will have errors.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-ini data-lang=ini><span style=display:flex><span><span style=color:#719e07>[dependencies]</span>
 </span></span><span style=display:flex><span>tree-sitter <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;0.21.0&#34;     # must use 0.20.0</span>
 </span></span><span style=display:flex><span>tree-sitter-go <span style=color:#719e07>=</span> <span style=color:#2aa198>&#34;0.20.0&#34;</span>
 </span></span></code></pre></div><h2 id=captures-and-paths>Captures and Paths
@@ -667,5 +667,5 @@ children (or parents) to extract more information.</p></div><footer><p class=met
 (of course) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more. Contact me via any of these ways.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="me noopener noreferrer" href=https://infosec.exchange/@parsiya title=https://infosec.exchange/@parsiya><i class="fa fa-mastodon fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
-<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/static-analysis/ title="Static Analysis">Static Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/blockchain/ title="Blockchain (lol)">Blockchain (lol)</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title="WinAppDbg (use Frida instead)">WinAppDbg (use Frida instead)</a></li><li><a href=https://awsome.pw title='AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability'>AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2025 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/static-analysis/ title="Static Analysis">Static Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/blockchain/ title="Blockchain (lol)">Blockchain (lol)</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title="WinAppDbg (use Frida instead)">WinAppDbg (use Frida instead)</a></li><li><a href=https://awsome.pw title='AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability'>AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2026 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.</p></footer></body></html>

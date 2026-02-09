@@ -1,4 +1,4 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>YAML Wrangling with Rust</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.152.2"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2022-10-16-yaml-wrangling-with-rust/owl.jpg"><meta name=twitter:title content="YAML Wrangling with Rust"><meta name=twitter:description content="I will talk about how I parsed Semgrep rules in YAML with Rust, how I created
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>YAML Wrangling with Rust</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.155.3"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2022-10-16-yaml-wrangling-with-rust/owl.jpg"><meta name=twitter:title content="YAML Wrangling with Rust"><meta name=twitter:description content="I will talk about how I parsed Semgrep rules in YAML with Rust, how I created
 Rust structs from JSON schemas for Semgrep rules, and finally, what
 didn't work. This blog post has different sections with code so you can follow
 and experiment."><meta name=twitter:domain content="parsiya.net"><meta name=twitter:creator content="@CryptoGangsta"></head><body><header role=banner><hgroup><h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
@@ -18,10 +18,10 @@ pretty much every system that supports Rust.</p><p><strong>Ingredients:</strong>
 <a href=https://twitter.com/CryptoGangsta/status/1545540067019538432 target=_blank rel="noreferrer noopener">unemployed and a burden on society</a>, I have more time.</p><p>I saw this <a href=https://github.com/wahyuhadi/semgrep-server-rules target=_blank rel="noreferrer noopener">private Semgrep server</a> a couple of weeks ago and being a
 <a href=/categories/semgrep/ title="Semgrep junkie">Semgrep junkie</a> I
 want to implement a similar server to learn Rust.</p><p>Almost all Semgrep rules are in YAML<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>. Most files only contain one rule (good
-practice). A file with one rule looks like:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+practice). A file with one rule looks like:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>rules</span>:
 </span></span><span style=display:flex><span>- <span style=color:#268bd2>id</span>: rule-1
 </span></span><span style=display:flex><span>  ...
-</span></span></code></pre></div><p>Files can have several rules; that's how rulesets are implemented:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+</span></span></code></pre></div><p>Files can have several rules; that's how rulesets are implemented:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>rules</span>:
 </span></span><span style=display:flex><span>- <span style=color:#268bd2>id</span>: rule-1
 </span></span><span style=display:flex><span>  ...
 </span></span><span style=display:flex><span>- <span style=color:#268bd2>id</span>: rule-2
@@ -29,18 +29,18 @@ practice). A file with one rule looks like:</p><div class=highlight><pre tabinde
 </span></span></code></pre></div><p>To have a rule server, I need to interact with these files:</p><ol><li>Extract rules from files with multiple rules.</li><li>Bundle rules together in one file to serve rulesets.</li></ol><h1 id=parsing-yaml-files-with-rust>Parsing YAML Files with Rust
 <a class=header-link href=#parsing-yaml-files-with-rust><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>The de facto YAML library in Rust is <a href=https://github.com/dtolnay/serde-yaml target=_blank rel="noreferrer noopener">serde-yaml</a>. Following the
 <a href=https://docs.rs/serde_yaml/latest/serde_yaml/ target=_blank rel="noreferrer noopener">examples</a>, I quickly found out I must create proper Rust
-structs to correctly deserialize Semgrep rules.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>fn</span> <span style=color:#268bd2>main</span>() {
+structs to correctly deserialize Semgrep rules.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>fn</span> <span style=color:#268bd2>main</span>() {
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>let</span> contents <span style=color:#719e07>=</span> fs::read_to_string(<span style=color:#2aa198>&#34;../multiple-rules.yaml&#34;</span>)
 </span></span><span style=display:flex><span>        .expect(<span style=color:#2aa198>&#34;Should have been able to read the file&#34;</span>);
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// let my_yaml: &lt;???&gt; = serde_yaml::from_str::&lt;???&gt;(&amp;contents).unwrap();
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>}
+</span></span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>Every example used a small struct to serialize to YAML and then deserialize back
 to an object!</p><span class=caption-wrapper><img class=caption src=owl.jpg title="Accurate view of serde_yaml tutorials!" alt="Accurate view of serde_yaml tutorials!">
 <span class=caption-text>Accurate view of serde_yaml tutorials!</span></span><h2 id=partial-deserialization>Partial Deserialization
 <a class=header-link href=#partial-deserialization><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>We can haz partial deserialization. Create a few high-level structs and only
 capture a few items. Every Semgrep rule must have <code>id</code> and <code>languages</code>. A sample
-rule file will look like this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+rule file will look like this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>rules</span>:
 </span></span><span style=display:flex><span>- <span style=color:#268bd2>id</span>: rule-1
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>languages</span>:
 </span></span><span style=display:flex><span>    - c
@@ -53,30 +53,30 @@ rule file will look like this:</p><div class=highlight><pre tabindex=0 style=col
 </span></span></code></pre></div><p>First, I created the struct that holds the complete rule file. The <code>rules</code> tag
 contains an array of rules or <code>Vec&lt;Rule></code> (I haven't created that struct, yet).</p><p>Above the struct definition are <code>derive</code> macros that generate implementations
 for the struct traits:</p><ul><li><code>Debug</code>: To print the contents of the struct with <code>{:#?}</code>.</li><li><code>Serialize/Deserialize</code>: For serialization/deserialization of these structs.
-See more at <a href=https://serde.rs/derive.html target=_blank rel="noreferrer noopener">https://serde.rs/derive.html</a>.</li></ul><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#586e75>// 01-first-try/src/main.rs
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
+See more at <a href=https://serde.rs/derive.html target=_blank rel="noreferrer noopener">https://serde.rs/derive.html</a>.</li></ul><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#586e75>// 01-first-try/src/main.rs
+</span></span></span><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>struct</span> <span style=color:#268bd2>RuleFile</span> {
 </span></span><span style=display:flex><span>    rules: <span style=color:#b58900>Vec</span><span style=color:#719e07>&lt;</span>Rule<span style=color:#719e07>&gt;</span>,
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>What should a <code>Rule</code> look like? I am only looking for two fields:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
+</span></span></code></pre></div><p>What should a <code>Rule</code> look like? I am only looking for two fields:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>struct</span> <span style=color:#268bd2>Rule</span> {
 </span></span><span style=display:flex><span>    id: <span style=color:#b58900>String</span>,
 </span></span><span style=display:flex><span>    languages: <span style=color:#b58900>Vec</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>String</span><span style=color:#719e07>&gt;</span>,
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>Let's deserialize the test file (it has three of my
-<a href=https://github.com/parsiya/semgrep-hotspots target=_blank rel="noreferrer noopener">C++ Semgrep Hot Spot Rules</a>).</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#586e75>// 01-first-try/src/main.rs
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>fn</span> <span style=color:#268bd2>main</span>() {
+<a href=https://github.com/parsiya/semgrep-hotspots target=_blank rel="noreferrer noopener">C++ Semgrep Hot Spot Rules</a>).</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#586e75>// 01-first-try/src/main.rs
+</span></span></span><span style=display:flex><span><span style=color:#719e07>fn</span> <span style=color:#268bd2>main</span>() {
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// read the file.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#268bd2>let</span> contents <span style=color:#719e07>=</span> fs::read_to_string(<span style=color:#2aa198>&#34;../multiple-rules.yaml&#34;</span>)
+</span></span></span><span style=display:flex><span>    <span style=color:#268bd2>let</span> contents <span style=color:#719e07>=</span> fs::read_to_string(<span style=color:#2aa198>&#34;../multiple-rules.yaml&#34;</span>)
 </span></span><span style=display:flex><span>        .expect(<span style=color:#2aa198>&#34;Should have been able to read the file&#34;</span>);
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// don&#39;t unwrap like this in the real world! Errors will result in panic!
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#268bd2>let</span> rule_file: <span style=color:#268bd2>RuleFile</span> <span style=color:#719e07>=</span> serde_yaml::from_str::<span style=color:#719e07>&lt;</span>RuleFile<span style=color:#719e07>&gt;</span>(<span style=color:#719e07>&amp;</span>contents).unwrap();
+</span></span></span><span style=display:flex><span>    <span style=color:#268bd2>let</span> rule_file: <span style=color:#268bd2>RuleFile</span> <span style=color:#719e07>=</span> serde_yaml::from_str::<span style=color:#719e07>&lt;</span>RuleFile<span style=color:#719e07>&gt;</span>(<span style=color:#719e07>&amp;</span>contents).unwrap();
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>println!</span>(<span style=color:#2aa198>&#34;</span><span style=color:#2aa198>{:#?}</span><span style=color:#2aa198>&#34;</span>, rule_file);
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>The rules are deserialized correctly but I only have access to the defined
-fields.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>:~/yaml-wrangling-with-rust/01-first-try$ cargo run
+fields.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-yaml data-lang=yaml><span style=display:flex><span>:~/yaml-wrangling-with-rust/01-first-try$ cargo run
 </span></span><span style=display:flex><span>...
 </span></span><span style=display:flex><span>RuleFile {
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>rules</span>: [
@@ -104,26 +104,26 @@ fields.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-c
 </span></span><span style=display:flex><span>    ],
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>Let's modify the code and add a dummy required field. Switch to the
-<code>02-missing-required-field</code> directory:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#586e75>// 02-missing-required-field/src/main.rs
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
+<code>02-missing-required-field</code> directory:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#586e75>// 02-missing-required-field/src/main.rs
+</span></span></span><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>struct</span> <span style=color:#268bd2>Rule</span> {
 </span></span><span style=display:flex><span>    id: <span style=color:#b58900>String</span>,
 </span></span><span style=display:flex><span>    languages: <span style=color:#b58900>Vec</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>String</span><span style=color:#719e07>&gt;</span>,
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// added field
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    dummy: <span style=color:#b58900>String</span>,
+</span></span></span><span style=display:flex><span>    dummy: <span style=color:#b58900>String</span>,
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>The program panics because the input file doesn't have the <code>dummy</code> tag.</p><pre tabindex=0><code>:~/yaml-wrangling-with-rust/02-missing-required-field$ cargo run
 ...
 thread &#39;main&#39; panicked at &#39;called `Result::unwrap()` on an `Err` value:
     Error(&#34;rules[0]: missing field `dummy`&#34;, line: 2, column: 3)&#39;, src/main.rs:7:75
 </code></pre><p>We can make fields optional by using the <a href=https://doc.rust-lang.org/std/option/ target=_blank rel="noreferrer noopener">Option</a> keyword. This
-tells the program there might be a string in that field or nothing.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#586e75>// 02-missing-required-field/src/main.rs
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
+tells the program there might be a string in that field or nothing.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#586e75>// 02-missing-required-field/src/main.rs
+</span></span></span><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>struct</span> <span style=color:#268bd2>Rule</span> {
 </span></span><span style=display:flex><span>    id: <span style=color:#b58900>String</span>,
 </span></span><span style=display:flex><span>    languages: <span style=color:#b58900>Vec</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>String</span><span style=color:#719e07>&gt;</span>,
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// added field
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    dummy: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>String</span><span style=color:#719e07>&gt;</span>,
+</span></span></span><span style=display:flex><span>    dummy: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>String</span><span style=color:#719e07>&gt;</span>,
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><h2 id=experiments-in-creating-rust-structs-from-jsonschema>Experiments in Creating Rust Structs from JSONSchema
 <a class=header-link href=#experiments-in-creating-rust-structs-from-jsonschema><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Creating everything by hand is a pain.
@@ -133,7 +133,7 @@ Luckily, Semgrep rules have a JSON Schema in the
 numbers from this version:</p><ul><li><a href=https://github.com/returntocorp/semgrep-interfaces/blob/a36652b1e2b9d089918a88575d00e8c7bdd5afd9/rule_schema.yaml target=_blank rel="noreferrer noopener">https://github.com/returntocorp/semgrep-interfaces/blob/a36652b1e2b9d089918a88575d00e8c7bdd5afd9/rule_schema.yaml</a></li></ul><p>A <a href=https://json-schema.org/ target=_blank rel="noreferrer noopener">JSON Schema</a> is a way to design and validate JSON
 documents<sup id=fnref:3><a href=#fn:3 class=footnote-ref role=doc-noteref>3</a></sup>. Earlier I mentioned that every Semgrep rule must have the <code>id</code>
 and <code>languages</code> fields. This requirement is on <a href=https://github.com/returntocorp/semgrep-interfaces/blob/a36652b1e2b9d089918a88575d00e8c7bdd5afd9/rule_schema.yaml#L160 target=_blank rel="noreferrer noopener">line 160</a>. Each
-rule must also have <code>one of</code> those three combinations of pattern fields.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 160</span>
+rule must also have <code>one of</code> those three combinations of pattern fields.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 160</span>
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>rules</span>:
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>type</span>: array
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>items</span>:
@@ -155,25 +155,25 @@ None were successful. But they might be useful for others or future me.</p><p><s
 I did not know if I could copy it. If you have skipped the <code>Getting Started</code>
 section and want to follow the exercises, go and copy the file.</p><h2 id=oxidecomputertypify>OxideComputer/typify
 <a class=header-link href=#oxidecomputertypify><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>The <a href=https://github.com/oxidecomputer/typify target=_blank rel="noreferrer noopener">typify</a> crate says<br><a href=https://docs.rs/typify/0.0.10/typify/ target=_blank rel="noreferrer noopener">The documentation</a> didn't show how to generate code. I used the
-<a href=https://github.com/oxidecomputer/typify/blob/ab2d3e18f624ce4a55278c0846ebb5f936134023/example-build/build.rs target=_blank rel="noreferrer noopener">example-build/build.rs</a> file.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#586e75>// 03-typify-generation/src/main.rs
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>use</span> schemars::schema::Schema;
+<a href=https://github.com/oxidecomputer/typify/blob/ab2d3e18f624ce4a55278c0846ebb5f936134023/example-build/build.rs target=_blank rel="noreferrer noopener">example-build/build.rs</a> file.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#586e75>// 03-typify-generation/src/main.rs
+</span></span></span><span style=display:flex><span><span style=color:#719e07>use</span> schemars::schema::Schema;
 </span></span><span style=display:flex><span><span style=color:#719e07>use</span> typify::{TypeSpace, TypeSpaceSettings};
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#719e07>fn</span> <span style=color:#268bd2>main</span>() {
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// read the JSON schema in YAML format.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#268bd2>let</span> content <span style=color:#719e07>=</span> std::fs::read_to_string(<span style=color:#2aa198>&#34;../rule_schema.yaml&#34;</span>).unwrap();
+</span></span></span><span style=display:flex><span>    <span style=color:#268bd2>let</span> content <span style=color:#719e07>=</span> std::fs::read_to_string(<span style=color:#2aa198>&#34;../rule_schema.yaml&#34;</span>).unwrap();
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// create the schema (this is useful if you want to validate).
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#268bd2>let</span> schema <span style=color:#719e07>=</span> serde_yaml::from_str::<span style=color:#719e07>&lt;</span>schemars::schema::RootSchema<span style=color:#719e07>&gt;</span>(<span style=color:#719e07>&amp;</span>content).unwrap();
+</span></span></span><span style=display:flex><span>    <span style=color:#268bd2>let</span> schema <span style=color:#719e07>=</span> serde_yaml::from_str::<span style=color:#719e07>&lt;</span>schemars::schema::RootSchema<span style=color:#719e07>&gt;</span>(<span style=color:#719e07>&amp;</span>content).unwrap();
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// I have no idea what&#39;s happening here.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#268bd2>let</span> <span style=color:#719e07>mut</span> type_space <span style=color:#719e07>=</span> TypeSpace::new(TypeSpaceSettings::default().with_struct_builder(<span style=color:#cb4b16>true</span>));
+</span></span></span><span style=display:flex><span>    <span style=color:#268bd2>let</span> <span style=color:#719e07>mut</span> type_space <span style=color:#719e07>=</span> TypeSpace::new(TypeSpaceSettings::default().with_struct_builder(<span style=color:#cb4b16>true</span>));
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// panic happens here!
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    type_space.add_ref_types(schema.definitions).unwrap();
+</span></span></span><span style=display:flex><span>    type_space.add_ref_types(schema.definitions).unwrap();
 </span></span><span style=display:flex><span>    
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// removed
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>}
+</span></span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>Well, we got a panic!</p><pre tabindex=0><code>thread &#39;main&#39; panicked at &#39;not yet implemented&#39;,
     /home/parsia/.cargo/registry/src/github.com-1ecc6299db9ec823/typify-impl-0.0.10/src/convert.rs:31:36
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
@@ -181,8 +181,8 @@ note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 leave debugging for another day (you're welcome to figure it out).</p><h2 id=marwesschemafy_lib>Marwes/schemafy_lib
 <a class=header-link href=#marwesschemafy_lib><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>I found this library in <a href=https://json-schema.org/implementations.html#code-generation target=_blank rel="noreferrer noopener">json-schema.org/Code generation</a>. The
 <a href=https://docs.rs/schemafy_lib/latest/schemafy_lib/#usage target=_blank rel="noreferrer noopener">schemafy_lib docs</a> has a straightforward code generation
-example.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#586e75>// 04-schemafy-generation/src/main.rs
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>fn</span> <span style=color:#268bd2>main</span>() {
+example.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#586e75>// 04-schemafy-generation/src/main.rs
+</span></span></span><span style=display:flex><span><span style=color:#719e07>fn</span> <span style=color:#268bd2>main</span>() {
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>let</span> content <span style=color:#719e07>=</span> std::fs::read_to_string(<span style=color:#2aa198>&#34;../rule_schema.yaml&#34;</span>).unwrap();
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>let</span> schema <span style=color:#719e07>=</span> serde_yaml::from_str(<span style=color:#719e07>&amp;</span>content).unwrap();
 </span></span><span style=display:flex><span>
@@ -196,7 +196,7 @@ example.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>let</span> code <span style=color:#719e07>=</span> expander.expand(<span style=color:#719e07>&amp;</span>schema);
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>println!</span>(<span style=color:#2aa198>&#34;</span><span style=color:#2aa198>{}</span><span style=color:#2aa198>&#34;</span>, code.to_string());
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>No panic but we only get two empty structs. Oh, well!</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive (Clone , PartialEq , Debug , Default , Deserialize , Serialize)]</span>
+</span></span></code></pre></div><p>No panic but we only get two empty structs. Oh, well!</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive (Clone , PartialEq , Debug , Default , Deserialize , Serialize)]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>pub</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>SchemaItemRules</span> { } 
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#719e07>#[derive (Clone , PartialEq , Debug , Default , Deserialize , Serialize)]</span>
@@ -210,19 +210,19 @@ example.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-
 <a class=header-link href=#using-serde_yaml-value><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>We can also use <a href=https://docs.rs/serde_yaml/latest/serde_yaml/enum.Value.html target=_blank rel="noreferrer noopener">serde_yaml::Value</a> to parse YAML files without
 deserializing them into detailed structs. This is very useful if you just want
 to modify YAML files. For example, just splitting the Semgrep rules in a file.</p><p>It took me a bit to figure it out. <code>Value</code> is a container that holds different
-YAML objects. Note, I am reading a rule file, again, and not the schema.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#586e75>// 05-value/src/main.rs - section 1
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>fn</span> <span style=color:#268bd2>main</span>() {
+YAML objects. Note, I am reading a rule file, again, and not the schema.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#586e75>// 05-value/src/main.rs - section 1
+</span></span></span><span style=display:flex><span><span style=color:#719e07>fn</span> <span style=color:#268bd2>main</span>() {
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>let</span> content <span style=color:#719e07>=</span> std::fs::read_to_string(<span style=color:#2aa198>&#34;../multiple-rules.yaml&#34;</span>).unwrap();
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// ----- start of section 1
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>use</span> serde_yaml::Value;
+</span></span></span><span style=display:flex><span>    <span style=color:#719e07>use</span> serde_yaml::Value;
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// read the file and store it in a `Value`.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#268bd2>let</span> rule_file <span style=color:#719e07>=</span> serde_yaml::from_str::<span style=color:#719e07>&lt;</span>Value<span style=color:#719e07>&gt;</span>(<span style=color:#719e07>&amp;</span>content).unwrap();
+</span></span></span><span style=display:flex><span>    <span style=color:#268bd2>let</span> rule_file <span style=color:#719e07>=</span> serde_yaml::from_str::<span style=color:#719e07>&lt;</span>Value<span style=color:#719e07>&gt;</span>(<span style=color:#719e07>&amp;</span>content).unwrap();
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>println!</span>(<span style=color:#2aa198>&#34;</span><span style=color:#2aa198>{:#?}</span><span style=color:#2aa198>&#34;</span>, rule_file);
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// ----- end of section 1
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>}
-</span></span></code></pre></div><p>This gives us good info.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>Mapping {
+</span></span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>This gives us good info.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-json data-lang=json><span style=display:flex><span>Mapping {
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;rules&#34;</span>: Sequence [
 </span></span><span style=display:flex><span>        Mapping {
 </span></span><span style=display:flex><span>            <span style=color:#268bd2>&#34;id&#34;</span>: String(<span style=color:#2aa198>&#34;snprintf-insecure-use&#34;</span>),
@@ -239,50 +239,50 @@ YAML objects. Note, I am reading a rule file, again, and not the schema.</p><div
 </span></span><span style=display:flex><span>                ],
 </span></span><span style=display:flex><span>            },
 </span></span><span style=display:flex><span>            <span style=color:#586e75>// some items removed
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        },
+</span></span></span><span style=display:flex><span>        },
 </span></span><span style=display:flex><span>        Mapping {
 </span></span><span style=display:flex><span>            <span style=color:#268bd2>&#34;id&#34;</span>: String(<span style=color:#2aa198>&#34;potentially-uninitialized-pointer&#34;</span>),
 </span></span><span style=display:flex><span>            <span style=color:#586e75>// removed
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        },
+</span></span></span><span style=display:flex><span>        },
 </span></span><span style=display:flex><span>        Mapping {
 </span></span><span style=display:flex><span>            <span style=color:#268bd2>&#34;id&#34;</span>: String(<span style=color:#2aa198>&#34;memcpy-insecure-use&#34;</span>),
 </span></span><span style=display:flex><span>            <span style=color:#586e75>// removed
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        },
+</span></span></span><span style=display:flex><span>        },
 </span></span><span style=display:flex><span>    ],
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>Some YAML to Rust patterns:</p><ol><li>Object => <a href=https://docs.rs/serde_yaml/latest/serde_yaml/struct.Mapping.html target=_blank rel="noreferrer noopener">Mapping</a>.</li><li>Array => <a href=https://docs.rs/serde_yaml/latest/serde_yaml/type.Sequence.html target=_blank rel="noreferrer noopener">Sequence</a>.</li><li>string => Rust String.</li></ol><p>I can also convert it back to a YAML string. Comment the <code>section 1</code> code
-and uncomment <code>section 2</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#586e75>// 05-value/src/main.rs - section 2
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>fn</span> <span style=color:#268bd2>main</span>() {
+and uncomment <code>section 2</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#586e75>// 05-value/src/main.rs - section 2
+</span></span></span><span style=display:flex><span><span style=color:#719e07>fn</span> <span style=color:#268bd2>main</span>() {
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>let</span> content <span style=color:#719e07>=</span> std::fs::read_to_string(<span style=color:#2aa198>&#34;../multiple-rules.yaml&#34;</span>).unwrap();
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// ----- start of section 2
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>use</span> serde_yaml::Value;
+</span></span></span><span style=display:flex><span>    <span style=color:#719e07>use</span> serde_yaml::Value;
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>let</span> rule_file <span style=color:#719e07>=</span> serde_yaml::from_str::<span style=color:#719e07>&lt;</span>Value<span style=color:#719e07>&gt;</span>(<span style=color:#719e07>&amp;</span>content).unwrap();
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// convert it back to a YAML string.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#268bd2>let</span> back_to_yaml <span style=color:#719e07>=</span> serde_yaml::to_string::<span style=color:#719e07>&lt;</span>Value<span style=color:#719e07>&gt;</span>(<span style=color:#719e07>&amp;</span>rule_file).unwrap();
+</span></span></span><span style=display:flex><span>    <span style=color:#268bd2>let</span> back_to_yaml <span style=color:#719e07>=</span> serde_yaml::to_string::<span style=color:#719e07>&lt;</span>Value<span style=color:#719e07>&gt;</span>(<span style=color:#719e07>&amp;</span>rule_file).unwrap();
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>println!</span>(<span style=color:#2aa198>&#34;</span><span style=color:#2aa198>{}</span><span style=color:#2aa198>&#34;</span>, back_to_yaml);
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// ----- end of section 2
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>}
+</span></span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>And I got the same file back.</p><span class=caption-wrapper><img class=caption src=01-back-to-yaml.png title="The rule file converted back to a YAML string" alt="The rule file converted back to a YAML string">
 <span class=caption-text>The rule file converted back to a YAML string</span></span><p>Time to extract info from the YAML files. <code>rule_file</code> is a <code>Mapping</code> and has a
 field named <code>rules</code>. <code>rules</code> is a <code>Sequence</code> and has one or more items. Each
-item is a single rule in another <code>Mapping</code> and has a string <code>id</code>.</p><p>Comment section 2 and uncomment section 3, then run <code>cargo run</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#586e75>// 05-value/src/main.rs - section 3
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>fn</span> <span style=color:#268bd2>main</span>() {
+item is a single rule in another <code>Mapping</code> and has a string <code>id</code>.</p><p>Comment section 2 and uncomment section 3, then run <code>cargo run</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#586e75>// 05-value/src/main.rs - section 3
+</span></span></span><span style=display:flex><span><span style=color:#719e07>fn</span> <span style=color:#268bd2>main</span>() {
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>let</span> content <span style=color:#719e07>=</span> std::fs::read_to_string(<span style=color:#2aa198>&#34;../multiple-rules.yaml&#34;</span>).unwrap();
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// ----- start of section 3
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>use</span> serde_yaml::{Mapping};
+</span></span></span><span style=display:flex><span>    <span style=color:#719e07>use</span> serde_yaml::{Mapping};
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// get the file as a mapping.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#268bd2>let</span> rule_file_mapping: <span style=color:#268bd2>Mapping</span> <span style=color:#719e07>=</span> serde_yaml::from_str::<span style=color:#719e07>&lt;</span>Mapping<span style=color:#719e07>&gt;</span>(<span style=color:#719e07>&amp;</span>content).unwrap();
+</span></span></span><span style=display:flex><span>    <span style=color:#268bd2>let</span> rule_file_mapping: <span style=color:#268bd2>Mapping</span> <span style=color:#719e07>=</span> serde_yaml::from_str::<span style=color:#719e07>&lt;</span>Mapping<span style=color:#719e07>&gt;</span>(<span style=color:#719e07>&amp;</span>content).unwrap();
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// we know &#34;rules&#34; is a Sequence so we get it.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#268bd2>let</span> rules <span style=color:#719e07>=</span> rule_file_mapping.get(<span style=color:#2aa198>&#34;rules&#34;</span>).unwrap().as_sequence().unwrap();
+</span></span></span><span style=display:flex><span>    <span style=color:#268bd2>let</span> rules <span style=color:#719e07>=</span> rule_file_mapping.get(<span style=color:#2aa198>&#34;rules&#34;</span>).unwrap().as_sequence().unwrap();
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// go through the rules.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>for</span> rule <span style=color:#719e07>in</span> rules {
+</span></span></span><span style=display:flex><span>    <span style=color:#719e07>for</span> rule <span style=color:#719e07>in</span> rules {
 </span></span><span style=display:flex><span>        <span style=color:#586e75>// we know the &#34;id&#34; of each rule is a String.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        <span style=color:#268bd2>println!</span>(<span style=color:#2aa198>&#34;</span><span style=color:#2aa198>{}</span><span style=color:#2aa198>&#34;</span>, rule.get(<span style=color:#2aa198>&#34;id&#34;</span>).unwrap().as_str().unwrap());
+</span></span></span><span style=display:flex><span>        <span style=color:#268bd2>println!</span>(<span style=color:#2aa198>&#34;</span><span style=color:#2aa198>{}</span><span style=color:#2aa198>&#34;</span>, rule.get(<span style=color:#2aa198>&#34;id&#34;</span>).unwrap().as_str().unwrap());
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// ----- end of section 3
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>}
+</span></span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>I am doing a lot of <code>unwraps</code> which are not safe!</p><pre tabindex=0><code>:~/yaml-wrangling-with-rust/05-value$ cargo run
    
 snprintf-insecure-use
@@ -292,36 +292,36 @@ memcpy-insecure-use
 treat the rest like a blob.</p><h2 id=generic-rust-structs>Generic Rust Structs
 <a class=header-link href=#generic-rust-structs><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>Now, I can create some generic Rust structs for splitting the files. The rule
 file is an object with one field named <code>rules</code>. <code>rules</code> is an array of rules
-(type <code>Mapping</code>).</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#586e75>// This allows us to split the rules without caring about their contents.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
+(type <code>Mapping</code>).</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#586e75>// This allows us to split the rules without caring about their contents.
+</span></span></span><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>struct</span> <span style=color:#268bd2>GenericRuleFile</span> {
 </span></span><span style=display:flex><span>    rules: <span style=color:#b58900>Vec</span><span style=color:#719e07>&lt;</span>serde_yaml::Mapping<span style=color:#719e07>&gt;</span>,
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>Open <code>cargo.toml</code> to see how I've added serde's <code>derive</code> feature.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-toml data-lang=toml><span style=display:flex><span><span style=color:#586e75># removed</span>
+</span></span></code></pre></div><p>Open <code>cargo.toml</code> to see how I've added serde's <code>derive</code> feature.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-toml data-lang=toml><span style=display:flex><span><span style=color:#586e75># removed</span>
 </span></span><span style=display:flex><span>[dependencies]
 </span></span><span style=display:flex><span>serde = {version = <span style=color:#2aa198>&#34;1.0&#34;</span>, features = [<span style=color:#2aa198>&#34;derive&#34;</span>]}
 </span></span><span style=display:flex><span>serde_yaml = <span style=color:#2aa198>&#34;0.9&#34;</span>
 </span></span></code></pre></div><p>Now, I can use the struct to split files with multiples rules. For each rule, I
-am creating a new <code>GenericRuleFile</code> to create a separate rule file.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#586e75>// 06-generic-structs/src/main.rs
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>fn</span> <span style=color:#268bd2>main</span>() {
+am creating a new <code>GenericRuleFile</code> to create a separate rule file.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#586e75>// 06-generic-structs/src/main.rs
+</span></span></span><span style=display:flex><span><span style=color:#719e07>fn</span> <span style=color:#268bd2>main</span>() {
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>let</span> content <span style=color:#719e07>=</span> std::fs::read_to_string(<span style=color:#2aa198>&#34;../multiple-rules.yaml&#34;</span>).unwrap();
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// deserialize
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#268bd2>let</span> generic_rule_file: <span style=color:#268bd2>GenericRuleFile</span> <span style=color:#719e07>=</span> serde_yaml::from_str(<span style=color:#719e07>&amp;</span>content).unwrap();
+</span></span></span><span style=display:flex><span>    <span style=color:#268bd2>let</span> generic_rule_file: <span style=color:#268bd2>GenericRuleFile</span> <span style=color:#719e07>=</span> serde_yaml::from_str(<span style=color:#719e07>&amp;</span>content).unwrap();
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// go through each rule. Each one is a Mapping.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>for</span> single_rule <span style=color:#719e07>in</span> generic_rule_file.rules {
+</span></span></span><span style=display:flex><span>    <span style=color:#719e07>for</span> single_rule <span style=color:#719e07>in</span> generic_rule_file.rules {
 </span></span><span style=display:flex><span>        
 </span></span><span style=display:flex><span>        <span style=color:#586e75>// create a new GenericRuleFile object with only one rule.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        <span style=color:#268bd2>let</span> <span style=color:#719e07>mut</span> new_rules: <span style=color:#b58900>Vec</span><span style=color:#719e07>&lt;</span>serde_yaml::Mapping<span style=color:#719e07>&gt;</span> <span style=color:#719e07>=</span> <span style=color:#b58900>Vec</span>::new();
+</span></span></span><span style=display:flex><span>        <span style=color:#268bd2>let</span> <span style=color:#719e07>mut</span> new_rules: <span style=color:#b58900>Vec</span><span style=color:#719e07>&lt;</span>serde_yaml::Mapping<span style=color:#719e07>&gt;</span> <span style=color:#719e07>=</span> <span style=color:#b58900>Vec</span>::new();
 </span></span><span style=display:flex><span>        new_rules.push(single_rule);
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>let</span> new_generic_rule <span style=color:#719e07>=</span> GenericRuleFile{
 </span></span><span style=display:flex><span>            rules: <span style=color:#268bd2>new_rules</span>,
 </span></span><span style=display:flex><span>        };
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>        <span style=color:#586e75>// convert it to yaml.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        <span style=color:#268bd2>let</span> single_rule_yaml: <span style=color:#b58900>String</span> <span style=color:#719e07>=</span> serde_yaml::to_string(<span style=color:#719e07>&amp;</span>new_generic_rule).unwrap();
+</span></span></span><span style=display:flex><span>        <span style=color:#268bd2>let</span> single_rule_yaml: <span style=color:#b58900>String</span> <span style=color:#719e07>=</span> serde_yaml::to_string(<span style=color:#719e07>&amp;</span>new_generic_rule).unwrap();
 </span></span><span style=display:flex><span>        <span style=color:#586e75>// print it.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        <span style=color:#268bd2>println!</span>(<span style=color:#2aa198>&#34;</span><span style=color:#2aa198>{}</span><span style=color:#2aa198>&#34;</span>, single_rule_yaml);
+</span></span></span><span style=display:flex><span>        <span style=color:#268bd2>println!</span>(<span style=color:#2aa198>&#34;</span><span style=color:#2aa198>{}</span><span style=color:#2aa198>&#34;</span>, single_rule_yaml);
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><span class=caption-wrapper><img class=caption src=02-split-rules.png title="Separated rules" alt="Separated rules">
@@ -334,19 +334,19 @@ but I think it's just easier to use the schema for validation before
 deserialization.</p><h3 id=rulefile>RuleFile
 <a class=header-link href=#rulefile><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>Let's learn through some examples. The top object is defined at the bottom of
 the file starting from line 430. Searching for <code>rules:</code> I can find the start of
-the document object.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 430</span>
+the document object.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 430</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>type</span>: object
 </span></span><span style=display:flex><span><span style=color:#268bd2>properties</span>:
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>rules</span>:
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>type</span>: array
 </span></span></code></pre></div><p>This is the complete file or <code>RuleFile</code>. It has an array of <code>Rule</code>s in the tag
-<code>rules:</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
+<code>rules:</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>pub</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>RuleFile</span> {
 </span></span><span style=display:flex><span>    rules: <span style=color:#b58900>Vec</span><span style=color:#719e07>&lt;</span>Rule<span style=color:#719e07>&gt;</span>,
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><h3 id=rule>Rule
 <a class=header-link href=#rule><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p><code>Rule</code> is more complicated. Find it fields under the <code>properties:</code> tag for
-<code>rules:</code> (line 436):</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 436</span>
+<code>rules:</code> (line 436):</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 436</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>properties</span>:
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>rules</span>:
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>type</span>: array
@@ -362,24 +362,24 @@ the document object.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1
 </span></span><span style=display:flex><span>          <span style=color:#268bd2>title</span>: Description to attach to findings
 </span></span><span style=display:flex><span>          <span style=color:#268bd2>type</span>: string
 </span></span><span style=display:flex><span>        <span style=color:#586e75># removed</span>
-</span></span></code></pre></div><p>The <code>id</code> field which is of type <code>id</code>. Line 427 has the definition:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 427</span>
+</span></span></code></pre></div><p>The <code>id</code> field which is of type <code>id</code>. Line 427 has the definition:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 427</span>
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>id</span>:
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>title</span>: Rule ID to attach to findings
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>type</span>: string
 </span></span></code></pre></div><p>There's no need to create a struct for <code>id</code> because <code>String</code> is a Rust primitive
 type and it has no other members. <code>version</code> and <code>message</code> are strings, too. I
-can create the first three fields:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
+can create the first three fields:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>pub</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>Rule</span> {
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Rule ID to attach to findings
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    id: <span style=color:#b58900>String</span>,
+</span></span></span><span style=display:flex><span>    id: <span style=color:#b58900>String</span>,
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Version of rule
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    version: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>String</span><span style=color:#719e07>&gt;</span>,
+</span></span></span><span style=display:flex><span>    version: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>String</span><span style=color:#719e07>&gt;</span>,
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Description to attach to findings
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    message: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>String</span><span style=color:#719e07>&gt;</span>,
+</span></span></span><span style=display:flex><span>    message: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>String</span><span style=color:#719e07>&gt;</span>,
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>Note how <code>version</code> and <code>message</code> are <code>Options</code>. These are not required tags and
 might not be present in every rule.</p><p>Although <code>mode</code> is an enum, we cannot define it as an enum here. If so, serde
-will look for a YAML enum (they start with <code>!</code>).</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 445</span>
+will look for a YAML enum (they start with <code>!</code>).</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 445</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>mode</span>:
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>default</span>: search
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>enum</span>:
@@ -387,26 +387,26 @@ will look for a YAML enum (they start with <code>!</code>).</p><div class=highli
 </span></span><span style=display:flex><span>    - taint
 </span></span><span style=display:flex><span>    - join
 </span></span><span style=display:flex><span>    - extract
-</span></span></code></pre></div><p>I defined it as a normal string.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
+</span></span></code></pre></div><p>I defined it as a normal string.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>pub</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>Rule</span> {
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// removed
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>
+</span></span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    mode: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>String</span><span style=color:#719e07>&gt;</span>,
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p><code>languages</code> is another required field and an array of strings.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 452</span>
+</span></span></code></pre></div><p><code>languages</code> is another required field and an array of strings.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 452</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>languages</span>:
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>title</span>: Languages this pattern should run on
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>type</span>: array
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>items</span>:
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>type</span>: string
-</span></span></code></pre></div><p>It becomes a <code>Vec&lt;String></code>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
+</span></span></code></pre></div><p>It becomes a <code>Vec&lt;String></code>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>pub</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>Rule</span> {
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// removed
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>
+</span></span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Languages this pattern should run on
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    languages: <span style=color:#b58900>Vec</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>String</span><span style=color:#719e07>&gt;</span>,
+</span></span></span><span style=display:flex><span>    languages: <span style=color:#b58900>Vec</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>String</span><span style=color:#719e07>&gt;</span>,
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p><code>paths</code> is another struct:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 458</span>
+</span></span></code></pre></div><p><code>paths</code> is another struct:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 458</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>paths</span>:
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>title</span>: Path globs this pattern should run on
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>type</span>: object
@@ -418,24 +418,24 @@ will look for a YAML enum (they start with <code>!</code>).</p><div class=highli
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>additionalProperties</span>: <span style=color:#cb4b16>false</span>
 </span></span></code></pre></div><p>The struct has two fields <code>include</code> and <code>exclude</code>. Both are of type
 <code>path-array</code>. Search for <code>path-array:</code> in the schema (don't forget the colon) to
-find the definition:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 423</span>
+find the definition:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 423</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>path-array</span>:
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>type</span>: array
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>items</span>:
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>type</span>: string
-</span></span></code></pre></div><p>It's just a <code>Vec&lt;String></code>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
+</span></span></code></pre></div><p>It's just a <code>Vec&lt;String></code>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>pub</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>Paths</span> {
 </span></span><span style=display:flex><span>    include: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>Vec</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>String</span><span style=color:#719e07>&gt;&gt;</span>,
 </span></span><span style=display:flex><span>    exclude: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>Vec</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>String</span><span style=color:#719e07>&gt;&gt;</span>,
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>Adding the <code>paths</code> field to <code>Rule</code>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
+</span></span></code></pre></div><p>Adding the <code>paths</code> field to <code>Rule</code>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>pub</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>Rule</span> {
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// removed
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>
+</span></span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Path globs this pattern should run on
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    paths: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span>Paths<span style=color:#719e07>&gt;</span>,
+</span></span></span><span style=display:flex><span>    paths: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span>Paths<span style=color:#719e07>&gt;</span>,
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p><code>severity</code> is another text enum.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 467</span>
+</span></span></code></pre></div><p><code>severity</code> is another text enum.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 467</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>severity</span>:
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>title</span>: Severity to report alongside this finding
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>enum</span>:
@@ -444,15 +444,15 @@ find the definition:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1
 </span></span><span style=display:flex><span>    - INFO
 </span></span><span style=display:flex><span>    - INVENTORY
 </span></span><span style=display:flex><span>    - EXPERIMENT
-</span></span></code></pre></div><p>Another ordinary string:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
+</span></span></code></pre></div><p>Another ordinary string:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>pub</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>Rule</span> {
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// removed
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>
+</span></span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Severity to report alongside this finding
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    severity: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>String</span><span style=color:#719e07>&gt;</span>,
+</span></span></span><span style=display:flex><span>    severity: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>String</span><span style=color:#719e07>&gt;</span>,
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><h3 id=fix-regex>fix-regex
-<a class=header-link href=#fix-regex><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>Skipping a few fields to use <code>fix-regex</code> (line 487) as a good example:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 487</span>
+<a class=header-link href=#fix-regex><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>Skipping a few fields to use <code>fix-regex</code> (line 487) as a good example:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 487</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>fix-regex</span>:
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>type</span>: object
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>title</span>: Replacement regex to fix matched code.
@@ -470,40 +470,40 @@ find the definition:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1
 </span></span><span style=display:flex><span>    - regex
 </span></span><span style=display:flex><span>    - replacement
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>additionalProperties</span>: <span style=color:#cb4b16>false</span>
-</span></span></code></pre></div><p>I created a struct with three fields (two are required).</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
+</span></span></code></pre></div><p>I created a struct with three fields (two are required).</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>pub</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>FixRegex</span> {
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Replace up to this many regex matches
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    count: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span><span style=color:#dc322f>i32</span><span style=color:#719e07>&gt;</span>,
+</span></span></span><span style=display:flex><span>    count: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span><span style=color:#dc322f>i32</span><span style=color:#719e07>&gt;</span>,
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Regular expression to find in matched code
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    regex: <span style=color:#b58900>String</span>,
+</span></span></span><span style=display:flex><span>    regex: <span style=color:#b58900>String</span>,
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Code to replace the regular expression match with. Can use capture groups.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    replacement: <span style=color:#b58900>String</span>,
+</span></span></span><span style=display:flex><span>    replacement: <span style=color:#b58900>String</span>,
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>We have another problem. The field is named <code>fix-regex</code> but it's an illegal
 field name in Rust. Use the serde <a href=https://serde.rs/field-attrs.html#rename target=_blank rel="noreferrer noopener">rename field attribute</a> to
 assign the <code>fix-regex</code> YAML tag to the <code>fix_regex</code> struct field (I think the
-<code>alias</code> attribute also works).</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
+<code>alias</code> attribute also works).</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>pub</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>Rule</span> {
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// removed
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>
+</span></span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Replacement regex to fix matched code.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>#[serde(rename = </span><span style=color:#2aa198>&#34;fix-regex&#34;</span><span style=color:#719e07>)]</span>
+</span></span></span><span style=display:flex><span>    <span style=color:#719e07>#[serde(rename = </span><span style=color:#2aa198>&#34;fix-regex&#34;</span><span style=color:#719e07>)]</span>
 </span></span><span style=display:flex><span>    fix_regex: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span>FixRegex<span style=color:#719e07>&gt;</span>,
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p><code>metadata</code> and <code>object</code> are freeform and can contain everything. I kept them as
-<code>serde_yaml::Mapping</code></p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
+<code>serde_yaml::Mapping</code></p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>pub</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>Rule</span> {
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// removed
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>
+</span></span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Arbitrary structured data for your own reference
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    metadata: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span>serde_yaml::Mapping<span style=color:#719e07>&gt;</span>,
+</span></span></span><span style=display:flex><span>    metadata: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span>serde_yaml::Mapping<span style=color:#719e07>&gt;</span>,
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Options object to enable/disable certain matching features in semgrep-core
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    options: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span>serde_yaml::Mapping<span style=color:#719e07>&gt;</span>,
+</span></span></span><span style=display:flex><span>    options: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span>serde_yaml::Mapping<span style=color:#719e07>&gt;</span>,
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><h3 id=pattern-either-content>pattern-either-content
 <a class=header-link href=#pattern-either-content><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>Let's use on a more complicated object. On line 24 there is
-<code>pattern-either-content</code>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 24</span>
+<code>pattern-either-content</code>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 24</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>pattern-either-content</span>:
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>type</span>: array
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>title</span>: <span style=color:#2aa198>&#34;Return finding where any of the nested conditions are true&#34;</span>
@@ -515,7 +515,7 @@ assign the <code>fix-regex</code> YAML tag to the <code>fix_regex</code> struct 
 </span></span><span style=display:flex><span>      - <span style=color:#268bd2>$ref</span>: <span style=color:#2aa198>&#34;#/$defs/pattern&#34;</span>
 </span></span><span style=display:flex><span>      - <span style=color:#268bd2>$ref</span>: <span style=color:#2aa198>&#34;#/$defs/pattern-regex&#34;</span>
 </span></span></code></pre></div><p>It's an array of objects. To get a better understanding, study this example from
-<a href=https://semgrep.dev/docs/writing-rules/rule-syntax/#pattern-either target=_blank rel="noreferrer noopener">the Semgrep documentation</a>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>rules</span>:
+<a href=https://semgrep.dev/docs/writing-rules/rule-syntax/#pattern-either target=_blank rel="noreferrer noopener">the Semgrep documentation</a>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>rules</span>:
 </span></span><span style=display:flex><span>  - <span style=color:#268bd2>id</span>: insecure-crypto-usage
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>pattern-either</span>:
 </span></span><span style=display:flex><span>      - <span style=color:#268bd2>pattern</span>: hashlib.sha1(...)
@@ -526,7 +526,7 @@ assign the <code>fix-regex</code> YAML tag to the <code>fix_regex</code> struct 
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>languages</span>:
 </span></span><span style=display:flex><span>      - python
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>severity</span>: ERROR
-</span></span></code></pre></div><p>Searching for <code>patterns:</code> takes us to line 357:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 357</span>
+</span></span></code></pre></div><p>Searching for <code>patterns:</code> takes us to line 357:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 357</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>patterns</span>:
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>type</span>: object
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>properties</span>:
@@ -534,12 +534,12 @@ assign the <code>fix-regex</code> YAML tag to the <code>fix_regex</code> struct 
 </span></span><span style=display:flex><span>      <span style=color:#268bd2>title</span>: Return finding where all of the nested conditions are true
 </span></span><span style=display:flex><span>      <span style=color:#268bd2>$ref</span>: <span style=color:#2aa198>&#34;#/$defs/patterns-content&#34;</span>
 </span></span></code></pre></div><p>The field <code>patterns</code> will point to the <code>PatternsContent</code> struct. Don't worry
-about defining it right now.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
+about defining it right now.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>pub</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>PatternEitherContent</span> {
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    patterns: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>Vec</span><span style=color:#719e07>&lt;</span>PatternsContent<span style=color:#719e07>&gt;&gt;</span>,
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>Next is <code>pattern-either</code> which points to itself:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
+</span></span></code></pre></div><p>Next is <code>pattern-either</code> which points to itself:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>pub</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>PatternEitherContent</span> {
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    patterns: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>Vec</span><span style=color:#719e07>&lt;</span>PatternsContent<span style=color:#719e07>&gt;&gt;</span>,
@@ -547,7 +547,7 @@ about defining it right now.</p><div class=highlight><pre tabindex=0 style=color
 </span></span><span style=display:flex><span>    <span style=color:#719e07>#[serde(rename = </span><span style=color:#2aa198>&#34;pattern-either&#34;</span><span style=color:#719e07>)]</span>
 </span></span><span style=display:flex><span>    pattern_either: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>Vec</span><span style=color:#719e07>&lt;</span>PatternEitherContent<span style=color:#719e07>&gt;&gt;</span>,
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>The next field is <code>pattern-inside</code> defined on line 387:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 387</span>
+</span></span></code></pre></div><p>The next field is <code>pattern-inside</code> defined on line 387:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 387</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>pattern-inside</span>:
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>type</span>: object
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>properties</span>:
@@ -557,7 +557,7 @@ about defining it right now.</p><div class=highlight><pre tabindex=0 style=color
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>required</span>:
 </span></span><span style=display:flex><span>    - pattern-inside
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>additionalProperties</span>: <span style=color:#cb4b16>false</span>
-</span></span></code></pre></div><p>It's just a String.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
+</span></span></code></pre></div><p>It's just a String.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>pub</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>PatternEitherContent</span> {
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    patterns: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>Vec</span><span style=color:#719e07>&lt;</span>PatternsContent<span style=color:#719e07>&gt;&gt;</span>,
@@ -568,7 +568,7 @@ about defining it right now.</p><div class=highlight><pre tabindex=0 style=color
 </span></span><span style=display:flex><span>    <span style=color:#719e07>#[serde(rename = </span><span style=color:#2aa198>&#34;pattern-inside&#34;</span><span style=color:#719e07>)]</span>
 </span></span><span style=display:flex><span>    pattern_inside: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>String</span><span style=color:#719e07>&gt;</span>,
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>And finally, <code>pattern-regex:</code> on line 339:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 339</span>
+</span></span></code></pre></div><p>And finally, <code>pattern-regex:</code> on line 339:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 339</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>pattern-regex</span>:
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>type</span>: object
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>properties</span>:
@@ -578,7 +578,7 @@ about defining it right now.</p><div class=highlight><pre tabindex=0 style=color
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>required</span>:
 </span></span><span style=display:flex><span>    - pattern-regex
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>additionalProperties</span>: <span style=color:#cb4b16>false</span>
-</span></span></code></pre></div><p>It's another string.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
+</span></span></code></pre></div><p>It's another string.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>pub</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>PatternEitherContent</span> {
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    patterns: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>Vec</span><span style=color:#719e07>&lt;</span>PatternsContent<span style=color:#719e07>&gt;&gt;</span>,
@@ -594,7 +594,7 @@ about defining it right now.</p><div class=highlight><pre tabindex=0 style=color
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><h3 id=focus-metavariable>focus-metavariable
 <a class=header-link href=#focus-metavariable><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>While defining <code>PatternsContent</code> I got stuck on the <code>focus-metavariable:</code> field
-for a bit. See line 375:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 375</span>
+for a bit. See line 375:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75># rule_schema.yaml - line 375</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>focus-metavariable</span>:
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>type</span>: object
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>properties</span>:
@@ -608,20 +608,20 @@ for a bit. See line 375:</p><div class=highlight><pre tabindex=0 style=color:#93
 </span></span><span style=display:flex><span>    - focus-metavariable
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>additionalProperties</span>: <span style=color:#cb4b16>false</span>
 </span></span></code></pre></div><p>This field can either have a string OR an array of strings. Both of these
-examples are valid:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>focus-metavariable</span>: $ITEM
+examples are valid:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#268bd2>focus-metavariable</span>: $ITEM
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>focus-metavariable</span>:
 </span></span><span style=display:flex><span>  - $ITEM1
 </span></span><span style=display:flex><span>  - $ITEM2
 </span></span></code></pre></div><p>To convert this field, I could write a custom deserializer in <code>function</code> and
-then use the <a href=https://serde.rs/field-attrs.html#deserialize_with target=_blank rel="noreferrer noopener">deserialize_with</a> serde field attribute.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
+then use the <a href=https://serde.rs/field-attrs.html#deserialize_with target=_blank rel="noreferrer noopener">deserialize_with</a> serde field attribute.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>pub</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>PatternEitherContent</span> {
 </span></span><span style=display:flex><span>    <span style=color:#719e07>#[serde(rename = </span><span style=color:#2aa198>&#34;focus-metavariable&#34;</span><span style=color:#719e07>, deserialize_with =</span><span style=color:#2aa198>&#34;function&#34;</span><span style=color:#719e07>)]</span>
 </span></span><span style=display:flex><span>    focus_metavariable: <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>Vec</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>String</span><span style=color:#719e07>&gt;&gt;</span>,
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>You can see a couple of deserializer examples at
 <a href=https://github.com/serde-rs/serde/issues/1907 target=_blank rel="noreferrer noopener">https://github.com/serde-rs/serde/issues/1907</a>.</p><p>But I decided to use the <a href=https://docs.rs/serde_with/ target=_blank rel="noreferrer noopener">serde_with</a> crate which defines
-<code>OneOrMany</code>.</p><ol><li>Add <code>#[serde_as]</code> before the struct.</li><li>Add <code>#[serde_as(as = "Option&lt;OneOrMany&lt;_>>")]</code> before the field.</li></ol><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[serde_as]</span>
+<code>OneOrMany</code>.</p><ol><li>Add <code>#[serde_as]</code> before the struct.</li><li>Add <code>#[serde_as(as = "Option&lt;OneOrMany&lt;_>>")]</code> before the field.</li></ol><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#719e07>#[serde_as]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Serialize, Deserialize)]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>pub</span> <span style=color:#719e07>struct</span> <span style=color:#268bd2>PatternEitherContent</span> {
 </span></span><span style=display:flex><span>    <span style=color:#719e07>#[serde_as(as = </span><span style=color:#2aa198>&#34;Option&lt;OneOrMany&lt;_&gt;&gt;&#34;</span><span style=color:#719e07>)]</span>
@@ -658,42 +658,42 @@ parameter to see this output:</p><pre tabindex=0><code>:~/yaml-wrangling-with-ru
 <a class=header-link href=#index-rules><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h4><p>This code parses rules and stores them in a HashMap for later use (e.g., to
 create and serve rulesets). Pass the command <code>index-rules</code> to create a rule
 index and print the number of the rules. You can uncomment the last line to
-also print the rule IDs.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#586e75>// 08-rustacean-matchmaking/src/main.rs
+also print the rule IDs.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#586e75>// 08-rustacean-matchmaking/src/main.rs
 </span></span></span><span style=display:flex><span><span style=color:#586e75>// store all rules in a HashMap where the key is rule ID and the value is the rule.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>pub</span> <span style=color:#719e07>fn</span> <span style=color:#268bd2>create_rule_index</span>(registry_path: <span style=color:#719e07>&amp;</span><span style=color:#dc322f>str</span>) {
+</span></span></span><span style=display:flex><span><span style=color:#719e07>pub</span> <span style=color:#719e07>fn</span> <span style=color:#268bd2>create_rule_index</span>(registry_path: <span style=color:#719e07>&amp;</span><span style=color:#dc322f>str</span>) {
 </span></span><span style=display:flex><span>    
 </span></span><span style=display:flex><span>    utils::check_registry_path(registry_path);
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// store all rule file paths
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#268bd2>let</span> rule_file_paths <span style=color:#719e07>=</span> utils::find_rules(registry_path.to_string());
+</span></span></span><span style=display:flex><span>    <span style=color:#268bd2>let</span> rule_file_paths <span style=color:#719e07>=</span> utils::find_rules(registry_path.to_string());
 </span></span><span style=display:flex><span>    
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>let</span> <span style=color:#719e07>mut</span> rule_index: <span style=color:#268bd2>HashMap</span><span style=color:#719e07>&lt;</span><span style=color:#b58900>String</span>, semgrep_rules::Rule<span style=color:#719e07>&gt;</span> <span style=color:#719e07>=</span> HashMap::new();
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#719e07>for</span> rule_file <span style=color:#719e07>in</span> rule_file_paths {
 </span></span><span style=display:flex><span>        
 </span></span><span style=display:flex><span>        <span style=color:#586e75>// read the rule file and deserialize it.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        <span style=color:#268bd2>let</span> contents <span style=color:#719e07>=</span> utils::read_file_to_string(<span style=color:#719e07>&amp;</span>rule_file);
+</span></span></span><span style=display:flex><span>        <span style=color:#268bd2>let</span> contents <span style=color:#719e07>=</span> utils::read_file_to_string(<span style=color:#719e07>&amp;</span>rule_file);
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>let</span> deserialized_result <span style=color:#719e07>=</span> serde_yaml::from_str::<span style=color:#719e07>&lt;</span>semgrep_rules::RuleFile<span style=color:#719e07>&gt;</span>(<span style=color:#719e07>&amp;</span>contents);
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>        <span style=color:#586e75>// check for errors.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        <span style=color:#268bd2>let</span> deserialized <span style=color:#719e07>=</span> <span style=color:#719e07>match</span> deserialized_result {
+</span></span></span><span style=display:flex><span>        <span style=color:#268bd2>let</span> deserialized <span style=color:#719e07>=</span> <span style=color:#719e07>match</span> deserialized_result {
 </span></span><span style=display:flex><span>            <span style=color:#b58900>Ok</span>(rf) <span style=color:#719e07>=&gt;</span> rf,
 </span></span><span style=display:flex><span>            <span style=color:#b58900>Err</span>(e) <span style=color:#719e07>=&gt;</span> {
 </span></span><span style=display:flex><span>                <span style=color:#586e75>// log the error and move to the next file.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>                <span style=color:#268bd2>println!</span>(<span style=color:#2aa198>&#34;[!] File: </span><span style=color:#2aa198>{}</span><span style=color:#cb4b16>\n\t</span><span style=color:#2aa198>Error: </span><span style=color:#2aa198>{}</span><span style=color:#2aa198>&#34;</span>, rule_file, e.to_string());
+</span></span></span><span style=display:flex><span>                <span style=color:#268bd2>println!</span>(<span style=color:#2aa198>&#34;[!] File: </span><span style=color:#2aa198>{}</span><span style=color:#cb4b16>\n\t</span><span style=color:#2aa198>Error: </span><span style=color:#2aa198>{}</span><span style=color:#2aa198>&#34;</span>, rule_file, e.to_string());
 </span></span><span style=display:flex><span>                <span style=color:#719e07>continue</span>;
 </span></span><span style=display:flex><span>            },
 </span></span><span style=display:flex><span>        };
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>        <span style=color:#586e75>// iterate through the rules in the rule file and extract all the rules.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        <span style=color:#719e07>for</span> individual_rule <span style=color:#719e07>in</span> deserialized.rules {
+</span></span></span><span style=display:flex><span>        <span style=color:#719e07>for</span> individual_rule <span style=color:#719e07>in</span> deserialized.rules {
 </span></span><span style=display:flex><span>            <span style=color:#586e75>// get the id and own it.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>            rule_index.insert(individual_rule.id.to_owned(), individual_rule);
+</span></span></span><span style=display:flex><span>            rule_index.insert(individual_rule.id.to_owned(), individual_rule);
 </span></span><span style=display:flex><span>        }
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>println!</span>(<span style=color:#2aa198>&#34;Number of rules in the index: </span><span style=color:#2aa198>{}</span><span style=color:#2aa198>&#34;</span>, rule_index.keys().len());
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// print the keys.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#586e75>// println!(&#34;{:#?}&#34;, rule_index.keys());
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>}
+</span></span></span><span style=display:flex><span>    <span style=color:#586e75>// println!(&#34;{:#?}&#34;, rule_index.keys());
+</span></span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>Run it with <code>cargo run -- index-rules /path/to/semgrep-rules/</code>.</p><pre tabindex=0><code>:~/yaml-wrangling-with-rust/08-rustacean-matchmaking$ cargo run -- index-rules ../../semgrep-rules/
    Compiling rustacean-matchmaking v0.1.0 (/yaml-wrangling-with-rust/08-rustacean-matchmaking)
     Finished dev [unoptimized + debuginfo] target(s) in 10.91s
@@ -711,5 +711,5 @@ Number of rules in the index: 1710
 (of course) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more. Contact me via any of these ways.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="me noopener noreferrer" href=https://infosec.exchange/@parsiya title=https://infosec.exchange/@parsiya><i class="fa fa-mastodon fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
-<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/static-analysis/ title="Static Analysis">Static Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/blockchain/ title="Blockchain (lol)">Blockchain (lol)</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title="WinAppDbg (use Frida instead)">WinAppDbg (use Frida instead)</a></li><li><a href=https://awsome.pw title='AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability'>AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2025 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/static-analysis/ title="Static Analysis">Static Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/blockchain/ title="Blockchain (lol)">Blockchain (lol)</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title="WinAppDbg (use Frida instead)">WinAppDbg (use Frida instead)</a></li><li><a href=https://awsome.pw title='AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability'>AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2026 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.</p></footer></body></html>

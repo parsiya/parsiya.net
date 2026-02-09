@@ -1,4 +1,4 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>How Burp AI Works</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.152.2"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2025-08-15-how-burp-ai-works/17-ai-login-1.webp"><meta name=twitter:title content="How Burp AI Works"><meta name=twitter:description content="This is a quick peek inside Burp AI. I'll show how to proxy its requests, what
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>How Burp AI Works</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.155.3"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2025-08-15-how-burp-ai-works/17-ai-login-1.webp"><meta name=twitter:title content="How Burp AI Works"><meta name=twitter:description content="This is a quick peek inside Burp AI. I'll show how to proxy its requests, what
 actually happens when you trigger a feature. This knowledge allows us to
 redirect Burp AI to your own AI instance. As far as I know, this is not publicly
 documented.
@@ -53,7 +53,7 @@ Shannon) so likely random/encrypted.</p><span class=caption-wrapper><img class=c
 example.net.</p><span class=caption-wrapper><img class=caption src=07-explore-issue.webp title="The 'Explore HSTS' button" alt="The 'Explore HSTS' button">
 <span class=caption-text>The 'Explore HSTS' button</span></span><p>First request: POST to
 <code>https://ai.portswigger.net/ai/hakawai-explore-service/api/v1/start</code>. Values are
-replaced with <code>{{ }}</code> placeholders, but you can guess them.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>POST /ai/hakawai-explore-service/api/v<span style=color:#2aa198>1</span>/start HTTP/<span style=color:#2aa198>2</span>
+replaced with <code>{{ }}</code> placeholders, but you can guess them.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-json data-lang=json><span style=display:flex><span>POST /ai/hakawai-explore-service/api/v<span style=color:#2aa198>1</span>/start HTTP/<span style=color:#2aa198>2</span>
 </span></span><span style=display:flex><span>Host: ai.portswigger.net
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>{
@@ -76,7 +76,7 @@ replaced with <code>{{ }}</code> placeholders, but you can guess them.</p><div c
 </span></span></code></pre></div><p>We see:</p><ol><li>Finding name and type (same).</li><li>Description from the Burp KB (description section of <a href=https://portswigger.net/kb/issues/01000300_strict-transport-security-not-enforced target=_blank rel="noreferrer noopener">this page</a>) as HTML.</li><li>Full originating request and response.</li></ol><p>We don't see any prompts. It's injected later by the Burp AI proxy. They are
 easy to guess.</p><p>The response instructs Burp to send a request. It looks like a Repeater action,
 but nothing appears there. This is the same request we saw in Logger earlier.</p><span class=caption-wrapper><img class=caption src=08-explore-resp.webp title="'Explore HSTS' response" alt="'Explore HSTS' response">
-<span class=caption-text>'Explore HSTS' response</span></span><p>Response structure:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+<span class=caption-text>'Explore HSTS' response</span></span><p>Response structure:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-json data-lang=json><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;exploration_id&#34;</span>: <span style=color:#2aa198>&#34;{{ some guid }}&#34;</span>,
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;step_title&#34;</span>: <span style=color:#2aa198>&#34;Check for security headers and HTTPS redirect&#34;</span>,
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;step_action&#34;</span>: <span style=color:#2aa198>&#34;I&#39;m sending a basic GET request to examine the server&#39;s security headers and see if there&#39;s any HTTPS redirect mechanism in place. This will help us understand what security controls are missing and how we might exploit this weakness. Specifically, I&#39;m looking for:\n1. Absence of HSTS header\n2. Lack of automatic HTTPS redirect\n3. Any other security headers that might be present or missing\nThis is the most logical first step as it directly relates to the reported vulnerability and will help us understand the server&#39;s security posture.&#34;</span>,
@@ -97,7 +97,7 @@ but nothing appears there. This is the same request we saw in Logger earlier.</p
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>Next <code>/continue</code> request: includes the prior response, same GUID, adds
 <code>X-Forwarded-Proto: http</code>.</p><span class=caption-wrapper><img class=caption src=09-explore-req-2.webp title="'Explore HSTS' request #2" alt="'Explore HSTS' request #2">
-<span class=caption-text>'Explore HSTS' request #2</span></span><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>POST /ai/hakawai-explore-service/api/v<span style=color:#2aa198>1</span>/continue HTTP/<span style=color:#2aa198>2</span>
+<span class=caption-text>'Explore HSTS' request #2</span></span><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-json data-lang=json><span style=display:flex><span>POST /ai/hakawai-explore-service/api/v<span style=color:#2aa198>1</span>/continue HTTP/<span style=color:#2aa198>2</span>
 </span></span><span style=display:flex><span>Host: ai.portswigger.net
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>{
@@ -110,7 +110,7 @@ but nothing appears there. This is the same request we saw in Logger earlier.</p
 </span></span><span style=display:flex><span>  ]
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>The response adds a description and the next action (send another request).</p><span class=caption-wrapper><img class=caption src=10-explore-resp-2.webp title="'Explore HSTS' response #2" alt="'Explore HSTS' response #2">
-<span class=caption-text>'Explore HSTS' response #2</span></span><p>Structure:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+<span class=caption-text>'Explore HSTS' response #2</span></span><p>Structure:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-json data-lang=json><span style=display:flex><span>{
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;exploration_id&#34;</span>: <span style=color:#2aa198>&#34;{{ same guid as before }}&#34;</span>,
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;step_title&#34;</span>: <span style=color:#2aa198>&#34;Test proxy header behavior&#34;</span>,
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;step_action&#34;</span>: <span style=color:#2aa198>&#34;From the previous response, we confirmed that the server:\n1. Lacks HSTS headers\n2. Doesn&#39;t force HTTPS redirects\n3. Has minimal security headers\n4. Serves content over HTTP/2 despite being accessed via HTTP\n\nI&#39;m adding the X-Forwarded-Proto header set to &#39;http&#39; to see if the server&#39;s behavior changes when it believes the request came through a proxy. This could reveal if there&#39;s any proxy-aware security logic that might help us understand how the server handles SSL/TLS decisions. This is important because many applications implement HTTPS enforcement at the proxy level, and understanding this behavior could reveal additional attack vectors.&#34;</span>,
@@ -129,7 +129,7 @@ but nothing appears there. This is the same request we saw in Logger earlier.</p
 </span></span><span style=display:flex><span>        }
 </span></span><span style=display:flex><span>    ]
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>Final <code>/continue</code> contains the previous response.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>POST /ai/hakawai-explore-service/api/v<span style=color:#2aa198>1</span>/continue HTTP/<span style=color:#2aa198>2</span>
+</span></span></code></pre></div><p>Final <code>/continue</code> contains the previous response.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-json data-lang=json><span style=display:flex><span>POST /ai/hakawai-explore-service/api/v<span style=color:#2aa198>1</span>/continue HTTP/<span style=color:#2aa198>2</span>
 </span></span><span style=display:flex><span>Host: ai.portswigger.net
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>
@@ -143,7 +143,7 @@ but nothing appears there. This is the same request we saw in Logger earlier.</p
 </span></span><span style=display:flex><span>  ]
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>That response ends the conversation.</p><span class=caption-wrapper><img class=caption src=11-explore-resp-3.webp title="'Explore HSTS' response #3" alt="'Explore HSTS' response #3">
-<span class=caption-text>'Explore HSTS' response #3</span></span><p>If you want to copy the structure:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+<span class=caption-text>'Explore HSTS' response #3</span></span><p>If you want to copy the structure:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-json data-lang=json><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;exploration_id&#34;</span>: <span style=color:#2aa198>&#34;{{ same guid as before }}&#34;</span>,
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;step_title&#34;</span>: <span style=color:#2aa198>&#34;Report findings on HTTPS enforcement vulnerability&#34;</span>,
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;step_action&#34;</span>: <span style=color:#2aa198>&#34;The server consistently serves content over HTTP without any security redirects or headers, regardless of the protocol or proxy headers used. This behavior persists even when explicitly indicating HTTP traffic through proxy headers.\n\nAfter confirming the lack of HTTPS enforcement through multiple test cases, including direct requests and proxy-aware testing, it&#39;s appropriate to report our findings. The vulnerability has been fully verified and its impact understood, making this the logical conclusion to our testing.&#34;</span>,
@@ -168,7 +168,7 @@ but nothing appears there. This is the same request we saw in Logger earlier.</p
 <code>example.net</code>.</p><span class=caption-wrapper><img class=caption src=13-explain-button.webp title="'Explain This' button" alt="'Explain This' button">
 <span class=caption-text>'Explain This' button</span></span><p>This results in a POST request to
 <code>https://ai.portswigger.net/ai/hakawai-explain-this/api/v1/explainthis</code>.</p><span class=caption-wrapper><img class=caption src=14-explain-req.webp title="'Explain This' request #1" alt="'Explain This' request #1">
-<span class=caption-text>'Explain This' request #1</span></span><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>POST /ai/hakawai-explain-this/api/v<span style=color:#2aa198>1</span>/explainthis HTTP/<span style=color:#2aa198>2</span>
+<span class=caption-text>'Explain This' request #1</span></span><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-json data-lang=json><span style=display:flex><span>POST /ai/hakawai-explain-this/api/v<span style=color:#2aa198>1</span>/explainthis HTTP/<span style=color:#2aa198>2</span>
 </span></span><span style=display:flex><span>Host: ai.portswigger.net
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>{
@@ -177,7 +177,7 @@ but nothing appears there. This is the same request we saw in Logger earlier.</p
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>Note the context. When I changed this request to POST and added some dummy
 values, the value of context changed to <code>REQUEST</code>.</p><p>The response just explains the issue.</p><span class=caption-wrapper><img class=caption src=15-explain-resp.webp title="'Explain This' response" alt="'Explain This' response">
-<span class=caption-text>'Explain This' response</span></span><p>Response structure:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+<span class=caption-text>'Explain This' response</span></span><p>Response structure:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-json data-lang=json><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;content&#34;</span>: <span style=color:#2aa198>&#34;{{ removed }}&#34;</span>
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>And this appears in the sidebar.</p><span class=caption-wrapper><img class=caption src=16-explain-sidebar.webp title="'Explain This' results in the side bar" alt="'Explain This' results in the side bar">
@@ -190,7 +190,7 @@ chose AI recorded login.</p><span class=caption-wrapper><img class=caption src=1
 page, but I wanted to see the discovery process.</p><span class=caption-wrapper><img class=caption src=18-ai-login-2.webp title="Info for AI recorded login" alt="Info for AI recorded login">
 <span class=caption-text>Info for AI recorded login</span></span><p>In the first step, Burp sends the following information to
 <code>https://ai.portswigger.net/ai/hakawai-recorded-login-generator/api/v1/start</code>
-in a POST request:</p><ul><li>URL</li><li>Title</li><li>Page text</li><li>An array of elements (links, inputs, buttons, etc.)</li><li>A screenshot of the page in base64</li></ul><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>POST /ai/hakawai-recorded-login-generator/api/v<span style=color:#2aa198>1</span>/start HTTP/<span style=color:#2aa198>2</span>
+in a POST request:</p><ul><li>URL</li><li>Title</li><li>Page text</li><li>An array of elements (links, inputs, buttons, etc.)</li><li>A screenshot of the page in base64</li></ul><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-json data-lang=json><span style=display:flex><span>POST /ai/hakawai-recorded-login-generator/api/v<span style=color:#2aa198>1</span>/start HTTP/<span style=color:#2aa198>2</span>
 </span></span><span style=display:flex><span>Host: ai.portswigger.net
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>{
@@ -213,11 +213,11 @@ in a POST request:</p><ul><li>URL</li><li>Title</li><li>Page text</li><li>An arr
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;input_value&#34;</span>: <span style=color:#cb4b16>null</span>,
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;accepts_input&#34;</span>: <span style=color:#cb4b16>false</span>
 </span></span><span style=display:flex><span>      }, <span style=color:#586e75>// removed the rest
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    ],
+</span></span></span><span style=display:flex><span>    ],
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;screenshot&#34;</span>: <span style=color:#2aa198>&#34;data:image/png;base64,{{removed screenshot data}}&#34;</span>
 </span></span><span style=display:flex><span>  }
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>The response tells the recorder to click <code>Sign in</code>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span></code></pre></div><p>The response tells the recorder to click <code>Sign in</code>:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-json data-lang=json><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;recorded_login_id&#34;</span>: <span style=color:#2aa198>&#34;{{ guid }}&#34;</span>,
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;tool_call&#34;</span>: {
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>&#34;toolu_01KLBGYsdH6JBvrcf6ircZkx&#34;</span>,
@@ -228,7 +228,7 @@ in a POST request:</p><ul><li>URL</li><li>Title</li><li>Page text</li><li>An arr
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>  }
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>We've reached the login page. The next request has similar info about this page.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>POST /ai/hakawai-recorded-login-generator/api/v<span style=color:#2aa198>1</span>/continue HTTP/<span style=color:#2aa198>2</span>
+</span></span></code></pre></div><p>We've reached the login page. The next request has similar info about this page.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-json data-lang=json><span style=display:flex><span>POST /ai/hakawai-recorded-login-generator/api/v<span style=color:#2aa198>1</span>/continue HTTP/<span style=color:#2aa198>2</span>
 </span></span><span style=display:flex><span>Host: ai.portswigger.net
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>{
@@ -243,7 +243,7 @@ in a POST request:</p><ul><li>URL</li><li>Title</li><li>Page text</li><li>An arr
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;Home Sign in | Sign up Gruyere: Login User name: Password: Login&#34;</span>,
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;interactive_elements&#34;</span>: [
 </span></span><span style=display:flex><span>      <span style=color:#586e75>// removed
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>      {
+</span></span></span><span style=display:flex><span>      {
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>160</span>,
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;&#34;</span>,
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;attributes&#34;</span>: <span style=color:#2aa198>&#34;type=password&#34;</span>,
@@ -262,7 +262,7 @@ in a POST request:</p><ul><li>URL</li><li>Title</li><li>Page text</li><li>An arr
 </span></span><span style=display:flex><span>  }
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>Username and password are never sent to AI (another point to PortSwigger). The
-response from AI tells the recorder to enter the username.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+response from AI tells the recorder to enter the username.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-json data-lang=json><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;recorded_login_id&#34;</span>: <span style=color:#2aa198>&#34;{{ same guid }}&#34;</span>,
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;tool_call&#34;</span>: {
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>&#34;toolu_018auKHege7thfnHrVQSsb2f&#34;</span>,
@@ -274,7 +274,7 @@ response from AI tells the recorder to enter the username.</p><div class=highlig
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>  }
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>After that, this request goes out.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>POST /ai/hakawai-recorded-login-generator/api/v<span style=color:#2aa198>1</span>/continue HTTP/<span style=color:#2aa198>2</span>
+</span></span></code></pre></div><p>After that, this request goes out.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-json data-lang=json><span style=display:flex><span>POST /ai/hakawai-recorded-login-generator/api/v<span style=color:#2aa198>1</span>/continue HTTP/<span style=color:#2aa198>2</span>
 </span></span><span style=display:flex><span>Host: ai.portswigger.net
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>{
@@ -289,7 +289,7 @@ response from AI tells the recorder to enter the username.</p><div class=highlig
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;Home Sign in | Sign up Gruyere: Login User name: USERNAME_PLACEHOLDER Password: Login&#34;</span>,
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;interactive_elements&#34;</span>: [
 </span></span><span style=display:flex><span>      <span style=color:#586e75>// removed
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>      {
+</span></span></span><span style=display:flex><span>      {
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>154</span>,
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;USERNAME_PLACEHOLDER&#34;</span>,
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;attributes&#34;</span>: <span style=color:#2aa198>&#34;type=text&#34;</span>,
@@ -314,7 +314,7 @@ response from AI tells the recorder to enter the username.</p><div class=highlig
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;screenshot&#34;</span>: <span style=color:#2aa198>&#34;data:image/png;base64,{{ removed }}&#34;</span>
 </span></span><span style=display:flex><span>  }
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>AI tells Burp to enter the password.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span></code></pre></div><p>AI tells Burp to enter the password.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-json data-lang=json><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;recorded_login_id&#34;</span>: <span style=color:#2aa198>&#34;{{ same guid }}&#34;</span>,
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;tool_call&#34;</span>: {
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>&#34;tooluse_DDIbQfI0TiGlRbSCTIw67g&#34;</span>,
@@ -326,7 +326,7 @@ response from AI tells the recorder to enter the username.</p><div class=highlig
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>  }
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>Next request shows the entered password.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>POST /ai/hakawai-recorded-login-generator/api/v<span style=color:#2aa198>1</span>/continue HTTP/<span style=color:#2aa198>2</span>
+</span></span></code></pre></div><p>Next request shows the entered password.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-json data-lang=json><span style=display:flex><span>POST /ai/hakawai-recorded-login-generator/api/v<span style=color:#2aa198>1</span>/continue HTTP/<span style=color:#2aa198>2</span>
 </span></span><span style=display:flex><span>Host: ai.portswigger.net
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>{
@@ -341,7 +341,7 @@ response from AI tells the recorder to enter the username.</p><div class=highlig
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;Home Sign in | Sign up Gruyere: Login User name: USERNAME_PLACEHOLDER Password: •••••••••••• Login&#34;</span>,
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;interactive_elements&#34;</span>: [
 </span></span><span style=display:flex><span>      <span style=color:#586e75>// removed
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>      {
+</span></span></span><span style=display:flex><span>      {
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>154</span>,
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;USERNAME_PLACEHOLDER&#34;</span>,
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;attributes&#34;</span>: <span style=color:#2aa198>&#34;type=text&#34;</span>,
@@ -366,7 +366,7 @@ response from AI tells the recorder to enter the username.</p><div class=highlig
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;screenshot&#34;</span>: <span style=color:#2aa198>&#34;data:image/png;base64,{{ removed }}&#34;</span>
 </span></span><span style=display:flex><span>  }
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>Then AI tells Burp to click the login button.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span></code></pre></div><p>Then AI tells Burp to click the login button.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-json data-lang=json><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;recorded_login_id&#34;</span>: <span style=color:#2aa198>&#34;b416611a-16d5-492d-8a4f-7826774dfec3&#34;</span>,
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;tool_call&#34;</span>: {
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>&#34;toolu_015P9EuahD1iuQR3ETzyU1q4&#34;</span>,
@@ -377,7 +377,7 @@ response from AI tells the recorder to enter the username.</p><div class=highlig
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>  }
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>After clicking login we reach the app and Burp reports back to AI.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span></code></pre></div><p>After clicking login we reach the app and Burp reports back to AI.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-json data-lang=json><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;recorded_login_id&#34;</span>: <span style=color:#2aa198>&#34;b416611a-16d5-492d-8a4f-7826774dfec3&#34;</span>,
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;tool_result&#34;</span>: {
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;tool_id&#34;</span>: <span style=color:#2aa198>&#34;toolu_015P9EuahD1iuQR3ETzyU1q4&#34;</span>,
@@ -389,7 +389,7 @@ response from AI tells the recorder to enter the username.</p><div class=highlig
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;Home | My Snippets | New Snippet | Upload USERNAME_PLACEHOLDER &lt;USERNAME_PLACEHOLDER&gt; | Profile | Sign out Gruyere: Home Refresh Most recent snippets: Cheddar Mac Gruyere is the cheesiest application on the web. All snippets  Homepage Brie Brie is the queen of the cheeses!!! All snippets  Homepage&#34;</span>,
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;interactive_elements&#34;</span>: [
 </span></span><span style=display:flex><span>      <span style=color:#586e75>// removed the elements on the page
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>      {
+</span></span></span><span style=display:flex><span>      {
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;id&#34;</span>: <span style=color:#2aa198>230</span>,
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;text&#34;</span>: <span style=color:#2aa198>&#34;Sign out&#34;</span>,
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>&#34;attributes&#34;</span>: <span style=color:#2aa198>&#34;href=/{{ gruyere-instance-id }}/logout&#34;</span>,
@@ -436,5 +436,5 @@ Framework for Debugging Java":</p><ul><li><a href=https://www.slideshare.net/Cro
 (of course) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more. Contact me via any of these ways.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="me noopener noreferrer" href=https://infosec.exchange/@parsiya title=https://infosec.exchange/@parsiya><i class="fa fa-mastodon fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
-<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/static-analysis/ title="Static Analysis">Static Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/blockchain/ title="Blockchain (lol)">Blockchain (lol)</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title="WinAppDbg (use Frida instead)">WinAppDbg (use Frida instead)</a></li><li><a href=https://awsome.pw title='AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability'>AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2025 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/static-analysis/ title="Static Analysis">Static Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/blockchain/ title="Blockchain (lol)">Blockchain (lol)</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title="WinAppDbg (use Frida instead)">WinAppDbg (use Frida instead)</a></li><li><a href=https://awsome.pw title='AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability'>AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2026 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.</p></footer></body></html>

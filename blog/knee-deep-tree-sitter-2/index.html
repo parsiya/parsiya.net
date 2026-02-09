@@ -1,4 +1,4 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Knee Deep in tree-sitter CST</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.152.2"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/knee-deep-tree-sitter-2/04.png"><meta name=twitter:title content="Knee Deep in tree-sitter CST"><meta name=twitter:description content="We will continue the tree-sitter adventure and tackle the problems we couldn't
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Knee Deep in tree-sitter CST</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.155.3"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/knee-deep-tree-sitter-2/04.png"><meta name=twitter:title content="Knee Deep in tree-sitter CST"><meta name=twitter:description content="We will continue the tree-sitter adventure and tackle the problems we couldn't
 solve with just tree-sitter queries. We can get results with a combination of
 queries and the Concrete Syntax Tree (CST).
 In the
@@ -28,40 +28,40 @@ queries and the Concrete Syntax Tree (CST).</p><p>In the
 populate the submodule, we need it for the last part.</p><h1 id=discovering-indirect-parentchildren-connections>Discovering Indirect Parent/Children Connections
 <a class=header-link href=#discovering-indirect-parentchildren-connections><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>We had problems figuring out the first <code>function_declaration</code> parent of a
 function call. With the CST, we can repeatedly call <code>.parent()</code> on nodes and
-check the type with <code>.kind()</code>.</p><ul><li><code>parent()</code> returns an <code>Option&lt;Node></code>.<ul><li>If we reach a node without a parent, we've reached the top of the code.</li></ul></li><li><code>kind()</code> returns a string.</li></ul><p>This function does the trick.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#2aa198>/// Find the first parent of type `kind`. If the input&#39;s type is the `kind`
+check the type with <code>.kind()</code>.</p><ul><li><code>parent()</code> returns an <code>Option&lt;Node></code>.<ul><li>If we reach a node without a parent, we've reached the top of the code.</li></ul></li><li><code>kind()</code> returns a string.</li></ul><p>This function does the trick.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#2aa198>/// Find the first parent of type `kind`. If the input&#39;s type is the `kind`
 </span></span></span><span style=display:flex><span><span style=color:#2aa198>/// parameter, we will not return it. We&#39;re only interested in parents.
-</span></span></span><span style=display:flex><span><span style=color:#2aa198></span><span style=color:#719e07>pub</span>(<span style=color:#719e07>crate</span>) <span style=color:#719e07>fn</span> <span style=color:#268bd2>parent_of_kind</span><span style=color:#719e07>&lt;</span>&#39;a<span style=color:#719e07>&gt;</span>(n: <span style=color:#719e07>&amp;</span>&#39;a <span style=color:#268bd2>Node</span>, kind: <span style=color:#719e07>&amp;</span><span style=color:#dc322f>str</span>) -&gt; <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span>Node<span style=color:#719e07>&lt;</span>&#39;a<span style=color:#719e07>&gt;&gt;</span> {
+</span></span></span><span style=display:flex><span><span style=color:#719e07>pub</span>(<span style=color:#719e07>crate</span>) <span style=color:#719e07>fn</span> <span style=color:#268bd2>parent_of_kind</span><span style=color:#719e07>&lt;</span>&#39;a<span style=color:#719e07>&gt;</span>(n: <span style=color:#719e07>&amp;</span>&#39;a <span style=color:#268bd2>Node</span>, kind: <span style=color:#719e07>&amp;</span><span style=color:#dc322f>str</span>) -&gt; <span style=color:#b58900>Option</span><span style=color:#719e07>&lt;</span>Node<span style=color:#719e07>&lt;</span>&#39;a<span style=color:#719e07>&gt;&gt;</span> {
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// These work, too.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#586e75>// let mut current_node = n.to_owned();
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#586e75>// let mut current_node = n.clone();
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#268bd2>let</span> <span style=color:#719e07>mut</span> current_node <span style=color:#719e07>=</span> <span style=color:#719e07>*</span>n;
+</span></span></span><span style=display:flex><span>    <span style=color:#586e75>// let mut current_node = n.to_owned();
+</span></span></span><span style=display:flex><span>    <span style=color:#586e75>// let mut current_node = n.clone();
+</span></span></span><span style=display:flex><span>    <span style=color:#268bd2>let</span> <span style=color:#719e07>mut</span> current_node <span style=color:#719e07>=</span> <span style=color:#719e07>*</span>n;
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#719e07>while</span> current_node.parent() <span style=color:#719e07>!=</span> <span style=color:#b58900>None</span> {
 </span></span><span style=display:flex><span>        <span style=color:#586e75>// Already checked if the parent is not None so we can just unwrap.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        current_node <span style=color:#719e07>=</span> current_node.parent().unwrap();
+</span></span></span><span style=display:flex><span>        current_node <span style=color:#719e07>=</span> current_node.parent().unwrap();
 </span></span><span style=display:flex><span>        <span style=color:#586e75>// Check the kind.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        <span style=color:#719e07>if</span> current_node.kind() <span style=color:#719e07>==</span> kind {
+</span></span></span><span style=display:flex><span>        <span style=color:#719e07>if</span> current_node.kind() <span style=color:#719e07>==</span> kind {
 </span></span><span style=display:flex><span>            <span style=color:#719e07>return</span> <span style=color:#b58900>Some</span>(current_node);
 </span></span><span style=display:flex><span>        }
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// return None;
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#b58900>None</span>
+</span></span></span><span style=display:flex><span>    <span style=color:#b58900>None</span>
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><h1 id=function-call-chains>Function Call Chains
 <a class=header-link href=#function-call-chains><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>One of our problems with queries was not being to skip nodes. I guessed that we
-can start from function calls and go up. We're going to exactly do that.</p><ol><li>Capture <code>call_expression</code> nodes with queries.</li><li>Go up the tree until the first parent that is a <code>function_declaration</code>.</li></ol><p>The query is simple.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=display:flex><span>(call_expression) <span style=color:#268bd2>@callee</span>
-</span></span></code></pre></div><p><code>child_by_field_name("name")</code> returns the field "name" as an <code>Option&lt;Node></code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#586e75>// Assuming node is a tree_sitter::Node.
+can start from function calls and go up. We're going to exactly do that.</p><ol><li>Capture <code>call_expression</code> nodes with queries.</li><li>Go up the tree until the first parent that is a <code>function_declaration</code>.</li></ol><p>The query is simple.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-ts data-lang=ts><span style=display:flex><span>(call_expression) <span style=color:#268bd2>@callee</span>
+</span></span></code></pre></div><p><code>child_by_field_name("name")</code> returns the field "name" as an <code>Option&lt;Node></code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#586e75>// Assuming node is a tree_sitter::Node.
 </span></span></span><span style=display:flex><span><span style=color:#586e75>// Get the &#34;name&#34; field of a node.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#719e07>if</span> <span style=color:#268bd2>let</span> <span style=color:#b58900>Some</span>(caller) <span style=color:#719e07>=</span> node.child_by_field_name(<span style=color:#2aa198>&#34;name&#34;</span>) {
+</span></span></span><span style=display:flex><span><span style=color:#719e07>if</span> <span style=color:#268bd2>let</span> <span style=color:#b58900>Some</span>(caller) <span style=color:#719e07>=</span> node.child_by_field_name(<span style=color:#2aa198>&#34;name&#34;</span>) {
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Do something if the node has such a field.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>} <span style=color:#719e07>else</span> {
+</span></span></span><span style=display:flex><span>} <span style=color:#719e07>else</span> {
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// The node doesn&#39;t have this field.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>}
+</span></span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>After finding the parent, we can grab the function's information in the
 <code>function</code> field of the <code>call_expression</code>. The tree for <code>Child2()</code> is:</p><pre tabindex=0><code>call_expression             // Child2()
   function: identifier      // Child2
   arguments: argument_list  // ()
-</code></pre><p>Running it against the following code:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#719e07>package</span> main
+</code></pre><p>Running it against the following code:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#719e07>package</span> main
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>Parent</span>() {
 </span></span><span style=display:flex><span>	<span style=color:#268bd2>child</span>()
@@ -76,7 +76,7 @@ can start from function calls and go up. We're going to exactly do that.</p><ol>
 </span></span><span style=display:flex><span><span style=color:#268bd2>func</span> <span style=color:#268bd2>child2</span>() {}
 </span></span></code></pre></div><p>The result is correct. Run <code>cargo run -- 03</code>.</p><span class=caption-wrapper><img class=caption src=01.png title="cargo run -- 03" alt="cargo run -- 03">
 <span class=caption-text>cargo run -- 03</span></span><h2 id=methods-and-imports>Methods and Imports
-<a class=header-link href=#methods-and-imports><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>This doesn't count methods and imported functions like the following code:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#719e07>package</span> main
+<a class=header-link href=#methods-and-imports><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>This doesn't count methods and imported functions like the following code:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#719e07>package</span> main
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#719e07>import</span> <span style=color:#2aa198>&#34;fmt&#34;</span>
 </span></span><span style=display:flex><span>
@@ -96,15 +96,15 @@ of the <code>function</code> field is not an <code>identifier</code> anymore. We
 <code>selector_expression</code>. The name of the import is in <code>operand</code> and the function
 name is in the <code>field</code>.</p><p>I have simplified our code by just unwrapping those options. I am relying on the
 tree-sitter grammar catching malformed code during parsing, which, IMO, is a
-sane assumption.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#586e75>// (call_expression) always has a &#34;function&#34; field so we can
+sane assumption.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#586e75>// (call_expression) always has a &#34;function&#34; field so we can
 </span></span></span><span style=display:flex><span><span style=color:#586e75>// simplify our code and just unwrap.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>let</span> callee <span style=color:#719e07>=</span> current_node.child_by_field_name(<span style=color:#2aa198>&#34;function&#34;</span>).unwrap();
+</span></span></span><span style=display:flex><span><span style=color:#268bd2>let</span> callee <span style=color:#719e07>=</span> current_node.child_by_field_name(<span style=color:#2aa198>&#34;function&#34;</span>).unwrap();
 </span></span><span style=display:flex><span><span style=color:#719e07>match</span> callee.kind() {
 </span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;identifier&#34;</span> <span style=color:#719e07>=&gt;</span> {
 </span></span><span style=display:flex><span>        child_function.name <span style=color:#719e07>=</span> node_text(callee, src);
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Same with named fields of (selector_expression).
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#2aa198>&#34;selector_expression&#34;</span> <span style=color:#719e07>=&gt;</span> {
+</span></span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;selector_expression&#34;</span> <span style=color:#719e07>=&gt;</span> {
 </span></span><span style=display:flex><span>        child_function.package <span style=color:#719e07>=</span>
 </span></span><span style=display:flex><span>            node_text(callee.child_by_field_name(<span style=color:#2aa198>&#34;operand&#34;</span>).unwrap(), src);
 </span></span><span style=display:flex><span>
@@ -131,30 +131,30 @@ Run <code>cargo run -- 04</code>.</p><span class=caption-wrapper><img class=capt
 allows us to efficiently go through the tree. We can walk through the input node
 and all of its children. Unfortunately, the docs only have a little bit of info
 about it at <a href=https://tree-sitter.github.io/tree-sitter/using-parsers#walking-trees-with-tree-cursors target=_blank rel="noreferrer noopener">Walking Trees with Tree Cursors</a>.</p><p>Let's try to walk the entire tree and spit out the nodes. I don't want this to
-turn into leetcode bullshit thing so use whatever you prefer.</p><ol><li>Go down the tree until you reach a leaf (node without a child).</li><li>Go to its next sibling and continue going down.</li><li>If there are no more siblings, go back to the parent and go to a parent's sibling.</li><li>If we've reached the root, we're done.</li></ol><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rs data-lang=rs><span style=display:flex><span>&#39;outer: <span style=color:#268bd2>loop</span> {
+turn into leetcode bullshit thing so use whatever you prefer.</p><ol><li>Go down the tree until you reach a leaf (node without a child).</li><li>Go to its next sibling and continue going down.</li><li>If there are no more siblings, go back to the parent and go to a parent's sibling.</li><li>If we've reached the root, we're done.</li></ol><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rs data-lang=rs><span style=display:flex><span>&#39;outer: <span style=color:#268bd2>loop</span> {
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// 0. Add the current node to the map.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    node_map.insert(c.node(), node_text(c.node(), src));
+</span></span></span><span style=display:flex><span>    node_map.insert(c.node(), node_text(c.node(), src));
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// 1. Go to its child and continue.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> c.goto_first_child() {
+</span></span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> c.goto_first_child() {
 </span></span><span style=display:flex><span>        <span style=color:#719e07>continue</span> &#39;outer;
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// 2. We&#39;ve reached a leaf (node without a child). We will go to a sibling.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#719e07>if</span> c.goto_next_sibling() {
+</span></span></span><span style=display:flex><span>    <span style=color:#719e07>if</span> c.goto_next_sibling() {
 </span></span><span style=display:flex><span>        <span style=color:#719e07>continue</span> &#39;outer;
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// 3. If there are no more siblings, we need to go back up.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    &#39;inner: <span style=color:#268bd2>loop</span> {
+</span></span></span><span style=display:flex><span>    &#39;inner: <span style=color:#268bd2>loop</span> {
 </span></span><span style=display:flex><span>        <span style=color:#586e75>// 4. Check if we&#39;ve reached the root node. If so, we&#39;re done.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        <span style=color:#719e07>if</span> <span style=color:#719e07>!</span>c.goto_parent() {
+</span></span></span><span style=display:flex><span>        <span style=color:#719e07>if</span> <span style=color:#719e07>!</span>c.goto_parent() {
 </span></span><span style=display:flex><span>            <span style=color:#719e07>break</span> &#39;outer;
 </span></span><span style=display:flex><span>        }
 </span></span><span style=display:flex><span>        <span style=color:#586e75>// 5. Go to the previous node&#39;s sibling.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        <span style=color:#719e07>if</span> c.goto_next_sibling() {
+</span></span></span><span style=display:flex><span>        <span style=color:#719e07>if</span> c.goto_next_sibling() {
 </span></span><span style=display:flex><span>            <span style=color:#586e75>// And break out of the inner loop.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>            <span style=color:#719e07>break</span> &#39;inner;
+</span></span></span><span style=display:flex><span>            <span style=color:#719e07>break</span> &#39;inner;
 </span></span><span style=display:flex><span>        }
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>}
@@ -168,11 +168,11 @@ as the one we had and it is. Run <code>cargo run -- 05</code>.</p><span class=ca
 <a class=header-link href=#types><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>So, back to our good old friend, types. Our issue with types was recursion. The
 type of a <code>slice_type</code> (e.g., <code>[]int</code>) could be another type. We couldn't
 extract them with queries.</p><p>Here, I created a function that parses a subset of possible types. It's a
-monstrosity that looks like this.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#2aa198>/// Represents a Go type.
-</span></span></span><span style=display:flex><span><span style=color:#2aa198></span><span style=color:#719e07>#[derive(Debug, Clone, Serialize, Deserialize)]</span>
+monstrosity that looks like this.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#2aa198>/// Represents a Go type.
+</span></span></span><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Clone, Serialize, Deserialize)]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>pub</span> <span style=color:#719e07>enum</span> <span style=color:#268bd2>GoType</span> {
 </span></span><span style=display:flex><span>    SimpleType(SimpleType), <span style=color:#586e75>// Lone (type_identifier)
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    Slice(Slice),
+</span></span></span><span style=display:flex><span>    Slice(Slice),
 </span></span><span style=display:flex><span>    Pointer(Pointer),
 </span></span><span style=display:flex><span>    Array(Array),
 </span></span><span style=display:flex><span>    Map(Map),
@@ -182,7 +182,7 @@ monstrosity that looks like this.</p><div class=highlight><pre tabindex=0 style=
 </span></span></code></pre></div><p>We're gonna ignore <code>parameter_list</code> and only focus on functions that return a
 single value here. A <code>parameter_list</code> is just a list of variable name and types.</p><p>Then I created a function to parse the type. It would call itself when it
 reached a node that was another type.</p><p>Some parts are simple. If you see a <code>type_identifier</code>, it's a string that
-contains a type without any gimmicks.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#719e07>match</span> n_kind {
+contains a type without any gimmicks.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#719e07>match</span> n_kind {
 </span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;type_identifier&#34;</span> <span style=color:#719e07>=&gt;</span> <span style=color:#b58900>Ok</span>(GoType::SimpleType(SimpleType {
 </span></span><span style=display:flex><span>        internal_type: <span style=color:#268bd2>n_text</span>,
 </span></span><span style=display:flex><span>    })),
@@ -193,11 +193,11 @@ contains a type without any gimmicks.</p><div class=highlight><pre tabindex=0 st
 call and return it as a <code>Slice</code> struct.</p><p><code>map_or_else</code> is an interesting combinator. The first argument is executed if
 there's an error. If not, the second part is. Because I am returning from the
 function, it will return an error if I cannot parse the type. If parsing is
-successful, we will re turn a <code>slice_type</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#719e07>match</span> n_kind {
+successful, we will re turn a <code>slice_type</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#719e07>match</span> n_kind {
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// It&#39;s a slice. The `element` field has the type.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#2aa198>&#34;slice_type&#34;</span> <span style=color:#719e07>=&gt;</span> {
+</span></span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;slice_type&#34;</span> <span style=color:#719e07>=&gt;</span> {
 </span></span><span style=display:flex><span>        <span style=color:#586e75>// Get the element field.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        <span style=color:#719e07>if</span> <span style=color:#268bd2>let</span> <span style=color:#b58900>Some</span>(element) <span style=color:#719e07>=</span> n.child_by_field_name(<span style=color:#2aa198>&#34;element&#34;</span>) {
+</span></span></span><span style=display:flex><span>        <span style=color:#719e07>if</span> <span style=color:#268bd2>let</span> <span style=color:#b58900>Some</span>(element) <span style=color:#719e07>=</span> n.child_by_field_name(<span style=color:#2aa198>&#34;element&#34;</span>) {
 </span></span><span style=display:flex><span>            parse_go_type(element, src).map_or_else(
 </span></span><span style=display:flex><span>                <span style=color:#719e07>|</span>e<span style=color:#719e07>|</span> {
 </span></span><span style=display:flex><span>                    TypeError::wrap_string(<span style=color:#268bd2>format!</span>(
@@ -206,7 +206,7 @@ successful, we will re turn a <code>slice_type</code>.</p><div class=highlight><
 </span></span><span style=display:flex><span>                    ))
 </span></span><span style=display:flex><span>                },
 </span></span><span style=display:flex><span>                <span style=color:#586e75>// Return a slice with the parsed type.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>                <span style=color:#719e07>|</span>s_type<span style=color:#719e07>|</span> {
+</span></span></span><span style=display:flex><span>                <span style=color:#719e07>|</span>s_type<span style=color:#719e07>|</span> {
 </span></span><span style=display:flex><span>                    <span style=color:#b58900>Ok</span>(GoType::Slice(Slice {
 </span></span><span style=display:flex><span>                        internal_type: <span style=color:#b58900>Box</span>::new(s_type),
 </span></span><span style=display:flex><span>                    }))
@@ -214,7 +214,7 @@ successful, we will re turn a <code>slice_type</code>.</p><div class=highlight><
 </span></span><span style=display:flex><span>            )
 </span></span><span style=display:flex><span>        } <span style=color:#719e07>else</span> {
 </span></span><span style=display:flex><span>            <span style=color:#586e75>// Return an error if the element field doesn&#39;t exist.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>            TypeError::wrap_string(<span style=color:#268bd2>format!</span>(
+</span></span></span><span style=display:flex><span>            TypeError::wrap_string(<span style=color:#268bd2>format!</span>(
 </span></span><span style=display:flex><span>                <span style=color:#2aa198>&#34;Got a </span><span style=color:#2aa198>{}</span><span style=color:#2aa198> without an element field, text: </span><span style=color:#2aa198>{}</span><span style=color:#2aa198>&#34;</span>,
 </span></span><span style=display:flex><span>                n_kind, n_text,
 </span></span><span style=display:flex><span>            ))
@@ -222,12 +222,12 @@ successful, we will re turn a <code>slice_type</code>.</p><div class=highlight><
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p><code>map_type</code> is similar. For <code>map[key]value</code>, we have two fields: <code>key</code> and
-<code>value</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#719e07>match</span> n_kind {
+<code>value</code>.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#719e07>match</span> n_kind {
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// It&#39;s a map.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#2aa198>&#34;map_type&#34;</span> <span style=color:#719e07>=&gt;</span> {
+</span></span></span><span style=display:flex><span>    <span style=color:#2aa198>&#34;map_type&#34;</span> <span style=color:#719e07>=&gt;</span> {
 </span></span><span style=display:flex><span>        <span style=color:#586e75>// Assuming parsing was correct and map_type has two children, key
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        <span style=color:#586e75>// and value.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>        <span style=color:#268bd2>let</span> k <span style=color:#719e07>=</span> n.child_by_field_name(<span style=color:#2aa198>&#34;key&#34;</span>).unwrap();
+</span></span></span><span style=display:flex><span>        <span style=color:#586e75>// and value.
+</span></span></span><span style=display:flex><span>        <span style=color:#268bd2>let</span> k <span style=color:#719e07>=</span> n.child_by_field_name(<span style=color:#2aa198>&#34;key&#34;</span>).unwrap();
 </span></span><span style=display:flex><span>        <span style=color:#268bd2>let</span> v <span style=color:#719e07>=</span> n.child_by_field_name(<span style=color:#2aa198>&#34;value&#34;</span>).unwrap();
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>        parse_go_type(k, src).map_or_else(
@@ -238,7 +238,7 @@ successful, we will re turn a <code>slice_type</code>.</p><div class=highlight><
 </span></span><span style=display:flex><span>                ))
 </span></span><span style=display:flex><span>            },
 </span></span><span style=display:flex><span>            <span style=color:#586e75>// If key type was parsed correctly, parse the value type.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>            <span style=color:#719e07>|</span>key_type<span style=color:#719e07>|</span> {
+</span></span></span><span style=display:flex><span>            <span style=color:#719e07>|</span>key_type<span style=color:#719e07>|</span> {
 </span></span><span style=display:flex><span>                parse_go_type(v, src).map_or_else(
 </span></span><span style=display:flex><span>                    <span style=color:#719e07>|</span>e<span style=color:#719e07>|</span> {
 </span></span><span style=display:flex><span>                        TypeError::wrap_string(<span style=color:#268bd2>format!</span>(
@@ -247,7 +247,7 @@ successful, we will re turn a <code>slice_type</code>.</p><div class=highlight><
 </span></span><span style=display:flex><span>                        ))
 </span></span><span style=display:flex><span>                    },
 </span></span><span style=display:flex><span>                    <span style=color:#586e75>// Both key and value types were parsed correctly. Return a Map.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>                    <span style=color:#719e07>|</span>value_type<span style=color:#719e07>|</span> {
+</span></span></span><span style=display:flex><span>                    <span style=color:#719e07>|</span>value_type<span style=color:#719e07>|</span> {
 </span></span><span style=display:flex><span>                        <span style=color:#b58900>Ok</span>(GoType::Map(Map {
 </span></span><span style=display:flex><span>                            key: <span style=color:#b58900>Box</span>::new(key_type),
 </span></span><span style=display:flex><span>                            value: <span style=color:#b58900>Box</span>::new(value_type),
@@ -259,7 +259,7 @@ successful, we will re turn a <code>slice_type</code>.</p><div class=highlight><
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>This allows us to parse something like this <code>[]map[string][]int</code>, a slice of
-maps where the key is a string and the value is a slice of ints. The result is:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+maps where the key is a string and the value is a slice of ints. The result is:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-json data-lang=json><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  <span style=color:#268bd2>&#34;Slice&#34;</span>: {
 </span></span><span style=display:flex><span>    <span style=color:#268bd2>&#34;internal_type&#34;</span>: {
 </span></span><span style=display:flex><span>      <span style=color:#268bd2>&#34;Map&#34;</span>: {
@@ -290,7 +290,7 @@ head src/type_sitter_example/type_sitter_go/go.rs
 
 cargo add type-sitter-lib --features yak-sitter
 cargo add yak-sitter
-</code></pre><p>The generated code is similar to what we did:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]</span>
+</code></pre><p>The generated code is similar to what we did:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#719e07>#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>#[allow(non_camel_case_types)]</span>
 </span></span><span style=display:flex><span><span style=color:#719e07>pub</span> <span style=color:#719e07>enum</span> <span style=color:#268bd2>SimpleType</span><span style=color:#719e07>&lt;</span>&#39;tree<span style=color:#719e07>&gt;</span> {
 </span></span><span style=display:flex><span>    ArrayType(ArrayType<span style=color:#719e07>&lt;</span>&#39;tree<span style=color:#719e07>&gt;</span>),
@@ -313,22 +313,22 @@ tree-sitter tree and add the text. In fact, one of the extra info is the
 original source code instead of just the byte offsets.</p><p>I was not able to get it to work without yak-sitter (e.g., the version of
 structs that work with <code>tree-sitter</code> nodes). I managed to create a working
 example based on a test at
-<a href=https://github.com/Jakobeha/type-sitter/blob/main/type-sitter-lib/tests/use_node_types.rs#L11 target=_blank rel="noreferrer noopener">https://github.com/Jakobeha/type-sitter/blob/main/type-sitter-lib/tests/use_node_types.rs#L11</a>.</p><p>We can do something like this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#586e75>// Now we can go through the nodes and filter function return values.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span><span style=color:#268bd2>let</span> func_returns <span style=color:#719e07>=</span> yak_root
+<a href=https://github.com/Jakobeha/type-sitter/blob/main/type-sitter-lib/tests/use_node_types.rs#L11 target=_blank rel="noreferrer noopener">https://github.com/Jakobeha/type-sitter/blob/main/type-sitter-lib/tests/use_node_types.rs#L11</a>.</p><p>We can do something like this:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-rs data-lang=rs><span style=display:flex><span><span style=color:#586e75>// Now we can go through the nodes and filter function return values.
+</span></span></span><span style=display:flex><span><span style=color:#268bd2>let</span> func_returns <span style=color:#719e07>=</span> yak_root
 </span></span><span style=display:flex><span>    .children(<span style=color:#719e07>&amp;</span><span style=color:#719e07>mut</span> yak_root.walk())
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Go through all the children and unwrap them.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    .filter_map(<span style=color:#719e07>|</span>child<span style=color:#719e07>|</span> child.unwrap().regular())
+</span></span></span><span style=display:flex><span>    .filter_map(<span style=color:#719e07>|</span>child<span style=color:#719e07>|</span> child.unwrap().regular())
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Filter (function_declaration) statements.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    .filter_map(<span style=color:#719e07>|</span>n<span style=color:#719e07>|</span> n.function_declaration())
+</span></span></span><span style=display:flex><span>    .filter_map(<span style=color:#719e07>|</span>n<span style=color:#719e07>|</span> n.function_declaration())
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Get the &#34;result&#34; field for each (function_declaration)
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    .filter_map(<span style=color:#719e07>|</span>n<span style=color:#719e07>|</span> n.result().flatten())
+</span></span></span><span style=display:flex><span>    .filter_map(<span style=color:#719e07>|</span>n<span style=color:#719e07>|</span> n.result().flatten())
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// The result could be a (parameter_list) or (simple_type).
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    <span style=color:#586e75>// We&#39;re gonna ignore parameter_list here and only select simple types.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    .filter_map(<span style=color:#719e07>|</span>n<span style=color:#719e07>|</span> n.simple_type())
+</span></span></span><span style=display:flex><span>    <span style=color:#586e75>// We&#39;re gonna ignore parameter_list here and only select simple types.
+</span></span></span><span style=display:flex><span>    .filter_map(<span style=color:#719e07>|</span>n<span style=color:#719e07>|</span> n.simple_type())
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Convert to text.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    .map(<span style=color:#719e07>|</span>n<span style=color:#719e07>|</span> n.text())
+</span></span></span><span style=display:flex><span>    .map(<span style=color:#719e07>|</span>n<span style=color:#719e07>|</span> n.text())
 </span></span><span style=display:flex><span>    <span style=color:#586e75>// Collect in a vector.
-</span></span></span><span style=display:flex><span><span style=color:#586e75></span>    .collect::<span style=color:#719e07>&lt;</span><span style=color:#b58900>Vec</span><span style=color:#719e07>&lt;</span>_<span style=color:#719e07>&gt;&gt;</span>();
+</span></span></span><span style=display:flex><span>    .collect::<span style=color:#719e07>&lt;</span><span style=color:#b58900>Vec</span><span style=color:#719e07>&lt;</span>_<span style=color:#719e07>&gt;&gt;</span>();
 </span></span></code></pre></div><p>We go through the nodes and filter the ones that are <code>function_declaration</code>. Then
 go through the <code>result</code> field and finally get the <code>simple_types</code> (note, we're
 gonna miss when the result is a <code>parameter_list</code>).</p><p>You can run the example with</p><pre tabindex=0><code>cd src/type_sitter_example
@@ -341,5 +341,5 @@ the previous blog that we could solve with queries. Now we can:</p><ol><li>Find 
 (of course) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more. Contact me via any of these ways.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="me noopener noreferrer" href=https://infosec.exchange/@parsiya title=https://infosec.exchange/@parsiya><i class="fa fa-mastodon fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
-<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/static-analysis/ title="Static Analysis">Static Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/blockchain/ title="Blockchain (lol)">Blockchain (lol)</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title="WinAppDbg (use Frida instead)">WinAppDbg (use Frida instead)</a></li><li><a href=https://awsome.pw title='AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability'>AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2025 Parsia - <a href=https://parsiya.net/license/>License</a> -
+<a target=_blank rel="noopener noreferrer" href=https://www.linkedin.com/in/parsiya title=https://www.linkedin.com/in/parsiya><i class="fa fa-linkedin fa-3x"></i></a></li></ul><section class=odd><h1>Collections</h1><li><a href=https://parsiya.net/categories/thick-client-proxying/ title="Thick Client Proxying">Thick Client Proxying</a></li><li><a href=https://parsiya.net/categories/writeup/ title=CTFs/Writeups>CTFs/Writeups</a></li><li><a href=https://parsiya.net/categories/attack-surface-analysis/ title="Attack Surface Analysis">Attack Surface Analysis</a></li><li><a href=https://parsiya.net/categories/static-analysis/ title="Static Analysis">Static Analysis</a></li><li><a href=https://parsiya.net/categories/bug-bounty/ title="Bug Bounty">Bug Bounty</a></li><li><a href=https://parsiya.net/categories/blockchain/ title="Blockchain (lol)">Blockchain (lol)</a></li><li><a href=https://parsiya.net/categories/crypto/ title=Crypto(graphy)>Crypto(graphy)</a></li><li><a href=https://parsiya.net/categories/burp-extension/ title="Burp Extension Development">Burp Extension Development</a></li><li><a href=https://parsiya.net/categories/automation/ title=Automation>Automation</a></li><li><a href=https://parsiya.net/categories/reverse-engineering/ title="Reverse Engineering">Reverse Engineering</a></li><li><a href=https://parsiya.net/categories/winappdbg/ title="WinAppDbg (use Frida instead)">WinAppDbg (use Frida instead)</a></li><li><a href=https://awsome.pw title='AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability'>AWSome.pw - S3 bucket squatting - my very "legit" branded vulnerability</a></li></section></aside></div></div><footer role=contentinfo><p>Copyright &copy; 2026 Parsia - <a href=https://parsiya.net/license/>License</a> -
 <span class=credit>Powered by <a target=_blank href=https://gohugo.io rel="noopener noreferrer">Hugo</a> and <a target=_blank href=https://github.com/parsiya/hugo-octopress/ rel="noopener noreferrer">Hugo-Octopress</a> theme.</p></footer></body></html>
