@@ -92,8 +92,15 @@ to sound like everyone else.
 
 My LLM usage in this context is:
 
-1. Catching spelling and punctuation mistakes.
+1. Catching spelling and punctuation mistakes. See the source of [refine][refine] skill.
+    1. Highlight the text
+    2. Type `/refine` in GitHub Copilot Chat.
+    3. Review the edits.
 2. Formatting text (e.g., convert this text into a numbered list).
+    1. [Markdown formatting instructions][mark].
+
+[refine]: https://github.com/parsiya/parsiya.net/tree/main/.github/skills/refine/SKILLS.md
+[mark]:https://github.com/parsiya/parsiya.net/tree/main/.github/instructions/markdown.instructions.md
 
 ### Tracking
 I have no tracking in this website. It's static HTML by Hugo and only a couple
