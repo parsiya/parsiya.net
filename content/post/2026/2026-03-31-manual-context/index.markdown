@@ -11,20 +11,20 @@ categories:
 - Soapbox
 ---
 
-I wake up and read the news. Daniel Miessler has pronounced my job dead three
+I wake up and read the news. Daniel Miessler has only declared my job dead three
 times this week. Another frontier lab has found a bazillion bugs. Half of
-LinkedIn is "SAST is dead." Welcome to the age of AI.
+LinkedIn is "SAST is dead." The war is, well. Welcome to the age of AI.
 
-In this blog I reflect on "Manual Work is a Bug" and on how my workflow has
-changed. I introduce the (not so novel concept) of "AI-Docs." A knowledge base
-for both humans and AI. You should not have to manually fill the context except
-during the initial creation; the LLM should have access to your knowledge base
+In this blog I reflect on "Manual Work is a Bug" and on how AI has changed my
+workflow. I introduce the (not so novel concept) of "AI-Docs." A knowledge base
+for both humans and AI. Similar to our manual knowledge base, you should not
+have to manually fill the context except during the initial creation; the LLM
+should have everything it needs on hand.
 
 <!--more-->
 
-Note: I know there are other forms of AI, but I will use LLM and AI
-interchangeably in this post. Please don't tell Yann LeCun. He has 1 billion in
-seed funding and powerful friends.
+Note: I will use LLM and AI interchangeably in this post. Please don't tell
+Yann LeCun. He has 1 billion in seed funding and powerful friends.
 
 # .nfo
 I've decided to write more and more loosely. I've become this sort of influencer
@@ -34,14 +34,14 @@ the bonus, not the goal.
 
 [tl]: https://tldrsec.com/
 
-I had an online edgy teenage phase because I chose the wrong country and time
+I never had an online edgy teenage phase because I chose the wrong country and time
 to be born in. I programmed on paper until 19 and my family got our first
 computer at 25[^ph]. So please bear with me as I cosplay as a scene hacker 20
 years too late.
 
 [^ph]: I've actually written something about paper programming that I might submit to phrack.
 
-## -|_ greetz
+## [greetz]
 Those who made this possible:
 
 * Me: Your illustrious host.
@@ -51,7 +51,7 @@ Those who made this possible:
 [mai]: https://www.youtube.com/watch?v=IhCDK_pSjnk
 [dead]: https://parsiya.io/literature/bookreviews/#deadmanshand
 
-## -|_ shootz
+## [anti-greetz]
 New AI-Slop patterns:
 
 * `it's not ___, it's ___.`
@@ -59,9 +59,9 @@ New AI-Slop patterns:
 
 # Why Should I Read This?
 [Manual Work is a Bug][man] is my favorite technical post of all time. It's a
-permanent link on top of the blog. I don't trust LLMs to do the right thing so
-I want to fill their context with correct info automatically. So, `Manual
-Context is a Bug`.
+permanent link on top of the blog. I want to use LLMs to create, consume, and
+cultivate clones so I fill LLM context with correct info automatically. Because
+`Manual Context is a Bug`.
 
 [man]: https://queue.acm.org/detail.cfm?id=3197520
 
