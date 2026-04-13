@@ -15,7 +15,8 @@ categories:
 I used GPT-5.4 and Claude Opus 4.6 to reverse engineer the Aula F108 Pro
 keyboard's software using Ghidra MCP. This is how I did it, what setbacks I had,
 and how (A)I borked the keyboard's screen despite constant supervision and
-review.
+review. A common issue with the keyboard is that it ACKs bad messages, then
+silently drops them. Did Gene Wolfe write this firmware?
 
 I also introduce the novel wording of `(A)I`, meaning both I and AI did
 something, because everyone is making things up, why not me? I assume I need to
@@ -30,7 +31,8 @@ give it a name, a logo, and a website to become an AIfluencer?
 
 ## [greetz]
 
-* [Adam from MORSE](https://hackback.zip/) for review and feedback[^ft-mo].
+* [Adam from MORSE](https://hackback.zip/) for review and feedback.
+  * Yes, we're allowed to talk to other teams.
 * LaurieWired for [GhidraMCP][ghidra-mcp].
 * Song: [Mina Deris - Iranam][deris].
 * Book: [Alastair Reynolds - Anthology - Beyond The Aquila Rift][aquila].
@@ -140,15 +142,16 @@ tasks. GPT-5.4 was set to high reasoning from the default medium and Claude Opus
 simple reversing.
 
 I am sure people have their own favorites, but for my use cases at work and home
-they are very close. At work I mostly use GPT-5.4 in our own subscription, and
-at home I use Claude Opus 4.6 via GitHub Copilot. GPT-5.4 yaps more, but I have
-instructions to cut the talking and summaries to a minimum.
+these two are very close. At work I mostly use GPT-5.4 in our own subscription,
+and at home I use Claude Opus 4.6 via GitHub Copilot. GPT-5.4 yaps more, but I
+have instructions to cut the talking and summaries to a minimum.
 
 ## LLM Usage and Hand Holding
 I oversaw every step and read the (decompiled) code along with the LLM
 reasoning. Both models were very good at understanding decompiled code and using
-the GhidraMCP to follow references. Much better than me, but I've not been a
-reverse engineer for almost a decade.
+the GhidraMCP to navigate the binary. Much better than me, but I've not been a
+reverse engineer for almost a decade so my opinion is not correct. I will just
+leave you with this quote.
 
 {{< blockquote author=" - Lady Deathwhisper" source="World of Warcraft the videogame" >}}
 The sooner you come to accept your condition as a defect, the sooner you will find yourselves in a position to transcend it.
@@ -211,7 +214,7 @@ LinkedIn comments. For the rest, here are the challenges:
 
 ## The LCD
 F108 Pro comes with an LCD, I think it is the only difference between the Pro
-and non-Pro F108. It's your typical keyboard screen LCD. It's janky, small and
+and non-Pro F108. It's your typical keyboard screen LCD. It's funky, small and
 has limited uses. This one is 240x135. You can see the charge, time, and also
 use it to configure the keyboard. You can also upload an animated gif to it and
 this is where disaster struck.
@@ -235,14 +238,14 @@ data.
 I don't think I could have figured this all by myself, lol.
 
 ### Validating the File
-The keyboard crashed after the first try. All lights died and the LCD went black.
-Luckily unplugging and replugging the keyboard brought it back.
+The keyboard crashed after the first try. All lights died and the LCD went
+black. Luckily unplugging and replugging the keyboard brought it back.
 
 First I thought the image was not correct. The AI was using the Go tool to
-generate the image and immediately upload it. There was no validation. 
-So I asked AI to split image generation and upload. But this means I need to
-trust the same library that generated the image to verify it. Long story short,
-the image and conversion were correct.
+generate the image and immediately upload it. There was no validation. So I
+asked AI to split image generation and upload. But this means I need to trust
+the same library that generated the image to verify it. Long story short, the
+image and conversion were correct.
 
 This reminds me of the joke about the famous [Bundle of Sticks][bu] story. The
 sons keep breaking the sticks no matter how many the father bundles together and
@@ -282,8 +285,8 @@ transferred successfully. The keyboard showed a progress bar, then the animation
 started playing. It worked.
 
 Then I turned the knob and **the menus were gone**, wut?! The menus were there
-but I just couldn't see them, instead I would see the last frames of the gif. If
-I pressed the knob, I was in a menu but I didn't know where.
+but I just couldn't see them. Instead, I would see the last frames of the gif.
+If I pressed the knob, I was in a menu but I didn't know where.
 
 I thought I could fix it by uploading another gif so I asked AI to create and
 upload a one frame gif. It didn't work. You can see the one frame red gif along
@@ -297,7 +300,7 @@ with the corrupted menus in this video.
 I thought I could trust the gif embedded with the app. But it looks like the app
 actually only checks and sends the first `141` frames. There's a config value
 `gif_maxframes="141"` in `rgb-keyboard.xml`. Furthermore, if you try to upload
-the embedded gif with the original software it will warn that you can only
+the embedded gif with the original software, it will warn that you can only
 upload 141 frames.
 
 Later I realized the same software is used for multiple keyboards so there are
@@ -308,7 +311,7 @@ The keyboard's firmware has no bounds checking. It blindly writes whatever you
 send via the upload protocol to SPI flash. It looks like the 141-frame limit
 corresponds to the physical space allocated for the image slot in the flash
 layout. Everything past frame 141 overflowed into the menu graphics and
-overwrote the keyboard screen's menu.
+overwrote the menus on the keyboard's screen.
 
 ### What Didn't Fix This Mess
 I tried everything I could think of:
@@ -358,24 +361,24 @@ Sidelight sender
 Sends sidelight config. Commands: 04 18, 04 13, 00 80, 04 02, 04 F0
 ```
 
-So the utility was based on this protocol. The keyboard returned a correct ACK
-when we sent these commands to change the sidelight but nothing happened. It was
+So the utility was based on this protocol. The keyboard acknowledged the
+sidelight commands, but nothing happened. It was
 only after I yanked the LLM and looked around in the rest of the files that (A)I
 discovered `sidelight="0"` in `layouts/rgb-keyboard.xml`. Looking at the other
-keyboard software from Epomaker/Aula I realized this software is probably used
+keyboard software from Epomaker/Aula, I realized this software is probably used
 for many Aula/Epomaker keyboards and these are customizations for this keyboard.
 
 In our defense:
 
 1. The Ghidra function exists.
-2. The keyboard returned ACK.
+2. The keyboard acknowledged the commands.
 3. While the keyboard manual mentions we can change the bar and side lights with
    keyboard shortcuts, it's also possible to change the programmable keys via
    software with keyboard shortcuts, so I thought we could do both for the other
    two light zones.
 
-Both side strips and the light bar can only be programmed with the keyboard
-shortcut keys and not software.
+Both side strips and the light bar can only be configured via keyboard
+shortcuts, not software.
 
 ### Related Documentation
 
@@ -387,9 +390,9 @@ shortcut keys and not software.
 [side]: https://github.com/parsiya/f108-pro/blob/main/ai-docs/sidelight-investigation.md
 
 ## Two Bytes Walk Into a Buffer in the Wrong Order
-You can also remap keys. Similar to the above we would send commands and the
-keyboard returned ACKs but nothing changed. I thought we had gotten the key
-remap correctly. It was kind of straightforward. See the documented protocol at
+You can also remap keys. Similar to the above, we would send commands and the
+keyboard acknowledged them, but nothing changed. I thought we'd gotten the key
+remap right. It was kind of straightforward. See the documented protocol at
 [ai-docs/key-remap-protocol.md][remap-prot] and the key map at
 [ai-docs/key-map.md][keymap].
 
@@ -397,10 +400,12 @@ remap correctly. It was kind of straightforward. See the documented protocol at
 [keymap]: https://github.com/parsiya/f108-pro/blob/main/ai-docs/key-map.md
 
 We need to build a 576-byte remap buffer and send it in 64-byte HID feature
-reports. The report ended with a two-byte trailer that the Ghidra decompilation
-showed as `0x55AA`. Everything looked fine and the commands were very similar to
-the other ones that were working. The keyboard replied with ACK but it was not
-working.
+reports. These are fixed-size HID configuration packets, not normal keypress
+events, and the vendor software uses them to push settings like remaps to the
+device. The report ended with a two-byte trailer that the Ghidra decompilation
+showed as `0x55AA`. Everything looked fine, and the commands were very similar
+to the ones that were working. The device still acted like everything was fine,
+but the remap was not working.
 
 Going around the internet I found a similar tool with a web UI for the Aula F108
 Pro at https://github.com/Punkster81/AULA-F108-Driver. It doesn't have the remap
@@ -439,10 +444,9 @@ matches what goes on the wire.
 integer on a little-endian x86 machine puts `0xAA` at the lower address and
 `0x55` at the higher address.
 
-To our credit, the keyboard returned the correct ACK and never rejected our
-payload. How can we figure out that something is wrong when the receiver accepts
-everything as correct but silently drops the bytes? This was a common thing with
-this keyboard. It kept gaslighting us, nodded, but rejected everything.
+To our credit, the keyboard never rejected our payload and behaved as if
+everything were fine. How can we figure out that something is wrong when the
+receiver accepts everything as correct but silently drops the bytes?
 
 There were a few other issues, but mostly minor. I am happy the LLM allowed me
 to do this in a couple of days. An actual reverse engineer can probably do it
@@ -472,17 +476,12 @@ image.
 
 Serious talk, does this mean the keyboard is unusable? Not really.
 
-I mean ultimately I could return it to Amazon and be done. But I like the
-keyboard and the price. I could also buy a new one and swap and return, but I am
-not going to commit fraud over $40. During the time the LCD was working, I didn't
-use it to configure the screen because of the over-sensitive knob.
-
 I can use the software to configure most of the keyboard. I can upload and view
-GIFs. The clock and battery percentage is visible. The only problem is I can
+GIFs. I can view the clock and battery percentage. The only problem is I can
 accidentally go into a menu (happens a lot with the sensitive knob) and change
 something and get stuck there. Holding `fn+esc` to reset to factory settings
-usually gets me out of this, but means I have to rerun commands to set the color
-and mapping back.
+usually gets me out, but then I have to rerun commands to set the color and
+mapping back.
 
 There are some things that can only be done with the screen but not the
 software. They have keyboard shortcut keys. Interestingly, I did not find these
@@ -522,7 +521,7 @@ When I hold `fn` I can see the current connection and layout so in this case `w`
 lights up for the Windows layout and `4` because it's connected with USB-C.
 
 To avoid getting stuck in the menus, I switch to the gif or the clock screen and
-then make sure I do not rotate the sensitive knob when I press `fn+knob`. This
+then make sure I don't rotate the sensitive knob when I press `fn+knob`. This
 will lock the screen and set the knob in multimedia mode. Turning the knob does
 `volume up/down` and press is `mute/unmute`. These settings are hardcoded and
 the knob cannot be remapped.
