@@ -36,7 +36,7 @@ give it a name, a logo, and a website to become an AIfluencer?
 * LaurieWired for [GhidraMCP][ghidra-mcp].
 * Song: [Mina Deris - Iranam][deris].
 * Book: [Alastair Reynolds - Anthology - Beyond The Aquila Rift][aquila].
-  * Diamond Dogs is phenomenal. I didn't like the ending, but holy shit, the setting!
+  * Diamond Dogs is phenomenal. I didn't like the ending, but OMG, the setting!
 
 [aquila]: https://parsiya.io/literature/bookreviews/#aquilarift
 [deris]: https://www.youtube.com/watch?v=s55-4MDf_w4
