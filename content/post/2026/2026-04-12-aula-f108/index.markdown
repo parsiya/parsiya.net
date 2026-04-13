@@ -278,15 +278,15 @@ inEP.Read(ackBuf)      // 64-byte ACK
 ```
 
 ### Don't Trust the ~~Tool~~ Fool
-For my next experiment, I noticed the software comes with an embedded gif in
+For my next experiment, I used the embedded gif that comes with the software at
 `[software-installation-path]/gif/AULA F108Pro 三模机械键盘/0.gif`. This is a
 GIF with 214 frames. I passed it to the tool to upload. All 3,386 pages
 transferred successfully. The keyboard showed a progress bar, then the animation
-started playing. It worked.
+started playing.
 
 Then I turned the knob and **the menus were gone**, wut?! The menus were there
-but I just couldn't see them. Instead, I would see the last frames of the gif.
-If I pressed the knob, I was in a menu but I didn't know where.
+but I just couldn't see them. So if I pressed the knob and I was on the
+brightness menu, I could change it. But I saw the last frames of the gif.
 
 I thought I could fix it by uploading another gif so I asked AI to create and
 upload a one frame gif. It didn't work. You can see the one frame red gif along
