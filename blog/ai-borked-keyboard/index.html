@@ -138,13 +138,13 @@ Five lines of code:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;
 </span></span><span style=display:flex><span>outEP.<span style=color:#268bd2>Write</span>(pageData)  <span style=color:#586e75>// 4096 bytes, fragmented automatically</span>
 </span></span><span style=display:flex><span>inEP.<span style=color:#268bd2>Read</span>(ackBuf)      <span style=color:#586e75>// 64-byte ACK</span>
 </span></span></code></pre></div><h3 id=dont-trust-the-tool-fool>Don't Trust the <del>Tool</del> Fool
-<a class=header-link href=#dont-trust-the-tool-fool><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>For my next experiment, I noticed the software comes with an embedded gif in
+<a class=header-link href=#dont-trust-the-tool-fool><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>For my next experiment, I used the embedded gif that comes with the software at
 <code>[software-installation-path]/gif/AULA F108Pro 三模机械键盘/0.gif</code>. This is a
 GIF with 214 frames. I passed it to the tool to upload. All 3,386 pages
 transferred successfully. The keyboard showed a progress bar, then the animation
-started playing. It worked.</p><p>Then I turned the knob and <strong>the menus were gone</strong>, wut?! The menus were there
-but I just couldn't see them. Instead, I would see the last frames of the gif.
-If I pressed the knob, I was in a menu but I didn't know where.</p><p>I thought I could fix it by uploading another gif so I asked AI to create and
+started playing.</p><p>Then I turned the knob and <strong>the menus were gone</strong>, wut?! The menus were there
+but I just couldn't see them. So if I pressed the knob and I was on the
+brightness menu, I could change it. But I saw the last frames of the gif.</p><p>I thought I could fix it by uploading another gif so I asked AI to create and
 upload a one frame gif. It didn't work. You can see the one frame red gif along
 with the corrupted menus in this video.</p><video controls style=max-width:320px>
 <source src=keyboard.webm type=video/webm>Your browser does not support the video tag.</video><p>I thought I could trust the gif embedded with the app. But it looks like the app
