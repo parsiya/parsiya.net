@@ -1,7 +1,8 @@
 <!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>AI Borked my Keyboard - Reversing the Aula F108 Pro Software</title><link rel=stylesheet href=/css/hugo-octopress.css><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.160.1"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/ai-borked-keyboard/i-am-hacker.webp"><meta name=twitter:title content="AI Borked my Keyboard - Reversing the Aula F108 Pro Software"><meta name=twitter:description content="I used GPT-5.4 and Claude Opus 4.6 to reverse engineer the Aula F108 Pro
 keyboard's software using Ghidra MCP. This is how I did it, what setbacks I had,
 and how (A)I borked the keyboard's screen despite constant supervision and
-review.
+review. A common issue with the keyboard is that it ACKs bad messages, then
+silently drops them. Did Gene Wolfe write this firmware?
 I also introduce the novel wording of (A)I, meaning both I and AI did
 something, because everyone is making things up, why not me? I assume I need to
 give it a name, a logo, and a website to become an AIfluencer?"><meta name=twitter:domain content="parsiya.net"><meta name=twitter:creator content="@CryptoGangsta"></head><body><header role=banner><hgroup><h1><a href=https://parsiya.net/>Hackerman's Hacking Tutorials</a></h1><h2>The knowledge of anything, since all things have causes, is not acquired or
@@ -10,11 +11,12 @@ complete unless it is known by its causes. - Avicenna</h2></hgroup></header><nav
 - 18 minute read - <a class=label href=https://parsiya.net/categories/ai/>AI </a><a class=label href=https://parsiya.net/categories/hardware/>Hardware </a><a class=label href=https://parsiya.net/categories/reverse-engineering/>Reverse Engineering</a></p><h1 class=entry-title>AI Borked my Keyboard - Reversing the Aula F108 Pro Software</h1></header><div class=entry-content><nav id=TableOfContents><ul><li><a href=#nfo>.nfo</a><ul><li><a href=#greetz>[greetz]</a></li><li><a href=#anti-greetz>[anti-greetz]</a></li></ul></li><li><a href=#background>Background</a><ul><li><a href=#keyboard-software>Keyboard Software</a></li></ul></li><li><a href=#setup>Setup</a><ul><li><a href=#ghidramcp-setup>GhidraMCP Setup</a></li><li><a href=#attaching-the-keyboard-to-wsl2>Attaching the Keyboard to WSL2</a></li><li><a href=#model-difference>Model Difference</a></li><li><a href=#llm-usage-and-hand-holding>LLM Usage and Hand Holding</a></li></ul></li><li><a href=#the-fails>The Fails</a><ul><li><a href=#the-lcd>The LCD</a><ul><li><a href=#the-upload-protocol>The Upload Protocol</a></li><li><a href=#validating-the-file>Validating the File</a></li><li><a href=#a-subtle-difference-control-vs-interrupt-transfers>A Subtle Difference: Control vs. Interrupt Transfers</a></li><li><a href=#dont-trust-the-tool-fool>Don't Trust the <del>Tool</del> Fool</a></li><li><a href=#what-didnt-fix-this-mess>What Didn't Fix This Mess</a></li><li><a href=#partial-recovery>Partial Recovery</a></li></ul></li><li><a href=#side-gas-lights-or-how-i-was-gaslit-by-my-keyboard>Side "Gas Lights" or How I was Gaslit by My Keyboard</a><ul><li><a href=#related-documentation>Related Documentation</a></li></ul></li><li><a href=#two-bytes-walk-into-a-buffer-in-the-wrong-order>Two Bytes Walk Into a Buffer in the Wrong Order</a><ul><li><a href=#the-root-cause>The Root Cause</a></li></ul></li></ul></li><li><a href=#what-did-we-learn-here-today>What Did We Learn Here Today</a></li><li><a href=#appendix-1-copium>Appendix 1: Copium</a></li></ul></nav><p>I used GPT-5.4 and Claude Opus 4.6 to reverse engineer the Aula F108 Pro
 keyboard's software using Ghidra MCP. This is how I did it, what setbacks I had,
 and how (A)I borked the keyboard's screen despite constant supervision and
-review.</p><p>I also introduce the novel wording of <code>(A)I</code>, meaning both I and AI did
+review. A common issue with the keyboard is that it ACKs bad messages, then
+silently drops them. Did Gene Wolfe write this firmware?</p><p>I also introduce the novel wording of <code>(A)I</code>, meaning both I and AI did
 something, because everyone is making things up, why not me? I assume I need to
 give it a name, a logo, and a website to become an AIfluencer?</p><ul><li>Code: <a href=https://github.com/parsiya/f108-pro target=_blank rel="noreferrer noopener">https://github.com/parsiya/f108-pro</a></li><li>ai-docs: <a href=https://github.com/parsiya/f108-pro/tree/main/ai-docs target=_blank rel="noreferrer noopener">https://github.com/parsiya/f108-pro/tree/main/ai-docs</a></li></ul><h1 id=nfo>.nfo
 <a class=header-link href=#nfo><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><h2 id=greetz>[greetz]
-<a class=header-link href=#greetz><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><ul><li><a href=https://hackback.zip/ target=_blank rel="noreferrer noopener">Adam from MORSE</a> for review and feedback<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>.</li><li>LaurieWired for <a href=https://github.com/lauriewired/ghidramcp target=_blank rel="noreferrer noopener">GhidraMCP</a>.</li><li>Song: <a href="https://www.youtube.com/watch?v=s55-4MDf_w4" target=_blank rel="noreferrer noopener">Mina Deris - Iranam</a>.</li><li>Book: <a href=https://parsiya.io/literature/bookreviews/#aquilarift target=_blank rel="noreferrer noopener">Alastair Reynolds - Anthology - Beyond The Aquila Rift</a>.<ul><li>Diamond Dogs is phenomenal. I didn't like the ending, but holy shit, the setting!</li></ul></li></ul><h2 id=anti-greetz>[anti-greetz]
+<a class=header-link href=#greetz><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><ul><li><a href=https://hackback.zip/ target=_blank rel="noreferrer noopener">Adam from MORSE</a> for review and feedback.<ul><li>Yes, we're allowed to talk to other teams.</li></ul></li><li>LaurieWired for <a href=https://github.com/lauriewired/ghidramcp target=_blank rel="noreferrer noopener">GhidraMCP</a>.</li><li>Song: <a href="https://www.youtube.com/watch?v=s55-4MDf_w4" target=_blank rel="noreferrer noopener">Mina Deris - Iranam</a>.</li><li>Book: <a href=https://parsiya.io/literature/bookreviews/#aquilarift target=_blank rel="noreferrer noopener">Alastair Reynolds - Anthology - Beyond The Aquila Rift</a>.<ul><li>Diamond Dogs is phenomenal. I didn't like the ending, but holy shit, the setting!</li></ul></li></ul><h2 id=anti-greetz>[anti-greetz]
 <a class=header-link href=#anti-greetz><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><ul><li>Web pages that hijack any and all shortcut keys like <code>ctrl+f/n</code></li><li>Infosec LinkedIn:<ul><li>"If you want a picture of the future, imagine vendor <del>security research</del> marketing blogs rehashed by LLMs — forever."</li></ul></li></ul><span class=caption-wrapper><img class=caption src=i-am-hacker.webp title="In other news, Mythos was released recently!" alt="In other news, Mythos was released recently!">
 <span class=caption-text>In other news, Mythos was released recently!</span></span><h1 id=background>Background
 <a class=header-link href=#background><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>I bought a new mechanical keyboard, the Aula F108 Pro. I got it for $40 (retails
@@ -64,13 +66,14 @@ why I am using two keyboards in the picture above.</p><h2 id=model-difference>Mo
 tasks. GPT-5.4 was set to high reasoning from the default medium and Claude Opus
 4.6 was on default high. This might not be a great benchmark because this is
 simple reversing.</p><p>I am sure people have their own favorites, but for my use cases at work and home
-they are very close. At work I mostly use GPT-5.4 in our own subscription, and
-at home I use Claude Opus 4.6 via GitHub Copilot. GPT-5.4 yaps more, but I have
-instructions to cut the talking and summaries to a minimum.</p><h2 id=llm-usage-and-hand-holding>LLM Usage and Hand Holding
+these two are very close. At work I mostly use GPT-5.4 in our own subscription,
+and at home I use Claude Opus 4.6 via GitHub Copilot. GPT-5.4 yaps more, but I
+have instructions to cut the talking and summaries to a minimum.</p><h2 id=llm-usage-and-hand-holding>LLM Usage and Hand Holding
 <a class=header-link href=#llm-usage-and-hand-holding><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>I oversaw every step and read the (decompiled) code along with the LLM
 reasoning. Both models were very good at understanding decompiled code and using
-the GhidraMCP to follow references. Much better than me, but I've not been a
-reverse engineer for almost a decade.</p><blockquote><p>The sooner you come to accept your condition as a defect, the sooner you will find yourselves in a position to transcend it.</p><footer><strong>- Lady Deathwhisper</strong>
+the GhidraMCP to navigate the binary. Much better than me, but I've not been a
+reverse engineer for almost a decade so my opinion is not correct. I will just
+leave you with this quote.</p><blockquote><p>The sooner you come to accept your condition as a defect, the sooner you will find yourselves in a position to transcend it.</p><footer><strong>- Lady Deathwhisper</strong>
 <cite>World of Warcraft the videogame</cite></footer></blockquote><p>I am not one of those "go find things for me and keep trying until things are
 working." I understand the incentives of the model makers and the AGI-pilled to
 pretend one-shotting is a virtue, but it's not for me. I created a huge prompt
@@ -100,7 +103,7 @@ risk "getting left behind." I don't have a solution yet, but I am sure there are
 plenty of suggestions from people that involve me paying them :).</p><p>Soapbox rant done, if you like bikeshedding you should stop here and head to
 LinkedIn comments. For the rest, here are the challenges:</p><h2 id=the-lcd>The LCD
 <a class=header-link href=#the-lcd><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>F108 Pro comes with an LCD, I think it is the only difference between the Pro
-and non-Pro F108. It's your typical keyboard screen LCD. It's janky, small and
+and non-Pro F108. It's your typical keyboard screen LCD. It's funky, small and
 has limited uses. This one is 240x135. You can see the charge, time, and also
 use it to configure the keyboard. You can also upload an animated gif to it and
 this is where disaster struck.</p><p>You can read the entire investigation documented by AI in
@@ -112,12 +115,12 @@ prepends a 256-byte header with frame timing data, and sends the whole thing to
 the keyboard in 4096-byte pages.</p><p>The protocol uses two different USB interfaces: interface 3 for control commands
 (begin, header with page count, apply) and interface 2 for the actual pixel
 data.</p><p>I don't think I could have figured this all by myself, lol.</p><h3 id=validating-the-file>Validating the File
-<a class=header-link href=#validating-the-file><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>The keyboard crashed after the first try. All lights died and the LCD went black.
-Luckily unplugging and replugging the keyboard brought it back.</p><p>First I thought the image was not correct. The AI was using the Go tool to
-generate the image and immediately upload it. There was no validation.
-So I asked AI to split image generation and upload. But this means I need to
-trust the same library that generated the image to verify it. Long story short,
-the image and conversion were correct.</p><p>This reminds me of the joke about the famous <a href=https://read.gov/aesop/040.html target=_blank rel="noreferrer noopener">Bundle of Sticks</a> story. The
+<a class=header-link href=#validating-the-file><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>The keyboard crashed after the first try. All lights died and the LCD went
+black. Luckily unplugging and replugging the keyboard brought it back.</p><p>First I thought the image was not correct. The AI was using the Go tool to
+generate the image and immediately upload it. There was no validation. So I
+asked AI to split image generation and upload. But this means I need to trust
+the same library that generated the image to verify it. Long story short, the
+image and conversion were correct.</p><p>This reminds me of the joke about the famous <a href=https://read.gov/aesop/040.html target=_blank rel="noreferrer noopener">Bundle of Sticks</a> story. The
 sons keep breaking the sticks no matter how many the father bundles together and
 he finally says "thanks for ruining the lesson, assholes."</p><h3 id=a-subtle-difference-control-vs-interrupt-transfers>A Subtle Difference: Control vs. Interrupt Transfers
 <a class=header-link href=#a-subtle-difference-control-vs-interrupt-transfers><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>The Windows software doesn't use control transfers for the data pages. It uses
@@ -140,21 +143,21 @@ Five lines of code:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;
 GIF with 214 frames. I passed it to the tool to upload. All 3,386 pages
 transferred successfully. The keyboard showed a progress bar, then the animation
 started playing. It worked.</p><p>Then I turned the knob and <strong>the menus were gone</strong>, wut?! The menus were there
-but I just couldn't see them, instead I would see the last frames of the gif. If
-I pressed the knob, I was in a menu but I didn't know where.</p><p>I thought I could fix it by uploading another gif so I asked AI to create and
+but I just couldn't see them. Instead, I would see the last frames of the gif.
+If I pressed the knob, I was in a menu but I didn't know where.</p><p>I thought I could fix it by uploading another gif so I asked AI to create and
 upload a one frame gif. It didn't work. You can see the one frame red gif along
 with the corrupted menus in this video.</p><video controls style=max-width:320px>
 <source src=keyboard.webm type=video/webm>Your browser does not support the video tag.</video><p>I thought I could trust the gif embedded with the app. But it looks like the app
 actually only checks and sends the first <code>141</code> frames. There's a config value
 <code>gif_maxframes="141"</code> in <code>rgb-keyboard.xml</code>. Furthermore, if you try to upload
-the embedded gif with the original software it will warn that you can only
+the embedded gif with the original software, it will warn that you can only
 upload 141 frames.</p><p>Later I realized the same software is used for multiple keyboards so there are
 probably other keyboards that can show the entire gif. (A)I assumed the gif in
 the software is safe for our keyboard.</p><p>The keyboard's firmware has no bounds checking. It blindly writes whatever you
 send via the upload protocol to SPI flash. It looks like the 141-frame limit
 corresponds to the physical space allocated for the image slot in the flash
 layout. Everything past frame 141 overflowed into the menu graphics and
-overwrote the keyboard screen's menu.</p><h3 id=what-didnt-fix-this-mess>What Didn't Fix This Mess
+overwrote the menus on the keyboard's screen.</p><h3 id=what-didnt-fix-this-mess>What Didn't Fix This Mess
 <a class=header-link href=#what-didnt-fix-this-mess><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>I tried everything I could think of:</p><ul><li>Factory reset (<code>fn+esc</code>): Resets lighting colors and modes, not the screen.</li><li>Firmware update (Sonix ISP flasher v1.07) included with v1.0.0.3 of the
 software: Only reflashes the keyboard. The menu graphics live on a separate
 chip. Similar to my ND104 which uses different firmware images for the
@@ -183,26 +186,28 @@ strips on either side. (A)I thought we could program all three. AI found
 <code>FUN_0044b800</code> in Ghidra and added it to the main index:</p><pre tabindex=0><code>FUN_0044b800
 Sidelight sender
 Sends sidelight config. Commands: 04 18, 04 13, 00 80, 04 02, 04 F0
-</code></pre><p>So the utility was based on this protocol. The keyboard returned a correct ACK
-when we sent these commands to change the sidelight but nothing happened. It was
+</code></pre><p>So the utility was based on this protocol. The keyboard acknowledged the
+sidelight commands, but nothing happened. It was
 only after I yanked the LLM and looked around in the rest of the files that (A)I
 discovered <code>sidelight="0"</code> in <code>layouts/rgb-keyboard.xml</code>. Looking at the other
-keyboard software from Epomaker/Aula I realized this software is probably used
-for many Aula/Epomaker keyboards and these are customizations for this keyboard.</p><p>In our defense:</p><ol><li>The Ghidra function exists.</li><li>The keyboard returned ACK.</li><li>While the keyboard manual mentions we can change the bar and side lights with
+keyboard software from Epomaker/Aula, I realized this software is probably used
+for many Aula/Epomaker keyboards and these are customizations for this keyboard.</p><p>In our defense:</p><ol><li>The Ghidra function exists.</li><li>The keyboard acknowledged the commands.</li><li>While the keyboard manual mentions we can change the bar and side lights with
 keyboard shortcuts, it's also possible to change the programmable keys via
 software with keyboard shortcuts, so I thought we could do both for the other
-two light zones.</li></ol><p>Both side strips and the light bar can only be programmed with the keyboard
-shortcut keys and not software.</p><h3 id=related-documentation>Related Documentation
+two light zones.</li></ol><p>Both side strips and the light bar can only be configured via keyboard
+shortcuts, not software.</p><h3 id=related-documentation>Related Documentation
 <a class=header-link href=#related-documentation><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><ul><li><a href=https://github.com/parsiya/f108-pro/blob/main/ai-docs/sidelight-investigation.md target=_blank rel="noreferrer noopener">ai-docs/sidelight-investigation.md</a> - AI summary of our discussion.</li><li><a href=https://github.com/parsiya/f108-pro/blob/main/ai-docs/hid-protocol.md target=_blank rel="noreferrer noopener">ai-docs/hid-protocol.md</a> - Sidelight protocol details (Sidelight and LED Layer sections)</li><li><a href=https://github.com/parsiya/f108-pro/blob/main/ai-docs/ghidra-functions.md target=_blank rel="noreferrer noopener">ai-docs/ghidra-functions.md</a> - <code>FUN_0044b800</code> and <code>FUN_00433fd0</code>.</li></ul><h2 id=two-bytes-walk-into-a-buffer-in-the-wrong-order>Two Bytes Walk Into a Buffer in the Wrong Order
-<a class=header-link href=#two-bytes-walk-into-a-buffer-in-the-wrong-order><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>You can also remap keys. Similar to the above we would send commands and the
-keyboard returned ACKs but nothing changed. I thought we had gotten the key
-remap correctly. It was kind of straightforward. See the documented protocol at
+<a class=header-link href=#two-bytes-walk-into-a-buffer-in-the-wrong-order><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>You can also remap keys. Similar to the above, we would send commands and the
+keyboard acknowledged them, but nothing changed. I thought we'd gotten the key
+remap right. It was kind of straightforward. See the documented protocol at
 <a href=https://github.com/parsiya/f108-pro/blob/main/ai-docs/key-remap-protocol.md target=_blank rel="noreferrer noopener">ai-docs/key-remap-protocol.md</a> and the key map at
 <a href=https://github.com/parsiya/f108-pro/blob/main/ai-docs/key-map.md target=_blank rel="noreferrer noopener">ai-docs/key-map.md</a>.</p><p>We need to build a 576-byte remap buffer and send it in 64-byte HID feature
-reports. The report ended with a two-byte trailer that the Ghidra decompilation
-showed as <code>0x55AA</code>. Everything looked fine and the commands were very similar to
-the other ones that were working. The keyboard replied with ACK but it was not
-working.</p><p>Going around the internet I found a similar tool with a web UI for the Aula F108
+reports. These are fixed-size HID configuration packets, not normal keypress
+events, and the vendor software uses them to push settings like remaps to the
+device. The report ended with a two-byte trailer that the Ghidra decompilation
+showed as <code>0x55AA</code>. Everything looked fine, and the commands were very similar
+to the ones that were working. The device still acted like everything was fine,
+but the remap was not working.</p><p>Going around the internet I found a similar tool with a web UI for the Aula F108
 Pro at <a href=https://github.com/Punkster81/AULA-F108-Driver target=_blank rel="noreferrer noopener">https://github.com/Punkster81/AULA-F108-Driver</a>. It doesn't have the remap
 or the LCD protocol but it's reverse engineered from captured traffic. Then I
 realized what my father always said:</p><blockquote><p>Nothing beats examining the patient.</p><footer><strong>- Parsia's dad</strong></footer></blockquote><blockquote><p>Microsoft? How is that going to help your med school application?</p><footer><strong>- also Parsia's dad</strong></footer></blockquote><p>I went back to the burner desktop to examine the patient and captured the USB
@@ -213,10 +218,9 @@ and gave the final <code>pcapng</code> to AI.</p><p>AI used Python to read the c
 bytes <code>0x55</code> then <code>0xAA</code> to the buffer" which is <code>buf[574] = 0x55; buf[575] = 0xAA</code> in Go.</p><p>Then I vaguely remembered the classic mistake: assuming byte order in memory
 matches what goes on the wire.</p><p><code>local_126</code> is a <code>uint16</code> variable. The value <code>0x55AA</code> stored as a 16-bit
 integer on a little-endian x86 machine puts <code>0xAA</code> at the lower address and
-<code>0x55</code> at the higher address.</p><p>To our credit, the keyboard returned the correct ACK and never rejected our
-payload. How can we figure out that something is wrong when the receiver accepts
-everything as correct but silently drops the bytes? This was a common thing with
-this keyboard. It kept gaslighting us, nodded, but rejected everything.</p><p>There were a few other issues, but mostly minor. I am happy the LLM allowed me
+<code>0x55</code> at the higher address.</p><p>To our credit, the keyboard never rejected our payload and behaved as if
+everything were fine. How can we figure out that something is wrong when the
+receiver accepts everything as correct but silently drops the bytes?</p><p>There were a few other issues, but mostly minor. I am happy the LLM allowed me
 to do this in a couple of days. An actual reverse engineer can probably do it
 much faster and without these issues.</p><h1 id=what-did-we-learn-here-today>What Did We Learn Here Today
 <a class=header-link href=#what-did-we-learn-here-today><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>Current models are very good at navigating binaries, at least small binaries
@@ -226,15 +230,12 @@ responsible for what's done.</p><p>Lessons learned from the failures:</p><ul><li
 Pro screen firmware utility, please let me know. You know where to find me.</p><h1 id=appendix-1-copium>Appendix 1: Copium
 <a class=header-link href=#appendix-1-copium><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h1><p>(A)I could argue we've 'hacked' the F108 Pro and now it can display a gif and
 multiple still images instead of none. My $200 ND104 has one gif and one still
-image.</p><p>Serious talk, does this mean the keyboard is unusable? Not really.</p><p>I mean ultimately I could return it to Amazon and be done. But I like the
-keyboard and the price. I could also buy a new one and swap and return, but I am
-not going to commit fraud over $40. During the time the LCD was working, I didn't
-use it to configure the screen because of the over-sensitive knob.</p><p>I can use the software to configure most of the keyboard. I can upload and view
-GIFs. The clock and battery percentage is visible. The only problem is I can
+image.</p><p>Serious talk, does this mean the keyboard is unusable? Not really.</p><p>I can use the software to configure most of the keyboard. I can upload and view
+GIFs. I can view the clock and battery percentage. The only problem is I can
 accidentally go into a menu (happens a lot with the sensitive knob) and change
 something and get stuck there. Holding <code>fn+esc</code> to reset to factory settings
-usually gets me out of this, but means I have to rerun commands to set the color
-and mapping back.</p><p>There are some things that can only be done with the screen but not the
+usually gets me out, but then I have to rerun commands to set the color and
+mapping back.</p><p>There are some things that can only be done with the screen but not the
 software. They have keyboard shortcut keys. Interestingly, I did not find these
 in the manual on the Aula website, but in the Epomaker version of the manual and
 also on Reddit.</p><p>For connections, hold to start pairing, tap to connect. E.g., hold <code>fn+1</code> to
@@ -256,11 +257,11 @@ messages.</p><pre tabindex=0><code>| FN Combo | Action      |
 | FN + R   | iOS     |
 </code></pre><p>When I hold <code>fn</code> I can see the current connection and layout so in this case <code>w</code>
 lights up for the Windows layout and <code>4</code> because it's connected with USB-C.</p><p>To avoid getting stuck in the menus, I switch to the gif or the clock screen and
-then make sure I do not rotate the sensitive knob when I press <code>fn+knob</code>. This
+then make sure I don't rotate the sensitive knob when I press <code>fn+knob</code>. This
 will lock the screen and set the knob in multimedia mode. Turning the knob does
 <code>volume up/down</code> and press is <code>mute/unmute</code>. These settings are hardcoded and
 the knob cannot be remapped.</p><span class=caption-wrapper><img class=caption src=04.webp title="Did you break your keyboard, too?" alt="Did you break your keyboard, too?">
-<span class=caption-text>Did you break your keyboard, too?</span></span><div class=footnotes role=doc-endnotes><hr><ol><li id=fn:1><p>Yes, we're allowed to talk to other teams.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></div></div><footer><p class=meta><span class="byline author vcard">Posted by <span class=fn>Parsia</span></span><time>Apr 12, 2026</time></span></p><p class=meta><a class="basic-alignment left" href=https://parsiya.net/blog/manual-context-is-a-bug/ title="Manual Context is a Bug">Manual Context is a Bug</a></p></footer></article></div><aside class="sidebar thirds"><section class="first odd"><h1>Who am I?</h1><p><p>I am Parsia, a security engineer at Microsoft.</p><p>I write about application security, cryptography, static analysis, and
+<span class=caption-text>Did you break your keyboard, too?</span></span></div><footer><p class=meta><span class="byline author vcard">Posted by <span class=fn>Parsia</span></span><time>Apr 12, 2026</time></span></p><p class=meta><a class="basic-alignment left" href=https://parsiya.net/blog/manual-context-is-a-bug/ title="Manual Context is a Bug">Manual Context is a Bug</a></p></footer></article></div><aside class="sidebar thirds"><section class="first odd"><h1>Who am I?</h1><p><p>I am Parsia, a security engineer at Microsoft.</p><p>I write about application security, cryptography, static analysis, and
 (of course) videogames.</p><p>Click on <a href=/about/>About Me!</a> to know more. Contact me via any of these ways.</p></p></section><ul class=sidebar-nav><li class=sidebar-nav-item><a target=_blank rel="me noopener noreferrer" href=https://infosec.exchange/@parsiya title=https://infosec.exchange/@parsiya><i class="fa fa-mastodon fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://github.com/parsiya/ title=https://github.com/parsiya/><i class="fa fa-github fa-3x"></i></a>
 <a target=_blank rel="noopener noreferrer" href=https://twitter.com/cryptogangsta/ title=https://twitter.com/cryptogangsta/><i class="fa fa-twitter fa-3x"></i></a>
