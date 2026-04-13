@@ -15,8 +15,12 @@ Fix punctuation, typos, misspellings, grammar, and similar surface-level issues 
 - Keep edits scoped to what the user asked to change.
 - Do not rewrite for style unless the original wording is clearly broken.
 - Follow the repository Markdown instructions.
+- Do not remove texts with `ZZZ` because they are edit markers for later.
 
 ## Procedure
 
 1. Fix surface-level errors first.
 2. Make the smallest set of edits needed.
+
+## Output
+Edit the file directly. Do not create reply with the summary of changes.
