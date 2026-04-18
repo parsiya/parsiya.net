@@ -15,10 +15,9 @@ categories:
 
 * [ ] Set twitter image
 * If publishing date != creation date:
-    * [ ] Change the timestamp in the front matter
-    * [ ] Change the timestamp in the directory name
+  * [ ] Change the timestamp in the front matter
+  * [ ] Change the timestamp in the directory name
 * [ ] Custom URL if needed, otherwise remove the tag
-* [ ] more
+* [ ] ZZ or ZZZ tags, these must be addressed
 
 <!--more-->
-
