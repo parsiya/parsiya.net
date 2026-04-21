@@ -15,7 +15,7 @@ search for keywords.
 
 {{< toc >}}
 
-------
+----------
 
 # Tar
 Insert [XKCD 1168](https://xkcd.com/1168/), hur dur!
@@ -26,7 +26,7 @@ Insert [XKCD 1168](https://xkcd.com/1168/), hur dur!
 ## Decompress a tar.gz file
 `tar -zxvf target_tar.tar.gz -C path/to/decompress/`
 
-------
+----------
 
 # OpenSSL
 
@@ -39,12 +39,12 @@ Insert [XKCD 1168](https://xkcd.com/1168/), hur dur!
 * `-brief`: reduced output
 * `cipher-name`: A cipher from output of `openssl ciphers` command
 
-------
+----------
 
 # AWS
 
 ## How to Use s3deploy
-I have switched to s3deploy from s3cmd: https://github.com/bep/s3deploy. 
+I have switched to s3deploy from s3cmd: https://github.com/bep/s3deploy.
 
 Create a file named `.s3deploy.yaml` (note the period) in the root of website. I
 have:
@@ -128,21 +128,20 @@ Use `--no-sign-request`. E.g., to list all items in a world-readable bucket:
 
 * `aws s3 ls s3://bucket-name --no-sign-request --recursive`
 
-------
+----------
 
 # Windows
 
 ## Shortcut to IE (or WinINET) Proxy Settings
-
 `control inetcpl.cpl,,4`
 
 ## where.exe
 `where.exe` searches for files. If no location is passed it searches in the
 local directory and then in PATH.
 
-- `/R` searches recursively in a specific location.
-- `/T` displays file size.
-- `/?` for help.
+* `/R` searches recursively in a specific location.
+* `/T` displays file size.
+* `/?` for help.
 
 ## Delete File or Directory with a Path or Name Longer than the Windows Limit
 
@@ -425,11 +424,11 @@ and look under the `ProfileImagePath` key to see which user it is.
 ## powercfg
 
 * `powercfg /requests`
-    * See which programs have requested to keep the device display active.
-    * Source: https://textslashplain.com/2020/10/05/images-keeping-you-awake/
+  * See which programs have requested to keep the device display active.
+  * Source: https://textslashplain.com/2020/10/05/images-keeping-you-awake/
 * `powercfg /sleepstudy`
-    * Generates a fancy HTML page.
-    * Source: [Matt Thomlinson][mattt-twitter].
+  * Generates a fancy HTML page.
+  * Source: [Matt Thomlinson][mattt-twitter].
 
 [mattt-twitter]: https://twitter.com/mattt_cyber
 
@@ -460,12 +459,12 @@ Moving to WSL2 will prevent your machine from talking to the internet with some
 VPN software and if you are connected to the VPN. WSL2 uses Hyper-V. Hyper-V VMs
 usually do not have network connectivity on VPN.
 
-## File locations:
+## File locations
 
 * `%LocalAppData%/packages/{full-distro-name}/LocalState` where
   `full-distro-name` is:
-    * Ubuntu 18: `CanonicalGroupLimited.Ubuntu18.04onWindows_79rhkp1fndgsc`
-    * Debian: `TheDebianProject.DebianGNULinux_76v4gfsz19hv4`
+  * Ubuntu 18: `CanonicalGroupLimited.Ubuntu18.04onWindows_79rhkp1fndgsc`
+  * Debian: `TheDebianProject.DebianGNULinux_76v4gfsz19hv4`
 
 ## Access WSL2 Files
 In WSL1, a file in the distro is a separate file on disk. In WSL2 we have a
@@ -555,7 +554,7 @@ rm install # assuming we're in PowerShell
 
 [ps-gzip]: https://stackoverflow.com/questions/69190609/unzipping-a-gzip-with-powershell-works-but-can-i-extract-directly-to-file
 
-Now we can use `wsl --import`. 
+Now we can use `wsl --import`.
 
 `wsl --import NewUbuntu c:/path/to/VMs/ ubuntu2024.tar`
 
@@ -578,7 +577,7 @@ More info: https://parsiya.io/random/wsl2-hugo-watch/
 6. ???
 7. Logout and login.
 
-------
+----------
 
 # PowerShell
 
@@ -643,8 +642,8 @@ to dismount it. The path to the VHD should be absolute.
 ## Base64 Encode and Decode without PowerShell
 Use `certutil` for bootleg base64 encoding/decoding:
 
-- `certutil -encode whatever.exe whatever.base64`
-- `certutil -decode whetever.base64 whatever.exe`
+* `certutil -encode whatever.exe whatever.base64`
+* `certutil -decode whetever.base64 whatever.exe`
 
 ## Load a Managed DLL from PowerShell
 
@@ -659,7 +658,7 @@ extension in the command.
 
 * Source: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.archive/compress-archive
 
-------
+----------
 
 # Hyper-V
 Switching from VirtualBox for Hyper-V had its own set of tradeoffs.
@@ -707,7 +706,7 @@ empty.
 * Solution: Modify the DNS server for the network adapter and manually add a DNS
   server like `8.8.8.8` or `1.1.1.1`.
 
-------
+----------
 
 # VirtualBox
 
@@ -758,7 +757,7 @@ clone it to vdi, resize it and convert it back to vdmk.
 
 * Source: https://stackoverflow.com/a/12456219
 
-------
+----------
 
 # Git
 I know a total of 5-6 git commands.
@@ -823,8 +822,8 @@ You have forked a repository a while ago. You want to sync the new changes.
     1. `git merge upstream/main`
 
 * Source: GitHub documentation.
-    * [Configuring a remote for a fork][config-remote]
-    * [Syncing a fork][sync-fork]
+  * [Configuring a remote for a fork][config-remote]
+  * [Syncing a fork][sync-fork]
 
 [config-remote]: https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/configuring-a-remote-for-a-fork
 [sync-fork]: https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/syncing-a-fork
@@ -928,7 +927,25 @@ This is for GitHub, but should work for everywhere.
 5. Tell git to sign every commit:
     1. `git config --global commit.gpgsign true`
 
-------
+## Git Submodule: HTTPS for Everyone, SSH for You
+When adding a **public** repo as a submodule, use the HTTPS URL so anyone can
+clone without authentication:
+
+```bash
+git submodule add https://github.com/user/repo.git path/to/submodule
+```
+
+If you need SSH locally (e.g., for pushing), override the URL in your local
+`.git/config` without changing the shared `.gitmodules`:
+
+```bash
+git config submodule.path/to/submodule.url git@github.com:user/repo.git
+```
+
+This way `.gitmodules` keeps the HTTPS URL for everyone else, and your machine
+uses SSH.
+
+----------
 
 # Visual Studio Code
 My current (as of June 2019) editor of choice. Settings are at
@@ -962,7 +979,7 @@ VS Code needs to open a workspace. Open the parent directory to the project.
 
 Source: https://www.reddit.com/r/golang/comments/g6l6y9/couldnt_start_client_gopls_unsupported_uri_scheme/
 
-------
+----------
 
 # Sublime Text 3
 Tips for using the Sublime Text 3 editor. I don't use Sublime Text anymore
@@ -982,7 +999,7 @@ Where `?` is the Go version that is unknown.
 
 Edit this file:
 
-- `%AppData%\Sublime Text 3\Packages\GoSublime\gosubl\sh.py`
+* `%AppData%\Sublime Text 3\Packages\GoSublime\gosubl\sh.py`
 
 Find these lines:
 
@@ -1002,7 +1019,7 @@ build.
 ## Open the Same File in a New Tab
 `File > New view into File`. Then drag the pane to a second screen/location.
 
-------
+----------
 
 # Burp
 
@@ -1059,7 +1076,7 @@ iptables -t nat -A POSTROUTING -p tcp --dport 443 -j MASQUERADE
 
 [invisible-proxy]: https://portswigger.net/burp/documentation/desktop/tools/proxy/options/invisible
 
-------
+----------
 
 # Linux
 I'd just like to interject for a moment. What you're referring to as Linux, is
@@ -1084,42 +1101,42 @@ Only search in files with specific extensions. E.g., only `md/markdown`.
 
 `grep -ir "whatever" --include\*.md --include \*.markdown`
 
-------
+----------
 
 # Docker
 
 ## Commands
 
 * Images:
-    * All images: `docker images`
-    * Delete image(s): `docker rmi img1 img2`
-        * By name: `docker rmi whatever/blah`
-        * By ID: `docker rmi f20d`
-    * Build image from file:
-        * `docker build . -f file -t whatever/blah`
-        * `DockerFile` it does not need to be mentioned. `docker build -t whatever/blah`
-        * `docker image` should display the image now.
+  * All images: `docker images`
+  * Delete image(s): `docker rmi img1 img2`
+    * By name: `docker rmi whatever/blah`
+    * By ID: `docker rmi f20d`
+  * Build image from file:
+    * `docker build . -f file -t whatever/blah`
+    * `DockerFile` it does not need to be mentioned. `docker build -t whatever/blah`
+    * `docker image` should display the image now.
 * Containers:
-    * All running containers: `docker container ls -a` - `docker ps -a`
-    * Only show running containers: `docker ps`
-    * Stop one container: `docker stop d194 3f4a`
-    * Stop all containers:
-        * PowerShell: `docker ps -a -q | ForEach { docker stop $_ }`
-        * Bash: `docker stop $(docker ps -a -q)`
-    * Delete container(s): `docker container rm d194 3f4a`
-    * Run a container from an image:
-        * `docker run -it whatever/blah [command]` where command is usually `/bin/bash`.
-        * `--rm` to delete the container after it exits. This is useful when testing.
+  * All running containers: `docker container ls -a` - `docker ps -a`
+  * Only show running containers: `docker ps`
+  * Stop one container: `docker stop d194 3f4a`
+  * Stop all containers:
+    * PowerShell: `docker ps -a -q | ForEach { docker stop $_ }`
+    * Bash: `docker stop $(docker ps -a -q)`
+  * Delete container(s): `docker container rm d194 3f4a`
+  * Run a container from an image:
+    * `docker run -it whatever/blah [command]` where command is usually `/bin/bash`.
+    * `--rm` to delete the container after it exits. This is useful when testing.
 * centOS specific:
-    * centOS cmd for `DockerFile`: `CMD ["/usr/sbin/init"]`
-    * Create and run a centOS container: `docker run -it whatever/blah sh`
+  * centOS cmd for `DockerFile`: `CMD ["/usr/sbin/init"]`
+  * Create and run a centOS container: `docker run -it whatever/blah sh`
 
 ## Troubleshooting
 
 * Error starting userland proxy: mkdir ... : input/output error.
-    * Restart docker. On Windows, right click the docker tray icon and select `Restart...`.
+  * Restart docker. On Windows, right click the docker tray icon and select `Restart...`.
 
-------
+----------
 
 # Python
 These were written when I used Python 2, some might not work with newer versions.
@@ -1214,7 +1231,7 @@ More:
 python -c "from Crypto.Cipher import AES; aes = AES.new(KEY, AES.MODE_ECB); print aes.decrypt(CIPHERTEXT));"
 ```
 
-------
+----------
 
 # Java
 
@@ -1251,14 +1268,14 @@ log4j.appender.R.layout.ConversionPattern=%p %t %c - %m%n
 
 * Source: http://logging.apache.org/log4j/1.2/manual.html
 
-------
+----------
 
 # Angular
 
 ## Find the Version of Angular on a Website with DevTools
 Run in the console `getAllAngularRootElements()[0].attributes["ng-version"];`.
 
-------
+----------
 
 # Misc
 
@@ -1312,8 +1329,8 @@ I gave away the DW2280 printer when I moved to Canada but I am keeping the
 instructions just in case. Before printing, get to printer physically and use
 the following instructions:
 
-- DW2280: http://support.brother.com/g/b/faqend.aspx?c=gb&lang=en&prod=hl2170w_all&faqid=faq00000063_025
-- DCP-7030: https://www.youtube.com/watch?v=6JEZYM5aLY8
+* DW2280: http://support.brother.com/g/b/faqend.aspx?c=gb&lang=en&prod=hl2170w_all&faqid=faq00000063_025
+* DCP-7030: https://www.youtube.com/watch?v=6JEZYM5aLY8
 
 1. Open the back.
 2. Press the two green handles down.
@@ -1360,7 +1377,7 @@ under   | x              |
 
 Now open LibreOffice and use these instructions:
 
-- https://www.pcmech.com/article/how-to-print-an-envelope-with-libreoffice/
+* https://www.pcmech.com/article/how-to-print-an-envelope-with-libreoffice/
 
 1. Create new document in LibreOffice Writer (Word).
 2. `Insert > Envelope`.
