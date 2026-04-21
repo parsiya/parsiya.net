@@ -1,4 +1,11 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Hackerman's Hacking Tutorials</title><link>https://parsiya.net/</link><description>Recent content on Hackerman's Hacking Tutorials</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Sun, 12 Apr 2026 23:07:00 -0700</lastBuildDate><atom:link href="https://parsiya.net/index.xml" rel="self" type="application/rss+xml"/><item><title>AI Borked my Keyboard - Reversing the Aula F108 Pro Software</title><link>https://parsiya.net/blog/ai-borked-keyboard/</link><pubDate>Sun, 12 Apr 2026 23:07:00 -0700</pubDate><guid>https://parsiya.net/blog/ai-borked-keyboard/</guid><description>&lt;p&gt;I used GPT-5.4 and Claude Opus 4.6 to reverse engineer the Aula F108 Pro
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Hackerman's Hacking Tutorials</title><link>https://parsiya.net/</link><description>Recent content on Hackerman's Hacking Tutorials</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Tue, 21 Apr 2026 08:55:57 -0700</lastBuildDate><atom:link href="https://parsiya.net/index.xml" rel="self" type="application/rss+xml"/><item><title>Harnessing the Wayward Machine-God, 1: Manual Markdown Cleanup Is a Bug</title><link>https://parsiya.net/blog/machine-god-1/</link><pubDate>Tue, 21 Apr 2026 08:55:57 -0700</pubDate><guid>https://parsiya.net/blog/machine-god-1/</guid><description>&lt;p&gt;LLMs regularly ignore my Markdown instructions. As the I part of &lt;code&gt;(A)I&lt;/code&gt;, I got
+tired and created some deterministic automation to format the output to my
+preferences. I will discuss the problem, our solutions, bugs, lessons learned,
+and the final product.&lt;/p&gt;
+&lt;p&gt;I am going to try a new format here. This blog has the important stuff that I
+care about. This is for humans. All the AI discussions and the details are in
+&lt;code&gt;ai-docs&lt;/code&gt; (link below) for AI. Simply ask your LLM to fetch those URLs (or clone
+the repo) and then ask them for the details.&lt;/p&gt;</description></item><item><title>AI Borked my Keyboard - Reversing the Aula F108 Pro Software</title><link>https://parsiya.net/blog/ai-borked-keyboard/</link><pubDate>Sun, 12 Apr 2026 23:07:00 -0700</pubDate><guid>https://parsiya.net/blog/ai-borked-keyboard/</guid><description>&lt;p&gt;I used GPT-5.4 and Claude Opus 4.6 to reverse engineer the Aula F108 Pro
 keyboard's software using Ghidra MCP. This is how I did it, what setbacks I had,
 and how (A)I borked the keyboard's screen despite constant supervision and
 review. A common issue with the keyboard is that it ACKs bad messages, then
@@ -989,7 +996,7 @@ search for keywords.&lt;/p&gt;
  &lt;/li&gt;
  &lt;li&gt;&lt;a href="#wsl"&gt;WSL&lt;/a&gt;
  &lt;ul&gt;
- &lt;li&gt;&lt;a href="#file-locations"&gt;File locations:&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#file-locations"&gt;File locations&lt;/a&gt;&lt;/li&gt;
  &lt;li&gt;&lt;a href="#access-wsl2-files"&gt;Access WSL2 Files&lt;/a&gt;&lt;/li&gt;
  &lt;li&gt;&lt;a href="#import-and-export"&gt;Import and Export&lt;/a&gt;&lt;/li&gt;
  &lt;li&gt;&lt;a href="#use-wsl-distributions-without-the-microsoft-store"&gt;Use WSL Distributions without the Microsoft Store&lt;/a&gt;&lt;/li&gt;
@@ -1043,6 +1050,7 @@ search for keywords.&lt;/p&gt;
  &lt;li&gt;&lt;a href="#make-git-case-sensitive-with-a-catch"&gt;Make git Case Sensitive (with a Catch)&lt;/a&gt;&lt;/li&gt;
  &lt;li&gt;&lt;a href="#exclude-a-committed-file-with-gitignore"&gt;Exclude a Committed File with gitignore&lt;/a&gt;&lt;/li&gt;
  &lt;li&gt;&lt;a href="#sign-git-commits"&gt;Sign git Commits&lt;/a&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;a href="#git-submodule-https-for-everyone-ssh-for-you"&gt;Git Submodule: HTTPS for Everyone, SSH for You&lt;/a&gt;&lt;/li&gt;
  &lt;/ul&gt;
  &lt;/li&gt;
  &lt;li&gt;&lt;a href="#visual-studio-code"&gt;Visual Studio Code&lt;/a&gt;
