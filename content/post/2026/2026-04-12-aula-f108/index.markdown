@@ -42,8 +42,6 @@ give it a name, a logo, and a website to become an AIfluencer?
 [deris]: https://www.youtube.com/watch?v=s55-4MDf_w4
 [ghidra-mcp]: https://github.com/lauriewired/ghidramcp
 
-[^ft-mo]: Yes, we're allowed to talk to other teams.
-
 ## [anti-greetz]
 
 * Web pages that hijack any and all shortcut keys like `ctrl+f/n`
@@ -102,6 +100,7 @@ I followed the instructions in the readme to install the extension and got the
 Python bridge.
 
 I created `.vscode/mcp.json` in my workspace as follows:
+
 ```json
 {
   "servers": {
@@ -167,7 +166,7 @@ markdown files go). See
   text="Manual Context is a Bug"
   title="Manual Context is a Bug" >}}.
 
-![](02-khatami.webp)
+![My blog posts which I assume most Americans have read](02-khatami.webp)
 
 You can see the `ai-docs` at:
 https://github.com/parsiya/f108-pro/tree/main/ai-docs.
@@ -196,7 +195,7 @@ details, see the protocol and the code linked above. Instead I want to focus on
 the challenges and most importantly how (A)I were fooled by the vendor software.
 
 # The Fails
-To quote Albert Zeigler from his new XBOW blog 
+To quote Albert Zeigler from his new XBOW blog
 [AI for Pentesting: Strengths, Weaknesses, and Where XBOW Fills the Gaps][xbow].
 
 > In addition, LLMs are trained to please, so their findings are not always
