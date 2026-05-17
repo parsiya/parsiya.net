@@ -26,6 +26,11 @@ should have everything it needs on hand.
 Note: I will use LLM and AI interchangeably in this post. Please don't tell
 Yann LeCun. He has 1 billion in seed funding and powerful friends.
 
+**Update:** I've switched my approach. I turn most default rules and all custom
+rules off in the central config and enable settings selectively in
+`.vscode/settings.json`. The end result is still the same, but easier to
+configure.
+
 # .nfo
 I've decided to write more and more loosely. I've become this sort of influencer
 wanna-be that writes "only the good stuff that gets into [tl;dr sec][tl]." Your
@@ -253,7 +258,7 @@ LLMs are like "50 first dates." You have to send the entire conversation to the
 LLM with every message. Hence, why sending "thank you" is expensive, because
 it's not just sending two words but your entire conversation.
 
-So how do we document this? 
+So how do we document this?
 
 1. Ask AI to write a document with:
    1. What the thing is.
