@@ -16,6 +16,7 @@ Fix punctuation, typos, misspellings, grammar, and similar surface-level issues 
 - Do not rewrite for style unless the original wording is clearly broken.
 - Follow the repository Markdown instructions.
 - Do not remove texts with `ZZZ` because they are edit markers for later.
+- Ignore markdown lint warnings especially table paddings. They will be auto formatted.
 
 ## Procedure
 

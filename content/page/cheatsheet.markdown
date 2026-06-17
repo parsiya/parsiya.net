@@ -577,6 +577,29 @@ More info: https://parsiya.io/random/wsl2-hugo-watch/
 6. ???
 7. Logout and login.
 
+## Use Windows Copilot Plugins/Agents/Skills in WSL2
+Symlinking `~/.copilot/` in WSL to the Windows location does NOT work for
+plugin skills. `config.json` stores absolute Windows paths (`C:\Users\...`)
+for plugin `cache_path`. The Linux CLI reads `config.json` via the symlink,
+sees plugins in `/plugin list`, but can't load skills because the paths
+don't resolve on Linux.
+
+Use Copilot CLI on Windows for plugins. The Linux CLI works for basic
+Copilot usage but won't discover plugin skills.
+
+**What I tried and didn't work**:
+Symlink `~/.copilot/` in WSL2 to the Windows location via `/mnt/c/` and start a
+new Copilot session. Installation and everything else should still be done on
+the Windows side, but you can use them in WSL.
+
+```bash
+# Remove existing directory if present
+mv ~/.copilot ~/.copilot.bak
+
+# Create symlink to Windows path
+ln -s /mnt/c/Users/<user>/.copilot ~/.copilot
+```
+
 ----------
 
 # PowerShell
@@ -1481,4 +1504,3 @@ function zz() {
 # go to dev
 cd dev
 ```
-
