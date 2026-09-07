@@ -25,7 +25,6 @@ icky and [not cool anymore][sfi-secrets]. Using this method I can:
 3. As a bonus, decouple my code from LLM authentication.
 
 [^1]: This also opens up fun possibilities like `Chat, is this true?`
-
 [sfi-secrets]: https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-brand/documents/secure-future-initiative-protect-identities-and-secrets.pdf
 
 # Summary
@@ -65,9 +64,9 @@ If you just want the solution:
   }
   ```
 1. Create this env variable for LiteLLM:
-  1. `AZURE_CREDENTIAL` with value `DefaultAzureCredential`
+    1. `AZURE_CREDENTIAL` with value `DefaultAzureCredential`
 2. Run LiteLLM
-  1. `litellm --config .\config.yaml --host localhost`
+    1. `litellm --config .\config.yaml --host localhost`
 3. Click `Manage Model` in Chat and select `Azure`.
 4. Choose `gpt-5-parsia`.
 
@@ -89,7 +88,6 @@ keys. We cannot use API keys. With apologies to [Hafez][hafez]:
 > My pain and remedy are both from work
 
 [hafez]: https://en.wikipedia.org/wiki/Hafez
-
 [^2]: The original verse is "دردم از یار است و درمان نیز هم" (My pain and remedy are both from the beloved). Replacing یار (beloved) with کار (work).
 
 So I am logged into the machine which is Entra joined, and my model is deployed
@@ -106,7 +104,7 @@ named [litellm][bt-lite].
 
 [LiteLLM][litellm-main] is a local LLM proxy. It does a lot more like budgeting,
 but I was only interested in [Azure AD Token Refresh][litellm-ad] support. It
-uses something called `DefaultAzureCredential` to obtain a token. 
+uses something called `DefaultAzureCredential` to obtain a token.
 
 [litellm-main]: https://docs.litellm.ai/docs/
 [litellm-ad]: https://docs.litellm.ai/docs/providers/azure#azure-ad-token-refresh---defaultazurecredential
@@ -252,7 +250,6 @@ from code. In the code, I just need a model name and endpoint and to quote
 that[^4]."
 
 [hbo]: https://youtu.be/uPxKW7RR7h0?t=169
-
 [^4]: Hafez to Billy Connoly is quite the transition. Enjoying this "diversity of thought?"
 
 ## Drawbacks

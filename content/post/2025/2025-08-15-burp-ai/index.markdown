@@ -37,7 +37,7 @@ I covered a shorter version in my DEF CON 33 Bug Bounty Village talk
 
 1. AI is off by default (props to PortSwigger).
 2. All AI traffic goes to `ai.portswigger.net`. Block it to disable Burp AI.
-  1. This is also mentioned in the documentation, but I wanted to confirm.
+    1. This is also mentioned in the documentation, but I wanted to confirm.
 3. Requests/responses are JSON.
 4. Burp had "agentic behavior" pre‑hype. E.g., AI can ask Repeater or the login
    recorder to act.
@@ -59,7 +59,7 @@ security not enforced on example.net" I saw only one AI request.
 
 Here's how the issue looks in Burp after exploration:
 
-{{< imgcap title="Exploring HSTS in example.net" src="01-explore-hsts.webp" >}} 
+{{< imgcap title="Exploring HSTS in example.net" src="01-explore-hsts.webp" >}}
 
 And this is the only request Logger captured:
 
@@ -127,7 +127,7 @@ On Linux (credit: [Nico][nico]):
 [nico]: https://hackademy.agarri.fr/contact
 
 Done. Now the balance request shows up in Burp server. GET to
-`https://ai.portswigger.net/burp/balance` with a base64 token in the 
+`https://ai.portswigger.net/burp/balance` with a base64 token in the
 `Portswigger-Burp-Ai-Token` header.
 
 {{< imgcap title="Burp balance check request" src="05-balance2.webp" >}}

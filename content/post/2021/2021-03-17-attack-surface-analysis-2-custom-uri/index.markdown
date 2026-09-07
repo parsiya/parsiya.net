@@ -25,7 +25,7 @@ wanted to discuss two of my undisclosed bugs but the post is already too long.
 1. Startup path limitations and possible workarounds.
 2. Positive security's excellent blog released a month after this with a near
    jar trick.
-  1. [Allow arbitrary URLs, expect arbitrary code execution][positive].
+    1. [Allow arbitrary URLs, expect arbitrary code execution][positive].
 
 The article has a great trick for passing parameters when we cannot. Use `jar`
 files in UNC paths: `\\ip\path\whatever.jar`. Search for `windows-10-19042` in
@@ -132,7 +132,6 @@ path to get around this limitation. See section
 above.
 
 [positive-jar-trick]: https://positive.security/blog/url-open-rce#windows-10-19042
-
 [cyku-twitter]: https://twitter.com/cyku_tw
 [cyku-nord-bug]: https://hackerone.com/reports/1001255
 [process-start-string]: https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.process.start?view=net-5.0#System_Diagnostics_Process_Start_System_String_
@@ -324,7 +323,7 @@ for `protocol://user:pass@server.tld/`. [Tweet][jonaslyj-tweet] by
 
 # Loading Remote Files
 We can also pass remote files to the target app via these URI handlers. It's an
-old technique. I learned it from Raymond Chen's blog post 
+old technique. I learned it from Raymond Chen's blog post
 [subtle ways your innocent program can be Internet-facing][subtle-raymond]
 written in 2006.
 
@@ -431,7 +430,7 @@ explores these bugs in detail.
 The ZDI advisory pages don't contain any details so I am not linking to them.
 It's very disappointing. We can only learn about these disclosed and fixed bugs
 from the end-of-the-year blog post. That said, it's their bugs and they can do
-whatever they want with them. 
+whatever they want with them.
 
 ### Microsoft Teams Command Injection
 In the Microsoft Teams exploit rgod passed a parameter named `gpu-launcher` to
@@ -479,7 +478,6 @@ to inject a .hta HTML Application file into the log file. The log file is
 controlled by the attacker and placed in the startup directory of the victim's
 machine
 {{< /blockquote >}}
-
 
 ```html
 <a href='gwd-template://?"
@@ -758,8 +756,6 @@ If you are targeting a specific program you probably already know the URI scheme
 during your initial attack surface analysis (you did one, didn't you?).
 [URLProtocolView][urlprotocolview-nirsoft] by Nirsoft is a great tool to view
 all of these schemes.
-
-[urlprotocolview-nirsoft]: https://www.nirsoft.net/utils/url_protocol_view.html
 
 Next, check how the URI is passed to the app. In URLProtocolView we can see it
 under the `Command-Line` column. Here's the entry for the Nord VPN URI scheme we
