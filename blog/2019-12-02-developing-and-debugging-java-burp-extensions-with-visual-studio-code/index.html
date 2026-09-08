@@ -1,4 +1,4 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Developing and Debugging Java Burp Extensions with Visual Studio Code</title><link rel=stylesheet href=/css/hugo-octopress.min.0effb37ad30576122b5e4690e98647188965be5b667046017b72a40109a65e45.css integrity="sha256-Dv+zetMFdhIrXkaQ6YZHGIllvltmcEYBe3KkAQmmXkU="><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.163.2"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2019-12-02-developing-and-debugging-java-burp-extensions-with-visual-studio-code/03-intellicode.png"><meta name=twitter:title content="Developing and Debugging Java Burp Extensions with Visual Studio Code"><meta name=twitter:description content="A few days ago, I released the Bug Diaries
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Developing and Debugging Java Burp Extensions with Visual Studio Code</title><link rel=stylesheet href=/css/hugo-octopress.min.0effb37ad30576122b5e4690e98647188965be5b667046017b72a40109a65e45.css integrity="sha256-Dv+zetMFdhIrXkaQ6YZHGIllvltmcEYBe3KkAQmmXkU="><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.165.0"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/2019-12-02-developing-and-debugging-java-burp-extensions-with-visual-studio-code/03-intellicode.png"><meta name=twitter:title content="Developing and Debugging Java Burp Extensions with Visual Studio Code"><meta name=twitter:description content="A few days ago, I released the Bug Diaries
 Burp extension. It's a Burp extension that aims to mimic Burp issues for the
 community (free) version. For reasons, I decided to rewrite it in Java. This is
 the first part of my series on what I learned switching to Java.
@@ -95,29 +95,29 @@ name here. You can later change it in <code>settings.gradle</code>.</li></ul><p>
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">26
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">27
 </span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#495050">28
-</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-yaml data-lang=yaml><span style=display:flex><span>// Apply the Java plugin
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#586e75>// Apply the Java plugin</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>apply plugin</span>: <span style=color:#2aa198>&#39;java&#39;</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>// Use Maven (because Burp Extender is on Maven)
+</span></span><span style=display:flex><span><span style=color:#586e75>// Use Maven (because Burp Extender is on Maven)</span>
 </span></span><span style=display:flex><span>repositories {
 </span></span><span style=display:flex><span>     mavenCentral()
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>dependencies {
-</span></span><span style=display:flex><span>    // Add the Burp Extender interface
+</span></span><span style=display:flex><span>    <span style=color:#586e75>// Add the Burp Extender interface</span>
 </span></span><span style=display:flex><span>    compile &#39;net.portswigger.burp.extender:burp-extender-api:2.1&#39;
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>sourceSets {
 </span></span><span style=display:flex><span>    main {
 </span></span><span style=display:flex><span>        java {
-</span></span><span style=display:flex><span>            // Set the source directory to &#34;src&#34;
+</span></span><span style=display:flex><span>            <span style=color:#586e75>// Set the source directory to &#34;src&#34;</span>
 </span></span><span style=display:flex><span>            srcDir &#39;src&#39;
 </span></span><span style=display:flex><span>        }
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>// Create a task for bundling all dependencies into a jar file.
+</span></span><span style=display:flex><span><span style=color:#586e75>// Create a task for bundling all dependencies into a jar file.</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>task bigJar(type</span>: Jar) {
 </span></span><span style=display:flex><span>    baseName = project.name + &#39;-all&#39;
 </span></span><span style=display:flex><span>    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }

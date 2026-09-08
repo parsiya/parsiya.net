@@ -1,4 +1,4 @@
-<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Harnessing the Wayward Machine-God, 1: Manual Markdown Cleanup Is a Bug</title><link rel=stylesheet href=/css/hugo-octopress.min.0effb37ad30576122b5e4690e98647188965be5b667046017b72a40109a65e45.css integrity="sha256-Dv+zetMFdhIrXkaQ6YZHGIllvltmcEYBe3KkAQmmXkU="><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.163.2"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/machine-god-1/01.webp"><meta name=twitter:title content="Harnessing the Wayward Machine-God, 1: Manual Markdown Cleanup Is a Bug"><meta name=twitter:description content="LLMs regularly ignore my Markdown instructions. As the I part of (A)I, I got
+<!doctype html><html xmlns=http://www.w3.org/1999/xhtml xml:lang=en lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1"><link href=/css/fonts.css rel=stylesheet type=text/css><title>Harnessing the Wayward Machine-God, 1: Manual Markdown Cleanup Is a Bug</title><link rel=stylesheet href=/css/hugo-octopress.min.0effb37ad30576122b5e4690e98647188965be5b667046017b72a40109a65e45.css integrity="sha256-Dv+zetMFdhIrXkaQ6YZHGIllvltmcEYBe3KkAQmmXkU="><link rel=stylesheet href=/css/fork-awesome.min.css><link href=https://parsiya.net/favicon.png rel=icon><meta name=description content><meta name=keywords content="[Parsia Hakimian Parsiya infosec information security]"><meta name=author content="Parsia"><meta name=generator content="Hugo 0.165.0"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image:src content="https://parsiya.net/blog/machine-god-1/01.webp"><meta name=twitter:title content="Harnessing the Wayward Machine-God, 1: Manual Markdown Cleanup Is a Bug"><meta name=twitter:description content="LLMs regularly ignore my Markdown instructions. As the I part of (A)I, I got
 tired and created some deterministic automation to format the output to my
 preferences. I will discuss the problem, our solutions, bugs, lessons learned,
 and the final product.
@@ -234,7 +234,7 @@ solutions for me and the results of many trials.</p><pre tabindex=0><code>1. No 
    another heading or a list.
 2. One empty line between headings and another heading or a list.
 3. One empty line between normal text and lists.
-</code></pre><p>This is just a complicated way of saying:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-markdown data-lang=markdown><span style=display:flex><span>&lt;!-- Don&#39;t do this --&gt;
+</code></pre><p>This is just a complicated way of saying:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-markdown data-lang=markdown><span style=display:flex><span><span style=color:#586e75>&lt;!-- Don&#39;t do this --&gt;</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>## heading
 </span></span></span><span style=display:flex><span>[empty line]
 </span></span><span style=display:flex><span>Block that&#39;s not a list, codefence, or another heading.
@@ -330,7 +330,7 @@ heading of the line. You know the drill, ask your LLM to find the code and the
 docs :).</p><h3 id=remark-bold-not-list-spam>remark Bold Not-List Spam
 <a class=header-link href=#remark-bold-not-list-spam><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>The first solution had a funny bug. If you had multiple of these lines, it would
 convert the first one to a heading, then it would look at the new heading and
-convert the next one to a heading under it and so on.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-markdown data-lang=markdown><span style=display:flex><span>&lt;!-- original --&gt;
+convert the next one to a heading under it and so on.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-markdown data-lang=markdown><span style=display:flex><span><span style=color:#586e75>&lt;!-- original --&gt;</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>### Some heading
 </span></span></span><span style=display:flex><span>Some text.
 </span></span><span style=display:flex><span>
@@ -339,14 +339,14 @@ convert the next one to a heading under it and so on.</p><div class=highlight><p
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=font-weight:700>**bar**</span>:
 </span></span><span style=display:flex><span>bar bar
-</span></span></code></pre></div><p>Would become:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-markdown data-lang=markdown><span style=display:flex><span>&lt;!-- original --&gt;
+</span></span></code></pre></div><p>Would become:</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-markdown data-lang=markdown><span style=display:flex><span><span style=color:#586e75>&lt;!-- original --&gt;</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>### Some heading
 </span></span></span><span style=display:flex><span>Some text.
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>#### foo:
 </span></span></span><span style=display:flex><span>foo foo
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>&lt;!-- should be level 4 --&gt;
+</span></span><span style=display:flex><span><span style=color:#586e75>&lt;!-- should be level 4 --&gt;</span>
 </span></span><span style=display:flex><span><span style=color:#268bd2>##### bar:
 </span></span></span><span style=display:flex><span>bar bar
 </span></span></code></pre></div><p>So we store the value of the last <em>real</em> heading and use it as a reference. See
@@ -355,13 +355,13 @@ convert the next one to a heading under it and so on.</p><div class=highlight><p
 <a class=header-link href=#other-side-effects><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h2><p>This new approach broke my workflow.</p><h3 id=format-tables---remark>Format Tables - Remark
 <a class=header-link href=#format-tables---remark><svg class="fill-current o-60 hover-accent-color-light" height="22" viewBox="0 0 24 24" width="22"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></h3><p>I use the <a href="https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one" target=_blank rel="noreferrer noopener">Markdown All in One</a> VS Code extension for writing Markdown.
 If you set it to the default Markdown formatter, it will pad tables in source to
-be more readable and I read everything in Markdown so I like this.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-markdown data-lang=markdown><span style=display:flex><span>&lt;!-- before padding --&gt;
+be more readable and I read everything in Markdown so I like this.</p><div class=highlight><pre tabindex=0 style=color:#93a1a1;background-color:#002b36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-markdown data-lang=markdown><span style=display:flex><span><span style=color:#586e75>&lt;!-- before padding --&gt;</span>
 </span></span><span style=display:flex><span>| Item | Price | Note |
 </span></span><span style=display:flex><span>| - | - | -- |
 </span></span><span style=display:flex><span>| VS Code | $0 | Editor |
 </span></span><span style=display:flex><span>| Parsia | $42 | Rando |
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>&lt;!-- after padding --&gt;
+</span></span><span style=display:flex><span><span style=color:#586e75>&lt;!-- after padding --&gt;</span>
 </span></span><span style=display:flex><span>| Item    | Price | Note   |
 </span></span><span style=display:flex><span>| ------- | ----- | ------ |
 </span></span><span style=display:flex><span>| VS Code | $0    | Editor |
