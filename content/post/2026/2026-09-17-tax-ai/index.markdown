@@ -13,15 +13,14 @@ categories:
 How I used LLMs to put together a packet for my tax preparer and review my
 return. What worked and what didn't. I also created a public skill.
 
-This is not tax or investment advice. This is not about "filing taxes with AI."
-I have an awesome tax preparer because my taxes are complicated and FBAR/FATCA
-penalties are steep. I need the human in the loop for my threat model (the IRS).
+**This is not tax or investment advice**. This is not about "filing taxes with
+AI." I have an awesome tax preparer because my taxes are complicated and
+FBAR/FATCA penalties are steep. I need the human in the loop for my threat model
+(the IRS).
 
 <!--more-->
 
 Skills are at https://github.com/parsiya/parsia-plugins.
-
-[Worldwide taxation rant omitted because I am channeling my inner patio11].
 
 # Motivation and Problem Statement
 My taxes are complicated. You think yours are, too, and I am sure they are, but
@@ -29,16 +28,21 @@ being a US citizen living abroad or holding foreign assets adds another
 difficulty level. You have to worry about things like FBAR, FATCA, PFIC, FEIE,
 and FTC.
 
-In my opinion, the US government (regardless of administration or party) doesn't
-want US citizens to move abroad, work abroad, or marry abroad.
+In my opinion, the US government (regardless of party) and the general public
+doesn't want US citizens to move abroad, work abroad, or marry abroad. Just ask
+anyone with a foreign spouse.
+
+[Worldwide taxation rant omitted because I am channeling my inner [patio11][patio11]].
+
+[patio11]: https://x.com/patio11
 
 {{< blockquote author="Anonymous teammate" >}}
 ngl, ur lowkey cooked
 {{< /blockquote >}}
 
-The best things you can do are 1. find a great CPA (and immigration attorney)
+The best things you can do are 1. find a great CPA and immigration attorney
 and 2. become very familiar with the tax treaty between the US and the country
-where you live or hold assets (and the US immigration system).
+where you live or hold assets and the US immigration system.
 
 I am American-Canadian[^ft-cad], among other things, and have financial accounts
 in Canada. Fortunately, I have a great preparer and know the US-Canada tax
